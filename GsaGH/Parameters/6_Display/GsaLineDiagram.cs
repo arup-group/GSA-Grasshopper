@@ -11,7 +11,6 @@ namespace GsaGH.Parameters {
     public override string TypeName => "Line Diagram";
     public BoundingBox ClippingBox => Boundingbox;
     public Color Color { get; private set; }
-    public DiagramType DiagramType => DiagramType.Line;
 
     internal GsaLineDiagram(GsaAPI.Line line, double scaleFactor, Color customColor) {
       Value = Diagrams.ConvertLine(line, scaleFactor);

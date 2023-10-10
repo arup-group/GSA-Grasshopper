@@ -17,7 +17,6 @@ using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -648,7 +647,7 @@ namespace GsaGH.Components {
           return;
         }
 
-        Mesh tempmesh = Elements.GetMeshFromApiElement2d(element, nodes, _lengthUnit);
+        Mesh tempmesh = GsaElementFactory.GetMeshFromApiElement2d(element, nodes, _lengthUnit);
         if (tempmesh == null) {
           return;
         }

@@ -11,10 +11,10 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.Grahics;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -22,6 +22,7 @@ using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
+using Rhino.Commands;
 using Rhino.Geometry;
 using DiagramType = GsaAPI.DiagramType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
@@ -321,7 +322,7 @@ namespace GsaGH.Components {
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
 
-      //PostHog.Result(modelGoo.Value.Model.case, 1, "Diagram", type.ToString());
+      PostHog.Diagram("Load", _caseId, _selectedItems[1], types, Parameters.EntityType.Element);
     }
 
     private bool IsGhObjectValid(GsaModelGoo modelGoo) {
@@ -402,13 +403,13 @@ namespace GsaGH.Components {
       list.Insert(0, "All");
     }
 
-    private void UpdateForce(string unit) {
+    internal void UpdateForce(string unit) {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateModel(string unit) {
+    internal void UpdateModel(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
@@ -423,7 +424,7 @@ namespace GsaGH.Components {
         = ResultHelper.GetAvalailableResults(_gsaModel);
       var cases = new List<string>();
 
-      List<int> caseIds = Loads.GetLoadCases(_gsaModel.Model);
+      List<int> caseIds = _gsaModel.GetLoadCases();
       foreach (int caseId in caseIds) {
         cases.Add($"L{caseId}");
       }

@@ -100,21 +100,21 @@ namespace GsaGH.Parameters {
       PolyCurve = (PolyCurve)other.PolyCurve?.DuplicateShallow();
       Brep = (Brep)other.Brep?.DuplicateShallow();
       PolyCurve = (PolyCurve)other.PolyCurve?.DuplicateShallow();
-      Topology = other.Topology;
+      Topology = other.Topology?.Duplicate();
       TopologyType = other.TopologyType;
 
       VoidCurves = other.VoidCurves?.ConvertAll(t => (PolyCurve)t.DuplicateShallow());
-      VoidTopology = other.VoidTopology;
+      VoidTopology = other.VoidTopology?.Duplicate();
       VoidTopologyType = other.VoidTopologyType;
 
       InclusionLines = other.InclusionLines?.ConvertAll(t => (PolyCurve)t.DuplicateShallow());
-      InclusionLinesTopology = other.InclusionLinesTopology;
+      InclusionLinesTopology = other.InclusionLinesTopology?.Duplicate();
       InclusionLinesTopologyType = other.InclusionLinesTopologyType;
 
-      InclusionPoints = other.InclusionPoints;
+      InclusionPoints = other.InclusionPoints?.Duplicate();
 
       Prop2d = other.Prop2d;
-      Section3dPreview = other.Section3dPreview;
+      Section3dPreview = other.Section3dPreview?.Duplicate();
     }
 
     /// <summary>

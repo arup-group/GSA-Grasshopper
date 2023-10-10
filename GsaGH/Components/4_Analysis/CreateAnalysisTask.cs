@@ -18,7 +18,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateAnalysisTask;
-    private GsaAnalysisTask.AnalysisType _analtype = GsaAnalysisTask.AnalysisType.Static;
+    private AnalysisTaskType _tasktype = AnalysisTaskType.Static;
 
     public CreateAnalysisTask() : base(
       "Create " + GsaAnalysisTaskGoo.Name,
@@ -29,8 +29,7 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      _analtype = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType),
-        _selectedItems[i]);
+      _tasktype = (AnalysisTaskType)Enum.Parse(typeof(AnalysisTaskType), _selectedItems[i]);
       base.UpdateUI();
     }
 
@@ -43,9 +42,9 @@ namespace GsaGH.Components {
       _selectedItems = new List<string>();
 
       _dropDownItems.Add(new List<string>() {
-        GsaAnalysisTask.AnalysisType.Static.ToString(),
+        AnalysisTaskType.Static.ToString(),
       });
-      _selectedItems.Add(_analtype.ToString());
+      _selectedItems.Add(_tasktype.ToString());
 
       _isInitialised = true;
     }
@@ -64,7 +63,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      string name = _analtype.ToString();
+      string name = _tasktype.ToString();
       da.GetData(0, ref name);
 
       List<GsaAnalysisCase> cases = null;
@@ -98,7 +97,7 @@ namespace GsaGH.Components {
           "Default Task has been created; it will by default contain all cases found in model");
       }
 
-      if (_analtype != GsaAnalysisTask.AnalysisType.Static) {
+      if (_tasktype != AnalysisTaskType.Static) {
         this.AddRuntimeWarning("It is currently not possible to adjust the solver settings. "
           + Environment.NewLine
           + "Please verify the solver settings in GSA ('Task and Cases' -> 'Analysis Tasks')");
@@ -107,14 +106,13 @@ namespace GsaGH.Components {
       var task = new GsaAnalysisTask {
         Name = name,
         Cases = cases,
-        Type = _analtype,
+        Type = _tasktype,
       };
       da.SetData(0, new GsaAnalysisTaskGoo(task));
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      _analtype = (GsaAnalysisTask.AnalysisType)Enum.Parse(typeof(GsaAnalysisTask.AnalysisType),
-        _selectedItems[0]);
+      _tasktype = (AnalysisTaskType)Enum.Parse(typeof(AnalysisTaskType), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
   }

@@ -1,5 +1,5 @@
 ﻿using GsaAPI;
-using GsaGH.Helpers.Export;
+using GsaGH.Helpers.Assembly;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using Rhino.Geometry;
@@ -19,8 +19,10 @@ namespace GsaGHTests.Parameters {
         },
       };
 
+      var assembly = new ModelAssembly(m1d);
+
       var assembled = new GsaModel {
-        Model = Assembler.AssembleForLocalAxis(m1d),
+        Model = assembly.GetModel()
       };
 
       Member assembledMem1d = assembled.Model.Members()[1];

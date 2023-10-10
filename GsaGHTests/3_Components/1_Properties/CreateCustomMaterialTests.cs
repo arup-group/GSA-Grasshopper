@@ -5,7 +5,6 @@ using OasysGH.Components;
 using OasysUnits;
 using OasysUnits.Units;
 using Xunit;
-using static GsaGH.Parameters.GsaMaterial;
 
 namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]

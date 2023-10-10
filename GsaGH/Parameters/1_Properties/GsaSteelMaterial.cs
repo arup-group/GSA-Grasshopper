@@ -1,5 +1,6 @@
 ﻿using GsaAPI;
 using GsaAPI.Materials;
+using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
   public class GsaSteelMaterial : GsaMaterial, IGsaStandardMaterial {
@@ -34,7 +35,7 @@ namespace GsaGH.Parameters {
     }
 
     public GsaSteelMaterial(GsaSteelMaterial other) : base(other) {
-      Model model = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
+      Model model = ModelFactory.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
       _steelMaterial = model.CreateSteelMaterial(other.Name);
 
       DuplicateAnalysisMaterial(other);

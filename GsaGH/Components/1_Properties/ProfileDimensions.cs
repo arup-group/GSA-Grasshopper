@@ -7,11 +7,11 @@ using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
@@ -459,7 +459,7 @@ namespace GsaGH.Components {
         da.SetData(i, type[0]);
       } else if (profile.StartsWith("CAT")) {
         string prof = profile.Split(' ')[2];
-        List<double> sqlValues = MicrosoftSQLiteReader.Instance.GetCatalogueProfileValues(prof,
+        List<double> sqlValues = SqlReader.Instance.GetCatalogueProfileValues(prof,
           Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
         unit = LengthUnit.Meter;
         if (sqlValues.Count == 2) {
@@ -509,17 +509,17 @@ namespace GsaGH.Components {
       }
     }
 
-    private void SetOutput(IGH_DataAccess da, int outputId, string outputValue, LengthUnit unit) {
-      double val = double.Parse(outputValue, CultureInfo.InvariantCulture);
-      var length = new Length(val, unit);
-      da.SetData(outputId, new GH_UnitNumber(length.ToUnit(_lengthUnit)));
-    }
-
-    private void Update(string unit) {
+    internal void Update(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Message = unit;
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
       ExpireSolution(true);
+    }
+
+    private void SetOutput(IGH_DataAccess da, int outputId, string outputValue, LengthUnit unit) {
+      double val = double.Parse(outputValue, CultureInfo.InvariantCulture);
+      var length = new Length(val, unit);
+      da.SetData(outputId, new GH_UnitNumber(length.ToUnit(_lengthUnit)));
     }
   }
 }

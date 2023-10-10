@@ -1,6 +1,5 @@
 ﻿using GsaAPI;
 using GsaGH.Parameters;
-using GsaGH.Parameters.Enums;
 using GsaGHTests.Helpers;
 using Xunit;
 using LoadCaseType = GsaGH.Parameters.LoadCaseType;

@@ -20,7 +20,6 @@ using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -371,12 +370,8 @@ namespace GsaGH.Components {
       }
 
       switch (_mode) {
-        case FoldMode.Displacement when (int)_disp < 4:
-          Params.Output[2].Name = "Values [" + Length.GetAbbreviation(_lengthResultUnit) + "]";
-          break;
-
         case FoldMode.Displacement:
-          Params.Output[2].Name = "Values [rad]";
+          Params.Output[2].Name = "Values [" + Length.GetAbbreviation(_lengthResultUnit) + "]";
           break;
 
         case FoldMode.Force when ((int)_disp < 3) | _isShear:
@@ -639,6 +634,10 @@ namespace GsaGH.Components {
 
       ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
+      if (elems.Count == 0) {
+        this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
+        return;
+      };
 
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = _isShear ? resShear.XyzResults : res.XyzResults;
@@ -866,7 +865,7 @@ namespace GsaGH.Components {
           return;
         }
 
-        Mesh tempmesh = Elements.GetMeshFromApiElement2d(element, nodes, lengthUnit);
+        Mesh tempmesh = GsaElementFactory.GetMeshFromApiElement2d(element, nodes, lengthUnit);
         if (tempmesh == null) {
           return;
         }
@@ -1090,7 +1089,8 @@ namespace GsaGH.Components {
       PostHog.Result(result.Type, 2, resultType, _disp.ToString());
     }
 
-    private void CreateGradient() {
+    internal GH_GradientControl CreateGradient(GH_Document doc = null) {
+      doc ??= Instances.ActiveCanvas.Document;
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
 
@@ -1112,11 +1112,12 @@ namespace GsaGH.Components {
         Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50,
         Params.Input[2].Attributes.Bounds.Y - (gradient.Attributes.Bounds.Height / 4) - 6);
 
-      Instances.ActiveCanvas.Document.AddObject(gradient, false);
+      doc.AddObject(gradient, false);
       Params.Input[2].RemoveAllSources();
       Params.Input[2].AddSource(gradient.Params.Output[0]);
 
       UpdateUI();
+      return gradient;
     }
 
     private void Mode1Clicked() {
@@ -1184,42 +1185,42 @@ namespace GsaGH.Components {
       Attributes.PerformLayout();
     }
 
-    private void ShowLegend(object sender, EventArgs e) {
+    internal void ShowLegend(object sender, EventArgs e) {
       _showLegend = !_showLegend;
       ExpirePreview(true);
     }
 
-    private void UpdateForce(string unit) {
+    internal void UpdateForce(string unit) {
       _forcePerLengthUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateLength(string unit) {
+    internal void UpdateLength(string unit) {
       _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateModel(string unit) {
+    internal void UpdateModel(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateMoment(string unit) {
+    internal void UpdateMoment(string unit) {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateStress(string unit) {
+    internal void UpdateStress(string unit) {
       _stressUnitResult = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateLegendScale() {
+    internal void UpdateLegendScale() {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
       } catch (Exception e) {
@@ -1233,7 +1234,7 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    private void MaintainScaleLegendText(ToolStripItem menuitem) {
+    internal void MaintainScaleLegendText(ToolStripItem menuitem) {
       _scaleLegendTxt = menuitem.Text;
     }
   }

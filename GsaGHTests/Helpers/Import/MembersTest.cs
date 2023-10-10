@@ -16,7 +16,7 @@ namespace GsaGHTests.Helpers.Import {
       Assert.Equal("EN 1993-1-1:2005", mem.Section.Material.SteelDesignCodeName);
       Assert.Equal("STD R 800 400", mem.Section.ApiSection.Profile);
       Duplicates.AreEqual(model.Materials.SteelMaterials[1], mem.Section.Material);
-      Duplicates.AreEqual(model.Properties.Sections[1].Value, mem.Section);
+      Duplicates.AreEqual(model.Sections[1].Value, mem.Section);
 
       AssertPointsAreEqual(new Point3d(0, 0, 0), mem.PolyCurve.PointAtStart);
       AssertPointsAreEqual(new Point3d(4.5, 4.5, 0), mem.PolyCurve.PointAtEnd);
@@ -30,7 +30,7 @@ namespace GsaGHTests.Helpers.Import {
       Assert.Equal("EC2-1-1", mem.Prop2d.Material.ConcreteDesignCodeName);
       Assert.Equal(200, mem.Prop2d.Thickness.Millimeters);
       Duplicates.AreEqual(model.Materials.ConcreteMaterials[1], mem.Prop2d.Material);
-      Duplicates.AreEqual(model.Properties.Prop2ds[2].Value, mem.Prop2d);
+      Duplicates.AreEqual(model.Prop2ds[2].Value, mem.Prop2d);
 
       AssertPointsAreEqual(new Point3d(0, 0, 0), mem.Topology[0]);
       AssertPointsAreEqual(new Point3d(4.5, 0, 0), mem.Topology[1]);
@@ -45,7 +45,7 @@ namespace GsaGHTests.Helpers.Import {
       GsaMember3d mem = members.Member3ds.First().Value;
       Assert.Equal(MatType.Timber, mem.Prop3d.Material.MaterialType);
       Duplicates.AreEqual(model.Materials.TimberMaterials[1], mem.Prop3d.Material);
-      Duplicates.AreEqual(model.Properties.Prop3ds[5].Value, mem.Prop3d);
+      Duplicates.AreEqual(model.Prop3ds[5].Value, mem.Prop3d);
 
       AssertPointsAreEqual(new Point3d(0, 4.5, 0), mem.SolidMesh.Vertices[0]);
       AssertPointsAreEqual(new Point3d(4.5, 4.5, 0), mem.SolidMesh.Vertices[1]);

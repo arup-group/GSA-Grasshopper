@@ -1,5 +1,6 @@
 ﻿using GsaAPI;
 using GsaAPI.Materials;
+using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
   public class GsaFrpMaterial : GsaMaterial, IGsaStandardMaterial {
@@ -28,7 +29,7 @@ namespace GsaGH.Parameters {
     }
 
     public GsaFrpMaterial(GsaFrpMaterial other) : base(other) {
-      Model model = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
+      Model model = ModelFactory.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
       _frpMaterial = model.CreateFrpMaterial(other.Name);
 
       DuplicateAnalysisMaterial(other);

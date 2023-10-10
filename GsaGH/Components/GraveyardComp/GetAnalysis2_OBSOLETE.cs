@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -42,7 +41,7 @@ namespace GsaGH.Components.GraveyardComp {
       da.GetData(0, ref modelGoo);
 
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
-        = Analyses.GetAnalysisTasksAndCombinations(modelGoo.Value);
+        = modelGoo.Value.GetAnalysisTasksAndCombinations();
 
       da.SetDataList(0, tuple.Item1);
       da.SetDataList(1, tuple.Item2);

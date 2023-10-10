@@ -185,13 +185,11 @@ namespace GsaGH.Components {
       }
 
       result = (ghObject.Value as GsaResultGoo).Value;
-      string nodeList = Inputs.GetNodeListNameForResults(this, da, 1, result.Model);
+      string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
-      Tuple<List<GsaResultsValues>, List<int>> reactionForceValues
-        = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit);
-      GsaResultsValues forceValues = reactionForceValues.Item1[0];
-      nodeList = string.Join(" ", reactionForceValues.Item2);
-
+      GsaResultsValues forceValues
+        = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit)[0];
+      nodeList = string.Join(" ", forceValues.Ids);
       LengthUnit lengthUnit = GetLengthUnit(result);
 
       ReadOnlyDictionary<int, Node> gsaFilteredNodes = result.Model.Model.Nodes(nodeList);

@@ -324,13 +324,14 @@ namespace GsaGH.Components {
           new GH_UnitNumber(prop.Thickness.ToUnit(_lengthUnit)));
       da.SetData(8, prop.ApiProp2d.ReferenceSurface);
       da.SetData(9, prop.AdditionalOffsetZ.ToUnit(_lengthUnit));
-      da.SetData(10, new GsaProperty2dModifier(prop.ApiProp2d.PropertyModifier));
+      da.SetData(10, new GsaProperty2dModifierGoo(
+        new GsaProperty2dModifier(prop.ApiProp2d.PropertyModifier)));
       da.SetData(11, prop.ApiProp2d.SupportType);
       da.SetData(12, prop.ApiProp2d.SupportType != SupportType.Auto 
         ? prop.ApiProp2d.ReferenceEdge : -1);
     }
 
-    private void Update(string unit) {
+    internal void Update(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Message = unit;
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();

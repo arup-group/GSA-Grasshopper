@@ -13,7 +13,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateCombinationCase : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("8adcdf01-364b-4141-865d-02dc70577afd");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateCombinationCase;
 

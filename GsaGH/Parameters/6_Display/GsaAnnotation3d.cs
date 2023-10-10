@@ -16,7 +16,6 @@ namespace GsaGH.Parameters {
     public override string TypeName => "Annotation3D";
     public BoundingBox ClippingBox => Boundingbox;
     public Color Color { get; private set; } = Colours.GsaDarkBlue;
-    public AnnotationType AnnotationType => AnnotationType.TextDot;
     public string Text => Value.Text;
     public Point3d Location => Value.TextPlane.Origin;
 
@@ -29,7 +28,7 @@ namespace GsaGH.Parameters {
 
     private GsaAnnotation3d() { }
 
-    public override bool CastTo<TQ>(out TQ target) {
+    public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_UnitNumber))) {
         var types = Quantity.Infos.Select(x => x.ValueType).ToList();
         foreach (Type type in types) {
@@ -97,14 +96,15 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      var point = new Point3d(Value.TextPlane.Origin);
-      point.Transform(xform);
-      return new GsaAnnotation3d(Value.TextPlane, Color, Value.Text, Value.Height);
+      Plane pln = Value.TextPlane.Clone();
+      pln.Transform(xform);
+      return new GsaAnnotation3d(pln, Color, Value.Text, Value.Height);
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      Point3d point = xmorph.MorphPoint(Value.TextPlane.Origin);
-      return new GsaAnnotation3d(Value.TextPlane, Color, Value.Text, Value.Height);
+      Plane pln = Value.TextPlane.Clone();
+      xmorph.Morph(ref pln);
+      return new GsaAnnotation3d(pln, Color, Value.Text, Value.Height);
     }
 
     public override BoundingBox GetBoundingBox(Transform xform) {

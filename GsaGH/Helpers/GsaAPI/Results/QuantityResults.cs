@@ -10,7 +10,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 using MassUnit = OasysUnits.Units.MassUnit;
 
 namespace GsaGH.Helpers.GsaApi {
-  internal partial class ResultHelper {
+  internal static partial class ResultHelper {
 
     internal static GsaResultQuantity GetQuantityResult(
       Double6 result, ForceUnit unit, bool isBeam = false) {
@@ -29,6 +29,10 @@ namespace GsaGH.Helpers.GsaApi {
     }
 
     internal static GsaResultQuantity GetQuantityResult(double result, EnergyUnit unit) {
+      if (double.IsNaN(result)) {
+        return new GsaResultQuantity();
+      }
+
       IQuantity x = new Energy(new Energy(result, EnergyUnit.Joule).As(unit), unit);
 
       return new GsaResultQuantity() {
@@ -84,34 +88,35 @@ namespace GsaGH.Helpers.GsaApi {
 
     internal static GsaResultQuantity GetQuantityResult(Double6 result, AngleUnit unit) {
       IQuantity x;
-      if (
-        !double.IsNaN(result
-         .XX)) // TO-DO: GSA-5351 remove NaN and Infinity values from GsaAPI results
-      {
-        x = !double.IsInfinity(result.XX) ?
-          new Angle(new Angle(result.XX, AngleUnit.Radian).As(unit), unit) :
-          (IQuantity)(double.IsPositiveInfinity(result.XX) ? new Angle(360, AngleUnit.Degree) :
-            new Angle(-360, AngleUnit.Degree));
+      if (!double.IsNaN(result.XX)) {
+        // TO-DO: GSA-5351 remove NaN and Infinity values from GsaAPI results
+        x = !double.IsInfinity(result.XX) 
+          ? new Angle(new Angle(result.XX, AngleUnit.Radian).As(unit), unit) 
+          : (IQuantity)(double.IsPositiveInfinity(result.XX) 
+            ? new Angle(360, AngleUnit.Degree) 
+            : new Angle(-360, AngleUnit.Degree));
       } else {
         x = new Angle(0, unit);
       }
 
       IQuantity y;
       if (!double.IsNaN(result.YY)) {
-        y = !double.IsInfinity(result.YY) ?
-          new Angle(new Angle(result.YY, AngleUnit.Radian).As(unit), unit) :
-          (IQuantity)(double.IsPositiveInfinity(result.YY) ? new Angle(360, AngleUnit.Degree) :
-            new Angle(-360, AngleUnit.Degree));
+        y = !double.IsInfinity(result.YY) 
+          ? new Angle(new Angle(result.YY, AngleUnit.Radian).As(unit), unit) 
+          : (IQuantity)(double.IsPositiveInfinity(result.YY) 
+            ? new Angle(360, AngleUnit.Degree) 
+            : new Angle(-360, AngleUnit.Degree));
       } else {
         y = new Angle(0, unit);
       }
 
       IQuantity z;
       if (!double.IsNaN(result.ZZ)) {
-        z = !double.IsInfinity(result.ZZ) ?
-          new Angle(new Angle(result.ZZ, AngleUnit.Radian).As(unit), unit) :
-          (IQuantity)(double.IsPositiveInfinity(result.ZZ) ? new Angle(360, AngleUnit.Degree) :
-            new Angle(-360, AngleUnit.Degree));
+        z = !double.IsInfinity(result.ZZ) 
+          ? new Angle(new Angle(result.ZZ, AngleUnit.Radian).As(unit), unit) 
+          : (IQuantity)(double.IsPositiveInfinity(result.ZZ) 
+            ? new Angle(360, AngleUnit.Degree) 
+            : new Angle(-360, AngleUnit.Degree));
       } else {
         z = new Angle(0, unit);
       }

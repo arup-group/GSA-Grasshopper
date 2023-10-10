@@ -1,0 +1,31 @@
+﻿using GsaGH.Components;
+using OasysGH.UI;
+using System.Collections.Generic;
+using Xunit;
+
+namespace GsaGHTests.Components.Display {
+  [Collection("GrasshopperFixture collection")]
+  public class AnnotateDetailedTests {
+    [Fact]
+    public void DefaultDropSelectionsTest() {
+      var comp = new AnnotateDetailed();
+      Assert.Equal("Regular Dot", comp._selectedItems[0]);
+
+      comp.SetSelected(0, 1);
+      Assert.Equal("TextTag 3D", comp._selectedItems[0]);
+    }
+
+    [Fact]
+    public void SetCheckBoxesTest() {
+      var comp = new AnnotateDetailed();
+      comp.SetCheckBoxes(new List<bool> {
+        false, false, false, false }
+      );
+      Assert.NotNull((DropDownCheckBoxesComponentAttributes)comp.Attributes);
+      comp.SetCheckBoxes(new List<bool> {
+        true, true, true, true }
+      );
+      Assert.NotNull((DropDownCheckBoxesComponentAttributes)comp.Attributes);
+    }
+  }
+}

@@ -23,7 +23,7 @@ namespace GsaGHTests.Parameters {
       m.AddList(apilist);
 
       var model = new GsaModel() { Model = m };
-      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model)[0];
+      GsaList list = model.GetLists()[0];
 
       Assert.Equal(1, list.Id);
       Assert.Equal("undef List", list.Name);
@@ -51,7 +51,7 @@ namespace GsaGHTests.Parameters {
       // Act
       m.AddList(apilist);
       var model = new GsaModel() { Model = m };
-      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model)[0];
+      GsaList list = model.GetLists()[0];
 
       // Assert
       Assert.Equal(1, list.Id);
@@ -95,7 +95,7 @@ namespace GsaGHTests.Parameters {
       // Act
       m.AddList(apilist);
       var model = new GsaModel() { Model = m };
-      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model)[0];
+      GsaList list = model.GetLists()[0];
 
       // Assert
       Assert.Equal(1, list.Id);
@@ -138,7 +138,7 @@ namespace GsaGHTests.Parameters {
       // Act
       m.AddList(apilist);
       var model = new GsaModel() { Model = m };
-      GsaList list = GsaGH.Helpers.Import.Lists.GetLists(model)[0];
+      GsaList list = model.GetLists()[0];
 
       // Assert
       Assert.Equal(1, list.Id);
