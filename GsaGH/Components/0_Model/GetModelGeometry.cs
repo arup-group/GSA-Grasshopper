@@ -64,6 +64,7 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.List;
     private ConcurrentBag<GsaNodeGoo> _supportNodes;
     private bool _showSupports = true;
+    private SolveResults _results;
 
     public GetModelGeometry() : base("Get Model Geometry", "GetGeo",
       "Get nodes, elements and members from GSA model", CategoryName.Name(),
@@ -416,7 +417,6 @@ namespace GsaGH.Components {
       if (InPreSolve) {
         GsaModelGoo modelGoo = null;
         data.GetData(0, ref modelGoo);
-        _boundingBox = modelGoo.Value.BoundingBox;
 
         bool nodeFilterHasInput = false;
         bool elementFilterHasInput = false;
@@ -468,7 +468,7 @@ namespace GsaGH.Components {
       if (!GetSolveResults(data, out SolveResults results)) {
         GsaModelGoo modelGoo = null;
         data.GetData(0, ref modelGoo);
-
+        
         GsaListGoo nodeListGoo = null;
         string nodeList = "all";
         if (data.GetData(1, ref nodeListGoo)) {
@@ -679,7 +679,7 @@ namespace GsaGH.Components {
     }
 
     private SolveResults Compute(GsaModel model, string nodeList, string elemList, string memList) {
-      var results = new SolveResults();
+      _results = new SolveResults();
       var steps = new List<int> {
         0, 1, 2,
       };
@@ -688,30 +688,32 @@ namespace GsaGH.Components {
         model.ModelUnit = _lengthUnit;
       }
 
+      _boundingBox = model.BoundingBox;
+
       try {
         Parallel.ForEach(steps, i => {
           switch (i) {
             case 0:
-              results.Nodes = Nodes.GetNodes(
+              _results.Nodes = Nodes.GetNodes(
                 nodeList.ToLower() == "all" ? model.ApiNodes : model.Model.Nodes(nodeList),
                 model.ModelUnit,
                 model.ApiAxis);
-              results.DisplaySupports
-                = new ConcurrentBag<GsaNodeGoo>(results.Nodes.Where(n => n.Value.IsSupport));
+              _results.DisplaySupports
+                = new ConcurrentBag<GsaNodeGoo>(_results.Nodes.Where(n => n.Value.IsSupport));
               break;
 
             case 1:
               var elements = new Elements(model, elemList);
-              results.Elem1ds = elements.Element1ds;
-              results.Elem2ds = elements.Element2ds;
-              results.Elem3ds = elements.Element3ds;
+              _results.Elem1ds = elements.Element1ds;
+              _results.Elem2ds = elements.Element2ds;
+              _results.Elem3ds = elements.Element3ds;
               break;
 
             case 2:
               var members = new Members(model, memList, this);
-              results.Mem1ds = members.Member1ds;
-              results.Mem2ds = members.Member2ds;
-              results.Mem3ds = members.Member3ds;
+              _results.Mem1ds = members.Member1ds;
+              _results.Mem2ds = members.Member2ds;
+              _results.Mem3ds = members.Member3ds;
               break;
           }
         });
@@ -719,7 +721,7 @@ namespace GsaGH.Components {
         this.AddRuntimeWarning(e.InnerException?.Message);
       }
 
-      return results;
+      return _results;
     }
 
     internal void GraftModeClicked(object sender, EventArgs e) {

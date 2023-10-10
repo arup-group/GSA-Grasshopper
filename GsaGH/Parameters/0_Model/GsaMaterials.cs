@@ -36,40 +36,45 @@ namespace GsaGH.Parameters {
     }
 
     private GsaMaterial GetMaterial(MaterialType type, int analysisProp, int gradeProp) {
-      int id = analysisProp;
-      if (id != 0) { // it is a custom material
-        if (AnalysisMaterials.ContainsKey(id)) {
-          return AnalysisMaterials[id];
+      if (analysisProp != 0) { // it is a custom material
+        if (AnalysisMaterials.ContainsKey(analysisProp)) {
+          return AnalysisMaterials[analysisProp];
         } else {
-          return new GsaReferencedMaterial(id);
+          return new GsaReferencedMaterial(analysisProp, MatType.Custom);
         }
       }
 
-      id = gradeProp;
       switch (type) {
         case MaterialType.ALUMINIUM:
-          return AluminiumMaterials.TryGetValue(id, out GsaMaterial aluminium) ? aluminium : null;
+          return AluminiumMaterials.TryGetValue(gradeProp, out GsaMaterial aluminium) ? aluminium
+            : new GsaReferencedMaterial(gradeProp, MatType.Aluminium);
 
         case MaterialType.CONCRETE:
-          return ConcreteMaterials.TryGetValue(id, out GsaMaterial concrete) ? concrete : null;
+          return ConcreteMaterials.TryGetValue(gradeProp, out GsaMaterial concrete) ? concrete
+            : new GsaReferencedMaterial(gradeProp, MatType.Concrete);
 
         case MaterialType.FABRIC:
-          return FabricMaterials.TryGetValue(id, out GsaMaterial fabric) ? fabric : null;
+          return FabricMaterials.TryGetValue(gradeProp, out GsaMaterial fabric) ? fabric
+            : new GsaReferencedMaterial(gradeProp, MatType.Fabric);
 
         case MaterialType.FRP:
-          return FrpMaterials.TryGetValue(id, out GsaMaterial frp) ? frp : null;
+          return FrpMaterials.TryGetValue(gradeProp, out GsaMaterial frp) ? frp
+            : new GsaReferencedMaterial(gradeProp, MatType.Frp);
 
         case MaterialType.GLASS:
-          return GlassMaterials.TryGetValue(id, out GsaMaterial glass) ? glass : null;
+          return GlassMaterials.TryGetValue(gradeProp, out GsaMaterial glass) ? glass
+            : new GsaReferencedMaterial(gradeProp, MatType.Glass);
 
         case MaterialType.FIRST:
-          return SteelMaterials.TryGetValue(id, out GsaMaterial steel) ? steel : null;
+          return SteelMaterials.TryGetValue(gradeProp, out GsaMaterial steel) ? steel 
+            : new GsaReferencedMaterial(gradeProp, MatType.Steel);
 
         case MaterialType.TIMBER:
-          return TimberMaterials.TryGetValue(id, out GsaMaterial timber) ? timber : null;
+          return TimberMaterials.TryGetValue(gradeProp, out GsaMaterial timber) ? timber 
+            : new GsaReferencedMaterial(gradeProp, MatType.Timber);
 
         default:
-          return null;
+          return new GsaReferencedMaterial(gradeProp, GsaMaterialFactory.GetMatType(type));
       }
     }
 
