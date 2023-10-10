@@ -95,10 +95,6 @@ namespace GsaGH.Components {
       var outTransY = new DataTree<GH_UnitNumber>();
       var outTransZ = new DataTree<GH_UnitNumber>();
       var outTransXyz = new DataTree<GH_UnitNumber>();
-      var outRotX = new DataTree<GH_UnitNumber>();
-      var outRotY = new DataTree<GH_UnitNumber>();
-      var outRotZ = new DataTree<GH_UnitNumber>();
-      var outRotXyz = new DataTree<GH_UnitNumber>();
 
       var ghTypes = new List<GH_ObjectWrapper>();
       if (!da.GetDataList(0, ghTypes)) {
