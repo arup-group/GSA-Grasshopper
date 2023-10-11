@@ -83,21 +83,25 @@ namespace GsaGH.Components {
           case GsaElement2dGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
               gravityLoad.ReferenceType = ReferenceType.Element;
+              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               break;
             }
           case GsaMember1dGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
               gravityLoad.ReferenceType = ReferenceType.Member;
+              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
               break;
             }
           case GsaMember2dGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
               gravityLoad.ReferenceType = ReferenceType.Member;
+              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
               break;
             }
           case GsaMember3dGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
               gravityLoad.ReferenceType = ReferenceType.Member;
+              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
               break;
             }
           case GsaMaterialGoo value: {
@@ -108,21 +112,25 @@ namespace GsaGH.Components {
               }
               gravityLoad.RefObjectGuid = value.Value.Guid;
               gravityLoad.ReferenceType = ReferenceType.Property;
+              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               break;
             }
           case GsaSectionGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
               gravityLoad.ReferenceType = ReferenceType.Property;
+              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               break;
             }
           case GsaProperty2dGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
               gravityLoad.ReferenceType = ReferenceType.Property;
+              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               break;
             }
           case GsaProperty3dGoo value: {
               gravityLoad.RefObjectGuid = value.Value.Guid;
               gravityLoad.ReferenceType = ReferenceType.Property;
+              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               break;
             }
           default: {
