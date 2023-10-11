@@ -148,11 +148,13 @@ namespace GsaGH.Components {
           case GsaElement1dGoo element1dGoo:
             beamThermalLoad.RefObjectGuid = element1dGoo.Value.Guid;
             beamThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
+            beamThermalLoad.ReferenceType = ReferenceType.Element;
             break;
 
           case GsaMember1dGoo member1dGoo:
             beamThermalLoad.RefObjectGuid = member1dGoo.Value.Guid;
             beamThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
+            beamThermalLoad.ReferenceType = ReferenceType.Member;
             break;
 
           case GsaMaterialGoo materialGoo:
