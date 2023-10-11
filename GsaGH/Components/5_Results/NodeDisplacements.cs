@@ -159,7 +159,7 @@ namespace GsaGH.Components {
           {
             foreach (int id in vals[perm - 1].Ids) {
               // there is only one result per node
-              Parameters._5_Results.Quantities.IDisplacementQuantity values = vals[perm - 1].Results[id][0];
+              Parameters._5_Results.Quantities.IDisplacement values = vals[perm - 1].Results[id][0];
               // use ToUnit to capture changes in dropdown
               transX.Add(new GH_UnitNumber(values.X.ToUnit(_lengthUnit)));
               transY.Add(new GH_UnitNumber(values.Y.ToUnit(_lengthUnit)));

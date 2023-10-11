@@ -5,7 +5,7 @@ using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters._5_Results.Quantities {
-  public class GsaDisplacementQuantity : IDisplacementQuantity {
+  public class GsaDisplacementQuantity : IDisplacement {
     public Length X { get;  private set; }
     public Length Xyz { get; private set; }
     public Length Y { get; private set; }
@@ -27,6 +27,13 @@ namespace GsaGH.Parameters._5_Results.Quantities {
       double pyth
         = Math.Sqrt(Math.Pow(result.X, 2) + Math.Pow(result.Y, 2) + Math.Pow(result.Z, 2));
       Xyz = new Length(new Length(pyth, LengthUnit.Meter).As(unit), unit);
+    }
+
+    public void SetLengthUnit(Length x, Length y, Length z, Length xyz) {
+      X = x;
+      Y = y; 
+      Z = z;
+      Xyz = xyz;
     }
 
     public void SetAngleUnit(Double6 result, AngleUnit unit) {
@@ -64,6 +71,12 @@ namespace GsaGH.Parameters._5_Results.Quantities {
       double pyth = Math.Sqrt(Math.Pow(Xx.Value, 2) + Math.Pow(y.Value, 2) + Math.Pow(z.Value, 2));
       IQuantity xyz = double.IsInfinity(pyth) ? new Angle(360, AngleUnit.Degree) :
         new Angle(new Angle(pyth, AngleUnit.Radian).As(unit), unit);
+    }
+    public void SetAngleUnit(Angle xx, Angle yy, Angle zz, Angle xxyyzz) {
+      Xx = xx;
+      Yy = yy;
+      Zz = zz;
+      Xxyyzz = xxyyzz;
     }
   }
 }

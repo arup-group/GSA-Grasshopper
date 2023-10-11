@@ -490,13 +490,13 @@ namespace GsaGH.Helpers.GsaApi {
         Double6 values = result.Displacement;
         var quantities = new GsaDisplacementQuantity(values, resultLengthUnit, AngleUnit.Radian);
         if (!double.IsNaN(values.X) && !double.IsNaN(values.Y) && !double.IsNaN(values.Z)) {
-          var xyz = new ConcurrentDictionary<int, IDisplacementQuantity>();
+          var xyz = new ConcurrentDictionary<int, IDisplacement>();
           xyz.TryAdd(0, quantities);
           r.Results.TryAdd(nodeId, xyz);
         }
 
         if (!double.IsNaN(values.XX) && !double.IsNaN(values.YY) && !double.IsNaN(values.ZZ)) {
-          var xxyyzz = new ConcurrentDictionary<int, IDisplacementQuantity>();
+          var xxyyzz = new ConcurrentDictionary<int, IDisplacement>();
           xxyyzz.TryAdd(0, quantities);
           r.Results.TryAdd(nodeId, xxyyzz);
         }

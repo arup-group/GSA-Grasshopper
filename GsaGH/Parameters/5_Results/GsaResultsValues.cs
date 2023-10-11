@@ -14,7 +14,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Parameters {
 
 
-  public class GsaResultsValues : IResultValues<IQuantity, IQuantity, IDisplacementQuantity> {
+  public class GsaResultsValues{
     public enum ResultType {
       Displacement,
       Force,
@@ -52,7 +52,9 @@ namespace GsaGH.Parameters {
     internal ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>
       XyzResults { get; set; }
       = new ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>();
-    public ConcurrentDictionary<int, ConcurrentDictionary<int, IDisplacementQuantity>> Results { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    internal ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>
+      XyyyzzResults { get; set; }
+      = new ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>>();
 
     internal GsaResultsValues() { }
 
