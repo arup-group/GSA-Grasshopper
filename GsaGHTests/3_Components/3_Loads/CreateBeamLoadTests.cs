@@ -1,7 +1,9 @@
 ﻿using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
+using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
+using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.Components.Loads {
@@ -162,6 +164,38 @@ namespace GsaGHTests.Components.Loads {
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
       Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void CreateElement1dLoadTest() {
+      var comp = new CreateBeamLoad();
+      GH_OasysComponent element1dComp = CreateElement1dTests.ComponentMother();
+      var element1dGoo = (GsaElement1dGoo)ComponentTestHelper.GetOutput(element1dComp);
+
+      ComponentTestHelper.SetInput(comp, element1dGoo, 1);
+      ComponentTestHelper.SetInput(comp, -5, 6);
+
+      var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      var load = (GsaBeamLoad)output.Value;
+      Assert.Equal(-5000, load.ApiLoad.Value(0));
+      Assert.Equal(ReferenceType.Element, load.ReferenceType);
+      Assert.Equal(GsaAPI.EntityType.Element, load.ApiLoad.EntityType);
+    }
+
+    [Fact]
+    public void CreateMember1dLoadTest() {
+      var comp = new CreateBeamLoad();
+      GH_OasysComponent member1dComp = CreateMember1dTests.ComponentMother();
+      var member1dGoo = (GsaMember1dGoo)ComponentTestHelper.GetOutput(member1dComp);
+
+      ComponentTestHelper.SetInput(comp, member1dGoo, 1);
+      ComponentTestHelper.SetInput(comp, -5, 6);
+
+      var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      var load = (GsaBeamLoad)output.Value;
+      Assert.Equal(-5000, load.ApiLoad.Value(0));
+      Assert.Equal(ReferenceType.Member, load.ReferenceType);
+      Assert.Equal(GsaAPI.EntityType.Member, load.ApiLoad.EntityType);
     }
   }
 }
