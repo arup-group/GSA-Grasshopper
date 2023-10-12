@@ -59,11 +59,11 @@ namespace GsaGH.Components {
         }
         case 0: {
           if (_selectedItems[i] == _type[1]) {
-            if (_resultType == CaseType.Combination) {
+            if (_resultType == CaseType.CombinationCase) {
               return;
             }
 
-            _resultType = CaseType.Combination;
+            _resultType = CaseType.CombinationCase;
             UpdateDropdowns();
           }
 
@@ -74,7 +74,7 @@ namespace GsaGH.Components {
             string.Join(string.Empty, _selectedItems[i].ToCharArray().Where(char.IsDigit)));
           if (newId != _caseId) {
             _caseId = newId;
-            if (_resultType == CaseType.Combination) {
+            if (_resultType == CaseType.CombinationCase) {
               UpdatePermutations();
             }
           }
@@ -187,8 +187,8 @@ namespace GsaGH.Components {
             }
           } else if (type.ToUpper().StartsWith("C")) {
             _selectedItems[0] = _dropDownItems[0][1];
-            if (_resultType != CaseType.Combination) {
-              _resultType = CaseType.Combination;
+            if (_resultType != CaseType.CombinationCase) {
+              _resultType = CaseType.CombinationCase;
               if (_dropDownItems.Count < 3) {
                 _dropDownItems.Add(new List<string>() {
                   "All",
@@ -213,7 +213,7 @@ namespace GsaGH.Components {
       var ghACase = new GH_Integer();
       if (da.GetData(2, ref ghACase)) {
         if (GH_Convert.ToInt32(ghACase, out int analCase, GH_Conversion.Both)) {
-          if (_resultType == CaseType.Combination && _caseId != analCase) {
+          if (_resultType == CaseType.CombinationCase && _caseId != analCase) {
             UpdatePermutations();
           }
 
@@ -267,7 +267,7 @@ namespace GsaGH.Components {
 
           break;
 
-        case CaseType.Combination:
+        case CaseType.CombinationCase:
           if (_combinationCaseResults == null) {
             _combinationCaseResults = _gsaModel.Model.CombinationCaseResults();
             if (_combinationCaseResults == null || _combinationCaseResults.Count == 0) {
@@ -319,7 +319,7 @@ namespace GsaGH.Components {
       if (_selectedItems[0] == _type[0]) {
         _resultType = CaseType.AnalysisCase;
       } else if (_selectedItems[0] == _type[1]) {
-        _resultType = CaseType.Combination;
+        _resultType = CaseType.CombinationCase;
       }
 
       if (_selectedItems[1].ToLower() == "all") {
@@ -363,7 +363,7 @@ namespace GsaGH.Components {
       _dropDownItems[1] = cases;
       _selectedItems[1] = type[0] + _caseId.ToString();
 
-      if (_resultType == CaseType.Combination) {
+      if (_resultType == CaseType.CombinationCase) {
         if (_dropDownItems.Count < 3) {
           _dropDownItems.Add(new List<string>() {
             "All",
@@ -390,7 +390,7 @@ namespace GsaGH.Components {
     }
 
     private void UpdatePermutations() {
-      if (_resultType != CaseType.Combination) {
+      if (_resultType != CaseType.CombinationCase) {
         return;
       }
 

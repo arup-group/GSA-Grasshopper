@@ -2,6 +2,6 @@
   public enum CaseType {
     LoadCase,
     AnalysisCase,
-    Combination
+    CombinationCase
   }
 }
