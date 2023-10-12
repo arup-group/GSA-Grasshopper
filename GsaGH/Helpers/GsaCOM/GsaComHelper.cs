@@ -7,8 +7,6 @@ namespace GsaGH.Helpers {
   public sealed class GsaComObject {
     public static ComAuto Instance => lazy.Value;
     private static readonly Lazy<ComAuto> lazy = new Lazy<ComAuto>(() => new ComAuto());
-
-    private GsaComObject() { }
   }
 
   internal static class GsaComHelper {
@@ -27,6 +25,10 @@ namespace GsaGH.Helpers {
         return gsa;
       }
 
+      if (File.Exists(tempPath)) {
+        File.Delete(tempPath);
+      }
+
       guid = model.Guid;
       tempPath = Path.GetTempPath() + guid.ToString() + ".gwb";
 
@@ -39,11 +41,19 @@ namespace GsaGH.Helpers {
 
     internal static GsaModel GetGsaGhModel() {
       ComAuto gsa = GsaComObject.Instance;
-
       gsa.SaveAs(tempPath);
       var gsaGh = new GsaModel();
       gsaGh.Model.Open(tempPath);
+      
       return gsaGh;
+    }
+
+    internal static void Dispose(object? sender, EventArgs e) {
+      if (File.Exists(tempPath)) {
+        File.Delete(tempPath);
+      }
+
+      GsaComObject.Instance.Close();
     }
   }
 }
