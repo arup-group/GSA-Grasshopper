@@ -1,6 +1,6 @@
 ﻿namespace GsaGH.Parameters {
   public enum CaseType {
-    Load,
+    LoadCase,
     AnalysisCase,
     Combination
   }

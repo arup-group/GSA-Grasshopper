@@ -31,7 +31,7 @@ namespace GsaGH.Helpers {
 
     internal static void Diagram(
       string diagramType, string caseId, string type, List<GsaAPI.DiagramType> subTypes, EntityType entityType) {
-      CaseType caseType = caseId.StartsWith("L") ? CaseType.Load
+      CaseType caseType = caseId.StartsWith("L") ? CaseType.LoadCase
         : caseId.StartsWith("A") ? CaseType.AnalysisCase : CaseType.Combination;
       List<string> subType = subTypes.ConvertAll(x => x.ToString());
       Diagram(diagramType, caseType, type, string.Join(";", subTypes), entityType);
