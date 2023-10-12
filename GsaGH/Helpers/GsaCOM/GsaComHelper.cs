@@ -48,7 +48,7 @@ namespace GsaGH.Helpers {
       return gsaGh;
     }
 
-    internal static void Dispose(object? sender, EventArgs e) {
+    internal static void Dispose(object sender, EventArgs e) {
       if (File.Exists(tempPath)) {
         File.Delete(tempPath);
       }
