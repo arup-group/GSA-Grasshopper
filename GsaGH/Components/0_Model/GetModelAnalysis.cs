@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -46,7 +45,7 @@ namespace GsaGH.Components {
       da.GetData(0, ref modelGoo);
 
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
-        = Analyses.GetAnalysisTasksAndCombinations(modelGoo.Value);
+        = modelGoo.Value.GetAnalysisTasksAndCombinations();
       var combinationCaseGoos = modelGoo.Value.Model.CombinationCases().Select(keyValuePair
         => new GsaCombinationCaseGoo(new GsaCombinationCase(keyValuePair))).ToList();
 

@@ -215,7 +215,7 @@ namespace GsaGH.Components {
       da.SetData(10, section.ApiSection.Colour);
     }
 
-    private void Update(string unit) {
+    internal void Update(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       Message = unit;
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();

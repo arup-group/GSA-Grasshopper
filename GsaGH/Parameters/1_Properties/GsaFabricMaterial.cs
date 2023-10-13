@@ -1,6 +1,7 @@
 ﻿using System;
 using GsaAPI;
 using GsaAPI.Materials;
+using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
   public class GsaFabricMaterial : GsaMaterial, IGsaStandardMaterial {
@@ -24,7 +25,7 @@ namespace GsaGH.Parameters {
     }
 
     public GsaFabricMaterial(GsaFabricMaterial other) : base(other) {
-      Model model = GsaModel.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
+      Model model = ModelFactory.CreateModelFromCodes(ConcreteDesignCodeName, SteelDesignCodeName);
       _fabricMaterial = model.CreateFabricMaterial(other.Name);
     }
   }

@@ -9,7 +9,6 @@ using Xunit;
 namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
   public class CreateGridLineTest {
-
     public static GH_OasysComponent GridLineComponentMother() {
       var comp = new CreateGridLine();
       comp.CreateAttributes();
@@ -26,6 +25,14 @@ namespace GsaGHTests.Model {
       ComponentTestHelper.SetInput(comp, "Line", 1);
 
       return comp;
+    }
+
+    public static GsaModelGoo CreateModelWithGridlines() {
+      var comp = new CreateModel();
+      comp.CreateAttributes();
+      ComponentTestHelper.SetInput(comp,
+        ComponentTestHelper.GetOutput(GridLineComponentMother()));
+      return (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
     }
 
     public static GH_OasysComponent GridArcComponentMother() {
@@ -100,6 +107,12 @@ namespace GsaGHTests.Model {
 
       var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
       Assert.NotEmpty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+    }
+
+    [Fact]
+    public void CreateModelWithGridLines() {
+      GsaModelGoo model = CreateModelWithGridlines();
+      Assert.Single(model.Value.Model.GridLines());
     }
   }
 }

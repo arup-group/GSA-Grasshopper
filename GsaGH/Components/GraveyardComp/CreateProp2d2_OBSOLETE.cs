@@ -172,19 +172,17 @@ namespace GsaGH.Components {
             if (ghTyp.Value is GsaMaterialGoo materialGoo) {
               prop.Material = GsaMaterialFactory.CreateMaterial(materialGoo.Value);
             } else {
-              if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
-                prop.Material = new GsaReferencedMaterial(idd);
+              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+                prop.Material = new GsaReferencedMaterial(id, MatType.Custom);
               } else {
                 this.AddRuntimeError(
                   "Unable to convert PB input to a Section Property of reference integer");
                 return;
               }
             }
-          } else {
-            prop.Material = new GsaReferencedMaterial(2);
-          }
+          } 
         } else {
-          prop.Material = new GsaReferencedMaterial(8);
+          prop.Material = new GsaReferencedMaterial(1, MatType.Fabric);
         }
       } else {
         prop.ApiProp2d.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;

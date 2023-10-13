@@ -20,7 +20,6 @@ using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -459,6 +458,10 @@ namespace GsaGH.Components {
 
       ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
+      if (elems.Count == 0) {
+        this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
+        return;
+      };
 
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = res.XyzResults;
@@ -613,7 +616,7 @@ namespace GsaGH.Components {
           return;
         }
 
-        Mesh tempmesh = Elements.GetMeshFromApiElement3d(element, nodes, lengthUnit);
+        Mesh tempmesh = GsaElementFactory.GetMeshFromApiElement3d(element, nodes, lengthUnit);
         if (tempmesh == null) {
           return;
         }
@@ -677,9 +680,8 @@ namespace GsaGH.Components {
             break;
         }
 
-        for (int i = 0; i < vals.Count - 1;
-          i++) // start at i=0, now the last index is the centre point in GsaAPI output so to count -1
-        {
+        // start at i=0, now the last index is the centre point in GsaAPI output so to count -1
+        for (int i = 0; i < tempmesh.Vertices.Count; i++) {
           double tnorm = (2 * (vals[i].Value - dmin) / (dmax - dmin)) - 1;
           Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
           tempmesh.VertexColors.Add(col);
@@ -796,7 +798,8 @@ namespace GsaGH.Components {
       PostHog.Result(result.Type, 3, resultType, _disp.ToString());
     }
 
-    private void CreateGradient() {
+    internal GH_GradientControl CreateGradient(GH_Document doc = null) {
+      doc ??= Instances.ActiveCanvas.Document;
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
 
@@ -818,11 +821,12 @@ namespace GsaGH.Components {
         Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50,
         Params.Input[2].Attributes.Bounds.Y - (gradient.Attributes.Bounds.Height / 4) - 6);
 
-      Instances.ActiveCanvas.Document.AddObject(gradient, false);
+      doc.AddObject(gradient, false);
       Params.Input[2].RemoveAllSources();
       Params.Input[2].AddSource(gradient.Params.Output[0]);
 
       UpdateUI();
+      return gradient;
     }
 
     private void DeformationModeClicked() {
@@ -847,7 +851,7 @@ namespace GsaGH.Components {
       Attributes.PerformLayout();
     }
 
-    private void ShowLegend(object sender, EventArgs e) {
+    internal void ShowLegend(object sender, EventArgs e) {
       _showLegend = !_showLegend;
       ExpirePreview(true);
     }
@@ -866,25 +870,25 @@ namespace GsaGH.Components {
       ReDrawComponent();
     }
 
-    private void UpdateLength(string unit) {
+    internal void UpdateLength(string unit) {
       _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateModel(string unit) {
+    internal void UpdateModel(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateStress(string unit) {
+    internal void UpdateStress(string unit) {
       _stressUnitResult = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateLegendScale() {
+    internal void UpdateLegendScale() {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
       }
@@ -899,7 +903,7 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    private void MaintainScaleLegendText(ToolStripItem menuitem) {
+    internal void MaintainScaleLegendText(ToolStripItem menuitem) {
       _scaleLegendTxt = menuitem.Text;
     }
   }

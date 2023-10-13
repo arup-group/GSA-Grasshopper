@@ -8,7 +8,6 @@ namespace GsaGH.Parameters {
   /// <para>The Annotation parameter can be either a <see cref="GsaAnnotationDot"/> or a <see cref="GsaAnnotation3d"/> type.</para>
   /// </summary>
   public interface IGsaAnnotation : IGH_GeometricGoo, IGH_PreviewData {
-    public AnnotationType AnnotationType { get; }
     public string Text { get; }
     public Point3d Location { get; }
     public bool CastTo<TQ>(ref TQ target);

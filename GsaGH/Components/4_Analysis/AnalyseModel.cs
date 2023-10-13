@@ -4,18 +4,17 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
-using GsaGH.Helpers.Export;
+using GsaGH.Helpers;
+using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Helpers;
 using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
@@ -40,7 +39,7 @@ namespace GsaGH.Components {
       true,
       true,
     };
-    
+
     private bool _reMesh = true;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     internal ToleranceContextMenu ToleranceMenu { get; set; } = new ToleranceContextMenu();
@@ -166,26 +165,29 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       // Collect inputs
-      (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) = GetInputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
+      (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) = InputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
       (List<GsaMaterial> materials, List<GsaSection> sections, List<GsaProperty2d> prop2Ds,
-        List<GsaProperty3d> prop3Ds) = GetInputsForModelAssembly.GetProperties(this, da, 1, true);
+        List<GsaProperty3d> prop3Ds) = InputsForModelAssembly.GetProperties(this, da, 1, true);
       (List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
         List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds,
-        List<GsaMember3d> mem3ds) = GetInputsForModelAssembly.GetGeometry(this, da, 2, true);
+        List<GsaMember3d> mem3ds) = InputsForModelAssembly.GetGeometry(this, da, 2, true);
       (List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces, List<GsaLoadCase> loadCases)
-        = GetInputsForModelAssembly.GetLoading(this, da, 3, true);
+        = InputsForModelAssembly.GetLoading(this, da, 3, true);
       (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
-        = GetInputsForModelAssembly.GetAnalysis(this, da, 4, true);
+        = InputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
-      if (models is null & lists is null & gridLines is null & nodes is null & elem1ds is null
-        & elem2ds is null & mem1ds is null & mem2ds is null & mem3ds is null & sections is null
-        & prop2Ds is null & loads is null & gridPlaneSurfaces is null) {
+      if (models is null & lists is null & gridLines is null & nodes is null
+        & elem1ds is null & elem2ds is null & elem3ds is null
+        & mem1ds is null & mem2ds is null & mem3ds is null
+        & materials is null & sections is null & prop2Ds is null
+        & loads is null & loadCases is null & gridPlaneSurfaces is null
+        & analysisTasks is null & combinationCases is null) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
 
       // Merge models
-      var model = new GsaModel();      
+      var model = new GsaModel();
       if (models != null) {
         if (models.Count > 0) {
           model = models.Count > 1
@@ -195,10 +197,11 @@ namespace GsaGH.Components {
       }
 
       // Assemble model
-      model.Model = Assembler.AssembleModel(
-        model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds, mem1ds, mem2ds, mem3ds,
-        materials, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces, loadCases, 
-        analysisTasks, combinationCases, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
+      var assembly = new ModelAssembly(model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds,
+        mem1ds, mem2ds, mem3ds, materials, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces,
+        loadCases, analysisTasks, combinationCases, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
+      model.Model = assembly.GetModel();
+
       // Run analysis
       if (_analysis) {
         IReadOnlyDictionary<int, AnalysisTask> gsaTasks = model.Model.AnalysisTasks();
@@ -206,7 +209,7 @@ namespace GsaGH.Components {
           var task = new GsaAnalysisTask {
             Id = model.Model.AddAnalysisTask(),
           };
-          task.CreateDefaultCases(model.Model);
+          task.CreateDefaultCases(model);
           if (task.Cases == null || task.Cases.Count == 0) {
             this.AddRuntimeWarning(
               " Model contains no loads and has not been analysed, but has been assembled.");
@@ -215,7 +218,7 @@ namespace GsaGH.Components {
               " Model contained no Analysis Tasks. Default Task has been created containing " +
               "all cases found in model");
             foreach (GsaAnalysisCase ca in task.Cases) {
-              model.Model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Description);
+              model.Model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Definition);
             }
 
             gsaTasks = model.Model.AnalysisTasks();
@@ -246,7 +249,7 @@ namespace GsaGH.Components {
 
           foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks) {
             if (model.Model.Analyse(task.Key)) {
-              PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
+              OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
                 model.Model.Elements().Count);
             } else {
               string message = "Analysis Task " + task.Key +
@@ -313,9 +316,9 @@ namespace GsaGH.Components {
 
             string warning = "Member and element synchronisation check\n" +
               "Warning: Creating Elements From Members will recreate child Elements. " +
-            Environment.NewLine +"This will update the Element's property to the parent " +
+            Environment.NewLine + "This will update the Element's property to the parent " +
             "Member's property, and may also renumber element IDs. " +
-            Environment.NewLine + "The following former Element IDs were updated:" 
+            Environment.NewLine + "The following former Element IDs were updated:"
             + Environment.NewLine;
             string ids = split[1].Replace(
               "(list may be too long to display, click to copy)", string.Empty)

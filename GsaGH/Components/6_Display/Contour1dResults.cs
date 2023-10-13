@@ -585,6 +585,10 @@ namespace GsaGH.Components {
 
       var elems = new ConcurrentDictionary<int, Element>(result.Model.Model.Elements(elementlist));
       var nodes = new ConcurrentDictionary<int, Node>(result.Model.Model.Nodes());
+      if (elems.Count == 0) {
+        this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
+        return;
+      };
 
       ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
         = res.XyzResults;
@@ -1023,7 +1027,8 @@ namespace GsaGH.Components {
       PostHog.Result(result.Type, 1, resultType, _disp.ToString());
     }
 
-    private void CreateGradient() {
+    internal GH_GradientControl CreateGradient(GH_Document doc = null) {
+      doc ??= Instances.ActiveCanvas.Document;
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
 
@@ -1045,11 +1050,12 @@ namespace GsaGH.Components {
         Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50,
         Params.Input[3].Attributes.Bounds.Y - (gradient.Attributes.Bounds.Height / 4) - 6);
 
-      Instances.ActiveCanvas.Document.AddObject(gradient, false);
+      doc.AddObject(gradient, false);
       Params.Input[3].RemoveAllSources();
       Params.Input[3].AddSource(gradient.Params.Output[0]);
 
       UpdateUI();
+      return gradient;
     }
 
     private void Mode1Clicked() {
@@ -1116,42 +1122,42 @@ namespace GsaGH.Components {
       Attributes.PerformLayout();
     }
 
-    private void ShowLegend(object sender, EventArgs e) {
+    internal void ShowLegend(object sender, EventArgs e) {
       _showLegend = !_showLegend;
       ExpirePreview(true);
     }
 
-    private void UpdateEnergy(string unit) {
+    internal void UpdateEnergy(string unit) {
       _energyResultUnit = (EnergyUnit)UnitsHelper.Parse(typeof(EnergyUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateForce(string unit) {
+    internal void UpdateForce(string unit) {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateLength(string unit) {
+    internal void UpdateLength(string unit) {
       _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateModel(string unit) {
+    internal void UpdateModel(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateMoment(string unit) {
+    internal void UpdateMoment(string unit) {
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateLegendScale() {
+    internal void UpdateLegendScale() {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
       } catch (Exception e) {
@@ -1165,7 +1171,7 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    private void MaintainScaleLegendText(ToolStripItem menuitem) {
+    internal void MaintainScaleLegendText(ToolStripItem menuitem) {
       _scaleLegendTxt = menuitem.Text;
     }
   }

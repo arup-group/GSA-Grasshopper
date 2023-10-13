@@ -62,12 +62,12 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       GsaMaterial material = null;
-
       GsaMaterialGoo materialGoo = null;
       if (da.GetData(0, ref materialGoo)) {
         material = GsaMaterialFactory.CreateMaterial(materialGoo.Value);
       }
 
+      GsaMaterial customMaterial = GsaMaterialFactory.CreateMaterial(material);
       int id = 0;
       if (da.GetData(1, ref id)) {
         material.Id = id;
@@ -79,7 +79,6 @@ namespace GsaGH.Components {
       }
 
       GsaMaterialGoo customMaterialGoo = null;
-      GsaMaterial customMaterial = GsaMaterialFactory.CreateMaterial(material);
       if (da.GetData(3, ref customMaterialGoo)) {
         customMaterial = GsaMaterialFactory.CreateMaterial(customMaterialGoo.Value);
         material.AnalysisMaterial = customMaterial.AnalysisMaterial;
@@ -87,7 +86,7 @@ namespace GsaGH.Components {
 
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(4, ref ghTyp)) {
-        if (material.MaterialType != MatType.Custom) {
+        if (!(material is GsaCustomMaterial)) {
           this.AddRuntimeWarning("MaterialType can only be changed for Custom Materials");
         }
 
@@ -162,6 +161,7 @@ namespace GsaGH.Components {
                   break;
 
                 case "GENERIC":
+                case "CUSTOM":
                   type = MatType.Custom;
                   break;
               }
@@ -174,9 +174,13 @@ namespace GsaGH.Components {
             return;
         }
 
+        if (material is GsaCustomMaterial) {
+          material.MaterialType = type;
+        }
+        
         customMaterial = new GsaCustomMaterial(customMaterial.AnalysisMaterial, id, type);
         if (type != material.MaterialType) {
-          customMaterial.Name = $"created from {material.MaterialType} {material.Name}";
+          customMaterial.Name = $"Created from {material.MaterialType} {material.Name}";
         }
       }
 

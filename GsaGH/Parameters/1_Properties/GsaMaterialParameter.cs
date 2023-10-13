@@ -101,7 +101,7 @@ namespace GsaGH.Parameters {
       }
 
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
-        var customMaterial = new GsaReferencedMaterial(id);
+        var customMaterial = new GsaReferencedMaterial(id, MatType.Custom);
         return new GsaMaterialGoo(customMaterial);
       }
 

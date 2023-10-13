@@ -42,13 +42,15 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(AnalyseModel))]
     //Results
     [InlineData(typeof(BeamStrainEnergyDensity))]
+    //Display
     [InlineData(typeof(Contour1dResults))]
     [InlineData(typeof(ResultDiagrams))]
     [InlineData(typeof(Contour2dResults))]
     [InlineData(typeof(Contour3dResults))]
     [InlineData(typeof(ContourNodeResults))]
     [InlineData(typeof(ReactionForceDiagrams))]
-
+    [InlineData(typeof(AnnotateDetailed))]
+    [InlineData(typeof(LoadDiagrams))]
     public void DeSerializeComponentTest(Type t) {
       var comp = (GH_OasysComponent)Activator.CreateInstance(t);
       OasysDropDownComponentTestHelper.TestDeserialize(comp);

@@ -65,5 +65,19 @@ namespace GsaGHTests.Properties {
       Assert.Equal(1, stressOptOut.Value);
       Assert.True(modifierdGoo.Value.IsModified);
     }
+
+    [Fact]
+    public void UpdateCustomUIUpdateDensityTest() {
+      var comp = (GetSectionModifier)ComponentMother();
+      comp.UpdateDensity("kg/cm");
+      Assert.Equal("cm, kg/cm", comp.Message);
+    }
+
+    [Fact]
+    public void UpdateCustomUIUpdateLengthTest() {
+      var comp = (GetSectionModifier)ComponentMother();
+      comp.UpdateLength("ft");
+      Assert.Equal("ft, kg/m", comp.Message);
+    }
   }
 }

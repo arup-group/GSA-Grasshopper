@@ -17,7 +17,6 @@ namespace GsaGH.Parameters {
         base.InstanceDescription;
     public override string TypeName => SourceCount == 0 ? GsaListGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.ListParam;
-    private static EntityType _type = EntityType.Member;
     public GsaMemberListParameter() : base(new GH_InstanceDescription(
       "Member filter list",
       "Me",
@@ -29,23 +28,9 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaListGoo PreferredCast(object data) {
-      switch (data) {
-        case GsaListGoo list:
-          if (list.Value.EntityType == _type) {
-            return list;
-          } else if (list.Value.EntityType == EntityType.Undefined) {
-            GsaList dup = list.Value.Duplicate();
-            dup.EntityType = _type;
-            return new GsaListGoo(dup);
-          } else {
-            this.AddRuntimeError("List must be of type Member to apply to member filter");
-            return new GsaListGoo(null);
-          }
-      }
-
       if (GH_Convert.ToString(data, out string text, GH_Conversion.Both)) {
         var list = new GsaList() {
-          EntityType = _type,
+          EntityType = EntityType.Member,
           Definition = text
         };
         return new GsaListGoo(list);

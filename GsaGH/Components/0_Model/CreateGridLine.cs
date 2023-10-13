@@ -2,7 +2,6 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -52,12 +51,6 @@ namespace GsaGH.Components {
           // project onto WorldXY
           line.FromZ = 0;
           line.ToZ = 0;
-          if (line.Length == 0) {
-            string message = "Invalid input geometry, projected line has zero length.";
-            this.AddRuntimeWarning(message);
-            return;
-          }
-
           gridLine = new GsaGridLine(line, label);
         } else if (ghArc.CastFrom(curve)) {
           Arc arc = ghArc.Value;
@@ -68,12 +61,6 @@ namespace GsaGH.Components {
           midPoint.Z = 0;
           Point3d endPoint = arc.EndPoint;
           endPoint.Z = 0;
-          if (arc.Length == 0) {
-            string message = "Invalid input geometry, projected arc has zero length.";
-            this.AddRuntimeWarning(message);
-            return;
-          }
-
           gridLine = new GsaGridLine(arc, label);
         } else {
           string message = "Invalid input geometry, curve needs to be a straight line or a circular arc.";

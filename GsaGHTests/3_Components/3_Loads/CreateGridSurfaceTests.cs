@@ -41,5 +41,54 @@ namespace GsaGHTests.Components.Loads {
       Assert.Equal("99", gridSurface.Tolerance);
       Assert.Equal(Span_Type.ONE_WAY, gridSurface.GridSurface.SpanType);
     }
+
+    //[Fact]
+    //public void CreateTwoWaySpanTest() {
+    //  GH_OasysDropDownComponent comp = ComponentMother();
+    //  ComponentTestHelper.SetInput(comp, 42, 1);
+    //  ComponentTestHelper.SetInput(comp, "all", 2);
+    //  ComponentTestHelper.SetInput(comp, "myGridSurface", 3);
+    //  ComponentTestHelper.SetInput(comp, "10mm", 4);
+
+    //  var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
+    //  GsaGridPlaneSurface gridSurface = output.Value;
+
+    //  Assert.Equal("0", gridSurface.Elevation);
+    //  Assert.Equal(42, gridSurface.GridSurfaceId);
+    //  Assert.Equal("myGridSurface", gridSurface.GridSurface.Name);
+    //  Assert.Equal("10mm", gridSurface.Tolerance);
+    //  Assert.Equal(Span_Type.TWO_WAY, gridSurface.GridSurface.SpanType);
+    //  //Assert.Equal(GsaAPI.GridSurfaceExpansionType., gridSurface.GridSurface.ExpansionType);
+    //}
+
+    //[Fact]
+    //public void Create2DTest() {
+    //  GH_OasysDropDownComponent comp = ComponentMother();
+    //  ComponentTestHelper.SetInput(comp, 42, 1);
+    //  ComponentTestHelper.SetInput(comp, "all", 2);
+    //  ComponentTestHelper.SetInput(comp, "myGridSurface", 3);
+    //  ComponentTestHelper.SetInput(comp, "10mm", 4);
+
+    //  var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
+    //  GsaGridPlaneSurface gridSurface = output.Value;
+
+    //  Assert.Equal("0", gridSurface.Elevation);
+    //  Assert.Equal(42, gridSurface.GridSurfaceId);
+    //  Assert.Equal("myGridSurface", gridSurface.GridSurface.Name);
+    //  Assert.Equal("10mm", gridSurface.Tolerance);
+    //  Assert.Equal(Span_Type.ONE_WAY, gridSurface.GridSurface.SpanType);
+    //}
+
+    [Fact]
+    public void EntityListTypeErrorTest() {
+      var comp = new CreateGridSurface();
+      ComponentTestHelper.SetInput(comp, "little", 4);
+
+      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+    }
+
   }
 }

@@ -1,9 +1,9 @@
 ﻿using GsaGH.Parameters;
-using OasysUnits.Units;
 using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Helpers.GsaApi.Grahics {
-  internal class GraphicsScalar {
+  internal static class GraphicsScalar {
     /// <summary>
     /// For 3D visualisation stuff without results
     /// </summary>
