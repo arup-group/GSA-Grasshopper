@@ -29,7 +29,6 @@ namespace DocsGeneration.MarkDowns.Helpers {
       return $"_{text}_";
     }
 
-
     public static string SummaryDescription(string str) {
       string markdown = ConvertSummaryToMarkup(str);
       return $"## Description\n\n{markdown}\n\n";
