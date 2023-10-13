@@ -149,22 +149,19 @@ namespace GsaGH.Components {
         GH_Convert.ToPoint3d(ghPt, ref point3d, GH_Conversion.Both);
       }
 
-      gridPointLoad.ApiLoad.X = point3d.X;
-      gridPointLoad.ApiLoad.Y = point3d.Y;
-
       GsaGridPlaneSurface gridPlaneSurface;
       Plane plane = Plane.WorldXY;
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(2, ref ghTyp)) {
         switch (ghTyp.Value) {
-          case GsaGridPlaneSurfaceGoo gridplanesurfacegoo: {
+          case GsaGridPlaneSurfaceGoo gridplanesurfacegoo: 
               gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
               gridPointLoad.GridPlaneSurface = gridPlaneSurface;
               _expansionType = ExpansionType.UseGpsSettings;
               UpdateMessage(gridPlaneSurface.GridSurface.ElementType
                 == GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
               break;
-            }
+
           case GH_Plane pln:
             plane = pln.Value;
             gridPlaneSurface = new GsaGridPlaneSurface(plane);
@@ -173,7 +170,7 @@ namespace GsaGH.Components {
                 == GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
             break;
 
-          default: {
+          default: 
               if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
                 gridPointLoad.ApiLoad.GridSurface = id;
                 gridPointLoad.GridPlaneSurface = null;
@@ -186,11 +183,10 @@ namespace GsaGH.Components {
               }
 
               break;
-            }
         }
       } else {
         plane = Plane.WorldXY;
-        plane.Origin = point3d;
+        plane.Origin = new Point3d(0, 0, point3d.Z);
         gridPlaneSurface = new GsaGridPlaneSurface(plane, true);
         gridPointLoad.GridPlaneSurface = gridPlaneSurface;
 
@@ -219,6 +215,16 @@ namespace GsaGH.Components {
             break;
         }
       }
+
+      var plnNormal = new Vector3d(plane.Normal);
+      plnNormal.Unitize();
+      if (plnNormal.Z != 1) {
+        this.AddRuntimeRemark("The grid plane basis is not defined in world coordinates. \n" +
+          "The input point´s X and Y coordinates are use as the grid plane´s local coordiantes.");
+      } 
+
+      gridPointLoad.ApiLoad.X = point3d.X;
+      gridPointLoad.ApiLoad.Y = point3d.Y;
 
       string dir = "Z";
       GsaAPI.Direction direc = GsaAPI.Direction.Z;

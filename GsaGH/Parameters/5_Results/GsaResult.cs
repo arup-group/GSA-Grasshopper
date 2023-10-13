@@ -344,7 +344,7 @@ namespace GsaGH.Parameters {
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
       Model = model;
       CombinationCaseResult = result;
-      Type = CaseType.Combination;
+      Type = CaseType.CombinationCase;
       CaseId = caseId;
       SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
     }
@@ -360,7 +360,7 @@ namespace GsaGH.Parameters {
           txt = "A" + CaseId;
           break;
 
-        case CaseType.Combination: {
+        case CaseType.CombinationCase: {
             txt = "C" + CaseId;
             if (SelectedPermutationIds.Count > 0) {
               txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count :

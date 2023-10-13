@@ -202,14 +202,14 @@ namespace GsaGH.Components {
       if (ghTyp?.Value is GsaResultGoo goo) {
         result = goo.Value;
         switch (result.Type) {
-          case CaseType.Combination when result.SelectedPermutationIds.Count > 1:
+          case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
             string warningText
               = $"Combination Case {result.CaseId} contains {result.SelectedPermutationIds.Count} permutations - only one permutation can be displayed at a time.{Environment.NewLine}Displaying first permutation; please use the 'Select Results' to select other single permutations";
             this.AddRuntimeWarning(warningText);
             _case = $"C{result.CaseId}";
             break;
 
-          case CaseType.Combination:
+          case CaseType.CombinationCase:
             _case = $"C{result.CaseId}";
             break;
 
@@ -304,6 +304,10 @@ namespace GsaGH.Components {
             double valueScaleFactor = ComputeUnitScale();
             valueToAnnotate
               = $"{Math.Round(valResult * valueScaleFactor, significantDigits)} {Message}";
+          }
+
+          if (color == Color.Empty) {
+            color = (Color)annotation.Colour;
           }
 
           diagramAnnotations.Add(new GsaAnnotationGoo(
