@@ -61,7 +61,7 @@ namespace GsaGHTests.Results {
       ComponentTestHelper.SetInput(comp, 1, 2);
 
       var result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(CaseType.Combination, result.Value.Type);
+      Assert.Equal(CaseType.CombinationCase, result.Value.Type);
       Assert.Equal(1, result.Value.CaseId);
       Assert.Equal(new List<int>() {
         1,
@@ -84,7 +84,7 @@ namespace GsaGHTests.Results {
       ComponentTestHelper.SetInput(comp, 1, 3);
 
       var result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(CaseType.Combination, result.Value.Type);
+      Assert.Equal(CaseType.CombinationCase, result.Value.Type);
       Assert.Equal(1, result.Value.CaseId);
       Assert.Equal(new List<int>() {
         1,
