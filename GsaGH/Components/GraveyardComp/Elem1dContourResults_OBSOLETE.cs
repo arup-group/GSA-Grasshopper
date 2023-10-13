@@ -205,7 +205,7 @@ namespace GsaGH.Components {
           bool redraw = false;
 
           if (selectedidd < 4) {
-            if ((int)_disp > 3) // chekc if we are coming from other half of display modes
+            if ((int)_disp > 3) // check if we are coming from other half of display modes
             {
               if (_mode == FoldMode.Displacement) {
                 redraw = true;
@@ -213,7 +213,7 @@ namespace GsaGH.Components {
               }
             }
           } else {
-            if ((int)_disp < 4) // chekc if we are coming from other half of display modes
+            if ((int)_disp < 4) // check if we are coming from other half of display modes
             {
               if (_mode == FoldMode.Displacement) {
                 redraw = true;

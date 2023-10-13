@@ -161,7 +161,6 @@ namespace GsaGH.Components {
               UpdateMessage(gridPlaneSurface.GridSurface.ElementType
                 == GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
               break;
-            
 
           case GH_Plane pln:
             plane = pln.Value;
@@ -184,7 +183,6 @@ namespace GsaGH.Components {
               }
 
               break;
-            
         }
       } else {
         plane = Plane.WorldXY;

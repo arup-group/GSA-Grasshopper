@@ -249,7 +249,7 @@ namespace GsaGH.Components {
             bool redraw = false;
 
             if (j < 4) {
-              if ((int)_disp > 3) // chekc if we are coming from other half of display modes
+              if ((int)_disp > 3) // check if we are coming from other half of display modes
               {
                 if (_mode == FoldMode.Displacement) {
                   redraw = true;
@@ -257,7 +257,7 @@ namespace GsaGH.Components {
                 }
               }
             } else {
-              if ((int)_disp < 4) // chekc if we are coming from other half of display modes
+              if ((int)_disp < 4) // check if we are coming from other half of display modes
               {
                 if (_mode == FoldMode.Displacement) {
                   redraw = true;
@@ -292,7 +292,7 @@ namespace GsaGH.Components {
         Params.RegisterInputParam(new Param_Interval());
         Params.Input[4].Name = "Min/Max Domain";
         Params.Input[4].NickName = "I";
-        Params.Input[4].Description = "Opitonal Domain for custom Min to Max contour colours";
+        Params.Input[4].Description = "Optional Domain for custom Min to Max contour colours";
         Params.Input[4].Optional = true;
         Params.Input[4].Access = GH_ParamAccess.item;
         Params.RegisterInputParam(scale);
@@ -465,7 +465,7 @@ namespace GsaGH.Components {
         + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
       pManager[3].Optional = true;
       pManager.AddIntervalParameter("Min/Max Domain", "I",
-        "Opitonal Domain for custom Min to Max contour colours", GH_ParamAccess.item);
+        "Optional Domain for custom Min to Max contour colours", GH_ParamAccess.item);
       pManager[4].Optional = true;
       pManager.AddNumberParameter("Scale", "x:X", "Scale the result display size",
         GH_ParamAccess.item, 10);

@@ -3,11 +3,13 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -71,21 +73,12 @@ namespace GsaGH.Components {
                 }
                 break;
               }
-            
-            case GsaAnnotationDot annotationDot:
-              AddAnnotation(annotationDot.Location, annotationDot.Text,
-                              annotationDot.Color, path);
-              break;
-            case GsaAnnotation3d annotation3d:
-              AddAnnotation(annotation3d, path);
-              break;
 
             case GsaElement2dGoo e2d:
-              for (int i = 0; i < e2d.Value.Mesh.Faces.Count; i++) {
-                AddAnnotation(e2d.Value.Mesh.Faces.GetFaceCenter(i), e2d.Value.Ids[i].ToString(),
-                  Color.Empty, path);
+              Point3dList points = e2d.Value.GetCenterPoints();
+              for (int i = 0; i < e2d.Value.ApiElements.Count; i++) {
+                AddAnnotation(points[i], e2d.Value.Ids[i].ToString(), Color.Empty, path);
               }
-
               continue;
 
             case GsaElement3dGoo e3d:
@@ -93,7 +86,6 @@ namespace GsaGH.Components {
                 AddAnnotation(e3d.Value.NgonMesh.Ngons.GetNgonCenter(i),
                   e3d.Value.Ids[i].ToString(), Color.Empty, path);
               }
-
               continue;
 
             case MeshResultGoo resMesh:
@@ -106,7 +98,6 @@ namespace GsaGH.Components {
                     resMesh.ElementIds[i].ToString(), Color.Empty, path);
                 }
               }
-
               continue;
 
             case GsaNodeGoo node:
@@ -140,18 +131,6 @@ namespace GsaGH.Components {
             case LineResultGoo resLine:
               AddAnnotation(resLine.Value.PointAt(0.5), resLine.ElementId.ToString(),
                 Color.Empty, path);
-              break;
-
-            case GsaVectorDiagram diagramVector:
-              AddAnnotation(diagramVector.AnchorPoint, string.Empty, Color.Empty, path);
-              break;
-
-            case GsaLineDiagram diagramLine:
-              AddAnnotation(diagramLine.Value.PointAt(0.5), string.Empty, Color.Empty, path);
-              break;
-
-            case GsaArrowheadDiagram arrowhead:
-              // do nothing
               break;
 
             default:
