@@ -5,6 +5,7 @@ using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -12,6 +13,7 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.UI;
+using Rhino.Collections;
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -153,20 +155,31 @@ namespace GsaGH.Components {
         foreach (IGH_Goo goo in tree.get_Branch(path)) {
           switch (goo) {
             case GsaElement2dGoo e2d:
-              for (int i = 0; i < e2d.Value.Mesh.Faces.Count; i++) {
+              Point3dList points = e2d.Value.GetCenterPoints();
+              int faceIndex = 0;
+              for (int i = 0; i < e2d.Value.ApiElements.Count; i++) {
                 if (_text3d) {
                   if (e2d.Value.Mesh.FaceNormals.Count == 0) {
                     e2d.Value.Mesh.RebuildNormals();
                   }
-                  AddAnnotation3d(
-                    new Plane(e2d.Value.Mesh.Faces.GetFaceCenter(i), e2d.Value.Mesh.FaceNormals[i]),
-                    CreateText(e2d, path, i), 
-                    (Color)e2d.Value.ApiElements[i].Colour, size, path);
+                  AddAnnotation3d(new Plane(points[i], e2d.Value.Mesh.FaceNormals[faceIndex]),
+                    CreateText(e2d, path, i), (Color)e2d.Value.ApiElements[i].Colour, size, path);
                 } else {
-                  AddAnnotationDot(
-                    e2d.Value.Mesh.Faces.GetFaceCenter(i), 
-                    CreateText(e2d, path, i),
-                    (Color)e2d.Value.ApiElements[i].Colour, size, path);
+                  AddAnnotationDot(points[i], CreateText(e2d, path, i), (Color)e2d.Value.ApiElements[i].Colour, size, path);
+                }
+
+                switch (e2d.Value.ApiElements[i].Type) {
+                  case ElementType.QUAD8:
+                    faceIndex += 8;
+                    break;
+
+                  case ElementType.TRI6:
+                    faceIndex += 4;
+                    break;
+
+                  default:
+                    faceIndex++;
+                    break;
                 }
               }
               continue;
@@ -176,12 +189,12 @@ namespace GsaGH.Components {
                 if (_text3d) {
                   AddAnnotation3d(
                     new Plane(e3d.Value.NgonMesh.Ngons.GetNgonCenter(i), Vector3d.ZAxis),
-                    CreateText(e3d, path, i), 
+                    CreateText(e3d, path, i),
                     (Color)e3d.Value.ApiElements[i].Colour, size, path);
                 } else {
                   AddAnnotationDot(
-                    e3d.Value.NgonMesh.Ngons.GetNgonCenter(i), 
-                    CreateText(e3d, path, i), 
+                    e3d.Value.NgonMesh.Ngons.GetNgonCenter(i),
+                    CreateText(e3d, path, i),
                     (Color)e3d.Value.ApiElements[i].Colour, size, path);
                 }
               }
@@ -190,13 +203,13 @@ namespace GsaGH.Components {
             case GsaElement1dGoo e1d:
               if (_text3d) {
                 AddAnnotation3d(
-                  CreateLocalAxis(e1d.Value.Line), 
-                  CreateText(e1d, path), 
+                  CreateLocalAxis(e1d.Value.Line),
+                  CreateText(e1d, path),
                   (Color)e1d.Value.ApiElement.Colour, size, path);
               } else {
                 AddAnnotationDot(
                   e1d.Value.Line.PointAtNormalizedLength(0.5),
-                  CreateText(e1d, path), 
+                  CreateText(e1d, path),
                   (Color)e1d.Value.ApiElement.Colour, size, path);
               }
               break;
@@ -204,13 +217,13 @@ namespace GsaGH.Components {
             case GsaMember1dGoo m1d:
               if (_text3d) {
                 AddAnnotation3d(
-                  CreateLocalAxis(m1d.Value.PolyCurve), 
-                  CreateText(m1d, path), 
+                  CreateLocalAxis(m1d.Value.PolyCurve),
+                  CreateText(m1d, path),
                   (Color)m1d.Value.ApiMember.Colour, size, path);
               } else {
                 AddAnnotationDot(
                   m1d.Value.PolyCurve.PointAtNormalizedLength(0.5),
-                  CreateText(m1d, path), 
+                  CreateText(m1d, path),
                   (Color)m1d.Value.ApiMember.Colour, size, path);
               }
               break;
@@ -221,12 +234,12 @@ namespace GsaGH.Components {
                 Plane.FitPlaneToPoints(pl, out Plane pln);
                 pln.Origin = pl.CenterPoint();
                 AddAnnotation3d(
-                  pln, 
-                  CreateText(m2d, path), 
+                  pln,
+                  CreateText(m2d, path),
                   (Color)m2d.Value.ApiMember.Colour, size, path);
               } else {
                 AddAnnotationDot(
-                  pl.CenterPoint(), 
+                  pl.CenterPoint(),
                   CreateText(m2d, path),
                   (Color)m2d.Value.ApiMember.Colour, size, path);
               }

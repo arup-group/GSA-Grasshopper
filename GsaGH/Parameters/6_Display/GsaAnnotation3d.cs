@@ -98,13 +98,13 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Transform(Transform xform) {
       Plane pln = Value.TextPlane.Clone();
       pln.Transform(xform);
-      return new GsaAnnotation3d(pln, Color, Value.Text, Value.Height);
+      return new GsaAnnotationGoo(new GsaAnnotation3d(pln, Color, Value.Text, Value.Height));
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       Plane pln = Value.TextPlane.Clone();
       xmorph.Morph(ref pln);
-      return new GsaAnnotation3d(pln, Color, Value.Text, Value.Height);
+      return new GsaAnnotationGoo(new GsaAnnotation3d(pln, Color, Value.Text, Value.Height));
     }
 
     public override BoundingBox GetBoundingBox(Transform xform) {
