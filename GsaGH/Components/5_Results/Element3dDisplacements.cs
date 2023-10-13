@@ -75,9 +75,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-
       string note = ResultNotes.Note2dResults;
-
       pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux",
         "Translations in X-direction in Global Axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations Y [" + unitAbbreviation + "]", "Uy",
@@ -86,14 +84,6 @@ namespace GsaGH.Components {
         "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations |XYZ| [" + unitAbbreviation + "]", "|U|",
         "Combined |XYZ| Translations." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Rotations XX [rad]", "Rxx",
-        "Rotations around X-axis in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Rotations YY [rad]", "Ryy",
-        "Rotations around Y-axis in Global Axiss." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Rotations ZZ [rad]", "Rzz",
-        "Rotations around Z-axis in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|",
-        "Combined |XXYYZZ| Rotations." + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
@@ -105,10 +95,6 @@ namespace GsaGH.Components {
       var outTransY = new DataTree<GH_UnitNumber>();
       var outTransZ = new DataTree<GH_UnitNumber>();
       var outTransXyz = new DataTree<GH_UnitNumber>();
-      var outRotX = new DataTree<GH_UnitNumber>();
-      var outRotY = new DataTree<GH_UnitNumber>();
-      var outRotZ = new DataTree<GH_UnitNumber>();
-      var outRotXyz = new DataTree<GH_UnitNumber>();
 
       var ghTypes = new List<GH_ObjectWrapper>();
       if (!da.GetDataList(0, ghTypes)) {
@@ -147,57 +133,26 @@ namespace GsaGH.Components {
             continue;
           }
 
-          Parallel.For(0, 2, thread => // split computation in two for xyz and xxyyzz
-          {
-            switch (thread) {
-              case 0: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
+          foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
                   vals[perm - 1].XyzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) {
-                    continue;
-                  }
-
-                  var path = new GH_Path(result.CaseId,
-                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
-
-                  outTransX.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_lengthUnit))),
-                    path); // use ToUnit to capture changes in dropdown
-                  outTransY.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_lengthUnit))), path);
-                  outTransZ.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_lengthUnit))), path);
-                  outTransXyz.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_lengthUnit))), path);
-                }
-
-                break;
-              }
-              case 1: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                  vals[perm - 1].XxyyzzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) {
-                    continue;
-                  }
-
-                  var path = new GH_Path(result.CaseId,
-                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
-
-                  outRotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)),
-                    path); // always use [rad] units
-                  outRotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), path);
-                  outRotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), path);
-                  outRotXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Xyz)), path);
-                }
-
-                break;
-              }
+            int elementId = kvp.Key;
+            ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
+            if (res.Count == 0) {
+              continue;
             }
-          });
+
+            var path = new GH_Path(result.CaseId,
+              result.SelectedPermutationIds == null ? 0 : perm, elementId);
+            // use ToUnit to capture changes in dropdown
+            outTransX.AddRange(
+              res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_lengthUnit))), path); 
+            outTransY.AddRange(
+              res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_lengthUnit))), path);
+            outTransZ.AddRange(
+              res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_lengthUnit))), path);
+            outTransXyz.AddRange(
+              res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_lengthUnit))), path);
+          }
         }
       }
 
@@ -205,10 +160,6 @@ namespace GsaGH.Components {
       da.SetDataTree(1, outTransY);
       da.SetDataTree(2, outTransZ);
       da.SetDataTree(3, outTransXyz);
-      da.SetDataTree(4, outRotX);
-      da.SetDataTree(5, outRotY);
-      da.SetDataTree(6, outRotZ);
-      da.SetDataTree(7, outRotXyz);
 
       PostHog.Result(result.Type, 3, GsaResultsValues.ResultType.Displacement);
     }

@@ -47,10 +47,15 @@ namespace GsaGH.Parameters {
 
     internal Point3d GetPoint(LengthUnit unit) {
       LengthUnit m = LengthUnit.Meter;
+      double z = 0;
+      if(GridPlaneSurface != null) {
+        z = GridPlaneSurface.Plane.OriginZ; 
+      }
+
       return new Point3d(
               new Length(ApiLoad.X, m).As(unit),
               new Length(ApiLoad.Y, m).As(unit),
-              new Length(GridPlaneSurface.Plane.OriginZ, m).As(unit));
+              new Length(z, m).As(unit));
     }
   }
 }

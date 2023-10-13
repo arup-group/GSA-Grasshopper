@@ -63,7 +63,19 @@ namespace GsaGH.Helpers.GH {
             case EntityType.Element:
               switch (gh_typ.Value) {
                 case GsaMaterialGoo materialGoo:
-                  list.Add(materialGoo);
+                  switch (materialGoo.Value.MaterialType) {
+                    case MatType.Custom:
+                    case MatType.Steel:
+                    case MatType.Concrete:
+                    case MatType.Frp:
+                      list.Add(materialGoo);
+                      break;
+
+                    default:
+                      owner.AddRuntimeError($"Unable to reference Material of type " +
+                        $"{materialGoo.Value.MaterialType} in a list.");
+                      continue;
+                  }
                   break;
 
                 case GsaSectionGoo sectionGoo:
@@ -115,7 +127,19 @@ namespace GsaGH.Helpers.GH {
             case EntityType.Member:
               switch (gh_typ.Value) {
                 case GsaMaterialGoo materialGoo:
-                  list.Add(materialGoo);
+                  switch (materialGoo.Value.MaterialType) {
+                    case MatType.Custom:
+                    case MatType.Steel:
+                    case MatType.Concrete:
+                    case MatType.Frp:
+                      list.Add(materialGoo);
+                      break;
+
+                    default:
+                      owner.AddRuntimeError($"Unable to reference Material of type " +
+                        $"{materialGoo.Value.MaterialType} in a list.");
+                      continue;
+                  }
                   break;
 
                 case GsaSectionGoo sectionGoo:
@@ -127,8 +151,8 @@ namespace GsaGH.Helpers.GH {
                   break;
 
                 case GsaProperty3dGoo prop3dGoo:
-                  list.Add(prop3dGoo);
-                  break;
+                  owner.AddRuntimeError($"Unable to reference 3D property in a Member list.");
+                  continue;
 
                 case GsaMember1dGoo member1dGoo:
                   list.Add(member1dGoo);
