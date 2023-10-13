@@ -79,7 +79,7 @@ namespace DocsGeneration.MarkDowns {
       text += iconTable.Finalise();
 
       if (parameter.Name == "Bool6") {
-        text += StringHelper.Tip("Did you know?",
+        text += StringHelper.Admonition("Did you know?", AdmonitionType.Info,
           "The `Bool6` icon takes inspiration from the central pin/hinge/charnier connection " +
           "[Ove Arup's Kingsgate footbridge](https://www.arup.com/projects/kingsgate-footbridge" +
           ").\r\n![Kingsgate Footbridge Durham](./images/Kingsgate-Footbridge-Durham.jpg)\r\n" +
