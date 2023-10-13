@@ -5,24 +5,21 @@ using DocsGeneration.MarkDowns.Helpers;
 
 namespace DocsGeneration.MarkDowns {
   public class Parameters {
-    public static readonly string ParametersOverview =
-      "# Parameters\n" +
-      "\n" +
-      ":::danger" +
-      "\nGSA-Grasshopper plugin is pre-release and under active development, including further testing to be undertaken. It is provided \\\"as-is\\\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using the plugin should not be relied upon without thorough and independent checking.\n:::\n" +
-      "\n" +
-      "The GSA plugin introduces a new set of custom Grasshopper parameters. Parameters are what is passed from one component's output to another component's input.\n" +
-      "![Parameters](https://developer.rhino3d.com/api/grasshopper/media/ParameterKinds.png)\n" +
-      "\n" +
-      "## Custom GSA Parameters" +
-      "\n\n";
-
-
     public static void CreateOverview(Dictionary<string, List<Parameter>> parameters) {
       string filePath = @"Output\gsagh-parameters.md";
       Console.WriteLine($"Writing {filePath}");
 
-      string text = ParametersOverview;
+      string text = "# Parameters\n\n";
+      if (GsaGH.GsaGhInfo.isBeta) {
+        text += StringHelper.AddBetaWarning();
+        text += "\n";
+      }
+
+      text += "The GSA plugin introduces a new set of custom Grasshopper parameters. Parameters are what is passed from one component's output to another component's input.\n" +
+      "![Parameters](https://developer.rhino3d.com/api/grasshopper/media/ParameterKinds.png)\n" +
+      "\n" +
+      "## Custom GSA Parameters" +
+      "\n\n";
 
       var tableHeaders = new List<string>() {
         " ", // icon
@@ -67,7 +64,9 @@ namespace DocsGeneration.MarkDowns {
       Console.WriteLine($"Writing {filePath}");
       
       string text = $"# {parameter.Name}\n\n";
-      text += StringHelper.AddBetaWarning();
+      if (GsaGH.GsaGhInfo.isBeta) {
+        text += StringHelper.AddBetaWarning();
+      }
 
       var iconHeaders = new List<string>() {
         "Icon"
@@ -80,7 +79,7 @@ namespace DocsGeneration.MarkDowns {
       text += iconTable.Finalise();
 
       if (parameter.Name == "Bool6") {
-        text += StringHelper.Tip("Did you know?",
+        text += StringHelper.Admonition("Did you know?", AdmonitionType.Info,
           "The `Bool6` icon takes inspiration from the central pin/hinge/charnier connection " +
           "[Ove Arup's Kingsgate footbridge](https://www.arup.com/projects/kingsgate-footbridge" +
           ").\r\n![Kingsgate Footbridge Durham](./images/Kingsgate-Footbridge-Durham.jpg)\r\n" +

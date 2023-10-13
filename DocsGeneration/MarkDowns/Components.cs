@@ -48,7 +48,9 @@ namespace DocsGeneration.MarkDowns {
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {component.Name}\n\n";
-      text += StringHelper.AddBetaWarning();
+      if (GsaGH.GsaGhInfo.isBeta) {
+        text += StringHelper.AddBetaWarning();
+      }
 
       var iconHeaders = new List<string>() {
         "Icon"
