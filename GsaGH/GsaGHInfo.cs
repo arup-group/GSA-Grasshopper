@@ -121,6 +121,7 @@ namespace GsaGH {
       Instances.ComponentServer.AddCategoryIcon("GSA", Resources.GSALogo);
 
       Utility.InitialiseMainMenuUnitsAndDependentPluginsCheck();
+      RhinoApp.Closing += Helpers.GsaComHelper.Dispose;
 
       PostHog.PluginLoaded(PluginInfo.Instance, gsaVersion);
 

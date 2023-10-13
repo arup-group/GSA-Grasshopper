@@ -1,17 +1,19 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using Xunit;
 
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class GsaList_Members_Test {
+  public class GsaList_Materials_Test {
     public static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
 
     [Fact]
     public void NoRuntimeErrorTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error, "Error");
     }
 
     [Fact]
@@ -20,33 +22,22 @@ namespace IntegrationTests.Parameters {
     }
 
     [Theory]
-    [InlineData("Test1Id", 1)]
-    [InlineData("Test1Name", "Columns")]
-    [InlineData("Test1Type", "Member")]
-    [InlineData("Test1Count", 12)]
-    [InlineData("Test2Id", 2)]
-    [InlineData("Test2Name", "Typical Floors")]
-    [InlineData("Test2Type", "Member")]
-    [InlineData("Test2Count", 5)]
-    [InlineData("Test3Id", 3)]
-    [InlineData("Test3Name", "Primaries")]
-    [InlineData("Test3Type", "Member")]
-    [InlineData("Test3Count", 45)]
-    [InlineData("Test4Id", 4)]
-    [InlineData("Test4Name", "Member List [4]")]
-    [InlineData("Test4Type", "Member")]
-    [InlineData("Test4Count", 60)]
-    [InlineData("Test5Id", 11)]
-    [InlineData("Test5Name", "Ground floor")]
-    [InlineData("Test5Type", "Member")]
-    [InlineData("Test5Count", 1)]
-    [InlineData("Test6Id", 99)]
-    [InlineData("Test6Name", "3d list")]
-    [InlineData("Test6Type", "Member")]
-    [InlineData("Test6Count", 1)]
-    public void Test(string groupIdentifier, object expected) {
+    [InlineData("List from material Definitions", new string[] {
+      "MC1",
+      "MC1",
+      "MS1",
+      "MS1",
+      "MP1",
+      "MP1",
+      "M1",
+      "M1",
+    })]
+    public void MaterialDefinitionTest(string groupIdentifier, string[] expectedVals) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGhPrimitives(param, expected);
+      var output = (List<GH_String>)param.VolatileData.get_Branch(0);
+      for (int i = 0; i < expectedVals.Length; i++) {
+        Assert.Equal(expectedVals[i], output[i].Value);
+      }
     }
 
     private static GH_Document OpenDocument() {

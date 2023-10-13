@@ -117,7 +117,7 @@ namespace GsaGHTests.Parameters {
     public void TransformAnnotation3dTest() {
       var transform = Transform.Translation(new Vector3d(1, 1, 1));
       var anno3d = new GsaAnnotationGoo(GsaAnnotation3dTests.Annotation3dMother());
-      var transformed = (IGsaAnnotation)anno3d.Transform(transform);
+      IGsaAnnotation transformed = ((GsaAnnotationGoo)anno3d.Transform(transform)).Value;
       Assert.NotNull(transformed);
       Assert.Equal(2, transformed.Location.X, 2);
       Assert.Equal(2, transformed.Location.Y, 2);
@@ -131,7 +131,7 @@ namespace GsaGHTests.Parameters {
     public void TransformAnnotationDotTest() {
       var transform = Transform.Translation(new Vector3d(1, 1, 1));
       var annoDot = new GsaAnnotationGoo(GsaAnnotationDotTests.AnnotationDotMother());
-      var transformed = (IGsaAnnotation)annoDot.Transform(transform);
+      IGsaAnnotation transformed = ((GsaAnnotationGoo)annoDot.Transform(transform)).Value;
       Assert.NotNull(transformed);
       Assert.Equal(2, transformed.Location.X, 2);
       Assert.Equal(2, transformed.Location.Y, 2);
@@ -145,7 +145,7 @@ namespace GsaGHTests.Parameters {
     public void MorphAnnotation3dTest() {
       var morph = new StretchSpaceMorph(new Point3d(0, 0, 0), new Point3d(10, 10, 10), 10);
       var anno3d = new GsaAnnotationGoo(GsaAnnotation3dTests.Annotation3dMother());
-      var morphed = (IGsaAnnotation)anno3d.Morph(morph);
+      IGsaAnnotation morphed = ((GsaAnnotationGoo)anno3d.Morph(morph)).Value;
       Assert.NotNull(morphed);
       Assert.Equal(0.88, morphed.Location.X, 2);
       Assert.Equal(0.88, morphed.Location.Y, 2);
@@ -159,7 +159,7 @@ namespace GsaGHTests.Parameters {
     public void MorphAnnotationDotTest() {
       var morph = new StretchSpaceMorph(new Point3d(0, 0, 0), new Point3d(10, 10, 10), 10);
       var annoDot = new GsaAnnotationGoo(GsaAnnotationDotTests.AnnotationDotMother());
-      var morphed = (IGsaAnnotation)annoDot.Morph(morph);
+      var morphed = ((GsaAnnotationGoo)annoDot.Morph(morph)).Value;
       Assert.NotNull(morphed);
       Assert.Equal(0.88, morphed.Location.X, 2);
       Assert.Equal(0.88, morphed.Location.Y, 2);

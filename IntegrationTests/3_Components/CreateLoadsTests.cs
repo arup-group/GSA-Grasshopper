@@ -6,7 +6,7 @@ using Xunit;
 
 namespace IntegrationTests.Components {
   [Collection("GrasshopperFixture collection")]
-  public class SpringReactionForcesTests {
+  public class CreateLoadsTests {
     public static GH_Document Document {
       get {
         if (document == null) {
@@ -21,26 +21,22 @@ namespace IntegrationTests.Components {
     [Fact]
     public void NoRuntimeErrorTest() {
       Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning,
-        "Analyse Model");
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
     }
 
     [Theory]
-    [InlineData("SpringForces", new double[] {
-      99292.3,
-      99292.3,
-      99292.3,
-      99292.3,
-    })]
-    [InlineData("CombinationCaseSpringForces", new double[] {
-      148938.492,
-      148938.492,
-      148938.492,
-      148938.492,
-    })]
+    [InlineData("BeamLoad", true)]
+    [InlineData("BeamThermalLoad", true)]
+    [InlineData("FaceLoad", true)]
+    [InlineData("FaceThermalLoad", true)]
+    [InlineData("GravityLoad", true)]
+    [InlineData("NodeLoad", true)]
+    [InlineData("GridAreaLoad", true)]
+    [InlineData("GridLineLoad", true)]
+    [InlineData("GridPointLoad", true)]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGhPrimitives(param, expected, 1);
+      Helper.TestGhPrimitives(param, expected);
     }
 
     private static GH_Document OpenDocument() {
