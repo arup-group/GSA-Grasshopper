@@ -311,9 +311,9 @@ namespace IntegrationTests.Components {
       "6.178 kN·m",
       "-1.667 kN·m",
     })]
-    [InlineData("ResVectEmptyString", new string[] {
-      "",
-      "",
+    [InlineData("DiagramLineNull", new string[] {
+      "False",
+      "False"
     })]
     public void TestAnnotationText(string name, string[] expectedVals) {
       GH_Document doc = Document;

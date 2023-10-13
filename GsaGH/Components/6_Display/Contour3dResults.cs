@@ -231,7 +231,7 @@ namespace GsaGH.Components {
         Params.RegisterInputParam(new Param_Interval());
         Params.Input[3].Name = "Min/Max Domain";
         Params.Input[3].NickName = "I";
-        Params.Input[3].Description = "Opitonal Domain for custom Min to Max contour colours";
+        Params.Input[3].Description = "Optional Domain for custom Min to Max contour colours";
         Params.Input[3].Optional = true;
         Params.Input[3].Access = GH_ParamAccess.item;
       }
@@ -367,7 +367,7 @@ namespace GsaGH.Components {
         + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
       pManager[2].Optional = true;
       pManager.AddIntervalParameter("Min/Max Domain", "I",
-        "Opitonal Domain for custom Min to Max contour colours", GH_ParamAccess.item);
+        "Optional Domain for custom Min to Max contour colours", GH_ParamAccess.item);
       pManager[3].Optional = true;
     }
 
@@ -399,7 +399,7 @@ namespace GsaGH.Components {
         case GsaResultGoo goo: {
           result = goo.Value;
           switch (result.Type) {
-            case CaseType.Combination when result.SelectedPermutationIds.Count > 1:
+            case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
               this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
                 + result.SelectedPermutationIds.Count
                 + " permutations - only one permutation can be displayed at a time."
@@ -408,7 +408,7 @@ namespace GsaGH.Components {
               _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
               break;
 
-            case CaseType.Combination:
+            case CaseType.CombinationCase:
               _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
               break;
 

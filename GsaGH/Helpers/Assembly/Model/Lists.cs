@@ -309,9 +309,6 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertList(GsaList list, GH_Component owner) {
-      if (list == null) {
-        return;
-      }
       GsaList copyList;
       switch (list.EntityType) {
         case EntityType.Element:

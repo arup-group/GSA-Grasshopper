@@ -18,7 +18,7 @@ namespace GsaGH.Parameters {
       set => ApiLoad.Name = value;
     }
     public GsaFaceThermalLoad() {
-      ApiLoad = new FaceThermalLoad ();
+      ApiLoad = new FaceThermalLoad();
     }
 
     public IGsaLoad Duplicate() {

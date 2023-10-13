@@ -15,6 +15,11 @@ namespace IntegrationTests.Parameters {
       Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
     }
 
+    [Fact]
+    public void NoRuntimeWarningsTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning, "Warning");
+    }
+
     [Theory]
     [InlineData("Test1StartYs", 0.0)]
     [InlineData("Test1StartZs", 7.0)]
@@ -31,6 +36,9 @@ namespace IntegrationTests.Parameters {
     [InlineData("Test5Vertices", 72)]
     [InlineData("Test5Faces", 18)]
     [InlineData("Test6IdsAreEqual", 0)]
+    [InlineData("Test7Verticies", 120)]
+    [InlineData("Test7Faces", 90)]
+    [InlineData("Test8IdsAreEqual", 0)]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);

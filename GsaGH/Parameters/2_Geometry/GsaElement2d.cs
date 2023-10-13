@@ -80,7 +80,7 @@ namespace GsaGH.Parameters {
       Brep brep, List<Curve> curves, Point3dList points, double meshSize,
       List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit, Length tolerance,
       int prop = 0) {
-      Mesh = RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, null, mem1ds, 
+      Mesh = RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, null, mem1ds,
         meshSize, unit, tolerance, MeshMode2d.Mixed).Item1;
       Tuple<List<Element>, Point3dList, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem2d(Mesh, prop, true);
@@ -144,6 +144,36 @@ namespace GsaGH.Parameters {
       }
 
       return elems;
+    }
+
+    public Point3dList GetCenterPoints() {
+      var points = new Point3dList();
+      int faceIndex = 0;
+      for (int i = 0; i < ApiElements.Count; i++) {
+
+        Point3d pt = Mesh.Faces.GetFaceCenter(faceIndex);
+        int index = 0;
+
+        switch (ApiElements[i].Type) {
+          case ElementType.QUAD8:
+            index = TopoInt[i][0];
+            pt = Mesh.Vertices[Mesh.Faces[faceIndex].C];
+            faceIndex += 8;
+            break;
+
+          case ElementType.TRI6:
+            pt = Mesh.Faces.GetFaceCenter(faceIndex + 4);
+            faceIndex += 4;
+            break;
+
+          default:
+            faceIndex++;
+            break;
+        }
+
+        points.Add(pt);
+      }
+      return points;
     }
 
     public DataTree<int> GetTopologyIDs() {

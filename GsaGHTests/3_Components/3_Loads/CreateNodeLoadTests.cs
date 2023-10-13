@@ -95,14 +95,34 @@ namespace GsaGHTests.Components.Loads {
     }
 
     [Theory]
-    [InlineData("X")]
-    [InlineData("Y")]
-    [InlineData("Z")]
-    [InlineData("XX")]
-    [InlineData("YY")]
-    [InlineData("ZZ")]
-    public void DirectionTest(string direction) {
+    [InlineData(0, "X")]
+    [InlineData(0, "Y")]
+    [InlineData(0, "Z")]
+    [InlineData(0, "XX")]
+    [InlineData(0, "YY")]
+    [InlineData(0, "ZZ")]
+    [InlineData(1, "X")]
+    [InlineData(1, "Y")]
+    [InlineData(1, "Z")]
+    [InlineData(1, "XX")]
+    [InlineData(1, "YY")]
+    [InlineData(1, "ZZ")]
+    [InlineData(2, "X")]
+    [InlineData(2, "Y")]
+    [InlineData(2, "Z")]
+    [InlineData(2, "XX")]
+    [InlineData(2, "YY")]
+    [InlineData(2, "ZZ")]
+    [InlineData(3, "X")]
+    [InlineData(3, "Y")]
+    [InlineData(3, "Z")]
+    [InlineData(3, "XX")]
+    [InlineData(3, "YY")]
+    [InlineData(3, "ZZ")]
+    public void DirectionTest(int j, string direction) {
       var comp = new CreateNodeLoad();
+      comp.CreateAttributes();
+      comp.SetSelected(0, j);
       ComponentTestHelper.SetInput(comp, new Point3d(10, 5, -1), 1);
       ComponentTestHelper.SetInput(comp, direction, 3);
       ComponentTestHelper.SetInput(comp, -5, 4);
