@@ -31,6 +31,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.SaveGsaModel;
     private string _fileNameLastSaved;
+    private bool _saveInputOverride = false;
 
     public SaveGsaModel() : base("Save GSA Model", "Save",
       "Saves your GSA model from this parametric nightmare", CategoryName.Name(),
@@ -95,8 +96,9 @@ namespace GsaGH.Components {
       da.GetData(2, ref fileName);
 
       bool save = false;
-      if (da.GetData(1, ref save) && save) {
+      if (da.GetData(1, ref save) && (save || _saveInputOverride)) {
         Save(ref gsaModel, fileName);
+        _saveInputOverride = false;
       }
 
       da.SetData(0, new GsaModelGoo(gsaModel));
@@ -121,7 +123,12 @@ namespace GsaGH.Components {
     }
 
     internal void SaveButtonClick() {
-      UpdateUI();
+      if (string.IsNullOrEmpty(_fileNameLastSaved)) {
+        SaveAsButtonClick();
+        return;
+      }
+
+      _saveInputOverride = true;
     }
 
     internal void SaveAsButtonClick() {
@@ -153,9 +160,15 @@ namespace GsaGH.Components {
     }
 
     internal void OpenGsaExe() {
-      if (!string.IsNullOrEmpty(_fileNameLastSaved)) {
-        Process.Start(_fileNameLastSaved);
+      if (string.IsNullOrEmpty(_fileNameLastSaved)) {
+        Params.Input[0].CollectData();
+        var tempModel = (GsaModelGoo)Params.Input[0].VolatileData.AllData(true).First();
+        string tempPath = Path.GetTempPath() + tempModel.Value.Guid.ToString() + ".gwb";
+        GsaModel gsaModel = tempModel.Value;
+        Save(ref gsaModel, tempPath);
       }
+
+      Process.Start(_fileNameLastSaved);
     }
   }
 }
