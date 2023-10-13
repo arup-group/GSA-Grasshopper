@@ -125,7 +125,7 @@ namespace DocsGeneration.Data {
               Type valueType = gooProperty.PropertyType;
               string path = "T:" + valueType.FullName;
               XmlNode xmlDocuOfMethod = GsaGhDll.GsaGhXml.SelectSingleNode(
-                  "//member[starts-with(@name, '" + path + "')]");
+                  "//member[@name='" + path + "']");
               string text = xmlDocuOfMethod.InnerXml
                 .Replace("<summary>", string.Empty).Replace("</summary>", string.Empty);
               string cleanStr = Regex.Replace(text, @"\s+", " ");

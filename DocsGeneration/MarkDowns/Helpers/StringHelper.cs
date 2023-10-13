@@ -65,6 +65,11 @@ namespace DocsGeneration.MarkDowns.Helpers {
 
     private static string ConvertSummaryToMarkup(string str) {
       str = str.Replace("</para>", "\n\n").Replace("<para>", string.Empty);
+      str = str.Replace("IGsaLoad", "GsaLoad");
+      str = str.Replace("IGsaGridLoad", "GsaGridLoad");
+      str = str.Replace("IGsaStandardMaterial", "GsaStandardMaterial");
+      str = str.Replace("IGsaAnnotation", "GsaAnnotation");
+      str = str.Replace("IGsaDiagram", "GsaDiagram");
 
       // For example:
       // <see href="https://docs.oasys-software.com/structural/gsa/references/listsandembeddedlists.html">syntax</see>

@@ -67,7 +67,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
 
       if (parameterName.Contains("Unit Number")) {
         string link = $"[Unit Number](gsagh-unitnumber-parameter.md)";
-        return parameterName.Replace("UnitNumber", link) + list + tree;
+        return parameterName.Replace("Unit Number", link) + list + tree;
       }
 
       parameterName = parameterName.Replace("I Geometric", "Geometry");
