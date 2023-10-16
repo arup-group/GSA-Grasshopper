@@ -32,5 +32,11 @@ namespace IntegrationTests.Components {
 
       return Helper.CreateDocument(Path.Combine(path, fileName));
     }
+
+    [Fact]
+    public void NoRuntimeErrorTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
+    }
   }
 }
