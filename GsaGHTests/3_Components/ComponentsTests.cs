@@ -75,7 +75,6 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateBool6))]
     [InlineData(typeof(Create1dMember))]
     [InlineData(typeof(CreateSupport))]
-    [InlineData(typeof(CreateMember1d_OBSOLETE))]
     public void WhenInitialiseDropdowns_ThenDropDownItems_ShouldBeNull(Type t) {
       var obj = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
       obj.InitialiseDropdowns();
@@ -125,10 +124,10 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(Contour2dResults), "Displacement", "Footfall")]
     [InlineData(typeof(Element2dDisplacements), "mm", "ft")]
     [InlineData(typeof(Element2dForcesAndMoments), "kN/m", "kipf/ft")]
-    [InlineData(typeof(Element2dStresses), "Megapascal", "kipf/ft²")]
+    [InlineData(typeof(Element2dStresses), "MPa", "kipf/ft²")]
     [InlineData(typeof(Contour3dResults), "Displacement", "Stress")]
     [InlineData(typeof(Element3dDisplacements), "mm", "ft")]
-    [InlineData(typeof(Element3dStresses), "Megapascal", "kipf/ft²")]
+    [InlineData(typeof(Element3dStresses), "MPa", "kipf/ft²")]
     [InlineData(typeof(GlobalPerformanceResults), "t", "slug")]
     [InlineData(typeof(ContourNodeResults), "Displacement", "Footfall")]
     [InlineData(typeof(NodeDisplacements), "mm", "ft")]

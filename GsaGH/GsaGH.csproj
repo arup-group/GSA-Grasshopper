@@ -5,24 +5,22 @@
     <Platforms>x64</Platforms>
     <Title>GsaGH</Title>
 	    <Company>Oasys</Company>
-    <Copyright>Copyright © Oasys 1985 - 2022</Copyright>
+    <Copyright>Copyright © Oasys 1985 - 2023</Copyright>
     <PackageProjectUrl>https://github.com/arup-group/GSA-Grasshopper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arup-group/GSA-Grasshopper</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>GSALogo128.png</PackageIcon>
-    <Version>0.9.99-beta</Version>
+    <Version>1.0.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	   <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <LangVersion>8.0</LangVersion>
     <Description>Official Oasys GSA Grasshopper Plugin
 
-GsaGH is pre-release and under active development, including further testing to be undertaken. It is provided "as-is" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.
-
 The plugin requires a licensed version of Gsa to load.
 
 Contact oasys@arup.com to request a free trial version.
 
-Copyright © Oasys 1985 - 2022</Description>
+Copyright © Oasys 1985 - 2023</Description>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
   
@@ -60,7 +58,8 @@ Copyright © Oasys 1985 - 2022</Description>
     <PackageReference Include="Grasshopper" Version="6.27.20176.5001" IncludeAssets="compile;build">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="OasysGH" Version="0.6.13-beta" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.3" />
+    <PackageReference Include="OasysGH" Version="1.0.1" />
     <PackageReference Include="RhinoCommon" Version="6.27.20176.5001">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>compile;build</IncludeAssets>

@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
-using GsaGH.Components.GraveyardComp;
 using GsaGH.Helpers;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;

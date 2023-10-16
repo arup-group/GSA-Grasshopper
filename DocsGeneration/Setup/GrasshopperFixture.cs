@@ -56,7 +56,7 @@ namespace DocsGeneration {
 
       InitializeCore();
 
-      Utility.SetupUnitsDuringLoad(true);
+      Utility.SetupUnitsDuringLoad();
     }
 
     public void AddPluginToGh() {

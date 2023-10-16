@@ -208,9 +208,9 @@ namespace GsaGH.Helpers.Assembly {
           if (!material.IsFromApi) {
             continue;
           }
+          
           if (material.ConcreteDesignCodeName != string.Empty &&
             material.ConcreteDesignCodeName != GenericConcreteCodeName) {
-
             return material.ConcreteDesignCodeName;
           }
         }
@@ -286,15 +286,14 @@ namespace GsaGH.Helpers.Assembly {
 
     private string GetSteelDesignCode(Model model = null) {
       if (_steelDesignCode == string.Empty) {
-        // if there is no concrete design code available
+        // if there is no steel design code available
         // try looking for one in the materials created from API objects
         foreach (GsaMaterial material in _materials.Values) {
           if (!material.IsFromApi) {
             continue;
           }
-          if (material.SteelDesignCodeName != string.Empty &&
-            material.SteelDesignCodeName != GenericSteelCodeName) {
-
+          
+          if (material.SteelDesignCodeName != string.Empty) {
             return material.SteelDesignCodeName;
           }
         }

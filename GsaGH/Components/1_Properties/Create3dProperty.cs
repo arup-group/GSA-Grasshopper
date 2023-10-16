@@ -17,7 +17,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Create3dProperty;
 
-    public Create3dProperty() : base("Create 3D Property", "Prop3d", "Create GSA  Property 3D",
+    public Create3dProperty() : base("Create 3D Property", "Prop3d", "Create GSA 3D Property",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }

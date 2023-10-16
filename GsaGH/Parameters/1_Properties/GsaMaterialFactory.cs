@@ -49,7 +49,7 @@ namespace GsaGH.Parameters {
           break;
 
         case ConcreteMaterial concreteMaterial:
-          material = material = new GsaConcreteMaterial(concreteMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
+          material = new GsaConcreteMaterial(concreteMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
             Id = id,
           };
           break;

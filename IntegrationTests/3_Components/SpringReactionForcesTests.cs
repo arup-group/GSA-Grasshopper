@@ -32,6 +32,12 @@ namespace IntegrationTests.Components {
       99292.3,
       99292.3,
     })]
+    [InlineData("CombinationCaseSpringForces", new double[] {
+      148938.492,
+      148938.492,
+      148938.492,
+      148938.492,
+    })]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected, 1);

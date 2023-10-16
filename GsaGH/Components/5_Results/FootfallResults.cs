@@ -54,7 +54,7 @@ namespace GsaGH.Components {
 
         case GsaResultGoo goo: {
           result = goo.Value;
-          if (result.Type == CaseType.Combination) {
+          if (result.Type == CaseType.CombinationCase) {
             this.AddRuntimeError("Footfall Result only available for Analysis Cases");
             return;
           }

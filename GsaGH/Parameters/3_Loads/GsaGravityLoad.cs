@@ -33,6 +33,7 @@ namespace GsaGH.Parameters {
         ApiLoad = {
           Case = ApiLoad.Case,
           EntityList = ApiLoad.EntityList.ToString(),
+          EntityType = ApiLoad.EntityType,
           Nodes = ApiLoad.Nodes.ToString(),
           Name = ApiLoad.Name.ToString(),
           Factor = ApiLoad.Factor,
