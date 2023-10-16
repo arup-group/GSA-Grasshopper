@@ -8,15 +8,6 @@ using GsaGH.Helpers;
 
 namespace DocsGeneration.MarkDowns {
   public class Components {
-    public static readonly string ComponentsOverview =
-      "# Components\n" +
-      "\n" +
-      ":::caution" +
-      "\nGSA-Grasshopper plugin is pre-release and under active development, including further testing to be undertaken. It is provided \\\"as-is\\\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using the plugin should not be relied upon without thorough and independent checking.\n:::\n" +
-      "\n" +
-      "![GsaGH-Ribbon](./images/RibbonLayout.gif)\n" +
-      "\n";
-
     public static void CreateOverview(
       Dictionary<string, List<Component>> components, List<Parameter> parameters) {
       CreateComponentOverview(components.Keys.ToList());
@@ -165,7 +156,13 @@ namespace DocsGeneration.MarkDowns {
       string filePath = $@"Output\gsagh-components.md";
       Console.WriteLine($"Writing {filePath}");
 
-      string text = ComponentsOverview;
+      string text = "# Components\n\n";
+      if (GsaGH.GsaGhInfo.isBeta) {
+        text += StringHelper.AddBetaWarning();
+        text += "\n";
+      }
+
+      text += "![GsaGH-Ribbon](./images/RibbonLayout.gif)\n\n";
 
       foreach (string category in categories) {
         text += $"[{category} components](gsagh-{category.ToLower()}-components-overview.md)\n\n";

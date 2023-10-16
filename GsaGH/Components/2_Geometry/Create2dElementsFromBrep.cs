@@ -7,7 +7,6 @@ using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GsaGH.Components.GraveyardComp;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -27,12 +26,12 @@ namespace GsaGH.Components {
   /// </summary>
   public class Create2dElementsFromBrep : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("18c5913e-cbce-42e8-8563-18e28b079d34");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Create2dElementsFromBrep;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     internal ToleranceContextMenu ToleranceMenu { get; set; } = new ToleranceContextMenu();
-    private List<string> _meshMode = new List<string>() {
+    private readonly List<string> _meshMode = new List<string>() {
       "Tri-6 only",
       "Planar Quads",
       "Quad-8 only"

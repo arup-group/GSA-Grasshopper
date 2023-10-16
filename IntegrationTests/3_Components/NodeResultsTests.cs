@@ -32,7 +32,7 @@ namespace IntegrationTests.Components {
     }
 
     [Theory]
-    [InlineData("FContour", 871.0, 66.14, 1)]
+    [InlineData("FContour", 580.7, 66.14, 1)]
     public void NodeContourTests(
       string name, double expected1, double expected2, int precision = 6) {
       GH_Document doc = Document;

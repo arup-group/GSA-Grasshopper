@@ -17,7 +17,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Edit3dProperty;
 
-    public Edit3dProperty() : base("Edit 3D Property", "EditPV", "Modify a GSA Property 3D",
+    public Edit3dProperty() : base("Edit 3D Property", "EditPV", "Modify a GSA 3D Property",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
