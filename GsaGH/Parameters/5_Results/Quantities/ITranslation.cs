@@ -1,15 +1,10 @@
-﻿using GsaAPI;
-using OasysUnits;
-using LengthUnit = OasysUnits.Units.LengthUnit;
+﻿using OasysUnits;
 
-namespace GsaGH.Parameters._5_Results.Quantities {
-  public interface ITranslation : IResult{
+namespace GsaGH.Parameters.Results {
+  public interface ITranslation {
     public Length X { get; }
     public Length Xyz { get; }
     public Length Y { get; }
     public Length Z { get; }
-
-    public void SetLengthUnit(Double6 result, LengthUnit unit);
-    public void SetLengthUnit(Length x, Length y, Length z, Length xyz);
   }
 }

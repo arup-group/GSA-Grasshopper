@@ -134,7 +134,7 @@ namespace GsaGH.Components {
             return;
         }
 
-        List<GsaDisplacementValues> vals = result.NodeDisplacementValues(nodeList, _lengthUnit);
+        List<GsaNodeDisplacements> vals = result.NodeDisplacementValues(nodeList, _lengthUnit);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
@@ -159,7 +159,7 @@ namespace GsaGH.Components {
           {
             foreach (int id in vals[perm - 1].Ids) {
               // there is only one result per node
-              Parameters._5_Results.Quantities.IDisplacement values = vals[perm - 1].Results[id][0];
+              Parameters.Results.Quantities.IDisplacement values = vals[perm - 1].Results[id][0];
               // use ToUnit to capture changes in dropdown
               transX.Add(new GH_UnitNumber(values.X.ToUnit(_lengthUnit)));
               transY.Add(new GH_UnitNumber(values.Y.ToUnit(_lengthUnit)));

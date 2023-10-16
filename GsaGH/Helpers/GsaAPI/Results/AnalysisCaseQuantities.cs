@@ -1,14 +1,12 @@
-﻿using GsaAPI;
-using GsaGH.Parameters;
-using GsaGH.Parameters._5_Results.Quantities;
-using OasysUnits;
-using OasysUnits.Units;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using static GsaGH.Parameters.GsaResultsValues;
+using GsaAPI;
+using GsaGH.Parameters;
+using OasysUnits;
+using OasysUnits.Units;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using EnergyUnit = OasysUnits.Units.EnergyUnit;
 using ForceUnit = OasysUnits.Units.ForceUnit;
@@ -28,7 +26,7 @@ namespace GsaGH.Helpers.GsaApi {
       ReadOnlyDictionary<int, Element1DResult> globalResults, ForceUnit forceUnit,
       MomentUnit momentUnit) {
       var r = new GsaResultsValues {
-        Type = ResultType.Force,
+        Type = GsaResultsValues.ResultType.Force,
       };
 
       Parallel.ForEach(globalResults.Keys, key => {
@@ -68,7 +66,7 @@ namespace GsaGH.Helpers.GsaApi {
       ReadOnlyDictionary<int, Element1DResult> globalResults, EnergyUnit energyUnit,
       bool average = false) {
       var r = new GsaResultsValues {
-        Type = ResultType.StrainEnergy,
+        Type = GsaResultsValues.ResultType.StrainEnergy,
       };
 
       Parallel.ForEach(globalResults.Keys, key => {
@@ -99,7 +97,7 @@ namespace GsaGH.Helpers.GsaApi {
     internal static GsaResultsValues GetElement1DResultValues(
       ReadOnlyDictionary<int, Element1DResult> globalResults, LengthUnit resultLengthUnit) {
       var r = new GsaResultsValues {
-        Type = ResultType.Displacement,
+        Type = GsaResultsValues.ResultType.Displacement,
       };
 
       Parallel.ForEach(globalResults.Keys, key => {
@@ -137,7 +135,7 @@ namespace GsaGH.Helpers.GsaApi {
     internal static GsaResultsValues GetElement2DResultValues(
       ReadOnlyDictionary<int, Element2DResult> globalResults, PressureUnit stressUnit) {
       var r = new GsaResultsValues {
-        Type = ResultType.Stress,
+        Type = GsaResultsValues.ResultType.Stress,
       };
 
       Parallel.ForEach(globalResults.Keys, key => {
@@ -156,7 +154,7 @@ namespace GsaGH.Helpers.GsaApi {
           if (i < stresses.Count && !double.IsNaN(stresses[i].XX) &&
               !double.IsNaN(stresses[i].YY) && !double.IsNaN(stresses[i].ZZ)) {
             xyzRes[i] = GetQuantityResult(stresses[i], stressUnit);
-          } else if (!double.IsNaN(stresses[i - stresses.Count].XY) 
+          } else if (!double.IsNaN(stresses[i - stresses.Count].XY)
                      && !double.IsNaN(stresses[i - stresses.Count].YZ)
                      && !double.IsNaN(stresses[i - stresses.Count].ZX)) {
             xxyyzzRes[i - stresses.Count]
@@ -191,7 +189,7 @@ namespace GsaGH.Helpers.GsaApi {
     internal static GsaResultsValues GetElement2DResultValues(
       ReadOnlyDictionary<int, Element2DResult> globalResults, ForcePerLengthUnit forceUnit) {
       var r = new GsaResultsValues {
-        Type = ResultType.Shear,
+        Type = GsaResultsValues.ResultType.Shear,
       };
 
       Parallel.ForEach(globalResults.Keys, key => {
@@ -232,7 +230,7 @@ namespace GsaGH.Helpers.GsaApi {
       ReadOnlyDictionary<int, Element2DResult> globalResults, ForcePerLengthUnit forceUnit,
       ForceUnit momentUnit) {
       var r = new GsaResultsValues {
-        Type = ResultType.Force,
+        Type = GsaResultsValues.ResultType.Force,
       };
 
       Parallel.ForEach(globalResults.Keys, key => {
@@ -296,7 +294,7 @@ namespace GsaGH.Helpers.GsaApi {
     internal static GsaResultsValues GetElement2DResultValues(
       ReadOnlyDictionary<int, Element2DResult> globalResults, LengthUnit resultLengthUnit) {
       var r = new GsaResultsValues {
-        Type = ResultType.Displacement,
+        Type = GsaResultsValues.ResultType.Displacement,
       };
 
       Parallel.ForEach(globalResults.Keys, key => {
@@ -348,7 +346,7 @@ namespace GsaGH.Helpers.GsaApi {
     internal static GsaResultsValues GetElement3DResultValues(
       ReadOnlyDictionary<int, Element3DResult> globalResults, LengthUnit resultLengthUnit) {
       var r = new GsaResultsValues {
-        Type = ResultType.Displacement,
+        Type = GsaResultsValues.ResultType.Displacement,
       };
 
       Parallel.ForEach(globalResults.Keys, key => {
@@ -384,7 +382,7 @@ namespace GsaGH.Helpers.GsaApi {
     internal static GsaResultsValues GetElement3DResultValues(
       ReadOnlyDictionary<int, Element3DResult> globalResults, PressureUnit stressUnit) {
       var r = new GsaResultsValues {
-        Type = ResultType.Stress,
+        Type = GsaResultsValues.ResultType.Stress,
       };
 
       Parallel.ForEach(globalResults.Keys, key => {
@@ -442,7 +440,7 @@ namespace GsaGH.Helpers.GsaApi {
       ReadOnlyDictionary<int, NodeResult> globalResults, ForceUnit forceUnit, MomentUnit momentUnit,
       ConcurrentBag<int> supportnodeIDs = null) {
       var r = new GsaResultsValues {
-        Type = ResultType.Force,
+        Type = GsaResultsValues.ResultType.Force,
       };
 
       Parallel.ForEach(globalResults.Keys, nodeId => {
@@ -479,26 +477,26 @@ namespace GsaGH.Helpers.GsaApi {
     /// <param name="globalResults"></param>
     /// <param name="resultLengthUnit"></param>
     /// <returns></returns>
-    internal static GsaDisplacementValues GetNodeResultValues(
+    internal static GsaResultsValues GetNodeResultValues(
       ReadOnlyDictionary<int, NodeResult> globalResults, LengthUnit resultLengthUnit) {
-      var r = new GsaDisplacementValues {
-        Type = ResultType.Displacement,
+      var r = new GsaResultsValues {
+        Type = GsaResultsValues.ResultType.Force,
       };
 
       Parallel.ForEach(globalResults.Keys, nodeId => {
         NodeResult result = globalResults[nodeId];
         Double6 values = result.Displacement;
-        var quantities = new GsaDisplacementQuantity(values, resultLengthUnit, AngleUnit.Radian);
+
         if (!double.IsNaN(values.X) && !double.IsNaN(values.Y) && !double.IsNaN(values.Z)) {
-          var xyz = new ConcurrentDictionary<int, IDisplacement>();
-          xyz.TryAdd(0, quantities);
-          r.Results.TryAdd(nodeId, xyz);
+          var xyz = new ConcurrentDictionary<int, GsaResultQuantity>();
+          xyz.TryAdd(0, GetQuantityResult(values, resultLengthUnit));
+          r.XyzResults.TryAdd(nodeId, xyz);
         }
 
         if (!double.IsNaN(values.XX) && !double.IsNaN(values.YY) && !double.IsNaN(values.ZZ)) {
-          var xxyyzz = new ConcurrentDictionary<int, IDisplacement>();
-          xxyyzz.TryAdd(0, quantities);
-          r.Results.TryAdd(nodeId, xxyyzz);
+          var xxyyzz = new ConcurrentDictionary<int, GsaResultQuantity>();
+          xxyyzz.TryAdd(0, GetQuantityResult(values, AngleUnit.Radian));
+          r.XxyyzzResults.TryAdd(nodeId, xxyyzz);
         }
       });
 
@@ -519,7 +517,7 @@ namespace GsaGH.Helpers.GsaApi {
       ReadOnlyDictionary<int, NodeResult> globalResults, ForceUnit forceUnit, MomentUnit momentUnit,
       ConcurrentBag<int> supportnodeIDs = null) {
       var r = new GsaResultsValues {
-        Type = ResultType.Force,
+        Type = GsaResultsValues.ResultType.Force,
       };
 
       Parallel.ForEach(globalResults.Keys, nodeId => {

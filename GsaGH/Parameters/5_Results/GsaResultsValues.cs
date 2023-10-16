@@ -1,6 +1,4 @@
 ﻿using GsaAPI;
-using GsaGH.Parameters._5_Results.Quantities;
-using GsaGH.Parameters._5_Results.Values;
 using OasysUnits;
 using Rhino.Geometry;
 using System;

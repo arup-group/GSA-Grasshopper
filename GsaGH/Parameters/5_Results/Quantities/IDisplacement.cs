@@ -1,4 +1,4 @@
-﻿namespace GsaGH.Parameters._5_Results.Quantities {
+﻿namespace GsaGH.Parameters.Results {
   public interface IDisplacement : ITranslation, IRotation {
   }
 }

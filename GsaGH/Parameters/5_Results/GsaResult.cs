@@ -139,8 +139,8 @@ namespace GsaGH.Parameters {
     ///   Append to this dictionary to chache results
     ///   key = elementList
     /// </summary>
-    internal Dictionary<string, GsaDisplacementValues> ACaseNodeDisplacementValues { get; set; }
-      = new Dictionary<string, GsaDisplacementValues>();
+    internal Dictionary<string, GsaResultsValues> ACaseNodeDisplacementValues { get; set; }
+      = new Dictionary<string, GsaResultsValues>();
     /// <summary>
     ///   Analysis Case Node Footfall Result VALUES Dictionary
     ///   Append to this dictionary to chache results
@@ -302,9 +302,9 @@ namespace GsaGH.Parameters {
     ///   key = elementList
     ///   value = Dictionary(permutationID, permutationsResults)
     /// </summary>
-    internal Dictionary<string, ConcurrentDictionary<int, GsaDisplacementValues>>
+    internal Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>
       ComboNodeDisplacementValues { get; set; }
-      = new Dictionary<string, ConcurrentDictionary<int, GsaDisplacementValues>>();
+      = new Dictionary<string, ConcurrentDictionary<int, GsaResultsValues>>();
     /// <summary>
     ///   Combination Case Node Reaction Force Result VALUES Dictionary
     ///   Append to this dictionary to chache results
@@ -344,7 +344,7 @@ namespace GsaGH.Parameters {
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
       Model = model;
       CombinationCaseResult = result;
-      Type = CaseType.Combination;
+      Type = CaseType.CombinationCase;
       CaseId = caseId;
       SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
     }
@@ -360,7 +360,7 @@ namespace GsaGH.Parameters {
           txt = "A" + CaseId;
           break;
 
-        case CaseType.Combination: {
+        case CaseType.CombinationCase: {
             txt = "C" + CaseId;
             if (SelectedPermutationIds.Count > 0) {
               txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count :
@@ -924,7 +924,7 @@ namespace GsaGH.Parameters {
     /// <param name="nodelist"></param>
     /// <param name="lengthUnit"></param>
     /// <returns></returns>
-    internal List<GsaDisplacementValues> NodeDisplacementValues(
+    internal List<GsaResultsValues> NodeDisplacementValues(
       string nodelist, LengthUnit lengthUnit) {
       if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
         nodelist = "All";
@@ -940,7 +940,7 @@ namespace GsaGH.Parameters {
             ResultHelper.GetNodeResultValues(ACaseNodeResults[nodelist], lengthUnit));
         }
 
-        return new List<GsaDisplacementValues> {
+        return new List<GsaResultsValues> {
           ACaseNodeDisplacementValues[nodelist],
         };
       }
