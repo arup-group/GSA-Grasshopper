@@ -51,7 +51,7 @@ namespace GsaGH.Components {
     private Prop2dType _mode = Prop2dType.Shell;
     private int _supportTypeIndex;
 
-    public Create2dProperty() : base("Create 2D Property", "Prop2d", "Create a GSA  Property 2D",
+    public Create2dProperty() : base("Create 2D Property", "Prop2d", "Create a GSA 2D Property",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
