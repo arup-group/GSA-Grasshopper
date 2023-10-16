@@ -9,7 +9,6 @@ using Xunit;
 
 namespace IntegrationTests.ExampleFiles {
   [Collection("GrasshopperFixture collection")]
-  [SuppressMessage("ReSharper", "InconsistentNaming")]
   public class Example5_4PointSrfMidSupport_Test {
 
     public static GH_Document Document() {

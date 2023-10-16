@@ -122,8 +122,4 @@ Copyright © Oasys 1985 - 2023</Description>
     </EmbeddedResource>
   </ItemGroup>
   
-  <ItemGroup>
-    <Folder Include="Components\GraveyardComp\" />
-  </ItemGroup>
-  
 </Project>

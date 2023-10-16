@@ -31,7 +31,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Create2dElementsFromBrep;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     internal ToleranceContextMenu ToleranceMenu { get; set; } = new ToleranceContextMenu();
-    private List<string> _meshMode = new List<string>() {
+    private readonly List<string> _meshMode = new List<string>() {
       "Tri-6 only",
       "Planar Quads",
       "Quad-8 only"
