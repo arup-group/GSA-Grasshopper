@@ -480,7 +480,7 @@ namespace GsaGH.Helpers.GsaApi {
     internal static GsaResultsValues GetNodeResultValues(
       ReadOnlyDictionary<int, NodeResult> globalResults, LengthUnit resultLengthUnit) {
       var r = new GsaResultsValues {
-        Type = GsaResultsValues.ResultType.Force,
+        Type = GsaResultsValues.ResultType.Displacement,
       };
 
       Parallel.ForEach(globalResults.Keys, nodeId => {
