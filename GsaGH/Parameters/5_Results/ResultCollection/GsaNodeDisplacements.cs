@@ -18,7 +18,7 @@ namespace GsaGH.Parameters.Results {
     ///   Combination Case Node Displacement Result VALUES Dictionary
     ///   Append to this dictionary to chache results
     ///   key = nodeId
-    ///   value = Collection of permutations(permutationsResults)
+    ///   value = Collection of permutations(permutationsResults) ei Collection will have 1 item in case of AnalysisCase
     /// </summary>
     public ConcurrentDictionary<int, Collection<IDisplacement>> Results { get; }
       = new ConcurrentDictionary<int, Collection<IDisplacement>>();

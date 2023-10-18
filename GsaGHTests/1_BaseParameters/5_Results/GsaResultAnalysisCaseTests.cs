@@ -38,7 +38,7 @@ namespace GsaGHTests.Parameters {
 
       Assert.NotNull(result);
       Assert.Equal(1, result.CaseId);
-      Assert.Equal(CaseType.AnalysisCase, result.Type);
+      Assert.Equal(CaseType.AnalysisCase, result.CaseType);
 
       string nodeList = "442 to 468";
       List<GsaNodeDisplacements> resultValues =

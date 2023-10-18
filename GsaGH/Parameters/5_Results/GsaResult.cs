@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
+using GsaGH.Parameters.Results;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using EnergyUnit = OasysUnits.Units.EnergyUnit;
@@ -26,7 +27,7 @@ namespace GsaGH.Parameters {
   /// </list></para>
   /// <para>All result values from the <see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/introduction.html">.NET API</see> has been wrapped in <see href="https://docs.oasys-software.com/structural/gsa/references/gsagh/gsagh-unitnumber-parameter.html">Unit Number</see> and can be converted into different measures on the fly. The Result parameter caches the result values</para>
   /// </summary>
-  public class GsaResult {
+  public class GsaResult : IGsaResult {
     /// <summary>
     ///   Analysis Case 1DElement Displacement Result VALUES Dictionary
     ///   Append to this dictionary to chache results
@@ -167,8 +168,8 @@ namespace GsaGH.Parameters {
     ///   Analysis Case API Result
     /// </summary>
     internal AnalysisCaseResult AnalysisCaseResult { get; set; }
-    internal int CaseId { get; set; }
-    internal string CaseName { get; set; }
+    public int CaseId { get; set; }
+    public string CaseName { get; set; }
     /// <summary>
     ///   Combination Case API Result
     /// </summary>
@@ -323,19 +324,19 @@ namespace GsaGH.Parameters {
     internal Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>>>
       ComboNodeResults { get; set; }
       = new Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>>>();
-    internal GsaModel Model { get; set; }
+    public GsaModel Model { get; set; }
     /// <summary>
     ///   User set permutation ID. If -1 => return all.
     /// </summary>
-    internal List<int> SelectedPermutationIds { get; set; }
-    internal CaseType Type { get; set; }
+    public List<int> SelectedPermutationIds { get; set; }
+    public CaseType CaseType { get; set; }
 
     public GsaResult() { }
 
     internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseId) {
       Model = model;
       AnalysisCaseResult = result;
-      Type = CaseType.AnalysisCase;
+      CaseType = CaseType.AnalysisCase;
       CaseId = caseId;
       CaseName = model.Model.AnalysisCaseName(CaseId);
     }
@@ -344,7 +345,7 @@ namespace GsaGH.Parameters {
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
       Model = model;
       CombinationCaseResult = result;
-      Type = CaseType.CombinationCase;
+      CaseType = CaseType.CombinationCase;
       CaseId = caseId;
       SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
     }
@@ -355,7 +356,7 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string txt = string.Empty;
-      switch (Type) {
+      switch (CaseType) {
         case CaseType.AnalysisCase:
           txt = "A" + CaseId;
           break;
@@ -390,7 +391,7 @@ namespace GsaGH.Parameters {
       }
 
       var key = new Tuple<string, int, int>(elementlist, 1, axisId);
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseElement1DStrainEnergyDensityValues.ContainsKey(key)) {
           if (!ACaseElement1DResults.ContainsKey(key)) {
             ACaseElement1DResults.Add(key, AnalysisCaseResult.Element1DResults(elementlist, 1));
@@ -439,7 +440,7 @@ namespace GsaGH.Parameters {
       Plane global = Plane.WorldXY;
 
       var key = new Tuple<string, int, int>(elementlist, positionsCount, axisId);
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseElement1DDisplacementValues.ContainsKey(key)) {
           if (!ACaseElement1DResults.ContainsKey(key)) {
             ACaseElement1DResults.Add(key,
@@ -488,7 +489,7 @@ namespace GsaGH.Parameters {
       }
 
       var key = new Tuple<string, FootfallResultType>(elementlist, type);
-      if (Type != CaseType.AnalysisCase) {
+      if (CaseType != CaseType.AnalysisCase) {
         throw new Exception("Cannot get Footfall results for a Combination Case.");
       }
 
@@ -522,7 +523,7 @@ namespace GsaGH.Parameters {
       }
 
       var key = new Tuple<string, int, int>(elementlist, positionsCount, axisId);
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseElement1DForceValues.ContainsKey(key)) {
           if (!ACaseElement1DResults.ContainsKey(key)) {
             ACaseElement1DResults.Add(key,
@@ -570,7 +571,7 @@ namespace GsaGH.Parameters {
       }
 
       var key = new Tuple<string, int, int>(elementlist, positionsCount, axisId);
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseElement1DStrainEnergyDensityValues.ContainsKey(key)) {
           if (!ACaseElement1DResults.ContainsKey(key)) {
             ACaseElement1DResults.Add(key,
@@ -616,7 +617,7 @@ namespace GsaGH.Parameters {
         elementlist = "All";
       }
 
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseElement2DDisplacementValues.ContainsKey(elementlist)) {
           if (!ACaseElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) {
             ACaseElement2DResults.Add(new Tuple<string, double>(elementlist, 0),
@@ -665,7 +666,7 @@ namespace GsaGH.Parameters {
       }
 
       var key = new Tuple<string, FootfallResultType>(elementlist, type);
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseElement2DFootfallValues.ContainsKey(key)) {
           GsaResultsValues nodeFootfallResultValues = NodeFootfallValues("All", type);
           ACaseElement2DFootfallValues.Add(key,
@@ -696,7 +697,7 @@ namespace GsaGH.Parameters {
         elementlist = "All";
       }
 
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseElement2DForceValues.ContainsKey(elementlist)) {
           if (!ACaseElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) {
             ACaseElement2DResults.Add(new Tuple<string, double>(elementlist, 0),
@@ -746,7 +747,7 @@ namespace GsaGH.Parameters {
         elementlist = "All";
       }
 
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseElement2DShearValues.ContainsKey(elementlist)) {
           if (!ACaseElement2DResults.ContainsKey(new Tuple<string, double>(elementlist, 0))) {
             ACaseElement2DResults.Add(new Tuple<string, double>(elementlist, 0),
@@ -796,7 +797,7 @@ namespace GsaGH.Parameters {
       }
 
       var key = new Tuple<string, double>(elementlist, layer);
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseElement2DStressValues.ContainsKey(key)) {
           if (!ACaseElement2DResults.ContainsKey(key)) {
             ACaseElement2DResults.Add(key, AnalysisCaseResult.Element2DResults(elementlist, layer));
@@ -840,7 +841,7 @@ namespace GsaGH.Parameters {
         elementlist = "All";
       }
 
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseElement3DDisplacementValues.ContainsKey(elementlist)) {
           if (!ACaseElement3DResults.ContainsKey(elementlist)) {
             ACaseElement3DResults.Add(elementlist,
@@ -885,7 +886,7 @@ namespace GsaGH.Parameters {
         elementlist = "All";
       }
 
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseElement3DStressValues.ContainsKey(elementlist)) {
           if (!ACaseElement3DResults.ContainsKey(elementlist)) {
             ACaseElement3DResults.Add(elementlist,
@@ -930,7 +931,7 @@ namespace GsaGH.Parameters {
         nodelist = "All";
       }
 
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseNodeDisplacementValues.ContainsKey(nodelist)) {
           if (!ACaseNodeResults.ContainsKey(nodelist)) {
             ACaseNodeResults.Add(nodelist, AnalysisCaseResult.NodeResults(nodelist));
@@ -971,7 +972,7 @@ namespace GsaGH.Parameters {
         nodelist = "All";
       }
 
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         var key = new Tuple<string, FootfallResultType>(nodelist, type);
         if (!ACaseNodeFootfallValues.ContainsKey(key)) {
           ACaseNodeFootfallValues.Add(key,
@@ -1012,7 +1013,7 @@ namespace GsaGH.Parameters {
         nodelist = "All";
       }
 
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseNodeReactionForceValues.ContainsKey(nodelist)) {
           if (!ACaseNodeResults.ContainsKey(nodelist)) {
             ACaseNodeResults.Add(nodelist, AnalysisCaseResult.NodeResults(nodelist));
@@ -1069,7 +1070,7 @@ namespace GsaGH.Parameters {
         nodelist = "All";
       }
 
-      if (Type == CaseType.AnalysisCase) {
+      if (CaseType == CaseType.AnalysisCase) {
         if (!ACaseNodeReactionForceValues.ContainsKey(nodelist)) {
           if (!ACaseNodeResults.ContainsKey(nodelist)) {
             ACaseNodeResults.Add(nodelist, AnalysisCaseResult.NodeResults(nodelist));

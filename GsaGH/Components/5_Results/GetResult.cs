@@ -83,7 +83,7 @@ namespace GsaGH.Components {
           if (type.ToUpper().StartsWith("A")) {
             resultType = CaseType.AnalysisCase;
           } else if (type.ToUpper().StartsWith("C")) {
-            resultType = CaseType.Combination;
+            resultType = CaseType.CombinationCase;
           } else {
             this.AddRuntimeError("Error converting input " + Params.Input[1].NickName
               + " to 'Analysis' or 'Combination'");
@@ -145,7 +145,7 @@ namespace GsaGH.Components {
 
           break;
 
-        case CaseType.Combination:
+        case CaseType.CombinationCase:
           if (_combinationCaseResults == null) {
             _combinationCaseResults = model.Model.CombinationCaseResults();
             if (_combinationCaseResults == null || _combinationCaseResults.Count == 0) {
@@ -177,8 +177,8 @@ namespace GsaGH.Components {
           }
 
           if (!_result.ContainsKey(
-            new Tuple<CaseType, int>(CaseType.Combination, caseId))) {
-            _result.Add(new Tuple<CaseType, int>(CaseType.Combination, caseId),
+            new Tuple<CaseType, int>(CaseType.CombinationCase, caseId))) {
+            _result.Add(new Tuple<CaseType, int>(CaseType.CombinationCase, caseId),
               new GsaResult(model, _combinationCaseResults[caseId], caseId, permutationIDs));
           }
 

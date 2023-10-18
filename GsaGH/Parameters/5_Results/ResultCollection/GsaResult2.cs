@@ -6,7 +6,7 @@ using GsaGH.Helpers;
 
 namespace GsaGH.Parameters.Results {
 
-  public class GsaResult2 {
+  public class GsaResult2 : IGsaResult {
     // API Global results
     internal AnalysisCaseResult AnalysisCaseResult { get; set; }
     internal CombinationCaseResult CombinationCaseResult { get; set; }
@@ -24,12 +24,12 @@ namespace GsaGH.Parameters.Results {
       = new Dictionary<string, GsaNodeDisplacements>();
 
     // Other members
-    internal int CaseId { get; set; }
-    internal string CaseName { get; set; }
-    internal GsaModel Model { get; set; }
+    public int CaseId { get; set; }
+    public string CaseName { get; set; }
+    public GsaModel Model { get; set; }
 
-    internal List<int> SelectedPermutationIds { get; set; }
-    internal CaseType CaseType { get; set; }
+    public List<int> SelectedPermutationIds { get; set; }
+    public CaseType CaseType { get; set; }
 
     public GsaResult2() { }
 

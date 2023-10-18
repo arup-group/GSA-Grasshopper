@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -12,6 +11,7 @@ using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -23,17 +23,17 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to get GSA 3D element displacement values
+  ///   Component to get GSA node displacement values
   /// </summary>
-  public class Element3dDisplacements : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("b24e0b5d-6376-43bf-9844-15443ce3b9dd");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+  public class NodeDisplacements2 : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("b491c4f4-ad6f-4073-946f-1cfb6b8861af");
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Element3dDisplacements;
+    protected override Bitmap Icon => Resources.NodeDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
 
-    public Element3dDisplacements() : base("Element 3D Displacements", "Disp3D",
-      "3D Translation and Rotation result values", CategoryName.Name(), SubCategoryName.Cat5()) {
+    public NodeDisplacements2() : base("Node Displacements", "NodeDisp",
+      "Node Translation and Rotation result values", CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
     }
 
@@ -69,37 +69,39 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaElementMemberListParameter());
+      pManager.AddParameter(new GsaNodeListParameter());
       pManager[1].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      string note = ResultNotes.Note2dResults;
+      string note = ResultNotes.NoteNodeResults;
 
       pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux",
         "Translations in X-direction in Global Axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations Y [" + unitAbbreviation + "]", "Uy",
-        "Translations in Y-direction in Global Axis." + note, GH_ParamAccess.tree);
+        "Translations in Y-direction in Global Axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations Z [" + unitAbbreviation + "]", "Uz",
-        "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
+        "Translations in Z-direction in Global Axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations |XYZ| [" + unitAbbreviation + "]", "|U|",
-        "Combined |XYZ| Translations." + note, GH_ParamAccess.tree);
+        "Combined |XYZ| Translations in Global Axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations XX [rad]", "Rxx",
-        "Rotations around X-axis in Global Axis." + note, GH_ParamAccess.tree);
+        "Rotations around X-axis in Global Axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations YY [rad]", "Ryy",
-        "Rotations around Y-axis in Global Axiss." + note, GH_ParamAccess.tree);
+        "Rotations around Y-axis in Global Axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations ZZ [rad]", "Rzz",
-        "Rotations around Z-axis in Global Axis." + note, GH_ParamAccess.tree);
+        "Rotations around Z-axis in Global Axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|",
-        "Combined |XXYYZZ| Rotations." + note, GH_ParamAccess.tree);
+        "Combined |XXYYZZ| Rotations in Global Axis" + note, GH_ParamAccess.tree);
+      pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value",
+        GH_ParamAccess.tree);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var result = new GsaResult();
+      var result = new GsaResult2();
 
-      string elementlist = "All";
+      string nodeList = "All";
 
       var outTransX = new DataTree<GH_UnitNumber>();
       var outTransY = new DataTree<GH_UnitNumber>();
@@ -109,6 +111,7 @@ namespace GsaGH.Components {
       var outRotY = new DataTree<GH_UnitNumber>();
       var outRotZ = new DataTree<GH_UnitNumber>();
       var outRotXyz = new DataTree<GH_UnitNumber>();
+      var outIDs = new DataTree<int>();
 
       var ghTypes = new List<GH_ObjectWrapper>();
       if (!da.GetDataList(0, ghTypes)) {
@@ -122,8 +125,8 @@ namespace GsaGH.Components {
             return;
 
           case GsaResultGoo goo:
-            result = (GsaResult)goo.Value;
-            elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
+            result = (GsaResult2)goo.Value;
+            nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
             break;
 
           default:
@@ -131,73 +134,65 @@ namespace GsaGH.Components {
             return;
         }
 
-        List<GsaResultsValues> vals = result.Element3DDisplacementValues(elementlist, _lengthUnit);
+        GsaNodeDisplacements vals = result.NodeDisplacementValues(nodeList);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
         };
         if (permutations.Count == 1 && permutations[0] == -1) {
-          permutations = Enumerable.Range(1, vals.Count).ToList();
+          permutations = Enumerable.Range(1, vals.Results.Values.First().Count).ToList();
+          // creates a list (1, 2, 3, 4) if we have 4 permutations
         }
 
         foreach (int perm in permutations) {
-          if (vals[perm - 1].XyzResults.Count == 0 & vals[perm - 1].XxyyzzResults.Count == 0) {
-            string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-            this.AddRuntimeWarning("Case " + acase + " contains no Element3D results.");
-            continue;
-          }
+          var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : perm);
 
-          Parallel.For(0, 2, thread => // split computation in two for xyz and xxyyzz
+          var transX = new List<GH_UnitNumber>();
+          var transY = new List<GH_UnitNumber>();
+          var transZ = new List<GH_UnitNumber>();
+          var transXyz = new List<GH_UnitNumber>();
+          var rotX = new List<GH_UnitNumber>();
+          var rotY = new List<GH_UnitNumber>();
+          var rotZ = new List<GH_UnitNumber>();
+          var rotXyz = new List<GH_UnitNumber>();
+
+          Parallel.For(0, 2, item => // split into two tasks
           {
-            switch (thread) {
-              case 0: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                  vals[perm - 1].XyzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) {
-                    continue;
-                  }
-
-                  var path = new GH_Path(result.CaseId,
-                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
-
-                  outTransX.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_lengthUnit))),
-                    path); // use ToUnit to capture changes in dropdown
-                  outTransY.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_lengthUnit))), path);
-                  outTransZ.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_lengthUnit))), path);
-                  outTransXyz.AddRange(
-                    res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_lengthUnit))), path);
+            switch (item) {
+              case 0:
+                foreach (int id in vals[perm - 1].Ids) {
+                  // there is only one result per node
+                  GsaResultQuantity values = vals[perm - 1].XyzResults[id][0];
+                  // use ToUnit to capture changes in dropdown
+                  transX.Add(new GH_UnitNumber(values.X.ToUnit(_lengthUnit)));
+                  transY.Add(new GH_UnitNumber(values.Y.ToUnit(_lengthUnit)));
+                  transZ.Add(new GH_UnitNumber(values.Z.ToUnit(_lengthUnit)));
+                  transXyz.Add(new GH_UnitNumber(values.Xyz.ToUnit(_lengthUnit)));
                 }
-
                 break;
-              }
-              case 1: {
-                foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                  vals[perm - 1].XxyyzzResults) {
-                  int elementId = kvp.Key;
-                  ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-                  if (res.Count == 0) {
-                    continue;
-                  }
 
-                  var path = new GH_Path(result.CaseId,
-                    result.SelectedPermutationIds == null ? 0 : perm, elementId);
-
-                  outRotX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X)),
-                    path); // always use [rad] units
-                  outRotY.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Y)), path);
-                  outRotZ.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Z)), path);
-                  outRotXyz.AddRange(res.Select(x => new GH_UnitNumber(x.Value.Xyz)), path);
+              case 1:
+                foreach (int id in vals[perm - 1].Ids) {
+                  // there is only one result per node
+                  GsaResultQuantity values = vals[perm - 1].XxyyzzResults[id][0];
+                  rotX.Add(new GH_UnitNumber(values.X));
+                  rotY.Add(new GH_UnitNumber(values.Y));
+                  rotZ.Add(new GH_UnitNumber(values.Z));
+                  rotXyz.Add(new GH_UnitNumber(values.Xyz));
                 }
-
                 break;
-              }
             }
           });
+
+          outTransX.AddRange(transX, path);
+          outTransY.AddRange(transY, path);
+          outTransZ.AddRange(transZ, path);
+          outTransXyz.AddRange(transXyz, path);
+          outRotX.AddRange(rotX, path);
+          outRotY.AddRange(rotY, path);
+          outRotZ.AddRange(rotZ, path);
+          outRotXyz.AddRange(rotXyz, path);
+          outIDs.AddRange(vals[perm - 1].Ids, path);
         }
       }
 
@@ -209,8 +204,9 @@ namespace GsaGH.Components {
       da.SetDataTree(5, outRotY);
       da.SetDataTree(6, outRotZ);
       da.SetDataTree(7, outRotXyz);
+      da.SetDataTree(8, outIDs);
 
-      PostHog.Result(result.CaseType, 3, GsaResultsValues.ResultType.Displacement);
+      PostHog.Result(result.CaseType, 0, GsaResultsValues.ResultType.Displacement);
     }
 
     protected override void UpdateUIFromSelectedItems() {

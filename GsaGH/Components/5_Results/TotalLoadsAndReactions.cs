@@ -141,8 +141,8 @@ namespace GsaGH.Components {
           return;
 
         case GsaResultGoo goo: {
-          result = goo.Value;
-          if (result.Type == CaseType.Combination) {
+          result = (GsaResult)goo.Value;
+          if (result.CaseType == CaseType.CombinationCase) {
             this.AddRuntimeError("Global Result only available for Analysis Cases");
             return;
           }
@@ -191,7 +191,7 @@ namespace GsaGH.Components {
       da.SetData(i++, new GH_UnitNumber(rm.Z));
       da.SetData(i, new GH_UnitNumber(rm.Xyz));
 
-      PostHog.Result(result.Type, -1, "Global", "TotalLoadsAndReactions");
+      PostHog.Result(result.CaseType, -1, "Global", "TotalLoadsAndReactions");
     }
 
     protected override void UpdateUIFromSelectedItems() {

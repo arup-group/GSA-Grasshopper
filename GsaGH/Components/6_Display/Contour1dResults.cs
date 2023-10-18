@@ -501,9 +501,9 @@ namespace GsaGH.Components {
           return;
 
         case GsaResultGoo goo: {
-            result = goo.Value;
-            switch (result.Type) {
-              case CaseType.Combination when result.SelectedPermutationIds.Count > 1:
+            result = (GsaResult)goo.Value;
+            switch (result.CaseType) {
+              case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
                 this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
                   + result.SelectedPermutationIds.Count
                   + " permutations - only one permutation can be displayed at a time."
@@ -512,7 +512,7 @@ namespace GsaGH.Components {
                 _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
                 break;
 
-              case CaseType.Combination:
+              case CaseType.CombinationCase:
                 _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
                 break;
 
@@ -1024,7 +1024,7 @@ namespace GsaGH.Components {
       var resultType
         = (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType),
           _mode.ToString());
-      PostHog.Result(result.Type, 1, resultType, _disp.ToString());
+      PostHog.Result(result.CaseType, 1, resultType, _disp.ToString());
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {

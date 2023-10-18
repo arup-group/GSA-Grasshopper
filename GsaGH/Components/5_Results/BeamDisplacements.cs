@@ -130,7 +130,7 @@ namespace GsaGH.Components {
         }
 
         if (ghTyp.Value is GsaResultGoo goo) {
-          result = goo.Value;
+          result = (GsaResult)goo.Value;
           elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
         } else {
           this.AddRuntimeError("Error converting input to GSA Result");
@@ -218,7 +218,7 @@ namespace GsaGH.Components {
       da.SetDataTree(6, outRotZ);
       da.SetDataTree(7, outRotXyz);
 
-      PostHog.Result(result.Type, 1, GsaResultsValues.ResultType.Displacement);
+      PostHog.Result(result.CaseType, 1, GsaResultsValues.ResultType.Displacement);
     }
 
     protected override void UpdateUIFromSelectedItems() {

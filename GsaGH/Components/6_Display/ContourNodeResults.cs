@@ -428,8 +428,8 @@ namespace GsaGH.Components {
           return;
 
         case GsaResultGoo goo: {
-          result = goo.Value;
-          if (result.Type == CaseType.CombinationCase
+          result = (GsaResult)goo.Value;
+          if (result.CaseType == CaseType.CombinationCase
             && result.SelectedPermutationIds.Count > 1) {
             this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
               + result.SelectedPermutationIds.Count
@@ -439,11 +439,11 @@ namespace GsaGH.Components {
             _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
           }
 
-          if (result.Type == CaseType.CombinationCase) {
+          if (result.CaseType == CaseType.CombinationCase) {
             _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
           }
 
-          if (result.Type == CaseType.AnalysisCase) {
+          if (result.CaseType == CaseType.AnalysisCase) {
             _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
           }
 
@@ -822,7 +822,7 @@ namespace GsaGH.Components {
         GsaResultsValues.ResultType.Force :
         (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType),
           _mode.ToString());
-      PostHog.Result(result.Type, 0, resultType, _disp.ToString());
+      PostHog.Result(result.CaseType, 0, resultType, _disp.ToString());
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {

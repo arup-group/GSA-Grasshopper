@@ -193,7 +193,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      result = (ghObject.Value as GsaResultGoo).Value;
+      result = (GsaResult)(ghObject.Value as GsaResultGoo).Value;
       string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
       GsaResultsValues forceValues 
@@ -225,7 +225,7 @@ namespace GsaGH.Components {
       });
 
       SetOutputs(da);
-      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Force,
+      PostHog.Result(result.CaseType, 0, GsaResultsValues.ResultType.Force,
         _selectedDisplayValue.ToString());
     }
 

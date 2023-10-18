@@ -200,16 +200,16 @@ namespace GsaGH.Components {
       }
 
       if (ghTyp?.Value is GsaResultGoo goo) {
-        result = goo.Value;
-        switch (result.Type) {
-          case CaseType.Combination when result.SelectedPermutationIds.Count > 1:
+        result = (GsaResult)goo.Value;
+        switch (result.CaseType) {
+          case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
             string warningText
               = $"Combination Case {result.CaseId} contains {result.SelectedPermutationIds.Count} permutations - only one permutation can be displayed at a time.{Environment.NewLine}Displaying first permutation; please use the 'Select Results' to select other single permutations";
             this.AddRuntimeWarning(warningText);
             _case = $"C{result.CaseId}";
             break;
 
-          case CaseType.Combination:
+          case CaseType.CombinationCase:
             _case = $"C{result.CaseId}";
             break;
 
@@ -283,7 +283,7 @@ namespace GsaGH.Components {
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
 
-      PostHog.Diagram("Result", result.Type, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
+      PostHog.Diagram("Result", result.CaseType, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
     }
 
     private List<GsaAnnotationGoo> GenerateAnnotations(
