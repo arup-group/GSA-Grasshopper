@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Components;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -41,7 +43,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(CaseType.AnalysisCase, result.CaseType);
 
       string nodeList = "442 to 468";
-      List<GsaNodeDisplacements> resultValues =
+      List<GsaResultsValues> resultValues =
         result.NodeDisplacementValues(nodeList, LengthUnit.Millimeter);
       
       var expectedIds = result.Model.Model.Nodes(nodeList).Keys.ToList();
