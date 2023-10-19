@@ -17,12 +17,11 @@ namespace GsaGHTests.Parameters {
     }
 
     [Theory]
-    [InlineData("UNDEF", "UNIFORM")]
-    [InlineData("POINT", "UNDEF")]
-    [InlineData("UNIFORM", "UNDEF")]
-    [InlineData("LINEAR", "UNDEF")]
-    [InlineData("PATCH", "UNDEF")]
-    [InlineData("TRILINEAR", "UNDEF")]
+    [InlineData("POINT", "UNIFORM")]
+    [InlineData("UNIFORM", "POINT")]
+    [InlineData("LINEAR", "POINT")]
+    [InlineData("PATCH", "POINT")]
+    [InlineData("TRILINEAR", "POINT")]
     public void DuplicateTest(string originalTypeString, string duplicateTypeString) {
       var originalType = (BeamLoadType)Enum.Parse(typeof(BeamLoadType), originalTypeString);
       var duplicateType = (BeamLoadType)Enum.Parse(typeof(BeamLoadType), duplicateTypeString);
