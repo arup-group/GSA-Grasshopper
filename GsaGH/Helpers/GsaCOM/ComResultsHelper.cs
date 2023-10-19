@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Windows.Forms;
 using GsaAPI;
 using GsaGH.Parameters;
 using Interop.Gsa_10_2;
@@ -55,12 +56,16 @@ namespace GsaGH.Helpers.GsaApi {
 
       foreach (int nodeId in nodes.Keys) {
         var xyzRes = new ConcurrentDictionary<int, GsaResultQuantity>();
-        var ff = new Ratio((double)gsa.Output_Extract(nodeId, 0), RatioUnit.DecimalFraction);
-        var res = new GsaResultQuantity() {
-          X = ff,
-        };
-        xyzRes.TryAdd(0, res);
-        r.XyzResults.TryAdd(nodeId, xyzRes);
+        try {
+          var ff = new Ratio((double)gsa.Output_Extract(nodeId, 0), RatioUnit.DecimalFraction);
+          var res = new GsaResultQuantity() {
+            X = ff,
+          };
+          xyzRes.TryAdd(0, res);
+          r.XyzResults.TryAdd(nodeId, xyzRes);
+        } catch (System.ArgumentException) {
+          // skip
+        }
       }
 
       r.UpdateMinMax();
