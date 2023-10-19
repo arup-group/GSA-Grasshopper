@@ -92,7 +92,7 @@ namespace GsaGH.Components {
         case FoldMode.OneDimensionalOneWay:
           Params.Input[5].NickName = "Dir";
           Params.Input[5].Name = "Span Direction";
-          Params.Input[5].Description = "Span Direction between -180 and 180 degrees";
+          Params.Input[5].Description = "Span Direction between -Pi and Pi";
           Params.Input[5].Access = GH_ParamAccess.item;
           Params.Input[5].Optional = true;
           break;
@@ -362,21 +362,28 @@ namespace GsaGH.Components {
           var ghexp = new GH_Integer();
           if (da.GetData(5, ref ghexp)) {
             GH_Convert.ToInt32_Primary(ghexp, ref exp);
-          }
 
-          gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.PLANE_CORNER;
-          switch (exp) {
-            case 1:
-              gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.PLANE_SMOOTH;
-              break;
+            switch (exp) {
+              case 0:
+                gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.PLANE_CORNER;
+                break;
 
-            case 2:
-              gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.PLANE_ASPECT;
-              break;
+              case 1:
+                gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.PLANE_SMOOTH;
+                break;
 
-            case 3:
-              gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.LEGACY;
-              break;
+              case 2:
+                gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.PLANE_ASPECT;
+                break;
+
+              case 3:
+                gs.ExpansionType = GsaAPI.GridSurfaceExpansionType.LEGACY;
+                break;
+
+              default:
+                this.AddRuntimeWarning("Failed to parse expansion type");
+                break;
+            }
           }
 
           bool simple = true;

@@ -151,7 +151,7 @@ steps:
         $tag = [array]@($exeName,$majorVersion,$minorVersion,$spVersion,$buildNumber)
         $tagNumbersOnly = [array]@($majorVersion,$minorVersion,$spVersion,$buildNumber)
 
-        $dotSeparatedTag = $majorVersion + "." + $minorVersion + "." + $spVersion + "-beta"
+        $dotSeparatedTag = $majorVersion + "." + $minorVersion + "." + $spVersion
         $underscoreSeparatedTag = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
         $tagNumbersOnlyUnderscore = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
         $tagNumbersOnlydot = $majorVersion + "." + $minorVersion + "." + $spVersion + "." + $buildNumber
@@ -227,7 +227,7 @@ steps:
       $(System.DefaultWorkingDirectory)/**/$(dotSeparatedTag)-docs.zip
     assetUploadMode: 'replace'
     isDraft: true
-    isPreRelease: true
+    isPreRelease: false
     addChangeLog: false
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
 

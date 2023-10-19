@@ -94,13 +94,13 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Transform(Transform xform) {
       var point = new Point3d(Value.Point);
       point.Transform(xform);
-      return new GsaAnnotationDot(point, Color, Value.Text);
+      return new GsaAnnotationGoo(new GsaAnnotationDot(point, Color, Value.Text));
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       TextDot value = Value;
       Point3d point = xmorph.MorphPoint(Value.Point);
-      return new GsaAnnotationDot(point, Color, Value.Text);
+      return new GsaAnnotationGoo(new GsaAnnotationDot(point, Color, Value.Text));
     }
 
     public override BoundingBox GetBoundingBox(Transform xform) {

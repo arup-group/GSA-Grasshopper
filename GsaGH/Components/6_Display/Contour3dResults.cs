@@ -231,7 +231,7 @@ namespace GsaGH.Components {
         Params.RegisterInputParam(new Param_Interval());
         Params.Input[3].Name = "Min/Max Domain";
         Params.Input[3].NickName = "I";
-        Params.Input[3].Description = "Opitonal Domain for custom Min to Max contour colours";
+        Params.Input[3].Description = "Optional Domain for custom Min to Max contour colours";
         Params.Input[3].Optional = true;
         Params.Input[3].Access = GH_ParamAccess.item;
       }
@@ -367,7 +367,7 @@ namespace GsaGH.Components {
         + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
       pManager[2].Optional = true;
       pManager.AddIntervalParameter("Min/Max Domain", "I",
-        "Opitonal Domain for custom Min to Max contour colours", GH_ParamAccess.item);
+        "Optional Domain for custom Min to Max contour colours", GH_ParamAccess.item);
       pManager[3].Optional = true;
     }
 

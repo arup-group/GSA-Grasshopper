@@ -14,6 +14,7 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
+using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
@@ -51,7 +52,7 @@ namespace GsaGH.Components {
     private Prop2dType _mode = Prop2dType.Shell;
     private int _supportTypeIndex;
 
-    public Create2dProperty() : base("Create 2D Property", "Prop2d", "Create a GSA  Property 2D",
+    public Create2dProperty() : base("Create 2D Property", "Prop2d", "Create a GSA 2D Property",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }

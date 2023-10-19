@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DocsGeneration.MarkDowns.Helpers {
+  public enum AdmonitionType {
+    Note,
+    Tip,
+    Info,
+    Caution,
+    Danger
+  }
+
   public class StringHelper {
     public static string AddBetaWarning() {
       string txt = "GSA-Grasshopper plugin is pre-release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using the plugin should not be relied upon without thorough and independent checking.";
-      return Warning(txt);
+      return Admonition(txt, AdmonitionType.Caution);
     }
-    public static string Tip(string headline, string text) {
-      // :::tip Did you know?
-      // The `Bool6` icon takes inspiration from the central pin / hinge / charnier connection[Ove Arup's Kingsgate footbridge](https://www.arup.com/projects/kingsgate-footbridge).
-      // ![Kingsgate Footbridge Durham](./ images / gsagh / Kingsgate - Footbridge - Durham.jpg)
-      // * (c)Giles Rocholl / Arup *
-      // :::
-      return $":::tip {headline}\n{text}\n:::\n\n";
-    }
-    public static string Warning(string text) {
-      // :::danger
-      // GSA - Grasshopper plugin[GsaGH] is pre - release and under active development, including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. Future versions may contain breaking changes. Any files, results, or other types of output information created using GsaGH should not be relied upon without thorough and independent checking.
-      // :::
-      return $":::danger\n{text}\n:::\n\n";
+
+    public static string Admonition(string txt, AdmonitionType type, string headline = "") {
+      return $":::{type.ToString().ToLower()} {headline}\n\n{txt}\n\n:::\n\n";
     }
 
     public static string MakeBold(string text) {
@@ -29,7 +28,6 @@ namespace DocsGeneration.MarkDowns.Helpers {
     public static string MakeItalic(string text) {
       return $"_{text}_";
     }
-
 
     public static string SummaryDescription(string str) {
       string markdown = ConvertSummaryToMarkup(str);
@@ -67,6 +65,11 @@ namespace DocsGeneration.MarkDowns.Helpers {
 
     private static string ConvertSummaryToMarkup(string str) {
       str = str.Replace("</para>", "\n\n").Replace("<para>", string.Empty);
+      str = str.Replace("IGsaLoad", "GsaLoad");
+      str = str.Replace("IGsaGridLoad", "GsaGridLoad");
+      str = str.Replace("IGsaStandardMaterial", "GsaStandardMaterial");
+      str = str.Replace("IGsaAnnotation", "GsaAnnotation");
+      str = str.Replace("IGsaDiagram", "GsaDiagram");
 
       // For example:
       // <see href="https://docs.oasys-software.com/structural/gsa/references/listsandembeddedlists.html">syntax</see>

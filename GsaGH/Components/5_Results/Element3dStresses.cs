@@ -63,7 +63,7 @@ namespace GsaGH.Components {
       _selectedItems = new List<string>();
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Stress));
-      _selectedItems.Add(_stresshUnit.ToString());
+      _selectedItems.Add(Pressure.GetAbbreviation(_stresshUnit));
 
       _isInitialised = true;
     }

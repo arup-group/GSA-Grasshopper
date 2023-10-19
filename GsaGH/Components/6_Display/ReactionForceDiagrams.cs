@@ -227,8 +227,7 @@ namespace GsaGH.Components {
       });
 
       SetOutputs(da, reactionForceVectors, annotations);
-      PostHog.Result(result.CaseType, 0, GsaResultsValues.ResultType.Force,
-        _selectedDisplayValue.ToString());
+      PostHog.Diagram("Result", result.CaseType, "ReactionForce", _selectedDisplayValue.ToString(), Parameters.EntityType.Node);
     }
 
     private double ComputeAutoScale(GsaResultsValues forceValues, BoundingBox bbox) {

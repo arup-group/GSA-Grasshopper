@@ -39,14 +39,14 @@ namespace GsaGH {
     internal static int MinGsaVersion = 0;
     internal const string TermsConditions
       = "Oasys terms and conditions apply. See https://www.oasys-software.com/terms-conditions for details. ";
-    internal const string Vers = "0.9.99";
+    internal const string Vers = "1.0.0";
     internal static string disclaimer = $"{PluginName} is pre-release and under active development, " +
       $"including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. " +
       $"Future versions may contain breaking changes. Any files, results, or other types of output information created using " +
       $"{PluginName} should not be relied upon without thorough and independent checking. " +
       $"{PluginName} {Vers} requires {ProductName} 10.2.{MinGsaVersion} or higher installed.";
     internal static Guid guid = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
-    internal static bool isBeta = true;
+    internal static bool isBeta = false;
   }
 
   public class AddReferencePriority : GH_AssemblyPriority {
@@ -119,11 +119,9 @@ namespace GsaGH {
       Instances.CanvasCreated += MenuLoad.OnStartup;
       Instances.ComponentServer.AddCategorySymbolName("GSA", 'G');
       Instances.ComponentServer.AddCategoryIcon("GSA", Resources.GSALogo);
-
-      Utility.InitialiseMainMenuAndDefaultUnits();
-
+      Utility.InitialiseMainMenuUnitsAndDependentPluginsCheck();
+      RhinoApp.Closing += Helpers.GsaComHelper.Dispose;
       PostHog.PluginLoaded(PluginInfo.Instance, gsaVersion);
-
       return GH_LoadingInstruction.Proceed;
     }
 
@@ -181,8 +179,6 @@ namespace GsaGH {
     public static OasysPluginInfo Instance => lazy.Value;
     private static readonly Lazy<OasysPluginInfo> lazy = new Lazy<OasysPluginInfo>(()
       => new OasysPluginInfo(GsaGhInfo.ProductName, GsaGhInfo.PluginName, GsaGhInfo.Vers,
-        GsaGhInfo.isBeta, "phc_alOp3OccDM3D18xJTWDoW44Y1cJvbEScm5LJSX8qnhs"));
-
-    private PluginInfo() { }
+        GsaGhInfo.isBeta, "phc_QjmqOoe8GqTMi3u88ynRR3WWvrJA9zAaqcQS1FDVnJD"));
   }
 }
