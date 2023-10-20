@@ -6,11 +6,11 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Parameters.Results {
   public class GsaDisplacementQuantity : IDisplacement {
     public Length X { get; private set; }
-    public Length Xyz { get; private set; }
+    public Length Xyz { get; internal set; }
     public Length Y { get; private set; }
     public Length Z { get; private set; }
     public Angle Xx { get; private set; }
-    public Angle Xxyyzz { get; private set; }
+    public Angle Xxyyzz { get; internal set; }
     public Angle Yy { get; private set; }
     public Angle Zz { get; private set; }
 

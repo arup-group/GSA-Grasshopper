@@ -1,11 +1,13 @@
-﻿using GsaAPI;
-using GsaGH.Parameters.Results;
-using OasysUnits;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using GsaAPI;
+using GsaGH.Parameters.Results;
+using OasysUnits;
+using AngleUnit = OasysUnits.Units.AngleUnit;
+using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters.Results {
   // For now, to be refactored
@@ -50,7 +52,10 @@ namespace GsaGH.Parameters.Results {
       double maxXx = Results.AsParallel().Select(list => list.Value.Select(res => res.Xx.Value).Max()).Max();
       double maxYy = Results.AsParallel().Select(list => list.Value.Select(res => res.Yy.Value).Max()).Max();
       double maxZz = Results.AsParallel().Select(list => list.Value.Select(res => res.Zz.Value).Max()).Max();
-      Max = new GsaDisplacementQuantity(new Double6(maxX, maxY, maxZ, maxXx, maxYy, maxZz));
+      Max = new GsaDisplacementQuantity(new Double6(maxX, maxY, maxZ, maxXx, maxYy, maxZz)) {
+        Xyz = new Length(Results.AsParallel().Select(list => list.Value.Select(res => res.Xyz.Value).Max()).Max(), LengthUnit.Meter),
+        Xxyyzz = new Angle(Results.AsParallel().Select(list => list.Value.Select(res => res.Xxyyzz.Value).Max()).Max(), AngleUnit.Radian)
+      };
 
       double minX = Results.AsParallel().Select(list => list.Value.Select(res => res.X.Value).Min()).Min();
       double minY = Results.AsParallel().Select(list => list.Value.Select(res => res.Y.Value).Min()).Min();
@@ -58,7 +63,10 @@ namespace GsaGH.Parameters.Results {
       double minXx = Results.AsParallel().Select(list => list.Value.Select(res => res.Xx.Value).Min()).Min();
       double minYy = Results.AsParallel().Select(list => list.Value.Select(res => res.Yy.Value).Min()).Min();
       double minZz = Results.AsParallel().Select(list => list.Value.Select(res => res.Zz.Value).Min()).Min();
-      Min = new GsaDisplacementQuantity(new Double6(minX, minY, minZ, minXx, minYy, minZz));
+      Min = new GsaDisplacementQuantity(new Double6(minX, minY, minZ, minXx, minYy, minZz)) {
+        Xyz = new Length(Results.AsParallel().Select(list => list.Value.Select(res => res.Xyz.Value).Min()).Min(), LengthUnit.Meter),
+        Xxyyzz = new Angle(Results.AsParallel().Select(list => list.Value.Select(res => res.Xxyyzz.Value).Min()).Min(), AngleUnit.Radian)
+      };
     }
   }
 }
