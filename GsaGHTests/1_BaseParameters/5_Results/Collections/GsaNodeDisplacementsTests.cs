@@ -16,17 +16,25 @@ namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
   public partial class GsaNodeDisplacementsTests {
     [Fact]
-    public void GsaNodeDisplacementsFromAnalysisCaseTest() {
+    public void GsaNodeDisplacementsNodeIdsFromAnalysisCaseTest() {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
-      string nodeList = "442 to 468";
-      GsaNodeDisplacements resultSet = result.NodeDisplacementValues(nodeList);
+      GsaNodeDisplacements resultSet = result.NodeDisplacementValues(NodeList);
 
       // Assert node IDs
-      var expectedIds = result.Model.Model.Nodes(nodeList).Keys.ToList();
+      var expectedIds = result.Model.Model.Nodes(NodeList).Keys.ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
+    }
+
+    [Fact]
+    public void GsaNodeDisplacementsXValuesFromAnalysisCaseTest() {
+      // Assemble
+      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+
+      // Act
+      GsaNodeDisplacements resultSet = result.NodeDisplacementValues(NodeList);
 
       // Assert result values
       List<double> expectedX = ExpectedDisplacementXInMillimeter();
@@ -41,6 +49,21 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
+    [Fact]
+    public void GsaNodeDisplacementsMaxMinXFromAnalysisCaseTest() {
+      // Assemble
+      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+
+      // Act
+      GsaNodeDisplacements resultSet = result.NodeDisplacementValues(NodeList);
+
+      // Assert Max/Min in set
+      Assert.Equal(6.426, resultSet.Max.X.Millimeters, 3);
+      Assert.Equal(-0.1426, resultSet.Min.X.Millimeters, 3);
+    }
+
+
+    private static string NodeList = "442 to 468";
     // these are regression tests, the values are taken directly from GSA results
     // "Steel_Design_Complex.gwb"
     private static List<double> ExpectedDisplacementXInMillimeter() {
