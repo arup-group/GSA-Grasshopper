@@ -1,14 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using GsaAPI;
-using GsaGH.Components;
-using GsaGH.Helpers.GsaApi;
-using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
-using GsaGHTests.Helper;
 using OasysUnits;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
