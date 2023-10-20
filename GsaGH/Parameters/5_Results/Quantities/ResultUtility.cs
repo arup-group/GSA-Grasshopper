@@ -1,33 +1,52 @@
 ﻿using GsaGH.Helpers;
 using OasysUnits;
+using OasysUnits.Units;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace GsaGH.Parameters.Results {
-  internal static class ResultUtility {
-    internal static T PythagoreanQuadruple<T>(T x, T y, T z, Enum unit) where T : IQuantity {
-      double a = x.As(unit);
-      double b = y.As(unit);
-      double c = z.As(unit);
-      double pyth = Math.Sqrt((a * a) + (b * b) + (c * c));
-      return (T)Quantity.From(pyth, unit);
+  public static class ResultUtility {
+    public static IDisplacement GetMax(this ICollection<Collection<IDisplacement>> c) {
+      return new GsaDisplacementQuantity(
+        c.Select(c => c.Select(p => p.X).Max()).Max(),
+        c.Select(c => c.Select(p => p.Y).Max()).Max(),
+        c.Select(c => c.Select(p => p.Z).Max()).Max(),
+        c.Select(c => c.Select(p => p.Xyz).Max()).Max(),
+        c.Select(c => c.Select(p => p.Xx).Max()).Max(),
+        c.Select(c => c.Select(p => p.Yy).Max()).Max(),
+        c.Select(c => c.Select(p => p.Zz).Max()).Max(),
+        c.Select(c => c.Select(p => p.Xxyyzz).Max()).Max());
     }
 
-    internal static T Max<T>(this ICollection<T> collection, Enum unit) where T : IQuantity {
-      if (collection.IsNullOrEmpty()) {
-        return (T)Quantity.From(0, unit);
-      }
-
-      return (T)Quantity.From(collection.Select(x => x.As(unit)).Max(), unit);
+    public static IDisplacement GetMin(this ICollection<Collection<IDisplacement>> c) {
+      return new GsaDisplacementQuantity(
+        c.Select(c => c.Select(p => p.X).Min()).Min(),
+        c.Select(c => c.Select(p => p.Y).Min()).Min(),
+        c.Select(c => c.Select(p => p.Z).Min()).Min(),
+        c.Select(c => c.Select(p => p.Xyz).Min()).Min(),
+        c.Select(c => c.Select(p => p.Xx).Min()).Min(),
+        c.Select(c => c.Select(p => p.Yy).Min()).Min(),
+        c.Select(c => c.Select(p => p.Zz).Min()).Min(),
+        c.Select(c => c.Select(p => p.Xxyyzz).Min()).Min());
     }
 
-    internal static T Min<T>(this ICollection<T> collection, Enum unit) where T : IQuantity {
-      if (collection.IsNullOrEmpty()) {
-        return (T)Quantity.From(0, unit);
+    internal static T PythagoreanQuadruple<T>(T x, T y, T z) where T : IQuantity {
+      double a = x.Value;
+      double b = y.Value;
+      double c = z.Value;
+      double pythagoras = Pythagoras(new List<double> { a, b, c });
+      return (T)Quantity.From(pythagoras, x.Unit);
+    }
+
+    private static double Pythagoras(List<double> doubles) {
+      double sum = 0;
+      foreach (double val in doubles) {
+        sum += val * val;
       }
 
-      return (T)Quantity.From(collection.Select(x => x.As(unit)).Min(), unit);
+      return Math.Sqrt(sum);
     }
   }
 }
