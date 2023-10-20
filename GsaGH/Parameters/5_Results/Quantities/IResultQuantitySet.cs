@@ -1,4 +1,4 @@
 ﻿namespace GsaGH.Parameters.Results {
-  public interface IResult {
+  public interface IResultQuantitySet {
   }
 }

@@ -20,8 +20,7 @@ namespace GsaGH.Parameters.Results {
       = new Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>>>();
 
     // Caches
-    internal Dictionary<string, GsaNodeDisplacements> NodeDisplacementCache { get; set; }
-      = new Dictionary<string, GsaNodeDisplacements>();
+    internal INodeResultCache<IDisplacement> NodeDisplacements { get; set; }
 
     // Other members
     public int CaseId { get; set; }
@@ -39,6 +38,7 @@ namespace GsaGH.Parameters.Results {
       CaseType = CaseType.AnalysisCase;
       CaseId = caseId;
       CaseName = model.Model.AnalysisCaseName(CaseId);
+      NodeDisplacements = new AnalysisCaseNodeDisplacementCache(result);
     }
 
     internal GsaResult2(
@@ -48,6 +48,7 @@ namespace GsaGH.Parameters.Results {
       CaseType = CaseType.CombinationCase;
       CaseId = caseId;
       SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
+      NodeDisplacements = new CombinationCaseNodeDisplacementCache(result);
     }
 
     public override string ToString() {
@@ -71,31 +72,7 @@ namespace GsaGH.Parameters.Results {
     }
 
     internal GsaNodeDisplacements NodeDisplacementValues(string nodelist) {
-      if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
-        nodelist = "All";
-      }
-
-      if (!NodeDisplacementCache.ContainsKey(nodelist)) {
-        switch (CaseType) {
-          case CaseType.AnalysisCase:
-            if (!AnalysisCaseNodeResults.ContainsKey(nodelist)) {
-              AnalysisCaseNodeResults.Add(nodelist, AnalysisCaseResult.NodeResults(nodelist));
-            }
-
-            NodeDisplacementCache.Add(nodelist, new GsaNodeDisplacements(AnalysisCaseNodeResults[nodelist]));
-            break;
-
-          case CaseType.CombinationCase:
-            if (!CombinationCaseNodeResults.ContainsKey(nodelist)) {
-              CombinationCaseNodeResults.Add(nodelist, CombinationCaseResult.NodeResults(nodelist));
-            }
-
-            NodeDisplacementCache.Add(nodelist, new GsaNodeDisplacements(CombinationCaseNodeResults[nodelist]));
-            break;
-        }
-      }
-
-      return NodeDisplacementCache[nodelist];
+      return (GsaNodeDisplacements)NodeDisplacements.ResultSubset(nodelist);
     }
   }
 }

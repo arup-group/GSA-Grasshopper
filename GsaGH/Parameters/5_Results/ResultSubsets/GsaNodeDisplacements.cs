@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  // For now, to be refactored
   public class GsaNodeDisplacements : IResultSubset<IDisplacement> {
     public IDisplacement Max { get; private set; }
     public IDisplacement Min { get; private set; }
