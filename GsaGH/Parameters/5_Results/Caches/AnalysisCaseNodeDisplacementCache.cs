@@ -9,31 +9,26 @@ namespace GsaGH.Parameters.Results {
   public class AnalysisCaseNodeDisplacementCache : INodeResultCache<IDisplacement> {
     public IApiResult ApiResult { get; set; }
 
-    // API Node results (will not be needed after GSA-7517)
-    internal Dictionary<string, ReadOnlyDictionary<int, NodeResult>> AnalysisCaseNodeResults { get; set; }
-      = new Dictionary<string, ReadOnlyDictionary<int, NodeResult>>();
-
-    public IDictionary<string, IResultSubset<IDisplacement>> Cache { get; set; }
-      = new Dictionary<string, IResultSubset<IDisplacement>>();
+    public ConcurrentDictionary<int, ICollection<IDisplacement>> Cache { get; }
+      = new ConcurrentDictionary<int, ICollection<IDisplacement>>();
 
     internal AnalysisCaseNodeDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new AnalysisCaseApiResult(result);
     }
 
-    public IResultSubset<IDisplacement> ResultSubset(string nodelist) {
-      if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
-        nodelist = "All";
+    public IResultSubset<IDisplacement> ResultSubset(ICollection<int> nodeIds) {
+      ConcurrentBag<int> missingIds = Cache.GetMissingKeys(nodeIds);
+      if (missingIds.Count > 0) {
+        string nodelist = string.Join(" ", missingIds);
+        ReadOnlyDictionary<int, NodeResult> apiAnalysisCaseResults = 
+          ((AnalysisCaseResult)ApiResult.Result).NodeResults(nodelist);
+        Parallel.ForEach(missingIds, nodeId => {
+          var res = new GsaDisplacementQuantity(apiAnalysisCaseResults[nodeId].Displacement);
+          Cache.TryAdd(nodeId, new Collection<IDisplacement>() { res });
+        });
       }
 
-      if (!Cache.ContainsKey(nodelist)) {
-        if (!AnalysisCaseNodeResults.ContainsKey(nodelist)) {
-          AnalysisCaseNodeResults.Add(nodelist, ((AnalysisCaseResult)ApiResult.Result).NodeResults(nodelist));
-        }
-
-        Cache.Add(nodelist, new GsaNodeDisplacements(AnalysisCaseNodeResults[nodelist]));
-      }
-
-      return Cache[nodelist];
+      return new GsaNodeDisplacements(Cache.GetSubset(nodeIds));
     }
   }
 }

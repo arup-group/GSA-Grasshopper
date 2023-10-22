@@ -160,7 +160,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IDisplacement> displacementQuantity = resultSet.Results[id];
+        var displacementQuantity = (Collection<IDisplacement>)resultSet.Results[id];
         
         // for analysis case results we expect only one value in the collection
         Assert.Single(displacementQuantity);
@@ -191,7 +191,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IDisplacement> displacementQuantity = resultSet.Results[id];
+        var displacementQuantity = (Collection<IDisplacement>)resultSet.Results[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, displacementQuantity.Count);

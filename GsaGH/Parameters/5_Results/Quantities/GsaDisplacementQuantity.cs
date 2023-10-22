@@ -33,11 +33,11 @@ namespace GsaGH.Parameters.Results {
       X = new Length(result.X, LengthUnit.Meter);
       Y = new Length(result.Y, LengthUnit.Meter);
       Z = new Length(result.Z, LengthUnit.Meter);
-      Xyz = ResultUtility.PythagoreanQuadruple(X, Y, Z);
+      Xyz = QuantityUtility.PythagoreanQuadruple(X, Y, Z);
       Xx = CreateAngle(result.XX);
       Yy = CreateAngle(result.YY);
       Zz = CreateAngle(result.ZZ);
-      Xxyyzz = ResultUtility.PythagoreanQuadruple(Xx, Yy, Zz);
+      Xxyyzz = QuantityUtility.PythagoreanQuadruple(Xx, Yy, Zz);
     }
 
     private Angle CreateAngle(double val) {

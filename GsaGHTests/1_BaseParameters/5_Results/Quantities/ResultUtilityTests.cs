@@ -12,7 +12,7 @@ namespace GsaGHTests.Parameters.Results {
       IQuantity x = Quantity.From(a, unit);
       IQuantity y = Quantity.From(b, unit);
       IQuantity z = Quantity.From(c, unit);
-      IQuantity quantity = ResultUtility.PythagoreanQuadruple(x, y, z);
+      IQuantity quantity = QuantityUtility.PythagoreanQuadruple(x, y, z);
 
       double pyth = Math.Sqrt((a * a) + (b * b) + (c * c));
       IQuantity expected = Quantity.From(pyth, unit);

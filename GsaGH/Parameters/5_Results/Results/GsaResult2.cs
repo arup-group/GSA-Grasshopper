@@ -30,8 +30,6 @@ namespace GsaGH.Parameters.Results {
     public List<int> SelectedPermutationIds { get; set; }
     public CaseType CaseType { get; set; }
 
-    public GsaResult2() { }
-
     internal GsaResult2(GsaModel model, AnalysisCaseResult result, int caseId) {
       Model = model;
       AnalysisCaseResult = result;
@@ -72,7 +70,13 @@ namespace GsaGH.Parameters.Results {
     }
 
     internal GsaNodeDisplacements NodeDisplacementValues(string nodelist) {
-      return (GsaNodeDisplacements)NodeDisplacements.ResultSubset(nodelist);
+      var entityList = new EntityList() {
+        Definition = nodelist,
+        Type = GsaAPI.EntityType.Node,
+        Name = "tmp"
+      };
+      ReadOnlyCollection<int> nodeIds = Model.Model.ExpandList(entityList);
+      return (GsaNodeDisplacements)NodeDisplacements.ResultSubset(nodeIds);
     }
   }
 }

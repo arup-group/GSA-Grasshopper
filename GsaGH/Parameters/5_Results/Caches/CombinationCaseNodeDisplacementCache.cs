@@ -9,32 +9,30 @@ namespace GsaGH.Parameters.Results {
   public class CombinationCaseNodeDisplacementCache : INodeResultCache<IDisplacement> {
     public IApiResult ApiResult { get; set; }
 
-    // API Node results (will not be needed after GSA-7517)
-    internal Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>>>
-      CombinationCaseNodeResults { get; set; }
-      = new Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>>>();
-
-    public IDictionary<string, IResultSubset<IDisplacement>> Cache { get; set; }
-      = new Dictionary<string, IResultSubset<IDisplacement>>();
+    public ConcurrentDictionary<int, ICollection<IDisplacement>> Cache { get; set; }
+      = new ConcurrentDictionary<int, ICollection<IDisplacement>>();
 
     internal CombinationCaseNodeDisplacementCache(CombinationCaseResult result) {
       ApiResult = new CombinationCaseApiResult(result);
     }
 
-    public IResultSubset<IDisplacement> ResultSubset(string nodelist) {
-      if (nodelist.ToLower() == "all" || nodelist == string.Empty) {
-        nodelist = "All";
+    public IResultSubset<IDisplacement> ResultSubset(ICollection<int> nodeIds) {
+      ConcurrentBag<int> missingIds = Cache.GetMissingKeys(nodeIds);
+      if (missingIds.Count > 0) {
+        string nodelist = string.Join(" ", missingIds);
+        ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> apiCombinationCaseResults =
+          ((CombinationCaseResult)ApiResult.Result).NodeResults(nodelist);
+        Parallel.ForEach(missingIds, nodeId => {
+          var permutationResults = new Collection<IDisplacement>();
+          foreach (NodeResult permutationResult in apiCombinationCaseResults[nodeId]) {
+            permutationResults.Add(new GsaDisplacementQuantity(permutationResult.Displacement));
+          }
+
+          Cache.TryAdd(nodeId, permutationResults);
+        });
       }
 
-      if (!Cache.ContainsKey(nodelist)) {
-        if (!CombinationCaseNodeResults.ContainsKey(nodelist)) {
-          CombinationCaseNodeResults.Add(nodelist, ((CombinationCaseResult)ApiResult.Result).NodeResults(nodelist));
-        }
-
-        Cache.Add(nodelist, new GsaNodeDisplacements(CombinationCaseNodeResults[nodelist]));
-      }
-
-      return Cache[nodelist];
+      return new GsaNodeDisplacements(Cache.GetSubset(nodeIds));
     }
   }
 }
