@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -11,7 +12,6 @@ using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
-using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -99,7 +99,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var result = new GsaResult2();
+      var result = new GsaResult();
 
       string nodeList = "All";
 
@@ -125,7 +125,7 @@ namespace GsaGH.Components {
             return;
 
           case GsaResultGoo goo:
-            result = (GsaResult2)goo.Value;
+            result = (GsaResult)goo.Value;
             nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
             break;
 
@@ -134,14 +134,13 @@ namespace GsaGH.Components {
             return;
         }
 
-        GsaNodeDisplacements vals = result.NodeDisplacementValues(nodeList);
+        List<GsaResultsValues> vals = result.NodeDisplacementValues(nodeList, _lengthUnit);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
         };
         if (permutations.Count == 1 && permutations[0] == -1) {
-          permutations = Enumerable.Range(1, vals.Results.Values.First().Count).ToList();
-          // creates a list (1, 2, 3, 4) if we have 4 permutations
+          permutations = Enumerable.Range(1, vals.Count).ToList();
         }
 
         foreach (int perm in permutations) {
@@ -160,9 +159,9 @@ namespace GsaGH.Components {
           {
             switch (item) {
               case 0:
-                foreach (int id in vals.Ids) {
+                foreach (int id in vals[perm - 1].Ids) {
                   // there is only one result per node
-                  IDisplacement values = vals.Results[id][0];
+                  GsaResultQuantity values = vals[perm - 1].XyzResults[id][0];
                   // use ToUnit to capture changes in dropdown
                   transX.Add(new GH_UnitNumber(values.X.ToUnit(_lengthUnit)));
                   transY.Add(new GH_UnitNumber(values.Y.ToUnit(_lengthUnit)));
@@ -172,13 +171,13 @@ namespace GsaGH.Components {
                 break;
 
               case 1:
-                foreach (int id in vals.Ids) {
+                foreach (int id in vals[perm - 1].Ids) {
                   // there is only one result per node
-                  IDisplacement values = vals.Results[id][0];
-                  rotX.Add(new GH_UnitNumber(values.Xx));
-                  rotY.Add(new GH_UnitNumber(values.Yy));
-                  rotZ.Add(new GH_UnitNumber(values.Zz));
-                  rotXyz.Add(new GH_UnitNumber(values.Xxyyzz));
+                  GsaResultQuantity values = vals[perm - 1].XxyyzzResults[id][0];
+                  rotX.Add(new GH_UnitNumber(values.X));
+                  rotY.Add(new GH_UnitNumber(values.Y));
+                  rotZ.Add(new GH_UnitNumber(values.Z));
+                  rotXyz.Add(new GH_UnitNumber(values.Xyz));
                 }
                 break;
             }
@@ -192,7 +191,7 @@ namespace GsaGH.Components {
           outRotY.AddRange(rotY, path);
           outRotZ.AddRange(rotZ, path);
           outRotXyz.AddRange(rotXyz, path);
-          outIDs.AddRange(vals.Ids, path);
+          outIDs.AddRange(vals[perm - 1].Ids, path);
         }
       }
 
