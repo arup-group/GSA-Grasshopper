@@ -17,7 +17,7 @@ namespace GsaGH.Parameters.Results {
     public Angle Yy { get; internal set; }
     public Angle Zz { get; internal set; }
 
-    internal GsaDisplacementQuantity(
+    public GsaDisplacementQuantity(
       Length x, Length y, Length z, Length xyz, Angle xx, Angle yy, Angle zz, Angle xxyyzz) {
       X = x;
       Y = y; 

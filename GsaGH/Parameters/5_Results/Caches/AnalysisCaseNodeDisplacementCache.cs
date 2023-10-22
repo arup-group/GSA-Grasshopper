@@ -16,7 +16,7 @@ namespace GsaGH.Parameters.Results {
     public IDictionary<string, IResultSubset<IDisplacement>> Cache { get; set; }
       = new Dictionary<string, IResultSubset<IDisplacement>>();
 
-    public AnalysisCaseNodeDisplacementCache(AnalysisCaseResult result) {
+    internal AnalysisCaseNodeDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new AnalysisCaseApiResult(result);
     }
 

@@ -3,7 +3,7 @@
 namespace GsaGH.Parameters.Results {
   public class AnalysisCaseApiResult : IApiResult {
     public object Result { get; }
-    public AnalysisCaseApiResult(AnalysisCaseResult result) {
+    internal AnalysisCaseApiResult(AnalysisCaseResult result) {
       Result = result;
     }
   } 

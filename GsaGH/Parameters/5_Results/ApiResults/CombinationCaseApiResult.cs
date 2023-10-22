@@ -3,7 +3,7 @@
 namespace GsaGH.Parameters.Results {
   public class CombinationCaseApiResult : IApiResult {
     public object Result { get; }
-    public CombinationCaseApiResult(CombinationCaseResult result) {
+    internal CombinationCaseApiResult(CombinationCaseResult result) {
       Result = result;
     }
   } 
