@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace GsaGH.Parameters.Results {
@@ -12,10 +13,10 @@ namespace GsaGH.Parameters.Results {
     ///   key = nodeId
     ///   value = Collection of permutations(permutationsResults) ei Collection will have 1 item in case of AnalysisCase
     /// </summary>
-    public ConcurrentDictionary<int, ICollection<IDisplacement>> Results { get; }
-      = new ConcurrentDictionary<int, ICollection<IDisplacement>>();
+    public ConcurrentDictionary<int, Collection<IDisplacement>> Results { get; }
+      = new ConcurrentDictionary<int, Collection<IDisplacement>>();
 
-    internal GsaNodeDisplacements(ConcurrentDictionary<int, ICollection<IDisplacement>> results) {
+    internal GsaNodeDisplacements(ConcurrentDictionary<int, Collection<IDisplacement>> results) {
       Results = results;
       Max = Results.Values.GetMax();
       Min = Results.Values.GetMin();

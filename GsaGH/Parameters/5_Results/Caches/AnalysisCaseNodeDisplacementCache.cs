@@ -8,8 +8,8 @@ namespace GsaGH.Parameters.Results {
   public class AnalysisCaseNodeDisplacementCache : INodeResultCache<IDisplacement> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, ICollection<IDisplacement>> Cache { get; }
-      = new ConcurrentDictionary<int, ICollection<IDisplacement>>();
+    public ConcurrentDictionary<int, Collection<IDisplacement>> Cache { get; }
+      = new ConcurrentDictionary<int, Collection<IDisplacement>>();
 
     internal AnalysisCaseNodeDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);

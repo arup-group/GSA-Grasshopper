@@ -14,10 +14,26 @@ namespace GsaGH.Parameters.Results {
     public int CaseId { get; set; }
     public string CaseName { get; set; }
     public GsaModel Model { get; set; }
-
     public List<int> SelectedPermutationIds { get; set; }
     public CaseType CaseType { get; set; }
 
+    // temp conversion from old class
+    internal GsaResult2(GsaResult result) {
+      Model = result.Model;
+      CaseType = result.CaseType;
+      CaseId = result.CaseId;
+      switch (CaseType) {
+        case CaseType.AnalysisCase:
+          NodeDisplacements = new AnalysisCaseNodeDisplacementCache(result.AnalysisCaseResult);
+          break;
+
+        case CaseType.CombinationCase:
+          SelectedPermutationIds = result.SelectedPermutationIds;
+          NodeDisplacements = new CombinationCaseNodeDisplacementCache(result.CombinationCaseResult);
+          break;
+      }
+    }
+    
     internal GsaResult2(GsaModel model, AnalysisCaseResult result, int caseId) {
       Model = model;
       CaseType = CaseType.AnalysisCase;

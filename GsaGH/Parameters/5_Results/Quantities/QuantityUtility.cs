@@ -1,11 +1,12 @@
 ﻿using OasysUnits;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace GsaGH.Parameters.Results {
   public static class QuantityUtility {
-    public static IDisplacement GetMax(this ICollection<ICollection<IDisplacement>> c) {
+    public static IDisplacement GetMax(this ICollection<Collection<IDisplacement>> c) {
       return new GsaDisplacementQuantity(
         c.Select(c => c.Select(p => p.X).Max()).Max(),
         c.Select(c => c.Select(p => p.Y).Max()).Max(),
@@ -17,7 +18,7 @@ namespace GsaGH.Parameters.Results {
         c.Select(c => c.Select(p => p.Xxyyzz).Max()).Max());
     }
 
-    public static IDisplacement GetMin(this ICollection<ICollection<IDisplacement>> c) {
+    public static IDisplacement GetMin(this ICollection<Collection<IDisplacement>> c) {
       return new GsaDisplacementQuantity(
         c.Select(c => c.Select(p => p.X).Min()).Min(),
         c.Select(c => c.Select(p => p.Y).Min()).Min(),
