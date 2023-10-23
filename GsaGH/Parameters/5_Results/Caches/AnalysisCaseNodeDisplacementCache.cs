@@ -13,7 +13,7 @@ namespace GsaGH.Parameters.Results {
       = new ConcurrentDictionary<int, ICollection<IDisplacement>>();
 
     internal AnalysisCaseNodeDisplacementCache(AnalysisCaseResult result) {
-      ApiResult = new AnalysisCaseApiResult(result);
+      ApiResult = new ApiResult(result);
     }
 
     public IResultSubset<IDisplacement> ResultSubset(ICollection<int> nodeIds) {

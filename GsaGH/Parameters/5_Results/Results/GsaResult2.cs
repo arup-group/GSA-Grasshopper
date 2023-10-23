@@ -3,22 +3,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers;
+using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
 
   public class GsaResult2 : IGsaResult {
-    // API Global results
-    internal AnalysisCaseResult AnalysisCaseResult { get; set; }
-    internal CombinationCaseResult CombinationCaseResult { get; set; }
-
-    // API Node results (will not be needed after GSA-7517)
-    internal Dictionary<string, ReadOnlyDictionary<int, NodeResult>> AnalysisCaseNodeResults { get; set; }
-      = new Dictionary<string, ReadOnlyDictionary<int, NodeResult>>();
-
-    internal Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>>>
-      CombinationCaseNodeResults { get; set; }
-      = new Dictionary<string, ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>>>();
-
     // Caches
     internal INodeResultCache<IDisplacement> NodeDisplacements { get; set; }
 
@@ -32,7 +21,6 @@ namespace GsaGH.Parameters.Results {
 
     internal GsaResult2(GsaModel model, AnalysisCaseResult result, int caseId) {
       Model = model;
-      AnalysisCaseResult = result;
       CaseType = CaseType.AnalysisCase;
       CaseId = caseId;
       CaseName = model.Model.AnalysisCaseName(CaseId);
@@ -42,7 +30,6 @@ namespace GsaGH.Parameters.Results {
     internal GsaResult2(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
       Model = model;
-      CombinationCaseResult = result;
       CaseType = CaseType.CombinationCase;
       CaseId = caseId;
       SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
