@@ -1,9 +1,6 @@
-﻿using GsaGH.Helpers;
-using OasysUnits;
-using OasysUnits.Units;
+﻿using OasysUnits;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace GsaGH.Parameters.Results {

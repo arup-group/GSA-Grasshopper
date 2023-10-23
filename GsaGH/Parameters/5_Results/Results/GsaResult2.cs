@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers;
-using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
 

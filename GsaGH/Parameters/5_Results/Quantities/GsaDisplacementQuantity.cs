@@ -1,8 +1,5 @@
 ﻿using GsaAPI;
 using OasysUnits;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
