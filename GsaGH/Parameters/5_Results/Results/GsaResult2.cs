@@ -71,14 +71,31 @@ namespace GsaGH.Parameters.Results {
       return txt.TrimSpaces();
     }
 
-    internal GsaNodeDisplacements NodeDisplacementValues(string nodelist) {
+    internal ReadOnlyCollection<int> NodeIds(string nodeList) {
       var entityList = new EntityList() {
-        Definition = nodelist,
+        Definition = nodeList,
         Type = GsaAPI.EntityType.Node,
-        Name = "tmp"
+        Name = "node"
       };
-      ReadOnlyCollection<int> nodeIds = Model.Model.ExpandList(entityList);
-      return (GsaNodeDisplacements)NodeDisplacements.ResultSubset(nodeIds);
+      return Model.Model.ExpandList(entityList);
+    }
+
+    internal ReadOnlyCollection<int> ElementIds(string elementList) {
+      var entityList = new EntityList() {
+        Definition = elementList,
+        Type = GsaAPI.EntityType.Element,
+        Name = "elem"
+      };
+      return Model.Model.ExpandList(entityList);
+    }
+
+    internal ReadOnlyCollection<int> MemberIds(string memberList) {
+      var entityList = new EntityList() {
+        Definition = memberList,
+        Type = GsaAPI.EntityType.Member,
+        Name = "mem"
+      };
+      return Model.Model.ExpandList(entityList);
     }
   }
 }

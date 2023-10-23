@@ -28,7 +28,8 @@ namespace GsaGHTests.Parameters.Results {
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
-      GsaNodeDisplacements resultSet = result.NodeDisplacementValues(NodeList);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert node IDs
       var expectedIds = result.Model.Model.Nodes(NodeList).Keys.ToList();
@@ -41,7 +42,8 @@ namespace GsaGHTests.Parameters.Results {
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
 
       // Act
-      GsaNodeDisplacements resultSet = result.NodeDisplacementValues(NodeList);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert node IDs
       var expectedIds = result.Model.Model.Nodes(NodeList).Keys.ToList();
@@ -63,7 +65,8 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
-      GsaNodeDisplacements resultSet = result.NodeDisplacementValues(NodeList);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
       double max = ResultsHelper(resultSet.Max, component);
@@ -87,7 +90,8 @@ namespace GsaGHTests.Parameters.Results {
         ExpectedCombinationCaseC4p2Values(component).Max());
 
       // Act
-      GsaNodeDisplacements resultSet = result.NodeDisplacementValues(NodeList);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
       double max = ResultsHelper(resultSet.Max, component);
@@ -109,7 +113,8 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
-      GsaNodeDisplacements resultSet = result.NodeDisplacementValues(NodeList);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
       double min = ResultsHelper(resultSet.Min, component);
@@ -133,7 +138,8 @@ namespace GsaGHTests.Parameters.Results {
         ExpectedCombinationCaseC4p2Values(component).Min());
 
       // Act
-      GsaNodeDisplacements resultSet = result.NodeDisplacementValues(NodeList);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
       double min = ResultsHelper(resultSet.Min, component);
@@ -155,7 +161,8 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expected = ExpectedAnalysisCaseValues(component);
 
       // Act
-      GsaNodeDisplacements resultSet = result.NodeDisplacementValues(NodeList);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert result values
       int i = 0;
@@ -186,7 +193,8 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expectedP2 = ExpectedCombinationCaseC4p2Values(component);
 
       // Act
-      GsaNodeDisplacements resultSet = result.NodeDisplacementValues(NodeList);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert result values
       int i = 0;
