@@ -24,12 +24,12 @@ namespace GsaGH.Parameters.Results {
       CaseId = result.CaseId;
       switch (CaseType) {
         case CaseType.AnalysisCase:
-          NodeDisplacements = new AnalysisCaseNodeDisplacementCache(result.AnalysisCaseResult);
+          NodeDisplacements = new NodeDisplacementCache(result.AnalysisCaseResult);
           break;
 
         case CaseType.CombinationCase:
           SelectedPermutationIds = result.SelectedPermutationIds;
-          NodeDisplacements = new CombinationCaseNodeDisplacementCache(result.CombinationCaseResult);
+          NodeDisplacements = new NodeDisplacementCache(result.CombinationCaseResult);
           break;
       }
     }
@@ -39,7 +39,7 @@ namespace GsaGH.Parameters.Results {
       CaseType = CaseType.AnalysisCase;
       CaseId = caseId;
       CaseName = model.Model.AnalysisCaseName(CaseId);
-      NodeDisplacements = new AnalysisCaseNodeDisplacementCache(result);
+      NodeDisplacements = new NodeDisplacementCache(result);
     }
 
     internal GsaResult2(
@@ -48,7 +48,7 @@ namespace GsaGH.Parameters.Results {
       CaseType = CaseType.CombinationCase;
       CaseId = caseId;
       SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
-      NodeDisplacements = new CombinationCaseNodeDisplacementCache(result);
+      NodeDisplacements = new NodeDisplacementCache(result);
     }
 
     public override string ToString() {
