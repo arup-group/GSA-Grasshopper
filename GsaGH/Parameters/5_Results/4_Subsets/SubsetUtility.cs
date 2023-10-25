@@ -132,7 +132,7 @@ namespace GsaGH.Parameters.Results {
 
     private static (int Max, int Min) PermExtrema<T, U>(
     Collection<T> collection, Func<T, U> sortFunction)
-    where T : IResultQuantitySet
+    where T : IResultItem
     where U : IQuantity {
       IOrderedEnumerable<T> sorted = collection.OrderBy(sortFunction);
       int max = collection.IndexOf(sorted.Last());

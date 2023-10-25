@@ -10,7 +10,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void GsaDisplacementQuantityConstructorTest() {
       var apiResult = new Double6(1.1, 2.2, 3.3, 4.4, 5.5, 6.6);
-      var displacementQuantity = new GsaDisplacementQuantity(apiResult);
+      var displacementQuantity = new Displacement(apiResult);
       Assert.Equal(apiResult.X, displacementQuantity.X.Meters);
       Assert.Equal(apiResult.Y, displacementQuantity.Y.Meters);
       Assert.Equal(apiResult.Z, displacementQuantity.Z.Meters);
@@ -29,7 +29,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void GsaDisplacementQuantityAngleNanTest() {
       var apiResult = new Double6(1.1, 2.2, 3.3, double.NaN, double.NaN, double.NaN);
-      var displacementQuantity = new GsaDisplacementQuantity(apiResult);
+      var displacementQuantity = new Displacement(apiResult);
       
       Assert.Equal(Angle.Zero, displacementQuantity.Xx);
       Assert.Equal(Angle.Zero, displacementQuantity.Yy);
@@ -40,7 +40,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void GsaDisplacementQuantityAngleInfinityTest() {
       var apiResult = new Double6(1.1, 2.2, 3.3, double.PositiveInfinity, double.NegativeInfinity, double.NaN);
-      var displacementQuantity = new GsaDisplacementQuantity(apiResult);
+      var displacementQuantity = new Displacement(apiResult);
 
       Assert.Equal(360, displacementQuantity.Xx.Degrees);
       Assert.Equal(-360, displacementQuantity.Yy.Degrees);

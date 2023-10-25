@@ -4,7 +4,7 @@ using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters.Results {
-  public class GsaDisplacementQuantity : IDisplacement {
+  public class Displacement : IDisplacement {
     public Length X { get; internal set; }
     public Length Xyz { get; internal set; }
     public Length Y { get; internal set; }
@@ -14,7 +14,7 @@ namespace GsaGH.Parameters.Results {
     public Angle Yy { get; internal set; }
     public Angle Zz { get; internal set; }
 
-    public GsaDisplacementQuantity(
+    public Displacement(
       Length x, Length y, Length z, Length xyz, Angle xx, Angle yy, Angle zz, Angle xxyyzz) {
       X = x;
       Y = y; 
@@ -26,7 +26,7 @@ namespace GsaGH.Parameters.Results {
       Xxyyzz = xxyyzz;
     }
 
-    internal GsaDisplacementQuantity(Double6 result) {
+    internal Displacement(Double6 result) {
       X = new Length(result.X, LengthUnit.Meter);
       Y = new Length(result.Y, LengthUnit.Meter);
       Z = new Length(result.Z, LengthUnit.Meter);
