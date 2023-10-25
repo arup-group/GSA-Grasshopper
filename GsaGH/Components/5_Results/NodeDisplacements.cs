@@ -126,13 +126,13 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-        IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+        INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
         };
         if (permutations.Count == 1 && permutations[0] == -1) {
-          permutations = Enumerable.Range(1, resultSet.Results.Values.First().Count).ToList();
+          permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
         }
 
         var outTransX = new DataTree<GH_UnitNumber>();
@@ -145,7 +145,7 @@ namespace GsaGH.Components {
         var outRotXyz = new DataTree<GH_UnitNumber>();
         var outIDs = new DataTree<int>();
 
-        Parallel.ForEach(resultSet.Results, kvp => {
+        Parallel.ForEach(resultSet.Subset, kvp => {
           foreach (int p in permutations) {
             var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p);
             outTransX.Add(new GH_UnitNumber(kvp.Value[p - 1].X.ToUnit(_lengthUnit)), path);

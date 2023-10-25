@@ -8,7 +8,7 @@ namespace GsaGH.Parameters.Results {
 
   public class GsaResult2 : IGsaResult {
     // Caches
-    internal INodeResultCache<IDisplacement> NodeDisplacements { get; set; }
+    public INodeResultCache<IDisplacement> NodeDisplacements { get; private set; }
 
     // Other members
     public int CaseId { get; set; }

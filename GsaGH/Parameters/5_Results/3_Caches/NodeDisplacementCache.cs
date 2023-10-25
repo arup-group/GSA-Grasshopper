@@ -19,7 +19,7 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public IResultSubset<IDisplacement> ResultSubset(ICollection<int> nodeIds) {
+    public INodeResultSubset<IDisplacement> ResultSubset(ICollection<int> nodeIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(nodeIds);
       if (missingIds.Count > 0) {
         string nodelist = string.Join(" ", missingIds);

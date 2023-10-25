@@ -20,7 +20,7 @@ namespace GsaGHTests.Parameters.Results {
       var model = new GsaModel(apiModel);
       ReadOnlyDictionary<int, CombinationCaseResult> combinationCaseResults = model.Model.CombinationCaseResults();
       if (permutations == null) {
-        permutations = new List<int>() { 1 };
+        permutations = new List<int>() { 1, 2 };
       }
 
       return new GsaResult2(model, combinationCaseResults[caseId], caseId, permutations);

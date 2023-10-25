@@ -29,7 +29,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert node IDs
       var expectedIds = result.Model.Model.Nodes(NodeList).Keys.ToList();
@@ -43,7 +43,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert node IDs
       var expectedIds = result.Model.Model.Nodes(NodeList).Keys.ToList();
@@ -66,10 +66,10 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
-      double max = ResultsHelper(resultSet.Max, component);
+      double max = ResultsHelper(resultSet, component, true);
       Assert.Equal(expected, max);
     }
 
@@ -91,10 +91,10 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
-      double max = ResultsHelper(resultSet.Max, component);
+      double max = ResultsHelper(resultSet, component, true);
       Assert.Equal(expected, max);
     }
 
@@ -114,10 +114,10 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
-      double min = ResultsHelper(resultSet.Min, component);
+      double min = ResultsHelper(resultSet, component, false);
       Assert.Equal(expected, min);
     }
 
@@ -139,10 +139,10 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
-      double min = ResultsHelper(resultSet.Min, component);
+      double min = ResultsHelper(resultSet, component, false);
       Assert.Equal(expected, min);
     }
 
@@ -162,12 +162,12 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        var displacementQuantity = (Collection<IDisplacement>)resultSet.Results[id];
+        Collection<IDisplacement> displacementQuantity = resultSet.Subset[id];
         
         // for analysis case results we expect only one value in the collection
         Assert.Single(displacementQuantity);
@@ -194,12 +194,12 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      IResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        var displacementQuantity = (Collection<IDisplacement>)resultSet.Results[id];
+        var displacementQuantity = (Collection<IDisplacement>)resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, displacementQuantity.Count);
@@ -296,6 +296,46 @@ namespace GsaGHTests.Parameters.Results {
           return NodeDisplacementsC4p2.XxyyzzInRadian();
       }
       throw new NotImplementedException();
+    }
+
+    private double ResultsHelper(INodeResultSubset<IDisplacement> result, GsaNodeDisplacementComponent component, bool max) {
+      double d = 0;
+      var extrema = (ExtremaSextet)(max ? result.Max : result.Min);
+      switch (component) {
+        case GsaNodeDisplacementComponent.X:
+          d = result.Subset[extrema.X.Id][extrema.X.Permutation].X.Millimeters;
+          break;
+
+        case GsaNodeDisplacementComponent.Y:
+          d = result.Subset[extrema.Y.Id][extrema.Y.Permutation].Y.Millimeters;
+          break;
+
+        case GsaNodeDisplacementComponent.Z:
+          d = result.Subset[extrema.Z.Id][extrema.Z.Permutation].Z.Millimeters;
+          break;
+
+        case GsaNodeDisplacementComponent.Xyz:
+          d = result.Subset[extrema.Xyz.Id][extrema.Xyz.Permutation].Xyz.Millimeters;
+          break;
+
+        case GsaNodeDisplacementComponent.Xx:
+          d = result.Subset[extrema.Xx.Id][extrema.Xx.Permutation].Xx.Radians;
+          break;
+
+        case GsaNodeDisplacementComponent.Yy:
+          d = result.Subset[extrema.Yy.Id][extrema.Yy.Permutation].Yy.Radians;
+          break;
+
+        case GsaNodeDisplacementComponent.Zz:
+          d = result.Subset[extrema.Zz.Id][extrema.Zz.Permutation].Zz.Radians;
+          break;
+
+        case GsaNodeDisplacementComponent.Xxyyzz:
+          d = result.Subset[extrema.Xxyyzz.Id][extrema.Xxyyzz.Permutation].Xxyyzz.Radians;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
     private double ResultsHelper(IDisplacement result, GsaNodeDisplacementComponent component) {
