@@ -1,17 +1,18 @@
 ﻿using OasysUnits;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace GsaGH.Parameters.Results {
-  public static class SubsetUtility {
-    public static (ExtremaSextet Max, ExtremaSextet Min) Extrema(
-      this ConcurrentDictionary<int, Collection<IDisplacement>> subset) {
+  public static class NodeExtremaVector6Utility {
+    public static (NodeExtremaVector6 Max, NodeExtremaVector6 Min) Extrema<T, Q1, Q2>(
+      this ConcurrentDictionary<int, Collection<T>> subset)
+      where T : IResultVector6<Q1, Q2>
+      where Q1 : IQuantity where Q2 : IQuantity {
       if (subset.First().Value.Count > 1) {
-        return ExtremaWithPermutations(subset);
+        return ExtremaWithPermutations<T, Q1, Q2>(subset);
       }
 
       int maxXId = subset.OrderBy(kvp => kvp.Value[0].X).Last().Key;
@@ -23,15 +24,15 @@ namespace GsaGH.Parameters.Results {
       int maxZzId = subset.OrderBy(kvp => kvp.Value[0].Zz).Last().Key;
       int maxXxyyzzId = subset.OrderBy(kvp => kvp.Value[0].Xxyyzz).Last().Key;
 
-      var max = new ExtremaSextet() {
-        X = (maxXId, 0),
-        Y = (maxYId, 0),
-        Z = (maxZId, 0),
-        Xyz = (maxXyzId, 0),
-        Xx = (maxXxId, 0),
-        Yy = (maxYyId, 0),
-        Zz = (maxZzId, 0),
-        Xxyyzz = (maxXxyyzzId, 0)
+      var max = new NodeExtremaVector6() {
+        X = new NodeExtremaKey(maxXId),
+        Y = new NodeExtremaKey(maxYId),
+        Z = new NodeExtremaKey(maxZId),
+        Xyz = new NodeExtremaKey(maxXyzId),
+        Xx = new NodeExtremaKey(maxXxId),
+        Yy = new NodeExtremaKey(maxYyId),
+        Zz = new NodeExtremaKey(maxZzId),
+        Xxyyzz = new NodeExtremaKey(maxXxyyzzId, 0)
       };
 
       int minXId = subset.OrderBy(kvp => kvp.Value[0].X).First().Key;
@@ -43,23 +44,25 @@ namespace GsaGH.Parameters.Results {
       int minZzId = subset.OrderBy(kvp => kvp.Value[0].Zz).First().Key;
       int minXxyyzzId = subset.OrderBy(kvp => kvp.Value[0].Xxyyzz).First().Key;
 
-      var min = new ExtremaSextet() {
-        X = (minXId, 0),
-        Y = (minYId, 0),
-        Z = (minZId, 0),
-        Xyz = (minXyzId, 0),
-        Xx = (minXxId, 0),
-        Yy = (minYyId, 0),
-        Zz = (minZzId, 0),
-        Xxyyzz = (minXxyyzzId, 0)
+      var min = new NodeExtremaVector6() {
+        X = new NodeExtremaKey(minXId),
+        Y = new NodeExtremaKey(minYId),
+        Z = new NodeExtremaKey(minZId),
+        Xyz = new NodeExtremaKey(minXyzId),
+        Xx = new NodeExtremaKey(minXxId),
+        Yy = new NodeExtremaKey(minYyId),
+        Zz = new NodeExtremaKey(minZzId),
+        Xxyyzz = new NodeExtremaKey(minXxyyzzId)
       };
 
       return (max, min);
     }
 
 
-    private static (ExtremaSextet Max, ExtremaSextet Min) ExtremaWithPermutations(
-      this ConcurrentDictionary<int, Collection<IDisplacement>> subset) {
+    internal static (NodeExtremaVector6 Max, NodeExtremaVector6 Min) ExtremaWithPermutations<T, Q1, Q2>(
+      this ConcurrentDictionary<int, Collection<T>> subset)
+      where T : IResultVector6<Q1, Q2>
+      where Q1 : IQuantity where Q2 : IQuantity {
       var permIdsX = new ConcurrentDictionary<int, (int Max, int Min)>();
       var permIdsY = new ConcurrentDictionary<int, (int Max, int Min)>();
       var permIdsZ = new ConcurrentDictionary<int, (int Max, int Min)>();
@@ -70,14 +73,14 @@ namespace GsaGH.Parameters.Results {
       var permIdsXxyyzz = new ConcurrentDictionary<int, (int Max, int Min)>();
 
       Parallel.ForEach(subset, kvp => {
-        permIdsX.TryAdd(kvp.Key, PermExtrema(kvp.Value, new Func<IDisplacement, Length>(x => x.X)));
-        permIdsY.TryAdd(kvp.Key, PermExtrema(kvp.Value, new Func<IDisplacement, Length>(x => x.Y)));
-        permIdsZ.TryAdd(kvp.Key, PermExtrema(kvp.Value, new Func<IDisplacement, Length>(x => x.Z)));
-        permIdsXyz.TryAdd(kvp.Key, PermExtrema(kvp.Value, new Func<IDisplacement, Length>(x => x.Xyz)));
-        permIdsXx.TryAdd(kvp.Key, PermExtrema(kvp.Value, new Func<IDisplacement, Angle>(x => x.Xx)));
-        permIdsYy.TryAdd(kvp.Key, PermExtrema(kvp.Value, new Func<IDisplacement, Angle>(x => x.Yy)));
-        permIdsZz.TryAdd(kvp.Key, PermExtrema(kvp.Value, new Func<IDisplacement, Angle>(x => x.Zz)));
-        permIdsXxyyzz.TryAdd(kvp.Key, PermExtrema(kvp.Value, new Func<IDisplacement, Angle>(x => x.Xxyyzz)));
+        permIdsX.TryAdd(kvp.Key, ExtremaUtility.PermExtrema(kvp.Value, new Func<T, Q1>(x => x.X)));
+        permIdsY.TryAdd(kvp.Key, ExtremaUtility.PermExtrema(kvp.Value, new Func<T, Q1>(x => x.Y)));
+        permIdsZ.TryAdd(kvp.Key, ExtremaUtility.PermExtrema(kvp.Value, new Func<T, Q1>(x => x.Z)));
+        permIdsXyz.TryAdd(kvp.Key, ExtremaUtility.PermExtrema(kvp.Value, new Func<T, Q1>(x => x.Xyz)));
+        permIdsXx.TryAdd(kvp.Key, ExtremaUtility.PermExtrema(kvp.Value, new Func<T, Q2>(x => x.Xx)));
+        permIdsYy.TryAdd(kvp.Key, ExtremaUtility.PermExtrema(kvp.Value, new Func<T, Q2>(x => x.Yy)));
+        permIdsZz.TryAdd(kvp.Key, ExtremaUtility.PermExtrema(kvp.Value, new Func<T, Q2>(x => x.Zz)));
+        permIdsXxyyzz.TryAdd(kvp.Key, ExtremaUtility.PermExtrema(kvp.Value, new Func<T, Q2>(x => x.Xxyyzz)));
       });
 
       int maxXId = subset.OrderBy(kvp => kvp.Value[permIdsX[kvp.Key].Max].X).Last().Key;
@@ -89,15 +92,15 @@ namespace GsaGH.Parameters.Results {
       int maxZzId = subset.OrderBy(kvp => kvp.Value[permIdsZz[kvp.Key].Max].Zz).Last().Key;
       int maxXxyyzzId = subset.OrderBy(kvp => kvp.Value[permIdsXxyyzz[kvp.Key].Max].Xxyyzz).Last().Key;
 
-      var max = new ExtremaSextet() {
-        X = (maxXId, permIdsX[maxXId].Max),
-        Y = (maxYId, permIdsY[maxYId].Max),
-        Z = (maxZId, permIdsZ[maxZId].Max),
-        Xyz = (maxXyzId, permIdsXyz[maxXyzId].Max),
-        Xx = (maxXxId, permIdsXx[maxXxId].Max),
-        Yy = (maxYyId, permIdsYy[maxYyId].Max),
-        Zz = (maxZzId, permIdsZz[maxZzId].Max),
-        Xxyyzz = (maxXxyyzzId, permIdsXyz[maxXyzId].Max)
+      var max = new NodeExtremaVector6() {
+        X = new NodeExtremaKey(maxXId, permIdsX[maxXId].Max),
+        Y = new NodeExtremaKey(maxYId, permIdsY[maxYId].Max),
+        Z = new NodeExtremaKey(maxZId, permIdsZ[maxZId].Max),
+        Xyz = new NodeExtremaKey(maxXyzId, permIdsXyz[maxXyzId].Max),
+        Xx = new NodeExtremaKey(maxXxId, permIdsXx[maxXxId].Max),
+        Yy = new NodeExtremaKey(maxYyId, permIdsYy[maxYyId].Max),
+        Zz = new NodeExtremaKey(maxZzId, permIdsZz[maxZzId].Max),
+        Xxyyzz = new NodeExtremaKey(maxXxyyzzId, permIdsXyz[maxXyzId].Max)
       };
 
       int minXId = subset.OrderBy(kvp => kvp.Value[permIdsX[kvp.Key].Min].X).First().Key;
@@ -109,34 +112,17 @@ namespace GsaGH.Parameters.Results {
       int minZzId = subset.OrderBy(kvp => kvp.Value[permIdsZz[kvp.Key].Min].Zz).First().Key;
       int minXxyyzzId = subset.OrderBy(kvp => kvp.Value[permIdsXxyyzz[kvp.Key].Min].Xxyyzz).First().Key;
 
-      var min = new ExtremaSextet() {
-        X = (minXId, permIdsX[minXId].Min),
-        Y = (minYId, permIdsY[minYId].Min),
-        Z = (minZId, permIdsZ[minZId].Min),
-        Xyz = (minXyzId, permIdsXyz[minXyzId].Min),
-        Xx = (minXxId, permIdsXx[minXxId].Min),
-        Yy = (minYyId, permIdsYy[minYyId].Min),
-        Zz = (minZzId, permIdsZz[minZzId].Min),
-        Xxyyzz = (minXxyyzzId, permIdsXxyyzz[minXxyyzzId].Min)
+      var min = new NodeExtremaVector6() {
+        X = new NodeExtremaKey(minXId, permIdsX[minXId].Min),
+        Y = new NodeExtremaKey(minYId, permIdsY[minYId].Min),
+        Z = new NodeExtremaKey(minZId, permIdsZ[minZId].Min),
+        Xyz = new NodeExtremaKey(minXyzId, permIdsXyz[minXyzId].Min),
+        Xx = new NodeExtremaKey(minXxId, permIdsXx[minXxId].Min),
+        Yy = new NodeExtremaKey(minYyId, permIdsYy[minYyId].Min),
+        Zz = new NodeExtremaKey(minZzId, permIdsZz[minZzId].Min),
+        Xxyyzz = new NodeExtremaKey(minXxyyzzId, permIdsXxyyzz[minXxyyzzId].Min)
       };
 
-      return (max, min);
-    }
-
-    private static ConcurrentDictionary<int, (int Max, int Min)> PermExtremaDictionary
-      (ICollection<int> ids) {
-      var dict = new ConcurrentDictionary<int, (int Max, int Min)>();
-      Parallel.ForEach(ids, id => dict.TryAdd(id, (0, 0)));
-      return dict;
-    }
-
-    private static (int Max, int Min) PermExtrema<T, U>(
-    Collection<T> collection, Func<T, U> sortFunction)
-    where T : IResultItem
-    where U : IQuantity {
-      IOrderedEnumerable<T> sorted = collection.OrderBy(sortFunction);
-      int max = collection.IndexOf(sorted.Last());
-      int min = collection.IndexOf(sorted.First());
       return (max, min);
     }
   }

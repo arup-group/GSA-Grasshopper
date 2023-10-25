@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using OasysUnits;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace GsaGH.Parameters.Results {
     public NodeDisplacements(ConcurrentDictionary<int, Collection<IDisplacement>> results) {
       Subset = results;
       Ids = results.Keys.ToList();
-      (Max, Min) = results.Extrema();
+      (Max, Min) = results.Extrema<IDisplacement, Length, Angle>();
     }
   }
 }

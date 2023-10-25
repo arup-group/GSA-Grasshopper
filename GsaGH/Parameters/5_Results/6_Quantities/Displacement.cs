@@ -6,25 +6,13 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Parameters.Results {
   public class Displacement : IDisplacement {
     public Length X { get; internal set; }
-    public Length Xyz { get; internal set; }
     public Length Y { get; internal set; }
     public Length Z { get; internal set; }
+    public Length Xyz { get; internal set; }
     public Angle Xx { get; internal set; }
-    public Angle Xxyyzz { get; internal set; }
     public Angle Yy { get; internal set; }
     public Angle Zz { get; internal set; }
-
-    public Displacement(
-      Length x, Length y, Length z, Length xyz, Angle xx, Angle yy, Angle zz, Angle xxyyzz) {
-      X = x;
-      Y = y; 
-      Z = z;
-      Xyz = xyz;
-      Xx = xx;
-      Yy = yy;
-      Zz = zz;
-      Xxyyzz = xxyyzz;
-    }
+    public Angle Xxyyzz { get; internal set; }
 
     internal Displacement(Double6 result) {
       X = new Length(result.X, LengthUnit.Meter);

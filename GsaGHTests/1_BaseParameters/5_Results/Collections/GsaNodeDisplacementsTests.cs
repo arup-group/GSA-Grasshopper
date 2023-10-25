@@ -300,7 +300,7 @@ namespace GsaGHTests.Parameters.Results {
 
     private double ResultsHelper(INodeResultSubset<IDisplacement> result, GsaNodeDisplacementComponent component, bool max) {
       double d = 0;
-      var extrema = (ExtremaSextet)(max ? result.Max : result.Min);
+      var extrema = (NodeExtremaVector6)(max ? result.Max : result.Min);
       switch (component) {
         case GsaNodeDisplacementComponent.X:
           d = result.Subset[extrema.X.Id][extrema.X.Permutation].X.Millimeters;
