@@ -8,14 +8,14 @@ namespace GsaGH.Parameters.Results {
 
   public class GsaResult2 : IGsaResult {
     // Caches
-    public INodeResultCache<IDisplacement, NodeExtremaVector6> NodeDisplacements { get; private set; }
-
-    // Other members
-    public int CaseId { get; set; }
-    public string CaseName { get; set; }
-    public GsaModel Model { get; set; }
-    public List<int> SelectedPermutationIds { get; set; }
-    public CaseType CaseType { get; set; }
+    public INodeResultCache<IDisplacement, NodeExtremaVector6> NodeDisplacements {
+      get;
+      private set;
+    }
+    public INodeResultCache<IInternalForce, NodeExtremaVector6> NodeReactionForces {
+      get;
+      private set;
+    }
 
     // temp conversion from old class
     internal GsaResult2(GsaResult result) {
@@ -33,7 +33,7 @@ namespace GsaGH.Parameters.Results {
           break;
       }
     }
-    
+
     internal GsaResult2(GsaModel model, AnalysisCaseResult result, int caseId) {
       Model = model;
       CaseType = CaseType.AnalysisCase;
@@ -50,6 +50,13 @@ namespace GsaGH.Parameters.Results {
       SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
       NodeDisplacements = new NodeDisplacementCache(result);
     }
+
+    // Other members
+    public int CaseId { get; set; }
+    public string CaseName { get; set; }
+    public GsaModel Model { get; set; }
+    public List<int> SelectedPermutationIds { get; set; }
+    public CaseType CaseType { get; set; }
 
     public override string ToString() {
       string txt = string.Empty;
@@ -75,7 +82,7 @@ namespace GsaGH.Parameters.Results {
       var entityList = new EntityList() {
         Definition = nodeList,
         Type = GsaAPI.EntityType.Node,
-        Name = "node"
+        Name = "node",
       };
       return Model.Model.ExpandList(entityList);
     }
@@ -84,7 +91,7 @@ namespace GsaGH.Parameters.Results {
       var entityList = new EntityList() {
         Definition = elementList,
         Type = GsaAPI.EntityType.Element,
-        Name = "elem"
+        Name = "elem",
       };
       return Model.Model.ExpandList(entityList);
     }
@@ -93,7 +100,7 @@ namespace GsaGH.Parameters.Results {
       var entityList = new EntityList() {
         Definition = memberList,
         Type = GsaAPI.EntityType.Member,
-        Name = "mem"
+        Name = "mem",
       };
       return Model.Model.ExpandList(entityList);
     }
