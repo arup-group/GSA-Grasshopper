@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class NodeDisplacementCache : INodeResultCache<IDisplacement> {
+  public class NodeDisplacementCache : INodeResultCache<IDisplacement, NodeExtremaVector6> {
     public IApiResult ApiResult { get; set; }
 
     public ConcurrentDictionary<int, Collection<IDisplacement>> Cache { get; }
@@ -19,7 +19,7 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public INodeResultSubset<IDisplacement> ResultSubset(ICollection<int> nodeIds) {
+    public INodeResultSubset<IDisplacement, NodeExtremaVector6> ResultSubset(ICollection<int> nodeIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(nodeIds);
       if (missingIds.Count > 0) {
         string nodelist = string.Join(" ", missingIds);

@@ -29,7 +29,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement, NodeExtremaVector6> resultSet = 
+        result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert node IDs
       var expectedIds = result.Model.Model.Nodes(NodeList).Keys.ToList();
@@ -43,7 +44,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement, NodeExtremaVector6> resultSet = 
+        result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert node IDs
       var expectedIds = result.Model.Model.Nodes(NodeList).Keys.ToList();
@@ -66,7 +68,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement, NodeExtremaVector6> resultSet = 
+        result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
       double max = ResultsHelper(resultSet, component, true);
@@ -91,7 +94,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement, NodeExtremaVector6> resultSet = 
+        result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
       double max = ResultsHelper(resultSet, component, true);
@@ -114,7 +118,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement, NodeExtremaVector6> resultSet = 
+        result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
       double min = ResultsHelper(resultSet, component, false);
@@ -139,7 +144,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement, NodeExtremaVector6> resultSet = 
+        result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
       double min = ResultsHelper(resultSet, component, false);
@@ -162,7 +168,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement, NodeExtremaVector6> resultSet = 
+        result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert result values
       int i = 0;
@@ -194,7 +201,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IDisplacement> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
+      INodeResultSubset<IDisplacement, NodeExtremaVector6> resultSet = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert result values
       int i = 0;
@@ -298,40 +305,40 @@ namespace GsaGHTests.Parameters.Results {
       throw new NotImplementedException();
     }
 
-    private double ResultsHelper(INodeResultSubset<IDisplacement> result, GsaNodeDisplacementComponent component, bool max) {
+    private double ResultsHelper(INodeResultSubset<IDisplacement, NodeExtremaVector6> result, GsaNodeDisplacementComponent component, bool max) {
       double d = 0;
-      var extrema = (NodeExtremaVector6)(max ? result.Max : result.Min);
+      NodeExtremaVector6 extrema = max ? result.Max : result.Min;
       switch (component) {
         case GsaNodeDisplacementComponent.X:
-          d = result.Subset[extrema.X.Id][extrema.X.Permutation].X.Millimeters;
+          d = result.GetExtrema(extrema.X).X.Millimeters;
           break;
 
         case GsaNodeDisplacementComponent.Y:
-          d = result.Subset[extrema.Y.Id][extrema.Y.Permutation].Y.Millimeters;
+          d = result.GetExtrema(extrema.Y).Y.Millimeters;
           break;
 
         case GsaNodeDisplacementComponent.Z:
-          d = result.Subset[extrema.Z.Id][extrema.Z.Permutation].Z.Millimeters;
+          d = result.GetExtrema(extrema.Z).Z.Millimeters;
           break;
 
         case GsaNodeDisplacementComponent.Xyz:
-          d = result.Subset[extrema.Xyz.Id][extrema.Xyz.Permutation].Xyz.Millimeters;
+          d = result.GetExtrema(extrema.Xyz).Xyz.Millimeters;
           break;
 
         case GsaNodeDisplacementComponent.Xx:
-          d = result.Subset[extrema.Xx.Id][extrema.Xx.Permutation].Xx.Radians;
+          d = result.GetExtrema(extrema.Xx).Xx.Radians;
           break;
 
         case GsaNodeDisplacementComponent.Yy:
-          d = result.Subset[extrema.Yy.Id][extrema.Yy.Permutation].Yy.Radians;
+          d = result.GetExtrema(extrema.Yy).Yy.Radians;
           break;
 
         case GsaNodeDisplacementComponent.Zz:
-          d = result.Subset[extrema.Zz.Id][extrema.Zz.Permutation].Zz.Radians;
+          d = result.GetExtrema(extrema.Zz).Zz.Radians;
           break;
 
         case GsaNodeDisplacementComponent.Xxyyzz:
-          d = result.Subset[extrema.Xxyyzz.Id][extrema.Xxyyzz.Permutation].Xxyyzz.Radians;
+          d = result.GetExtrema(extrema.Xxyyzz).Xxyyzz.Radians;
           break;
       }
 
