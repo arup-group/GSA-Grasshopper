@@ -6,9 +6,9 @@ using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
-  public partial class GsaDisplacementQuantityTests {
+  public partial class DisplacementQuantityTests {
     [Fact]
-    public void GsaDisplacementQuantityConstructorTest() {
+    public void DisplacementQuantityConstructorTest() {
       var apiResult = new Double6(1.1, 2.2, 3.3, 4.4, 5.5, 6.6);
       var displacementQuantity = new Displacement(apiResult);
       Assert.Equal(apiResult.X, displacementQuantity.X.Meters);
@@ -27,7 +27,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Fact]
-    public void GsaDisplacementQuantityAngleNanTest() {
+    public void DisplacementQuantityAngleNanTest() {
       var apiResult = new Double6(1.1, 2.2, 3.3, double.NaN, double.NaN, double.NaN);
       var displacementQuantity = new Displacement(apiResult);
       
@@ -38,7 +38,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Fact]
-    public void GsaDisplacementQuantityAngleInfinityTest() {
+    public void DisplacementQuantityAngleInfinityTest() {
       var apiResult = new Double6(1.1, 2.2, 3.3, double.PositiveInfinity, double.NegativeInfinity, double.NaN);
       var displacementQuantity = new Displacement(apiResult);
 
