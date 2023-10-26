@@ -149,10 +149,9 @@ namespace GsaGH.Components {
         var outRotZ = new DataTree<GH_UnitNumber>();
         var outRotXyz = new DataTree<GH_UnitNumber>();
         var outIDs = new DataTree<int>();
-        
 
         if (_selectedItems[0] == ExtremaOptions.Vector6[0]) {
-          Parallel.ForEach(resultSet.Subset, kvp => {
+          foreach(KeyValuePair<int, Collection<IDisplacement>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p);
               outTransX.Add(new GH_UnitNumber(kvp.Value[p - 1].X.ToUnit(_lengthUnit)), path);
@@ -165,7 +164,7 @@ namespace GsaGH.Components {
               outRotXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].Xxyyzz), path);
               outIDs.Add(kvp.Key, path);
             }
-          });
+          }
         } else {
           NodeExtremaKey key = ExtremaOptions.NodeExtremaKey(resultSet, _selectedItems[0]);
           IDisplacement extrema = resultSet.GetExtrema(key);
