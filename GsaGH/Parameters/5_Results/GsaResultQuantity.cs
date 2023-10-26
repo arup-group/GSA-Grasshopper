@@ -1,7 +1,7 @@
 ﻿using OasysUnits;
 
 namespace GsaGH.Parameters {
-  internal class GsaResultQuantity {
+  public class GsaResultQuantity {
     internal IQuantity X { get; set; }
     internal IQuantity Xyz { get; set; }
     internal IQuantity Y { get; set; }

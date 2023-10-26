@@ -56,12 +56,12 @@ namespace GsaGH.Helpers.GsaApi {
           xxyyzzRes.AsParallel().AsOrdered();
 
           Parallel.For(0, values.Count, i => {
-            if (!double.IsNaN(values[i].X) && !double.IsNaN(values[i].Y) 
+            if (!double.IsNaN(values[i].X) && !double.IsNaN(values[i].Y)
             && !double.IsNaN(values[i].Z)) {
               xyzRes.TryAdd(i, GetQuantityResult(values[i], forceUnit, true));
             }
 
-            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY) 
+            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY)
             && !double.IsNaN(values[i].ZZ)) {
               xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], momentUnit, true));
             }
@@ -168,12 +168,12 @@ namespace GsaGH.Helpers.GsaApi {
           xxyyzzRes.AsParallel().AsOrdered();
 
           Parallel.For(0, values.Count, i => {
-            if (!double.IsNaN(values[i].X) && !double.IsNaN(values[i].Y) 
+            if (!double.IsNaN(values[i].X) && !double.IsNaN(values[i].Y)
             && !double.IsNaN(values[i].Z)) {
               xyzRes.TryAdd(i, GetQuantityResult(values[i], resultLengthUnit));
             }
 
-            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY) 
+            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY)
             && !double.IsNaN(values[i].ZZ)) {
               xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], AngleUnit.Radian));
             }
@@ -227,22 +227,22 @@ namespace GsaGH.Helpers.GsaApi {
           xxyyzzRes.AsParallel().AsOrdered();
 
           Parallel.For(1, values.Count, i => {
-            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY) 
+            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY)
             && !double.IsNaN(values[i].ZZ)) {
               xyzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit));
             }
 
-            if (!double.IsNaN(values[i].XY) && !double.IsNaN(values[i].YZ) 
+            if (!double.IsNaN(values[i].XY) && !double.IsNaN(values[i].YZ)
             && !double.IsNaN(values[i].ZX)) {
               xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
             }
           });
-          if (!double.IsNaN(values[0].XX) && !double.IsNaN(values[0].YY) 
+          if (!double.IsNaN(values[0].XX) && !double.IsNaN(values[0].YY)
           && !double.IsNaN(values[0].ZZ)) {
             xyzRes.TryAdd(values.Count, GetQuantityResult(values[0], stressUnit)); // add centre point last
           }
 
-          if (!double.IsNaN(values[0].XY) && !double.IsNaN(values[0].YZ) 
+          if (!double.IsNaN(values[0].XY) && !double.IsNaN(values[0].YZ)
           && !double.IsNaN(values[0].ZX)) {
             xxyyzzRes.TryAdd(values.Count, GetQuantityResult(values[0], stressUnit, true));
           }
@@ -301,7 +301,7 @@ namespace GsaGH.Helpers.GsaApi {
 
           if (!double.IsNaN(values[0].X) && !double.IsNaN(values[0].Y)) {
             // add centre point last
-            xyzRes.TryAdd(values.Count, GetQuantityResult(values[0], forceUnit)); 
+            xyzRes.TryAdd(values.Count, GetQuantityResult(values[0], forceUnit));
           }
 
           r.XyzResults.TryAdd(key, xyzRes);
@@ -354,24 +354,24 @@ namespace GsaGH.Helpers.GsaApi {
           xxyyzzRes.AsParallel().AsOrdered();
 
           Parallel.For(1, forceValues.Count, i => {
-            if (!double.IsNaN(forceValues[i].XX) && !double.IsNaN(forceValues[i].YY) 
+            if (!double.IsNaN(forceValues[i].XX) && !double.IsNaN(forceValues[i].YY)
             && !double.IsNaN(forceValues[i].XY)) {
               xyzRes.TryAdd(i, GetQuantityResult(forceValues[i], forceUnit));
             }
 
-            if (!double.IsNaN(momentValues[i].XX) && !double.IsNaN(momentValues[i].YY) 
+            if (!double.IsNaN(momentValues[i].XX) && !double.IsNaN(momentValues[i].YY)
             && !double.IsNaN(momentValues[i].XY)) {
               xxyyzzRes.TryAdd(i, GetQuantityResult(momentValues[i], momentUnit));
             }
           });
 
-          if (!double.IsNaN(forceValues[0].XX) && !double.IsNaN(forceValues[0].YY) 
+          if (!double.IsNaN(forceValues[0].XX) && !double.IsNaN(forceValues[0].YY)
           && !double.IsNaN(forceValues[0].XY)) {
             xyzRes.TryAdd(forceValues.Count,
               GetQuantityResult(forceValues[0], forceUnit)); // add centre point last
           }
 
-          if (!double.IsNaN(momentValues[0].XX) && !double.IsNaN(momentValues[0].YY) 
+          if (!double.IsNaN(momentValues[0].XX) && !double.IsNaN(momentValues[0].YY)
           && !double.IsNaN(momentValues[0].XY)) {
             xxyyzzRes.TryAdd(forceValues.Count, GetQuantityResult(momentValues[0], momentUnit));
           }
@@ -437,7 +437,7 @@ namespace GsaGH.Helpers.GsaApi {
               xyzRes.TryAdd(i, GetQuantityResult(values[i], resultLengthUnit));
             }
 
-            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY) 
+            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY)
             && !double.IsNaN(values[i].ZZ)) {
               xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], AngleUnit.Radian));
             }
@@ -492,12 +492,12 @@ namespace GsaGH.Helpers.GsaApi {
           xyzRes.AsParallel().AsOrdered();
 
           Parallel.For(1, values.Count, i => {
-            if (!double.IsNaN(values[i].X) && !double.IsNaN(values[i].Y) 
+            if (!double.IsNaN(values[i].X) && !double.IsNaN(values[i].Y)
                 && !double.IsNaN(values[i].Z)) {
               xyzRes.TryAdd(i, GetQuantityResult(values[i], lengthUnit));
             }
           });
-          if (!double.IsNaN(values[0].X) && !double.IsNaN(values[0].Y) 
+          if (!double.IsNaN(values[0].X) && !double.IsNaN(values[0].Y)
               && !double.IsNaN(values[0].Z)) {
             xyzRes[values.Count] = GetQuantityResult(values[0], lengthUnit); // add centre point at the end
           }
@@ -550,23 +550,23 @@ namespace GsaGH.Helpers.GsaApi {
           xxyyzzRes.AsParallel().AsOrdered();
 
           Parallel.For(1, values.Count, i => {
-            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY) 
+            if (!double.IsNaN(values[i].XX) && !double.IsNaN(values[i].YY)
             && !double.IsNaN(values[i].ZZ)) {
               xyzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit));
             }
 
-            if (!double.IsNaN(values[i].XY) && !double.IsNaN(values[i].YZ) 
+            if (!double.IsNaN(values[i].XY) && !double.IsNaN(values[i].YZ)
             && !double.IsNaN(values[i].ZX)) {
               xxyyzzRes.TryAdd(i, GetQuantityResult(values[i], stressUnit, true));
             }
           });
-          if (!double.IsNaN(values[0].XX) && !double.IsNaN(values[0].YY) 
+          if (!double.IsNaN(values[0].XX) && !double.IsNaN(values[0].YY)
           && !double.IsNaN(values[0].ZZ)) {
             // add centre point at the end
-            xyzRes[values.Count] = GetQuantityResult(values[0], stressUnit); 
+            xyzRes[values.Count] = GetQuantityResult(values[0], stressUnit);
           }
 
-          if (!double.IsNaN(values[0].XY) && !double.IsNaN(values[0].YZ) 
+          if (!double.IsNaN(values[0].XY) && !double.IsNaN(values[0].YZ)
           && !double.IsNaN(values[0].ZX)) {
             xxyyzzRes[values.Count] = GetQuantityResult(values[0], stressUnit, true);
           }

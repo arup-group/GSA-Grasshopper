@@ -53,8 +53,8 @@ namespace GsaGH.Components {
           return;
 
         case GsaResultGoo goo: {
-          result = goo.Value;
-          if (result.Type == CaseType.CombinationCase) {
+          result = (GsaResult)goo.Value;
+          if (result.CaseType == CaseType.CombinationCase) {
             this.AddRuntimeError("Footfall Result only available for Analysis Cases");
             return;
           }
@@ -74,7 +74,7 @@ namespace GsaGH.Components {
       da.SetData(0, res.DmaxX.Value);
       da.SetData(1, tra.DmaxX.Value);
 
-      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Footfall, "Max");
+      PostHog.Result(result.CaseType, 0, GsaResultsValues.ResultType.Footfall, "Max");
     }
   }
 }

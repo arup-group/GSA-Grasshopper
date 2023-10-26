@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Grasshopper;
@@ -12,6 +13,7 @@ using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -99,19 +101,8 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var result = new GsaResult();
-
+      GsaResult2 result;
       string nodeList = "All";
-
-      var outTransX = new DataTree<GH_UnitNumber>();
-      var outTransY = new DataTree<GH_UnitNumber>();
-      var outTransZ = new DataTree<GH_UnitNumber>();
-      var outTransXyz = new DataTree<GH_UnitNumber>();
-      var outRotX = new DataTree<GH_UnitNumber>();
-      var outRotY = new DataTree<GH_UnitNumber>();
-      var outRotZ = new DataTree<GH_UnitNumber>();
-      var outRotXyz = new DataTree<GH_UnitNumber>();
-      var outIDs = new DataTree<int>();
 
       var ghTypes = new List<GH_ObjectWrapper>();
       if (!da.GetDataList(0, ghTypes)) {
@@ -120,92 +111,68 @@ namespace GsaGH.Components {
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         switch (ghTyp?.Value) {
+          case GsaResultGoo goo:
+            result = new GsaResult2((GsaResult)goo.Value);
+            nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
+            break;
+
           case null:
             this.AddRuntimeWarning("Input is null");
             return;
-
-          case GsaResultGoo goo:
-            result = goo.Value;
-            nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
-            break;
 
           default:
             this.AddRuntimeError("Error converting input to GSA Result");
             return;
         }
 
-        List<GsaResultsValues> vals = result.NodeDisplacementValues(nodeList, _lengthUnit);
+        ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
+        INodeResultSubset<IDisplacement, NodeExtremaVector6> resultSet = 
+          result.NodeDisplacements.ResultSubset(nodeIds);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
         };
         if (permutations.Count == 1 && permutations[0] == -1) {
-          permutations = Enumerable.Range(1, vals.Count).ToList();
+          permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
         }
 
-        foreach (int perm in permutations) {
-          var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : perm);
+        var outTransX = new DataTree<GH_UnitNumber>();
+        var outTransY = new DataTree<GH_UnitNumber>();
+        var outTransZ = new DataTree<GH_UnitNumber>();
+        var outTransXyz = new DataTree<GH_UnitNumber>();
+        var outRotX = new DataTree<GH_UnitNumber>();
+        var outRotY = new DataTree<GH_UnitNumber>();
+        var outRotZ = new DataTree<GH_UnitNumber>();
+        var outRotXyz = new DataTree<GH_UnitNumber>();
+        var outIDs = new DataTree<int>();
 
-          var transX = new List<GH_UnitNumber>();
-          var transY = new List<GH_UnitNumber>();
-          var transZ = new List<GH_UnitNumber>();
-          var transXyz = new List<GH_UnitNumber>();
-          var rotX = new List<GH_UnitNumber>();
-          var rotY = new List<GH_UnitNumber>();
-          var rotZ = new List<GH_UnitNumber>();
-          var rotXyz = new List<GH_UnitNumber>();
+        Parallel.ForEach(resultSet.Subset, kvp => {
+          foreach (int p in permutations) {
+            var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p);
+            outTransX.Add(new GH_UnitNumber(kvp.Value[p - 1].X.ToUnit(_lengthUnit)), path);
+            outTransY.Add(new GH_UnitNumber(kvp.Value[p - 1].Y.ToUnit(_lengthUnit)), path);
+            outTransZ.Add(new GH_UnitNumber(kvp.Value[p - 1].Z.ToUnit(_lengthUnit)), path);
+            outTransXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].Xyz.ToUnit(_lengthUnit)), path);
+            outRotX.Add(new GH_UnitNumber(kvp.Value[p - 1].Xx), path);
+            outRotY.Add(new GH_UnitNumber(kvp.Value[p - 1].Yy), path);
+            outRotZ.Add(new GH_UnitNumber(kvp.Value[p - 1].Zz), path);
+            outRotXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].Xxyyzz), path);
+            outIDs.Add(kvp.Key, path);
+          }
+        });
 
-          Parallel.For(0, 2, item => // split into two tasks
-          {
-            switch (item) {
-              case 0:
-                foreach (int id in vals[perm - 1].Ids) {
-                  // there is only one result per node
-                  GsaResultQuantity values = vals[perm - 1].XyzResults[id][0];
-                  // use ToUnit to capture changes in dropdown
-                  transX.Add(new GH_UnitNumber(values.X.ToUnit(_lengthUnit)));
-                  transY.Add(new GH_UnitNumber(values.Y.ToUnit(_lengthUnit)));
-                  transZ.Add(new GH_UnitNumber(values.Z.ToUnit(_lengthUnit)));
-                  transXyz.Add(new GH_UnitNumber(values.Xyz.ToUnit(_lengthUnit)));
-                }
-                break;
+        da.SetDataTree(0, outTransX);
+        da.SetDataTree(1, outTransY);
+        da.SetDataTree(2, outTransZ);
+        da.SetDataTree(3, outTransXyz);
+        da.SetDataTree(4, outRotX);
+        da.SetDataTree(5, outRotY);
+        da.SetDataTree(6, outRotZ);
+        da.SetDataTree(7, outRotXyz);
+        da.SetDataTree(8, outIDs);
 
-              case 1:
-                foreach (int id in vals[perm - 1].Ids) {
-                  // there is only one result per node
-                  GsaResultQuantity values = vals[perm - 1].XxyyzzResults[id][0];
-                  rotX.Add(new GH_UnitNumber(values.X));
-                  rotY.Add(new GH_UnitNumber(values.Y));
-                  rotZ.Add(new GH_UnitNumber(values.Z));
-                  rotXyz.Add(new GH_UnitNumber(values.Xyz));
-                }
-                break;
-            }
-          });
-
-          outTransX.AddRange(transX, path);
-          outTransY.AddRange(transY, path);
-          outTransZ.AddRange(transZ, path);
-          outTransXyz.AddRange(transXyz, path);
-          outRotX.AddRange(rotX, path);
-          outRotY.AddRange(rotY, path);
-          outRotZ.AddRange(rotZ, path);
-          outRotXyz.AddRange(rotXyz, path);
-          outIDs.AddRange(vals[perm - 1].Ids, path);
-        }
+        PostHog.Result(result.CaseType, 0, GsaResultsValues.ResultType.Displacement);
       }
-
-      da.SetDataTree(0, outTransX);
-      da.SetDataTree(1, outTransY);
-      da.SetDataTree(2, outTransZ);
-      da.SetDataTree(3, outTransXyz);
-      da.SetDataTree(4, outRotX);
-      da.SetDataTree(5, outRotY);
-      da.SetDataTree(6, outRotZ);
-      da.SetDataTree(7, outRotXyz);
-      da.SetDataTree(8, outIDs);
-
-      PostHog.Result(result.Type, 0, GsaResultsValues.ResultType.Displacement);
     }
 
     protected override void UpdateUIFromSelectedItems() {
