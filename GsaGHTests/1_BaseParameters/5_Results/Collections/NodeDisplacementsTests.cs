@@ -10,8 +10,8 @@ using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
-  public partial class GsaNodeDisplacementsTests {
-    public enum GsaNodeDisplacementComponent {
+  public partial class NodeDisplacementsTests {
+    public enum NodeDisplacementComponent {
       X, 
       Y, 
       Z, 
@@ -23,7 +23,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Fact]
-    public void GsaNodeDisplacementsNodeIdsFromAnalysisCaseTest() {
+    public void NodeDisplacementsNodeIdsFromAnalysisCaseTest() {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
@@ -33,12 +33,12 @@ namespace GsaGHTests.Parameters.Results {
         result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert node IDs
-      var expectedIds = result.Model.Model.Nodes(NodeList).Keys.ToList();
+      var expectedIds = result.Model.Model.Nodes(NodeList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
 
     [Fact]
-    public void GsaNodeDisplacementsNodeIdsFromcombinationCaseTest() {
+    public void NodeDisplacementsNodeIdsFromcombinationCaseTest() {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
 
@@ -53,15 +53,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(GsaNodeDisplacementComponent.X)]
-    [InlineData(GsaNodeDisplacementComponent.Y)]
-    [InlineData(GsaNodeDisplacementComponent.Z)]
-    [InlineData(GsaNodeDisplacementComponent.Xyz)]
-    [InlineData(GsaNodeDisplacementComponent.Xx)]
-    [InlineData(GsaNodeDisplacementComponent.Yy)]
-    [InlineData(GsaNodeDisplacementComponent.Zz)]
-    [InlineData(GsaNodeDisplacementComponent.Xxyyzz)]
-    public void GsaNodeDisplacementsMaxFromAnalysisCaseTest(GsaNodeDisplacementComponent component) {
+    [InlineData(NodeDisplacementComponent.X)]
+    [InlineData(NodeDisplacementComponent.Y)]
+    [InlineData(NodeDisplacementComponent.Z)]
+    [InlineData(NodeDisplacementComponent.Xyz)]
+    [InlineData(NodeDisplacementComponent.Xx)]
+    [InlineData(NodeDisplacementComponent.Yy)]
+    [InlineData(NodeDisplacementComponent.Zz)]
+    [InlineData(NodeDisplacementComponent.Xxyyzz)]
+    public void NodeDisplacementsMaxFromAnalysisCaseTest(NodeDisplacementComponent component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
@@ -77,15 +77,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(GsaNodeDisplacementComponent.X)]
-    [InlineData(GsaNodeDisplacementComponent.Y)]
-    [InlineData(GsaNodeDisplacementComponent.Z)]
-    [InlineData(GsaNodeDisplacementComponent.Xyz)]
-    [InlineData(GsaNodeDisplacementComponent.Xx)]
-    [InlineData(GsaNodeDisplacementComponent.Yy)]
-    [InlineData(GsaNodeDisplacementComponent.Zz)]
-    [InlineData(GsaNodeDisplacementComponent.Xxyyzz)]
-    public void GsaNodeDisplacementsMaxFromCombinationCaseTest(GsaNodeDisplacementComponent component) {
+    [InlineData(NodeDisplacementComponent.X)]
+    [InlineData(NodeDisplacementComponent.Y)]
+    [InlineData(NodeDisplacementComponent.Z)]
+    [InlineData(NodeDisplacementComponent.Xyz)]
+    [InlineData(NodeDisplacementComponent.Xx)]
+    [InlineData(NodeDisplacementComponent.Yy)]
+    [InlineData(NodeDisplacementComponent.Zz)]
+    [InlineData(NodeDisplacementComponent.Xxyyzz)]
+    public void NodeDisplacementsMaxFromCombinationCaseTest(NodeDisplacementComponent component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Max(
@@ -103,15 +103,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(GsaNodeDisplacementComponent.X)]
-    [InlineData(GsaNodeDisplacementComponent.Y)]
-    [InlineData(GsaNodeDisplacementComponent.Z)]
-    [InlineData(GsaNodeDisplacementComponent.Xyz)]
-    [InlineData(GsaNodeDisplacementComponent.Xx)]
-    [InlineData(GsaNodeDisplacementComponent.Yy)]
-    [InlineData(GsaNodeDisplacementComponent.Zz)]
-    [InlineData(GsaNodeDisplacementComponent.Xxyyzz)]
-    public void GsaNodeDisplacementsMinFromAnalysisCaseTest(GsaNodeDisplacementComponent component) {
+    [InlineData(NodeDisplacementComponent.X)]
+    [InlineData(NodeDisplacementComponent.Y)]
+    [InlineData(NodeDisplacementComponent.Z)]
+    [InlineData(NodeDisplacementComponent.Xyz)]
+    [InlineData(NodeDisplacementComponent.Xx)]
+    [InlineData(NodeDisplacementComponent.Yy)]
+    [InlineData(NodeDisplacementComponent.Zz)]
+    [InlineData(NodeDisplacementComponent.Xxyyzz)]
+    public void NodeDisplacementsMinFromAnalysisCaseTest(NodeDisplacementComponent component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
@@ -127,15 +127,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(GsaNodeDisplacementComponent.X)]
-    [InlineData(GsaNodeDisplacementComponent.Y)]
-    [InlineData(GsaNodeDisplacementComponent.Z)]
-    [InlineData(GsaNodeDisplacementComponent.Xyz)]
-    [InlineData(GsaNodeDisplacementComponent.Xx)]
-    [InlineData(GsaNodeDisplacementComponent.Yy)]
-    [InlineData(GsaNodeDisplacementComponent.Zz)]
-    [InlineData(GsaNodeDisplacementComponent.Xxyyzz)]
-    public void GsaNodeDisplacementsMinFromcombinationCaseTest(GsaNodeDisplacementComponent component) {
+    [InlineData(NodeDisplacementComponent.X)]
+    [InlineData(NodeDisplacementComponent.Y)]
+    [InlineData(NodeDisplacementComponent.Z)]
+    [InlineData(NodeDisplacementComponent.Xyz)]
+    [InlineData(NodeDisplacementComponent.Xx)]
+    [InlineData(NodeDisplacementComponent.Yy)]
+    [InlineData(NodeDisplacementComponent.Zz)]
+    [InlineData(NodeDisplacementComponent.Xxyyzz)]
+    public void NodeDisplacementsMinFromcombinationCaseTest(NodeDisplacementComponent component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Min(
@@ -153,15 +153,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(GsaNodeDisplacementComponent.X)]
-    [InlineData(GsaNodeDisplacementComponent.Y)]
-    [InlineData(GsaNodeDisplacementComponent.Z)]
-    [InlineData(GsaNodeDisplacementComponent.Xyz)]
-    [InlineData(GsaNodeDisplacementComponent.Xx)]
-    [InlineData(GsaNodeDisplacementComponent.Yy)]
-    [InlineData(GsaNodeDisplacementComponent.Zz)]
-    [InlineData(GsaNodeDisplacementComponent.Xxyyzz)]
-    public void GsaNodeDisplacementsValuesFromAnalysisCaseTest(GsaNodeDisplacementComponent component) {
+    [InlineData(NodeDisplacementComponent.X)]
+    [InlineData(NodeDisplacementComponent.Y)]
+    [InlineData(NodeDisplacementComponent.Z)]
+    [InlineData(NodeDisplacementComponent.Xyz)]
+    [InlineData(NodeDisplacementComponent.Xx)]
+    [InlineData(NodeDisplacementComponent.Yy)]
+    [InlineData(NodeDisplacementComponent.Zz)]
+    [InlineData(NodeDisplacementComponent.Xxyyzz)]
+    public void NodeDisplacementsValuesFromAnalysisCaseTest(NodeDisplacementComponent component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
@@ -185,15 +185,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(GsaNodeDisplacementComponent.X)]
-    [InlineData(GsaNodeDisplacementComponent.Y)]
-    [InlineData(GsaNodeDisplacementComponent.Z)]
-    [InlineData(GsaNodeDisplacementComponent.Xyz)]
-    [InlineData(GsaNodeDisplacementComponent.Xx)]
-    [InlineData(GsaNodeDisplacementComponent.Yy)]
-    [InlineData(GsaNodeDisplacementComponent.Zz)]
-    [InlineData(GsaNodeDisplacementComponent.Xxyyzz)]
-    public void GsaNodeDisplacementsValuesFromCombinationCaseTest(GsaNodeDisplacementComponent component) {
+    [InlineData(NodeDisplacementComponent.X)]
+    [InlineData(NodeDisplacementComponent.Y)]
+    [InlineData(NodeDisplacementComponent.Z)]
+    [InlineData(NodeDisplacementComponent.Xyz)]
+    [InlineData(NodeDisplacementComponent.Xx)]
+    [InlineData(NodeDisplacementComponent.Yy)]
+    [InlineData(NodeDisplacementComponent.Zz)]
+    [InlineData(NodeDisplacementComponent.Xxyyzz)]
+    public void NodeDisplacementsValuesFromCombinationCaseTest(NodeDisplacementComponent component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       List<double> expectedP1 = ExpectedCombinationCaseC4p1Values(component);
@@ -218,126 +218,126 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
-    private List<double> ExpectedAnalysisCaseValues(GsaNodeDisplacementComponent component) {
+    private List<double> ExpectedAnalysisCaseValues(NodeDisplacementComponent component) {
       switch (component) {
-        case GsaNodeDisplacementComponent.X:
+        case NodeDisplacementComponent.X:
           return NodeDisplacementsA1.XInMillimeter();
 
-        case GsaNodeDisplacementComponent.Y:
+        case NodeDisplacementComponent.Y:
           return NodeDisplacementsA1.YInMillimeter();
 
-        case GsaNodeDisplacementComponent.Z:
+        case NodeDisplacementComponent.Z:
           return NodeDisplacementsA1.ZInMillimeter();
 
-        case GsaNodeDisplacementComponent.Xyz:
+        case NodeDisplacementComponent.Xyz:
           return NodeDisplacementsA1.XyzInMillimeter();
 
-        case GsaNodeDisplacementComponent.Xx:
+        case NodeDisplacementComponent.Xx:
           return NodeDisplacementsA1.XxInRadian();
 
-        case GsaNodeDisplacementComponent.Yy:
+        case NodeDisplacementComponent.Yy:
           return NodeDisplacementsA1.YyInRadian();
 
-        case GsaNodeDisplacementComponent.Zz:
+        case NodeDisplacementComponent.Zz:
           return NodeDisplacementsA1.ZzInRadian();
 
-        case GsaNodeDisplacementComponent.Xxyyzz:
+        case NodeDisplacementComponent.Xxyyzz:
           return NodeDisplacementsA1.XxyyzzInRadian();
       }
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p1Values(GsaNodeDisplacementComponent component) {
+    private List<double> ExpectedCombinationCaseC4p1Values(NodeDisplacementComponent component) {
       switch (component) {
-        case GsaNodeDisplacementComponent.X:
+        case NodeDisplacementComponent.X:
           return NodeDisplacementsC4p1.XInMillimeter();
 
-        case GsaNodeDisplacementComponent.Y:
+        case NodeDisplacementComponent.Y:
           return NodeDisplacementsC4p1.YInMillimeter();
 
-        case GsaNodeDisplacementComponent.Z:
+        case NodeDisplacementComponent.Z:
           return NodeDisplacementsC4p1.ZInMillimeter();
 
-        case GsaNodeDisplacementComponent.Xyz:
+        case NodeDisplacementComponent.Xyz:
           return NodeDisplacementsC4p1.XyzInMillimeter();
 
-        case GsaNodeDisplacementComponent.Xx:
+        case NodeDisplacementComponent.Xx:
           return NodeDisplacementsC4p1.XxInRadian();
 
-        case GsaNodeDisplacementComponent.Yy:
+        case NodeDisplacementComponent.Yy:
           return NodeDisplacementsC4p1.YyInRadian();
 
-        case GsaNodeDisplacementComponent.Zz:
+        case NodeDisplacementComponent.Zz:
           return NodeDisplacementsC4p1.ZzInRadian();
 
-        case GsaNodeDisplacementComponent.Xxyyzz:
+        case NodeDisplacementComponent.Xxyyzz:
           return NodeDisplacementsC4p1.XxyyzzInRadian();
       }
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p2Values(GsaNodeDisplacementComponent component) {
+    private List<double> ExpectedCombinationCaseC4p2Values(NodeDisplacementComponent component) {
       switch (component) {
-        case GsaNodeDisplacementComponent.X:
+        case NodeDisplacementComponent.X:
           return NodeDisplacementsC4p2.XInMillimeter();
 
-        case GsaNodeDisplacementComponent.Y:
+        case NodeDisplacementComponent.Y:
           return NodeDisplacementsC4p2.YInMillimeter();
 
-        case GsaNodeDisplacementComponent.Z:
+        case NodeDisplacementComponent.Z:
           return NodeDisplacementsC4p2.ZInMillimeter();
 
-        case GsaNodeDisplacementComponent.Xyz:
+        case NodeDisplacementComponent.Xyz:
           return NodeDisplacementsC4p2.XyzInMillimeter();
 
-        case GsaNodeDisplacementComponent.Xx:
+        case NodeDisplacementComponent.Xx:
           return NodeDisplacementsC4p2.XxInRadian();
 
-        case GsaNodeDisplacementComponent.Yy:
+        case NodeDisplacementComponent.Yy:
           return NodeDisplacementsC4p2.YyInRadian();
 
-        case GsaNodeDisplacementComponent.Zz:
+        case NodeDisplacementComponent.Zz:
           return NodeDisplacementsC4p2.ZzInRadian();
 
-        case GsaNodeDisplacementComponent.Xxyyzz:
+        case NodeDisplacementComponent.Xxyyzz:
           return NodeDisplacementsC4p2.XxyyzzInRadian();
       }
       throw new NotImplementedException();
     }
 
-    private double ResultsHelper(INodeResultSubset<IDisplacement, NodeExtremaVector6> result, GsaNodeDisplacementComponent component, bool max) {
+    private double ResultsHelper(INodeResultSubset<IDisplacement, NodeExtremaVector6> result, NodeDisplacementComponent component, bool max) {
       double d = 0;
       NodeExtremaVector6 extrema = max ? result.Max : result.Min;
       switch (component) {
-        case GsaNodeDisplacementComponent.X:
+        case NodeDisplacementComponent.X:
           d = result.GetExtrema(extrema.X).X.Millimeters;
           break;
 
-        case GsaNodeDisplacementComponent.Y:
+        case NodeDisplacementComponent.Y:
           d = result.GetExtrema(extrema.Y).Y.Millimeters;
           break;
 
-        case GsaNodeDisplacementComponent.Z:
+        case NodeDisplacementComponent.Z:
           d = result.GetExtrema(extrema.Z).Z.Millimeters;
           break;
 
-        case GsaNodeDisplacementComponent.Xyz:
+        case NodeDisplacementComponent.Xyz:
           d = result.GetExtrema(extrema.Xyz).Xyz.Millimeters;
           break;
 
-        case GsaNodeDisplacementComponent.Xx:
+        case NodeDisplacementComponent.Xx:
           d = result.GetExtrema(extrema.Xx).Xx.Radians;
           break;
 
-        case GsaNodeDisplacementComponent.Yy:
+        case NodeDisplacementComponent.Yy:
           d = result.GetExtrema(extrema.Yy).Yy.Radians;
           break;
 
-        case GsaNodeDisplacementComponent.Zz:
+        case NodeDisplacementComponent.Zz:
           d = result.GetExtrema(extrema.Zz).Zz.Radians;
           break;
 
-        case GsaNodeDisplacementComponent.Xxyyzz:
+        case NodeDisplacementComponent.Xxyyzz:
           d = result.GetExtrema(extrema.Xxyyzz).Xxyyzz.Radians;
           break;
       }
@@ -345,38 +345,38 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    private double ResultsHelper(IDisplacement result, GsaNodeDisplacementComponent component) {
+    private double ResultsHelper(IDisplacement result, NodeDisplacementComponent component) {
       double d = 0;
       switch (component) {
-        case GsaNodeDisplacementComponent.X:
+        case NodeDisplacementComponent.X:
           d = result.X.Millimeters;
           break;
 
-        case GsaNodeDisplacementComponent.Y:
+        case NodeDisplacementComponent.Y:
           d = result.Y.Millimeters;
           break;
 
-        case GsaNodeDisplacementComponent.Z:
+        case NodeDisplacementComponent.Z:
           d = result.Z.Millimeters;
           break;
 
-        case GsaNodeDisplacementComponent.Xyz:
+        case NodeDisplacementComponent.Xyz:
           d = result.Xyz.Millimeters;
           break;
 
-        case GsaNodeDisplacementComponent.Xx:
+        case NodeDisplacementComponent.Xx:
           d = result.Xx.Radians;
           break;
 
-        case GsaNodeDisplacementComponent.Yy:
+        case NodeDisplacementComponent.Yy:
           d = result.Yy.Radians;
           break;
 
-        case GsaNodeDisplacementComponent.Zz:
+        case NodeDisplacementComponent.Zz:
           d = result.Zz.Radians;
           break;
 
-        case GsaNodeDisplacementComponent.Xxyyzz:
+        case NodeDisplacementComponent.Xxyyzz:
           d = result.Xxyyzz.Radians;
           break;
       }
