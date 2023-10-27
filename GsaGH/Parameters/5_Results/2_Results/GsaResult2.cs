@@ -8,7 +8,8 @@ namespace GsaGH.Parameters.Results {
 
   public class GsaResult2 : IGsaResult {
     // Caches
-    public INodeResultCache<IDisplacement, NodeExtremaVector6> NodeDisplacements { get; private set; }
+    public IBeamResultCache<IBeamDisplacement, ResultVector6<NodeExtremaKey>> BeamDisplacements { get; private set; }
+    public INodeResultCache<IDisplacement, ResultVector6<NodeExtremaKey>> NodeDisplacements { get; private set; }
 
     // Other members
     public int CaseId { get; set; }
@@ -24,11 +25,13 @@ namespace GsaGH.Parameters.Results {
       CaseId = result.CaseId;
       switch (CaseType) {
         case CaseType.AnalysisCase:
+          BeamDisplacements = new BeamDisplacementCache(result.AnalysisCaseResult);
           NodeDisplacements = new NodeDisplacementCache(result.AnalysisCaseResult);
           break;
 
         case CaseType.CombinationCase:
           SelectedPermutationIds = result.SelectedPermutationIds;
+          BeamDisplacements = new BeamDisplacementCache(result.CombinationCaseResult);
           NodeDisplacements = new NodeDisplacementCache(result.CombinationCaseResult);
           break;
       }

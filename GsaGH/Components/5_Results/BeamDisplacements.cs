@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -100,7 +102,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var result = new GsaResult();
+      GsaResult2 result;
 
       string elementlist = "All";
 
@@ -130,15 +132,15 @@ namespace GsaGH.Components {
         }
 
         if (ghTyp.Value is GsaResultGoo goo) {
-          result = (GsaResult)goo.Value;
+          result = new GsaResult2((GsaResult)goo.Value);
           elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
         } else {
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
         }
 
-        List<GsaResultsValues> vals
-          = result.Element1DDisplacementValues(elementlist, positionsCount, -1, _lengthUnit);
+        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
+        IBeamResultSubset<IBeamDisplacement, ResultVector6<NodeExtremaKey>> resultSet = result.BeamDisplacements.ResultSubset(elementIds, positionsCount);
 
         List<int> permutations = result.SelectedPermutationIds is null ? new List<int>() {
           1,
