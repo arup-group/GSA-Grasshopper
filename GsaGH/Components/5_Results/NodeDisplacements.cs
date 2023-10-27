@@ -126,7 +126,7 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-        INodeResultSubset<IDisplacement, NodeExtremaVector6> resultSet = 
+        INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> resultSet = 
           result.NodeDisplacements.ResultSubset(nodeIds);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
