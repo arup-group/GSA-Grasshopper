@@ -30,7 +30,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, NodeExtremaVector6> resultSet
+      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeReactionForces.ResultSubset(nodeIds);
 
       // Assert node IDs
@@ -45,7 +45,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, NodeExtremaVector6> resultSet
+      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeReactionForces.ResultSubset(nodeIds);
 
       // Assert node IDs
@@ -69,7 +69,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, NodeExtremaVector6> resultSet
+      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeReactionForces.ResultSubset(nodeIds);
 
       // Assert Max in set
@@ -94,7 +94,7 @@ namespace GsaGHTests.Parameters.Results {
         ExpectedCombinationCaseC4p2Values(component).Max());
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, NodeExtremaVector6> resultSet
+      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeReactionForces.ResultSubset(nodeIds);
 
       // Assert Max in set
@@ -117,7 +117,7 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component).Min();
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, NodeExtremaVector6> resultSet
+      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeReactionForces.ResultSubset(nodeIds);
 
       // Assert Max in set
@@ -143,7 +143,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, NodeExtremaVector6> resultSet
+      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeReactionForces.ResultSubset(nodeIds);
 
       // Assert Max in set
@@ -168,7 +168,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, NodeExtremaVector6> resultSet
+      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeReactionForces.ResultSubset(nodeIds);
 
       // Assert result values
@@ -202,7 +202,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, NodeExtremaVector6> resultSet
+      INodeResultSubset<IInternalForce,  ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeReactionForces.ResultSubset(nodeIds);
 
       // Assert result values
@@ -301,10 +301,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     private double ResultsHelper(
-      INodeResultSubset<IInternalForce, NodeExtremaVector6> result,
+      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> result,
       GsaNodeReactionForceComponent component, bool max) {
       double d = 0;
-      NodeExtremaVector6 extrema = max ? result.Max : result.Min;
+      ResultVector6<NodeExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
         case GsaNodeReactionForceComponent.X:
           d = result.GetExtrema(extrema.X).X.Kilonewtons;
