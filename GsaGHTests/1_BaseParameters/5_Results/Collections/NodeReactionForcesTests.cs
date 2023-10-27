@@ -65,8 +65,7 @@ namespace GsaGHTests.Parameters.Results {
     public void NodeReactionForceMaxFromAnalysisCaseTest(GsaNodeReactionForceComponent component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
-      double? expected = ExpectedAnalysisCaseValues(component).Where(item => item != null)
-       .Cast<double>().Max();
+      double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -91,11 +90,8 @@ namespace GsaGHTests.Parameters.Results {
       GsaNodeReactionForceComponent component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
-      double expected = Math.Max(
-        ExpectedCombinationCaseC4p1Values(component).Where(item => item != null).Cast<double>()
-         .Max(),
-        ExpectedCombinationCaseC4p2Values(component).Where(item => item != null).Cast<double>()
-         .Max());
+      double expected = Math.Max(ExpectedCombinationCaseC4p1Values(component).Max(),
+        ExpectedCombinationCaseC4p2Values(component).Max());
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
       INodeResultSubset<IInternalForce, NodeExtremaVector6> resultSet
@@ -118,8 +114,7 @@ namespace GsaGHTests.Parameters.Results {
     public void NodeReactionForceMinFromAnalysisCaseTest(GsaNodeReactionForceComponent component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
-      double expected = ExpectedAnalysisCaseValues(component).Where(item => item != null)
-       .Cast<double>().Min();
+      double expected = ExpectedAnalysisCaseValues(component).Min();
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
       INodeResultSubset<IInternalForce, NodeExtremaVector6> resultSet
@@ -143,11 +138,8 @@ namespace GsaGHTests.Parameters.Results {
       GsaNodeReactionForceComponent component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
-      double expected = Math.Min(
-        ExpectedCombinationCaseC4p1Values(component).Where(item => item != null).Cast<double>()
-         .Min(),
-        ExpectedCombinationCaseC4p2Values(component).Where(item => item != null).Cast<double>()
-         .Min());
+      double expected = Math.Min(ExpectedCombinationCaseC4p1Values(component).Min(),
+        ExpectedCombinationCaseC4p2Values(component).Min());
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -172,7 +164,7 @@ namespace GsaGHTests.Parameters.Results {
       GsaNodeReactionForceComponent component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
-      List<double?> expected = ExpectedAnalysisCaseValues(component);
+      List<double> expected = ExpectedAnalysisCaseValues(component);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -205,8 +197,8 @@ namespace GsaGHTests.Parameters.Results {
       GsaNodeReactionForceComponent component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
-      List<double?> expectedP1 = ExpectedCombinationCaseC4p1Values(component);
-      List<double?> expectedP2 = ExpectedCombinationCaseC4p2Values(component);
+      List<double> expectedP1 = ExpectedCombinationCaseC4p1Values(component);
+      List<double> expectedP2 = ExpectedCombinationCaseC4p2Values(component);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -216,7 +208,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        var reactionForceQuantity = (Collection<IInternalForce>)resultSet.Subset[id];
+        Collection<IInternalForce> reactionForceQuantity = resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, reactionForceQuantity.Count);
@@ -228,7 +220,7 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
-    private List<double?> ExpectedAnalysisCaseValues(GsaNodeReactionForceComponent component) {
+    private List<double> ExpectedAnalysisCaseValues(GsaNodeReactionForceComponent component) {
       switch (component) {
         case GsaNodeReactionForceComponent.X: return NodeReactionForcesA1.XInKiloNewtons();
 
@@ -254,7 +246,7 @@ namespace GsaGHTests.Parameters.Results {
       throw new NotImplementedException();
     }
 
-    private List<double?> ExpectedCombinationCaseC4p1Values(
+    private List<double> ExpectedCombinationCaseC4p1Values(
       GsaNodeReactionForceComponent component) {
       switch (component) {
         case GsaNodeReactionForceComponent.X: return NodeReactionForcesC4p1.XInKiloNewtons();
@@ -281,7 +273,7 @@ namespace GsaGHTests.Parameters.Results {
       throw new NotImplementedException();
     }
 
-    private List<double?> ExpectedCombinationCaseC4p2Values(
+    private List<double> ExpectedCombinationCaseC4p2Values(
       GsaNodeReactionForceComponent component) {
       switch (component) {
         case GsaNodeReactionForceComponent.X: return NodeReactionForcesC4p2.XInKiloNewtons();
