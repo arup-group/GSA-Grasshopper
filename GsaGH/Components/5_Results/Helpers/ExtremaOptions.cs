@@ -23,7 +23,7 @@ namespace GsaGH.Components.Helpers {
       "Min |R|",
     });
 
-    internal static NodeExtremaKey NodeExtremaKey<T>(INodeResultSubset<T, NodeExtremaVector6> resultSet, string key)
+    internal static NodeExtremaKey NodeExtremaKey<T>(INodeResultSubset<T, ResultVector6<NodeExtremaKey>> resultSet, string key)
       where T : IResultItem {
       return key switch {
         "Max Ux" => resultSet.Max.X,

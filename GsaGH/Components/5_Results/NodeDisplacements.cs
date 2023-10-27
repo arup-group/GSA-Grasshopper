@@ -41,7 +41,7 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
       base.UpdateUI();
     }
 
@@ -56,15 +56,11 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
-        "Type",
         "Unit",
       });
 
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
-
-      _dropDownItems.Add(ExtremaOptions.Vector6.ToList());
-      _selectedItems.Add(_dropDownItems[0][0]);
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
@@ -130,7 +126,7 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-        INodeResultSubset<IDisplacement, NodeExtremaVector6> resultSet =
+        INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> resultSet = 
           result.NodeDisplacements.ResultSubset(nodeIds);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -150,35 +146,20 @@ namespace GsaGH.Components {
         var outRotXyz = new DataTree<GH_UnitNumber>();
         var outIDs = new DataTree<int>();
 
-        if (_selectedItems[0] == ExtremaOptions.Vector6[0]) {
-          foreach(KeyValuePair<int, Collection<IDisplacement>> kvp in resultSet.Subset) {
-            foreach (int p in permutations) {
-              var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p);
-              outTransX.Add(new GH_UnitNumber(kvp.Value[p - 1].X.ToUnit(_lengthUnit)), path);
-              outTransY.Add(new GH_UnitNumber(kvp.Value[p - 1].Y.ToUnit(_lengthUnit)), path);
-              outTransZ.Add(new GH_UnitNumber(kvp.Value[p - 1].Z.ToUnit(_lengthUnit)), path);
-              outTransXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].Xyz.ToUnit(_lengthUnit)), path);
-              outRotX.Add(new GH_UnitNumber(kvp.Value[p - 1].Xx), path);
-              outRotY.Add(new GH_UnitNumber(kvp.Value[p - 1].Yy), path);
-              outRotZ.Add(new GH_UnitNumber(kvp.Value[p - 1].Zz), path);
-              outRotXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].Xxyyzz), path);
-              outIDs.Add(kvp.Key, path);
-            }
+        Parallel.ForEach(resultSet.Subset, kvp => {
+          foreach (int p in permutations) {
+            var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p);
+            outTransX.Add(new GH_UnitNumber(kvp.Value[p - 1].X.ToUnit(_lengthUnit)), path);
+            outTransY.Add(new GH_UnitNumber(kvp.Value[p - 1].Y.ToUnit(_lengthUnit)), path);
+            outTransZ.Add(new GH_UnitNumber(kvp.Value[p - 1].Z.ToUnit(_lengthUnit)), path);
+            outTransXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].Xyz.ToUnit(_lengthUnit)), path);
+            outRotX.Add(new GH_UnitNumber(kvp.Value[p - 1].Xx), path);
+            outRotY.Add(new GH_UnitNumber(kvp.Value[p - 1].Yy), path);
+            outRotZ.Add(new GH_UnitNumber(kvp.Value[p - 1].Zz), path);
+            outRotXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].Xxyyzz), path);
+            outIDs.Add(kvp.Key, path);
           }
-        } else {
-          NodeExtremaKey key = ExtremaOptions.NodeExtremaKey(resultSet, _selectedItems[0]);
-          IDisplacement extrema = resultSet.GetExtrema(key);
-          var path = new GH_Path(result.CaseId, key.Permutation);
-          outTransX.Add(new GH_UnitNumber(extrema.X.ToUnit(_lengthUnit)), path);
-          outTransY.Add(new GH_UnitNumber(extrema.Y.ToUnit(_lengthUnit)), path);
-          outTransZ.Add(new GH_UnitNumber(extrema.Z.ToUnit(_lengthUnit)), path);
-          outTransXyz.Add(new GH_UnitNumber(extrema.Xyz.ToUnit(_lengthUnit)), path);
-          outRotX.Add(new GH_UnitNumber(extrema.Xx), path);
-          outRotY.Add(new GH_UnitNumber(extrema.Yy), path);
-          outRotZ.Add(new GH_UnitNumber(extrema.Zz), path);
-          outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz), path);
-          outIDs.Add(key.Id, path);
-        }
+        });
 
         da.SetDataTree(0, outTransX);
         da.SetDataTree(1, outTransY);
@@ -195,13 +176,7 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      if (_selectedItems.Count == 1) {
-        _spacerDescriptions.Insert(0, "Type");
-        _dropDownItems.Insert(0, ExtremaOptions.Vector6.ToList());
-        _selectedItems.Insert(0, _dropDownItems[0][0]);
-      }
-
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       base.UpdateUIFromSelectedItems();
     }
   }

@@ -17,8 +17,8 @@ namespace GsaGH.Parameters.Results {
       return missingIds;
     }
 
-    public static ConcurrentDictionary<int, T> GetSubset<T>(
-      this IDictionary<int, T> dictionary, ICollection<int> keys) {
+    public static ConcurrentDictionary<int, T> GetSubset<T>(this IDictionary<int, T> dictionary, 
+      ICollection<int> keys) {
       var subset = new ConcurrentDictionary<int, T>();
       Parallel.ForEach(keys, key => subset.TryAdd(key, dictionary[key]));
       return subset;
