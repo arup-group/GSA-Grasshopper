@@ -2,8 +2,8 @@
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Components.Helpers {
-  internal class ExtremaOptions {
-    internal static readonly ReadOnlyCollection<string> Vector6 = new ReadOnlyCollection<string>(new[] {
+  internal class ExtremaHelper {
+    internal static readonly ReadOnlyCollection<string> Vector6Displacements = new ReadOnlyCollection<string>(new[] {
       "All",
       "Max Ux",
       "Max Uy",
@@ -23,7 +23,7 @@ namespace GsaGH.Components.Helpers {
       "Min |R|",
     });
 
-    internal static NodeExtremaKey NodeExtremaKey<T>(INodeResultSubset<T, ResultVector6<NodeExtremaKey>> resultSet, string key)
+    internal static U ExtremaKey<T, U>(INodeResultSubset<T, ResultVector6<U>> resultSet, string key)
       where T : IResultItem {
       return key switch {
         "Max Ux" => resultSet.Max.X,

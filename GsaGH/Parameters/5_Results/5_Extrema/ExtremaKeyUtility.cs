@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
-  public static class NodeExtremaKeyUtility {
+  public static class ExtremaKeyUtility {
     public static (ResultVector6<NodeExtremaKey> Max, ResultVector6<NodeExtremaKey> Min) Extrema<T>(
       this IDictionary<int, Collection<T>> subset) {
 
@@ -20,6 +20,11 @@ namespace GsaGH.Parameters.Results {
           switch (values[permutation]) {
             case IDisplacement displacement:
               UpdateExtrema<IDisplacement, Length, Angle>(displacement, nodeId, permutation,
+                ref maxValue, ref minValue, ref maxKey, ref minKey);
+              break;
+
+            case IInternalForce internalForce:
+              UpdateExtrema<IInternalForce, Force, Moment>(internalForce, nodeId, permutation,
                 ref maxValue, ref minValue, ref maxKey, ref minKey);
               break;
           }
