@@ -8,14 +8,16 @@ namespace GsaGHTests.Parameters.Results {
       return new List<double>() {
         2123,
         -1148,
-        423.3 - 1398,
+        423.3,
+        -1398,
       };
     }
 
     internal static List<double> YInKiloNewtons() {
       return new List<double>() {
         2158,
-        394.9 - 1184,
+        394.9,
+        -1184,
         -1368,
       };
     }
@@ -70,7 +72,7 @@ namespace GsaGHTests.Parameters.Results {
         290.3,
         0,
         0,
-        239.5,
+        393.5,
       };
     }
   }
