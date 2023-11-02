@@ -19,15 +19,14 @@ namespace GsaGH.Parameters.Results {
 
     // temp conversion from old class
     internal GsaResult2(GsaResult result) {
-      switch (CaseType) {
+      switch (result.CaseType) {
         case CaseType.AnalysisCase:
           InitialiseAnalysisCaseResults(result.Model, result.AnalysisCaseResult, result.CaseId);
           break;
 
         case CaseType.CombinationCase:
-          SelectedPermutationIds = result.SelectedPermutationIds;
           InitialiseCombinationsCaseResults(result.Model, result.CombinationCaseResult,
-            result.CaseId);
+            result.CaseId, result.SelectedPermutationIds);
           break;
       }
     }
@@ -38,8 +37,7 @@ namespace GsaGH.Parameters.Results {
 
     internal GsaResult2(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
-      SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
-      InitialiseCombinationsCaseResults(model, result, caseId);
+      InitialiseCombinationsCaseResults(model, result, caseId, permutations.OrderBy(x => x));
     }
 
     // Other members
@@ -108,10 +106,11 @@ namespace GsaGH.Parameters.Results {
     }
 
     private void InitialiseCombinationsCaseResults(
-      GsaModel model, CombinationCaseResult result, int caseId) {
+      GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
       Model = model;
       CaseType = CaseType.CombinationCase;
       CaseId = caseId;
+      SelectedPermutationIds = permutations.ToList();
 
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
