@@ -8,7 +8,37 @@ namespace GsaGH.Parameters.Results {
 
   public class GsaResult2 : IGsaResult {
     // Caches
-    public INodeResultCache<IDisplacement, ResultVector6<NodeExtremaKey>> NodeDisplacements { get; private set; }
+    public INodeResultCache<IDisplacement, ResultVector6<NodeExtremaKey>> NodeDisplacements {
+      get;
+      private set;
+    }
+    public INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> NodeReactionForces {
+      get;
+      private set;
+    }
+
+    // temp conversion from old class
+    internal GsaResult2(GsaResult result) {
+      switch (result.CaseType) {
+        case CaseType.AnalysisCase:
+          InitialiseAnalysisCaseResults(result.Model, result.AnalysisCaseResult, result.CaseId);
+          break;
+
+        case CaseType.CombinationCase:
+          InitialiseCombinationsCaseResults(result.Model, result.CombinationCaseResult,
+            result.CaseId, result.SelectedPermutationIds);
+          break;
+      }
+    }
+
+    internal GsaResult2(GsaModel model, AnalysisCaseResult result, int caseId) {
+      InitialiseAnalysisCaseResults(model, result, caseId);
+    }
+
+    internal GsaResult2(
+      GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
+      InitialiseCombinationsCaseResults(model, result, caseId, permutations.OrderBy(x => x));
+    }
 
     // Other members
     public int CaseId { get; set; }
@@ -16,40 +46,6 @@ namespace GsaGH.Parameters.Results {
     public GsaModel Model { get; set; }
     public List<int> SelectedPermutationIds { get; set; }
     public CaseType CaseType { get; set; }
-
-    // temp conversion from old class
-    internal GsaResult2(GsaResult result) {
-      Model = result.Model;
-      CaseType = result.CaseType;
-      CaseId = result.CaseId;
-      switch (CaseType) {
-        case CaseType.AnalysisCase:
-          NodeDisplacements = new NodeDisplacementCache(result.AnalysisCaseResult);
-          break;
-
-        case CaseType.CombinationCase:
-          SelectedPermutationIds = result.SelectedPermutationIds;
-          NodeDisplacements = new NodeDisplacementCache(result.CombinationCaseResult);
-          break;
-      }
-    }
-    
-    internal GsaResult2(GsaModel model, AnalysisCaseResult result, int caseId) {
-      Model = model;
-      CaseType = CaseType.AnalysisCase;
-      CaseId = caseId;
-      CaseName = model.Model.AnalysisCaseName(CaseId);
-      NodeDisplacements = new NodeDisplacementCache(result);
-    }
-
-    internal GsaResult2(
-      GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
-      Model = model;
-      CaseType = CaseType.CombinationCase;
-      CaseId = caseId;
-      SelectedPermutationIds = permutations.OrderBy(x => x).ToList();
-      NodeDisplacements = new NodeDisplacementCache(result);
-    }
 
     public override string ToString() {
       string txt = string.Empty;
@@ -75,7 +71,7 @@ namespace GsaGH.Parameters.Results {
       var entityList = new EntityList() {
         Definition = nodeList,
         Type = GsaAPI.EntityType.Node,
-        Name = "node"
+        Name = "node",
       };
       return Model.Model.ExpandList(entityList);
     }
@@ -84,7 +80,7 @@ namespace GsaGH.Parameters.Results {
       var entityList = new EntityList() {
         Definition = elementList,
         Type = GsaAPI.EntityType.Element,
-        Name = "elem"
+        Name = "elem",
       };
       return Model.Model.ExpandList(entityList);
     }
@@ -93,9 +89,31 @@ namespace GsaGH.Parameters.Results {
       var entityList = new EntityList() {
         Definition = memberList,
         Type = GsaAPI.EntityType.Member,
-        Name = "mem"
+        Name = "mem",
       };
       return Model.Model.ExpandList(entityList);
+    }
+
+    private void InitialiseAnalysisCaseResults(
+      GsaModel model, AnalysisCaseResult result, int caseId) {
+      Model = model;
+      CaseType = CaseType.AnalysisCase;
+      CaseId = caseId;
+      CaseName = model.Model.AnalysisCaseName(CaseId);
+
+      NodeDisplacements = new NodeDisplacementCache(result);
+      NodeReactionForces = new NodeReactionForceCache(result, model.Model);
+    }
+
+    private void InitialiseCombinationsCaseResults(
+      GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
+      Model = model;
+      CaseType = CaseType.CombinationCase;
+      CaseId = caseId;
+      SelectedPermutationIds = permutations.ToList();
+
+      NodeDisplacements = new NodeDisplacementCache(result);
+      NodeReactionForces = new NodeReactionForceCache(result, model.Model);
     }
   }
 }
