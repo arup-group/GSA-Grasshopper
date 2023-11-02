@@ -4,27 +4,13 @@ using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class BeamDisplacement : IBeamDisplacement {
-    public ICollection<IDisplacement> Displacements { get; }
-    public ICollection<double> Positions { get; }
+    public IDictionary<double, IDisplacement> Displacements { get; private set; }
 
-    internal BeamDisplacement(ICollection<Double6> result, ICollection<double> positions) {
-      foreach (Double6 item in result) {
-        Displacements.Add(new Displacement(item));
+    internal BeamDisplacement(ReadOnlyCollection<Double6> result, ReadOnlyCollection<double> positions) {
+      Displacements = new Dictionary<double, IDisplacement>();
+      for (int i = 0; i < result.Count; i++) { 
+        Displacements.Add(positions[i], new Displacement(result[i]));
       }
-      Positions = positions;  
     }
-
-    //private Angle CreateAngle(double val) {
-    //  // TO-DO: GSA-5351 remove NaN and Infinity values from GsaAPI results
-    //  if (!double.IsNaN(val)) {
-    //    return !double.IsInfinity(val)
-    //      ? new Angle(val, AngleUnit.Radian)
-    //      : (double.IsPositiveInfinity(val)
-    //        ? new Angle(360, AngleUnit.Degree)
-    //        : new Angle(-360, AngleUnit.Degree));
-    //  } else {
-    //    return Angle.Zero;
-    //  }
-    //}
   }
 }

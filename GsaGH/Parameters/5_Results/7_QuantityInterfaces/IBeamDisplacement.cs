@@ -2,6 +2,6 @@
 
 namespace GsaGH.Parameters.Results {
   public interface IBeamDisplacement : IResultItem {
-    ICollection<IDisplacement> Displacements { get; }
+    IDictionary<double, IDisplacement> Displacements { get; }
   }
 }
