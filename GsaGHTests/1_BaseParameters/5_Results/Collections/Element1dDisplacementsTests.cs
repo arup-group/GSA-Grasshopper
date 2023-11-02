@@ -168,7 +168,6 @@ namespace GsaGHTests.Parameters.Results {
 
         // for analysis case results we expect 4 positions
         Assert.Single(displacementQuantity);
-        int j = 0;
         var positions = Enumerable.Range(0, positionsCount).Select(
         k => (double)k / (positionsCount - 1)).ToList();
         foreach (double position in positions) {
@@ -207,7 +206,6 @@ namespace GsaGHTests.Parameters.Results {
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, displacementQuantity.Count);
 
-        int j = 0;
         var positions = Enumerable.Range(0, positionsCount).Select(
         k => (double)k / (positionsCount - 1)).ToList();
         foreach (double position in positions) {
