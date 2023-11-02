@@ -2,6 +2,11 @@
 
 namespace GsaGHTests.Helper {
   internal static class GsaFile {
+    private static string steelDesignComplex = "";
+    private static string steelDesignSimple = "";
+    private static string element2dSimple = "";
+    private static string element3dSimple = "";
+    private static string springForces = "";
     internal static string SteelDesignComplex {
       get {
         if (steelDesignComplex == "") {
@@ -41,18 +46,23 @@ namespace GsaGHTests.Helper {
         return element3dSimple;
       }
     }
-    private static string steelDesignComplex = "";
-    private static string steelDesignSimple = "";
-    private static string element2dSimple = "";
-    private static string element3dSimple = "";
+    internal static string SpringForces {
+      get {
+        if (springForces == "") {
+          springForces = FilePath("spring-reaction-forces.gwb");
+        }
+
+        return springForces;
+      }
+    }
 
     private static string FilePath(string fileName) {
       string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
-        .FullName;
+       .FullName;
       return Path.Combine(new string[] {
         solutiondir,
         "TestHelpers",
-        fileName
+        fileName,
       });
     }
   }
