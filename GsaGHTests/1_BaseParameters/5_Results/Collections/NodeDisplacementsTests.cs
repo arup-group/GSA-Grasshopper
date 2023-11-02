@@ -43,15 +43,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(NodeComponentHelperEnum.X)]
-    [InlineData(NodeComponentHelperEnum.Y)]
-    [InlineData(NodeComponentHelperEnum.Z)]
-    [InlineData(NodeComponentHelperEnum.Xyz)]
-    [InlineData(NodeComponentHelperEnum.Xx)]
-    [InlineData(NodeComponentHelperEnum.Yy)]
-    [InlineData(NodeComponentHelperEnum.Zz)]
-    [InlineData(NodeComponentHelperEnum.Xxyyzz)]
-    public void NodeDisplacementsMaxFromAnalysisCaseTest(NodeComponentHelperEnum component) {
+    [InlineData(ResultVector6HelperEnum.X)]
+    [InlineData(ResultVector6HelperEnum.Y)]
+    [InlineData(ResultVector6HelperEnum.Z)]
+    [InlineData(ResultVector6HelperEnum.Xyz)]
+    [InlineData(ResultVector6HelperEnum.Xx)]
+    [InlineData(ResultVector6HelperEnum.Yy)]
+    [InlineData(ResultVector6HelperEnum.Zz)]
+    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
+    public void NodeDisplacementsMaxFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
@@ -67,15 +67,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(NodeComponentHelperEnum.X)]
-    [InlineData(NodeComponentHelperEnum.Y)]
-    [InlineData(NodeComponentHelperEnum.Z)]
-    [InlineData(NodeComponentHelperEnum.Xyz)]
-    [InlineData(NodeComponentHelperEnum.Xx)]
-    [InlineData(NodeComponentHelperEnum.Yy)]
-    [InlineData(NodeComponentHelperEnum.Zz)]
-    [InlineData(NodeComponentHelperEnum.Xxyyzz)]
-    public void NodeDisplacementsMaxFromCombinationCaseTest(NodeComponentHelperEnum component) {
+    [InlineData(ResultVector6HelperEnum.X)]
+    [InlineData(ResultVector6HelperEnum.Y)]
+    [InlineData(ResultVector6HelperEnum.Z)]
+    [InlineData(ResultVector6HelperEnum.Xyz)]
+    [InlineData(ResultVector6HelperEnum.Xx)]
+    [InlineData(ResultVector6HelperEnum.Yy)]
+    [InlineData(ResultVector6HelperEnum.Zz)]
+    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
+    public void NodeDisplacementsMaxFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Max(ExpectedCombinationCaseC4p1Values(component).Max(),
@@ -92,15 +92,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(NodeComponentHelperEnum.X)]
-    [InlineData(NodeComponentHelperEnum.Y)]
-    [InlineData(NodeComponentHelperEnum.Z)]
-    [InlineData(NodeComponentHelperEnum.Xyz)]
-    [InlineData(NodeComponentHelperEnum.Xx)]
-    [InlineData(NodeComponentHelperEnum.Yy)]
-    [InlineData(NodeComponentHelperEnum.Zz)]
-    [InlineData(NodeComponentHelperEnum.Xxyyzz)]
-    public void NodeDisplacementsMinFromAnalysisCaseTest(NodeComponentHelperEnum component) {
+    [InlineData(ResultVector6HelperEnum.X)]
+    [InlineData(ResultVector6HelperEnum.Y)]
+    [InlineData(ResultVector6HelperEnum.Z)]
+    [InlineData(ResultVector6HelperEnum.Xyz)]
+    [InlineData(ResultVector6HelperEnum.Xx)]
+    [InlineData(ResultVector6HelperEnum.Yy)]
+    [InlineData(ResultVector6HelperEnum.Zz)]
+    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
+    public void NodeDisplacementsMinFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
@@ -116,15 +116,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(NodeComponentHelperEnum.X)]
-    [InlineData(NodeComponentHelperEnum.Y)]
-    [InlineData(NodeComponentHelperEnum.Z)]
-    [InlineData(NodeComponentHelperEnum.Xyz)]
-    [InlineData(NodeComponentHelperEnum.Xx)]
-    [InlineData(NodeComponentHelperEnum.Yy)]
-    [InlineData(NodeComponentHelperEnum.Zz)]
-    [InlineData(NodeComponentHelperEnum.Xxyyzz)]
-    public void NodeDisplacementsMinFromcombinationCaseTest(NodeComponentHelperEnum component) {
+    [InlineData(ResultVector6HelperEnum.X)]
+    [InlineData(ResultVector6HelperEnum.Y)]
+    [InlineData(ResultVector6HelperEnum.Z)]
+    [InlineData(ResultVector6HelperEnum.Xyz)]
+    [InlineData(ResultVector6HelperEnum.Xx)]
+    [InlineData(ResultVector6HelperEnum.Yy)]
+    [InlineData(ResultVector6HelperEnum.Zz)]
+    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
+    public void NodeDisplacementsMinFromcombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Min(ExpectedCombinationCaseC4p1Values(component).Min(),
@@ -141,15 +141,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(NodeComponentHelperEnum.X)]
-    [InlineData(NodeComponentHelperEnum.Y)]
-    [InlineData(NodeComponentHelperEnum.Z)]
-    [InlineData(NodeComponentHelperEnum.Xyz)]
-    [InlineData(NodeComponentHelperEnum.Xx)]
-    [InlineData(NodeComponentHelperEnum.Yy)]
-    [InlineData(NodeComponentHelperEnum.Zz)]
-    [InlineData(NodeComponentHelperEnum.Xxyyzz)]
-    public void NodeDisplacementsValuesFromAnalysisCaseTest(NodeComponentHelperEnum component) {
+    [InlineData(ResultVector6HelperEnum.X)]
+    [InlineData(ResultVector6HelperEnum.Y)]
+    [InlineData(ResultVector6HelperEnum.Z)]
+    [InlineData(ResultVector6HelperEnum.Xyz)]
+    [InlineData(ResultVector6HelperEnum.Xx)]
+    [InlineData(ResultVector6HelperEnum.Yy)]
+    [InlineData(ResultVector6HelperEnum.Zz)]
+    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
+    public void NodeDisplacementsValuesFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
@@ -173,15 +173,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(NodeComponentHelperEnum.X)]
-    [InlineData(NodeComponentHelperEnum.Y)]
-    [InlineData(NodeComponentHelperEnum.Z)]
-    [InlineData(NodeComponentHelperEnum.Xyz)]
-    [InlineData(NodeComponentHelperEnum.Xx)]
-    [InlineData(NodeComponentHelperEnum.Yy)]
-    [InlineData(NodeComponentHelperEnum.Zz)]
-    [InlineData(NodeComponentHelperEnum.Xxyyzz)]
-    public void NodeDisplacementsValuesFromCombinationCaseTest(NodeComponentHelperEnum component) {
+    [InlineData(ResultVector6HelperEnum.X)]
+    [InlineData(ResultVector6HelperEnum.Y)]
+    [InlineData(ResultVector6HelperEnum.Z)]
+    [InlineData(ResultVector6HelperEnum.Xyz)]
+    [InlineData(ResultVector6HelperEnum.Xx)]
+    [InlineData(ResultVector6HelperEnum.Yy)]
+    [InlineData(ResultVector6HelperEnum.Zz)]
+    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
+    public void NodeDisplacementsValuesFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       List<double> expectedP1 = ExpectedCombinationCaseC4p1Values(component);
@@ -207,67 +207,67 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
-    private List<double> ExpectedAnalysisCaseValues(NodeComponentHelperEnum component) {
+    private List<double> ExpectedAnalysisCaseValues(ResultVector6HelperEnum component) {
       switch (component) {
-        case NodeComponentHelperEnum.X: return NodeDisplacementsA1.XInMillimeter();
+        case ResultVector6HelperEnum.X: return NodeDisplacementsA1.XInMillimeter();
 
-        case NodeComponentHelperEnum.Y: return NodeDisplacementsA1.YInMillimeter();
+        case ResultVector6HelperEnum.Y: return NodeDisplacementsA1.YInMillimeter();
 
-        case NodeComponentHelperEnum.Z: return NodeDisplacementsA1.ZInMillimeter();
+        case ResultVector6HelperEnum.Z: return NodeDisplacementsA1.ZInMillimeter();
 
-        case NodeComponentHelperEnum.Xyz: return NodeDisplacementsA1.XyzInMillimeter();
+        case ResultVector6HelperEnum.Xyz: return NodeDisplacementsA1.XyzInMillimeter();
 
-        case NodeComponentHelperEnum.Xx: return NodeDisplacementsA1.XxInRadian();
+        case ResultVector6HelperEnum.Xx: return NodeDisplacementsA1.XxInRadian();
 
-        case NodeComponentHelperEnum.Yy: return NodeDisplacementsA1.YyInRadian();
+        case ResultVector6HelperEnum.Yy: return NodeDisplacementsA1.YyInRadian();
 
-        case NodeComponentHelperEnum.Zz: return NodeDisplacementsA1.ZzInRadian();
+        case ResultVector6HelperEnum.Zz: return NodeDisplacementsA1.ZzInRadian();
 
-        case NodeComponentHelperEnum.Xxyyzz: return NodeDisplacementsA1.XxyyzzInRadian();
+        case ResultVector6HelperEnum.Xxyyzz: return NodeDisplacementsA1.XxyyzzInRadian();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p1Values(NodeComponentHelperEnum component) {
+    private List<double> ExpectedCombinationCaseC4p1Values(ResultVector6HelperEnum component) {
       switch (component) {
-        case NodeComponentHelperEnum.X: return NodeDisplacementsC4p1.XInMillimeter();
+        case ResultVector6HelperEnum.X: return NodeDisplacementsC4p1.XInMillimeter();
 
-        case NodeComponentHelperEnum.Y: return NodeDisplacementsC4p1.YInMillimeter();
+        case ResultVector6HelperEnum.Y: return NodeDisplacementsC4p1.YInMillimeter();
 
-        case NodeComponentHelperEnum.Z: return NodeDisplacementsC4p1.ZInMillimeter();
+        case ResultVector6HelperEnum.Z: return NodeDisplacementsC4p1.ZInMillimeter();
 
-        case NodeComponentHelperEnum.Xyz: return NodeDisplacementsC4p1.XyzInMillimeter();
+        case ResultVector6HelperEnum.Xyz: return NodeDisplacementsC4p1.XyzInMillimeter();
 
-        case NodeComponentHelperEnum.Xx: return NodeDisplacementsC4p1.XxInRadian();
+        case ResultVector6HelperEnum.Xx: return NodeDisplacementsC4p1.XxInRadian();
 
-        case NodeComponentHelperEnum.Yy: return NodeDisplacementsC4p1.YyInRadian();
+        case ResultVector6HelperEnum.Yy: return NodeDisplacementsC4p1.YyInRadian();
 
-        case NodeComponentHelperEnum.Zz: return NodeDisplacementsC4p1.ZzInRadian();
+        case ResultVector6HelperEnum.Zz: return NodeDisplacementsC4p1.ZzInRadian();
 
-        case NodeComponentHelperEnum.Xxyyzz: return NodeDisplacementsC4p1.XxyyzzInRadian();
+        case ResultVector6HelperEnum.Xxyyzz: return NodeDisplacementsC4p1.XxyyzzInRadian();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p2Values(NodeComponentHelperEnum component) {
+    private List<double> ExpectedCombinationCaseC4p2Values(ResultVector6HelperEnum component) {
       switch (component) {
-        case NodeComponentHelperEnum.X: return NodeDisplacementsC4p2.XInMillimeter();
+        case ResultVector6HelperEnum.X: return NodeDisplacementsC4p2.XInMillimeter();
 
-        case NodeComponentHelperEnum.Y: return NodeDisplacementsC4p2.YInMillimeter();
+        case ResultVector6HelperEnum.Y: return NodeDisplacementsC4p2.YInMillimeter();
 
-        case NodeComponentHelperEnum.Z: return NodeDisplacementsC4p2.ZInMillimeter();
+        case ResultVector6HelperEnum.Z: return NodeDisplacementsC4p2.ZInMillimeter();
 
-        case NodeComponentHelperEnum.Xyz: return NodeDisplacementsC4p2.XyzInMillimeter();
+        case ResultVector6HelperEnum.Xyz: return NodeDisplacementsC4p2.XyzInMillimeter();
 
-        case NodeComponentHelperEnum.Xx: return NodeDisplacementsC4p2.XxInRadian();
+        case ResultVector6HelperEnum.Xx: return NodeDisplacementsC4p2.XxInRadian();
 
-        case NodeComponentHelperEnum.Yy: return NodeDisplacementsC4p2.YyInRadian();
+        case ResultVector6HelperEnum.Yy: return NodeDisplacementsC4p2.YyInRadian();
 
-        case NodeComponentHelperEnum.Zz: return NodeDisplacementsC4p2.ZzInRadian();
+        case ResultVector6HelperEnum.Zz: return NodeDisplacementsC4p2.ZzInRadian();
 
-        case NodeComponentHelperEnum.Xxyyzz: return NodeDisplacementsC4p2.XxyyzzInRadian();
+        case ResultVector6HelperEnum.Xxyyzz: return NodeDisplacementsC4p2.XxyyzzInRadian();
       }
 
       throw new NotImplementedException();
