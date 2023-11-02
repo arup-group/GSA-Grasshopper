@@ -20,7 +20,7 @@
     }
 
     public ResultVector6(T initialValue) {
-        X = initialValue;
+      X = initialValue;
       Y = initialValue;
       Z = initialValue;
       Xyz = initialValue;
