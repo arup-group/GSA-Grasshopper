@@ -41,7 +41,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(AnalyseModel), 1)]
     [InlineData(typeof(CreateAnalysisTask), 1)]
     //Results
-    [InlineData(typeof(BeamDisplacements), 1)]
+    [InlineData(typeof(BeamDisplacements), 2)]
     [InlineData(typeof(BeamForcesAndMoments), 2)]
     [InlineData(typeof(BeamStrainEnergyDensity), 1)]
     [InlineData(typeof(Contour1dResults), 2)]
@@ -116,7 +116,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(AnalyseModel), "m", "ft")]
     [InlineData(typeof(CreateAnalysisTask), "Static", "Static")]
     //Results
-    [InlineData(typeof(BeamDisplacements), "mm", "ft")]
+    [InlineData(typeof(BeamDisplacements), "All", "Min |R|")]
     [InlineData(typeof(BeamForcesAndMoments), "kN", "tf")]
     [InlineData(typeof(BeamStrainEnergyDensity), "MJ", "BTU")]
     [InlineData(typeof(Contour1dResults), "Displacement", "Footfall")]
