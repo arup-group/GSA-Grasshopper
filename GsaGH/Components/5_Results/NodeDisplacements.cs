@@ -167,7 +167,8 @@ namespace GsaGH.Components {
         } else {
           NodeExtremaKey key = ExtremaHelper.ExtremaKey(resultSet, _selectedItems[0]);
           IDisplacement extrema = resultSet.GetExtrema(key);
-          var path = new GH_Path(result.CaseId, key.Permutation);
+          int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
+          var path = new GH_Path(result.CaseId, key.Permutation + perm);
           outTransX.Add(new GH_UnitNumber(extrema.X.ToUnit(_lengthUnit)), path);
           outTransY.Add(new GH_UnitNumber(extrema.Y.ToUnit(_lengthUnit)), path);
           outTransZ.Add(new GH_UnitNumber(extrema.Z.ToUnit(_lengthUnit)), path);

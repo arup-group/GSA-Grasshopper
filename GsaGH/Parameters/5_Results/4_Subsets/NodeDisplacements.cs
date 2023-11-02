@@ -16,7 +16,7 @@ namespace GsaGH.Parameters.Results {
     public NodeDisplacements(IDictionary<int, Collection<IDisplacement>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
-      (Max, Min) = results.Extrema();
+      (Max, Min) = results.NodeExtrema();
     }
 
     public IDisplacement GetExtrema(NodeExtremaKey key) {

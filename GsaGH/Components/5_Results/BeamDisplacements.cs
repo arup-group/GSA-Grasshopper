@@ -145,7 +145,7 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
-        IBeamResultSubset<IBeamDisplacement, ResultVector6<NodeExtremaKey>> resultSet = 
+        IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet = 
           result.BeamDisplacements.ResultSubset(elementIds, positionsCount);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -156,29 +156,42 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, Collection<IBeamDisplacement>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, Collection<IElement1dDisplacement>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
-              outTransX.AddRange(kvp.Value[p - 1].Displacements.Values.Select(
+              outTransX.AddRange(kvp.Value[p - 1].Results.Values.Select(
                 r => new GH_UnitNumber(r.X.ToUnit(_lengthUnit))), path);
-              outTransY.AddRange(kvp.Value[p - 1].Displacements.Values.Select(
+              outTransY.AddRange(kvp.Value[p - 1].Results.Values.Select(
                 r => new GH_UnitNumber(r.Y.ToUnit(_lengthUnit))), path);
-              outTransZ.AddRange(kvp.Value[p - 1].Displacements.Values.Select(
+              outTransZ.AddRange(kvp.Value[p - 1].Results.Values.Select(
                 r => new GH_UnitNumber(r.Z.ToUnit(_lengthUnit))), path);
-              outTransXyz.AddRange(kvp.Value[p - 1].Displacements.Values.Select(
+              outTransXyz.AddRange(kvp.Value[p - 1].Results.Values.Select(
                 r => new GH_UnitNumber(r.Xyz.ToUnit(_lengthUnit))), path);
-              outRotX.AddRange(kvp.Value[p - 1].Displacements.Values.Select(
+              outRotX.AddRange(kvp.Value[p - 1].Results.Values.Select(
                 r => new GH_UnitNumber(r.Xx)), path);
-              outRotY.AddRange(kvp.Value[p - 1].Displacements.Values.Select(
+              outRotY.AddRange(kvp.Value[p - 1].Results.Values.Select(
                 r => new GH_UnitNumber(r.Yy)), path);
-              outRotZ.AddRange(kvp.Value[p - 1].Displacements.Values.Select(
+              outRotZ.AddRange(kvp.Value[p - 1].Results.Values.Select(
                 r => new GH_UnitNumber(r.Zz)), path);
-              outRotXyz.AddRange(kvp.Value[p - 1].Displacements.Values.Select(
+              outRotXyz.AddRange(kvp.Value[p - 1].Results.Values.Select(
                 r => new GH_UnitNumber(r.Xxyyzz)), path);
             }
           }
+        } else {
+          Element1dExtremaKey key = ExtremaHelper.ExtremaKey(resultSet, _selectedItems[0]);
+          IDisplacement extrema = resultSet.GetExtrema(key);
+          int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
+          var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
+          outTransX.Add(new GH_UnitNumber(extrema.X.ToUnit(_lengthUnit)), path);
+          outTransY.Add(new GH_UnitNumber(extrema.Y.ToUnit(_lengthUnit)), path);
+          outTransZ.Add(new GH_UnitNumber(extrema.Z.ToUnit(_lengthUnit)), path);
+          outTransXyz.Add(new GH_UnitNumber(extrema.Xyz.ToUnit(_lengthUnit)), path);
+          outRotX.Add(new GH_UnitNumber(extrema.Xx), path);
+          outRotY.Add(new GH_UnitNumber(extrema.Yy), path);
+          outRotZ.Add(new GH_UnitNumber(extrema.Zz), path);
+          outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz), path);
         }
-       
+
         PostHog.Result(result.CaseType, 1, GsaResultsValues.ResultType.Displacement);
       }
 
