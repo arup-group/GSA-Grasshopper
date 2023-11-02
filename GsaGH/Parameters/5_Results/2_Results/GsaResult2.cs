@@ -16,6 +16,10 @@ namespace GsaGH.Parameters.Results {
       get;
       private set;
     }
+    public INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> NodeSpringForces {
+      get;
+      private set;
+    }
 
     // temp conversion from old class
     internal GsaResult2(GsaResult result) {
@@ -103,6 +107,7 @@ namespace GsaGH.Parameters.Results {
 
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
+      NodeSpringForces = new NodeSpringForceCache(result);
     }
 
     private void InitialiseCombinationsCaseResults(
@@ -114,6 +119,7 @@ namespace GsaGH.Parameters.Results {
 
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
+      NodeSpringForces = new NodeSpringForceCache(result);
     }
   }
 }

@@ -1,23 +1,19 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class
-    NodeReactionForceCache : INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> {
-    internal ConcurrentBag<int> SupportNodeIds { get; private set; }
+    NodeSpringForceCache : INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> {
 
-    internal NodeReactionForceCache(AnalysisCaseResult result, Model model) {
+    internal NodeSpringForceCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
-      SetSupportNodeIds(model);
     }
 
-    internal NodeReactionForceCache(CombinationCaseResult result, Model model) {
+    internal NodeSpringForceCache(CombinationCaseResult result) {
       ApiResult = new ApiResult(result);
-      SetSupportNodeIds(model);
     }
 
     public IApiResult ApiResult { get; set; }
@@ -34,11 +30,7 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, NodeResult> aCaseResults = analysisCase.NodeResults(nodelist);
             Parallel.ForEach(missingIds, nodeId => {
-              if (!SupportNodeIds.Contains(nodeId)) {
-                return;
-              }
-
-              var res = new InternalForce(aCaseResults[nodeId].Reaction);
+              var res = new InternalForce(aCaseResults[nodeId].SpringForce);
               Cache.TryAdd(nodeId, new Collection<IInternalForce>() {
                 res,
               });
@@ -49,13 +41,9 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> cCaseResults
               = combinationCase.NodeResults(nodelist);
             Parallel.ForEach(missingIds, nodeId => {
-              if (!SupportNodeIds.Contains(nodeId)) {
-                return;
-              }
-
               var permutationResults = new Collection<IInternalForce>();
               foreach (NodeResult permutationResult in cCaseResults[nodeId]) {
-                permutationResults.Add(new InternalForce(permutationResult.Reaction));
+                permutationResults.Add(new InternalForce(permutationResult.SpringForce));
               }
 
               Cache.TryAdd(nodeId, permutationResults);
@@ -65,19 +53,6 @@ namespace GsaGH.Parameters.Results {
       }
 
       return new NodeForceSubset(Cache.GetSubset(nodeIds));
-    }
-
-    private void SetSupportNodeIds(Model model) {
-      ConcurrentBag<int> supportnodeIDs = null;
-      supportnodeIDs = new ConcurrentBag<int>();
-      ReadOnlyDictionary<int, Node> nodes = model.Nodes();
-      Parallel.ForEach(nodes, node => {
-        NodalRestraint rest = node.Value.Restraint;
-        if (rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ) {
-          supportnodeIDs.Add(node.Key);
-        }
-      });
-      SupportNodeIds = supportnodeIDs;
     }
   }
 }
