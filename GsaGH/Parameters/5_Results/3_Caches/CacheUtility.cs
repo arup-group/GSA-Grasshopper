@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace GsaGH.Parameters.Results {
@@ -10,6 +11,25 @@ namespace GsaGH.Parameters.Results {
       Parallel.ForEach(newKeys, key => {
         if (!existing.ContainsKey(key)) {
           missingIds.Add(key);
+        }
+      });
+
+      return missingIds;
+    }
+
+    public static ConcurrentBag<int> GetMissingKeysAndPositions<T1, T2>(
+      this IDictionary<int, Collection<T1>> existing, ICollection<int> newKeys, ReadOnlyCollection<double> positions)
+      where T1 : IElement1dQuantity<T2> where T2 : IResultItem {
+      var missingIds = new ConcurrentBag<int>();
+      Parallel.ForEach(newKeys, key => {
+        if (!existing.ContainsKey(key)) {
+          missingIds.Add(key);
+        } else {
+          foreach (double position in  positions) {
+            if (!existing[key][0].Results.ContainsKey(position)) {
+              missingIds.Add(key);
+            }
+          }
         }
       });
 

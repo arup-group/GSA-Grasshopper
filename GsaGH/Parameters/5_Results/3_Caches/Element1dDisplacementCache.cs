@@ -7,7 +7,7 @@ using Eto.Forms;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class Element1dDisplacementCache 
+  public class Element1dDisplacementCache
     : IElement1dResultCache<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
@@ -22,21 +22,22 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> 
+    public IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>>
       ResultSubset(ICollection<int> elementIds, int positionCount) {
       var positions = Enumerable.Range(0, positionCount).Select(
         i => (double)i / (positionCount - 1)).ToList();
       return ResultSubset(elementIds, new ReadOnlyCollection<double>(positions));
     }
 
-    public IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> 
+    public IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>>
       ResultSubset(ICollection<int> elementIds, ReadOnlyCollection<double> positions) {
-      ConcurrentBag<int> missingIds = Cache.GetMissingKeys(elementIds);
+      ConcurrentBag<int> missingIds
+        = Cache.GetMissingKeysAndPositions<IElement1dDisplacement, IDisplacement>(elementIds, positions);
       if (missingIds.Count > 0) {
         string elementList = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults 
+            ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
               = analysisCase.Element1dDisplacement(elementList, positions);
             Parallel.ForEach(missingIds, elementId => Cache.AddOrUpdate(
               elementId, Element1dResultsFactory.CreateBeamDisplacements(aCaseResults[elementId], positions),
@@ -44,7 +45,7 @@ namespace GsaGH.Parameters.Results {
             break;
 
           case CombinationCaseResult combinationCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults 
+            ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
               = combinationCase.Element1dDisplacement(elementList, positions);
             Parallel.ForEach(missingIds, elementId => Cache.AddOrUpdate(
               elementId, Element1dResultsFactory.CreateBeamDisplacements(cCaseResults[elementId], positions),
