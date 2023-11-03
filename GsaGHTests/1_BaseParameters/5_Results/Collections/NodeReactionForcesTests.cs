@@ -8,7 +8,7 @@ using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
-  public partial class GsaNodeReactionForcesTests {
+  public class GsaNodeReactionForcesTests {
     private static readonly string NodeList = "1324 to 1327";
 
     [Fact]

@@ -9,7 +9,7 @@ using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
-  public partial class Element1dDisplacementsTests {
+  public class Element1dDisplacementsTests {
 
     private static readonly string ElementList = "24 to 30";
 
