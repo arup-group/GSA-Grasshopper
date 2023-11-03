@@ -25,7 +25,7 @@ namespace GsaGH.Parameters.Results {
         if (!existing.ContainsKey(key)) {
           missingIds.Add(key);
         } else {
-          foreach (double position in  positions) {
+          foreach (double position in positions) {
             if (!existing[key][0].Results.ContainsKey(position)) {
               missingIds.Add(key);
             }
@@ -36,10 +36,14 @@ namespace GsaGH.Parameters.Results {
       return missingIds;
     }
 
-    public static ConcurrentDictionary<int, T> GetSubset<T>(this IDictionary<int, T> dictionary, 
+    public static ConcurrentDictionary<int, T> GetSubset<T>(this IDictionary<int, T> dictionary,
       ICollection<int> keys) {
       var subset = new ConcurrentDictionary<int, T>();
-      Parallel.ForEach(keys, key => subset.TryAdd(key, dictionary[key]));
+      Parallel.ForEach(keys, key => {
+        if (dictionary.ContainsKey(key)) {
+          subset.TryAdd(key, dictionary[key]);
+        }
+      });
       return subset;
     }
   }

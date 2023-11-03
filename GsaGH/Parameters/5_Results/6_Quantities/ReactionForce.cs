@@ -4,16 +4,16 @@ using OasysUnits.Units;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 
 namespace GsaGH.Parameters.Results {
-  public class InternalForce : IInternalForce {
-    internal InternalForce(Double6 result) {
+  public class ReactionForce : IInternalForce {
+    internal ReactionForce(Double6 result) {
       X = new Force(result.X, ForceUnit.Newton);
       Y = new Force(result.Y, ForceUnit.Newton);
       Z = new Force(result.Z, ForceUnit.Newton);
-      Xyz = QuantityUtility.PythagoreanTriple(Y, Z);
+      Xyz = QuantityUtility.PythagoreanQuadruple(X, Y, Z);
       Xx = new Moment(result.XX, MomentUnit.NewtonMeter);
       Yy = new Moment(result.YY, MomentUnit.NewtonMeter);
       Zz = new Moment(result.ZZ, MomentUnit.NewtonMeter);
-      Xxyyzz = QuantityUtility.PythagoreanTriple(Yy, Zz);
+      Xxyyzz = QuantityUtility.PythagoreanQuadruple(Xx, Yy, Zz);
     }
 
     public Force X { get; internal set; }
