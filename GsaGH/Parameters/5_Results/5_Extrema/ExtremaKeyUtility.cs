@@ -26,6 +26,12 @@ namespace GsaGH.Parameters.Results {
                   ref maxValue, ref minValue, ref maxKey, ref minKey);
                 break;
 
+              case IElement1dInternalForce displacement:
+                UpdateExtrema<IInternalForce, Force, Moment>(displacement.Results[position],
+                  elementId, permutation, position,
+                  ref maxValue, ref minValue, ref maxKey, ref minKey);
+                break;
+
             }
           }
         }

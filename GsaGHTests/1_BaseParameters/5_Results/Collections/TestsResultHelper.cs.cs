@@ -206,5 +206,47 @@ namespace GsaGHTests.Parameters.Results {
 
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
+
+    public static double ResultsHelper(
+      IElement1dResultSubset<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>> result,
+      ResultVector6HelperEnum component, bool max) {
+      double d = 0;
+      ResultVector6<Element1dExtremaKey> extrema = max ? result.Max : result.Min;
+      switch (component) {
+        case ResultVector6HelperEnum.X:
+          d = result.GetExtrema(extrema.X).X.Kilonewtons;
+          break;
+
+        case ResultVector6HelperEnum.Y:
+          d = result.GetExtrema(extrema.Y).Y.Kilonewtons;
+          break;
+
+        case ResultVector6HelperEnum.Z:
+          d = result.GetExtrema(extrema.Z).Z.Kilonewtons;
+          break;
+
+        case ResultVector6HelperEnum.Xyz:
+          d = result.GetExtrema(extrema.Xyz).Xyz.Kilonewtons;
+          break;
+
+        case ResultVector6HelperEnum.Xx:
+          d = result.GetExtrema(extrema.Xx).Xx.KilonewtonMeters;
+          break;
+
+        case ResultVector6HelperEnum.Yy:
+          d = result.GetExtrema(extrema.Yy).Yy.KilonewtonMeters;
+          break;
+
+        case ResultVector6HelperEnum.Zz:
+          d = result.GetExtrema(extrema.Zz).Zz.KilonewtonMeters;
+          break;
+
+        case ResultVector6HelperEnum.Xxyyzz:
+          d = result.GetExtrema(extrema.Xxyyzz).Xxyyzz.KilonewtonMeters;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
   }
 }

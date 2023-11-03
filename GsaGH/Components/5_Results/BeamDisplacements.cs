@@ -106,18 +106,14 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       GsaResult2 result;
-
       string elementlist = "All";
-
       var ghDivisions = new GH_Integer();
       da.GetData(2, ref ghDivisions);
       GH_Convert.ToInt32(ghDivisions, out int positionsCount, GH_Conversion.Both);
       positionsCount = Math.Abs(positionsCount) + 2; // taken absolute value and add 2 end points.
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      if (!da.GetDataList(0, ghTypes)) {
-        return;
-      }
+      da.GetDataList(0, ghTypes);
 
       var outTransX = new DataTree<GH_UnitNumber>();
       var outTransY = new DataTree<GH_UnitNumber>();
@@ -178,7 +174,7 @@ namespace GsaGH.Components {
             }
           }
         } else {
-          Element1dExtremaKey key = ExtremaHelper.ExtremaKey(resultSet, _selectedItems[0]);
+          Element1dExtremaKey key = ExtremaHelper.DisplacementExtremaKey(resultSet, _selectedItems[0]);
           IDisplacement extrema = resultSet.GetExtrema(key);
           int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
           var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
