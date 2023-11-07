@@ -8,21 +8,21 @@ using GsaAPI;
 namespace GsaGH.Parameters.Results {
   public class
     NodeReactionForceCache : INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> {
-    internal ConcurrentBag<int> SupportNodeIds { get; private set; }
+    public IApiResult ApiResult { get; set; }
+    public ConcurrentDictionary<int, Collection<IInternalForce>> Cache { get; }
+      = new ConcurrentDictionary<int, Collection<IInternalForce>>();
+
+    internal ReadOnlyDictionary<int, Node> Nodes { get; private set; }
 
     internal NodeReactionForceCache(AnalysisCaseResult result, Model model) {
       ApiResult = new ApiResult(result);
-      SetSupportNodeIds(model);
+      Nodes = model.Nodes();
     }
 
     internal NodeReactionForceCache(CombinationCaseResult result, Model model) {
       ApiResult = new ApiResult(result);
-      SetSupportNodeIds(model);
+      Nodes = model.Nodes();
     }
-
-    public IApiResult ApiResult { get; set; }
-    public ConcurrentDictionary<int, Collection<IInternalForce>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IInternalForce>>();
 
     public INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> ResultSubset(
       ICollection<int> nodeIds) {
@@ -34,7 +34,7 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, NodeResult> aCaseResults = analysisCase.NodeResults(nodelist);
             Parallel.ForEach(aCaseResults.Keys, nodeId => {
-              if (!SupportNodeIds.Contains(nodeId)) {
+              if (!IsRestrained(nodeId) && !HasValues(aCaseResults[nodeId].Reaction)) {
                 return;
               }
 
@@ -49,8 +49,17 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> cCaseResults
               = combinationCase.NodeResults(nodelist);
             Parallel.ForEach(cCaseResults.Keys, nodeId => {
-              if (!SupportNodeIds.Contains(nodeId)) {
-                return;
+              if (!IsRestrained(nodeId)) {
+                bool hasValues = false;
+                foreach (NodeResult value in cCaseResults[nodeId]) {
+                  if (HasValues(value.Reaction)) {
+                    hasValues = true;
+                  }
+                }
+
+                if (hasValues) {
+                  return;
+                }
               }
 
               var permutationResults = new Collection<IInternalForce>();
@@ -67,17 +76,14 @@ namespace GsaGH.Parameters.Results {
       return new NodeForceSubset(Cache.GetSubset(nodeIds));
     }
 
-    private void SetSupportNodeIds(Model model) {
-      ConcurrentBag<int> supportnodeIDs = null;
-      supportnodeIDs = new ConcurrentBag<int>();
-      ReadOnlyDictionary<int, Node> nodes = model.Nodes();
-      Parallel.ForEach(nodes, node => {
-        NodalRestraint rest = node.Value.Restraint;
-        if (rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ) {
-          supportnodeIDs.Add(node.Key);
-        }
-      });
-      SupportNodeIds = supportnodeIDs;
+    private bool IsRestrained(int nodeId) {
+      NodalRestraint rest = Nodes[nodeId].Restraint;
+      return rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ;
+    }
+
+    private bool HasValues(Double6 values) {
+      return values.X != 0 | values.Y != 0 | values.Z != 0
+              | values.XX != 0 | values.YY != 0 | values.ZZ != 0;
     }
   }
 }
