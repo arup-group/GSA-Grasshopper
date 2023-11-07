@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -173,7 +172,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6ReactionForces[0]) {
-          Parallel.ForEach(resultSet.Subset, kvp => {
+          foreach (KeyValuePair<int, Collection<IInternalForce>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p);
               outTransX.Add(new GH_UnitNumber(kvp.Value[p - 1].X.ToUnit(_forceUnit)), path);
@@ -186,11 +185,12 @@ namespace GsaGH.Components {
               outRotXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].Xxyyzz), path);
               outIDs.Add(kvp.Key, path);
             }
-          });
+          }
         } else {
           NodeExtremaKey key = ExtremaHelper.ReactionForceExtremaKey(resultSet, _selectedItems[0]);
           IInternalForce extrema = resultSet.GetExtrema(key);
-          var path = new GH_Path(result.CaseId, key.Permutation);
+          int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
+          var path = new GH_Path(result.CaseId, key.Permutation + perm);
           outTransX.Add(new GH_UnitNumber(extrema.X.ToUnit(_forceUnit)), path);
           outTransY.Add(new GH_UnitNumber(extrema.Y.ToUnit(_forceUnit)), path);
           outTransZ.Add(new GH_UnitNumber(extrema.Z.ToUnit(_forceUnit)), path);
