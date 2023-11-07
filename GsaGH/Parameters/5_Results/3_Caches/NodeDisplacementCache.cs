@@ -26,7 +26,7 @@ namespace GsaGH.Parameters.Results {
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, NodeResult> aCaseResults = analysisCase.NodeResults(nodelist);
-            Parallel.ForEach(missingIds, nodeId => {
+            Parallel.ForEach(aCaseResults.Keys, nodeId => {
               var res = new Displacement(aCaseResults[nodeId].Displacement);
               Cache.TryAdd(nodeId, new Collection<IDisplacement>() { res });
             });
@@ -34,7 +34,7 @@ namespace GsaGH.Parameters.Results {
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> cCaseResults = combinationCase.NodeResults(nodelist);
-            Parallel.ForEach(missingIds, nodeId => {
+            Parallel.ForEach(cCaseResults.Keys, nodeId => {
               var permutationResults = new Collection<IDisplacement>();
               foreach (NodeResult permutationResult in cCaseResults[nodeId]) {
                 permutationResults.Add(new Displacement(permutationResult.Displacement));

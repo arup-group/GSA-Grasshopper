@@ -56,7 +56,7 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
-        "Type",
+        "Envelope",
         "Unit",
       });
 
@@ -112,6 +112,16 @@ namespace GsaGH.Components {
         return;
       }
 
+      var outTransX = new DataTree<GH_UnitNumber>();
+      var outTransY = new DataTree<GH_UnitNumber>();
+      var outTransZ = new DataTree<GH_UnitNumber>();
+      var outTransXyz = new DataTree<GH_UnitNumber>();
+      var outRotX = new DataTree<GH_UnitNumber>();
+      var outRotY = new DataTree<GH_UnitNumber>();
+      var outRotZ = new DataTree<GH_UnitNumber>();
+      var outRotXyz = new DataTree<GH_UnitNumber>();
+      var outIDs = new DataTree<int>();
+
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         switch (ghTyp?.Value) {
           case GsaResultGoo goo:
@@ -139,16 +149,6 @@ namespace GsaGH.Components {
           permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
         }
 
-        var outTransX = new DataTree<GH_UnitNumber>();
-        var outTransY = new DataTree<GH_UnitNumber>();
-        var outTransZ = new DataTree<GH_UnitNumber>();
-        var outTransXyz = new DataTree<GH_UnitNumber>();
-        var outRotX = new DataTree<GH_UnitNumber>();
-        var outRotY = new DataTree<GH_UnitNumber>();
-        var outRotZ = new DataTree<GH_UnitNumber>();
-        var outRotXyz = new DataTree<GH_UnitNumber>();
-        var outIDs = new DataTree<int>();
-
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
           foreach (KeyValuePair<int, Collection<IDisplacement>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
@@ -165,9 +165,10 @@ namespace GsaGH.Components {
             }
           }
         } else {
-          NodeExtremaKey key = ExtremaHelper.ExtremaKey(resultSet, _selectedItems[0]);
+          NodeExtremaKey key = ExtremaHelper.DisplacementExtremaKey(resultSet, _selectedItems[0]);
           IDisplacement extrema = resultSet.GetExtrema(key);
-          var path = new GH_Path(result.CaseId, key.Permutation);
+          int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
+          var path = new GH_Path(result.CaseId, key.Permutation + perm);
           outTransX.Add(new GH_UnitNumber(extrema.X.ToUnit(_lengthUnit)), path);
           outTransY.Add(new GH_UnitNumber(extrema.Y.ToUnit(_lengthUnit)), path);
           outTransZ.Add(new GH_UnitNumber(extrema.Z.ToUnit(_lengthUnit)), path);
@@ -179,23 +180,23 @@ namespace GsaGH.Components {
           outIDs.Add(key.Id, path);
         }
 
-        da.SetDataTree(0, outTransX);
-        da.SetDataTree(1, outTransY);
-        da.SetDataTree(2, outTransZ);
-        da.SetDataTree(3, outTransXyz);
-        da.SetDataTree(4, outRotX);
-        da.SetDataTree(5, outRotY);
-        da.SetDataTree(6, outRotZ);
-        da.SetDataTree(7, outRotXyz);
-        da.SetDataTree(8, outIDs);
-
         PostHog.Result(result.CaseType, 0, GsaResultsValues.ResultType.Displacement);
       }
+
+      da.SetDataTree(0, outTransX);
+      da.SetDataTree(1, outTransY);
+      da.SetDataTree(2, outTransZ);
+      da.SetDataTree(3, outTransXyz);
+      da.SetDataTree(4, outRotX);
+      da.SetDataTree(5, outRotY);
+      da.SetDataTree(6, outRotZ);
+      da.SetDataTree(7, outRotXyz);
+      da.SetDataTree(8, outIDs);
     }
 
     protected override void UpdateUIFromSelectedItems() {
       if (_selectedItems.Count == 1) {
-        _spacerDescriptions.Insert(0, "Type");
+        _spacerDescriptions.Insert(0, "Envelope");
         _dropDownItems.Insert(0, ExtremaHelper.Vector6Displacements.ToList());
         _selectedItems.Insert(0, _dropDownItems[0][0]);
       }

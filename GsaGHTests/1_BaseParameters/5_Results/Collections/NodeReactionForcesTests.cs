@@ -8,7 +8,7 @@ using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
-  public partial class GsaNodeReactionForcesTests {
+  public class GsaNodeReactionForcesTests {
     private static readonly string NodeList = "1324 to 1327";
 
     [Fact]
@@ -42,15 +42,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(NodeComponentHelperEnum.X)]
-    [InlineData(NodeComponentHelperEnum.Y)]
-    [InlineData(NodeComponentHelperEnum.Z)]
-    [InlineData(NodeComponentHelperEnum.Xyz)]
-    [InlineData(NodeComponentHelperEnum.Xx)]
-    [InlineData(NodeComponentHelperEnum.Yy)]
-    [InlineData(NodeComponentHelperEnum.Zz)]
-    [InlineData(NodeComponentHelperEnum.Xxyyzz)]
-    public void NodeReactionForceMaxFromAnalysisCaseTest(NodeComponentHelperEnum component) {
+    [InlineData(ResultVector6HelperEnum.X)]
+    [InlineData(ResultVector6HelperEnum.Y)]
+    [InlineData(ResultVector6HelperEnum.Z)]
+    [InlineData(ResultVector6HelperEnum.Xyz)]
+    [InlineData(ResultVector6HelperEnum.Xx)]
+    [InlineData(ResultVector6HelperEnum.Yy)]
+    [InlineData(ResultVector6HelperEnum.Zz)]
+    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
+    public void NodeReactionForceMaxFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
@@ -66,15 +66,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(NodeComponentHelperEnum.X)]
-    [InlineData(NodeComponentHelperEnum.Y)]
-    [InlineData(NodeComponentHelperEnum.Z)]
-    [InlineData(NodeComponentHelperEnum.Xyz)]
-    [InlineData(NodeComponentHelperEnum.Xx)]
-    [InlineData(NodeComponentHelperEnum.Yy)]
-    [InlineData(NodeComponentHelperEnum.Zz)]
-    [InlineData(NodeComponentHelperEnum.Xxyyzz)]
-    public void NodeReactionForceMaxFromCombinationCaseTest(NodeComponentHelperEnum component) {
+    [InlineData(ResultVector6HelperEnum.X)]
+    [InlineData(ResultVector6HelperEnum.Y)]
+    [InlineData(ResultVector6HelperEnum.Z)]
+    [InlineData(ResultVector6HelperEnum.Xyz)]
+    [InlineData(ResultVector6HelperEnum.Xx)]
+    [InlineData(ResultVector6HelperEnum.Yy)]
+    [InlineData(ResultVector6HelperEnum.Zz)]
+    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
+    public void NodeReactionForceMaxFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Max(ExpectedCombinationCaseC4p1Values(component).Max(),
@@ -90,15 +90,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(NodeComponentHelperEnum.X)]
-    [InlineData(NodeComponentHelperEnum.Y)]
-    [InlineData(NodeComponentHelperEnum.Z)]
-    [InlineData(NodeComponentHelperEnum.Xyz)]
-    [InlineData(NodeComponentHelperEnum.Xx)]
-    [InlineData(NodeComponentHelperEnum.Yy)]
-    [InlineData(NodeComponentHelperEnum.Zz)]
-    [InlineData(NodeComponentHelperEnum.Xxyyzz)]
-    public void NodeReactionForceMinFromAnalysisCaseTest(NodeComponentHelperEnum component) {
+    [InlineData(ResultVector6HelperEnum.X)]
+    [InlineData(ResultVector6HelperEnum.Y)]
+    [InlineData(ResultVector6HelperEnum.Z)]
+    [InlineData(ResultVector6HelperEnum.Xyz)]
+    [InlineData(ResultVector6HelperEnum.Xx)]
+    [InlineData(ResultVector6HelperEnum.Yy)]
+    [InlineData(ResultVector6HelperEnum.Zz)]
+    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
+    public void NodeReactionForceMinFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
@@ -113,15 +113,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(NodeComponentHelperEnum.X)]
-    [InlineData(NodeComponentHelperEnum.Y)]
-    [InlineData(NodeComponentHelperEnum.Z)]
-    [InlineData(NodeComponentHelperEnum.Xyz)]
-    [InlineData(NodeComponentHelperEnum.Xx)]
-    [InlineData(NodeComponentHelperEnum.Yy)]
-    [InlineData(NodeComponentHelperEnum.Zz)]
-    [InlineData(NodeComponentHelperEnum.Xxyyzz)]
-    public void NodeReactionForceMinFromcombinationCaseTest(NodeComponentHelperEnum component) {
+    [InlineData(ResultVector6HelperEnum.X)]
+    [InlineData(ResultVector6HelperEnum.Y)]
+    [InlineData(ResultVector6HelperEnum.Z)]
+    [InlineData(ResultVector6HelperEnum.Xyz)]
+    [InlineData(ResultVector6HelperEnum.Xx)]
+    [InlineData(ResultVector6HelperEnum.Yy)]
+    [InlineData(ResultVector6HelperEnum.Zz)]
+    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
+    public void NodeReactionForceMinFromcombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Min(ExpectedCombinationCaseC4p1Values(component).Min(),
@@ -138,15 +138,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(NodeComponentHelperEnum.X)]
-    [InlineData(NodeComponentHelperEnum.Y)]
-    [InlineData(NodeComponentHelperEnum.Z)]
-    [InlineData(NodeComponentHelperEnum.Xyz)]
-    [InlineData(NodeComponentHelperEnum.Xx)]
-    [InlineData(NodeComponentHelperEnum.Yy)]
-    [InlineData(NodeComponentHelperEnum.Zz)]
-    [InlineData(NodeComponentHelperEnum.Xxyyzz)]
-    public void NodeReactionForceValuesFromAnalysisCaseTest(NodeComponentHelperEnum component) {
+    [InlineData(ResultVector6HelperEnum.X)]
+    [InlineData(ResultVector6HelperEnum.Y)]
+    [InlineData(ResultVector6HelperEnum.Z)]
+    [InlineData(ResultVector6HelperEnum.Xyz)]
+    [InlineData(ResultVector6HelperEnum.Xx)]
+    [InlineData(ResultVector6HelperEnum.Yy)]
+    [InlineData(ResultVector6HelperEnum.Zz)]
+    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
+    public void NodeReactionForceValuesFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
@@ -170,15 +170,15 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(NodeComponentHelperEnum.X)]
-    [InlineData(NodeComponentHelperEnum.Y)]
-    [InlineData(NodeComponentHelperEnum.Z)]
-    [InlineData(NodeComponentHelperEnum.Xyz)]
-    [InlineData(NodeComponentHelperEnum.Xx)]
-    [InlineData(NodeComponentHelperEnum.Yy)]
-    [InlineData(NodeComponentHelperEnum.Zz)]
-    [InlineData(NodeComponentHelperEnum.Xxyyzz)]
-    public void NodeReactionForceValuesFromCombinationCaseTest(NodeComponentHelperEnum component) {
+    [InlineData(ResultVector6HelperEnum.X)]
+    [InlineData(ResultVector6HelperEnum.Y)]
+    [InlineData(ResultVector6HelperEnum.Z)]
+    [InlineData(ResultVector6HelperEnum.Xyz)]
+    [InlineData(ResultVector6HelperEnum.Xx)]
+    [InlineData(ResultVector6HelperEnum.Yy)]
+    [InlineData(ResultVector6HelperEnum.Zz)]
+    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
+    public void NodeReactionForceValuesFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       List<double> expectedP1 = ExpectedCombinationCaseC4p1Values(component);
@@ -204,69 +204,69 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
-    private List<double> ExpectedAnalysisCaseValues(NodeComponentHelperEnum component) {
+    private List<double> ExpectedAnalysisCaseValues(ResultVector6HelperEnum component) {
       switch (component) {
-        case NodeComponentHelperEnum.X: return NodeReactionForcesA1.XInKiloNewtons();
+        case ResultVector6HelperEnum.X: return NodeReactionForcesA1.XInKiloNewtons();
 
-        case NodeComponentHelperEnum.Y: return NodeReactionForcesA1.YInKiloNewtons();
+        case ResultVector6HelperEnum.Y: return NodeReactionForcesA1.YInKiloNewtons();
 
-        case NodeComponentHelperEnum.Z: return NodeReactionForcesA1.ZInKiloNewtons();
+        case ResultVector6HelperEnum.Z: return NodeReactionForcesA1.ZInKiloNewtons();
 
-        case NodeComponentHelperEnum.Xyz: return NodeReactionForcesA1.XyzInKiloNewtons();
+        case ResultVector6HelperEnum.Xyz: return NodeReactionForcesA1.XyzInKiloNewtons();
 
-        case NodeComponentHelperEnum.Xx: return NodeReactionForcesA1.XxInKiloNewtonsPerMeter();
+        case ResultVector6HelperEnum.Xx: return NodeReactionForcesA1.XxInKiloNewtonsPerMeter();
 
-        case NodeComponentHelperEnum.Yy: return NodeReactionForcesA1.YyInKiloNewtonsPerMeter();
+        case ResultVector6HelperEnum.Yy: return NodeReactionForcesA1.YyInKiloNewtonsPerMeter();
 
-        case NodeComponentHelperEnum.Zz: return NodeReactionForcesA1.ZzInKiloNewtonsPerMeter();
+        case ResultVector6HelperEnum.Zz: return NodeReactionForcesA1.ZzInKiloNewtonsPerMeter();
 
-        case NodeComponentHelperEnum.Xxyyzz:
+        case ResultVector6HelperEnum.Xxyyzz:
           return NodeReactionForcesA1.XxyyzzInKiloNewtonsPerMeter();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p1Values(NodeComponentHelperEnum component) {
+    private List<double> ExpectedCombinationCaseC4p1Values(ResultVector6HelperEnum component) {
       switch (component) {
-        case NodeComponentHelperEnum.X: return NodeReactionForcesC4p1.XInKiloNewtons();
+        case ResultVector6HelperEnum.X: return NodeReactionForcesC4p1.XInKiloNewtons();
 
-        case NodeComponentHelperEnum.Y: return NodeReactionForcesC4p1.YInKiloNewtons();
+        case ResultVector6HelperEnum.Y: return NodeReactionForcesC4p1.YInKiloNewtons();
 
-        case NodeComponentHelperEnum.Z: return NodeReactionForcesC4p1.ZInKiloNewtons();
+        case ResultVector6HelperEnum.Z: return NodeReactionForcesC4p1.ZInKiloNewtons();
 
-        case NodeComponentHelperEnum.Xyz: return NodeReactionForcesC4p1.XyzInKiloNewtons();
+        case ResultVector6HelperEnum.Xyz: return NodeReactionForcesC4p1.XyzInKiloNewtons();
 
-        case NodeComponentHelperEnum.Xx: return NodeReactionForcesC4p1.XxInKiloNewtonsPerMeter();
+        case ResultVector6HelperEnum.Xx: return NodeReactionForcesC4p1.XxInKiloNewtonsPerMeter();
 
-        case NodeComponentHelperEnum.Yy: return NodeReactionForcesC4p1.YyInKiloNewtonsPerMeter();
+        case ResultVector6HelperEnum.Yy: return NodeReactionForcesC4p1.YyInKiloNewtonsPerMeter();
 
-        case NodeComponentHelperEnum.Zz: return NodeReactionForcesC4p1.ZzInKiloNewtonsPerMeter();
+        case ResultVector6HelperEnum.Zz: return NodeReactionForcesC4p1.ZzInKiloNewtonsPerMeter();
 
-        case NodeComponentHelperEnum.Xxyyzz:
+        case ResultVector6HelperEnum.Xxyyzz:
           return NodeReactionForcesC4p1.XxyyzzInKiloNewtonsPerMeter();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p2Values(NodeComponentHelperEnum component) {
+    private List<double> ExpectedCombinationCaseC4p2Values(ResultVector6HelperEnum component) {
       switch (component) {
-        case NodeComponentHelperEnum.X: return NodeReactionForcesC4p2.XInKiloNewtons();
+        case ResultVector6HelperEnum.X: return NodeReactionForcesC4p2.XInKiloNewtons();
 
-        case NodeComponentHelperEnum.Y: return NodeReactionForcesC4p2.YInKiloNewtons();
+        case ResultVector6HelperEnum.Y: return NodeReactionForcesC4p2.YInKiloNewtons();
 
-        case NodeComponentHelperEnum.Z: return NodeReactionForcesC4p2.ZInKiloNewtons();
+        case ResultVector6HelperEnum.Z: return NodeReactionForcesC4p2.ZInKiloNewtons();
 
-        case NodeComponentHelperEnum.Xyz: return NodeReactionForcesC4p2.XyzInKiloNewtons();
+        case ResultVector6HelperEnum.Xyz: return NodeReactionForcesC4p2.XyzInKiloNewtons();
 
-        case NodeComponentHelperEnum.Xx: return NodeReactionForcesC4p2.XxInKiloNewtonsPerMeter();
+        case ResultVector6HelperEnum.Xx: return NodeReactionForcesC4p2.XxInKiloNewtonsPerMeter();
 
-        case NodeComponentHelperEnum.Yy: return NodeReactionForcesC4p2.YyInKiloNewtonsPerMeter();
+        case ResultVector6HelperEnum.Yy: return NodeReactionForcesC4p2.YyInKiloNewtonsPerMeter();
 
-        case NodeComponentHelperEnum.Zz: return NodeReactionForcesC4p2.ZzInKiloNewtonsPerMeter();
+        case ResultVector6HelperEnum.Zz: return NodeReactionForcesC4p2.ZzInKiloNewtonsPerMeter();
 
-        case NodeComponentHelperEnum.Xxyyzz:
+        case ResultVector6HelperEnum.Xxyyzz:
           return NodeReactionForcesC4p2.XxyyzzInKiloNewtonsPerMeter();
       }
 

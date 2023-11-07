@@ -8,6 +8,16 @@ namespace GsaGH.Parameters.Results {
 
   public class GsaResult2 : IGsaResult {
     // Caches
+    public IElement1dResultCache<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> Element1dDisplacements { 
+      get; 
+      private set; 
+    }
+
+    public IElement1dResultCache<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>> Element1dInternalForces {
+      get;
+      private set;
+    }
+
     public INodeResultCache<IDisplacement, ResultVector6<NodeExtremaKey>> NodeDisplacements {
       get;
       private set;
@@ -105,6 +115,8 @@ namespace GsaGH.Parameters.Results {
       CaseId = caseId;
       CaseName = model.Model.AnalysisCaseName(CaseId);
 
+      Element1dDisplacements = new Element1dDisplacementCache(result);
+      Element1dInternalForces = new Element1dInternalForceCache(result);
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
       NodeSpringForces = new NodeSpringForceCache(result);
@@ -117,6 +129,8 @@ namespace GsaGH.Parameters.Results {
       CaseId = caseId;
       SelectedPermutationIds = permutations.ToList();
 
+      Element1dDisplacements = new Element1dDisplacementCache(result);
+      Element1dInternalForces = new Element1dInternalForceCache(result);
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
       NodeSpringForces = new NodeSpringForceCache(result);

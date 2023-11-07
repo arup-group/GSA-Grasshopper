@@ -1,5 +1,5 @@
 ﻿namespace GsaGHTests.Parameters.Results {
-  public enum NodeComponentHelperEnum {
+  public enum ResultVector6HelperEnum {
     X,
     Y,
     Z,
