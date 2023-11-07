@@ -128,7 +128,6 @@ namespace GsaGH.Components {
       GsaResult2 result;
 
       string nodeList = "All";
-      CaseType caseType = CaseType.AnalysisCase;
 
       var ghTypes = new List<GH_ObjectWrapper>();
       if (!da.GetDataList(0, ghTypes)) {
@@ -161,7 +160,6 @@ namespace GsaGH.Components {
             return;
         }
 
-        caseType = result.CaseType;
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
         INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
           = result.NodeSpringForces.ResultSubset(nodeIds);
@@ -203,6 +201,8 @@ namespace GsaGH.Components {
           outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz), path);
           outIDs.Add(key.Id, path);
         }
+
+        PostHog.Result(result.CaseType, 0, GsaResultsValues.ResultType.Force, "Spring");
       }
 
       da.SetDataTree(0, outTransX);
@@ -214,8 +214,6 @@ namespace GsaGH.Components {
       da.SetDataTree(6, outRotZ);
       da.SetDataTree(7, outRotXyz);
       da.SetDataTree(8, outIDs);
-
-      PostHog.Result(caseType, 0, GsaResultsValues.ResultType.Force, "Spring");
     }
 
     protected override void UpdateUIFromSelectedItems() {
