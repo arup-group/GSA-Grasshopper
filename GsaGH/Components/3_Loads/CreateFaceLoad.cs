@@ -415,7 +415,6 @@ namespace GsaGH.Components {
             faceLoad.ApiLoad.Position = new Vector2(r, s);
             faceLoad.ApiLoad.SetValue(0,
               ((Pressure)Input.UnitNumber(this, da, 6, _forcePerAreaUnit)).NewtonsPerSquareMeter);
-            this.AddRuntimeWarning("Warning: the position cannot be set in GsaAPI at the moment");
           }
 
           break;
