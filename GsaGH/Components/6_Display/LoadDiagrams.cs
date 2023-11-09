@@ -22,7 +22,6 @@ using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using Rhino.Commands;
 using Rhino.Geometry;
 using DiagramType = GsaAPI.DiagramType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
