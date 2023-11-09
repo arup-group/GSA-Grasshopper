@@ -410,7 +410,15 @@ namespace GsaGH.Components {
 
             double r = 0;
             da.GetData(7, ref r);
+            if (r < -1 || r > 1) {
+              this.AddRuntimeWarning("Position r must be between −1 to 1 for Quad and 0 to 1 for Tri elements");
+            }
+
             double s = 0;
+            if (s < -1 || s > 1) {
+              this.AddRuntimeWarning("Position s must be between −1 to 1 for Quad and 0 to 1 for Tri elements");
+            }
+
             da.GetData(8, ref s);
             faceLoad.ApiLoad.Position = new Vector2(r, s);
             faceLoad.ApiLoad.SetValue(0,
