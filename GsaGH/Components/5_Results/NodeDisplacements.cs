@@ -148,18 +148,19 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, Collection<IDisplacement>> kvp in resultSet.Subset) {
+          foreach (int id in resultSet.Ids) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p);
-              outTransX.Add(new GH_UnitNumber(kvp.Value[p - 1].X.ToUnit(_lengthUnit)), path);
-              outTransY.Add(new GH_UnitNumber(kvp.Value[p - 1].Y.ToUnit(_lengthUnit)), path);
-              outTransZ.Add(new GH_UnitNumber(kvp.Value[p - 1].Z.ToUnit(_lengthUnit)), path);
-              outTransXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].Xyz.ToUnit(_lengthUnit)), path);
-              outRotX.Add(new GH_UnitNumber(kvp.Value[p - 1].Xx), path);
-              outRotY.Add(new GH_UnitNumber(kvp.Value[p - 1].Yy), path);
-              outRotZ.Add(new GH_UnitNumber(kvp.Value[p - 1].Zz), path);
-              outRotXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].Xxyyzz), path);
-              outIDs.Add(kvp.Key, path);
+              IDisplacement res = resultSet.Subset[id][p - 1];
+              outTransX.Add(new GH_UnitNumber(res.X.ToUnit(_lengthUnit)), path);
+              outTransY.Add(new GH_UnitNumber(res.Y.ToUnit(_lengthUnit)), path);
+              outTransZ.Add(new GH_UnitNumber(res.Z.ToUnit(_lengthUnit)), path);
+              outTransXyz.Add(new GH_UnitNumber(res.Xyz.ToUnit(_lengthUnit)), path);
+              outRotX.Add(new GH_UnitNumber(res.Xx), path);
+              outRotY.Add(new GH_UnitNumber(res.Yy), path);
+              outRotZ.Add(new GH_UnitNumber(res.Zz), path);
+              outRotXyz.Add(new GH_UnitNumber(res.Xxyyzz), path);
+              outIDs.Add(id, path);
             }
           }
         } else {
