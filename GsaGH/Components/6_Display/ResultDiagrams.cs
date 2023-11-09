@@ -219,7 +219,7 @@ namespace GsaGH.Components {
         }
       }
 
-      string elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
+      EntityList list = Inputs.GetElementOrMemberList(this, da, 1, result.Model);
 
       var ghScale = new GH_Number();
       double scale = 1;
@@ -248,7 +248,8 @@ namespace GsaGH.Components {
       double computedScale
         = GraphicsScalar.ComputeScale(result.Model, scale, _lengthUnit, autoScale, unitScale);
       var graphic = new DiagramSpecification() {
-        ListDefinition = elementlist,
+        ListDefinition = list.Definition,
+        ListType = list.Type,
         Type = type,
         Cases = _case,
         ScaleFactor = computedScale,
