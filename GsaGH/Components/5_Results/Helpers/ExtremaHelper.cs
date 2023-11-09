@@ -4,6 +4,23 @@ using GsaGH.Parameters.Results;
 
 namespace GsaGH.Components.Helpers {
   internal class ExtremaHelper {
+    internal static readonly ReadOnlyCollection<string> Footfall
+      = new ReadOnlyCollection<string>(new[] {
+        "All",
+        "Max Response Factor",
+        "Max Peak Velocity",
+        "Max RMS Velocity",
+        "Max Peak Acceleration",
+        "Max RMS Acceleration",
+        "Max Critical Frequency",
+        "Min Response Factor",
+        "Min Peak Velocity",
+        "Min RMS Velocity",
+        "Min Peak Acceleration",
+        "Min RMS Acceleration",
+        "Min Critical Frequency",
+      });
+
     internal static readonly ReadOnlyCollection<string> Vector6Displacements
       = new ReadOnlyCollection<string>(new[] {
         "All",
@@ -66,6 +83,25 @@ namespace GsaGH.Components.Helpers {
         "Min Mzz",
         "Min |M|",
       });
+
+    internal static U FootfallExtremaKey<U>(
+      INodeResultSubset<IFootfall, ResultFootfall<U>> resultSet, string key) {
+      return key switch {
+        "Max Response Factor" => resultSet.Max.MaximumResponseFactor,
+        "Max Peak Velocity" => resultSet.Max.PeakVelocity,
+        "Max RMS Velocity" => resultSet.Max.RmsVelocity,
+        "Max Peak Acceleration" => resultSet.Max.PeakAcceleration,
+        "Max RMS Acceleration" => resultSet.Max.RmsAcceleration,
+        "Max Critical Frequency" => resultSet.Max.CriticalFrequency,
+        "Min Response Factor" => resultSet.Min.MaximumResponseFactor,
+        "Min Peak Velocity" => resultSet.Min.PeakVelocity,
+        "Min RMS Velocity" => resultSet.Min.RmsVelocity,
+        "Min Peak Acceleration" => resultSet.Min.PeakAcceleration,
+        "Min RMS Acceleration" => resultSet.Min.RmsAcceleration,
+        "Min Critical Frequency" => resultSet.Min.CriticalFrequency,
+        _ => throw new ArgumentException("Extrema case not found"),
+      };
+    }
 
     internal static U DisplacementExtremaKey<T, U>(
       INodeResultSubset<T, ResultVector6<U>> resultSet, string key) where T : IResultItem {
