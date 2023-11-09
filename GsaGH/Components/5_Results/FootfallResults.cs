@@ -128,6 +128,11 @@ namespace GsaGH.Components {
           ? result.NodeResonantFootfalls.ResultSubset(nodeIds)
           : result.NodeTransientFootfalls.ResultSubset(nodeIds);
 
+        if (resultSet.Ids.Count == 0) {
+          this.AddRuntimeWarning($"{result.CaseType} {result.CaseId} contains no Footfall results.");
+          return;
+        }
+
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
         };
