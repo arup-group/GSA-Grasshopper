@@ -12,7 +12,6 @@ namespace GsaGH.Parameters.Results {
       get; 
       private set; 
     }
-
     public IElement1dResultCache<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>> Element1dInternalForces {
       get;
       private set;
@@ -22,11 +21,19 @@ namespace GsaGH.Parameters.Results {
       get;
       private set;
     }
+    public INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> NodeResonantFootfalls {
+      get;
+      private set;
+    }
     public INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> NodeReactionForces {
       get;
       private set;
     }
     public INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> NodeSpringForces {
+      get;
+      private set;
+    }
+    public INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> NodeTransientFootfalls {
       get;
       private set;
     }
@@ -120,6 +127,8 @@ namespace GsaGH.Parameters.Results {
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
       NodeSpringForces = new NodeSpringForceCache(result);
+      NodeResonantFootfalls = new NodeResonantFootfallCache(result);
+      NodeTransientFootfalls = new NodeTransientFootfallCache(result);
     }
 
     private void InitialiseCombinationsCaseResults(
@@ -127,6 +136,7 @@ namespace GsaGH.Parameters.Results {
       Model = model;
       CaseType = CaseType.CombinationCase;
       CaseId = caseId;
+      CaseName = model.Model.CombinationCases()[caseId].Name;
       SelectedPermutationIds = permutations.ToList();
 
       Element1dDisplacements = new Element1dDisplacementCache(result);
@@ -134,6 +144,8 @@ namespace GsaGH.Parameters.Results {
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
       NodeSpringForces = new NodeSpringForceCache(result);
+      NodeResonantFootfalls = new NodeResonantFootfallCache(result);
+      NodeTransientFootfalls = new NodeTransientFootfallCache(result);
     }
   }
 }
