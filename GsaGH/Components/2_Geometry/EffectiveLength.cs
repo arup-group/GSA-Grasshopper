@@ -363,8 +363,7 @@ namespace GsaGH.Components {
         return GsaAPI.InternalIntermediateRestraint.Free;
       }
 
-
-      if (s.Contains("3") || (s.Contains("top") & s.Contains("bot"))) {
+      if (s.Contains("1050179") || (s.Contains("top") & s.Contains("bot"))) {
         return GsaAPI.InternalIntermediateRestraint.TopAndBottomFlangeLateral;
       }
 
