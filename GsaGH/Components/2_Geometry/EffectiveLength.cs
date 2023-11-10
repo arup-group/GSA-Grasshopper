@@ -311,13 +311,17 @@ namespace GsaGH.Components {
         Description = "Set the internal continous restraint along the member. " +
         "\nAccepted inputs are:" +
         "\n  Free (0)" +
-        "\n  Pinned (3145795)" +
-        "\n  TopFlangeLateral (1)",
+        "\n  TopFlangeLateral (1)" +
+        "\n  Pinned (2)",
         Optional = true
       };
     }
 
     private InternalContinuousRestraint InternalContinuousRestraint(string s) {
+      if (s == "2") {
+        return GsaAPI.InternalContinuousRestraint.Pinned;
+      }
+
       if (Enum.TryParse(s, out InternalContinuousRestraint result)) {
         return result;
       }
@@ -327,7 +331,7 @@ namespace GsaGH.Components {
         return GsaAPI.InternalContinuousRestraint.Free;
       }
 
-      if (s.Contains("3145795") || s.Contains("p")) {
+      if (s.Contains("2") || s.Contains("p")) {
         return GsaAPI.InternalContinuousRestraint.Pinned;
       }
 
@@ -348,12 +352,16 @@ namespace GsaGH.Components {
         "\n  Free (0)" +
         "\n  TopFlangeLateral (1)" +
         "\n  BottomFlangeLateral (2)" +
-        "\n  TopAndBottomFlangeLateral (1050179)",
+        "\n  TopAndBottomFlangeLateral (3)",
         Optional = true
       };
     }
 
     private InternalIntermediateRestraint InternalIntermediateRestraint(string s) {
+      if (s == "3") {
+        return GsaAPI.InternalIntermediateRestraint.TopAndBottomFlangeLateral;
+      }
+
       if (Enum.TryParse(s, true, out InternalIntermediateRestraint result)) {
         return result;
       }
@@ -363,7 +371,7 @@ namespace GsaGH.Components {
         return GsaAPI.InternalIntermediateRestraint.Free;
       }
 
-      if (s.Contains("1050179") || (s.Contains("top") & s.Contains("bot"))) {
+      if (s.Contains("3") || (s.Contains("top") & s.Contains("bot"))) {
         return GsaAPI.InternalIntermediateRestraint.TopAndBottomFlangeLateral;
       }
 
