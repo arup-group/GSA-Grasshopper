@@ -195,7 +195,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     internal static EntityList GetElementOrMemberList(
-      GH_Component owner, IGH_DataAccess da, int inputid, GsaModel model) {
+      GH_Component owner, IGH_DataAccess da, int inputid) {
       // to-do GSAGH-350
       var list = new EntityList() {
         Definition = "All",

@@ -36,7 +36,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaMember2dGoo), typeof(GsaMember2d))]
     [InlineData(typeof(GsaMember3dGoo), typeof(GsaMember3d))]
     [InlineData(typeof(GsaNodeGoo), typeof(GsaNode))]
-    [InlineData(typeof(GsaBucklingFactorsGoo), typeof(GsaBucklingFactors))]
+    [InlineData(typeof(GsaEffectiveLengthGoo), typeof(GsaBucklingFactors))]
     // 3_Loads
     [InlineData(typeof(GsaGridPlaneSurfaceGoo), typeof(GsaGridPlaneSurface))]
     [InlineData(typeof(GsaLoadGoo), typeof(GsaBeamLoad))]

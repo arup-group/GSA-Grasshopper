@@ -11,16 +11,16 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to create a new Buckling Length Factors
   /// </summary>
-  public class CreateBucklingFactors : GH_OasysComponent {
+  public class CreateBucklingFactors_OBSOLETE : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("0c32af28-5057-4649-bd56-0850541c954b");
-    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateBucklingFactors;
 
-    public CreateBucklingFactors() : base(
-      "Create " + GsaBucklingFactorsGoo.Name,
-      GsaBucklingFactorsGoo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaBucklingFactorsGoo.Description, CategoryName.Name(),
+    public CreateBucklingFactors_OBSOLETE() : base(
+      "Create " + GsaEffectiveLengthGoo.Name,
+      GsaEffectiveLengthGoo.NickName.Replace(" ", string.Empty),
+      "Create a " + GsaEffectiveLengthGoo.Description, CategoryName.Name(),
       SubCategoryName.Cat2()) {
       Hidden = true;
     }
@@ -39,10 +39,13 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaBucklingFactorsParameter());
+      pManager.AddParameter(new GsaEffectiveLengthParameter());
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
+      this.AddRuntimeError("This component is obsolete and will be removed in future versions. " +
+        "\nThis component has been replaced by Design Properties component, please update " +
+        "your script to use that instead.");
       var fls = new GsaBucklingFactors();
       double? input = null;
       if (da.GetData(0, ref input)) {
@@ -57,7 +60,11 @@ namespace GsaGH.Components {
         fls.EquivalentUniformMomentFactor = input;
       }
 
-      da.SetData(0, new GsaBucklingFactorsGoo(fls));
+      var designprops = new GsaEffectiveLength(new GsaMember1d()) {
+        BucklingFactors = fls
+      };
+
+      da.SetData(0, new GsaEffectiveLengthGoo(designprops));
     }
   }
 }

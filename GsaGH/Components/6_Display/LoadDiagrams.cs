@@ -245,7 +245,7 @@ namespace GsaGH.Components {
         _selectedItems[0] = caseList;
       }
 
-      EntityList list = Inputs.GetElementOrMemberList(this, da, 2, _gsaModel);
+      EntityList list = Inputs.GetElementOrMemberList(this, da, 2);
 
       var ghScale = new GH_Number();
       double scale = 1;

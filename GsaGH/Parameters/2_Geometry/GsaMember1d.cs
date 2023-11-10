@@ -127,6 +127,7 @@ namespace GsaGH.Parameters {
         Type = ApiMember.Type,
         Type1D = ApiMember.Type1D,
         AutomaticOffset = ApiMember.AutomaticOffset,
+        EffectiveLength = ApiMember.EffectiveLength,
       };
       if (ApiMember.Topology != string.Empty) {
         mem.Topology = ApiMember.Topology;
