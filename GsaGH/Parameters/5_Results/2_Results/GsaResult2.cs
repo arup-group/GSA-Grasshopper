@@ -136,6 +136,7 @@ namespace GsaGH.Parameters.Results {
       Model = model;
       CaseType = CaseType.CombinationCase;
       CaseId = caseId;
+      CaseName = model.Model.CombinationCases()[caseId].Name;
       SelectedPermutationIds = permutations.ToList();
 
       Element1dDisplacements = new Element1dDisplacementCache(result);

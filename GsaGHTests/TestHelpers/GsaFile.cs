@@ -7,6 +7,7 @@ namespace GsaGHTests.Helper {
     private static string element2dSimple = "";
     private static string element3dSimple = "";
     private static string springForces = "";
+    private static string steelFootfall = "";
     internal static string SteelDesignComplex {
       get {
         if (steelDesignComplex == "") {
@@ -53,6 +54,15 @@ namespace GsaGHTests.Helper {
         }
 
         return springForces;
+      }
+    }
+    internal static string SteelFootfall {
+      get {
+        if (steelFootfall == "") {
+          steelFootfall = FilePath("footfall_steel.gwb");
+        }
+
+        return steelFootfall;
       }
     }
 

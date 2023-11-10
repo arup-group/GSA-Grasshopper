@@ -23,7 +23,7 @@ namespace GsaGH.Parameters.Results {
         string nodelist = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
-            ReadOnlyDictionary<int, NodeFootfallResult> aCaseResults = analysisCase.NodeTransientFootfall(nodelist);
+            ReadOnlyDictionary<int, NodeFootfallResult> aCaseResults = analysisCase.NodeResonantFootfall(nodelist);
             Parallel.ForEach(aCaseResults.Keys, nodeId => {
               if (double.IsNaN(aCaseResults[nodeId].MaximumResponseFactor)) {
                 return;
