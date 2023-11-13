@@ -184,7 +184,7 @@ namespace GsaGH.Components {
             return;
 
           case GsaResultGoo goo:
-            result = goo.Value;
+            result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
 
@@ -295,7 +295,7 @@ namespace GsaGH.Components {
       da.SetDataTree(6, outYy);
       da.SetDataTree(7, outXxyy);
 
-      PostHog.Result(result.Type, 2, GsaResultsValues.ResultType.Force);
+      PostHog.Result(result.CaseType, 2, GsaResultsValues.ResultType.Force);
       da.SetDataTree(8, outWaxx);
       da.SetDataTree(9, outWayy);
     }

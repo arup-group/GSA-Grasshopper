@@ -2,7 +2,6 @@
 using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
-using GsaGHTests.Model;
 using OasysGH.Components;
 using Xunit;
 
