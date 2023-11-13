@@ -25,20 +25,20 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to create Effective Length properties for member 1d
   /// </summary>
-  public class EffectiveLength : GH_OasysDropDownComponent {
+  public class CreateEffectiveLength : GH_OasysDropDownComponent {
     private enum FoldMode {
       Automatic,
       InternalRestraints,
-      EffectiveLength,
+      UserSpecified,
     }
     public override Guid ComponentGuid => new Guid("3b63d584-5f61-4779-b576-14ab8682c1b9");
-    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateBucklingFactors;
+    protected override Bitmap Icon => Resources.CreateEffectiveLength;
     private FoldMode _mode = FoldMode.Automatic;
 
 
-    public EffectiveLength() : base("Effective Length Properties", "EffectiveLength",
+    public CreateEffectiveLength() : base("Create Effective Length Properties", "EffectiveLength",
       "Create 1D Member Design Properties for Effective Length, Restraints and Buckling Factors",
       CategoryName.Name(), SubCategoryName.Cat2()) {
       Hidden = true;
@@ -64,12 +64,12 @@ namespace GsaGH.Components {
             _mode = FoldMode.InternalRestraints;
             break;
 
-          case "EffectiveLength":
-            if (_mode == FoldMode.EffectiveLength) {
+          case "UserSpecified":
+            if (_mode == FoldMode.UserSpecified) {
               return;
             }
 
-            _mode = FoldMode.EffectiveLength;
+            _mode = FoldMode.UserSpecified;
             break;
         }
       }
@@ -106,7 +106,7 @@ namespace GsaGH.Components {
           Params.RegisterInputParam(InternalIntermediateRestraint());
           break;
 
-        case FoldMode.EffectiveLength:
+        case FoldMode.UserSpecified:
           Params.RegisterInputParam(EffectiveLengthAboutYParam());
           Params.RegisterInputParam(EffectiveLengthAboutZParam());
           Params.RegisterInputParam(EffectiveLengthLtbParam());
@@ -131,8 +131,8 @@ namespace GsaGH.Components {
       _dropDownItems.Add(Enum.GetNames(typeof(FoldMode)).ToList());
       _selectedItems.Add(_dropDownItems[0][0]);
 
-      _dropDownItems.Add(Enum.GetNames(typeof(GsaAPI.LoadReference)).ToList());
-      _selectedItems.Add(GsaAPI.LoadReference.ShearCentre.ToString());
+      _dropDownItems.Add(Enum.GetNames(typeof(LoadReference)).ToList());
+      _selectedItems.Add(LoadReference.ShearCentre.ToString());
 
       _isInitialised = true;
     }
@@ -157,7 +157,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var designProp = new GsaEffectiveLength();
+      var leff = new GsaEffectiveLength();
       string end1 = string.Empty;
       string end2 = string.Empty;
       switch (_mode) {
@@ -171,7 +171,7 @@ namespace GsaGH.Components {
             auto.End2 = MemberEndRestraintFactory.CreateFromStrings(end2);
           }
 
-          designProp.EffectiveLength = auto;
+          leff.EffectiveLength = auto;
           break;
 
         case FoldMode.InternalRestraints:
@@ -194,10 +194,10 @@ namespace GsaGH.Components {
             internalRes.RestraintAtBracedPoints = InternalIntermediateRestraint(intermed);
           }
 
-          designProp.EffectiveLength = internalRes;
+          leff.EffectiveLength = internalRes;
           break;
 
-        case FoldMode.EffectiveLength:
+        case FoldMode.UserSpecified:
           var specific = new EffectiveLengthFromUserSpecifiedValue();
           if (Params.Input[1].SourceCount > 0) {
             specific.EffectiveLengthAboutY = EffectiveLengthAttribute(
@@ -214,7 +214,7 @@ namespace GsaGH.Components {
               Input.LengthOrRatio(this, da, 3, LengthUnit.Meter, true));
           }
 
-          designProp.EffectiveLength = specific;
+          leff.EffectiveLength = specific;
           break;
       }
 
@@ -232,16 +232,16 @@ namespace GsaGH.Components {
         fls.EquivalentUniformMomentFactor = input;
       }
 
-      designProp.BucklingFactors = fls;
+      leff.BucklingFactors = fls;
 
       if (da.GetData(0, ref input)) {
-        designProp.EffectiveLength.DestablisingLoad = (double)input;
+        leff.EffectiveLength.DestablisingLoad = (double)input;
       }
 
-      designProp.EffectiveLength.DestablisingLoadPositionRelativeTo
+      leff.EffectiveLength.DestablisingLoadPositionRelativeTo
         = (LoadReference)Enum.Parse(typeof(LoadReference), _selectedItems[1]);
 
-      da.SetData(0, new GsaEffectiveLengthGoo(designProp));
+      da.SetData(0, new GsaEffectiveLengthGoo(leff));
     }
 
     private Param_GenericObject EffectiveLengthAboutYParam() {

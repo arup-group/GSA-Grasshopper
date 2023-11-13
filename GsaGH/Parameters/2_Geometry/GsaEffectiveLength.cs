@@ -1,4 +1,8 @@
 ﻿using GsaAPI;
+using OasysGH.Parameters;
+using OasysUnits.Units;
+using OasysUnits;
+using Grasshopper.Kernel.Types;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -45,10 +49,12 @@ namespace GsaGH.Parameters {
           return "User-specified internal restraints: " + intern + destabilisingLoad + bucklingFacts;
 
         case EffectiveLengthFromUserSpecifiedValue userSpecified:
-          string user = $"About y: {userSpecified.EffectiveLengthAboutY.Option} " +
-            $"{userSpecified.EffectiveLengthAboutY.Value}, About z: {userSpecified.EffectiveLengthAboutZ.Option} " +
-            $"{userSpecified.EffectiveLengthAboutZ.Value}, lateral torsional: {userSpecified.EffectiveLengthAboutZ.Option} " +
-            $"{userSpecified.EffectiveLengthAboutZ.Value}";
+          string y = ConvertEffectiveLengthAttribute(userSpecified.EffectiveLengthAboutY);
+          string z = ConvertEffectiveLengthAttribute(userSpecified.EffectiveLengthAboutZ);
+          string ltb = ConvertEffectiveLengthAttribute(userSpecified.EffectiveLengthLaterialTorsional);
+          string user = $"\nAbout y: {userSpecified.EffectiveLengthAboutY.Option} {y}, " +
+            $"About z: {userSpecified.EffectiveLengthAboutZ.Option} {z}, " +
+            $"lateral torsional: {userSpecified.EffectiveLengthAboutZ.Option} {ltb}";
           return "User-specified effective length: " + user + destabilisingLoad + bucklingFacts;
 
         case EffectiveLengthFromEndRestraintAndGeometry automatic:
@@ -60,6 +66,15 @@ namespace GsaGH.Parameters {
         default:
           throw new System.Exception("EffectiveLengthType not implemented");
       }
+    }
+
+    private string ConvertEffectiveLengthAttribute(EffectiveLengthAttribute leffAttribute) {
+      if (leffAttribute.Option == EffectiveLengthOptionType.Absolute) {
+        return new GH_Number(leffAttribute.Value).ToString();
+      }
+
+      return new GH_UnitNumber(new Ratio(leffAttribute.Value, RatioUnit.DecimalFraction).
+        ToUnit(RatioUnit.Percent)).ToString();
     }
   }
 }

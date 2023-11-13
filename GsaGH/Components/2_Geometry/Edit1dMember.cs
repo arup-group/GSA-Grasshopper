@@ -23,75 +23,21 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a 1D Member
   /// </summary>
-  public class Edit1dMember : Section3dPreviewComponent, IGH_VariableParameterComponent {
+  public class Edit1dMember : Section3dPreviewComponent {
     public override Guid ComponentGuid => new Guid("32e744e5-7352-4308-81d0-13bf06db5e82");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Edit1dMember;
     private AngleUnit _angleUnit = AngleUnit.Radian;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public Edit1dMember() : base("Edit 1D Member", "Mem1dEdit", "Modify GSA 1D Member",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
-
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      if (!(menu is ContextMenuStrip)) {
-        return; // this method is also called when clicking EWR balloon
-      }
-      
-      base.AppendAdditionalMenuItems(menu);
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => Update(unit)) {
-          Enabled = true,
-          Checked = unit == Length.GetAbbreviation(_lengthUnit),
-        };
-        unitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      menu.Items.Add(unitsMenu);
-      Menu_AppendSeparator(menu);
-    }
-
-    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    public override bool Read(GH_IReader reader) {
-      _lengthUnit
-        = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      return base.Read(reader);
-    }
-
-    public void VariableParameterMaintenance() { }
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetString("LengthUnit", _lengthUnit.ToString());
-      return base.Write(writer);
-    }
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       if (Params.Input[10] is Param_Number angleParameter) {
         _angleUnit = angleParameter.UseDegrees ? AngleUnit.Degree : AngleUnit.Radian;
       }
-
-      Message = Length.GetAbbreviation(_lengthUnit);
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -373,13 +319,6 @@ namespace GsaGH.Components {
       da.SetData(20, (Color)mem.ApiMember.Colour);
       da.SetData(21, mem.ApiMember.IsDummy);
       da.SetData(22, mem.ApiMember.Topology);
-    }
-
-    private void Update(string unit) {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      Message = unit;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
     }
   }
 }

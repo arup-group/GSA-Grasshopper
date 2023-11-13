@@ -16,9 +16,9 @@ using Rhino.Geometry;
 namespace GsaGH.Components {
   public class CreateMemberEndRestraint : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("ffd0e792-4dc9-49bd-88ef-48dc0e0a2178");
-    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.LocalAxes;
+    protected override Bitmap Icon => Resources.CreateMemberEndRestraint;
     private readonly List<string> _shortcuts = new List<string>(new[] {
         "Pinned",
         "Fixed",

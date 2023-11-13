@@ -18,7 +18,7 @@ namespace GsaGH.Parameters {
         base.InstanceDescription;
     public override string TypeName
       => SourceCount == 0 ? GsaEffectiveLengthGoo.Name : base.TypeName;
-    protected override Bitmap Icon => Resources.BucklingFactorsParam;
+    protected override Bitmap Icon => Resources.EffectiveLengthParam;
 
     public GsaEffectiveLengthParameter() : base(new GH_InstanceDescription(
       GsaEffectiveLengthGoo.Name, GsaEffectiveLengthGoo.NickName,
