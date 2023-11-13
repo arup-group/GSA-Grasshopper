@@ -194,6 +194,39 @@ namespace GsaGH.Helpers.GH {
       return list;
     }
 
+    internal static EntityList GetElementOrMemberList(
+      GH_Component owner, IGH_DataAccess da, int inputid, GsaModel model) {
+      // to-do GSAGH-350
+      var list = new EntityList() {
+        Definition = "All",
+        Type = GsaAPI.EntityType.Element
+      };
+
+      var ghType = new GH_ObjectWrapper();
+      if (!da.GetData(inputid, ref ghType)) {
+        return list;
+      }
+
+      if (!(ghType.Value is GsaListGoo listGoo)) {
+        GH_Convert.ToString(ghType.Value, out string definition, GH_Conversion.Both);
+        if (string.IsNullOrEmpty(definition) || definition.ToLower() == "all") {
+          definition = "All";
+        }
+
+        list.Definition = definition;
+        return list;
+      }
+
+      if (listGoo.Value.EntityType != EntityType.Element
+        && listGoo.Value.EntityType != EntityType.Member) {
+        owner.AddRuntimeWarning("List must be of either Element or Member type to apply to " +
+          "element filter");
+        return list;
+      }
+
+      return listGoo.Value.GetApiList();
+    }
+
     internal static string GetElementListDefinition(
       GH_Component owner, IGH_DataAccess da, int inputid, GsaModel model) {
       // to-do GSAGH-350
