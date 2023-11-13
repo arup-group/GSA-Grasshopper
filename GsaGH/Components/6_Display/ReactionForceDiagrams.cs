@@ -184,7 +184,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      result = (ghObject.Value as GsaResultGoo).Value;
+      result = (GsaResult)(ghObject.Value as GsaResultGoo).Value;
       string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
       GsaResultsValues forceValues
@@ -227,7 +227,7 @@ namespace GsaGH.Components {
       });
 
       SetOutputs(da, reactionForceVectors, annotations);
-      PostHog.Diagram("Result", result.Type, "ReactionForce", _selectedDisplayValue.ToString(), Parameters.EntityType.Node);
+      PostHog.Diagram("Result", result.CaseType, "ReactionForce", _selectedDisplayValue.ToString(), Parameters.EntityType.Node);
     }
 
     private double ComputeAutoScale(GsaResultsValues forceValues, BoundingBox bbox) {

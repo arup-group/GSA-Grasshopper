@@ -80,7 +80,7 @@ namespace GsaGH.Components {
     protected override void SolveInternal(IGH_DataAccess da) {
       GsaResultGoo resultGoo = null;
       da.GetData(0, ref resultGoo);
-      GsaResult result = resultGoo.Value;
+      var result = (GsaResult)resultGoo.Value;
 
       string elementlist = Inputs.GetElementListDefinition(this, da, 1, resultGoo.Value.Model);
       _section3dPreview = new Section3dPreview(result, elementlist, _defScale);
@@ -88,7 +88,7 @@ namespace GsaGH.Components {
       da.SetData(0, _section3dPreview.Mesh);
       da.SetDataList(1, _section3dPreview.Outlines);
 
-      PostHog.Result(result.Type, 1, "Displacement", "DeformedSection3d");
+      PostHog.Result(result.CaseType, 1, "Displacement", "DeformedSection3d");
     }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {

@@ -161,7 +161,7 @@ namespace GsaGH.Components {
             return;
 
           case GsaResultGoo goo:
-            result = goo.Value;
+            result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
 
@@ -207,7 +207,7 @@ namespace GsaGH.Components {
 
       da.SetDataTree(0, outTransX);
 
-      PostHog.Result(result.Type, 1, GsaResultsValues.ResultType.StrainEnergy);
+      PostHog.Result(result.CaseType, 1, GsaResultsValues.ResultType.StrainEnergy);
     }
 
     protected override void UpdateUIFromSelectedItems() {

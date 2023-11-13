@@ -154,7 +154,7 @@ namespace GsaGH.Helpers.GsaApi {
           if (i < stresses.Count && !double.IsNaN(stresses[i].XX) &&
               !double.IsNaN(stresses[i].YY) && !double.IsNaN(stresses[i].ZZ)) {
             xyzRes[i] = GetQuantityResult(stresses[i], stressUnit);
-          } else if (!double.IsNaN(stresses[i - stresses.Count].XY) 
+          } else if (!double.IsNaN(stresses[i - stresses.Count].XY)
                      && !double.IsNaN(stresses[i - stresses.Count].YZ)
                      && !double.IsNaN(stresses[i - stresses.Count].ZX)) {
             xxyyzzRes[i - stresses.Count]
@@ -480,7 +480,7 @@ namespace GsaGH.Helpers.GsaApi {
     internal static GsaResultsValues GetNodeResultValues(
       ReadOnlyDictionary<int, NodeResult> globalResults, LengthUnit resultLengthUnit) {
       var r = new GsaResultsValues {
-        Type = GsaResultsValues.ResultType.Force,
+        Type = GsaResultsValues.ResultType.Displacement,
       };
 
       Parallel.ForEach(globalResults.Keys, nodeId => {

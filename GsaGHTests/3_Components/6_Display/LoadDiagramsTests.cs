@@ -54,7 +54,7 @@ namespace GsaGHTests.Components.Display {
       LoadDiagrams comp = LoadDiagramNodeAndElement1dMother();
       var diagramGoo = (GsaDiagramGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal("L1", comp._selectedItems[0]);
-      Assert.Equal(18, comp._dropDownItems[0].Count);
+      Assert.Equal(19, comp._dropDownItems[0].Count);
     }
 
     [Fact]
