@@ -5,6 +5,23 @@ using MassUnit = OasysUnits.Units.MassUnit;
 
 namespace GsaGH.Parameters.Results {
   public class GlobalResultsCache : IGlobalResultsCache {
+
+    private IEffectiveInertia _effectiveInertia;
+    private IEffectiveMass _effectiveMass;
+    private double? _eigenvalue;
+    private Frequency _frequency;
+    private Ratio _loadFactor;
+    private ForcePerLength _modalGeometricStiffness;
+    private Mass _modalMass;
+    private ForcePerLength _modalStiffness;
+    private int? _mode;
+    private IInternalForce _totalLoad;
+    private IInternalForce _totalReaction;
+
+    internal GlobalResultsCache(AnalysisCaseResult result) {
+      ApiResult = new ApiResult(result);
+    }
+
     public IApiResult ApiResult { get; private set; }
     public IEffectiveInertia EffectiveInertia {
       get {
@@ -37,7 +54,7 @@ namespace GsaGH.Parameters.Results {
 
     public Frequency Frequency {
       get {
-        if (_frequency == null) {
+        if (_frequency.Unit == FrequencyUnit.Undefined) {
           Calculate();
         }
 
@@ -46,7 +63,7 @@ namespace GsaGH.Parameters.Results {
     }
     public Ratio LoadFactor {
       get {
-        if (_loadFactor == null) {
+        if (_loadFactor.Unit == RatioUnit.Undefined) {
           Calculate();
         }
 
@@ -55,7 +72,7 @@ namespace GsaGH.Parameters.Results {
     }
     public ForcePerLength ModalGeometricStiffness {
       get {
-        if (_modalGeometricStiffness == null) {
+        if (_modalGeometricStiffness.Unit == ForcePerLengthUnit.Undefined) {
           Calculate();
         }
 
@@ -64,7 +81,7 @@ namespace GsaGH.Parameters.Results {
     }
     public Mass ModalMass {
       get {
-        if (_modalMass == null) {
+        if (_modalMass.Unit == MassUnit.Undefined) {
           Calculate();
         }
 
@@ -73,7 +90,7 @@ namespace GsaGH.Parameters.Results {
     }
     public ForcePerLength ModalStiffness {
       get {
-        if (_modalStiffness == null) {
+        if (_modalStiffness.Unit == ForcePerLengthUnit.Undefined) {
           Calculate();
         }
 
@@ -108,22 +125,6 @@ namespace GsaGH.Parameters.Results {
       }
     }
 
-    private IEffectiveInertia _effectiveInertia;
-    private IEffectiveMass _effectiveMass;
-    private double? _eigenvalue;
-    private Frequency _frequency;
-    private Ratio _loadFactor;
-    private ForcePerLength _modalGeometricStiffness;
-    private Mass _modalMass;
-    private ForcePerLength _modalStiffness;
-    private int? _mode;
-    private IInternalForce _totalLoad;
-    private IInternalForce _totalReaction;
-
-    internal GlobalResultsCache(AnalysisCaseResult result) {
-      ApiResult = new ApiResult(result);
-    }
-
     // GSA-6747 CombinationCaseResult does not contain global results
     //internal GlobalResultsCache(CombinationCaseResult result) {
     //  ApiResult = new ApiResult(result);
@@ -131,11 +132,12 @@ namespace GsaGH.Parameters.Results {
 
     private void Calculate() {
       GlobalResult res = ((AnalysisCaseResult)ApiResult.Result).Global;
-      if (res.EffectiveInertia != null) { 
+      if (res.EffectiveInertia != null) {
         _effectiveInertia = new EffectiveInertia(res.EffectiveInertia);
       }
 
       _effectiveMass = new EffectiveMass(res.EffectiveMass);
+
       if (res.Frequency == 0 && res.LoadFactor == 0 && res.ModalStiffness != 0) {
         _eigenvalue = res.ModalStiffness;
       }
@@ -158,8 +160,7 @@ namespace GsaGH.Parameters.Results {
       }
 
       if (res.ModalStiffness != 0) {
-        _modalGeometricStiffness = new ForcePerLength(res.ModalGeometricStiffness,
-          ForcePerLengthUnit.NewtonPerMeter);
+        _modalStiffness = new ForcePerLength(res.ModalStiffness, ForcePerLengthUnit.NewtonPerMeter);
       }
 
       if (res.Mode != 0) {

@@ -8,12 +8,14 @@ namespace GsaGH.Parameters.Results {
 
   public class GsaResult2 : IGsaResult {
     // Caches
-    public IElement1dResultCache<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> Element1dDisplacements { 
-      get; 
-      private set; 
+    public IElement1dResultCache<IElement1dDisplacement, IDisplacement,
+      ResultVector6<Element1dExtremaKey>> Element1dDisplacements {
+      get;
+      private set;
     }
 
-    public IElement1dResultCache<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>> Element1dInternalForces {
+    public IElement1dResultCache<IElement1dInternalForce, IInternalForce,
+      ResultVector6<Element1dExtremaKey>> Element1dInternalForces {
       get;
       private set;
     }
@@ -27,6 +29,10 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
     public INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> NodeSpringForces {
+      get;
+      private set;
+    }
+    public IGlobalResultsCache GlobalResults {
       get;
       private set;
     }
@@ -120,6 +126,7 @@ namespace GsaGH.Parameters.Results {
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
       NodeSpringForces = new NodeSpringForceCache(result);
+      GlobalResults = new GlobalResultsCache(result);
     }
 
     private void InitialiseCombinationsCaseResults(
@@ -134,6 +141,7 @@ namespace GsaGH.Parameters.Results {
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
       NodeSpringForces = new NodeSpringForceCache(result);
+      //GlobalResults = new GlobalResultsCache(result);
     }
   }
 }
