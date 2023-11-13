@@ -162,28 +162,28 @@ namespace GsaGH.Components {
 
       int i = 0;
       IInternalForce f = globalResultsCache.TotalLoad;
-      da.SetData(i++, new GH_UnitNumber(f.X));
-      da.SetData(i++, new GH_UnitNumber(f.Y));
-      da.SetData(i++, new GH_UnitNumber(f.Z));
-      da.SetData(i++, new GH_UnitNumber(f.Xyz));
+      da.SetData(i++, new GH_UnitNumber(f.X.ToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(f.Y.ToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(f.Z.ToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(f.Xyz.ToUnit(_forceUnit)));
 
       IInternalForce m = globalResultsCache.TotalLoad;
-      da.SetData(i++, new GH_UnitNumber(m.Xx));
-      da.SetData(i++, new GH_UnitNumber(m.Yy));
-      da.SetData(i++, new GH_UnitNumber(m.Zz));
+      da.SetData(i++, new GH_UnitNumber(m.Xx.ToUnit(_momentUnit)));
+      da.SetData(i++, new GH_UnitNumber(m.Yy.ToUnit(_momentUnit)));
+      da.SetData(i++, new GH_UnitNumber(m.Zz.ToUnit(_momentUnit)));
       da.SetData(i++, new GH_UnitNumber(m.Xxyyzz));
 
       IInternalForce rf = globalResultsCache.TotalLoad;
-      da.SetData(i++, new GH_UnitNumber(rf.X));
-      da.SetData(i++, new GH_UnitNumber(rf.Y));
-      da.SetData(i++, new GH_UnitNumber(rf.Z));
+      da.SetData(i++, new GH_UnitNumber(rf.X.ToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(rf.Y.ToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(rf.Z.ToUnit(_forceUnit)));
       da.SetData(i++, new GH_UnitNumber(rf.Xyz));
 
       IInternalForce rm = globalResultsCache.TotalLoad;
-      da.SetData(i++, new GH_UnitNumber(rm.Xx));
-      da.SetData(i++, new GH_UnitNumber(rm.Yy));
-      da.SetData(i++, new GH_UnitNumber(rm.Zz));
-      da.SetData(i, new GH_UnitNumber(rm.Xxyyzz));
+      da.SetData(i++, new GH_UnitNumber(rm.Xx.ToUnit(_momentUnit)));
+      da.SetData(i++, new GH_UnitNumber(rm.Yy.ToUnit(_momentUnit)));
+      da.SetData(i++, new GH_UnitNumber(rm.Zz.ToUnit(_momentUnit)));
+      da.SetData(i, new GH_UnitNumber(rm.Xxyyzz.ToUnit(_momentUnit)));
 
       PostHog.Result(result.CaseType, -1, "Global", "TotalLoadsAndReactions");
     }

@@ -195,10 +195,10 @@ namespace GsaGH.Components {
 
       if (globalResultsCache.EffectiveInertia != null) {
         IEffectiveInertia stiff = globalResultsCache.EffectiveInertia;
-        da.SetData(i++, new GH_UnitNumber(stiff.X));
-        da.SetData(i++, new GH_UnitNumber(stiff.Y));
-        da.SetData(i++, new GH_UnitNumber(stiff.Z));
-        da.SetData(i++, new GH_UnitNumber(stiff.Xyz));
+        da.SetData(i++, new GH_UnitNumber(stiff.X.ToUnit(_inertiaUnit)));
+        da.SetData(i++, new GH_UnitNumber(stiff.Y.ToUnit(_inertiaUnit)));
+        da.SetData(i++, new GH_UnitNumber(stiff.Z.ToUnit(_inertiaUnit)));
+        da.SetData(i++, new GH_UnitNumber(stiff.Xyz.ToUnit(_inertiaUnit)));
       } else {
         da.SetData(i++, null);
         da.SetData(i++, null);
@@ -222,18 +222,17 @@ namespace GsaGH.Components {
             globalResultsCache.ModalGeometricStiffness.ToUnit(_forcePerLengthUnit)) : null);
 
       da.SetData(i++,
-        globalResultsCache.Frequency.Value != 0 ?
-          new GH_UnitNumber(globalResultsCache.Frequency.ToUnit(FrequencyUnit.Hertz)) : null);
+        globalResultsCache.Frequency.Value != 0 ? new GH_UnitNumber(globalResultsCache.Frequency) :
+          null);
 
-      if (globalResultsCache.LoadFactor.Value != 0) {
-        da.SetData(i++, globalResultsCache.LoadFactor);
-      } else {
-        da.SetData(i++, null);
-      }
+      da.SetData(i++,
+        globalResultsCache.LoadFactor.Value != 0 ?
+          new GH_UnitNumber(globalResultsCache.LoadFactor) : null);
 
       if (globalResultsCache.Frequency.Value == 0 && globalResultsCache.LoadFactor.Value == 0
         && globalResultsCache.ModalStiffness.Value != 0) {
-        da.SetData(i, globalResultsCache.ModalStiffness.Value);
+        da.SetData(i,
+          new GH_UnitNumber(globalResultsCache.ModalStiffness.ToUnit(_forcePerLengthUnit)));
       } else {
         da.SetData(i, null);
       }
