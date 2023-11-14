@@ -91,9 +91,9 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Null(output15.Value);
       Assert.Equal(0.5, output16.Value, 6);
       Assert.True(output17.Value);
-      Assert.Null(output18.Value.MomentAmplificationFactorStrongAxis);
-      Assert.Null(output18.Value.MomentAmplificationFactorWeakAxis);
-      Assert.Null(output18.Value.EquivalentUniformMomentFactor);
+      Assert.Null(output18.Value.BucklingFactors.MomentAmplificationFactorStrongAxis);
+      Assert.Null(output18.Value.BucklingFactors.MomentAmplificationFactorWeakAxis);
+      Assert.Null(output18.Value.BucklingFactors.EquivalentUniformMomentFactor);
       Assert.Equal("", output19.Value);
       Assert.Equal(0, output20.Value.R);
       Assert.Equal(0, output20.Value.G);
@@ -126,8 +126,11 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, new GsaNodeGoo(node), 13);
       ComponentTestHelper.SetInput(comp, 0.7, 14);
       ComponentTestHelper.SetInput(comp, false, 15);
+      var leff = new GsaEffectiveLength(new GsaMember1d()) {
+        BucklingFactors = new GsaBucklingFactors(1, 2, 3)
+      };
       ComponentTestHelper.SetInput(comp,
-        new GsaEffectiveLengthGoo(new GsaBucklingFactors(1, 2, 3)), 16);
+        new GsaEffectiveLengthGoo(leff), 16);
       ComponentTestHelper.SetInput(comp, "name", 17);
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 18);
       ComponentTestHelper.SetInput(comp, true, 19);
@@ -199,9 +202,9 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(99, output15.Value.Id);
       Assert.Equal(0.7, output16.Value);
       Assert.False(output17.Value);
-      Assert.Equal(1, output18.Value.MomentAmplificationFactorStrongAxis);
-      Assert.Equal(2, output18.Value.MomentAmplificationFactorWeakAxis);
-      Assert.Equal(3, output18.Value.EquivalentUniformMomentFactor);
+      Assert.Equal(1, output18.Value.BucklingFactors.MomentAmplificationFactorStrongAxis);
+      Assert.Equal(2, output18.Value.BucklingFactors.MomentAmplificationFactorWeakAxis);
+      Assert.Equal(3, output18.Value.BucklingFactors.EquivalentUniformMomentFactor);
       Assert.Equal("name", output19.Value);
       Assert.Equal(255, output20.Value.R);
       Assert.Equal(255, output20.Value.G);

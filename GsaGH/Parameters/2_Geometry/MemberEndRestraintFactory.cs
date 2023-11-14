@@ -7,13 +7,19 @@ namespace GsaGH.Parameters {
   public class MemberEndRestraintFactory {
     internal static MemberEndRestraint CreateFromStrings(string f1, string f2, string t, 
       string maj, string min) {
-      return new MemberEndRestraint(
-        RotationalRestraint(f1), RotationalRestraint(f2),
-        RotationalRestraint(maj), RotationalRestraint(min),
-        TorsionalRestraint(t),
-        TranslationalRestraint(f1), TranslationalRestraint(f2),
-        TranslationalRestraint(maj), TranslationalRestraint(min)
-        );
+
+      var topRot = RotationalRestraint(f1);
+      var botRot = RotationalRestraint(f2);
+      var majRot = RotationalRestraint(maj);
+      var minRot = RotationalRestraint(min);
+      var tor = TorsionalRestraint(t);
+      var topTrans = TranslationalRestraint(f1);
+      var botTrans = TranslationalRestraint(f2);
+      var majTrans = TranslationalRestraint(maj);
+      var minTrans = TranslationalRestraint(min);
+
+      return new MemberEndRestraint(topRot, botRot, majRot, minRot, tor,
+        topTrans, botTrans, majTrans, minTrans);
     }
 
     internal static MemberEndRestraint CreateFromStrings(string s) {
@@ -160,12 +166,12 @@ namespace GsaGH.Parameters {
         return GsaAPI.RotationalRestraint.None;
       }
 
-      if (s.StartsWith("w") || s.StartsWith("p") || s.StartsWith("1") || s.Contains("partial")) {
+      if (s.StartsWith("p") || s.StartsWith("1") || s.Contains("partial")) {
         return GsaAPI.RotationalRestraint.Partial;
       }
 
-      if (s.StartsWith("f") || s.StartsWith("r") || s.StartsWith("2") || s.Contains("true")
-        || s.Contains("full")) {
+      if (s.StartsWith("w") || s.StartsWith("f") || s.StartsWith("r") || 
+        s.StartsWith("2") || s.Contains("true") || s.Contains("full")) {
         return GsaAPI.RotationalRestraint.Full;
       }
 
@@ -184,8 +190,8 @@ namespace GsaGH.Parameters {
         return GsaAPI.TranslationalRestraint.None;
       }
 
-      if (s.StartsWith("l") || s.StartsWith("r") || s.StartsWith("1") || s.Contains("true")
-        || s.Contains("full")) {
+      if (s.StartsWith("l") || s.StartsWith("v") || s.StartsWith("r") 
+        || s.StartsWith("1") || s.Contains("true") || s.Contains("full")) {
         return GsaAPI.TranslationalRestraint.Full;
       }
 
@@ -202,10 +208,6 @@ namespace GsaGH.Parameters {
         return GsaAPI.TorsionalRestraint.None;
       }
 
-      if (s.StartsWith("fr") || s.StartsWith("1") || s.Contains("frict")) {
-        return GsaAPI.TorsionalRestraint.Friction;
-      }
-
       if (s.StartsWith("p") || s.StartsWith("2") || s.Contains("partial")) {
         return GsaAPI.TorsionalRestraint.Partial;
       }
@@ -213,6 +215,10 @@ namespace GsaGH.Parameters {
       if (s.StartsWith("fu") || s.StartsWith("r") || s.StartsWith("3")
         || s.Contains("true") || s.Contains("full")) {
         return GsaAPI.TorsionalRestraint.Full;
+      }
+
+      if (s.StartsWith("f") || s.StartsWith("1") || s.Contains("frict")) {
+        return GsaAPI.TorsionalRestraint.Friction;
       }
 
       return GsaAPI.TorsionalRestraint.None;

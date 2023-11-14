@@ -38,7 +38,7 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.Automatic;
 
 
-    public CreateEffectiveLength() : base("Create Effective Length Properties", "EffectiveLength",
+    public CreateEffectiveLength() : base("Create Effective Length", "EffectiveLength",
       "Create 1D Member Design Properties for Effective Length, Restraints and Buckling Factors",
       CategoryName.Name(), SubCategoryName.Cat2()) {
       Hidden = true;
@@ -220,7 +220,7 @@ namespace GsaGH.Components {
 
       var fls = new GsaBucklingFactors();
       double? input = null;
-      if (da.GetData(Params.Input.Count - 1, ref input)) {
+      if (da.GetData(Params.Input.Count - 3, ref input)) {
         fls.MomentAmplificationFactorStrongAxis = input;
       }
 
@@ -228,7 +228,7 @@ namespace GsaGH.Components {
         fls.MomentAmplificationFactorWeakAxis = input;
       }
 
-      if (da.GetData(Params.Input.Count - 3, ref input)) {
+      if (da.GetData(Params.Input.Count - 1, ref input)) {
         fls.EquivalentUniformMomentFactor = input;
       }
 

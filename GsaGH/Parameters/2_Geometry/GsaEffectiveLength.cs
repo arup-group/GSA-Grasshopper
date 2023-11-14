@@ -31,6 +31,10 @@ namespace GsaGH.Parameters {
         bucklingFacts = $", Design variables overrides: {BucklingFactors}";
       }
 
+      if (EffectiveLength == null) {
+        return bucklingFacts.TrimStart(',', ' ');
+      }
+
       string destabilisingLoad = string.Empty;
       if (EffectiveLength.DestablisingLoad != 0 && 
         EffectiveLength.DestablisingLoadPositionRelativeTo != LoadReference.ShearCentre) {
