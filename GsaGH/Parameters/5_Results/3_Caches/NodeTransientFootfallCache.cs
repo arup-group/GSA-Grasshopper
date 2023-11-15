@@ -25,6 +25,10 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, NodeFootfallResult> aCaseResults = analysisCase.NodeTransientFootfall(nodelist);
             Parallel.ForEach(aCaseResults.Keys, nodeId => {
+              if (double.IsNaN(aCaseResults[nodeId].MaximumResponseFactor)) {
+                return;
+              }
+
               var res = new Footfall(aCaseResults[nodeId]);
               Cache.TryAdd(nodeId, new Collection<IFootfall>() { res });
             });
@@ -35,6 +39,10 @@ namespace GsaGH.Parameters.Results {
             Parallel.ForEach(cCaseResults.Keys, nodeId => {
               var permutationResults = new Collection<IFootfall>();
               foreach (NodeFootfallResult permutationResult in cCaseResults[nodeId]) {
+                if (double.IsNaN(permutationResult.MaximumResponseFactor)) {
+                  continue;
+                }
+
                 permutationResults.Add(new Footfall(permutationResult));
               }
 
