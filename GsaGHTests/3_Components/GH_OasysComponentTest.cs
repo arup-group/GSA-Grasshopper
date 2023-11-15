@@ -110,7 +110,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(MeshResultInfo))]
     [InlineData(typeof(PointResultInfo))]
     [InlineData(typeof(GetResult))]
-    [InlineData(typeof(GlobalPerformanceResults))]
+    [InlineData(typeof(GlobalPerformanceResults_OBSOLETE))]
     [InlineData(typeof(ContourNodeResults))]
     [InlineData(typeof(NodeDisplacements))]
     [InlineData(typeof(ReactionForces))]

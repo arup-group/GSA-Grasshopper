@@ -20,16 +20,16 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to get GSA global performance results
   /// </summary>
-  public class GlobalPerformanceResults : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("2346fd74-b348-47b6-bcaa-31526afe1f7b");
-    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
+  public class GlobalPerformanceResults_OBSOLETE : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("9a0b6077-1cb6-405c-85d3-c24a533d6d43");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GlobalPerformanceResults;
     private ForcePerLengthUnit _forcePerLengthUnit = ForcePerLengthUnit.KilonewtonPerMeter;
     private AreaMomentOfInertiaUnit _inertiaUnit = AreaMomentOfInertiaUnit.MeterToTheFourth;
     private MassUnit _massUnit = DefaultUnits.MassUnit;
 
-    public GlobalPerformanceResults() : base("Global Performance Results", "GlobalPerformance",
+    public GlobalPerformanceResults_OBSOLETE() : base("Global Performance Results", "GlobalPerformance",
       "Get Global Performance (Dynamic, Model Stability, and Buckling) Results from a GSA model",
       CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
@@ -66,9 +66,11 @@ namespace GsaGH.Components {
       Params.Output[i++].Name = "Effective Mass X [" + massUnitAbbreviation + "]";
       Params.Output[i++].Name = "Effective Mass Y [" + massUnitAbbreviation + "]";
       Params.Output[i++].Name = "Effective Mass Z [" + massUnitAbbreviation + "]";
+      Params.Output[i++].Name = "Effective Mass |XYZ| [" + massUnitAbbreviation + "]";
       Params.Output[i++].Name = "Effective Inertia X [" + inertiaUnitAbbreviation + "]";
       Params.Output[i++].Name = "Effective Inertia Y [" + inertiaUnitAbbreviation + "]";
       Params.Output[i++].Name = "Effective Inertia Z [" + inertiaUnitAbbreviation + "]";
+      Params.Output[i++].Name = "Effective Inertia |XYZ| [" + inertiaUnitAbbreviation + "]";
       i++;
       Params.Output[i++].Name = "Modal Mass [" + massUnitAbbreviation + "]";
       Params.Output[i++].Name = "Modal Stiffness [" + forceperlengthUnitAbbreviation + "]";
@@ -120,12 +122,16 @@ namespace GsaGH.Components {
         "Effective Mass in GSA Model in Y-direction", GH_ParamAccess.item);
       pManager.AddGenericParameter("Effective Mass Z [" + massUnitAbbreviation + "]", "Σmz",
         "Effective Mass in GSA Model in Z-direction", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Effective Mass |XYZ| [" + massUnitAbbreviation + "]", "Σ|m|",
+        "Effective Mass in GSA Model", GH_ParamAccess.item);
       pManager.AddGenericParameter("Effective Inertia X [" + inertiaUnitAbbreviation + "]", "ΣIx",
         "Effective Inertia in GSA Model in X-direction", GH_ParamAccess.item);
       pManager.AddGenericParameter("Effective Inertia Y [" + inertiaUnitAbbreviation + "]", "ΣIy",
         "Effective Inertia in GSA Model in Y-direction", GH_ParamAccess.item);
       pManager.AddGenericParameter("Effective Inertia Z [" + inertiaUnitAbbreviation + "]", "ΣIz",
         "Effective Inertia in GSA Model in Z-direction", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Effective Inertia |XYZ| [" + inertiaUnitAbbreviation + "]",
+        "Σ|I|", "Effective Inertia in GSA Model", GH_ParamAccess.item);
       pManager.AddNumberParameter("Mode", "Mo", "Mode number if LC is a dynamic task",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Modal Mass [" + massUnitAbbreviation + "]", "MM",
@@ -185,18 +191,21 @@ namespace GsaGH.Components {
       da.SetData(i++, new GH_UnitNumber(mass.X.ToUnit(_massUnit)));
       da.SetData(i++, new GH_UnitNumber(mass.Y.ToUnit(_massUnit)));
       da.SetData(i++, new GH_UnitNumber(mass.Z.ToUnit(_massUnit)));
+      i++; // removed effective mass XYZ value.
       if (globalResultsCache.EffectiveInertia != null) {
         IEffectiveInertia stiff = globalResultsCache.EffectiveInertia;
         da.SetData(i++, new GH_UnitNumber(stiff.X.ToUnit(_inertiaUnit)));
         da.SetData(i++, new GH_UnitNumber(stiff.Y.ToUnit(_inertiaUnit)));
         da.SetData(i++, new GH_UnitNumber(stiff.Z.ToUnit(_inertiaUnit)));
+        i++; // removed effective inertia XYZ value.
       } else {
+        da.SetData(i++, null);
         da.SetData(i++, null);
         da.SetData(i++, null);
         da.SetData(i++, null);
       }
 
-      da.SetData(i++, globalResultsCache.Mode);
+      da.SetData(i++, globalResultsCache.Mode != 0 ? globalResultsCache.Mode : null);
 
       da.SetData(i++,
         globalResultsCache.ModalMass.Value != 0 ?

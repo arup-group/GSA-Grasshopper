@@ -25,7 +25,6 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(Create2dElementsFromBrep), 2)]
     [InlineData(typeof(CreateElementsFromMembers), 1)]
     [InlineData(typeof(SectionAlignment), 1)]
-    [InlineData(typeof(CreateEffectiveLength), 2)]
     //Loads
     [InlineData(typeof(CreateBeamLoad), 2)]
     [InlineData(typeof(CreateBeamThermalLoad), 2)]
@@ -54,7 +53,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(Contour3dResults), 2)]
     [InlineData(typeof(Element3dDisplacements), 1)]
     [InlineData(typeof(Element3dStresses), 1)]
-    [InlineData(typeof(GlobalPerformanceResults), 3)]
+    [InlineData(typeof(GlobalPerformanceResults_OBSOLETE), 3)]
     [InlineData(typeof(ContourNodeResults), 2)]
     [InlineData(typeof(NodeDisplacements), 2)]
     [InlineData(typeof(ReactionForces), 3)]
@@ -104,7 +103,7 @@ namespace GsaGHTests.Components {
     //Loads
     [InlineData(typeof(CreateBeamLoad), "Uniform", "Trilinear")]
     [InlineData(typeof(CreateBeamThermalLoad), "Uniform", "Uniform")]
-    [InlineData(typeof(CreateFaceLoad), "Uniform", "Equation")]
+    [InlineData(typeof(CreateFaceLoad), "Uniform", "Point")]
     [InlineData(typeof(CreateFaceThermalLoad), "Uniform", "Uniform")]
     [InlineData(typeof(CreateGridAreaLoad), "kN/m²", "kipf/ft²")]
     [InlineData(typeof(CreateGridLineLoad), "kN/m", "kipf/ft")]
@@ -112,6 +111,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateGridPointLoad), "kN", "tf")]
     [InlineData(typeof(CreateGridSurface), "1D, One-way span", "2D")]
     [InlineData(typeof(CreateNodeLoad), "NodeForce", "Settlement")]
+    [InlineData(typeof(LoadProperties), "kN", "kipf")]
     //Analysis
     [InlineData(typeof(AnalyseModel), "m", "ft")]
     [InlineData(typeof(CreateAnalysisTask), "Static", "Static")]
@@ -128,7 +128,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(Contour3dResults), "Displacement", "Stress")]
     [InlineData(typeof(Element3dDisplacements), "mm", "ft")]
     [InlineData(typeof(Element3dStresses), "MPa", "kipf/ft²")]
-    [InlineData(typeof(GlobalPerformanceResults), "t", "slug")]
+    [InlineData(typeof(GlobalPerformanceResults_OBSOLETE), "t", "slug")]
     [InlineData(typeof(ContourNodeResults), "Displacement", "Footfall")]
     [InlineData(typeof(NodeDisplacements), "All", "Min |R|")]
     [InlineData(typeof(ReactionForces), "kN", "tf", 1)]

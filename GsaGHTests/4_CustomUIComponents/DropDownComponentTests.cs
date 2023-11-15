@@ -54,7 +54,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(Contour3dResults), true)]
     [InlineData(typeof(Element3dDisplacements))]
     [InlineData(typeof(Element3dStresses))]
-    [InlineData(typeof(GlobalPerformanceResults))]
+    [InlineData(typeof(GlobalPerformanceResults_OBSOLETE))]
     [InlineData(typeof(ContourNodeResults), true)]
     [InlineData(typeof(NodeDisplacements))]
     [InlineData(typeof(ReactionForces))]
