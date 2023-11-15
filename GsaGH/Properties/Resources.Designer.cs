@@ -183,16 +183,6 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap BucklingFactorsParam {
-            get {
-                object obj = ResourceManager.GetObject("BucklingFactorsParam", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap CombinationCaseInfo {
             get {
                 object obj = ResourceManager.GetObject("CombinationCaseInfo", resourceCulture);
@@ -423,6 +413,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CreateEffectiveLength {
+            get {
+                object obj = ResourceManager.GetObject("CreateEffectiveLength", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CreateElem3d {
             get {
                 object obj = ResourceManager.GetObject("CreateElem3d", resourceCulture);
@@ -556,6 +556,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap CreateMaterial {
             get {
                 object obj = ResourceManager.GetObject("CreateMaterial", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CreateMemberEndRestraint {
+            get {
+                object obj = ResourceManager.GetObject("CreateMemberEndRestraint", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -826,6 +836,26 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap EditSpring {
             get {
                 object obj = ResourceManager.GetObject("EditSpring", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap EffectiveLengthInfo {
+            get {
+                object obj = ResourceManager.GetObject("EffectiveLengthInfo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap EffectiveLengthParam {
+            get {
+                object obj = ResourceManager.GetObject("EffectiveLengthParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1336,6 +1366,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap Member3dParam {
             get {
                 object obj = ResourceManager.GetObject("Member3dParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap MemberEndRestraintInfo {
+            get {
+                object obj = ResourceManager.GetObject("MemberEndRestraintInfo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

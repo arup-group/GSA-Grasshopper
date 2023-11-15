@@ -48,11 +48,21 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       string forceUnitAbbreviation = Force.GetAbbreviation(_forceUnit);
-      string forcePerLengthUnit
-        = ForcePerLength.GetAbbreviation(
+      string forcePerLengthUnit = string.Empty;
+      try {
+        forcePerLengthUnit = ForcePerLength.GetAbbreviation(
           UnitsHelper.GetForcePerLengthUnit(_forceUnit, _lengthUnit));
-      string forcePerAreaUnit
-        = Pressure.GetAbbreviation(UnitsHelper.GetForcePerAreaUnit(_forceUnit, _lengthUnit));
+      } catch (OasysUnitsException e) {
+        this.AddRuntimeError(e.Message);
+      }
+       
+      string forcePerAreaUnit = string.Empty;
+      try {
+        forcePerAreaUnit = Pressure.GetAbbreviation(UnitsHelper.GetForcePerAreaUnit(_forceUnit, _lengthUnit));
+      } catch (OasysUnitsException e) {
+        this.AddRuntimeError(e.Message);
+      }
+        
       string unitAbbreviation = string.Join(", ", new string[] {
         forceUnitAbbreviation,
         forcePerLengthUnit,

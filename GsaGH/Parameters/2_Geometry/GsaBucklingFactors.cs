@@ -37,8 +37,7 @@
         "fLsz:" + MomentAmplificationFactorWeakAxis;
       string lt = EquivalentUniformMomentFactor == null ? string.Empty :
         "fLtb:" + EquivalentUniformMomentFactor;
-      string output = string.Join(" ", y, z, lt).Trim();
-      return output == string.Empty ? "Automatic" : output;
+      return string.Join(" ", y, z, lt).Trim();
     }
   }
 }

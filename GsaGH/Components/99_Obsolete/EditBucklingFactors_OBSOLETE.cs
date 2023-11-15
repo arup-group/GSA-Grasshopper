@@ -11,20 +11,20 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit Buckling Length Factors and ouput the information
   /// </summary>
-  public class EditBucklingFactors : GH_OasysComponent {
+  public class EditBucklingFactors_OBSOLETE : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("6440b34e-d787-48cc-8e95-c07c6217e40a");
-    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditBucklingFactors;
 
-    public EditBucklingFactors() : base("Edit " + GsaBucklingFactorsGoo.Name,
-      "EditBucklingFactors", "Modify " + GsaBucklingFactorsGoo.Description, 
+    public EditBucklingFactors_OBSOLETE() : base("Edit " + GsaEffectiveLengthGoo.Name,
+      "EditBucklingFactors", "Modify " + GsaEffectiveLengthGoo.Description, 
       CategoryName.Name(), SubCategoryName.Cat2()) {
       Hidden = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaBucklingFactorsParameter());
+      pManager.AddParameter(new GsaEffectiveLengthParameter());
       pManager.AddNumberParameter("Factor Lsy", "fLy", "Moment Amplification Factor, Strong Axis",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Factor Lsz", "fLz", "Moment Amplification Factor, Weak Axis",
@@ -38,7 +38,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaBucklingFactorsParameter());
+      pManager.AddParameter(new GsaEffectiveLengthParameter());
       pManager.AddNumberParameter("Factor Lsy", "fLy", "Moment Amplification Factor, Strong Axis",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Factor Lsz", "fLz", "Moment Amplification Factor, Weak Axis",
@@ -49,11 +49,14 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
+      this.AddRuntimeError("This component is obsolete and will be removed in future versions. " +
+        "\nThis component has been replaced by Design Properties component, please update " +
+        "your script to use that instead.");
       var fls = new GsaBucklingFactors();
 
-      GsaBucklingFactorsGoo bucklingFactorsGoo = null;
+      GsaEffectiveLengthGoo bucklingFactorsGoo = null;
       if (da.GetData(0, ref bucklingFactorsGoo)) {
-        fls = new GsaBucklingFactors(bucklingFactorsGoo.Value);
+        fls = new GsaBucklingFactors(bucklingFactorsGoo.Value.BucklingFactors);
       }
 
       double? y = null;
@@ -71,7 +74,11 @@ namespace GsaGH.Components {
         fls.EquivalentUniformMomentFactor = lt;
       }
 
-      da.SetData(0, new GsaBucklingFactorsGoo(fls));
+      var designprops = new GsaEffectiveLength(new GsaMember1d()) {
+        BucklingFactors = fls
+      };
+
+      da.SetData(0, new GsaEffectiveLengthGoo(designprops));
       da.SetData(1, fls.MomentAmplificationFactorStrongAxis);
       da.SetData(2, fls.MomentAmplificationFactorWeakAxis);
       da.SetData(3, fls.EquivalentUniformMomentFactor);
