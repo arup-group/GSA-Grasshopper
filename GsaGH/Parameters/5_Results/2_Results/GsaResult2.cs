@@ -44,6 +44,10 @@ namespace GsaGH.Parameters.Results {
       get;
       private set;
     }
+    public IGlobalResultsCache GlobalResults {
+      get;
+      private set;
+    }
 
     // temp conversion from old class
     internal GsaResult2(GsaResult result) {
@@ -137,6 +141,7 @@ namespace GsaGH.Parameters.Results {
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
       Member1dDisplacements = new Member1dDisplacementCache(result);
+      GlobalResults = new GlobalResultsCache(result);
     }
 
     private void InitialiseCombinationsCaseResults(
