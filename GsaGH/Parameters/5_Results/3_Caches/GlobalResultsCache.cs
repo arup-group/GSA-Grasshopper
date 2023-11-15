@@ -18,6 +18,8 @@ namespace GsaGH.Parameters.Results {
     private IInternalForce _totalLoad;
     private IInternalForce _totalReaction;
 
+    private bool calculated = false;
+
     internal GlobalResultsCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
     }
@@ -25,18 +27,14 @@ namespace GsaGH.Parameters.Results {
     public IApiResult ApiResult { get; private set; }
     public IEffectiveInertia EffectiveInertia {
       get {
-        if (_effectiveInertia == null) {
-          Calculate();
-        }
+        Calculate();
 
         return _effectiveInertia;
       }
     }
     public IEffectiveMass EffectiveMass {
       get {
-        if (_effectiveMass == null) {
-          Calculate();
-        }
+        Calculate();
 
         return _effectiveMass;
       }
@@ -44,9 +42,7 @@ namespace GsaGH.Parameters.Results {
 
     public double? Eigenvalue {
       get {
-        if (_eigenvalue == null) {
-          Calculate();
-        }
+        Calculate();
 
         return _eigenvalue;
       }
@@ -54,72 +50,56 @@ namespace GsaGH.Parameters.Results {
 
     public Frequency Frequency {
       get {
-        if (_frequency.Unit == FrequencyUnit.Undefined) {
-          Calculate();
-        }
+        Calculate();
 
         return _frequency;
       }
     }
     public Ratio LoadFactor {
       get {
-        if (_loadFactor.Unit == RatioUnit.Undefined) {
-          Calculate();
-        }
+        Calculate();
 
         return _loadFactor;
       }
     }
     public ForcePerLength ModalGeometricStiffness {
       get {
-        if (_modalGeometricStiffness.Unit == ForcePerLengthUnit.Undefined) {
-          Calculate();
-        }
+        Calculate();
 
         return _modalGeometricStiffness;
       }
     }
     public Mass ModalMass {
       get {
-        if (_modalMass.Unit == MassUnit.Undefined) {
-          Calculate();
-        }
+        Calculate();
 
         return _modalMass;
       }
     }
     public ForcePerLength ModalStiffness {
       get {
-        if (_modalStiffness.Unit == ForcePerLengthUnit.Undefined) {
-          Calculate();
-        }
+        Calculate();
 
         return _modalStiffness;
       }
     }
     public int? Mode {
       get {
-        if (_mode == null) {
-          Calculate();
-        }
+        Calculate();
 
         return _mode;
       }
     }
     public IInternalForce TotalLoad {
       get {
-        if (_totalLoad == null) {
-          Calculate();
-        }
+        Calculate();
 
         return _totalLoad;
       }
     }
     public IInternalForce TotalReaction {
       get {
-        if (_totalReaction == null) {
-          Calculate();
-        }
+        Calculate();
 
         return _totalReaction;
       }
@@ -131,6 +111,10 @@ namespace GsaGH.Parameters.Results {
     //}
 
     private void Calculate() {
+      if (calculated) {
+        return;
+      }
+
       GlobalResult res = ((AnalysisCaseResult)ApiResult.Result).Global;
       if (res.EffectiveInertia != null) {
         _effectiveInertia = new EffectiveInertia(res.EffectiveInertia);
@@ -169,6 +153,7 @@ namespace GsaGH.Parameters.Results {
 
       _totalLoad = new ReactionForce(res.TotalLoad);
       _totalReaction = new ReactionForce(res.TotalReaction);
+      calculated = true;
     }
   }
 }

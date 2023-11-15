@@ -141,7 +141,6 @@ namespace GsaGH.Parameters.Results {
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
       NodeSpringForces = new NodeSpringForceCache(result);
-      //GlobalResults = new GlobalResultsCache(result);
     }
   }
 }

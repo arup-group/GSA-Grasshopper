@@ -191,8 +191,7 @@ namespace GsaGH.Components {
       da.SetData(i++, new GH_UnitNumber(mass.X.ToUnit(_massUnit)));
       da.SetData(i++, new GH_UnitNumber(mass.Y.ToUnit(_massUnit)));
       da.SetData(i++, new GH_UnitNumber(mass.Z.ToUnit(_massUnit)));
-      da.SetData(i++, new GH_UnitNumber(mass.Xyz.ToUnit(_massUnit)));
-
+      i++; // it's because we don't have anymore effective mass XYZ value.
       if (globalResultsCache.EffectiveInertia != null) {
         IEffectiveInertia stiff = globalResultsCache.EffectiveInertia;
         da.SetData(i++, new GH_UnitNumber(stiff.X.ToUnit(_inertiaUnit)));
