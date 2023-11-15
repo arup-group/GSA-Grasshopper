@@ -2,24 +2,26 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
-  public class Element1dInternalForces : IElement1dResultSubset<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>> {
-    public ResultVector6<Element1dExtremaKey> Max { get; private set; }
-    public ResultVector6<Element1dExtremaKey> Min { get; private set; }
-    public IList<int> Ids { get; private set; }
+  public class Element1dInternalForces : IElement1dResultSubset<IInternalForce1D, IInternalForce,
+    ResultVector6<ExtremaKey1D>> {
 
-    public ConcurrentDictionary<int, Collection<IElement1dInternalForce>> Subset { get; }
-      = new ConcurrentDictionary<int, Collection<IElement1dInternalForce>>();
-
-    public Element1dInternalForces(ConcurrentDictionary<int, Collection<IElement1dInternalForce>> results) {
+    public Element1dInternalForces(
+      ConcurrentDictionary<int, Collection<IInternalForce1D>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
-      (Max, Min) = results.Extrema<IElement1dInternalForce, IInternalForce>();
+      (Max, Min) = results.Extrema<IInternalForce1D, IInternalForce>();
     }
 
-    public IInternalForce GetExtrema(Element1dExtremaKey key) {
+    public ResultVector6<ExtremaKey1D> Max { get; private set; }
+    public ResultVector6<ExtremaKey1D> Min { get; private set; }
+    public IList<int> Ids { get; private set; }
+
+    public ConcurrentDictionary<int, Collection<IInternalForce1D>> Subset { get; }
+      = new ConcurrentDictionary<int, Collection<IInternalForce1D>>();
+
+    public IInternalForce GetExtrema(ExtremaKey1D key) {
       return Subset[key.Id][key.Permutation].Results[key.Position];
     }
   }
