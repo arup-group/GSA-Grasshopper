@@ -2,24 +2,25 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
-  public class Element1dDisplacements : IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> {
-    public ResultVector6<Element1dExtremaKey> Max { get; private set; }
-    public ResultVector6<Element1dExtremaKey> Min { get; private set; }
-    public IList<int> Ids { get; private set; }
+  public class Element1dDisplacements : IElement1dResultSubset<IDisplacement1D, IDisplacement,
+    ResultVector6<ExtremaKey1D>> {
 
-    public ConcurrentDictionary<int, Collection<IElement1dDisplacement>> Subset { get; }
-      = new ConcurrentDictionary<int, Collection<IElement1dDisplacement>>();
-
-    public Element1dDisplacements(ConcurrentDictionary<int, Collection<IElement1dDisplacement>> results) {
+    public Element1dDisplacements(ConcurrentDictionary<int, Collection<IDisplacement1D>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
-      (Max, Min) = results.Extrema<IElement1dDisplacement, IDisplacement>();
+      (Max, Min) = results.Extrema<IDisplacement1D, IDisplacement>();
     }
 
-    public IDisplacement GetExtrema(Element1dExtremaKey key) {
+    public ResultVector6<ExtremaKey1D> Max { get; private set; }
+    public ResultVector6<ExtremaKey1D> Min { get; private set; }
+    public IList<int> Ids { get; private set; }
+
+    public ConcurrentDictionary<int, Collection<IDisplacement1D>> Subset { get; }
+      = new ConcurrentDictionary<int, Collection<IDisplacement1D>>();
+
+    public IDisplacement GetExtrema(ExtremaKey1D key) {
       return Subset[key.Id][key.Permutation].Results[key.Position];
     }
   }

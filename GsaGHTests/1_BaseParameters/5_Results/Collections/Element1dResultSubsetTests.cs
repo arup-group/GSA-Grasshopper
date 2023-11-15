@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Linq;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using Xunit;
@@ -19,14 +16,20 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds("1");
-      IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet
+      IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 1);
 
       // Assert
-      var positions = new ReadOnlyCollection<double>(new Collection<double>() { 0.0, 1.0 });
-      var newKeys = new Collection<int>() { 2 };
-      ConcurrentBag<int> missingIds = result.Element1dDisplacements.Cache.
-        GetMissingKeysAndPositions<IElement1dDisplacement, IDisplacement>(newKeys, positions);
+      var positions = new ReadOnlyCollection<double>(new Collection<double>() {
+        0.0,
+        1.0,
+      });
+      var newKeys = new Collection<int>() {
+        2,
+      };
+      ConcurrentBag<int> missingIds
+        = result.Element1dDisplacements.Cache
+         .GetMissingKeysAndPositions<IDisplacement1D, IDisplacement>(newKeys, positions);
       Assert.Single(missingIds);
       Assert.Equal(newKeys[0], missingIds.First());
     }
@@ -38,14 +41,20 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds("1");
-      IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet
+      IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 1);
 
       // Assert
-      var positions = new ReadOnlyCollection<double>(new Collection<double>() { 0.0, 1.0 });
-      var newKeys = new Collection<int>() { 1 };
-      ConcurrentBag<int> missingIds = result.Element1dDisplacements.Cache.
-        GetMissingKeysAndPositions<IElement1dDisplacement, IDisplacement>(newKeys, positions);
+      var positions = new ReadOnlyCollection<double>(new Collection<double>() {
+        0.0,
+        1.0,
+      });
+      var newKeys = new Collection<int>() {
+        1,
+      };
+      ConcurrentBag<int> missingIds
+        = result.Element1dDisplacements.Cache
+         .GetMissingKeysAndPositions<IDisplacement1D, IDisplacement>(newKeys, positions);
       Assert.Single(missingIds);
       Assert.Equal(newKeys[0], missingIds.First());
     }

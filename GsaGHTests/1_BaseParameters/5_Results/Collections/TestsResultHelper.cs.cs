@@ -166,10 +166,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> result,
+      IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> result,
       ResultVector6HelperEnum component, bool max) {
       double d = 0;
-      ResultVector6<Element1dExtremaKey> extrema = max ? result.Max : result.Min;
+      ResultVector6<ExtremaKey1D> extrema = max ? result.Max : result.Min;
       switch (component) {
         case ResultVector6HelperEnum.X:
           d = result.GetExtrema(extrema.X).X.Millimeters;
@@ -208,10 +208,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IElement1dResultSubset<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>> result,
+      IElement1dResultSubset<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> result,
       ResultVector6HelperEnum component, bool max) {
       double d = 0;
-      ResultVector6<Element1dExtremaKey> extrema = max ? result.Max : result.Min;
+      ResultVector6<ExtremaKey1D> extrema = max ? result.Max : result.Min;
       switch (component) {
         case ResultVector6HelperEnum.X:
           d = result.GetExtrema(extrema.X).X.Kilonewtons;

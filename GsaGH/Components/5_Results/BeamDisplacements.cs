@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -141,8 +139,8 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
-        IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet = 
-          result.Element1dDisplacements.ResultSubset(elementIds, positionsCount);
+        IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>>
+          resultSet = result.Element1dDisplacements.ResultSubset(elementIds, positionsCount);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
@@ -152,29 +150,34 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, Collection<IElement1dDisplacement>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, Collection<IDisplacement1D>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
-              var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
-              outTransX.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.X.ToUnit(_lengthUnit))), path);
-              outTransY.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Y.ToUnit(_lengthUnit))), path);
-              outTransZ.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Z.ToUnit(_lengthUnit))), path);
-              outTransXyz.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Xyz.ToUnit(_lengthUnit))), path);
-              outRotX.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Xx)), path);
-              outRotY.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Yy)), path);
-              outRotZ.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Zz)), path);
-              outRotXyz.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Xxyyzz)), path);
+              var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p,
+                kvp.Key);
+              outTransX.AddRange(
+                kvp.Value[p - 1].Results.Values
+                 .Select(r => new GH_UnitNumber(r.X.ToUnit(_lengthUnit))), path);
+              outTransY.AddRange(
+                kvp.Value[p - 1].Results.Values
+                 .Select(r => new GH_UnitNumber(r.Y.ToUnit(_lengthUnit))), path);
+              outTransZ.AddRange(
+                kvp.Value[p - 1].Results.Values
+                 .Select(r => new GH_UnitNumber(r.Z.ToUnit(_lengthUnit))), path);
+              outTransXyz.AddRange(
+                kvp.Value[p - 1].Results.Values
+                 .Select(r => new GH_UnitNumber(r.Xyz.ToUnit(_lengthUnit))), path);
+              outRotX.AddRange(kvp.Value[p - 1].Results.Values.Select(r => new GH_UnitNumber(r.Xx)),
+                path);
+              outRotY.AddRange(kvp.Value[p - 1].Results.Values.Select(r => new GH_UnitNumber(r.Yy)),
+                path);
+              outRotZ.AddRange(kvp.Value[p - 1].Results.Values.Select(r => new GH_UnitNumber(r.Zz)),
+                path);
+              outRotXyz.AddRange(
+                kvp.Value[p - 1].Results.Values.Select(r => new GH_UnitNumber(r.Xxyyzz)), path);
             }
           }
         } else {
-          Element1dExtremaKey key = ExtremaHelper.DisplacementExtremaKey(resultSet, _selectedItems[0]);
+          ExtremaKey1D key = ExtremaHelper.DisplacementExtremaKey(resultSet, _selectedItems[0]);
           IDisplacement extrema = resultSet.GetExtrema(key);
           int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
           var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);

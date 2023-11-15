@@ -1,38 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Newtonsoft.Json.Linq;
 using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
   public static class ExtremaKeyUtility {
-    public static (ResultVector6<Element1dExtremaKey> Max, ResultVector6<Element1dExtremaKey> Min) Extrema<T, U>(
-      this IDictionary<int, Collection<T>> subset)
-      where T : IElement1dQuantity<U> where U : IResultItem {
-
+    public static (ResultVector6<ExtremaKey1D> Max, ResultVector6<ExtremaKey1D> Min) Extrema<T, U>(
+      this IDictionary<int, Collection<T>> subset) where T : IElement1dQuantity<U>
+      where U : IResultItem {
       var maxValue = new ResultVector6<double>(double.MinValue);
       var minValue = new ResultVector6<double>(double.MaxValue);
 
-      var maxKey = new ResultVector6<Element1dExtremaKey>();
-      var minKey = new ResultVector6<Element1dExtremaKey>();
+      var maxKey = new ResultVector6<ExtremaKey1D>();
+      var minKey = new ResultVector6<ExtremaKey1D>();
 
       foreach (int elementId in subset.Keys) {
         Collection<T> values = subset[elementId];
         for (int permutation = 0; permutation < values.Count; permutation++) {
           foreach (double position in values[permutation].Results.Keys) {
             switch (values[permutation]) {
-              case IElement1dDisplacement displacement:
-                UpdateExtrema<IDisplacement, Length, Angle>(displacement.Results[position], 
-                  elementId, permutation, position,
-                  ref maxValue, ref minValue, ref maxKey, ref minKey);
+              case IDisplacement1D displacement:
+                UpdateExtrema<IDisplacement, Length, Angle>(displacement.Results[position],
+                  elementId, permutation, position, ref maxValue, ref minValue, ref maxKey,
+                  ref minKey);
                 break;
 
-              case IElement1dInternalForce displacement:
+              case IInternalForce1D displacement:
                 UpdateExtrema<IInternalForce, Force, Moment>(displacement.Results[position],
-                  elementId, permutation, position,
-                  ref maxValue, ref minValue, ref maxKey, ref minKey);
+                  elementId, permutation, position, ref maxValue, ref minValue, ref maxKey,
+                  ref minKey);
                 break;
-
             }
           }
         }
@@ -43,7 +39,6 @@ namespace GsaGH.Parameters.Results {
 
     public static (ResultFootfall<NodeExtremaKey> Max, ResultFootfall<NodeExtremaKey> Min) Extrema(
       this IDictionary<int, Collection<IFootfall>> subset) {
-
       var maxValue = new ResultFootfall<double>(double.MinValue);
       var minValue = new ResultFootfall<double>(double.MaxValue);
 
@@ -53,8 +48,8 @@ namespace GsaGH.Parameters.Results {
       foreach (int nodeId in subset.Keys) {
         Collection<IFootfall> values = subset[nodeId];
         for (int permutation = 0; permutation < values.Count; permutation++) {
-          UpdateExtrema(values[permutation], nodeId, permutation,
-                  ref maxValue, ref minValue, ref maxKey, ref minKey);
+          UpdateExtrema(values[permutation], nodeId, permutation, ref maxValue, ref minValue,
+            ref maxKey, ref minKey);
         }
       }
 
@@ -63,7 +58,6 @@ namespace GsaGH.Parameters.Results {
 
     public static (ResultVector6<NodeExtremaKey> Max, ResultVector6<NodeExtremaKey> Min) Extrema<T>(
       this IDictionary<int, Collection<T>> subset) {
-
       var maxValue = new ResultVector6<double>(double.MinValue);
       var minValue = new ResultVector6<double>(double.MaxValue);
 
@@ -90,10 +84,10 @@ namespace GsaGH.Parameters.Results {
       return (maxKey, minKey);
     }
 
-    private static void UpdateExtrema(IFootfall item, int nodeId, int permutation,
-      ref ResultFootfall<double> maxValue, ref ResultFootfall<double> minValue,
-      ref ResultFootfall<NodeExtremaKey> maxKey, ref ResultFootfall<NodeExtremaKey> minKey) {
-
+    private static void UpdateExtrema(
+      IFootfall item, int nodeId, int permutation, ref ResultFootfall<double> maxValue,
+      ref ResultFootfall<double> minValue, ref ResultFootfall<NodeExtremaKey> maxKey,
+      ref ResultFootfall<NodeExtremaKey> minKey) {
       if (item.CriticalFrequency.Value > maxValue.CriticalFrequency) {
         maxValue.CriticalFrequency = item.CriticalFrequency.Value;
         maxKey.CriticalFrequency = new NodeExtremaKey(nodeId, permutation);
@@ -155,11 +149,11 @@ namespace GsaGH.Parameters.Results {
       }
     }
 
-    private static void UpdateExtrema<T, Q1, Q2>(T item, int nodeId, int permutation,
-      ref ResultVector6<double> maxValue, ref ResultVector6<double> minValue,
-      ref ResultVector6<NodeExtremaKey> maxKey, ref ResultVector6<NodeExtremaKey> minKey)
-      where T : IResultVector6<Q1, Q2> where Q1 : IQuantity where Q2 : IQuantity {
-
+    private static void UpdateExtrema<T, Q1, Q2>(
+      T item, int nodeId, int permutation, ref ResultVector6<double> maxValue,
+      ref ResultVector6<double> minValue, ref ResultVector6<NodeExtremaKey> maxKey,
+      ref ResultVector6<NodeExtremaKey> minKey) where T : IResultVector6<Q1, Q2>
+      where Q1 : IQuantity where Q2 : IQuantity {
       if (item.X.Value > maxValue.X) {
         maxValue.X = item.X.Value;
         maxKey.X = new NodeExtremaKey(nodeId, permutation);
@@ -241,89 +235,89 @@ namespace GsaGH.Parameters.Results {
       }
     }
 
-    private static void UpdateExtrema<T, Q1, Q2>(T item, int elementId, int permutation, double position,
-      ref ResultVector6<double> maxValue, ref ResultVector6<double> minValue,
-      ref ResultVector6<Element1dExtremaKey> maxKey, ref ResultVector6<Element1dExtremaKey> minKey)
-      where T : IResultVector6<Q1, Q2> where Q1 : IQuantity where Q2 : IQuantity {
-
+    private static void UpdateExtrema<T, Q1, Q2>(
+      T item, int elementId, int permutation, double position, ref ResultVector6<double> maxValue,
+      ref ResultVector6<double> minValue, ref ResultVector6<ExtremaKey1D> maxKey,
+      ref ResultVector6<ExtremaKey1D> minKey) where T : IResultVector6<Q1, Q2> where Q1 : IQuantity
+      where Q2 : IQuantity {
       if (item.X.Value > maxValue.X) {
         maxValue.X = item.X.Value;
-        maxKey.X = new Element1dExtremaKey(elementId, position, permutation);
+        maxKey.X = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Y.Value > maxValue.Y) {
         maxValue.Y = item.Y.Value;
-        maxKey.Y = new Element1dExtremaKey(elementId, position, permutation);
+        maxKey.Y = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Z.Value > maxValue.Z) {
         maxValue.Z = item.Z.Value;
-        maxKey.Z = new Element1dExtremaKey(elementId, position, permutation);
+        maxKey.Z = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Xyz.Value > maxValue.Xyz) {
         maxValue.Xyz = item.Xyz.Value;
-        maxKey.Xyz = new Element1dExtremaKey(elementId, position, permutation);
+        maxKey.Xyz = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Xx.Value > maxValue.Xx) {
         maxValue.Xx = item.Xx.Value;
-        maxKey.Xx = new Element1dExtremaKey(elementId, position, permutation);
+        maxKey.Xx = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Yy.Value > maxValue.Yy) {
         maxValue.Yy = item.Yy.Value;
-        maxKey.Yy = new Element1dExtremaKey(elementId, position, permutation);
+        maxKey.Yy = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Zz.Value > maxValue.Zz) {
         maxValue.Zz = item.Zz.Value;
-        maxKey.Zz = new Element1dExtremaKey(elementId, position, permutation);
+        maxKey.Zz = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Xxyyzz.Value > maxValue.Xxyyzz) {
         maxValue.Xxyyzz = item.Xxyyzz.Value;
-        maxKey.Xxyyzz = new Element1dExtremaKey(elementId, position, permutation);
+        maxKey.Xxyyzz = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.X.Value < minValue.X) {
         minValue.X = item.X.Value;
-        minKey.X = new Element1dExtremaKey(elementId, position, permutation);
+        minKey.X = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Y.Value < minValue.Y) {
         minValue.Y = item.Y.Value;
-        minKey.Y = new Element1dExtremaKey(elementId, position, permutation);
+        minKey.Y = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Z.Value < minValue.Z) {
         minValue.Z = item.Z.Value;
-        minKey.Z = new Element1dExtremaKey(elementId, position, permutation);
+        minKey.Z = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Xyz.Value < minValue.Xyz) {
         minValue.Xyz = item.Xyz.Value;
-        minKey.Xyz = new Element1dExtremaKey(elementId, position, permutation);
+        minKey.Xyz = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Xx.Value < minValue.Xx) {
         minValue.Xx = item.Xx.Value;
-        minKey.Xx = new Element1dExtremaKey(elementId, position, permutation);
+        minKey.Xx = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Yy.Value < minValue.Yy) {
         minValue.Yy = item.Yy.Value;
-        minKey.Yy = new Element1dExtremaKey(elementId, position, permutation);
+        minKey.Yy = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Zz.Value < minValue.Zz) {
         minValue.Zz = item.Zz.Value;
-        minKey.Zz = new Element1dExtremaKey(elementId, position, permutation);
+        minKey.Zz = new ExtremaKey1D(elementId, position, permutation);
       }
 
       if (item.Xxyyzz.Value < minValue.Xxyyzz) {
         minValue.Xxyyzz = item.Xxyyzz.Value;
-        minKey.Xxyyzz = new Element1dExtremaKey(elementId, position, permutation);
+        minKey.Xxyyzz = new ExtremaKey1D(elementId, position, permutation);
       }
     }
   }
