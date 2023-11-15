@@ -19,8 +19,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>>
-        resultSet = result.Element1dInternalForces.ResultSubset(elementIds, 1);
+      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+        = result.Element1dInternalForces.ResultSubset(elementIds, 1);
 
       // Assert element IDs
       var expectedIds = result.Model.Model.Elements(ElementList).Keys.OrderBy(x => x).ToList();
@@ -34,8 +34,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>>
-        resultSet = result.Element1dInternalForces.ResultSubset(elementIds, 1);
+      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+        = result.Element1dInternalForces.ResultSubset(elementIds, 1);
 
       // Assert element IDs
       var expectedIds = result.Model.Model.Elements(ElementList).Keys.OrderBy(x => x).ToList();
@@ -58,8 +58,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>>
-        resultSet = result.Element1dInternalForces.ResultSubset(elementIds, 5);
+      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+        = result.Element1dInternalForces.ResultSubset(elementIds, 5);
 
       // Assert Max in set
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
@@ -84,8 +84,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>>
-        resultSet = result.Element1dInternalForces.ResultSubset(elementIds, 5);
+      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+        = result.Element1dInternalForces.ResultSubset(elementIds, 5);
 
       // Assert Max in set
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
@@ -108,8 +108,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>>
-        resultSet = result.Element1dInternalForces.ResultSubset(elementIds, 5);
+      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+        = result.Element1dInternalForces.ResultSubset(elementIds, 5);
 
       // Assert Max in set
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
@@ -134,8 +134,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>>
-        resultSet = result.Element1dInternalForces.ResultSubset(elementIds, 5);
+      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+        = result.Element1dInternalForces.ResultSubset(elementIds, 5);
 
       // Assert Max in set
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
@@ -160,8 +160,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>>
-        resultSet = result.Element1dInternalForces.ResultSubset(elementIds, positionsCount);
+      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+        = result.Element1dInternalForces.ResultSubset(elementIds, positionsCount);
 
       // Assert result values
       int i = 0;
@@ -199,8 +199,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>>
-        resultSet = result.Element1dInternalForces.ResultSubset(elementIds, positionsCount);
+      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+        = result.Element1dInternalForces.ResultSubset(elementIds, positionsCount);
 
       // Assert result values
       int i = 0;

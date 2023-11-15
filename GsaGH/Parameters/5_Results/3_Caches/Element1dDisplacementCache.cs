@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class Element1dDisplacementCache : IElement1dResultCache<IDisplacement1D, IDisplacement,
+  public class Element1dDisplacementCache : IResultCache1D<IDisplacement1D, IDisplacement,
     ResultVector6<ExtremaKey1D>> {
 
     internal Element1dDisplacementCache(AnalysisCaseResult result) {
@@ -22,14 +22,14 @@ namespace GsaGH.Parameters.Results {
     public ConcurrentDictionary<int, Collection<IDisplacement1D>> Cache { get; }
       = new ConcurrentDictionary<int, Collection<IDisplacement1D>>();
 
-    public IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>>
+    public IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>>
       ResultSubset(ICollection<int> elementIds, int positionCount) {
       var positions = Enumerable.Range(0, positionCount)
        .Select(i => (double)i / (positionCount - 1)).ToList();
       return ResultSubset(elementIds, new ReadOnlyCollection<double>(positions));
     }
 
-    public IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>>
+    public IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>>
       ResultSubset(ICollection<int> elementIds, ReadOnlyCollection<double> positions) {
       ConcurrentBag<int> missingIds
         = Cache.GetMissingKeysAndPositions<IDisplacement1D, IDisplacement>(elementIds, positions);
@@ -41,7 +41,7 @@ namespace GsaGH.Parameters.Results {
               = analysisCase.Element1dDisplacement(elementList, positions);
             Parallel.ForEach(aCaseResults.Keys,
               elementId => Cache.AddOrUpdate(elementId,
-                Element1dResultsFactory.CreateBeamDisplacements(aCaseResults[elementId], positions),
+                ResultsFactory1D.CreateBeamDisplacements(aCaseResults[elementId], positions),
                 (key, oldValue)
                   => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
             break;
@@ -51,7 +51,7 @@ namespace GsaGH.Parameters.Results {
               = combinationCase.Element1dDisplacement(elementList, positions);
             Parallel.ForEach(cCaseResults.Keys,
               elementId => Cache.AddOrUpdate(elementId,
-                Element1dResultsFactory.CreateBeamDisplacements(cCaseResults[elementId], positions),
+                ResultsFactory1D.CreateBeamDisplacements(cCaseResults[elementId], positions),
                 (key, oldValue)
                   => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));
             break;

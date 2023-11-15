@@ -16,7 +16,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds("1");
-      IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 1);
 
       // Assert
@@ -41,7 +41,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds("1");
-      IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 1);
 
       // Assert

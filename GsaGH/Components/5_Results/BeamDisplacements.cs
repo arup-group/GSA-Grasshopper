@@ -139,8 +139,8 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
-        IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>>
-          resultSet = result.Element1dDisplacements.ResultSubset(elementIds, positionsCount);
+        IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
+          = result.Element1dDisplacements.ResultSubset(elementIds, positionsCount);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,

@@ -8,12 +8,12 @@ namespace GsaGH.Parameters.Results {
 
   public class GsaResult2 : IGsaResult {
     // Caches
-    public IElement1dResultCache<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>>
+    public IResultCache1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>>
       Element1dDisplacements {
       get;
       private set;
     }
-    public IElement1dResultCache<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>>
+    public IResultCache1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>>
       Element1dInternalForces {
       get;
       private set;
@@ -36,6 +36,11 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
     public INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> NodeTransientFootfalls {
+      get;
+      private set;
+    }
+    public IResultCache1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>>
+      Member1dDisplacements {
       get;
       private set;
     }
@@ -131,6 +136,7 @@ namespace GsaGH.Parameters.Results {
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
+      Member1dDisplacements = new Element1dDisplacementCache(result);
     }
 
     private void InitialiseCombinationsCaseResults(
@@ -148,6 +154,7 @@ namespace GsaGH.Parameters.Results {
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
+      Member1dDisplacements = new Element1dDisplacementCache(result);
     }
   }
 }

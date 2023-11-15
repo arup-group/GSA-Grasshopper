@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace GsaGH.Parameters.Results {
-  public class Displacements1D : IElement1dResultSubset<IDisplacement1D, IDisplacement,
+  public class Displacements1D : IResultSubset1D<IDisplacement1D, IDisplacement,
     ResultVector6<ExtremaKey1D>> {
 
     public Displacements1D(ConcurrentDictionary<int, Collection<IDisplacement1D>> results) {
