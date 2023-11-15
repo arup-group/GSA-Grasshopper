@@ -99,6 +99,27 @@ namespace GsaGH.Parameters {
       Id = mem.Key;
       ApiMember = mem.Value;
       ApiMember.MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
+      ApiMember.EffectiveLength.DestablisingLoad 
+        = new Length(ApiMember.EffectiveLength.DestablisingLoad, LengthUnit.Meter).As(modelUnit);
+      if (modelUnit != LengthUnit.Meter 
+        && ApiMember.EffectiveLength is EffectiveLengthFromUserSpecifiedValue user) {
+        if (user.EffectiveLengthAboutY.Option == EffectiveLengthOptionType.Absolute) {
+          user.EffectiveLengthAboutY = new EffectiveLengthAttribute(EffectiveLengthOptionType.Absolute,
+            new Length(user.EffectiveLengthAboutY.Value, LengthUnit.Meter).As(modelUnit));
+        }
+
+        if (user.EffectiveLengthAboutZ.Option == EffectiveLengthOptionType.Absolute) {
+          user.EffectiveLengthAboutZ = new EffectiveLengthAttribute(EffectiveLengthOptionType.Absolute,
+            new Length(user.EffectiveLengthAboutZ.Value, LengthUnit.Meter).As(modelUnit));
+        }
+
+        if (user.EffectiveLengthLaterialTorsional.Option == EffectiveLengthOptionType.Absolute) {
+          user.EffectiveLengthLaterialTorsional = new EffectiveLengthAttribute(
+            EffectiveLengthOptionType.Absolute,
+            new Length(user.EffectiveLengthLaterialTorsional.Value, LengthUnit.Meter).As(modelUnit));
+        }
+      }
+
       PolyCurve = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topoType);
       Topology = topology;
       TopologyType = topoType;
@@ -127,6 +148,7 @@ namespace GsaGH.Parameters {
         Type = ApiMember.Type,
         Type1D = ApiMember.Type1D,
         AutomaticOffset = ApiMember.AutomaticOffset,
+        EffectiveLength = ApiMember.EffectiveLength,
       };
       if (ApiMember.Topology != string.Empty) {
         mem.Topology = ApiMember.Topology;

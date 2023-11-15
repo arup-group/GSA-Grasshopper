@@ -25,6 +25,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(Create2dElementsFromBrep), 2)]
     [InlineData(typeof(CreateElementsFromMembers), 1)]
     [InlineData(typeof(SectionAlignment), 1)]
+    [InlineData(typeof(CreateEffectiveLength), 2)]
     //Loads
     [InlineData(typeof(CreateBeamLoad), 2)]
     [InlineData(typeof(CreateBeamThermalLoad), 2)]
@@ -103,7 +104,7 @@ namespace GsaGHTests.Components {
     //Loads
     [InlineData(typeof(CreateBeamLoad), "Uniform", "Trilinear")]
     [InlineData(typeof(CreateBeamThermalLoad), "Uniform", "Uniform")]
-    [InlineData(typeof(CreateFaceLoad), "Uniform", "Point")]
+    [InlineData(typeof(CreateFaceLoad), "Uniform", "Equation")]
     [InlineData(typeof(CreateFaceThermalLoad), "Uniform", "Uniform")]
     [InlineData(typeof(CreateGridAreaLoad), "kN/m²", "kipf/ft²")]
     [InlineData(typeof(CreateGridLineLoad), "kN/m", "kipf/ft")]
@@ -111,7 +112,6 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateGridPointLoad), "kN", "tf")]
     [InlineData(typeof(CreateGridSurface), "1D, One-way span", "2D")]
     [InlineData(typeof(CreateNodeLoad), "NodeForce", "Settlement")]
-    [InlineData(typeof(LoadProperties), "kN", "kipf")]
     //Analysis
     [InlineData(typeof(AnalyseModel), "m", "ft")]
     [InlineData(typeof(CreateAnalysisTask), "Static", "Static")]
