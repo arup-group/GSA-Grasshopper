@@ -110,7 +110,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(MeshResultInfo))]
     [InlineData(typeof(PointResultInfo))]
     [InlineData(typeof(GetResult))]
-    [InlineData(typeof(GlobalPerformanceResults_OBSOLETE))]
+    [InlineData(typeof(GlobalPerformanceResults_OBSOLETE), true)]
     [InlineData(typeof(GlobalPerformanceResults))]
     [InlineData(typeof(ContourNodeResults))]
     [InlineData(typeof(NodeDisplacements))]
@@ -120,10 +120,12 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SelectResult))]
     [InlineData(typeof(SpringReactionForces))]
     [InlineData(typeof(TotalLoadsAndReactions))]
-    public void GH_OasysComponentTest(Type t) {
+    public void GH_OasysComponentTest(Type t, bool obsolete = false) {
       var comp = (GH_OasysComponent)Activator.CreateInstance(t);
       Assert.NotNull(comp.Icon_24x24);
-      Assert.NotEqual(GH_Exposure.hidden, comp.Exposure);
+      if (!obsolete) {
+        Assert.NotEqual(GH_Exposure.hidden, comp.Exposure);
+      }
       Assert.NotEqual(new Guid(), comp.ComponentGuid);
       Assert.Equal(PluginInfo.Instance, comp.PluginInfo);
     }
