@@ -6,7 +6,7 @@ namespace GsaGH.Parameters.Results {
     public static Collection<IDisplacement1D> CreateBeamDisplacements(
       ReadOnlyCollection<Double6> results, ReadOnlyCollection<double> positions) {
       return new Collection<IDisplacement1D> {
-        new Element1dDisplacement(results, positions),
+        new Displacement1D(results, positions),
       };
     }
 
@@ -15,7 +15,7 @@ namespace GsaGH.Parameters.Results {
       ReadOnlyCollection<double> positions) {
       var permutations = new Collection<IDisplacement1D>();
       foreach (ReadOnlyCollection<Double6> permutation in results) {
-        permutations.Add(new Element1dDisplacement(permutation, positions));
+        permutations.Add(new Displacement1D(permutation, positions));
       }
 
       return permutations;
