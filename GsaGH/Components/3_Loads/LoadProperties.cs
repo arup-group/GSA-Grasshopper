@@ -47,26 +47,22 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      try {
-        string forceUnitAbbreviation = Force.GetAbbreviation(_forceUnit);
-        string forcePerLengthUnit
-          = ForcePerLength.GetAbbreviation(
-            UnitsHelper.GetForcePerLengthUnit(_forceUnit, _lengthUnit));
-        string forcePerAreaUnit
-          = Pressure.GetAbbreviation(UnitsHelper.GetForcePerAreaUnit(_forceUnit, _lengthUnit));
-        string unitAbbreviation = string.Join(", ", new {
-          forceUnitAbbreviation,
-          forcePerLengthUnit,
-          forcePerAreaUnit,
-        });
+      string forceUnitAbbreviation = Force.GetAbbreviation(_forceUnit);
+      string forcePerLengthUnit
+        = ForcePerLength.GetAbbreviation(
+          UnitsHelper.GetForcePerLengthUnit(_forceUnit, _lengthUnit));
+      string forcePerAreaUnit
+        = Pressure.GetAbbreviation(UnitsHelper.GetForcePerAreaUnit(_forceUnit, _lengthUnit));
+      string unitAbbreviation = string.Join(", ", new string[] {
+        forceUnitAbbreviation,
+        forcePerLengthUnit,
+        forcePerAreaUnit,
+      });
 
-        Params.Output[6].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
-        Params.Output[7].Name = "Load Value or Factor Y [" + unitAbbreviation + "]";
-        Params.Output[8].Name = "Load Value or Factor Z [" + unitAbbreviation + "]";
-        Params.Output[9].Name = "Load Value [" + unitAbbreviation + "]";
-      } catch (Exception e) {
-        this.AddRuntimeError(e.Message);
-      }
+      Params.Output[6].Name = "Load Value or Factor X [" + unitAbbreviation + "]";
+      Params.Output[7].Name = "Load Value or Factor Y [" + unitAbbreviation + "]";
+      Params.Output[8].Name = "Load Value or Factor Z [" + unitAbbreviation + "]";
+      Params.Output[9].Name = "Load Value [" + unitAbbreviation + "]";
     }
 
     protected override void InitialiseDropdowns() {
@@ -109,16 +105,22 @@ namespace GsaGH.Components {
       pManager.AddBooleanParameter("Projected", "Pj", "Projected", GH_ParamAccess.item);
       pManager.AddGenericParameter(
         "Load Value or Factor X [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V1",
-        "Value at Start, Point 1 or Factor X", GH_ParamAccess.item);
+        "Value at Start, Point 1 or Factor X." +
+          "\nExpression for Face Equation load.", GH_ParamAccess.item);
       pManager.AddGenericParameter(
         "Load Value or Factor Y [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V2",
-        "Value at End, Point 2 or Factor Y", GH_ParamAccess.item);
+        "Value at End, Point 2 or Factor Y." +
+          "\nPosition X for Face Point load." +
+          "\nEquation Axis for Face Equation load.", GH_ParamAccess.item);
       pManager.AddGenericParameter(
         "Load Value or Factor Z [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V3",
-        "Value at Point 3 or Factor Z", GH_ParamAccess.item);
+        "Value at Point 3 or Factor Z." +
+          "\nPosition Y for Face Point load." +
+          "\nIs Constant for Face Equation load.", GH_ParamAccess.item);
       pManager.AddGenericParameter(
         "Load Value [" + forceUnitAbbreviation + ", " + unitAbbreviation + "]", "V4",
-        "Value at Point 4", GH_ParamAccess.item);
+        "Value at Point 4." +
+          "\nUnits of the equation for Face Equation load", GH_ParamAccess.item);
       pManager.AddParameter(new GsaGridPlaneSurfaceParameter());
     }
 
@@ -205,22 +207,47 @@ namespace GsaGH.Components {
             da.SetData(3, faceLoad.ApiLoad.AxisProperty);
             da.SetData(4, faceLoad.ApiLoad.Direction);
             da.SetData(5, faceLoad.ApiLoad.IsProjected);
-            var apiFaceForce1 = new Pressure(faceLoad.ApiLoad.Value(0),
+
+            if (faceLoad.ApiLoad.Type != GsaAPI.FaceLoadType.EQUATION) {
+              var apiFaceForce1 = new Pressure(faceLoad.ApiLoad.Value(0),
+                PressureUnit.NewtonPerSquareMeter);
+              var outFaceForce1 = new Pressure(apiFaceForce1.As(forcePerAreaUnit), forcePerAreaUnit);
+              da.SetData(6, new GH_UnitNumber(outFaceForce1));
+            }
+
+            switch (faceLoad.ApiLoad.Type) {
+              case GsaAPI.FaceLoadType.GENERAL:
+                var apiFaceForce2 = new Pressure(faceLoad.ApiLoad.Value(1),
               PressureUnit.NewtonPerSquareMeter);
-            var outFaceForce1 = new Pressure(apiFaceForce1.As(forcePerAreaUnit), forcePerAreaUnit);
-            da.SetData(6, new GH_UnitNumber(outFaceForce1));
-            var apiFaceForce2 = new Pressure(faceLoad.ApiLoad.Value(1),
-              PressureUnit.NewtonPerSquareMeter);
-            var outFaceForce2 = new Pressure(apiFaceForce2.As(forcePerAreaUnit), forcePerAreaUnit);
-            da.SetData(7, new GH_UnitNumber(outFaceForce2));
-            var apiFaceForce3 = new Pressure(faceLoad.ApiLoad.Value(2),
-              PressureUnit.NewtonPerSquareMeter);
-            var outFaceForce3 = new Pressure(apiFaceForce3.As(forcePerAreaUnit), forcePerAreaUnit);
-            da.SetData(8, new GH_UnitNumber(outFaceForce3));
-            var apiFaceForce4 = new Pressure(faceLoad.ApiLoad.Value(3),
-              PressureUnit.NewtonPerSquareMeter);
-            var outFaceForce4 = new Pressure(apiFaceForce4.As(forcePerAreaUnit), forcePerAreaUnit);
-            da.SetData(9, new GH_UnitNumber(outFaceForce4));
+                var outFaceForce2 = new Pressure(apiFaceForce2.As(forcePerAreaUnit), forcePerAreaUnit);
+                da.SetData(7, new GH_UnitNumber(outFaceForce2));
+                var apiFaceForce3 = new Pressure(faceLoad.ApiLoad.Value(2),
+                  PressureUnit.NewtonPerSquareMeter);
+                var outFaceForce3 = new Pressure(apiFaceForce3.As(forcePerAreaUnit), forcePerAreaUnit);
+                da.SetData(8, new GH_UnitNumber(outFaceForce3));
+                var apiFaceForce4 = new Pressure(faceLoad.ApiLoad.Value(3),
+                  PressureUnit.NewtonPerSquareMeter);
+                var outFaceForce4 = new Pressure(apiFaceForce4.As(forcePerAreaUnit), forcePerAreaUnit);
+                da.SetData(9, new GH_UnitNumber(outFaceForce4));
+                break;
+
+              case GsaAPI.FaceLoadType.POINT:
+                da.SetData(7, new GH_Number(faceLoad.ApiLoad.Position.X));
+                da.SetData(8, new GH_Number(faceLoad.ApiLoad.Position.Y));
+                break;
+
+              case GsaAPI.FaceLoadType.EQUATION:
+                GsaAPI.PressureEquation eq = faceLoad.ApiLoad.Equation();
+                da.SetData(6, new GH_String(eq.Expression));
+                da.SetData(7, new GH_Integer(eq.Axis));
+                da.SetData(8, new GH_Boolean(eq.IsUniform));
+                string unitJoined = $"Pressure: {eq.PressureUnits}, " +
+                  $"Length: {eq.LengthUnits}, Angle: {eq.AngleUnits}";
+                da.SetData(9, new GH_String(unitJoined));
+                break;
+            }
+
+
             return;
 
           case GsaFaceThermalLoad faceThermalLoad:

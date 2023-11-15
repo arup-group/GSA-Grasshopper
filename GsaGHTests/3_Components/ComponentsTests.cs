@@ -56,10 +56,10 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(GlobalPerformanceResults), 3)]
     [InlineData(typeof(ContourNodeResults), 2)]
     [InlineData(typeof(NodeDisplacements), 2)]
-    [InlineData(typeof(ReactionForces), 2)]
+    [InlineData(typeof(ReactionForces), 3)]
     [InlineData(typeof(ReactionForceDiagrams), 1)]
     [InlineData(typeof(SelectResult), 2)]
-    [InlineData(typeof(SpringReactionForces), 2)]
+    [InlineData(typeof(SpringReactionForces), 3)]
     [InlineData(typeof(TotalLoadsAndReactions), 2)]
     public void WhenInitialiseDropdowns_ThenDropDownItemsCount_ShouldBeValid(
       Type t, int expectedListCount) {
@@ -131,21 +131,21 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(GlobalPerformanceResults), "t", "slug")]
     [InlineData(typeof(ContourNodeResults), "Displacement", "Footfall")]
     [InlineData(typeof(NodeDisplacements), "All", "Min |R|")]
-    [InlineData(typeof(ReactionForces), "kN", "tf")]
+    [InlineData(typeof(ReactionForces), "kN", "tf", 1)]
     [InlineData(typeof(ReactionForceDiagrams), "Resolved |F|", "Resolved |M|")]
     [InlineData(typeof(SelectResult), "AnalysisCase", "Combination")]
-    [InlineData(typeof(SpringReactionForces), "kN", "tf")]
+    [InlineData(typeof(SpringReactionForces), "kN", "tf", 1)]
     [InlineData(typeof(TotalLoadsAndReactions), "kN", "tf")]
     public void WhenSetSelected_ThenSelectedItems_ShouldBeValid(
-      Type t, string defaultValue, string firstValue) {
+      Type t, string defaultValue, string firstValue, int index = 0) {
       var obj = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
       obj.InitialiseDropdowns();
 
-      Assert.Equal(obj._selectedItems[0].ToString(), defaultValue, true, true, true);
+      Assert.Equal(obj._selectedItems[index].ToString(), defaultValue, true, true, true);
 
-      obj.SetSelected(0, obj._dropDownItems[0].Count - 1);
+      obj.SetSelected(index, obj._dropDownItems[index].Count - 1);
 
-      Assert.Equal(obj._selectedItems[0].ToString(), firstValue, true, true, true);
+      Assert.Equal(obj._selectedItems[index].ToString(), firstValue, true, true, true);
     }
   }
 }
