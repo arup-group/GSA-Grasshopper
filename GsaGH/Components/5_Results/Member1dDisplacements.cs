@@ -27,13 +27,13 @@ namespace GsaGH.Components {
   /// </summary>
   public class Member1dDisplacements : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("d15f1830-d383-4495-af8e-c78478482bcd");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Member1dDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
 
-    public Member1dDisplacements() : base("Member 1d Displacements", "1dMemDisp",
-      "Member1D Translation and Rotation result values", CategoryName.Name(),
+    public Member1dDisplacements() : base("Member 1D Displacements", "Mem1dDisp",
+      "1D Member Translation and Rotation result values", CategoryName.Name(),
       SubCategoryName.Cat5()) {
       Hidden = true;
     }
