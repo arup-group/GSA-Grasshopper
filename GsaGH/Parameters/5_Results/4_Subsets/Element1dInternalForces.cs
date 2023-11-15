@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace GsaGH.Parameters.Results {
-  public class Element1dInternalForces : IElement1dResultSubset<IInternalForce1D, IInternalForce,
+  public class Element1dInternalForces : IResultSubset1D<IInternalForce1D, IInternalForce,
     ResultVector6<ExtremaKey1D>> {
 
     public Element1dInternalForces(

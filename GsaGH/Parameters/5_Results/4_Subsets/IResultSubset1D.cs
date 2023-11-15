@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public interface IElement1dResultSubset<T1, T2, T3> where T1 : IElement1dQuantity<T2>
-    where T2 : IResultItem {
+  public interface IResultSubset1D<T1, T2, T3> where T1 : IQuantity1D<T2> where T2 : IResultItem {
     T3 Max { get; }
     T3 Min { get; }
     IList<int> Ids { get; }

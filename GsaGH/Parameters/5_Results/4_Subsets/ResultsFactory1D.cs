@@ -2,7 +2,7 @@
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public static class Element1dResultsFactory {
+  public static class ResultsFactory1D {
     public static Collection<IDisplacement1D> CreateBeamDisplacements(
       ReadOnlyCollection<Double6> results, ReadOnlyCollection<double> positions) {
       return new Collection<IDisplacement1D> {
@@ -24,7 +24,7 @@ namespace GsaGH.Parameters.Results {
     public static Collection<IInternalForce1D> CreateBeamForces(
       ReadOnlyCollection<Double6> results, ReadOnlyCollection<double> positions) {
       return new Collection<IInternalForce1D> {
-        new Element1dInternalForce(results, positions),
+        new InternalForce1D(results, positions),
       };
     }
 
@@ -33,7 +33,7 @@ namespace GsaGH.Parameters.Results {
       ReadOnlyCollection<double> positions) {
       var permutations = new Collection<IInternalForce1D>();
       foreach (ReadOnlyCollection<Double6> permutation in results) {
-        permutations.Add(new Element1dInternalForce(permutation, positions));
+        permutations.Add(new InternalForce1D(permutation, positions));
       }
 
       return permutations;

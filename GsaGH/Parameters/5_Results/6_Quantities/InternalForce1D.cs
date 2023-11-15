@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class Element1dInternalForce : IInternalForce1D {
+  public class InternalForce1D : IInternalForce1D {
 
-    internal Element1dInternalForce(
+    internal InternalForce1D(
       ReadOnlyCollection<Double6> result, ReadOnlyCollection<double> positions) {
       Results = new Dictionary<double, IInternalForce>();
       for (int i = 0; i < result.Count; i++) {

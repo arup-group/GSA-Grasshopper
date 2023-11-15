@@ -5,8 +5,7 @@ using OasysUnits;
 namespace GsaGH.Parameters.Results {
   public static class ExtremaKeyUtility {
     public static (ResultVector6<ExtremaKey1D> Max, ResultVector6<ExtremaKey1D> Min) Extrema<T, U>(
-      this IDictionary<int, Collection<T>> subset) where T : IElement1dQuantity<U>
-      where U : IResultItem {
+      this IDictionary<int, Collection<T>> subset) where T : IQuantity1D<U> where U : IResultItem {
       var maxValue = new ResultVector6<double>(double.MinValue);
       var minValue = new ResultVector6<double>(double.MaxValue);
 

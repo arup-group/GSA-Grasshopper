@@ -18,8 +18,8 @@ namespace GsaGH.Parameters.Results {
     }
 
     public static ConcurrentBag<int> GetMissingKeysAndPositions<T1, T2>(
-      this IDictionary<int, Collection<T1>> existing, ICollection<int> newKeys, ReadOnlyCollection<double> positions)
-      where T1 : IElement1dQuantity<T2> where T2 : IResultItem {
+      this IDictionary<int, Collection<T1>> existing, ICollection<int> newKeys,
+      ReadOnlyCollection<double> positions) where T1 : IQuantity1D<T2> where T2 : IResultItem {
       var missingIds = new ConcurrentBag<int>();
       Parallel.ForEach(newKeys, key => {
         if (!existing.ContainsKey(key)) {
@@ -36,8 +36,8 @@ namespace GsaGH.Parameters.Results {
       return missingIds;
     }
 
-    public static ConcurrentDictionary<int, T> GetSubset<T>(this IDictionary<int, T> dictionary,
-      ICollection<int> keys) {
+    public static ConcurrentDictionary<int, T> GetSubset<T>(
+      this IDictionary<int, T> dictionary, ICollection<int> keys) {
       var subset = new ConcurrentDictionary<int, T>();
       Parallel.ForEach(keys, key => {
         if (dictionary.ContainsKey(key)) {

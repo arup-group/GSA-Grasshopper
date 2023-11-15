@@ -19,7 +19,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 1);
 
       // Assert element IDs
@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 1);
 
       // Assert element IDs
@@ -58,7 +58,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 4);
 
       // Assert Max in set
@@ -84,7 +84,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 4);
 
       // Assert Max in set
@@ -108,7 +108,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 4);
 
       // Assert Max in set
@@ -134,7 +134,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 4);
 
       // Assert Max in set
@@ -160,7 +160,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, positionsCount);
 
       // Assert result values
@@ -199,7 +199,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, positionsCount);
 
       // Assert result values
