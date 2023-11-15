@@ -1,12 +1,9 @@
 ﻿using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Components;
-using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using OasysGH.Components;
 using Xunit;
 
-namespace GsaGHTests.Components.Properties {
+namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class CreateMemberEndRestraintTests {
 

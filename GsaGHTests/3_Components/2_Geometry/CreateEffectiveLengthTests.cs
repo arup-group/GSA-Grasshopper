@@ -5,7 +5,7 @@ using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Xunit;
 
-namespace GsaGHTests.Components.Properties {
+namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class CreateEffectiveLengthTests {
 
@@ -14,7 +14,6 @@ namespace GsaGHTests.Components.Properties {
       var comp = new CreateEffectiveLength();
       comp.CreateAttributes();
       
-      comp.SetSelected(0, 0);
       var output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
       GsaEffectiveLength leff = output.Value;
       Assert.True(leff.EffectiveLength is EffectiveLengthFromEndRestraintAndGeometry);
@@ -28,6 +27,11 @@ namespace GsaGHTests.Components.Properties {
       output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
       leff = output.Value;
       Assert.True(leff.EffectiveLength is EffectiveLengthFromUserSpecifiedValue);
+
+      comp.SetSelected(0, 0);
+      output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      leff = output.Value;
+      Assert.True(leff.EffectiveLength is EffectiveLengthFromEndRestraintAndGeometry);
     }
 
     [Fact]
@@ -93,6 +97,44 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(0.5, bf.MomentAmplificationFactorStrongAxis);
       Assert.Equal(1.2, bf.MomentAmplificationFactorWeakAxis);
       Assert.Equal(9.9, bf.EquivalentUniformMomentFactor);
+    }
+
+    [Fact]
+    public void UserSpecifiedLengthAsNumberInputTest() {
+      var comp = new CreateEffectiveLength();
+      comp.CreateAttributes();
+      comp.SetSelected(0, 2);
+      ComponentTestHelper.SetInput(comp, 0.1, 1);
+      ComponentTestHelper.SetInput(comp, 0.2, 2);
+      ComponentTestHelper.SetInput(comp, 1.5, 3);
+
+      var output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      var specific = (EffectiveLengthFromUserSpecifiedValue)output.Value.EffectiveLength;
+      Assert.Equal(0.1, specific.EffectiveLengthAboutY.Value);
+      Assert.Equal(EffectiveLengthOptionType.Absolute, specific.EffectiveLengthAboutY.Option);
+      Assert.Equal(0.2, specific.EffectiveLengthAboutZ.Value);
+      Assert.Equal(EffectiveLengthOptionType.Absolute, specific.EffectiveLengthAboutZ.Option);
+      Assert.Equal(1.5, specific.EffectiveLengthLaterialTorsional.Value);
+      Assert.Equal(EffectiveLengthOptionType.Absolute, specific.EffectiveLengthLaterialTorsional.Option);
+    }
+
+    [Fact]
+    public void UserSpecifiedLengthAsPercentInputTest() {
+      var comp = new CreateEffectiveLength();
+      comp.CreateAttributes();
+      comp.SetSelected(0, 2);
+      ComponentTestHelper.SetInput(comp, -0.1, 1);
+      ComponentTestHelper.SetInput(comp, -0.2, 2);
+      ComponentTestHelper.SetInput(comp, -1.5, 3);
+
+      var output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      var specific = (EffectiveLengthFromUserSpecifiedValue)output.Value.EffectiveLength;
+      Assert.Equal(0.1, specific.EffectiveLengthAboutY.Value);
+      Assert.Equal(EffectiveLengthOptionType.Relative, specific.EffectiveLengthAboutY.Option);
+      Assert.Equal(0.2, specific.EffectiveLengthAboutZ.Value);
+      Assert.Equal(EffectiveLengthOptionType.Relative, specific.EffectiveLengthAboutZ.Option);
+      Assert.Equal(1.5, specific.EffectiveLengthLaterialTorsional.Value);
+      Assert.Equal(EffectiveLengthOptionType.Relative, specific.EffectiveLengthLaterialTorsional.Option);
     }
   }
 }
