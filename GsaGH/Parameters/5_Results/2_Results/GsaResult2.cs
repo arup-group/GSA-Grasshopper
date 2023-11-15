@@ -136,7 +136,7 @@ namespace GsaGH.Parameters.Results {
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
-      Member1dDisplacements = new Element1dDisplacementCache(result);
+      Member1dDisplacements = new Member1dDisplacementCache(result);
     }
 
     private void InitialiseCombinationsCaseResults(
@@ -154,7 +154,7 @@ namespace GsaGH.Parameters.Results {
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
-      Member1dDisplacements = new Element1dDisplacementCache(result);
+      Member1dDisplacements = new Member1dDisplacementCache(result);
     }
   }
 }
