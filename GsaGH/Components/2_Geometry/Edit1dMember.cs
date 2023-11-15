@@ -23,7 +23,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a 1D Member
   /// </summary>
-  public class Edit1dMember : Section3dPreviewComponent {
+  public class Edit1dMember : Section3dPreviewComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("32e744e5-7352-4308-81d0-13bf06db5e82");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -39,6 +39,24 @@ namespace GsaGH.Components {
         _angleUnit = angleParameter.UseDegrees ? AngleUnit.Degree : AngleUnit.Radian;
       }
     }
+
+    bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    bool IGH_VariableParameterComponent.CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    IGH_Param IGH_VariableParameterComponent.CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    bool IGH_VariableParameterComponent.DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public void VariableParameterMaintenance() { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaMember1dParameter(), GsaMember1dGoo.Name,
