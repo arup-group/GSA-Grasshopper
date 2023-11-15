@@ -8,9 +8,10 @@ namespace GsaGH.Parameters.Results {
 
   public class GsaResult2 : IGsaResult {
     // Caches
-    public IElement1dResultCache<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> Element1dDisplacements { 
-      get; 
-      private set; 
+    public IElement1dResultCache<IElement1dDisplacement, IDisplacement,
+      ResultVector6<Element1dExtremaKey>> Element1dDisplacements {
+      get;
+      private set;
     }
     public IElement1dResultCache<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>> Element1dInternalForces {
       get;
@@ -34,6 +35,10 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
     public INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> NodeTransientFootfalls {
+      get;
+      private set;
+    }
+    public IGlobalResultsCache GlobalResults {
       get;
       private set;
     }
@@ -129,6 +134,7 @@ namespace GsaGH.Parameters.Results {
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
+      GlobalResults = new GlobalResultsCache(result);
     }
 
     private void InitialiseCombinationsCaseResults(
