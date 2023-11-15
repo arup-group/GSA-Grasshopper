@@ -27,7 +27,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class Member1dDisplacements : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("d15f1830-d383-4495-af8e-c78478482bcd");
-    public override GH_Exposure Exposure => GH_Exposure.hidden;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Member1dDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
@@ -74,7 +74,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaElementMemberListParameter());
+      pManager.AddParameter(new GsaMemberListParameter());
       pManager[1].Optional = true;
       pManager.AddIntegerParameter("Intermediate Points", "nP",
         "Number of intermediate equidistant points (default 3)", GH_ParamAccess.item, 3);
@@ -126,7 +126,7 @@ namespace GsaGH.Components {
         switch (ghTyp?.Value) {
           case GsaResultGoo goo:
             result = new GsaResult2((GsaResult)goo.Value);
-            memberList = Inputs.GetElementListDefinition(this, da, 1, result.Model);
+            memberList = Inputs.GetMemberListDefinition(this, da, 1, result.Model);
             break;
 
           case null:
@@ -205,12 +205,6 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      if (_selectedItems.Count == 1) {
-        _spacerDescriptions.Insert(0, "Envelope");
-        _dropDownItems.Insert(0, ExtremaHelper.Vector6Displacements.ToList());
-        _selectedItems.Insert(0, _dropDownItems[0][0]);
-      }
-
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
