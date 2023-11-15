@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class Element1dDisplacement : IDisplacement1D {
+  public class Displacement1D : IDisplacement1D {
 
-    internal Element1dDisplacement(
+    internal Displacement1D(
       ReadOnlyCollection<Double6> result, ReadOnlyCollection<double> positions) {
       Results = new Dictionary<double, IDisplacement>();
       for (int i = 0; i < result.Count; i++) {

@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace GsaGH.Parameters.Results {
-  public class Element1dDisplacements : IElement1dResultSubset<IDisplacement1D, IDisplacement,
+  public class Displacements1D : IElement1dResultSubset<IDisplacement1D, IDisplacement,
     ResultVector6<ExtremaKey1D>> {
 
-    public Element1dDisplacements(ConcurrentDictionary<int, Collection<IDisplacement1D>> results) {
+    public Displacements1D(ConcurrentDictionary<int, Collection<IDisplacement1D>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
       (Max, Min) = results.Extrema<IDisplacement1D, IDisplacement>();
