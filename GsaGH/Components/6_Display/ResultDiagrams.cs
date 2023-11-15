@@ -219,7 +219,7 @@ namespace GsaGH.Components {
         }
       }
 
-      EntityList list = Inputs.GetElementOrMemberList(this, da, 1, result.Model);
+      EntityList list = Inputs.GetElementOrMemberList(this, da, 1);
 
       var ghScale = new GH_Number();
       double scale = 1;

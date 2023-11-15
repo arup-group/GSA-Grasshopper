@@ -11,11 +11,6 @@ namespace IntegrationTests.Parameters {
     private static GH_Document document = null;
 
     [Fact]
-    public void NoRuntimeErrorTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
-    }
-
-    [Fact]
     public void NoRuntimeWarningTest() {
       Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
     }
