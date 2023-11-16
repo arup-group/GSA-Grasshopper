@@ -366,5 +366,38 @@ namespace GsaGH.Helpers.GH {
 
       return nodeList;
     }
+
+    internal static string GetMemberListDefinition(
+      GH_Component owner, IGH_DataAccess da, int inputid, GsaModel model) {
+      string memberList = "All";
+      var ghType = new GH_ObjectWrapper();
+      if (da.GetData(inputid, ref ghType)) {
+        if (ghType.Value is GsaListGoo listGoo) {
+          if (listGoo.Value.EntityType != EntityType.Member) {
+            owner.AddRuntimeWarning("List must be of type Member to apply to member filter");
+          }
+
+          if (listGoo.Value.Name == null || listGoo.Value.Name == string.Empty) {
+            return listGoo.Value.Definition;
+          }
+
+          if (model.Model.Lists().Values.Where(
+            x => x.Type == GsaAPI.EntityType.Member && x.Name == listGoo.Value.Name).Any()) {
+            return "\"" + listGoo.Value.Name + "\"";
+          }
+
+          return listGoo.Value.Definition;
+
+        } else {
+          GH_Convert.ToString(ghType.Value, out memberList, GH_Conversion.Both);
+        }
+      }
+
+      if (string.IsNullOrEmpty(memberList) || memberList.ToLower() == "all") {
+        memberList = "All";
+      }
+
+      return memberList;
+    }
   }
 }
