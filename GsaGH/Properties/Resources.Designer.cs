@@ -1323,6 +1323,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Member1dForcesAndMoments {
+            get {
+                object obj = ResourceManager.GetObject("Member1dForcesAndMoments", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Member1dParam {
             get {
                 object obj = ResourceManager.GetObject("Member1dParam", resourceCulture);

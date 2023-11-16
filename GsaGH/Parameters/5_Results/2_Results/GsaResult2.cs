@@ -43,6 +43,12 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
+    public IElement1dResultCache<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>>
+      Member1dInternalForces {
+      get;
+      private set;
+    }
+
     // temp conversion from old class
     internal GsaResult2(GsaResult result) {
       switch (result.CaseType) {
@@ -134,6 +140,7 @@ namespace GsaGH.Parameters.Results {
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
+      Member1dInternalForces = new Member1dInternalForceCache(result);
       GlobalResults = new GlobalResultsCache(result);
     }
 
@@ -152,6 +159,7 @@ namespace GsaGH.Parameters.Results {
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
+      Member1dInternalForces = new Member1dInternalForceCache(result);
     }
   }
 }

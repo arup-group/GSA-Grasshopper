@@ -62,6 +62,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SelectResult), 2)]
     [InlineData(typeof(SpringReactionForces), 3)]
     [InlineData(typeof(TotalLoadsAndReactions), 2)]
+    [InlineData(typeof(Member1dForcesAndMoments), 3)]
     public void WhenInitialiseDropdowns_ThenDropDownItemsCount_ShouldBeValid(
       Type t, int expectedListCount) {
       var obj = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
@@ -138,6 +139,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SelectResult), "AnalysisCase", "Combination")]
     [InlineData(typeof(SpringReactionForces), "kN", "tf", 1)]
     [InlineData(typeof(TotalLoadsAndReactions), "kN", "tf")]
+    [InlineData(typeof(Member1dForcesAndMoments), "All", "Min |Myz|")]
     public void WhenSetSelected_ThenSelectedItems_ShouldBeValid(
       Type t, string defaultValue, string firstValue, int index = 0) {
       var obj = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
