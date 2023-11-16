@@ -1,3 +1,3 @@
 ﻿namespace GsaGH.Parameters.Results {
-  public interface IInternalForce1D : IQuantity1D<IInternalForce> { }
+  public interface IInternalForce1d : IQuantity1d<IInternalForce> { }
 }

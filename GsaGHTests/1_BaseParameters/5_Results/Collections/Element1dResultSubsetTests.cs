@@ -16,7 +16,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds("1");
-      IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1d<IDisplacement1d, IDisplacement, ResultVector6<ExtremaKey1d>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 1);
 
       // Assert
@@ -29,7 +29,7 @@ namespace GsaGHTests.Parameters.Results {
       };
       ConcurrentBag<int> missingIds
         = result.Element1dDisplacements.Cache
-         .GetMissingKeysAndPositions<IDisplacement1D, IDisplacement>(newKeys, positions);
+         .GetMissingKeysAndPositions<IDisplacement1d, IDisplacement>(newKeys, positions);
       Assert.Single(missingIds);
       Assert.Equal(newKeys[0], missingIds.First());
     }
@@ -41,7 +41,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds("1");
-      IResultSubset1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1d<IDisplacement1d, IDisplacement, ResultVector6<ExtremaKey1d>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 1);
 
       // Assert
@@ -54,7 +54,7 @@ namespace GsaGHTests.Parameters.Results {
       };
       ConcurrentBag<int> missingIds
         = result.Element1dDisplacements.Cache
-         .GetMissingKeysAndPositions<IDisplacement1D, IDisplacement>(newKeys, positions);
+         .GetMissingKeysAndPositions<IDisplacement1d, IDisplacement>(newKeys, positions);
       Assert.Single(missingIds);
       Assert.Equal(newKeys[0], missingIds.First());
     }

@@ -2,45 +2,45 @@
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public static class ResultsFactory1D {
-    public static Collection<IDisplacement1D> CreateBeamDisplacements(
+  public static class ResultsFactory1d {
+    public static Collection<IDisplacement1d> CreateBeamDisplacements(
       ReadOnlyCollection<Double6> results, ReadOnlyCollection<double> positions) {
-      return new Collection<IDisplacement1D> {
-        new Displacement1D(results, positions),
+      return new Collection<IDisplacement1d> {
+        new Displacement1d(results, positions),
       };
     }
 
-    public static Collection<IDisplacement1D> CreateBeamDisplacements(
+    public static Collection<IDisplacement1d> CreateBeamDisplacements(
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results,
       ReadOnlyCollection<double> positions) {
-      var permutations = new Collection<IDisplacement1D>();
+      var permutations = new Collection<IDisplacement1d>();
       foreach (ReadOnlyCollection<Double6> permutation in results) {
-        permutations.Add(new Displacement1D(permutation, positions));
+        permutations.Add(new Displacement1d(permutation, positions));
       }
 
       return permutations;
     }
 
-    public static Collection<IInternalForce1D> CreateBeamForces(
+    public static Collection<IInternalForce1d> CreateBeamForces(
       ReadOnlyCollection<Double6> results, ReadOnlyCollection<double> positions) {
-      return new Collection<IInternalForce1D> {
-        new InternalForce1D(results, positions),
+      return new Collection<IInternalForce1d> {
+        new InternalForce1d(results, positions),
       };
     }
 
-    public static Collection<IInternalForce1D> CreateBeamForces(
+    public static Collection<IInternalForce1d> CreateBeamForces(
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results,
       ReadOnlyCollection<double> positions) {
-      var permutations = new Collection<IInternalForce1D>();
+      var permutations = new Collection<IInternalForce1d>();
       foreach (ReadOnlyCollection<Double6> permutation in results) {
-        permutations.Add(new InternalForce1D(permutation, positions));
+        permutations.Add(new InternalForce1d(permutation, positions));
       }
 
       return permutations;
     }
 
-    public static Collection<IInternalForce1D> AddMissingPositions(
-      this Collection<IInternalForce1D> existing, ReadOnlyCollection<Double6> results,
+    public static Collection<IInternalForce1d> AddMissingPositions(
+      this Collection<IInternalForce1d> existing, ReadOnlyCollection<Double6> results,
       ReadOnlyCollection<double> positions) {
       for (int i = 0; i < results.Count; i++) {
         if (!existing[0].Results.ContainsKey(positions[i])) {
@@ -51,8 +51,8 @@ namespace GsaGH.Parameters.Results {
       return existing;
     }
 
-    public static Collection<IInternalForce1D> AddMissingPositions(
-      this Collection<IInternalForce1D> existing,
+    public static Collection<IInternalForce1d> AddMissingPositions(
+      this Collection<IInternalForce1d> existing,
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results,
       ReadOnlyCollection<double> positions) {
       for (int i = 0; i < existing.Count; i++) {
@@ -66,8 +66,8 @@ namespace GsaGH.Parameters.Results {
       return existing;
     }
 
-    public static Collection<IDisplacement1D> AddMissingPositions(
-      this Collection<IDisplacement1D> existing, ReadOnlyCollection<Double6> results,
+    public static Collection<IDisplacement1d> AddMissingPositions(
+      this Collection<IDisplacement1d> existing, ReadOnlyCollection<Double6> results,
       ReadOnlyCollection<double> positions) {
       for (int i = 0; i < results.Count; i++) {
         if (!existing[0].Results.ContainsKey(positions[i])) {
@@ -78,8 +78,8 @@ namespace GsaGH.Parameters.Results {
       return existing;
     }
 
-    public static Collection<IDisplacement1D> AddMissingPositions(
-      this Collection<IDisplacement1D> existing,
+    public static Collection<IDisplacement1d> AddMissingPositions(
+      this Collection<IDisplacement1d> existing,
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results,
       ReadOnlyCollection<double> positions) {
       for (int i = 0; i < existing.Count; i++) {

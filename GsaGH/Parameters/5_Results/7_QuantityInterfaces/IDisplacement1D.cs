@@ -1,3 +1,3 @@
 ﻿namespace GsaGH.Parameters.Results {
-  public interface IDisplacement1D : IQuantity1D<IDisplacement> { }
+  public interface IDisplacement1d : IQuantity1d<IDisplacement> { }
 }

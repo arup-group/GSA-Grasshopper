@@ -19,7 +19,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1d<IInternalForce1d, IInternalForce, ResultVector6<ExtremaKey1d>> resultSet
         = result.Element1dInternalForces.ResultSubset(elementIds, 1);
 
       // Assert element IDs
@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1d<IInternalForce1d, IInternalForce, ResultVector6<ExtremaKey1d>> resultSet
         = result.Element1dInternalForces.ResultSubset(elementIds, 1);
 
       // Assert element IDs
@@ -58,7 +58,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1d<IInternalForce1d, IInternalForce, ResultVector6<ExtremaKey1d>> resultSet
         = result.Element1dInternalForces.ResultSubset(elementIds, 5);
 
       // Assert Max in set
@@ -84,7 +84,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1d<IInternalForce1d, IInternalForce, ResultVector6<ExtremaKey1d>> resultSet
         = result.Element1dInternalForces.ResultSubset(elementIds, 5);
 
       // Assert Max in set
@@ -108,7 +108,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1d<IInternalForce1d, IInternalForce, ResultVector6<ExtremaKey1d>> resultSet
         = result.Element1dInternalForces.ResultSubset(elementIds, 5);
 
       // Assert Max in set
@@ -134,7 +134,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1d<IInternalForce1d, IInternalForce, ResultVector6<ExtremaKey1d>> resultSet
         = result.Element1dInternalForces.ResultSubset(elementIds, 5);
 
       // Assert Max in set
@@ -160,13 +160,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1d<IInternalForce1d, IInternalForce, ResultVector6<ExtremaKey1d>> resultSet
         = result.Element1dInternalForces.ResultSubset(elementIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IInternalForce1D> displacementQuantity = resultSet.Subset[id];
+        Collection<IInternalForce1d> displacementQuantity = resultSet.Subset[id];
 
         // for analysis case results we expect 4 positions
         Assert.Single(displacementQuantity);
@@ -199,13 +199,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IResultSubset1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>> resultSet
+      IResultSubset1d<IInternalForce1d, IInternalForce, ResultVector6<ExtremaKey1d>> resultSet
         = result.Element1dInternalForces.ResultSubset(elementIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IInternalForce1D> displacementQuantity = resultSet.Subset[id];
+        Collection<IInternalForce1d> displacementQuantity = resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, displacementQuantity.Count);
