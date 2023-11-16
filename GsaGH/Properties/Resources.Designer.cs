@@ -143,6 +143,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap BeamDerivedStresses {
+            get {
+                object obj = ResourceManager.GetObject("BeamDerivedStresses", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap BeamDisplacements {
             get {
                 object obj = ResourceManager.GetObject("BeamDisplacements", resourceCulture);
@@ -166,6 +176,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap BeamStrainEnergyDensity {
             get {
                 object obj = ResourceManager.GetObject("BeamStrainEnergyDensity", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap BeamStresses {
+            get {
+                object obj = ResourceManager.GetObject("BeamStresses", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

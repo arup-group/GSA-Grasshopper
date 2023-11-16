@@ -1,7 +1,7 @@
 ﻿using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
-  public interface IDerivedStress1d : IResultItem {
+  public interface IStress1dDerived : IResultItem {
     Pressure ElasticShearY { get; }
     Pressure ElasticShearZ { get; }
     Pressure Torsional { get; }
