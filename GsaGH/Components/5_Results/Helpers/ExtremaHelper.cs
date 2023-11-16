@@ -127,8 +127,8 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U DisplacementExtremaKey<T1, T2, U>(
-      IResultSubset1D<T1, T2, ResultVector6<U>> resultSet, string key)
-      where T1 : IQuantity1D<T2> where T2 : IResultItem {
+      IResultSubset1d<T1, T2, ResultVector6<U>> resultSet, string key) where T1 : IQuantity1d<T2>
+      where T2 : IResultItem {
       return key switch {
         "Max Ux" => resultSet.Max.X,
         "Max Uy" => resultSet.Max.Y,
@@ -197,8 +197,8 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U InternalForceExtremaKey<T1, T2, U>(
-      IResultSubset1D<T1, T2, ResultVector6<U>> resultSet, string key)
-      where T1 : IQuantity1D<T2> where T2 : IResultItem {
+      IResultSubset1d<T1, T2, ResultVector6<U>> resultSet, string key) where T1 : IQuantity1d<T2>
+      where T2 : IResultItem {
       return key switch {
         "Max Fx" => resultSet.Max.X,
         "Max Fy" => resultSet.Max.Y,

@@ -8,12 +8,12 @@ namespace GsaGH.Parameters.Results {
 
   public class GsaResult2 : IGsaResult {
     // Caches
-    public IResultCache1D<IDisplacement1D, IDisplacement, ResultVector6<ExtremaKey1D>>
+    public IResultCache1d<IDisplacement1d, IDisplacement, ResultVector6<ExtremaKey1d>>
       Element1dDisplacements {
       get;
       private set;
     }
-    public IResultCache1D<IInternalForce1D, IInternalForce, ResultVector6<ExtremaKey1D>>
+    public IResultCache1d<IInternalForce1d, IInternalForce, ResultVector6<ExtremaKey1d>>
       Element1dInternalForces {
       get;
       private set;
@@ -36,6 +36,10 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
     public INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> NodeTransientFootfalls {
+      get;
+      private set;
+    }
+    public IGlobalResultsCache GlobalResults {
       get;
       private set;
     }

@@ -19,7 +19,7 @@ namespace GsaGH.Parameters.Results {
 
     public static ConcurrentBag<int> GetMissingKeysAndPositions<T1, T2>(
       this IDictionary<int, Collection<T1>> existing, ICollection<int> newKeys,
-      ReadOnlyCollection<double> positions) where T1 : IQuantity1D<T2> where T2 : IResultItem {
+      ReadOnlyCollection<double> positions) where T1 : IQuantity1d<T2> where T2 : IResultItem {
       var missingIds = new ConcurrentBag<int>();
       Parallel.ForEach(newKeys, key => {
         if (!existing.ContainsKey(key)) {
