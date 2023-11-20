@@ -5,7 +5,7 @@ using System.Linq;
 using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
-  public class Element1dStresses : IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> {
+  public class Entity1dStresses : IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> {
     public ResultStress1d<Entity1dExtremaKey> Max { get; private set; }
     public ResultStress1d<Entity1dExtremaKey> Min { get; private set; }
     public IList<int> Ids { get; private set; }
@@ -13,7 +13,7 @@ namespace GsaGH.Parameters.Results {
     public ConcurrentDictionary<int, Collection<IEntity1dStress>> Subset { get; }
       = new ConcurrentDictionary<int, Collection<IEntity1dStress>>();
 
-    public Element1dStresses(ConcurrentDictionary<int, Collection<IEntity1dStress>> results) {
+    public Entity1dStresses(ConcurrentDictionary<int, Collection<IEntity1dStress>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
       (Max, Min) = results.Extrema();

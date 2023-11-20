@@ -54,7 +54,7 @@ namespace GsaGH.Parameters.Results {
         }
       }
 
-      return new Element1dStresses(Cache.GetSubset(elementIds));
+      return new Entity1dStresses(Cache.GetSubset(elementIds));
     }
   }
 }
