@@ -41,7 +41,7 @@ namespace GsaGH.Parameters.Results {
               = analysisCase.Member1dDisplacement(memberList, positions);
             Parallel.ForEach(aCaseResults.Keys,
               memberId => Cache.AddOrUpdate(memberId,
-                Entity1dResultsFactory.CreateEntity1dDisplacements(aCaseResults[memberId], positions),
+                Entity1dResultsFactory.CreateDisplacements(aCaseResults[memberId], positions),
                 (key, oldValue)
                   => oldValue.AddMissingPositions(aCaseResults[memberId], positions)));
             break;
@@ -51,7 +51,7 @@ namespace GsaGH.Parameters.Results {
               = combinationCase.Member1dDisplacement(memberList, positions);
             Parallel.ForEach(cCaseResults.Keys,
               memberId => Cache.AddOrUpdate(memberId,
-                Entity1dResultsFactory.CreateEntity1dDisplacements(cCaseResults[memberId], positions),
+                Entity1dResultsFactory.CreateDisplacements(cCaseResults[memberId], positions),
                 (key, oldValue)
                   => oldValue.AddMissingPositions(cCaseResults[memberId], positions)));
             break;

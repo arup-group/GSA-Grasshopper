@@ -40,7 +40,7 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<DerivedStressResult1d>> aCaseResults
               = analysisCase.Element1dDerivedStress(elementList, positions);
             Parallel.ForEach(aCaseResults.Keys, elementId => Cache.AddOrUpdate(
-              elementId, Entity1dResultsFactory.CreateBeamDerivedStresses(aCaseResults[elementId], positions),
+              elementId, Entity1dResultsFactory.CreateDerivedStresses(aCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
             break;
 
@@ -48,7 +48,7 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<DerivedStressResult1d>>> cCaseResults
               = combinationCase.Element1dDerivedStress(elementList, positions);
             Parallel.ForEach(cCaseResults.Keys, elementId => Cache.AddOrUpdate(
-              elementId, Entity1dResultsFactory.CreateBeamDerivedStresses(cCaseResults[elementId], positions),
+              elementId, Entity1dResultsFactory.CreateDerivedStresses(cCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));
             break;
         }
