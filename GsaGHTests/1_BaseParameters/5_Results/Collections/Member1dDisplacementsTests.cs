@@ -209,7 +209,7 @@ namespace GsaGHTests.Parameters.Results {
         foreach (double position in positions) {
           double perm1
             = TestsResultHelper.ResultsHelper(displacementQuantity[0].Results[position], component);
-          Assert.Equal(expectedP1[i], perm1);
+          Assert.Equal(expectedP1[i++], perm1);
         }
       }
     }

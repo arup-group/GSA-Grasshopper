@@ -38,7 +38,7 @@ namespace GsaGH.Parameters.Results {
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
-              = analysisCase.Member1dDisplacement(memberList, 5);
+              = analysisCase.Member1dDisplacement(memberList, positions);
             Parallel.ForEach(aCaseResults.Keys,
               memberId => Cache.AddOrUpdate(memberId,
                 Element1dResultsFactory.CreateBeamDisplacements(aCaseResults[memberId], positions),
