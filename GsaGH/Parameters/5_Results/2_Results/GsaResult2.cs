@@ -53,6 +53,12 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
+    public IElement1dResultCache<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>>
+      Member1dDisplacements {
+      get;
+      private set;
+    }
+
     public IElement1dResultCache<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>>
       Member1dInternalForces {
       get;
@@ -153,6 +159,7 @@ namespace GsaGH.Parameters.Results {
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
       Member1dInternalForces = new Member1dInternalForceCache(result);
+      Member1dDisplacements = new Member1dDisplacementCache(result);
       GlobalResults = new GlobalResultsCache(result);
     }
 
@@ -172,8 +179,9 @@ namespace GsaGH.Parameters.Results {
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
-      NodeTransientFootfalls = new NodeTransientFootfallCache(result);
+      Member1dDisplacements = new Member1dDisplacementCache(result);
       Member1dInternalForces = new Member1dInternalForceCache(result);
+      NodeTransientFootfalls = new NodeTransientFootfallCache(result);
     }
   }
 }
