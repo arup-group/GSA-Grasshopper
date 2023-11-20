@@ -40,7 +40,8 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<double>> aCaseResults
               = analysisCase.Element1dStrainEnergyDensity(elementList, positions);
             Parallel.ForEach(aCaseResults.Keys, elementId => Cache.AddOrUpdate(
-              elementId, Entity1dResultsFactory.CreateStresses(aCaseResults[elementId], positions),
+              elementId, 
+              Entity1dResultsFactory.CreateStrainEnergyDensities(aCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
             break;
 
@@ -48,7 +49,8 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<double>>> cCaseResults
               = combinationCase.Element1dStrainEnergyDensity(elementList, positions);
             Parallel.ForEach(cCaseResults.Keys, elementId => Cache.AddOrUpdate(
-              elementId, Entity1dResultsFactory.CreateStresses(cCaseResults[elementId], positions),
+              elementId, 
+              Entity1dResultsFactory.CreateStrainEnergyDensities(cCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));
             break;
         }
