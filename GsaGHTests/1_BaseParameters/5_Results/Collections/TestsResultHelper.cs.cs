@@ -1,5 +1,7 @@
 ﻿using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
+using static GsaGHTests.Parameters.Results.Element1dDerivedStressTests;
+using static GsaGHTests.Parameters.Results.Element1dStressTests;
 
 namespace GsaGHTests.Parameters.Results {
   public static class TestsResultHelper {
@@ -165,6 +167,72 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
+    public static double ResultsHelper(IStress1dDerived result, ResultDerivedStress1dHelperEnum component) {
+      double d = 0;
+      switch (component) {
+        case ResultDerivedStress1dHelperEnum.ShearY:
+          d = result.ElasticShearY.Megapascals;
+          break;
+
+        case ResultDerivedStress1dHelperEnum.ShearZ:
+          d = result.ElasticShearZ.Megapascals;
+          break;
+
+        case ResultDerivedStress1dHelperEnum.Torsion:
+          d = result.Torsional.Megapascals;
+          break;
+
+        case ResultDerivedStress1dHelperEnum.VonMises:
+          d = result.VonMises.Megapascals;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
+    public static double ResultsHelper(IStress1d result, ResultStress1dHelperEnum component) {
+      double d = 0;
+      switch (component) {
+        case ResultStress1dHelperEnum.Axial:
+          d = result.Axial.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.ShearY:
+          d = result.ShearY.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.ShearZ:
+          d = result.ShearZ.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.ByPos:
+          d = result.BendingYyPositiveZ.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.ByNeg:
+          d = result.BendingYyNegativeZ.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.BzPos:
+          d = result.BendingZzPositiveY.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.BzNeg:
+          d = result.BendingZzNegativeY.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.C1:
+          d = result.CombinedC1.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.C2:
+          d = result.CombinedC2.Megapascals;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
     public static double ResultsHelper(
       IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> result,
       ResultVector6HelperEnum component, bool max) {
@@ -243,6 +311,78 @@ namespace GsaGHTests.Parameters.Results {
 
         case ResultVector6HelperEnum.Xxyyzz:
           d = result.GetExtrema(extrema.Xxyyzz).Xxyyzz.KilonewtonMeters;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
+    public static double ResultsHelper(
+      IElement1dResultSubset<IElement1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Element1dExtremaKey>> result,
+      ResultDerivedStress1dHelperEnum component, bool max) {
+      double d = 0;
+      ResultDerivedStress1d<Element1dExtremaKey> extrema = max ? result.Max : result.Min;
+      switch (component) {
+        case ResultDerivedStress1dHelperEnum.ShearY:
+          d = result.GetExtrema(extrema.ElasticShearY).ElasticShearY.Megapascals;
+          break;
+
+        case ResultDerivedStress1dHelperEnum.ShearZ:
+          d = result.GetExtrema(extrema.ElasticShearZ).ElasticShearZ.Megapascals;
+          break;
+
+        case ResultDerivedStress1dHelperEnum.Torsion:
+          d = result.GetExtrema(extrema.Torsional).Torsional.Megapascals;
+          break;
+
+        case ResultDerivedStress1dHelperEnum.VonMises:
+          d = result.GetExtrema(extrema.VonMises).VonMises.Megapascals;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
+    public static double ResultsHelper(
+      IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>> result,
+      ResultStress1dHelperEnum component, bool max) {
+      double d = 0;
+      ResultStress1d<Element1dExtremaKey> extrema = max ? result.Max : result.Min;
+      switch (component) {
+        case ResultStress1dHelperEnum.Axial:
+          d = result.GetExtrema(extrema.Axial).Axial.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.ShearY:
+          d = result.GetExtrema(extrema.ShearY).ShearY.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.ShearZ:
+          d = result.GetExtrema(extrema.ShearZ).ShearZ.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.ByPos:
+          d = result.GetExtrema(extrema.BendingYyPositiveZ).BendingYyPositiveZ.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.ByNeg:
+          d = result.GetExtrema(extrema.BendingYyNegativeZ).BendingYyNegativeZ.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.BzPos:
+          d = result.GetExtrema(extrema.BendingZzPositiveY).BendingZzPositiveY.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.BzNeg:
+          d = result.GetExtrema(extrema.BendingZzNegativeY).BendingZzNegativeY.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.C1:
+          d = result.GetExtrema(extrema.CombinedC1).CombinedC1.Megapascals;
+          break;
+
+        case ResultStress1dHelperEnum.C2:
+          d = result.GetExtrema(extrema.CombinedC2).CombinedC2.Megapascals;
           break;
       }
 
