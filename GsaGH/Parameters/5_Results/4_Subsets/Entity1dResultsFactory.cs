@@ -3,14 +3,14 @@ using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
   public static class Entity1dResultsFactory {
-    public static Collection<IEntity1dDisplacement> CreateBeamDisplacements(
+    public static Collection<IEntity1dDisplacement> CreateEntity1dDisplacements(
       ReadOnlyCollection<Double6> results, ReadOnlyCollection<double> positions) {
       return new Collection<IEntity1dDisplacement> {
               new Entity1dDisplacement(results, positions)
              };
     }
 
-    public static Collection<IEntity1dDisplacement> CreateBeamDisplacements(
+    public static Collection<IEntity1dDisplacement> CreateEntity1dDisplacements(
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results,  ReadOnlyCollection<double> positions) {
       var permutations = new Collection<IEntity1dDisplacement>();
       foreach (ReadOnlyCollection<Double6> permutation in results) {
@@ -19,14 +19,14 @@ namespace GsaGH.Parameters.Results {
       return permutations;
     }
 
-    public static Collection<IEntity1dInternalForce> CreateBeamForces(
+    public static Collection<IEntity1dInternalForce> CreateEntity1dForces(
       ReadOnlyCollection<Double6> results, ReadOnlyCollection<double> positions) {
       return new Collection<IEntity1dInternalForce> {
               new Entity1dInternalForce(results, positions)
              };
     }
 
-    public static Collection<IEntity1dInternalForce> CreateBeamForces(
+    public static Collection<IEntity1dInternalForce> CreateEntity1dForces(
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results, ReadOnlyCollection<double> positions) {
       var permutations = new Collection<IEntity1dInternalForce>();
       foreach (ReadOnlyCollection<Double6> permutation in results) {

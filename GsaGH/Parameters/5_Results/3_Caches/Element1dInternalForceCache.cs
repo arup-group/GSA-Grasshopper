@@ -40,7 +40,7 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
               = analysisCase.Element1dForce(elementList, positions);
             Parallel.ForEach(aCaseResults.Keys, elementId => Cache.AddOrUpdate(
-              elementId, Entity1dResultsFactory.CreateBeamForces(aCaseResults[elementId], positions),
+              elementId, Entity1dResultsFactory.CreateEntity1dForces(aCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
             break;
 
@@ -48,7 +48,7 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
               = combinationCase.Element1dForce(elementList, positions);
             Parallel.ForEach(cCaseResults.Keys, elementId => Cache.AddOrUpdate(
-              elementId, Entity1dResultsFactory.CreateBeamForces(cCaseResults[elementId], positions),
+              elementId, Entity1dResultsFactory.CreateEntity1dForces(cCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));
             break;
         }
