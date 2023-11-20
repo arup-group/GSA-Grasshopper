@@ -30,7 +30,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class BeamDerivedStresses : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("bd54fa3e-ea2c-4195-b1a8-120d1a213b75");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.BeamDerivedStresses;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;

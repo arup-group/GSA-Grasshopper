@@ -29,7 +29,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class BeamDisplacements : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("1b7e99e8-c3c9-42c3-9474-792ddd17388d");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.BeamDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;

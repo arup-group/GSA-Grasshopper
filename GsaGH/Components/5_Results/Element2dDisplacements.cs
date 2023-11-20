@@ -27,7 +27,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class Element2dDisplacements : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("22f87d33-4f9a-49d6-9f3d-b366e446a75f");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Element2dDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
