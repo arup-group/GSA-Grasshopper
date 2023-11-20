@@ -22,7 +22,7 @@ using OasysUnits.Units;
 namespace GsaGH.Components {
   public class FootfallResults : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("224074e5-2fdc-48fa-a042-89a2c62f0c88");
-    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.FootfallResults;
 

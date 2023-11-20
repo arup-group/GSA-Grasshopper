@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -27,15 +25,15 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to get GSA beam displacement values
   /// </summary>
-  public class BeamDisplacements : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("1b7e99e8-c3c9-42c3-9474-792ddd17388d");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+  public class Member1dDisplacements : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("d15f1830-d383-4495-af8e-c78478482bcd");
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.BeamDisplacements;
+    protected override Bitmap Icon => Resources.Member1dDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
 
-    public BeamDisplacements() : base("Beam Displacements", "BeamDisp",
-      "Element1D Translation and Rotation result values", CategoryName.Name(),
+    public Member1dDisplacements() : base("Member 1D Displacements", "Mem1dDisp",
+      "1D Member Translation and Rotation result values", CategoryName.Name(),
       SubCategoryName.Cat5()) {
       Hidden = true;
     }
@@ -76,7 +74,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaElementMemberListParameter());
+      pManager.AddParameter(new GsaMemberListParameter());
       pManager[1].Optional = true;
       pManager.AddIntegerParameter("Intermediate Points", "nP",
         "Number of intermediate equidistant points (default 3)", GH_ParamAccess.item, 3);
@@ -87,26 +85,26 @@ namespace GsaGH.Components {
       string note = ResultNotes.Note1dResults;
 
       pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux",
-        "Translations in Local Element X-direction." + note, GH_ParamAccess.tree);
+        "Translations in Local Member X-direction." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations Y [" + unitAbbreviation + "]", "Uy",
-        "Translations in Local Element Y-direction." + note, GH_ParamAccess.tree);
+        "Translations in Local Member Y-direction." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations Z [" + unitAbbreviation + "]", "Uz",
-        "Translations in Local Element Z-direction." + note, GH_ParamAccess.tree);
+        "Translations in Local Member Z-direction." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translations |XYZ| [" + unitAbbreviation + "]", "|U|",
         "Combined |XYZ| Translations." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations XX [rad]", "Rxx",
-        "Rotations around Local Element X-axis." + note, GH_ParamAccess.tree);
+        "Rotations around Local Member X-axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations YY [rad]", "Ryy",
-        "Rotations around Local Element Y-axis." + note, GH_ParamAccess.tree);
+        "Rotations around Local Member Y-axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations ZZ [rad]", "Rzz",
-        "Rotations around Local Element Z-axis." + note, GH_ParamAccess.tree);
+        "Rotations around Local Member Z-axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|",
         "Combined |XXYYZZ| Rotations." + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
       GsaResult2 result;
-      string elementlist = "All";
+      string memberList = "All";
       var ghDivisions = new GH_Integer();
       da.GetData(2, ref ghDivisions);
       GH_Convert.ToInt32(ghDivisions, out int positionsCount, GH_Conversion.Both);
@@ -128,7 +126,7 @@ namespace GsaGH.Components {
         switch (ghTyp?.Value) {
           case GsaResultGoo goo:
             result = new GsaResult2((GsaResult)goo.Value);
-            elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
+            memberList = Inputs.GetMemberListDefinition(this, da, 1, result.Model);
             break;
 
           case null:
@@ -140,9 +138,9 @@ namespace GsaGH.Components {
             return;
         }
 
-        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
-        IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet = 
-          result.Element1dDisplacements.ResultSubset(elementIds, positionsCount);
+        ReadOnlyCollection<int> memberIds = result.MemberIds(memberList);
+        IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet
+          = result.Member1dDisplacements.ResultSubset(memberIds, positionsCount);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
@@ -154,23 +152,28 @@ namespace GsaGH.Components {
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
           foreach (KeyValuePair<int, Collection<IElement1dDisplacement>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
-              var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
-              outTransX.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.X.ToUnit(_lengthUnit))), path);
-              outTransY.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Y.ToUnit(_lengthUnit))), path);
-              outTransZ.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Z.ToUnit(_lengthUnit))), path);
-              outTransXyz.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Xyz.ToUnit(_lengthUnit))), path);
-              outRotX.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Xx)), path);
-              outRotY.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Yy)), path);
-              outRotZ.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Zz)), path);
-              outRotXyz.AddRange(kvp.Value[p - 1].Results.Values.Select(
-                r => new GH_UnitNumber(r.Xxyyzz)), path);
+              var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p,
+                kvp.Key);
+              outTransX.AddRange(
+                kvp.Value[p - 1].Results.Values
+                 .Select(r => new GH_UnitNumber(r.X.ToUnit(_lengthUnit))), path);
+              outTransY.AddRange(
+                kvp.Value[p - 1].Results.Values
+                 .Select(r => new GH_UnitNumber(r.Y.ToUnit(_lengthUnit))), path);
+              outTransZ.AddRange(
+                kvp.Value[p - 1].Results.Values
+                 .Select(r => new GH_UnitNumber(r.Z.ToUnit(_lengthUnit))), path);
+              outTransXyz.AddRange(
+                kvp.Value[p - 1].Results.Values
+                 .Select(r => new GH_UnitNumber(r.Xyz.ToUnit(_lengthUnit))), path);
+              outRotX.AddRange(kvp.Value[p - 1].Results.Values.Select(r => new GH_UnitNumber(r.Xx)),
+                path);
+              outRotY.AddRange(kvp.Value[p - 1].Results.Values.Select(r => new GH_UnitNumber(r.Yy)),
+                path);
+              outRotZ.AddRange(kvp.Value[p - 1].Results.Values.Select(r => new GH_UnitNumber(r.Zz)),
+                path);
+              outRotXyz.AddRange(
+                kvp.Value[p - 1].Results.Values.Select(r => new GH_UnitNumber(r.Xxyyzz)), path);
             }
           }
         } else {
@@ -202,12 +205,6 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      if (_selectedItems.Count == 1) {
-        _spacerDescriptions.Insert(0, "Envelope");
-        _dropDownItems.Insert(0, ExtremaHelper.Vector6Displacements.ToList());
-        _selectedItems.Insert(0, _dropDownItems[0][0]);
-      }
-
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
