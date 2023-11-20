@@ -8,19 +8,19 @@ using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
-  public class Member1dDisplacementsTests {
+  public class Member1dForcesTests {
 
     private static readonly string MemberList = "all";
 
     [Fact]
-    public void Member1dDisplacementsMember1dIdsFromAnalysisCaseTest() {
+    public void Member1dForcesMember1dIdsFromAnalysisCaseTest() {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
-        = result.Member1dDisplacements.ResultSubset(memberIds, 5);
+      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+        = result.Member1dInternalForces.ResultSubset(memberIds, 5);
 
       // Assert member IDs
       var expectedIds = result.Model.Model.Members(MemberList).Keys.OrderBy(x => x).ToList();
@@ -28,14 +28,14 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Fact]
-    public void Member1dDisplacementsMember1dIdsFromCombinationCaseTest() {
+    public void Member1dForesMember1dIdsFromCombinationCaseTest() {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
-        = result.Member1dDisplacements.ResultSubset(memberIds, 5);
+      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+        = result.Member1dInternalForces.ResultSubset(memberIds, 5);
 
       // Assert member IDs
       var expectedIds = result.Model.Model.Members(MemberList).Keys.OrderBy(x => x).ToList();
@@ -51,15 +51,15 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6HelperEnum.Yy)]
     [InlineData(ResultVector6HelperEnum.Zz)]
     [InlineData(ResultVector6HelperEnum.Xxyyzz)]
-    public void Member1dDisplacementsMaxFromAnalysisCaseTest(ResultVector6HelperEnum component) {
+    public void Member1dForcesMaxFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
-        = result.Member1dDisplacements.ResultSubset(memberIds, 5);
+      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+        = result.Member1dInternalForces.ResultSubset(memberIds, 5);
 
       // Assert Max in set
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
@@ -82,8 +82,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
-        = result.Member1dDisplacements.ResultSubset(memberIds, 5);
+      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+        = result.Member1dInternalForces.ResultSubset(memberIds, 5);
 
       // Assert Max in set
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
@@ -106,8 +106,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
-        = result.Member1dDisplacements.ResultSubset(memberIds, 5);
+      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+        = result.Member1dInternalForces.ResultSubset(memberIds, 5);
 
       // Assert Max in set
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
@@ -130,8 +130,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
-        = result.Member1dDisplacements.ResultSubset(memberIds, 5);
+      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+        = result.Member1dInternalForces.ResultSubset(memberIds, 5);
 
       // Assert Max in set
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
@@ -155,20 +155,20 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
-        = result.Member1dDisplacements.ResultSubset(memberIds, positionsCount);
+      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+        = result.Member1dInternalForces.ResultSubset(memberIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity1dDisplacement> displacementQuantity = resultSet.Subset[id];
+        Collection<IEntity1dInternalForce> forcesQuantity = resultSet.Subset[id];
 
         // for analysis case results we expect 4 positions
-        Assert.Single(displacementQuantity);
+        Assert.Single(forcesQuantity);
         var positions = Enumerable.Range(0, positionsCount)
          .Select(k => (double)k / (positionsCount - 1)).ToList();
         foreach (double position in positions) {
-          double x = TestsResultHelper.ResultsHelper(displacementQuantity[0].Results[position],
+          double x = TestsResultHelper.ResultsHelper(forcesQuantity[0].Results[position],
             component);
           Assert.Equal(expected[i++], x);
         }
@@ -193,22 +193,22 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
-        = result.Member1dDisplacements.ResultSubset(memberIds, positionsCount);
+      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+        = result.Member1dInternalForces.ResultSubset(memberIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity1dDisplacement> displacementQuantity = resultSet.Subset[id];
+        Collection<IEntity1dInternalForce> forcesQuantity = resultSet.Subset[id];
 
         // for C1 case results we expect 1 permutation in the collection
-        Assert.Single(displacementQuantity);
+        Assert.Single(forcesQuantity);
 
         var positions = Enumerable.Range(0, positionsCount)
          .Select(k => (double)k / (positionsCount - 1)).ToList();
         foreach (double position in positions) {
           double perm1
-            = TestsResultHelper.ResultsHelper(displacementQuantity[0].Results[position], component);
+            = TestsResultHelper.ResultsHelper(forcesQuantity[0].Results[position], component);
           Assert.Equal(expectedP1[i++], perm1);
         }
       }
@@ -216,21 +216,21 @@ namespace GsaGHTests.Parameters.Results {
 
     private List<double> ExpectedAnalysisCaseValues(ResultVector6HelperEnum component) {
       switch (component) {
-        case ResultVector6HelperEnum.X: return Member1dDisplacementsA1.XInMillimeter();
+        case ResultVector6HelperEnum.X: return Member1dForcesA1.XInKiloNewton();
 
-        case ResultVector6HelperEnum.Y: return Member1dDisplacementsA1.YInMillimeter();
+        case ResultVector6HelperEnum.Y: return Member1dForcesA1.YInKiloNewton();
 
-        case ResultVector6HelperEnum.Z: return Member1dDisplacementsA1.ZInMillimeter();
+        case ResultVector6HelperEnum.Z: return Member1dForcesA1.ZInKiloNewton();
 
-        case ResultVector6HelperEnum.Xyz: return Member1dDisplacementsA1.XyzInMillimeter();
+        case ResultVector6HelperEnum.Xyz: return Member1dForcesA1.XyzInKiloNewton();
 
-        case ResultVector6HelperEnum.Xx: return Member1dDisplacementsA1.XxInRadian();
+        case ResultVector6HelperEnum.Xx: return Member1dForcesA1.XxInKiloNewtonMeter();
 
-        case ResultVector6HelperEnum.Yy: return Member1dDisplacementsA1.YyInRadian();
+        case ResultVector6HelperEnum.Yy: return Member1dForcesA1.YyInKiloNewtonMeter();
 
-        case ResultVector6HelperEnum.Zz: return Member1dDisplacementsA1.ZzInRadian();
+        case ResultVector6HelperEnum.Zz: return Member1dForcesA1.ZzInKiloNewtonMeter();
 
-        case ResultVector6HelperEnum.Xxyyzz: return Member1dDisplacementsA1.XxyyzzInRadian();
+        case ResultVector6HelperEnum.Xxyyzz: return Member1dForcesA1.XxyyzzInKiloNewtonMeter();
       }
 
       throw new NotImplementedException();
@@ -238,21 +238,21 @@ namespace GsaGHTests.Parameters.Results {
 
     private List<double> ExpectedCombinationCaseC1Values(ResultVector6HelperEnum component) {
       switch (component) {
-        case ResultVector6HelperEnum.X: return Member1dDisplacementsC1.XInMillimeter();
+        case ResultVector6HelperEnum.X: return Member1dForcesC1.XInKiloNewton();
 
-        case ResultVector6HelperEnum.Y: return Member1dDisplacementsC1.YInMillimeter();
+        case ResultVector6HelperEnum.Y: return Member1dForcesC1.YInKiloNewton();
 
-        case ResultVector6HelperEnum.Z: return Member1dDisplacementsC1.ZInMillimeter();
+        case ResultVector6HelperEnum.Z: return Member1dForcesC1.ZInKiloNewton();
 
-        case ResultVector6HelperEnum.Xyz: return Member1dDisplacementsC1.XyzInMillimeter();
+        case ResultVector6HelperEnum.Xyz: return Member1dForcesC1.XyzInKiloNewton();
 
-        case ResultVector6HelperEnum.Xx: return Member1dDisplacementsC1.XxInRadian();
+        case ResultVector6HelperEnum.Xx: return Member1dForcesC1.XxInKiloNewtonMeter();
 
-        case ResultVector6HelperEnum.Yy: return Member1dDisplacementsC1.YyInRadian();
+        case ResultVector6HelperEnum.Yy: return Member1dForcesC1.YyInKiloNewtonMeter();
 
-        case ResultVector6HelperEnum.Zz: return Member1dDisplacementsC1.ZzInRadian();
+        case ResultVector6HelperEnum.Zz: return Member1dForcesC1.ZzInKiloNewtonMeter();
 
-        case ResultVector6HelperEnum.Xxyyzz: return Member1dDisplacementsC1.XxyyzzInRadian();
+        case ResultVector6HelperEnum.Xxyyzz: return Member1dForcesC1.XxyyzzInKiloNewtonMeter();
       }
 
       throw new NotImplementedException();

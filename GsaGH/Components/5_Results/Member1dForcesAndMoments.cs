@@ -25,16 +25,16 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to get GSA beam force values
   /// </summary>
-  public class BeamForcesAndMoments : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("5dee1b78-7b47-4c65-9d17-446140fc4e0d");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+  public class Member1dForcesAndMoments : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("36973d2e-ee21-4165-aa7e-2fd07a76aec3");
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.BeamForcesAndMoments;
+    protected override Bitmap Icon => Resources.Member1dForcesAndMoments;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
 
-    public BeamForcesAndMoments() : base("Beam Forces and Moments", "BeamForces",
-      "Element1D Force and Moment result values", CategoryName.Name(), SubCategoryName.Cat5()) {
+    public Member1dForcesAndMoments() : base("Member 1D Forces and Moments", "Mem1dForces",
+      "1D Member Force and Moment result values", CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
     }
 
@@ -107,27 +107,27 @@ namespace GsaGH.Components {
       string note = ResultNotes.Note1dResults;
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx",
-        "Element Axial Forces in Local Element X-direction." + forcerule + note,
+        "Member Axial Forces in Local Member X-direction." + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy",
-        "Element Shear Forces in Local Element Y-direction." + forcerule + note,
+        "Member Shear Forces in Local Member Y-direction." + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz",
-        "Element Shear Forces in Local Element Z-direction." + forcerule + note,
+        "Member Shear Forces in Local Member Z-direction." + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force |YZ| [" + forceunitAbbreviation + "]", "|Fyz|",
-        "Total |YZ| Element Shear Forces." + note, GH_ParamAccess.tree);
+        "Total |YZ| Member Shear Forces." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx",
-        "Element Torsional Moments around Local Element X-axis." + momentrule + note,
+        "Member Torsional Moments around Local Member X-axis." + momentrule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy",
-        "Element Bending Moments around Local Element Y-axis." + momentrule + note,
+        "Member Bending Moments around Local Member Y-axis." + momentrule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz",
-        "Element Bending Moments around Local Element Z-axis." + momentrule + note,
+        "Member Bending Moments around Local Member Z-axis." + momentrule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |YZ| [" + momentunitAbbreviation + "]", "|Myz|",
-        "Total |YYZZ| Element Bending Moments." + note, GH_ParamAccess.tree);
+        "Total |YYZZ| Member Bending Moments." + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
@@ -154,7 +154,7 @@ namespace GsaGH.Components {
         switch (ghTyp?.Value) {
           case GsaResultGoo goo:
             result = new GsaResult2((GsaResult)goo.Value);
-            elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
+            elementlist = Inputs.GetMemberListDefinition(this, da, 1, result.Model);
             break;
 
           case null:
@@ -166,9 +166,9 @@ namespace GsaGH.Components {
             return;
         }
 
-        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
+        ReadOnlyCollection<int> elementIds = result.MemberIds(elementlist);
         IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet =
-          result.Element1dInternalForces.ResultSubset(elementIds, positionsCount);
+          result.Member1dInternalForces.ResultSubset(elementIds, positionsCount);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,

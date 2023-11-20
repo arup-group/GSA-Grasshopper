@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public interface IElement1dResultSubset<T1, T2, T3>
-    where T1 : IElement1dQuantity<T2>
+  public interface IEntity1dResultSubset<T1, T2, T3>
+    where T1 : IEntity1dQuantity<T2>
     where T2 : IResultItem {
     T3 Max { get; }
     T3 Min { get; }
@@ -15,6 +15,6 @@ namespace GsaGH.Parameters.Results {
     /// Value = Collection of results, one for each permutation. Collection will have 1 item in case of AnalysisCase
     /// </summary>
     ConcurrentDictionary<int, Collection<T1>> Subset { get; }
-    T2 GetExtrema(Element1dExtremaKey key);
+    T2 GetExtrema(Entity1dExtremaKey key);
   }
 }

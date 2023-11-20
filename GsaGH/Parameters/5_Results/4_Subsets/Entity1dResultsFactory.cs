@@ -2,73 +2,73 @@
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public static class Element1dResultsFactory {
-    public static Collection<IElement1dDisplacement> CreateBeamDisplacements(
+  public static class Entity1dResultsFactory {
+    public static Collection<IEntity1dDisplacement> CreateDisplacements(
       ReadOnlyCollection<Double6> results, ReadOnlyCollection<double> positions) {
-      return new Collection<IElement1dDisplacement> {
-              new Element1dDisplacement(results, positions)
+      return new Collection<IEntity1dDisplacement> {
+              new Entity1dDisplacement(results, positions)
              };
     }
 
-    public static Collection<IElement1dDisplacement> CreateBeamDisplacements(
+    public static Collection<IEntity1dDisplacement> CreateDisplacements(
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results,  ReadOnlyCollection<double> positions) {
-      var permutations = new Collection<IElement1dDisplacement>();
+      var permutations = new Collection<IEntity1dDisplacement>();
       foreach (ReadOnlyCollection<Double6> permutation in results) {
-        permutations.Add(new Element1dDisplacement(permutation, positions));
+        permutations.Add(new Entity1dDisplacement(permutation, positions));
       }
       return permutations;
     }
 
-    public static Collection<IElement1dInternalForce> CreateBeamForces(
+    public static Collection<IEntity1dInternalForce> CreateForces(
       ReadOnlyCollection<Double6> results, ReadOnlyCollection<double> positions) {
-      return new Collection<IElement1dInternalForce> {
-              new Element1dInternalForce(results, positions)
+      return new Collection<IEntity1dInternalForce> {
+              new Entity1dInternalForce(results, positions)
              };
     }
 
-    public static Collection<IElement1dInternalForce> CreateBeamForces(
+    public static Collection<IEntity1dInternalForce> CreateForces(
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results, ReadOnlyCollection<double> positions) {
-      var permutations = new Collection<IElement1dInternalForce>();
+      var permutations = new Collection<IEntity1dInternalForce>();
       foreach (ReadOnlyCollection<Double6> permutation in results) {
-        permutations.Add(new Element1dInternalForce(permutation, positions));
+        permutations.Add(new Entity1dInternalForce(permutation, positions));
       }
       return permutations;
     }
 
-    public static Collection<IElement1dStress> CreateBeamStresses(
+    public static Collection<IEntity1dStress> CreateStresses(
       ReadOnlyCollection<StressResult1d> results, ReadOnlyCollection<double> positions) {
-      return new Collection<IElement1dStress> {
-              new Element1dStress(results, positions)
+      return new Collection<IEntity1dStress> {
+              new Entity1dStress(results, positions)
              };
     }
 
-    public static Collection<IElement1dStress> CreateBeamStresses(
+    public static Collection<IEntity1dStress> CreateStresses(
       ReadOnlyCollection<ReadOnlyCollection<StressResult1d>> results, ReadOnlyCollection<double> positions) {
-      var permutations = new Collection<IElement1dStress>();
+      var permutations = new Collection<IEntity1dStress>();
       foreach (ReadOnlyCollection<StressResult1d> permutation in results) {
-        permutations.Add(new Element1dStress(permutation, positions));
+        permutations.Add(new Entity1dStress(permutation, positions));
       }
       return permutations;
     }
 
-    public static Collection<IElement1dDerivedStress> CreateBeamDerivedStresses(
+    public static Collection<IEntity1dDerivedStress> CreateDerivedStresses(
       ReadOnlyCollection<DerivedStressResult1d> results, ReadOnlyCollection<double> positions) {
-      return new Collection<IElement1dDerivedStress> {
-              new Element1dDerivedStress(results, positions)
+      return new Collection<IEntity1dDerivedStress> {
+              new Entity1dDerivedStress(results, positions)
              };
     }
 
-    public static Collection<IElement1dDerivedStress> CreateBeamDerivedStresses(
+    public static Collection<IEntity1dDerivedStress> CreateDerivedStresses(
       ReadOnlyCollection<ReadOnlyCollection<DerivedStressResult1d>> results, ReadOnlyCollection<double> positions) {
-      var permutations = new Collection<IElement1dDerivedStress>();
+      var permutations = new Collection<IEntity1dDerivedStress>();
       foreach (ReadOnlyCollection<DerivedStressResult1d> permutation in results) {
-        permutations.Add(new Element1dDerivedStress(permutation, positions));
+        permutations.Add(new Entity1dDerivedStress(permutation, positions));
       }
       return permutations;
     }
 
-    public static Collection<IElement1dInternalForce> AddMissingPositions(
-      this Collection<IElement1dInternalForce> existing,
+    public static Collection<IEntity1dInternalForce> AddMissingPositions(
+      this Collection<IEntity1dInternalForce> existing,
       ReadOnlyCollection<Double6> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < results.Count; i++) {
         if (!existing[0].Results.ContainsKey(positions[i])) {
@@ -79,8 +79,8 @@ namespace GsaGH.Parameters.Results {
       return existing;
     }
 
-    public static Collection<IElement1dInternalForce> AddMissingPositions(
-      this Collection<IElement1dInternalForce> existing,
+    public static Collection<IEntity1dInternalForce> AddMissingPositions(
+      this Collection<IEntity1dInternalForce> existing,
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < existing.Count; i++) {
         for (int j = 0; j < results.Count; j++) {
@@ -93,8 +93,8 @@ namespace GsaGH.Parameters.Results {
       return existing;
     }
 
-    public static Collection<IElement1dDisplacement> AddMissingPositions(
-      this Collection<IElement1dDisplacement> existing,
+    public static Collection<IEntity1dDisplacement> AddMissingPositions(
+      this Collection<IEntity1dDisplacement> existing,
       ReadOnlyCollection<Double6> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < results.Count; i++) {
         if (!existing[0].Results.ContainsKey(positions[i])) {
@@ -105,8 +105,8 @@ namespace GsaGH.Parameters.Results {
       return existing;
     }
 
-    public static Collection<IElement1dDisplacement> AddMissingPositions(
-      this Collection<IElement1dDisplacement> existing,
+    public static Collection<IEntity1dDisplacement> AddMissingPositions(
+      this Collection<IEntity1dDisplacement> existing,
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < existing.Count; i++) {
         for (int j = 0; j < results.Count; j++) {
@@ -119,8 +119,8 @@ namespace GsaGH.Parameters.Results {
       return existing;
     }
 
-    public static Collection<IElement1dStress> AddMissingPositions(
-      this Collection<IElement1dStress> existing,
+    public static Collection<IEntity1dStress> AddMissingPositions(
+      this Collection<IEntity1dStress> existing,
       ReadOnlyCollection<StressResult1d> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < results.Count; i++) {
         if (!existing[0].Results.ContainsKey(positions[i])) {
@@ -131,8 +131,8 @@ namespace GsaGH.Parameters.Results {
       return existing;
     }
 
-    public static Collection<IElement1dStress> AddMissingPositions(
-      this Collection<IElement1dStress> existing,
+    public static Collection<IEntity1dStress> AddMissingPositions(
+      this Collection<IEntity1dStress> existing,
       ReadOnlyCollection<ReadOnlyCollection<StressResult1d>> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < existing.Count; i++) {
         for (int j = 0; j < results.Count; j++) {
@@ -145,8 +145,8 @@ namespace GsaGH.Parameters.Results {
       return existing;
     }
 
-    public static Collection<IElement1dDerivedStress> AddMissingPositions(
-      this Collection<IElement1dDerivedStress> existing,
+    public static Collection<IEntity1dDerivedStress> AddMissingPositions(
+      this Collection<IEntity1dDerivedStress> existing,
       ReadOnlyCollection<DerivedStressResult1d> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < results.Count; i++) {
         if (!existing[0].Results.ContainsKey(positions[i])) {
@@ -157,8 +157,8 @@ namespace GsaGH.Parameters.Results {
       return existing;
     }
 
-    public static Collection<IElement1dDerivedStress> AddMissingPositions(
-      this Collection<IElement1dDerivedStress> existing,
+    public static Collection<IEntity1dDerivedStress> AddMissingPositions(
+      this Collection<IEntity1dDerivedStress> existing,
       ReadOnlyCollection<ReadOnlyCollection<DerivedStressResult1d>> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < existing.Count; i++) {
         for (int j = 0; j < results.Count; j++) {

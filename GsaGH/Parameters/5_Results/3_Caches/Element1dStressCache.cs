@@ -8,11 +8,11 @@ using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class Element1dStressCache
-    : IElement1dResultCache<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>> {
+    : IEntity1dResultCache<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IElement1dStress>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IElement1dStress>>();
+    public ConcurrentDictionary<int, Collection<IEntity1dStress>> Cache { get; }
+      = new ConcurrentDictionary<int, Collection<IEntity1dStress>>();
 
     internal Element1dStressCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -22,17 +22,17 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>>
+    public IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>>
       ResultSubset(ICollection<int> elementIds, int positionCount) {
       var positions = Enumerable.Range(0, positionCount).Select(
         i => (double)i / (positionCount - 1)).ToList();
       return ResultSubset(elementIds, new ReadOnlyCollection<double>(positions));
     }
 
-    public IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>>
+    public IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>>
       ResultSubset(ICollection<int> elementIds, ReadOnlyCollection<double> positions) {
       ConcurrentBag<int> missingIds
-        = Cache.GetMissingKeysAndPositions<IElement1dStress, IStress1d>(elementIds, positions);
+        = Cache.GetMissingKeysAndPositions<IEntity1dStress, IStress1d>(elementIds, positions);
       if (missingIds.Count > 0) {
         string elementList = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
@@ -40,7 +40,7 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<StressResult1d>> aCaseResults
               = analysisCase.Element1dStress(elementList, positions);
             Parallel.ForEach(aCaseResults.Keys, elementId => Cache.AddOrUpdate(
-              elementId, Element1dResultsFactory.CreateBeamStresses(aCaseResults[elementId], positions),
+              elementId, Entity1dResultsFactory.CreateStresses(aCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
             break;
 
@@ -48,13 +48,13 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<StressResult1d>>> cCaseResults
               = combinationCase.Element1dStress(elementList, positions);
             Parallel.ForEach(cCaseResults.Keys, elementId => Cache.AddOrUpdate(
-              elementId, Element1dResultsFactory.CreateBeamStresses(cCaseResults[elementId], positions),
+              elementId, Entity1dResultsFactory.CreateStresses(cCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));
             break;
         }
       }
 
-      return new Element1dStresses(Cache.GetSubset(elementIds));
+      return new Entity1dStresses(Cache.GetSubset(elementIds));
     }
   }
 }

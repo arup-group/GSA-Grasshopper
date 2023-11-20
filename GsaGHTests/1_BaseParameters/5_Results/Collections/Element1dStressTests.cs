@@ -31,7 +31,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, 1);
 
       // Assert element IDs
@@ -46,7 +46,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, 1);
 
       // Assert element IDs
@@ -71,7 +71,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, 4);
 
       // Assert Max in set
@@ -97,7 +97,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, 4);
 
       // Assert Max in set
@@ -122,7 +122,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, 4);
 
       // Assert Max in set
@@ -148,7 +148,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, 4);
 
       // Assert Max in set
@@ -174,13 +174,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IElement1dStress> stressQuantity = resultSet.Subset[id];
+        Collection<IEntity1dStress> stressQuantity = resultSet.Subset[id];
 
         // for analysis case results we expect 4 positions
         Assert.Single(stressQuantity);
@@ -212,13 +212,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
-      IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IElement1dStress> displacementQuantity = resultSet.Subset[id];
+        Collection<IEntity1dStress> displacementQuantity = resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, displacementQuantity.Count);
