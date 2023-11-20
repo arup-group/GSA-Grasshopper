@@ -133,7 +133,7 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
-        IElement1dResultSubset<IElement1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Element1dExtremaKey>> resultSet = 
+        IEntity1dResultSubset<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> resultSet = 
           result.Element1dDerivedStresses.ResultSubset(elementIds, positionsCount);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -144,7 +144,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Stress1d[0]) {
-          foreach (KeyValuePair<int, Collection<IElement1dDerivedStress>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, Collection<IEntity1dDerivedStress>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outShearY.AddRange(kvp.Value[p - 1].Results.Values.Select(
@@ -158,7 +158,7 @@ namespace GsaGH.Components {
             }
           }
         } else {
-          Element1dExtremaKey key = ExtremaHelper.Stress1dDerivedExtremaKey(resultSet, _selectedItems[0]);
+          Entity1dExtremaKey key = ExtremaHelper.Stress1dDerivedExtremaKey(resultSet, _selectedItems[0]);
           IStress1dDerived extrema = resultSet.GetExtrema(key);
           int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
           var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);

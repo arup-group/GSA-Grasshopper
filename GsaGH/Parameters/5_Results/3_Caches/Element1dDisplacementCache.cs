@@ -8,11 +8,11 @@ using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class Element1dDisplacementCache
-    : IElement1dResultCache<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> {
+    : IEntity1dResultCache<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IElement1dDisplacement>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IElement1dDisplacement>>();
+    public ConcurrentDictionary<int, Collection<IEntity1dDisplacement>> Cache { get; }
+      = new ConcurrentDictionary<int, Collection<IEntity1dDisplacement>>();
 
     internal Element1dDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -22,17 +22,17 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>>
+    public IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>>
       ResultSubset(ICollection<int> elementIds, int positionCount) {
       var positions = Enumerable.Range(0, positionCount).Select(
         i => (double)i / (positionCount - 1)).ToList();
       return ResultSubset(elementIds, new ReadOnlyCollection<double>(positions));
     }
 
-    public IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>>
+    public IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>>
       ResultSubset(ICollection<int> elementIds, ReadOnlyCollection<double> positions) {
       ConcurrentBag<int> missingIds
-        = Cache.GetMissingKeysAndPositions<IElement1dDisplacement, IDisplacement>(elementIds, positions);
+        = Cache.GetMissingKeysAndPositions<IEntity1dDisplacement, IDisplacement>(elementIds, positions);
       if (missingIds.Count > 0) {
         string elementList = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
@@ -40,7 +40,7 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
               = analysisCase.Element1dDisplacement(elementList, positions);
             Parallel.ForEach(aCaseResults.Keys, elementId => Cache.AddOrUpdate(
-              elementId, Element1dResultsFactory.CreateBeamDisplacements(aCaseResults[elementId], positions),
+              elementId, Entity1dResultsFactory.CreateBeamDisplacements(aCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
             break;
 
@@ -48,13 +48,13 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
               = combinationCase.Element1dDisplacement(elementList, positions);
             Parallel.ForEach(cCaseResults.Keys, elementId => Cache.AddOrUpdate(
-              elementId, Element1dResultsFactory.CreateBeamDisplacements(cCaseResults[elementId], positions),
+              elementId, Entity1dResultsFactory.CreateBeamDisplacements(cCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));
             break;
         }
       }
 
-      return new Element1dDisplacements(Cache.GetSubset(elementIds));
+      return new Entity1dDisplacements(Cache.GetSubset(elementIds));
     }
   }
 }

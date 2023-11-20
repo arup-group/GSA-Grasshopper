@@ -8,11 +8,11 @@ using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class Member1dInternalForceCache
-    : IElement1dResultCache<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>> {
+    : IEntity1dResultCache<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IElement1dInternalForce>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IElement1dInternalForce>>();
+    public ConcurrentDictionary<int, Collection<IEntity1dInternalForce>> Cache { get; }
+      = new ConcurrentDictionary<int, Collection<IEntity1dInternalForce>>();
 
     internal Member1dInternalForceCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -22,17 +22,17 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public IElement1dResultSubset<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>>
-      ResultSubset(ICollection<int> elementIds, int positionCount) {
+    public IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>>
+      ResultSubset(ICollection<int> memberIds, int positionCount) {
       var positions = Enumerable.Range(0, positionCount).Select(
         i => (double)i / (positionCount - 1)).ToList();
-      return ResultSubset(elementIds, new ReadOnlyCollection<double>(positions));
+      return ResultSubset(memberIds, new ReadOnlyCollection<double>(positions));
     }
 
-    public IElement1dResultSubset<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>>
-      ResultSubset(ICollection<int> elementIds, ReadOnlyCollection<double> positions) {
+    public IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>>
+      ResultSubset(ICollection<int> memberIds, ReadOnlyCollection<double> positions) {
       ConcurrentBag<int> missingIds
-        = Cache.GetMissingKeysAndPositions<IElement1dInternalForce, IInternalForce>(elementIds, positions);
+        = Cache.GetMissingKeysAndPositions<IEntity1dInternalForce, IInternalForce>(memberIds, positions);
       if (missingIds.Count > 0) {
         string memberList = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
@@ -40,7 +40,7 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
               = analysisCase.Member1dForce(memberList, positions);
             Parallel.ForEach(aCaseResults.Keys, memberId => Cache.AddOrUpdate(
-              memberId, Element1dResultsFactory.CreateBeamForces(aCaseResults[memberId], positions),
+              memberId, Entity1dResultsFactory.CreateBeamForces(aCaseResults[memberId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[memberId], positions)));
             break;
 
@@ -48,13 +48,13 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
               = combinationCase.Member1dForce(memberList, positions);
             Parallel.ForEach(cCaseResults.Keys, memberId => Cache.AddOrUpdate(
-              memberId, Element1dResultsFactory.CreateBeamForces(cCaseResults[memberId], positions),
+              memberId, Entity1dResultsFactory.CreateBeamForces(cCaseResults[memberId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[memberId], positions)));
             break;
         }
       }
 
-      return new Element1dInternalForces(Cache.GetSubset(elementIds));
+      return new Enity1dInternalForces(Cache.GetSubset(memberIds));
     }
   }
 }

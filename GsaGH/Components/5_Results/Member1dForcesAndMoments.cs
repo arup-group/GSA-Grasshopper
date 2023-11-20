@@ -167,7 +167,7 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> elementIds = result.MemberIds(elementlist);
-        IElement1dResultSubset<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>> resultSet =
+        IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet =
           result.Member1dInternalForces.ResultSubset(elementIds, positionsCount);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -178,7 +178,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, Collection<IElement1dInternalForce>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, Collection<IEntity1dInternalForce>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outTransX.AddRange(kvp.Value[p - 1].Results.Values.Select(
@@ -200,7 +200,7 @@ namespace GsaGH.Components {
             }
           }
         } else {
-          Element1dExtremaKey key = ExtremaHelper.InternalForceExtremaKey(resultSet, _selectedItems[0]);
+          Entity1dExtremaKey key = ExtremaHelper.InternalForceExtremaKey(resultSet, _selectedItems[0]);
           IInternalForce extrema = resultSet.GetExtrema(key);
           int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
           var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);

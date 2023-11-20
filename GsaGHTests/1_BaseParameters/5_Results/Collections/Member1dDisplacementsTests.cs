@@ -19,7 +19,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert member IDs
@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert member IDs
@@ -58,7 +58,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert Max in set
@@ -82,7 +82,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert Max in set
@@ -106,7 +106,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert Max in set
@@ -130,7 +130,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert Max in set
@@ -155,13 +155,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IElement1dDisplacement> displacementQuantity = resultSet.Subset[id];
+        Collection<IEntity1dDisplacement> displacementQuantity = resultSet.Subset[id];
 
         // for analysis case results we expect 4 positions
         Assert.Single(displacementQuantity);
@@ -193,13 +193,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IElement1dDisplacement> displacementQuantity = resultSet.Subset[id];
+        Collection<IEntity1dDisplacement> displacementQuantity = resultSet.Subset[id];
 
         // for C1 case results we expect 1 permutation in the collection
         Assert.Single(displacementQuantity);

@@ -8,22 +8,22 @@ namespace GsaGH.Parameters.Results {
 
   public class GsaResult2 : IGsaResult {
     // Caches
-    public IElement1dResultCache<IElement1dDisplacement, IDisplacement,
-      ResultVector6<Element1dExtremaKey>> Element1dDisplacements {
+    public IEntity1dResultCache<IEntity1dDisplacement, IDisplacement,
+      ResultVector6<Entity1dExtremaKey>> Element1dDisplacements {
       get;
       private set;
     }
-    public IElement1dResultCache<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>> Element1dInternalForces {
-      get;
-      private set;
-    }
-
-    public IElement1dResultCache<IElement1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Element1dExtremaKey>> Element1dDerivedStresses {
+    public IEntity1dResultCache<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> Element1dInternalForces {
       get;
       private set;
     }
 
-    public IElement1dResultCache<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>> Element1dStresses {
+    public IEntity1dResultCache<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> Element1dDerivedStresses {
+      get;
+      private set;
+    }
+
+    public IEntity1dResultCache<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> Element1dStresses {
       get;
       private set;
     }
@@ -53,13 +53,13 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
-    public IElement1dResultCache<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>>
+    public IEntity1dResultCache<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>>
       Member1dDisplacements {
       get;
       private set;
     }
 
-    public IElement1dResultCache<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>>
+    public IEntity1dResultCache<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>>
       Member1dInternalForces {
       get;
       private set;

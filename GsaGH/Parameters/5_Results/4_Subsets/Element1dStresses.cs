@@ -5,21 +5,21 @@ using System.Linq;
 using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
-  public class Element1dStresses : IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>> {
-    public ResultStress1d<Element1dExtremaKey> Max { get; private set; }
-    public ResultStress1d<Element1dExtremaKey> Min { get; private set; }
+  public class Element1dStresses : IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> {
+    public ResultStress1d<Entity1dExtremaKey> Max { get; private set; }
+    public ResultStress1d<Entity1dExtremaKey> Min { get; private set; }
     public IList<int> Ids { get; private set; }
 
-    public ConcurrentDictionary<int, Collection<IElement1dStress>> Subset { get; }
-      = new ConcurrentDictionary<int, Collection<IElement1dStress>>();
+    public ConcurrentDictionary<int, Collection<IEntity1dStress>> Subset { get; }
+      = new ConcurrentDictionary<int, Collection<IEntity1dStress>>();
 
-    public Element1dStresses(ConcurrentDictionary<int, Collection<IElement1dStress>> results) {
+    public Element1dStresses(ConcurrentDictionary<int, Collection<IEntity1dStress>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
       (Max, Min) = results.Extrema();
     }
 
-    public IStress1d GetExtrema(Element1dExtremaKey key) {
+    public IStress1d GetExtrema(Entity1dExtremaKey key) {
       return Subset[key.Id][key.Permutation].Results[key.Position];
     }
   }

@@ -234,10 +234,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IElement1dResultSubset<IElement1dDisplacement, IDisplacement, ResultVector6<Element1dExtremaKey>> result,
+      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> result,
       ResultVector6HelperEnum component, bool max) {
       double d = 0;
-      ResultVector6<Element1dExtremaKey> extrema = max ? result.Max : result.Min;
+      ResultVector6<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
         case ResultVector6HelperEnum.X:
           d = result.GetExtrema(extrema.X).X.Millimeters;
@@ -276,10 +276,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IElement1dResultSubset<IElement1dInternalForce, IInternalForce, ResultVector6<Element1dExtremaKey>> result,
+      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> result,
       ResultVector6HelperEnum component, bool max) {
       double d = 0;
-      ResultVector6<Element1dExtremaKey> extrema = max ? result.Max : result.Min;
+      ResultVector6<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
         case ResultVector6HelperEnum.X:
           d = result.GetExtrema(extrema.X).X.Kilonewtons;
@@ -318,10 +318,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IElement1dResultSubset<IElement1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Element1dExtremaKey>> result,
+      IEntity1dResultSubset<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> result,
       ResultDerivedStress1dHelperEnum component, bool max) {
       double d = 0;
-      ResultDerivedStress1d<Element1dExtremaKey> extrema = max ? result.Max : result.Min;
+      ResultDerivedStress1d<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
         case ResultDerivedStress1dHelperEnum.ShearY:
           d = result.GetExtrema(extrema.ElasticShearY).ElasticShearY.Megapascals;
@@ -344,10 +344,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<Element1dExtremaKey>> result,
+      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> result,
       ResultStress1dHelperEnum component, bool max) {
       double d = 0;
-      ResultStress1d<Element1dExtremaKey> extrema = max ? result.Max : result.Min;
+      ResultStress1d<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
         case ResultStress1dHelperEnum.Axial:
           d = result.GetExtrema(extrema.Axial).Axial.Megapascals;
