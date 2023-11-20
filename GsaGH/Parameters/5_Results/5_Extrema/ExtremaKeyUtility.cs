@@ -22,18 +22,64 @@ namespace GsaGH.Parameters.Results {
           foreach (double position in values[permutation].Results.Keys) {
             switch (values[permutation]) {
               case IElement1dDisplacement displacement:
-                UpdateExtrema<IDisplacement, Length, Angle>(displacement.Results[position], 
+                UpdateExtrema<IDisplacement, Length, Angle>(displacement.Results[position],
                   elementId, permutation, position,
                   ref maxValue, ref minValue, ref maxKey, ref minKey);
                 break;
 
-              case IElement1dInternalForce displacement:
-                UpdateExtrema<IInternalForce, Force, Moment>(displacement.Results[position],
+              case IElement1dInternalForce force:
+                UpdateExtrema<IInternalForce, Force, Moment>(force.Results[position],
                   elementId, permutation, position,
                   ref maxValue, ref minValue, ref maxKey, ref minKey);
                 break;
 
             }
+          }
+        }
+      }
+
+      return (maxKey, minKey);
+    }
+
+    public static (ResultStress1d<Element1dExtremaKey> Max, ResultStress1d<Element1dExtremaKey> Min) Extrema(
+      this IDictionary<int, Collection<IElement1dStress>> subset) {
+
+      var maxValue = new ResultStress1d<double>(double.MinValue);
+      var minValue = new ResultStress1d<double>(double.MaxValue);
+
+      var maxKey = new ResultStress1d<Element1dExtremaKey>();
+      var minKey = new ResultStress1d<Element1dExtremaKey>();
+
+      foreach (int elementId in subset.Keys) {
+        Collection<IElement1dStress> values = subset[elementId];
+        for (int permutation = 0; permutation < values.Count; permutation++) {
+          foreach (double position in values[permutation].Results.Keys) {
+            UpdateExtrema(values[permutation].Results[position],
+              elementId, permutation, position,
+              ref maxValue, ref minValue, ref maxKey, ref minKey);
+          }
+        }
+      }
+
+      return (maxKey, minKey);
+    }
+
+    public static (ResultDerivedStress1d<Element1dExtremaKey> Max, ResultDerivedStress1d<Element1dExtremaKey> Min) Extrema(
+      this IDictionary<int, Collection<IElement1dDerivedStress>> subset) {
+
+      var maxValue = new ResultDerivedStress1d<double>(double.MinValue);
+      var minValue = new ResultDerivedStress1d<double>(double.MaxValue);
+
+      var maxKey = new ResultDerivedStress1d<Element1dExtremaKey>();
+      var minKey = new ResultDerivedStress1d<Element1dExtremaKey>();
+
+      foreach (int elementId in subset.Keys) {
+        Collection<IElement1dDerivedStress> values = subset[elementId];
+        for (int permutation = 0; permutation < values.Count; permutation++) {
+          foreach (double position in values[permutation].Results.Keys) {
+            UpdateExtrema(values[permutation].Results[position],
+              elementId, permutation, position,
+              ref maxValue, ref minValue, ref maxKey, ref minKey);
           }
         }
       }
@@ -152,6 +198,146 @@ namespace GsaGH.Parameters.Results {
       if (item.RmsVelocity.Value < minValue.RmsVelocity) {
         minValue.RmsVelocity = item.RmsVelocity.Value;
         minKey.RmsVelocity = new NodeExtremaKey(nodeId, permutation);
+      }
+    }
+
+    private static void UpdateExtrema(IStress1d item, int elementId, int permutation, double position,
+      ref ResultStress1d<double> maxValue, ref ResultStress1d<double> minValue,
+      ref ResultStress1d<Element1dExtremaKey> maxKey, ref ResultStress1d<Element1dExtremaKey> minKey) {
+
+      if (item.Axial.Value > maxValue.Axial) {
+        maxValue.Axial = item.Axial.Value;
+        maxKey.Axial = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.BendingYyNegativeZ.Value > maxValue.BendingYyNegativeZ) {
+        maxValue.BendingYyNegativeZ = item.BendingYyNegativeZ.Value;
+        maxKey.BendingYyNegativeZ = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.BendingYyPositiveZ.Value > maxValue.BendingYyPositiveZ) {
+        maxValue.BendingYyPositiveZ = item.BendingYyPositiveZ.Value;
+        maxKey.BendingYyPositiveZ = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.BendingZzNegativeY.Value > maxValue.BendingZzNegativeY) {
+        maxValue.BendingZzNegativeY = item.BendingZzNegativeY.Value;
+        maxKey.BendingZzNegativeY = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.BendingZzPositiveY.Value > maxValue.BendingZzPositiveY) {
+        maxValue.BendingZzPositiveY = item.BendingZzPositiveY.Value;
+        maxKey.BendingZzPositiveY = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.CombinedC1.Value > maxValue.CombinedC1) {
+        maxValue.CombinedC1 = item.CombinedC1.Value;
+        maxKey.CombinedC1 = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.CombinedC2.Value > maxValue.CombinedC2) {
+        maxValue.CombinedC2 = item.CombinedC2.Value;
+        maxKey.CombinedC2 = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.ShearY.Value > maxValue.ShearY) {
+        maxValue.ShearY = item.ShearY.Value;
+        maxKey.ShearY = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.ShearZ.Value > maxValue.ShearZ) {
+        maxValue.ShearZ = item.ShearZ.Value;
+        maxKey.ShearZ = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.Axial.Value < minValue.Axial) {
+        minValue.Axial = item.Axial.Value;
+        minKey.Axial = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.BendingYyNegativeZ.Value < minValue.BendingYyNegativeZ) {
+        minValue.BendingYyNegativeZ = item.BendingYyNegativeZ.Value;
+        minKey.BendingYyNegativeZ = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.BendingYyPositiveZ.Value < minValue.BendingYyPositiveZ) {
+        minValue.BendingYyPositiveZ = item.BendingYyPositiveZ.Value;
+        minKey.BendingYyPositiveZ = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.BendingZzNegativeY.Value < minValue.BendingZzNegativeY) {
+        minValue.BendingZzNegativeY = item.BendingZzNegativeY.Value;
+        minKey.BendingZzNegativeY = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.BendingZzPositiveY.Value < minValue.BendingZzPositiveY) {
+        minValue.BendingZzPositiveY = item.BendingZzPositiveY.Value;
+        minKey.BendingZzPositiveY = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.CombinedC1.Value < minValue.CombinedC1) {
+        minValue.CombinedC1 = item.CombinedC1.Value;
+        minKey.CombinedC1 = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.CombinedC2.Value < minValue.CombinedC2) {
+        minValue.CombinedC2 = item.CombinedC2.Value;
+        minKey.CombinedC2 = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.ShearY.Value < minValue.ShearY) {
+        minValue.ShearY = item.ShearY.Value;
+        minKey.ShearY = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.ShearZ.Value < minValue.ShearZ) {
+        minValue.ShearZ = item.ShearZ.Value;
+        minKey.ShearZ = new Element1dExtremaKey(elementId, position, permutation);
+      }
+    }
+
+    private static void UpdateExtrema(IStress1dDerived item, int elementId, int permutation, double position,
+      ref ResultDerivedStress1d<double> maxValue, ref ResultDerivedStress1d<double> minValue,
+      ref ResultDerivedStress1d<Element1dExtremaKey> maxKey, ref ResultDerivedStress1d<Element1dExtremaKey> minKey) {
+
+      if (item.ElasticShearY.Value > maxValue.ElasticShearY) {
+        maxValue.ElasticShearY = item.ElasticShearY.Value;
+        maxKey.ElasticShearY = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.ElasticShearZ.Value > maxValue.ElasticShearZ) {
+        maxValue.ElasticShearZ = item.ElasticShearZ.Value;
+        maxKey.ElasticShearZ = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.Torsional.Value > maxValue.Torsional) {
+        maxValue.Torsional = item.Torsional.Value;
+        maxKey.Torsional = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.VonMises.Value > maxValue.VonMises) {
+        maxValue.VonMises = item.VonMises.Value;
+        maxKey.VonMises = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.ElasticShearY.Value < minValue.ElasticShearY) {
+        minValue.ElasticShearY = item.ElasticShearY.Value;
+        minKey.ElasticShearY = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.ElasticShearZ.Value < minValue.ElasticShearZ) {
+        minValue.ElasticShearZ = item.ElasticShearZ.Value;
+        minKey.ElasticShearZ = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.Torsional.Value < minValue.Torsional) {
+        minValue.Torsional = item.Torsional.Value;
+        minKey.Torsional = new Element1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.VonMises.Value < minValue.VonMises) {
+        minValue.VonMises = item.VonMises.Value;
+        minKey.VonMises = new Element1dExtremaKey(elementId, position, permutation);
       }
     }
 

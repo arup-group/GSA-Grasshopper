@@ -21,6 +21,42 @@ namespace GsaGH.Components.Helpers {
         "Min Critical Frequency",
       });
 
+    internal static readonly ReadOnlyCollection<string> Stress1d
+      = new ReadOnlyCollection<string>(new[] {
+        "All",
+        "Max Axial",
+        "Max Shear Y",
+        "Max Shear Z",
+        "Max Bending Y+",
+        "Max Bending Y-",
+        "Max Bending Z+",
+        "Max Bending Z-",
+        "Max Combined C1",
+        "Max Combined C2",
+        "Min Axial",
+        "Min Shear Y",
+        "Min Shear Z",
+        "Min Bending Y+",
+        "Min Bending Y-",
+        "Min Bending Z+",
+        "Min Bending Z-",
+        "Min Combined C1",
+        "Min Combined C2",
+      });
+
+    internal static readonly ReadOnlyCollection<string> Stress1dDerived
+      = new ReadOnlyCollection<string>(new[] {
+        "All",
+        "Max Shear Y",
+        "Max Shear Z",
+        "Max Torsional",
+        "Max von Mises",
+        "Min Shear Y",
+        "Min Shear Z",
+        "Min Torsional",
+        "Min von Mises",
+      });
+
     internal static readonly ReadOnlyCollection<string> Vector6Displacements
       = new ReadOnlyCollection<string>(new[] {
         "All",
@@ -99,6 +135,46 @@ namespace GsaGH.Components.Helpers {
         "Min Peak Acceleration" => resultSet.Min.PeakAcceleration,
         "Min RMS Acceleration" => resultSet.Min.RmsAcceleration,
         "Min Critical Frequency" => resultSet.Min.CriticalFrequency,
+        _ => throw new ArgumentException("Extrema case not found"),
+      };
+    }
+
+    internal static U Stress1dExtremaKey<U>(
+      IElement1dResultSubset<IElement1dStress, IStress1d, ResultStress1d<U>> resultSet, string key) {
+      return key switch {
+        "Max Axial" => resultSet.Max.Axial,
+        "Max Shear Y" => resultSet.Max.ShearY,
+        "Max Shear Z" => resultSet.Max.ShearZ,
+        "Max Bending Y+" => resultSet.Max.BendingYyPositiveZ,
+        "Max Bending Y-" => resultSet.Max.BendingYyNegativeZ,
+        "Max Bending Z+" => resultSet.Max.BendingZzPositiveY,
+        "Max Bending Z-" => resultSet.Max.BendingZzNegativeY,
+        "Max Combined C1" => resultSet.Max.CombinedC1,
+        "Max Combined C2" => resultSet.Max.CombinedC2,
+        "Min Axial" => resultSet.Min.Axial,
+        "Min Shear Y" => resultSet.Min.ShearY,
+        "Min Shear Z" => resultSet.Min.ShearZ,
+        "Min Bending Y+" => resultSet.Min.BendingYyNegativeZ,
+        "Min Bending Y-" => resultSet.Min.BendingYyNegativeZ,
+        "Min Bending Z+" => resultSet.Min.BendingZzPositiveY,
+        "Min Bending Z-" => resultSet.Min.BendingZzNegativeY,
+        "Min Combined C1" => resultSet.Min.CombinedC1,
+        "Min Combined C2" => resultSet.Min.CombinedC2,
+        _ => throw new ArgumentException("Extrema case not found"),
+      };
+    }
+
+    internal static U Stress1dDerivedExtremaKey<U>(
+      IElement1dResultSubset<IElement1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<U>> resultSet, string key) {
+      return key switch {
+        "Max Shear Y" => resultSet.Max.ElasticShearY,
+        "Max Shear Z" => resultSet.Max.ElasticShearZ,
+        "Max Torsional" => resultSet.Max.Torsional,
+        "Max von Mises" => resultSet.Max.VonMises,
+        "Min Shear Y" => resultSet.Min.ElasticShearY,
+        "Min Shear Z" => resultSet.Min.ElasticShearZ,
+        "Min Torsional" => resultSet.Min.Torsional,
+        "Min von Mises" => resultSet.Min.VonMises,
         _ => throw new ArgumentException("Extrema case not found"),
       };
     }
