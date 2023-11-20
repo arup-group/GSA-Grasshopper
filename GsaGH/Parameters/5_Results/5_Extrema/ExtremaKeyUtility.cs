@@ -87,6 +87,29 @@ namespace GsaGH.Parameters.Results {
       return (maxKey, minKey);
     }
 
+    public static (Entity1dExtremaKey Max, Entity1dExtremaKey Min) Extrema(
+      this IDictionary<int, Collection<IEntity1dStrainEnergyDensity>> subset) {
+
+      double maxValue = double.MinValue;
+      double minValue = double.MaxValue;
+
+      Entity1dExtremaKey maxKey = null;
+      Entity1dExtremaKey minKey = null;
+
+      foreach (int elementId in subset.Keys) {
+        Collection<IEntity1dStrainEnergyDensity> values = subset[elementId];
+        for (int permutation = 0; permutation < values.Count; permutation++) {
+          foreach (double position in values[permutation].Results.Keys) {
+            UpdateExtrema(values[permutation].Results[position],
+              elementId, permutation, position,
+              ref maxValue, ref minValue, ref maxKey, ref minKey);
+          }
+        }
+      }
+
+      return (maxKey, minKey);
+    }
+
     public static (ResultFootfall<NodeExtremaKey> Max, ResultFootfall<NodeExtremaKey> Min) Extrema(
       this IDictionary<int, Collection<IFootfall>> subset) {
 
@@ -338,6 +361,21 @@ namespace GsaGH.Parameters.Results {
       if (item.VonMises.Value < minValue.VonMises) {
         minValue.VonMises = item.VonMises.Value;
         minKey.VonMises = new Entity1dExtremaKey(elementId, position, permutation);
+      }
+    }
+
+    private static void UpdateExtrema(IEnergyDensity item, int elementId, int permutation, double position,
+      ref double maxValue, ref double minValue,
+      ref Entity1dExtremaKey maxKey, ref Entity1dExtremaKey minKey) {
+
+      if (item.EnergyDensity.Value > maxValue) {
+        maxValue = item.EnergyDensity.Value;
+        maxKey = new Entity1dExtremaKey(elementId, position, permutation);
+      }
+
+      if (item.EnergyDensity.Value < minValue) {
+        minValue = item.EnergyDensity.Value;
+        minKey = new Entity1dExtremaKey(elementId, position, permutation);
       }
     }
 
