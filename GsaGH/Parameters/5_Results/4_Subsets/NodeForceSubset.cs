@@ -9,7 +9,7 @@ namespace GsaGH.Parameters.Results {
     public NodeForceSubset(IDictionary<int, Collection<IInternalForce>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
-      (Max, Min) = results.Extrema();
+      (Max, Min) = results.GetResultVector6NodeExtremaKeys();
     }
 
     public ResultVector6<NodeExtremaKey> Max { get; private set; }
@@ -19,7 +19,7 @@ namespace GsaGH.Parameters.Results {
     public IDictionary<int, Collection<IInternalForce>> Subset { get; }
       = new ConcurrentDictionary<int, Collection<IInternalForce>>();
 
-    public IInternalForce GetExtrema(NodeExtremaKey key) {
+    public IInternalForce GetExtrema(IExtremaKey key) {
       return Subset[key.Id][key.Permutation];
     }
   }

@@ -1,5 +1,5 @@
 ﻿namespace GsaGH.Parameters.Results {
-  public class Entity1dExtremaKey {
+  public class Entity1dExtremaKey : IEntity1dExtremaKey {
     public int Id { get; internal set; }
     public int Permutation { get; internal set; }
     public double Position { get; internal set; }

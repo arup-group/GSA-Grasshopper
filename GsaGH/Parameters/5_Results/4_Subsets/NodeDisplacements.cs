@@ -16,10 +16,10 @@ namespace GsaGH.Parameters.Results {
     public NodeDisplacements(IDictionary<int, Collection<IDisplacement>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
-      (Max, Min) = results.Extrema();
+      (Max, Min) = results.GetResultVector6NodeExtremaKeys();
     }
 
-    public IDisplacement GetExtrema(NodeExtremaKey key) {
+    public IDisplacement GetExtrema(IExtremaKey key) {
       return Subset[key.Id][key.Permutation];
     }
   }

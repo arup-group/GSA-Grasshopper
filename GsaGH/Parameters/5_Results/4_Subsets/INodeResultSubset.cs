@@ -12,6 +12,6 @@ namespace GsaGH.Parameters.Results {
     /// Value = Collection of results, one for each permutation. Collection will have 1 item in case of AnalysisCase
     /// </summary>
     IDictionary<int, Collection<T1>> Subset { get; }
-    T1 GetExtrema(NodeExtremaKey key);
+    T1 GetExtrema(IExtremaKey key);
   }
 }

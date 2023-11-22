@@ -8,12 +8,22 @@ namespace GsaGH.Parameters.Results {
 
   public class GsaResult2 : IGsaResult {
     // Caches
+    public INodeResultCache<IEnergyDensity, NodeExtremaKey> Element1dAverageStrainEnergyDensities {
+      get;
+      private set;
+    }
+
     public IEntity1dResultCache<IEntity1dDisplacement, IDisplacement,
       ResultVector6<Entity1dExtremaKey>> Element1dDisplacements {
       get;
       private set;
     }
     public IEntity1dResultCache<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> Element1dInternalForces {
+      get;
+      private set;
+    }
+
+    public IEntity1dResultCache<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> Element1dStrainEnergyDensities {
       get;
       private set;
     }
@@ -149,9 +159,11 @@ namespace GsaGH.Parameters.Results {
       CaseId = caseId;
       CaseName = model.Model.AnalysisCaseName(CaseId);
 
+      Element1dAverageStrainEnergyDensities = new Element1dAverageStrainEnergyDensityCache(result);
       Element1dDisplacements = new Element1dDisplacementCache(result);
       Element1dInternalForces = new Element1dInternalForceCache(result);
       Element1dDerivedStresses = new Element1dDerivedStressCache(result);
+      Element1dStrainEnergyDensities = new Element1dStrainEnergyDensityCache(result);
       Element1dStresses = new Element1dStressCache(result);
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
@@ -171,9 +183,11 @@ namespace GsaGH.Parameters.Results {
       CaseName = model.Model.CombinationCases()[caseId].Name;
       SelectedPermutationIds = permutations.ToList();
 
+      Element1dAverageStrainEnergyDensities = new Element1dAverageStrainEnergyDensityCache(result);
       Element1dDisplacements = new Element1dDisplacementCache(result);
       Element1dInternalForces = new Element1dInternalForceCache(result);
       Element1dDerivedStresses = new Element1dDerivedStressCache(result);
+      Element1dStrainEnergyDensities = new Element1dStrainEnergyDensityCache(result);
       Element1dStresses = new Element1dStressCache(result);
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);

@@ -69,7 +69,7 @@ namespace GsaGH.Parameters.Results {
     }
 
     private bool IsSupport(KeyValuePair<int, NodeResult> kvp) {
-      return SupportNodeIds.Contains(kvp.Key) || HasValues(kvp.Value.Reaction);
+      return SupportNodeIds.Contains(kvp.Key) || IsNotNaN(kvp.Value.Reaction);
     }
 
     private bool IsSupport(KeyValuePair<int, ReadOnlyCollection<NodeResult>> kvp) {
@@ -78,7 +78,7 @@ namespace GsaGH.Parameters.Results {
       }
       
       foreach (NodeResult res in kvp.Value) {
-        if (HasValues(res.Reaction)) {
+        if (IsNotNaN(res.Reaction)) {
           return true;
         }
       }
@@ -90,13 +90,9 @@ namespace GsaGH.Parameters.Results {
       return rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ;
     }
 
-    private bool HasValues(Double6 values) {
-      return HasValue(values.X) || HasValue(values.Y) || HasValue(values.Z)
-        || HasValue(values.XX) || HasValue(values.YY) || HasValue(values.ZZ);
-    }
-
-    private bool HasValue(double value) {
-      return !double.IsNaN(value) && value != 0;
+    private bool IsNotNaN(Double6 values) {
+      return !double.IsNaN(values.X) || !double.IsNaN(values.Y) || !double.IsNaN(values.Z)
+        || !double.IsNaN(values.XX) || !double.IsNaN(values.YY) || !double.IsNaN(values.ZZ);
     }
 
     private void SetSupportNodeIds(Model model) {
@@ -108,6 +104,7 @@ namespace GsaGH.Parameters.Results {
           supportnodeIDs.Add(node.Key);
         }
       });
+
       SupportNodeIds = supportnodeIDs;
     }
   }
