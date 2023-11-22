@@ -16,10 +16,10 @@ namespace GsaGH.Parameters.Results {
     public Entity1dDisplacements(ConcurrentDictionary<int, Collection<IEntity1dDisplacement>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
-      (Max, Min) = results.Extrema<IEntity1dDisplacement, IDisplacement>();
+      (Max, Min) = results.GetResultVector6Entity1dExtremaKeys<IEntity1dDisplacement, IDisplacement>();
     }
 
-    public IDisplacement GetExtrema(Entity1dExtremaKey key) {
+    public IDisplacement GetExtrema(IEntity1dExtremaKey key) {
       return Subset[key.Id][key.Permutation].Results[key.Position];
     }
   }

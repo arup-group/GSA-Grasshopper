@@ -16,10 +16,10 @@ namespace GsaGH.Parameters.Results {
     public Entity1dStresses(ConcurrentDictionary<int, Collection<IEntity1dStress>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
-      (Max, Min) = results.Extrema();
+      (Max, Min) = results.GetResultStress1dExtremaKeys();
     }
 
-    public IStress1d GetExtrema(Entity1dExtremaKey key) {
+    public IStress1d GetExtrema(IEntity1dExtremaKey key) {
       return Subset[key.Id][key.Permutation].Results[key.Position];
     }
   }

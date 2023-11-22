@@ -15,6 +15,6 @@ namespace GsaGH.Parameters.Results {
     /// Value = Collection of results, one for each permutation. Collection will have 1 item in case of AnalysisCase
     /// </summary>
     ConcurrentDictionary<int, Collection<T1>> Subset { get; }
-    T2 GetExtrema(Entity1dExtremaKey key);
+    T2 GetExtrema(IEntity1dExtremaKey key);
   }
 }

@@ -8,6 +8,11 @@ namespace GsaGH.Parameters.Results {
 
   public class GsaResult2 : IGsaResult {
     // Caches
+    public INodeResultCache<IEnergyDensity, NodeExtremaKey> Element1dAverageStrainEnergyDensities {
+      get;
+      private set;
+    }
+
     public IEntity1dResultCache<IEntity1dDisplacement, IDisplacement,
       ResultVector6<Entity1dExtremaKey>> Element1dDisplacements {
       get;
@@ -154,6 +159,7 @@ namespace GsaGH.Parameters.Results {
       CaseId = caseId;
       CaseName = model.Model.AnalysisCaseName(CaseId);
 
+      Element1dAverageStrainEnergyDensities = new Element1dAverageStrainEnergyDensityCache(result);
       Element1dDisplacements = new Element1dDisplacementCache(result);
       Element1dInternalForces = new Element1dInternalForceCache(result);
       Element1dDerivedStresses = new Element1dDerivedStressCache(result);
@@ -177,6 +183,7 @@ namespace GsaGH.Parameters.Results {
       CaseName = model.Model.CombinationCases()[caseId].Name;
       SelectedPermutationIds = permutations.ToList();
 
+      Element1dAverageStrainEnergyDensities = new Element1dAverageStrainEnergyDensityCache(result);
       Element1dDisplacements = new Element1dDisplacementCache(result);
       Element1dInternalForces = new Element1dInternalForceCache(result);
       Element1dDerivedStresses = new Element1dDerivedStressCache(result);

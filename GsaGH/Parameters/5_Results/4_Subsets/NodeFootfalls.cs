@@ -15,10 +15,10 @@ namespace GsaGH.Parameters.Results {
     public NodeFootfalls(IDictionary<int, Collection<IFootfall>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
-      (Max, Min) = results.Extrema();
+      (Max, Min) = results.GetResultFootfallExtremaKeys();
     }
 
-    public IFootfall GetExtrema(NodeExtremaKey key) {
+    public IFootfall GetExtrema(IExtremaKey key) {
       return Subset[key.Id][key.Permutation];
     }
   }

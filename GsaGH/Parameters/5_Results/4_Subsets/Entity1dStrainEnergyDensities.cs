@@ -18,10 +18,10 @@ namespace GsaGH.Parameters.Results {
       ConcurrentDictionary<int, Collection<IEntity1dStrainEnergyDensity>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
-      (Max, Min) = results.Extrema();
+      (Max, Min) = results.GetEntity1dExtremaKeys<IEntity1dStrainEnergyDensity, IEnergyDensity>();
     }
 
-    public IEnergyDensity GetExtrema(Entity1dExtremaKey key) {
+    public IEnergyDensity GetExtrema(IEntity1dExtremaKey key) {
       return Subset[key.Id][key.Permutation].Results[key.Position];
     }
   }
