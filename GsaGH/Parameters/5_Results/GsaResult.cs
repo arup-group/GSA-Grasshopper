@@ -465,9 +465,15 @@ namespace GsaGH.Parameters {
             CombinationCaseResult.Element1DResults(elementlist, positionsCount, false));
         }
 
-        ComboElement1DDisplacementValues.Add(key,
-          ResultHelper.GetElement1DResultValues(ComboElement1DResults[key], lengthUnit,
-            SelectedPermutationIds));
+        ConcurrentDictionary<int, GsaResultsValues> results = ResultHelper.GetElement1DResultValues(
+          ComboElement1DResults[key], lengthUnit, SelectedPermutationIds);
+        if (axisId == 0) {
+          foreach (GsaResultsValues result in results.Values) {
+            result.CoordinateTransformationTo(global, Model.Model);
+          }
+        }
+
+        ComboElement1DDisplacementValues.Add(key, results);
       }
 
       return new List<GsaResultsValues>(ComboElement1DDisplacementValues[key].Values);
