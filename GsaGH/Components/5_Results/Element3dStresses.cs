@@ -27,7 +27,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class Element3dStresses : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("c9bdab98-0fe2-4852-b99c-c626515b3781");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Element3dStresses;
     private PressureUnit _stresshUnit = DefaultUnits.StressUnitResult;
@@ -118,7 +118,7 @@ namespace GsaGH.Components {
             return;
 
           case GsaResultGoo goo:
-            result = goo.Value;
+            result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
 
@@ -202,7 +202,7 @@ namespace GsaGH.Components {
       da.SetDataTree(4, outYz);
       da.SetDataTree(5, outZx);
 
-      PostHog.Result(result.Type, 3, GsaResultsValues.ResultType.Stress);
+      PostHog.Result(result.CaseType, 3, GsaResultsValues.ResultType.Stress);
     }
 
     protected override void UpdateUIFromSelectedItems() {

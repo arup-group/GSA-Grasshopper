@@ -22,7 +22,6 @@ using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using Rhino.Commands;
 using Rhino.Geometry;
 using DiagramType = GsaAPI.DiagramType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
@@ -245,10 +244,7 @@ namespace GsaGH.Components {
         _selectedItems[0] = caseList;
       }
 
-      string elementlist = Inputs.GetElementListDefinition(this, da, 2, _gsaModel);
-      if (string.IsNullOrEmpty(elementlist)) {
-        return;
-      }
+      EntityList list = Inputs.GetElementOrMemberList(this, da, 2);
 
       var ghScale = new GH_Number();
       double scale = 1;
@@ -291,7 +287,8 @@ namespace GsaGH.Components {
       List<DiagramType> types = GetSelectedDiagramTypes();
       Parallel.ForEach(types, type => {
         var graphic = new DiagramSpecification() {
-          ListDefinition = elementlist,
+          ListDefinition = list.Definition,
+          ListType = list.Type,
           Type = type,
           Cases = _caseId,
           ScaleFactor = computedScale,

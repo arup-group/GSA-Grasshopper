@@ -200,8 +200,8 @@ namespace GsaGH.Components {
       }
 
       if (ghTyp?.Value is GsaResultGoo goo) {
-        result = goo.Value;
-        switch (result.Type) {
+        result = (GsaResult)goo.Value;
+        switch (result.CaseType) {
           case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
             string warningText
               = $"Combination Case {result.CaseId} contains {result.SelectedPermutationIds.Count} permutations - only one permutation can be displayed at a time.{Environment.NewLine}Displaying first permutation; please use the 'Select Results' to select other single permutations";
@@ -219,7 +219,7 @@ namespace GsaGH.Components {
         }
       }
 
-      string elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
+      EntityList list = Inputs.GetElementOrMemberList(this, da, 1);
 
       var ghScale = new GH_Number();
       double scale = 1;
@@ -248,7 +248,8 @@ namespace GsaGH.Components {
       double computedScale
         = GraphicsScalar.ComputeScale(result.Model, scale, _lengthUnit, autoScale, unitScale);
       var graphic = new DiagramSpecification() {
-        ListDefinition = elementlist,
+        ListDefinition = list.Definition,
+        ListType = list.Type,
         Type = type,
         Cases = _case,
         ScaleFactor = computedScale,
@@ -283,7 +284,7 @@ namespace GsaGH.Components {
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
 
-      PostHog.Diagram("Result", result.Type, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
+      PostHog.Diagram("Result", result.CaseType, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
     }
 
     private List<GsaAnnotationGoo> GenerateAnnotations(

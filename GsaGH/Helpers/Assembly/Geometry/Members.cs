@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
+using OasysGH.Parameters;
 using OasysUnits;
+using OasysUnits.Units;
 using Rhino.Collections;
 using Rhino.Geometry;
 
@@ -35,6 +38,28 @@ namespace GsaGH.Helpers.Assembly {
 
       if (member1d.OrientationNode != null) {
         apiMember.OrientationNode = AddNode(member1d.OrientationNode.Point);
+      }
+
+      apiMember.EffectiveLength.DestablisingLoad = new Length(
+        apiMember.EffectiveLength.DestablisingLoad, _unit).Meters;
+
+      if (_unit != OasysUnits.Units.LengthUnit.Meter &&
+        apiMember.EffectiveLength is EffectiveLengthFromUserSpecifiedValue user) {
+        if (user.EffectiveLengthAboutY.Option == EffectiveLengthOptionType.Absolute) {
+          user.EffectiveLengthAboutY = new EffectiveLengthAttribute(EffectiveLengthOptionType.Absolute,
+            new Length(user.EffectiveLengthAboutY.Value, _unit).Meters);
+        }
+
+        if (user.EffectiveLengthAboutZ.Option == EffectiveLengthOptionType.Absolute) {
+          user.EffectiveLengthAboutZ = new EffectiveLengthAttribute(EffectiveLengthOptionType.Absolute,
+            new Length(user.EffectiveLengthAboutZ.Value, _unit).Meters);
+        }
+
+        if (user.EffectiveLengthLaterialTorsional.Option == EffectiveLengthOptionType.Absolute) {
+          user.EffectiveLengthLaterialTorsional = new EffectiveLengthAttribute(
+            EffectiveLengthOptionType.Absolute,
+            new Length(user.EffectiveLengthLaterialTorsional.Value, _unit).Meters);
+        }
       }
 
       apiMember.Property = ConvertSection(member1d.Section);

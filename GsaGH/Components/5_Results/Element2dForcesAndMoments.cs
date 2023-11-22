@@ -28,7 +28,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class Element2dForcesAndMoments : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("ea42e671-710e-4fd3-a113-1724049159cf");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+    public override GH_Exposure Exposure => GH_Exposure.quinary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Element2dForcesAndMoments;
     private ForcePerLengthUnit _forceUnit = DefaultUnits.ForcePerLengthUnit;
@@ -184,7 +184,7 @@ namespace GsaGH.Components {
             return;
 
           case GsaResultGoo goo:
-            result = goo.Value;
+            result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
 
@@ -295,7 +295,7 @@ namespace GsaGH.Components {
       da.SetDataTree(6, outYy);
       da.SetDataTree(7, outXxyy);
 
-      PostHog.Result(result.Type, 2, GsaResultsValues.ResultType.Force);
+      PostHog.Result(result.CaseType, 2, GsaResultsValues.ResultType.Force);
       da.SetDataTree(8, outWaxx);
       da.SetDataTree(9, outWayy);
     }

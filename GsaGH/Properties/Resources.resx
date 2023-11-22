@@ -142,6 +142,9 @@
   <data name="AnnotationParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\AnnotationParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="BeamDerivedStresses" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\BeamDerivedStresses.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="BeamDisplacements" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\BeamDisplacements.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -151,11 +154,11 @@
   <data name="BeamStrainEnergyDensity" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\BeamStrainEnergyDensity.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="BeamStresses" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\BeamStresses.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Bool6Param" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Bool6Param.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="BucklingFactorsParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\BucklingFactorsParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CombinationCaseInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CombinationCaseInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -226,6 +229,9 @@
   <data name="CreateCustomMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateCustomMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="CreateEffectiveLength" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateEffectiveLength.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="CreateElem3d" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateElem3d.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -267,6 +273,9 @@
   </data>
   <data name="CreateMaterial" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateMaterial.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateMemberEndRestraint" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateMemberEndRestraint.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="CreateModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\CreateModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -348,6 +357,12 @@
   </data>
   <data name="EditSpring" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\EditSpring.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EffectiveLengthInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\EffectiveLengthInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EffectiveLengthParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\EffectiveLengthParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Element1dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Element1dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -496,6 +511,9 @@
   <data name="Member3dParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Member3dParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="MemberEndRestraintInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\MemberEndRestraintInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="MeshResultInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\MeshResultInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -591,5 +609,11 @@
   </data>
   <data name="unused" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\unused.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Member1dDisplacements" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Member1dDisplacements.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Member1dForcesAndMoments" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\Member1dForcesAndMoments.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

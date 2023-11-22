@@ -1,9 +1,11 @@
-﻿using GsaGH.Components;
+﻿using GsaAPI;
+using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
+using System;
 using Xunit;
 
 namespace GsaGHTests.Components.Loads {
@@ -60,7 +62,6 @@ namespace GsaGHTests.Components.Loads {
       ComponentTestHelper.SetInput(comp, "All", 1);
       ComponentTestHelper.SetInput(comp, "myFaceLoad", 2);
       ComponentTestHelper.SetInput(comp, -5, 6);
-      // position is not yet working!
       ComponentTestHelper.SetInput(comp, 0.5, 7);
       ComponentTestHelper.SetInput(comp, 1.0, 8);
 
@@ -69,8 +70,8 @@ namespace GsaGHTests.Components.Loads {
       Assert.Equal(7, load.LoadCase.Id);
       Assert.Equal("myFaceLoad", load.ApiLoad.Name);
       Assert.Equal(-5000, load.ApiLoad.Value(0));
-      //Assert.Equal(0.5, load.ApiLoad.Position.X); 
-      //Assert.Equal(1.0, load.ApiLoad.Position.Y);
+      Assert.Equal(0.5, load.ApiLoad.Position.X);
+      Assert.Equal(1.0, load.ApiLoad.Position.Y);
       Assert.Equal(GsaAPI.FaceLoadType.POINT, load.ApiLoad.Type);
       Assert.Equal(ReferenceType.None, load.ReferenceType);
     }
@@ -164,6 +165,144 @@ namespace GsaGHTests.Components.Loads {
       Assert.Equal(-5000, load.ApiLoad.Value(0));
       Assert.Equal(ReferenceType.Member, load.ReferenceType);
       Assert.Equal(GsaAPI.EntityType.Member, load.ApiLoad.EntityType);
+    }
+
+    [Fact]
+    public void CreateDefaultEquationTest() {
+      var comp = new CreateFaceLoad();
+      comp.CreateAttributes();
+      comp.SetSelected(0, 3); // Equation
+      ComponentTestHelper.SetInput(comp, "All", 1);
+      ComponentTestHelper.SetInput(comp, "myLoad", 2);
+      ComponentTestHelper.SetInput(comp, "4*x+7*y-z", 7);
+
+      var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      var load = (GsaFaceLoad)output.Value;
+      Assert.Equal("myLoad", load.ApiLoad.Name);
+      Assert.Equal("4*x+7*y-z", load.ApiLoad.Equation().Expression);
+      Assert.Equal(GsaAPI.FaceLoadType.EQUATION, load.ApiLoad.Type);
+      Assert.Equal(0, load.ApiLoad.Equation().Axis);
+      Assert.False(load.ApiLoad.Equation().IsUniform);
+    }
+
+    [Fact]
+    public void CreateExtendedEquationTest() {
+      var comp = new CreateFaceLoad();
+      comp.CreateAttributes();
+      comp.SetSelected(0, 3); // Equation
+      ComponentTestHelper.SetInput(comp, "All", 1);
+      ComponentTestHelper.SetInput(comp, "myLoad", 2);
+      ComponentTestHelper.SetInput(comp, 1, 5); //axis
+      ComponentTestHelper.SetInput(comp, true, 6); // constant
+      ComponentTestHelper.SetInput(comp, "4*x+7*y-z", 7);
+
+      var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      var load = (GsaFaceLoad)output.Value;
+      Assert.Equal("myLoad", load.ApiLoad.Name);
+      Assert.Equal("4*x+7*y-z", load.ApiLoad.Equation().Expression);
+      Assert.Equal(GsaAPI.FaceLoadType.EQUATION, load.ApiLoad.Type);
+      Assert.Equal(1, load.ApiLoad.Equation().Axis);
+      Assert.True(load.ApiLoad.Equation().IsUniform);
+    }
+
+    [Fact]
+    public void ChangeUnitEquationTest() {
+      var comp = new CreateFaceLoad();
+      comp.CreateAttributes();
+      comp.SetSelected(0, 3); // Equation
+      ComponentTestHelper.SetInput(comp, "All", 1);
+      ComponentTestHelper.SetInput(comp, "myLoad", 2);
+      ComponentTestHelper.SetInput(comp, "4*x+7*y-z", 7);
+
+      var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      var load = (GsaFaceLoad)output.Value;
+      Assert.Equal("myLoad", load.ApiLoad.Name);
+      Assert.Equal("4*x+7*y-z", load.ApiLoad.Equation().Expression);
+      Assert.Equal(GsaAPI.FaceLoadType.EQUATION, load.ApiLoad.Type);
+
+      GsaAPI.StressUnit forceunit = StressUnit.Kilopascal;
+      GsaAPI.LengthUnit lengthUnit = LengthUnit.Meter;
+      Assert.Equal(lengthUnit, load.ApiLoad.Equation().LengthUnits);
+      Assert.Equal(forceunit, load.ApiLoad.Equation().PressureUnits);
+
+      comp.SetSelected(1, 0); // NewtonPerSquareMillimeter
+      output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      load = (GsaFaceLoad)output.Value;
+      forceunit = StressUnit.NewtonPerSquareMillimeter;
+      lengthUnit = GsaAPI.LengthUnit.Millimeter;
+      Assert.Equal(lengthUnit, load.ApiLoad.Equation().LengthUnits);
+      Assert.Equal(forceunit, load.ApiLoad.Equation().PressureUnits);
+
+      comp.SetSelected(1, 2); // NewtonPerSquareMeter
+      output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      load = (GsaFaceLoad)output.Value;
+      forceunit = StressUnit.NewtonPerSquareMeter;
+      lengthUnit = GsaAPI.LengthUnit.Meter;
+      Assert.Equal(lengthUnit, load.ApiLoad.Equation().LengthUnits);
+      Assert.Equal(forceunit, load.ApiLoad.Equation().PressureUnits);
+
+      comp.SetSelected(1, 4); // KilonewtonPerSquareMillimeter
+      output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      load = (GsaFaceLoad)output.Value;
+      forceunit = StressUnit.Gigapascal;
+      lengthUnit = GsaAPI.LengthUnit.Millimeter;
+      Assert.Equal(lengthUnit, load.ApiLoad.Equation().LengthUnits);
+      Assert.Equal(forceunit, load.ApiLoad.Equation().PressureUnits);
+
+      comp.SetSelected(1, 5); // KilonewtonPerSquareMeter
+      output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      load = (GsaFaceLoad)output.Value;
+      forceunit = StressUnit.Kilopascal;
+      lengthUnit = GsaAPI.LengthUnit.Meter;
+      Assert.Equal(lengthUnit, load.ApiLoad.Equation().LengthUnits);
+      Assert.Equal(forceunit, load.ApiLoad.Equation().PressureUnits);
+
+      comp.SetSelected(1, 6); // PoundForcePerSquareInch
+      output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      load = (GsaFaceLoad)output.Value;
+      forceunit = StressUnit.PoundForcePerSquareInch;
+      lengthUnit = GsaAPI.LengthUnit.Inch;
+      Assert.Equal(lengthUnit, load.ApiLoad.Equation().LengthUnits);
+      Assert.Equal(forceunit, load.ApiLoad.Equation().PressureUnits);
+
+      comp.SetSelected(1, 7); // PoundForcePerSquareFoot
+      output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      load = (GsaFaceLoad)output.Value;
+      forceunit = StressUnit.PoundForcePerSquareFoot;
+      lengthUnit = GsaAPI.LengthUnit.Foot;
+      Assert.Equal(lengthUnit, load.ApiLoad.Equation().LengthUnits);
+      Assert.Equal(forceunit, load.ApiLoad.Equation().PressureUnits);
+      
+      comp.SetSelected(1, 8); // KilopoundForcePerSquareInch
+      output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      load = (GsaFaceLoad)output.Value;
+      forceunit = StressUnit.KilopoundForcePerSquareInch;
+      lengthUnit = GsaAPI.LengthUnit.Inch;
+      Assert.Equal(lengthUnit, load.ApiLoad.Equation().LengthUnits);
+      Assert.Equal(forceunit, load.ApiLoad.Equation().PressureUnits);
+
+      comp.SetSelected(1, 9); // KilopoundForcePerSquareFoot
+      output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
+      load = (GsaFaceLoad)output.Value;
+      forceunit = StressUnit.KilopoundForcePerSquareFoot;
+      lengthUnit = GsaAPI.LengthUnit.Foot;
+      Assert.Equal(lengthUnit, load.ApiLoad.Equation().LengthUnits);
+      Assert.Equal(forceunit, load.ApiLoad.Equation().PressureUnits);
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(3)]
+    public void ChangeUnitExceptionsEquationTest(int i) {
+      var comp = new CreateFaceLoad();
+      comp.CreateAttributes();
+      comp.SetSelected(0, 3); // Equation
+      ComponentTestHelper.SetInput(comp, "All", 1);
+      ComponentTestHelper.SetInput(comp, "myLoad", 2);
+      ComponentTestHelper.SetInput(comp, "4*x+7*y-z", 7);
+      comp.SetSelected(1, i);
+      Assert.Throws<ArgumentOutOfRangeException>(() => ComponentTestHelper.GetOutput(comp));
+      Assert.Equal(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error, comp.RuntimeMessageLevel);
     }
   }
 }

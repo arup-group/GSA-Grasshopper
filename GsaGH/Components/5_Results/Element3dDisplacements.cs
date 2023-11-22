@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -27,7 +26,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class Element3dDisplacements : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("b24e0b5d-6376-43bf-9844-15443ce3b9dd");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Element3dDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
@@ -108,7 +107,7 @@ namespace GsaGH.Components {
             return;
 
           case GsaResultGoo goo:
-            result = goo.Value;
+            result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
 
@@ -161,7 +160,7 @@ namespace GsaGH.Components {
       da.SetDataTree(2, outTransZ);
       da.SetDataTree(3, outTransXyz);
 
-      PostHog.Result(result.Type, 3, GsaResultsValues.ResultType.Displacement);
+      PostHog.Result(result.CaseType, 3, GsaResultsValues.ResultType.Displacement);
     }
 
     protected override void UpdateUIFromSelectedItems() {

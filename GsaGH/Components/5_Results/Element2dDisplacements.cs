@@ -27,7 +27,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class Element2dDisplacements : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("22f87d33-4f9a-49d6-9f3d-b366e446a75f");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Element2dDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
@@ -121,7 +121,7 @@ namespace GsaGH.Components {
             return;
 
           case GsaResultGoo goo:
-            result = goo.Value;
+            result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
 
@@ -209,7 +209,7 @@ namespace GsaGH.Components {
       da.SetDataTree(6, outRotZ);
       da.SetDataTree(7, outRotXyz);
 
-      PostHog.Result(result.Type, 2, GsaResultsValues.ResultType.Displacement);
+      PostHog.Result(result.CaseType, 2, GsaResultsValues.ResultType.Displacement);
     }
 
     protected override void UpdateUIFromSelectedItems() {
