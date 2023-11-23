@@ -128,8 +128,8 @@ namespace GsaGH.Parameters {
           OrientationAngle = ApiElements[i].OrientationAngle,
           ParentMember = ApiElements[i].ParentMember,
           Property = ApiElements[i].Property,
-          Topology = new ReadOnlyCollection<int>(ApiElements[i].Topology.ToList()),
           Type = ApiElements[i].Type,
+          Topology = new ReadOnlyCollection<int>(ApiElements[i].Topology.ToList()),
         });
 
         elems[i].Offset.X1 = ApiElements[i].Offset.X1;
