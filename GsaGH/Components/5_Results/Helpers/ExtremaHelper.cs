@@ -203,6 +203,30 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U DisplacementExtremaKey<T1, T2, U>(
+      IEntity2dResultSubset<T1, T2, ResultVector6<U>> resultSet, string key) where T1 : IEntity2dQuantity<T2>
+    where T2 : IResultItem {
+      return key switch {
+        "Max Ux" => resultSet.Max.X,
+        "Max Uy" => resultSet.Max.Y,
+        "Max Uz" => resultSet.Max.Z,
+        "Max |U|" => resultSet.Max.Xyz,
+        "Max Rxx" => resultSet.Max.Xx,
+        "Max Ryy" => resultSet.Max.Yy,
+        "Max Rzz" => resultSet.Max.Zz,
+        "Max |R|" => resultSet.Max.Xxyyzz,
+        "Min Ux" => resultSet.Min.X,
+        "Min Uy" => resultSet.Min.Y,
+        "Min Uz" => resultSet.Min.Z,
+        "Min |U|" => resultSet.Min.Xyz,
+        "Min Rxx" => resultSet.Min.Xx,
+        "Min Ryy" => resultSet.Min.Yy,
+        "Min Rzz" => resultSet.Min.Zz,
+        "Min |R|" => resultSet.Min.Xxyyzz,
+        _ => throw new ArgumentException("Extrema case not found"),
+      };
+    }
+
+    internal static U DisplacementExtremaKey<T1, T2, U>(
       IEntity1dResultSubset<T1, T2, ResultVector6<U>> resultSet, string key)
       where T1 : IEntity1dQuantity<T2> where T2 : IResultItem {
       return key switch {
