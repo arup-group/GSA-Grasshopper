@@ -25,19 +25,19 @@ namespace GsaGH.Parameters.Results {
         string nodelist = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
-            ReadOnlyDictionary<int, NodeResult> aCaseResults = analysisCase.NodeResults(nodelist);
+            ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeDisplacement(nodelist);
             Parallel.ForEach(aCaseResults.Keys, nodeId => {
-              var res = new Displacement(aCaseResults[nodeId].Displacement);
-              Cache.TryAdd(nodeId, new Collection<IDisplacement>() { res });
+              var res = new Displacement(aCaseResults[nodeId]);
+              Cache.TryAdd(nodeId, new Collection<IDisplacement>() { res, });
             });
             break;
 
           case CombinationCaseResult combinationCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> cCaseResults = combinationCase.NodeResults(nodelist);
+            ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults = combinationCase.NodeDisplacement(nodelist);
             Parallel.ForEach(cCaseResults.Keys, nodeId => {
               var permutationResults = new Collection<IDisplacement>();
-              foreach (NodeResult permutationResult in cCaseResults[nodeId]) {
-                permutationResults.Add(new Displacement(permutationResult.Displacement));
+              foreach (Double6 permutation in cCaseResults[nodeId]) {
+                permutationResults.Add(new Displacement(permutation));
               }
 
               Cache.TryAdd(nodeId, permutationResults);

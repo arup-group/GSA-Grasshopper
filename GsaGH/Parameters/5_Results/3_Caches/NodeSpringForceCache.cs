@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
 
@@ -28,13 +29,13 @@ namespace GsaGH.Parameters.Results {
         string nodelist = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
-            ReadOnlyDictionary<int, NodeResult> aCaseResults = analysisCase.NodeResults(nodelist);
+            ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeSpringForce(nodelist);
             Parallel.ForEach(aCaseResults, resultKvp => {
               if (!HasValues(resultKvp)) {
                 return;
               }
 
-              var res = new ReactionForce(resultKvp.Value.SpringForce);
+              var res = new ReactionForce(resultKvp.Value);
               Cache.TryAdd(resultKvp.Key, new Collection<IInternalForce>() {
                 res,
               });
@@ -42,16 +43,16 @@ namespace GsaGH.Parameters.Results {
             break;
 
           case CombinationCaseResult combinationCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> cCaseResults
-              = combinationCase.NodeResults(nodelist);
+            ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults
+              = combinationCase.NodeSpringForce(nodelist);
             Parallel.ForEach(cCaseResults, resultKvp => {
               if (!HasValues(resultKvp)) {
                 return;
               }
 
               var permutationResults = new Collection<IInternalForce>();
-              foreach (NodeResult permutationResult in resultKvp.Value) {
-                permutationResults.Add(new ReactionForce(permutationResult.SpringForce));
+              foreach (Double6 permutation in resultKvp.Value) {
+                permutationResults.Add(new ReactionForce(permutation));
               }
 
               Cache.TryAdd(resultKvp.Key, permutationResults);
@@ -64,18 +65,12 @@ namespace GsaGH.Parameters.Results {
       return new NodeForceSubset(Cache.GetSubset(nodeIds));
     }
 
-    private bool HasValues(KeyValuePair<int, NodeResult> kvp) {
-      return HasValues(kvp.Value.SpringForce);
+    private bool HasValues(KeyValuePair<int, Double6> kvp) {
+      return HasValues(kvp.Value);
     }
 
-    private bool HasValues(KeyValuePair<int, ReadOnlyCollection<NodeResult>> kvp) {
-      foreach (NodeResult res in kvp.Value) {
-        if (HasValues(res.SpringForce)) {
-          return true;
-        }
-      }
-
-      return false;
+    private bool HasValues(KeyValuePair<int, ReadOnlyCollection<Double6>> kvp) {
+      return kvp.Value.Any(res => HasValues(res));
     }
 
     private bool HasValues(Double6 values) {
