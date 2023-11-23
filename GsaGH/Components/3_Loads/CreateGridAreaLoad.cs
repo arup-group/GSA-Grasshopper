@@ -107,10 +107,10 @@ namespace GsaGH.Components {
 
       pManager.AddParameter(new GsaLoadCaseParameter());
       pManager.AddBrepParameter("Brep", "B",
-        "(Optional) Brep. If no input the whole plane method will be used. If both Grid Plane Surface and Brep are inputted, this Brep will be projected onto the Grid Plane.",
+        "[Optional] Brep. If no input the whole plane method will be used. If both Grid Plane Surface and Brep are inputted, this Brep will be projected onto the Grid Plane.",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Grid Plane Surface", "GPS",
-        "Grid Plane Surface or Plane (optional). If no input here then the brep's best-fit plane will be used",
+        "Grid Plane Surface or Plane [Optional]. If no input here then the brep's best-fit plane will be used",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Direction", "Di",
         "Load direction (default z)." + Environment.NewLine + "Accepted inputs are:"

@@ -73,10 +73,10 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddPointParameter("Point", "Pt", "Point (x, y, z) location of support",
         GH_ParamAccess.item);
-      pManager.AddPlaneParameter("Plane", "Pl", "(Optional) Plane for local axis",
+      pManager.AddPlaneParameter("Plane", "Pl", "[Optional] Plane for local axis",
         GH_ParamAccess.item, Plane.WorldXY);
       pManager.AddParameter(new GsaBool6Parameter(), "Restraints", "B6",
-        "(Optional) Restraint in Bool6 form", GH_ParamAccess.item);
+        "[Optional] Restraint in Bool6 form", GH_ParamAccess.item);
 
       pManager[1].Optional = true;
       pManager.HideParameter(1);

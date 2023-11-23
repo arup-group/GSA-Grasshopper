@@ -26,16 +26,16 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaMaterialParameter());
       pManager.AddIntegerParameter("Material ID", "ID",
-        "(Optional) Set Material ID corrosponding to the desired ID in the material type's table " +
+        "[Optional] Set Material ID corrosponding to the desired ID in the material type's table " +
         "(Steel, Concrete, etc).", GH_ParamAccess.item);
-      pManager.AddTextParameter("Material Name", "Na", "(Optional) Set Material Name",
+      pManager.AddTextParameter("Material Name", "Na", "[Optional] Set Material Name",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter(), "Analysis Material", "AM",
-        GsaMaterialGoo.Description + "(Optional) Input another Material to overwrite the analysis" +
+        GsaMaterialGoo.Description + "[Optional] Input another Material to overwrite the analysis" +
         " material properties."
         + GsaMaterialGoo.Name, GH_ParamAccess.item);
       pManager.AddGenericParameter("Material Type", "mT",
-        "(Optional) Set Material Type for a Custom Material (only)." + Environment.NewLine +
+        "[Optional] Set Material Type for a Custom Material (only)." + Environment.NewLine +
         "Input either text string or integer:"
         + Environment.NewLine + "Generic : 0" + Environment.NewLine + "Steel : 1"
         + Environment.NewLine + "Concrete : 2" + Environment.NewLine + "Aluminium : 3"

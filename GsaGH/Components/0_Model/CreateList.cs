@@ -51,9 +51,9 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddIntegerParameter("Index", "ID",
-        "(Optional) List Number - set this to 0 to append it to the end of the list of lists, or set the ID to overwrite an existing list.",
+        "[Optional] List Number - set this to 0 to append it to the end of the list of lists, or set the ID to overwrite an existing list.",
         GH_ParamAccess.item, 0);
-      pManager.AddTextParameter("Name", "Na", "(Optional) List Name", GH_ParamAccess.item);
+      pManager.AddTextParameter("Name", "Na", "[Optional] List Name", GH_ParamAccess.item);
       pManager.AddGenericParameter("Definition", "Def",
         "Definition as text or list of object (Nodes, Elements, Members)", GH_ParamAccess.list);
       pManager[0].Optional = true;

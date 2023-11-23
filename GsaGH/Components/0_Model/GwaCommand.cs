@@ -34,7 +34,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
-        "(Optional) Existing GSA model to inject GWA command(s) into. Leave this input empty to create a new GSA model from GWA string.",
+        "[Optional] Existing GSA model to inject GWA command(s) into. Leave this input empty to create a new GSA model from GWA string.",
         GH_ParamAccess.item);
       pManager[0].Optional = true;
       pManager.AddTextParameter("GWA string", "GWA",

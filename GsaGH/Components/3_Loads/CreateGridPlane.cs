@@ -114,7 +114,7 @@ namespace GsaGH.Components {
         "GSA Grid Plane ID. Setting this will replace any existing Grid Planes in GSA model",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Grid Elevation in model units", "Ev",
-        "Grid Elevation (Optional). Note that this value will be added to Plane origin location in the plane's normal axis direction.",
+        "Grid Elevation [Optional]. Note that this value will be added to Plane origin location in the plane's normal axis direction.",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Grid Plane Name", GH_ParamAccess.item);
 
