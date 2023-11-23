@@ -33,13 +33,13 @@ namespace GsaGH.Parameters.Results {
         string nodelist = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
-            ReadOnlyDictionary<int, NodeResult> aCaseResults = analysisCase.NodeResults(nodelist);
+            ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeReactionForce(nodelist);
             Parallel.ForEach(aCaseResults, resultKvp => {
               if (!IsSupport(resultKvp)) {
                 return;
               }
 
-              var res = new ReactionForce(resultKvp.Value.Reaction);
+              var res = new ReactionForce(resultKvp.Value);
               Cache.TryAdd(resultKvp.Key, new Collection<IInternalForce>() {
                 res,
               });
@@ -47,16 +47,16 @@ namespace GsaGH.Parameters.Results {
             break;
 
           case CombinationCaseResult combinationCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> cCaseResults
-              = combinationCase.NodeResults(nodelist);
+            ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults
+              = combinationCase.NodeReactionForce(nodelist);
             Parallel.ForEach(cCaseResults, resultKvp => {
               if (!IsSupport(resultKvp)) {
                 return;
               }
 
               var permutationResults = new Collection<IInternalForce>();
-              foreach (NodeResult permutationResult in resultKvp.Value) {
-                permutationResults.Add(new ReactionForce(permutationResult.Reaction));
+              foreach (Double6 permutation in resultKvp.Value) {
+                permutationResults.Add(new ReactionForce(permutation));
               }
 
               Cache.TryAdd(resultKvp.Key, permutationResults);
@@ -68,22 +68,12 @@ namespace GsaGH.Parameters.Results {
       return new NodeForceSubset(Cache.GetSubset(nodeIds));
     }
 
-    private bool IsSupport(KeyValuePair<int, NodeResult> kvp) {
-      return SupportNodeIds.Contains(kvp.Key) || IsNotNaN(kvp.Value.Reaction);
+    private bool IsSupport(KeyValuePair<int, Double6> kvp) {
+      return SupportNodeIds.Contains(kvp.Key) || IsNotNaN(kvp.Value);
     }
 
-    private bool IsSupport(KeyValuePair<int, ReadOnlyCollection<NodeResult>> kvp) {
-      if (SupportNodeIds.Contains(kvp.Key)) {
-        return true;
-      }
-      
-      foreach (NodeResult res in kvp.Value) {
-        if (IsNotNaN(res.Reaction)) {
-          return true;
-        }
-      }
-      
-      return false;
+    private bool IsSupport(KeyValuePair<int, ReadOnlyCollection<Double6>> kvp) {
+      return SupportNodeIds.Contains(kvp.Key) || kvp.Value.Any(res => IsNotNaN(res));
     }
 
     private bool IsRestrained(NodalRestraint rest) {
