@@ -5,7 +5,7 @@ using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters.Results {
-  public class Stress2d : IStress2d {
+  public class Stress : IStress {
     public Pressure Xx { get; internal set; }
     public Pressure Yy { get; internal set; }
     public Pressure Zz { get; internal set; }
@@ -13,7 +13,7 @@ namespace GsaGH.Parameters.Results {
     public Pressure Yz { get; internal set; }
     public Pressure Zx { get; internal set; }
 
-    internal Stress2d(Tensor3 result) {
+    internal Stress(Tensor3 result) {
       Xx = new Pressure(result.XX, PressureUnit.Pascal);
       Yy = new Pressure(result.YY, PressureUnit.Pascal);
       Zz = new Pressure(result.ZZ, PressureUnit.Pascal);
