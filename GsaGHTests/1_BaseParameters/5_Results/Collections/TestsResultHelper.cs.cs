@@ -388,5 +388,47 @@ namespace GsaGHTests.Parameters.Results {
 
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
+
+    public static double ResultsHelper(
+      IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> result,
+      ResultVector6HelperEnum component, bool max) {
+      double d = 0;
+      ResultVector6<Entity2dExtremaKey> extrema = max ? result.Max : result.Min;
+      switch (component) {
+        case ResultVector6HelperEnum.X:
+          d = result.GetExtrema(extrema.X).X.Millimeters;
+          break;
+
+        case ResultVector6HelperEnum.Y:
+          d = result.GetExtrema(extrema.Y).Y.Millimeters;
+          break;
+
+        case ResultVector6HelperEnum.Z:
+          d = result.GetExtrema(extrema.Z).Z.Millimeters;
+          break;
+
+        case ResultVector6HelperEnum.Xyz:
+          d = result.GetExtrema(extrema.Xyz).Xyz.Millimeters;
+          break;
+
+        case ResultVector6HelperEnum.Xx:
+          d = result.GetExtrema(extrema.Xx).Xx.Radians;
+          break;
+
+        case ResultVector6HelperEnum.Yy:
+          d = result.GetExtrema(extrema.Yy).Yy.Radians;
+          break;
+
+        case ResultVector6HelperEnum.Zz:
+          d = result.GetExtrema(extrema.Zz).Zz.Radians;
+          break;
+
+        case ResultVector6HelperEnum.Xxyyzz:
+          d = result.GetExtrema(extrema.Xxyyzz).Xxyyzz.Radians;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
   }
 }
