@@ -1,18 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public abstract class Entity3dTetraResult<T> : IEntity3dTetraQuantity<T>
-    where T : IResultItem {
-    public T Node1 { get; internal set; }
-    public T Node2 { get; internal set; }
-    public T Node3 { get; internal set; }
-    public T Node4 { get; internal set; }
-    public T Centre { get; internal set; }
+  public abstract class Entity3dTetraResult<ApiResultType, QuantityResult> : IEntity3dTetraQuantity<QuantityResult>
+    where QuantityResult : IResultItem {
+    public QuantityResult Node1 { get; private set; }
+    public QuantityResult Node2 { get; private set; }
+    public QuantityResult Node3 { get; private set; }
+    public QuantityResult Node4 { get; private set; }
+    public QuantityResult Centre { get; private set; }
 
-    public IList<T> Results() {
-      return new List<T>() {
+    internal Entity3dTetraResult(ReadOnlyCollection<ApiResultType> apiResult, Func<ApiResultType, QuantityResult> constructor) {
+      int i = 0;
+      Centre = constructor(apiResult[i++]);
+      Node1 = constructor(apiResult[i++]);
+      Node2 = constructor(apiResult[i++]);
+      Node3 = constructor(apiResult[i++]);
+      Node4 = constructor(apiResult[i++]);
+    }
+
+    public IList<QuantityResult> Results() {
+      return new List<QuantityResult>() {
         Node1,
         Node2,
         Node3,
