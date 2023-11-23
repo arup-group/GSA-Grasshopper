@@ -187,95 +187,94 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       switch (i) {
-        case 0: {
-            switch (j) {
-              case 0: {
-                  if (_dropDownItems[1] != _displacement) {
-                    _dropDownItems[1] = _displacement;
+        case 0:
+          switch (j) {
+            case 0: {
+                if (_dropDownItems[1] != _displacement) {
+                  _dropDownItems[1] = _displacement;
 
-                    _selectedItems[0] = _dropDownItems[0][0];
-                    _selectedItems[1] = _dropDownItems[1][3];
+                  _selectedItems[0] = _dropDownItems[0][0];
+                  _selectedItems[1] = _dropDownItems[1][3];
 
-                    _disp = DisplayValue.ResXyz;
-                    Mode1Clicked();
-                  }
-
-                  break;
+                  _disp = DisplayValue.ResXyz;
+                  Mode1Clicked();
                 }
-              case 1: {
-                  if (_dropDownItems[1] != _force) {
-                    _dropDownItems[1] = _force;
 
-                    _selectedItems[0] = _dropDownItems[0][1];
-                    _selectedItems[1] = _dropDownItems[1][5]; // set Myy as default
-
-                    _disp = DisplayValue.Yy;
-                    Mode2Clicked();
-                  }
-
-                  break;
-                }
-              case 2: {
-                  if (_dropDownItems[1] != _strainenergy) {
-                    _dropDownItems[1] = _strainenergy;
-
-                    _selectedItems[0] = _dropDownItems[0][2];
-                    _selectedItems[1] = _dropDownItems[1][1]; // set average as default
-
-                    _disp = DisplayValue.Y;
-                    Mode3Clicked();
-                  }
-
-                  break;
-                }
-              case 3: {
-                  if (_dropDownItems[1] != _footfall) {
-                    _dropDownItems[1] = _footfall;
-
-                    _selectedItems[0] = _dropDownItems[0][3];
-                    _selectedItems[1] = _dropDownItems[1][0];
-
-                    _disp = DisplayValue.X;
-                    Mode4Clicked();
-                  }
-
-                  break;
-                }
-            }
-
-            break;
-          }
-        case 1: {
-            bool redraw = false;
-
-            if (j < 4) {
-              if ((int)_disp > 3) // check if we are coming from other half of display modes
-              {
-                if (_mode == FoldMode.Displacement) {
-                  redraw = true;
-                  _slider = true;
-                }
+                break;
               }
-            } else {
-              if ((int)_disp < 4) // check if we are coming from other half of display modes
-              {
-                if (_mode == FoldMode.Displacement) {
-                  redraw = true;
-                  _slider = false;
+            case 1: {
+                if (_dropDownItems[1] != _force) {
+                  _dropDownItems[1] = _force;
+
+                  _selectedItems[0] = _dropDownItems[0][1];
+                  _selectedItems[1] = _dropDownItems[1][5]; // set Myy as default
+
+                  _disp = DisplayValue.Yy;
+                  Mode2Clicked();
                 }
+
+                break;
+              }
+            case 2: {
+                if (_dropDownItems[1] != _strainenergy) {
+                  _dropDownItems[1] = _strainenergy;
+
+                  _selectedItems[0] = _dropDownItems[0][2];
+                  _selectedItems[1] = _dropDownItems[1][1]; // set average as default
+
+                  _disp = DisplayValue.Y;
+                  Mode3Clicked();
+                }
+
+                break;
+              }
+            case 3: {
+                if (_dropDownItems[1] != _footfall) {
+                  _dropDownItems[1] = _footfall;
+
+                  _selectedItems[0] = _dropDownItems[0][3];
+                  _selectedItems[1] = _dropDownItems[1][0];
+
+                  _disp = DisplayValue.X;
+                  Mode4Clicked();
+                }
+
+                break;
+              }
+          }
+
+          break;
+
+        case 1:
+          bool redraw = false;
+
+          if (j < 4) {
+            if ((int)_disp > 3) // check if we are coming from other half of display modes
+            {
+              if (_mode == FoldMode.Displacement) {
+                redraw = true;
+                _slider = true;
               }
             }
-
-            _disp = (DisplayValue)j;
-
-            _selectedItems[1] = _dropDownItems[1][j];
-
-            if (redraw) {
-              ReDrawComponent();
+          } else {
+            if ((int)_disp < 4) // check if we are coming from other half of display modes
+            {
+              if (_mode == FoldMode.Displacement) {
+                redraw = true;
+                _slider = false;
+              }
             }
-
-            break;
           }
+
+          _disp = (DisplayValue)j;
+
+          _selectedItems[1] = _dropDownItems[1][j];
+
+          if (redraw) {
+            ReDrawComponent();
+          }
+
+          break;
       }
 
       base.UpdateUI();

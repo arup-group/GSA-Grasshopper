@@ -1,10 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
+using Grasshopper;
+using Grasshopper.Kernel.Data;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using Rhino.Collections;
 using Rhino.Geometry;
+using Rhino.Geometry.Collections;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -16,7 +21,9 @@ namespace GsaGHTests.Parameters {
     public void DuplicateTest() {
       var original = new GsaElement2d(new Mesh());
       var duplicate = new GsaElement2d(original);
-      Duplicates.AreEqual(original, duplicate, new List<string>() { "Guid" });
+      Duplicates.AreEqual(original, duplicate, new List<string>() {
+        "Guid"
+      });
     }
 
     [Fact]
@@ -207,6 +214,7 @@ namespace GsaGHTests.Parameters {
         off2.Add(new GsaOffset(0, 0, 0, -0.17));
         sects.Add(new GsaProperty2d(secid++));
       }
+
       origi.Ids = ids2;
       origi.ApiElements.SetMembers(grps2);
       origi.ApiElements.SetMembers(dum2);
@@ -238,6 +246,139 @@ namespace GsaGHTests.Parameters {
         Assert.Equal("Mani", origi.ApiElements[i].Name);
         Assert.Equal(-0.17, origi.Offsets[i].Z.Value);
       }
+    }
+
+    [Fact]
+    public void CreateSectionNotNull() {
+      GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
+      ele.CreateSection3dPreview();
+
+      Assert.NotNull(ele.Section3dPreview);
+      Assert.NotNull(ele.Section3dPreview.Outlines);
+      Assert.NotNull(ele.Section3dPreview.Mesh);
+    }
+
+    [Fact]
+    public void DuplicateApiObjectReturnsValidObjectForQuad4Type() {
+      GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
+
+      List<Element> list = ele.DuplicateApiObjects();
+
+      Assert.NotNull(list);
+      Assert.Equal(2, list.Count);
+      for (int i=0; i <list.Count; i++) {
+        Assert.Equal(ele.ApiElements[i].Type, list[i].Type);
+        Assert.Equal(ele.ApiElements[i].Topology, list[i].Topology);
+        Assert.Equal((Color)ele.ApiElements[i].Colour, (Color)list[i].Colour);
+        Assert.Equal(ele.ApiElements[i].Group, list[i].Group); 
+        Assert.Equal(ele.ApiElements[i].IsDummy, list[i].IsDummy);
+        Assert.Equal(ele.ApiElements[i].Name, list[i].Name);
+        Assert.Equal(ele.ApiElements[i].Offset.ToString(), list[i].Offset.ToString());
+        Assert.Equal(ele.ApiElements[i].OrientationAngle, list[i].OrientationAngle);
+        Assert.Equal(ele.ApiElements[i].OrientationNode, list[i].OrientationNode);
+        Assert.Equal(ele.ApiElements[i].ParentMember?.Member, list[i].ParentMember?.Member);
+        Assert.Equal(ele.ApiElements[i].ParentMember?.Replica, list[i].ParentMember?.Replica);
+        Assert.Equal(ele.ApiElements[i].Property, list[i].Property);
+      }
+    }
+
+    [Fact]
+    public void GetCenterPointsReturnsValidPointsForQuad4Type() {
+      GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
+
+      Point3dList points = ele.GetCenterPoints();
+
+      Assert.NotNull( points  );
+      Assert.Equal( 2, points.Count);
+
+      ele.ApiElements[0].Type = ElementType.QUAD8;
+      ele.ApiElements[1].Type = ElementType.QUAD8;
+
+      Point3dList points2 = ele.GetCenterPoints();
+
+      Assert.NotNull(points2);
+      Assert.Equal(2, points2.Count);
+
+      Assert.NotEqual(points[0], points2[0]);
+      Assert.NotEqual(points[1], points2[1]);
+    }
+
+    [Fact]
+    public void GetTopologyIDsIsValid() {
+      GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
+
+      DataTree<int> topology = ele.GetTopologyIDs();
+      Assert.NotNull( topology );
+      Assert.Equal(2, topology.BranchCount);
+      Assert.Equal(8, topology.DataCount);
+      Assert.Equal("Tree (Branches = 2)\r\n{14} (N = 4)\r\n{15} (N = 4)", topology.TopologyDescription);
+      Assert.Equal(2, topology.Paths.Count);
+      Assert.Equal(2, topology.Branches.Count);
+    }
+
+    [Fact]
+    public void ToStringReturnsValidString() {
+      GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
+      Assert.Equal("Quad-4 N:21 E:2", ele.ToString());
+    }
+
+    [Fact]
+    public void UpdateMeshColoursChangeColor() {
+      GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
+      ele.ApiElements[0].Colour = Color.DarkCyan;
+      ele.ApiElements[1].Colour = Color.DarkBlue;
+
+      Assert.Empty(ele.Mesh.VertexColors);
+
+      ele.UpdateMeshColours();
+
+      Assert.Equal(Color.DarkCyan.ToArgb(), ele.Mesh.VertexColors[0].ToArgb());
+      Assert.Equal(Color.DarkBlue.ToArgb(), ele.Mesh.VertexColors[1].ToArgb());
+    }
+    private GsaElement2d CreateSampleElement2dWithQuad4Type() { 
+     var pts = new Point3dList {
+       new Point3d(-3, -4, 0),
+       new Point3d(5, -2, 0),
+       new Point3d(6, 7, 0),
+       new Point3d(-1, 2, 0),
+     };
+     pts.Add(pts[0]);
+     var pol = new Polyline(pts);
+
+     var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
+       MeshingParameters.DefaultAnalysisMesh, 0.001);
+
+     var elem = new GsaElement2d(mesh);
+     int elid = 14;
+     int secid = 3;
+     var grps = new List<int>();
+     var dum = new List<bool>();
+     var nms = new List<string>();
+     var off = new List<GsaOffset>();
+     elem.Prop2ds = new List<GsaProperty2d>();
+     for (int i = 0; i < elem.ApiElements.Count; i++) {
+       elem.Ids[i] = elid++;
+       grps.Add(22);
+       dum.Add(true);
+       nms.Add("Shahin");
+       off.Add(new GsaOffset(0, 0, 0, 0.1, LengthUnit.Meter));
+       elem.Prop2ds.Add(new GsaProperty2d(secid) {
+         ApiProp2d = new Prop2D(),
+       });
+     }
+
+     elem.ApiElements.SetMembers(grps);
+     elem.ApiElements.SetMembers(dum);
+     elem.ApiElements.SetMembers(nms);
+     elem.ApiElements.SetMembers(off);
+
+     elem.ApiElements[0].Type = ElementType.QUAD4;
+     elem.ApiElements[0].Topology = new ReadOnlyCollection<int>(new List<int>(4) { 1, 2, 3, 4 });
+     elem.ApiElements[1].Type = ElementType.QUAD4;
+     elem.ApiElements[1].Topology = new ReadOnlyCollection<int>(new List<int>(4) { 4, 3, 2, 1 });
+     elem.ApiElements.RemoveRange(2, 20);
+
+      return elem;
     }
   }
 }
