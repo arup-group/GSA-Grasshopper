@@ -6,12 +6,12 @@ using GsaAPI;
 namespace GsaGH.Parameters.Results {
   public abstract class Entity2dTriResult<T> : IEntity2dTriQuantity<T>
     where T : IResultItem {
-    public T Node1 { get; internal set; }
-    public T Node2 { get; internal set; }
-    public T Node3 { get; internal set; }
-    public T Centre { get; internal set; }
+    public T Node1 { get; private set; }
+    public T Node2 { get; private set; }
+    public T Node3 { get; private set; }
+    public T Centre { get; private set; }
 
-    public Entity2dTriResult(ReadOnlyCollection<Double6> apiResult, Func<Double6, T> constructor) {
+    internal Entity2dTriResult(ReadOnlyCollection<Double6> apiResult, Func<Double6, T> constructor) {
       int i = 0;
       Centre = constructor(apiResult[i++]);
       Node1 = constructor(apiResult[i++]);

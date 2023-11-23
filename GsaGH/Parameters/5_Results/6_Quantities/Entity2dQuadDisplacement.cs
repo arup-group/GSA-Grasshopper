@@ -4,7 +4,7 @@ using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class Entity2dQuadDisplacement : Entity2dQuadResult<IDisplacement> {
-    public Entity2dQuadDisplacement(ReadOnlyCollection<Double6> result)
+    internal Entity2dQuadDisplacement(ReadOnlyCollection<Double6> result)
       : base(result, (x) => new Displacement(x)) {
     }
   }
