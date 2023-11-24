@@ -78,6 +78,17 @@ namespace GsaGH.Components.Helpers {
         "Min |R|",
       });
 
+    internal static readonly ReadOnlyCollection<string> Tensor2InAxis
+      = new ReadOnlyCollection<string>(new[] {
+        "All",
+        "Max Nx",
+        "Max Ny",
+        "Max Nxy",
+        "Min Nx",
+        "Min Ny",
+        "Min Nxy",
+      });
+
     internal static readonly ReadOnlyCollection<string> Tensor3Stresses
       = new ReadOnlyCollection<string>(new[] {
         "All",
@@ -353,6 +364,20 @@ namespace GsaGH.Components.Helpers {
         "Min xy" => resultSet.Min.Xy,
         "Min yz" => resultSet.Min.Yz,
         "Min zx" => resultSet.Min.Zx,
+        _ => throw new ArgumentException("Extrema case not found"),
+      };
+    }
+
+    internal static U ForceExtremaKey<T1, T2, U>(
+      IEntity2dResultSubset<T1, T2, ResultTensor2InAxis<U>> resultSet, string key) 
+      where T1 : IEntity2dQuantity<T2> where T2 : IResultItem {
+      return key switch {
+        "Max Nx" => resultSet.Max.Nx,
+        "Max Ny" => resultSet.Max.Ny,
+        "Max Nxy" => resultSet.Max.Nxy,
+        "Min Nx" => resultSet.Min.Nx,
+        "Min Ny" => resultSet.Min.Ny,
+        "Min Nxy" => resultSet.Min.Nxy,
         _ => throw new ArgumentException("Extrema case not found"),
       };
     }
