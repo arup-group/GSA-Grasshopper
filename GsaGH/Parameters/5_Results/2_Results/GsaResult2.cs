@@ -43,11 +43,14 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
+    public IEntity2dLayeredResultCache<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element2dStresses {
+      get;
+      private set;
+    }
     public IEntity2dResultCache<IEntity2dQuantity<IForce2d>, IForce2d, ResultVector6<Entity2dExtremaKey>> Element2dForce {
       get;
       private set;
     }
-
     public INodeResultCache<IDisplacement, ResultVector6<NodeExtremaKey>> NodeDisplacements {
       get;
       private set;
@@ -178,6 +181,7 @@ namespace GsaGH.Parameters.Results {
 
       Element2dDisplacements = new Element2dDisplacementCache(result);
       Element2dForce = new Element2dForceCache(result);
+      Element2dStresses = new Element2dStressCache(result);
 
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
@@ -208,6 +212,7 @@ namespace GsaGH.Parameters.Results {
 
       Element2dDisplacements = new Element2dDisplacementCache(result);
       Element2dForce = new Element2dForceCache(result);
+      Element2dStresses = new Element2dStressCache(result);
 
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
