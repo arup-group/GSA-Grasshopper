@@ -2,6 +2,7 @@
 using GsaGH.Parameters.Results;
 using static GsaGHTests.Parameters.Results.Element1dDerivedStressTests;
 using static GsaGHTests.Parameters.Results.Element1dStressTests;
+using static GsaGHTests.Parameters.Results.Element2dStressesTests;
 
 namespace GsaGHTests.Parameters.Results {
   public static class TestsResultHelper {
@@ -161,6 +162,37 @@ namespace GsaGHTests.Parameters.Results {
 
         case ResultVector6HelperEnum.Xxyyzz:
           d = result.Xxyyzz.Radians;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
+    public static double ResultsHelper(IStress result, ResultTensor3HelperEnum component) {
+      double d = 0;
+      switch (component) {
+        case ResultTensor3HelperEnum.Xx:
+          d = result.Xx.Megapascals;
+          break;
+
+        case ResultTensor3HelperEnum.Yy:
+          d = result.Yy.Megapascals;
+          break;
+
+        case ResultTensor3HelperEnum.Zz:
+          d = result.Zz.Megapascals;
+          break;
+
+        case ResultTensor3HelperEnum.Xy:
+          d = result.Xy.Megapascals;
+          break;
+
+        case ResultTensor3HelperEnum.Yz:
+          d = result.Yz.Megapascals;
+          break;
+
+        case ResultTensor3HelperEnum.Zx:
+          d = result.Zx.Megapascals;
           break;
       }
 
@@ -425,6 +457,40 @@ namespace GsaGHTests.Parameters.Results {
 
         case ResultVector6HelperEnum.Xxyyzz:
           d = result.GetExtrema(extrema.Xxyyzz).Xxyyzz.Radians;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
+    public static double ResultsHelper(
+      IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> result,
+      ResultTensor3HelperEnum component, bool max) {
+      double d = 0;
+      ResultTensor3<Entity2dExtremaKey> extrema = max ? result.Max : result.Min;
+      switch (component) {
+        case ResultTensor3HelperEnum.Xx:
+          d = result.GetExtrema(extrema.Xx).Xx.Megapascals;
+          break;
+
+        case ResultTensor3HelperEnum.Yy:
+          d = result.GetExtrema(extrema.Yy).Yy.Megapascals;
+          break;
+
+        case ResultTensor3HelperEnum.Zz:
+          d = result.GetExtrema(extrema.Zz).Zz.Megapascals;
+          break;
+
+        case ResultTensor3HelperEnum.Xy:
+          d = result.GetExtrema(extrema.Xy).Xy.Megapascals;
+          break;
+
+        case ResultTensor3HelperEnum.Yz:
+          d = result.GetExtrema(extrema.Yz).Yz.Megapascals;
+          break;
+
+        case ResultTensor3HelperEnum.Zx:
+          d = result.GetExtrema(extrema.Zx).Zx.Megapascals;
           break;
       }
 
