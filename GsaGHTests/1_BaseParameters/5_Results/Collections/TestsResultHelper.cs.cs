@@ -464,6 +464,47 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
+      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> result,
+      ResultTensor2InAxisHelperEnum component, bool max) {
+      double d = 0;
+      ResultTensor2InAxis<Entity2dExtremaKey> extrema = max ? result.Max : result.Min;
+      switch (component) {
+        case ResultTensor2InAxisHelperEnum.Nx:
+          d = result.GetExtrema(extrema.Nx).Nx.KilonewtonsPerMeter;
+          break;
+
+        case ResultTensor2InAxisHelperEnum.Ny:
+          d = result.GetExtrema(extrema.Ny).Ny.KilonewtonsPerMeter;
+          break;
+
+        case ResultTensor2InAxisHelperEnum.Nxy:
+          d = result.GetExtrema(extrema.Nxy).Nxy.KilonewtonsPerMeter;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
+    public static double ResultsHelper(IForce2d result, ResultTensor2InAxisHelperEnum component) {
+      double d = 0;
+      switch (component) {
+        case ResultTensor2InAxisHelperEnum.Nx:
+          d = result.Nx.KilonewtonsPerMeter;
+          break;
+
+        case ResultTensor2InAxisHelperEnum.Ny:
+          d = result.Ny.KilonewtonsPerMeter;
+          break;
+
+        case ResultTensor2InAxisHelperEnum.Nxy:
+          d = result.Nxy.KilonewtonsPerMeter;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
+    public static double ResultsHelper(
       IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> result,
       ResultTensor3HelperEnum component, bool max) {
       double d = 0;
