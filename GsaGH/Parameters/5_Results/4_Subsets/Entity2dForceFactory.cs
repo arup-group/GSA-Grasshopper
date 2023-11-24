@@ -6,7 +6,7 @@ namespace GsaGH.Parameters.Results {
     
     public static Collection<IEntity2dQuantity<IForce2d>> CreateForce(
       ReadOnlyCollection<Tensor2> results) {
-      return new Collection<IEntity2dQuantity<IForce2d>> {
+      return new Collection<IEntity2dQuantity<IForce2d>>() {
               CreateFromApiCollection(results)
              };
     }
