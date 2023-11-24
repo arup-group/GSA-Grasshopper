@@ -43,6 +43,11 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
+    public IEntity2dResultCache<IEntity2dQuantity<IForce2d>, IForce2d, ResultVector6<Entity2dExtremaKey>> Element2dForce {
+      get;
+      private set;
+    }
+
     public INodeResultCache<IDisplacement, ResultVector6<NodeExtremaKey>> NodeDisplacements {
       get;
       private set;
@@ -170,14 +175,19 @@ namespace GsaGH.Parameters.Results {
       Element1dDerivedStresses = new Element1dDerivedStressCache(result);
       Element1dStrainEnergyDensities = new Element1dStrainEnergyDensityCache(result);
       Element1dStresses = new Element1dStressCache(result);
+
       Element2dDisplacements = new Element2dDisplacementCache(result);
+      Element2dForce = new Element2dForceCache(result);
+
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
+      
       Member1dInternalForces = new Member1dInternalForceCache(result);
       Member1dDisplacements = new Member1dDisplacementCache(result);
+      
       GlobalResults = new GlobalResultsCache(result);
     }
 
@@ -195,14 +205,18 @@ namespace GsaGH.Parameters.Results {
       Element1dDerivedStresses = new Element1dDerivedStressCache(result);
       Element1dStrainEnergyDensities = new Element1dStrainEnergyDensityCache(result);
       Element1dStresses = new Element1dStressCache(result);
+
       Element2dDisplacements = new Element2dDisplacementCache(result);
+      Element2dForce = new Element2dForceCache(result);
+
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
+      NodeTransientFootfalls = new NodeTransientFootfallCache(result);
+
       Member1dDisplacements = new Member1dDisplacementCache(result);
       Member1dInternalForces = new Member1dInternalForceCache(result);
-      NodeTransientFootfalls = new NodeTransientFootfallCache(result);
     }
   }
 }
