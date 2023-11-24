@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using Grasshopper.Documentation;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
@@ -78,15 +75,12 @@ namespace GsaGH.Components {
     private ForcePerLengthUnit _stiffnessUnit = DefaultUnits.ForcePerLengthUnit;
     private SpringPropertyType _mode = SpringPropertyType.Axial;
 
-
-    private int _supportTypeIndex;
-
     public CreateSpringProperty() : base("Create Spring Property", "Spring", "Create a GSA Spring Property",
       CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
 
       foreach (string unitstring in FilteredRotationalStiffnessUnits) {
-        _rotationalStiffnessUnitAbbreviations.Add(ForcePerLength.GetAbbreviation((ForcePerLengthUnit)Enum.Parse(typeof(ForcePerLengthUnit), unitstring)));
+        _rotationalStiffnessUnitAbbreviations.Add(RotationalStiffness.GetAbbreviation((RotationalStiffnessUnit)Enum.Parse(typeof(RotationalStiffnessUnit), unitstring)));
       }
     }
 
@@ -99,43 +93,56 @@ namespace GsaGH.Components {
         UpdateDropDownItems(mode);
       }
 
-      if (i != 0 && mode != Prop2dType.LoadPanel) {
-        _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
-      }
-
-      if (i == 1 && mode == Prop2dType.LoadPanel) {
-        _supportTypeIndex = j;
-        UpdateParameters(mode);
-        UpdateDropDownItems(mode);
-      }
+      //if (i == 1) {
+      //  _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      //}
 
       base.UpdateUI();
     }
 
     public override void VariableParameterMaintenance() {
+      string stiffnessAbr = ForcePerLength.GetAbbreviation(_stiffnessUnit);
+      string rotationalStiffnessAbr = RotationalStiffness.GetAbbreviation(_rotationalStiffnessUnit);
+
       switch (_mode) {
         case SpringPropertyType.Axial:
-
+        case SpringPropertyType.TensionOnly:
+        case SpringPropertyType.CompressionOnly:
+        case SpringPropertyType.Lockup:
+        case SpringPropertyType.Gap:
+          SetStiffnessInputAt(1);
+          SetDampingRatioInputAt(2);
           return;
 
-        case SpringPropertyType.CompressionOnly:
-          SetMaterialInputAt(0);
+        case SpringPropertyType.Torsional:
+          SetInputProperties(1, "Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "Stiffness xx");
+          return;
+
+        case SpringPropertyType.General:
+          SetInputProperties(1, "Stiffness x [" + stiffnessAbr + "]", "Sx", "Stiffness x");
+          SetInputProperties(2, "Stiffness y [" + stiffnessAbr + "]", "Sy", "Stiffness y");
+          SetInputProperties(3, "Stiffness z [" + stiffnessAbr + "]", "Sz", "Stiffness z");
+          SetInputProperties(4, "Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "Stiffness xx");
+          SetInputProperties(5, "Stiffness yy [" + rotationalStiffnessAbr + "]", "Syy", "Stiffness yy");
+          SetInputProperties(6, "Stiffness zz [" + rotationalStiffnessAbr + "]", "Szz", "Stiffness zz");
+          SetDampingRatioInputAt(7);
+          return;
+
+        case SpringPropertyType.Matrix:
+          SetInputProperties(1, "Spring Matrix", "SM", "Spring Matrix");
+          SetDampingRatioInputAt(2);
           return;
 
         case SpringPropertyType.Connector:
-        case SpringPropertyType.Friction:
-        case SpringPropertyType.Gap:
-        case SpringPropertyType.General:
-          SetInputProperties(0, "Thk", $"Thickness [{Length.GetAbbreviation(_lengthUnit)}]",
-            "Section thickness", optional: false);
-          SetMaterialInputAt(1);
+          SetDampingRatioInputAt(1);
+          return;
 
-          if (_mode != SpringPropertyType.General) {
-            SetInputProperties(2, "RS", "Reference Surface",
-              "Reference Surface Middle = 0 (default), Top = 1, Bottom = 2", optional: true);
-            SetInputProperties(3, "Off", $"Offset [{Length.GetAbbreviation(_lengthUnit)}]",
-              "Additional Offset", optional: true);
-          }
+        case SpringPropertyType.Friction:
+          SetInputProperties(1, "Stiffness x [" + stiffnessAbr + "]", "Sx", "Stiffness x");
+          SetInputProperties(2, "Stiffness y [" + stiffnessAbr + "]", "Sy", "Stiffness y");
+          SetInputProperties(3, "Stiffness z [" + stiffnessAbr + "]", "Sz", "Stiffness z");
+          SetInputProperties(4, "Coeff. of Friction [" + stiffnessAbr + "]", "CF", "Coefficient of Friction");
+          SetDampingRatioInputAt(5);
           return;
       }
     }
@@ -143,8 +150,7 @@ namespace GsaGH.Components {
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Type",
-        "Stiffness Unit",
-        //"Length Unit",
+        "Stiffness Unit"
       });
 
       _dropDownItems = new List<List<string>>();
@@ -156,19 +162,13 @@ namespace GsaGH.Components {
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength));
       _selectedItems.Add(ForcePerLength.GetAbbreviation(_stiffnessUnit));
 
-      //_dropDownItems.Add(abbreviations);
-      //_selectedItems.Add(RotationalStiffness.GetAbbreviation(_rotationalStiffnessUnit));
-
-      //_dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      //_selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
-
       _isInitialised = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddGenericParameter("Name", "Na", "[Optional] Spring Property Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Stiffness [foo]", "S", "Axial Stiffness", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Damping Ratio", "DR", "[Optional] Damping Ratio (Default = 0.0 -> 0%)", GH_ParamAccess.item);
+      pManager.AddTextParameter("Name", "Na", "[Optional] Spring Property Name", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness [" + ForcePerLength.GetAbbreviation(_stiffnessUnit) + "]", "S", "Axial Stiffness", GH_ParamAccess.item);
+      pManager.AddNumberParameter("Damping Ratio", "DR", "[Optional] Damping Ratio (Default = 0.0 -> 0%)", GH_ParamAccess.item);
       pManager[0].Optional = true;
       pManager[2].Optional = true;
     }
@@ -180,15 +180,125 @@ namespace GsaGH.Components {
     protected override void SolveInternal(IGH_DataAccess da) {
       GsaSpringProperty spring;
 
+      double stiffness = 0;
       switch (_mode) {
         case SpringPropertyType.Axial:
-          //var _fooUnit = new AxialStiffness();
-          //double asdf = Input.UnitNumber(this, da, 1, _fooUnit).As(AxialStiffnessUnit.Newton);
+        case SpringPropertyType.Torsional:
+        case SpringPropertyType.TensionOnly:
+        case SpringPropertyType.CompressionOnly:
+        case SpringPropertyType.Lockup:
+        case SpringPropertyType.Gap:
+          stiffness = Input.UnitNumber(this, da, 1, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
+          break;
+      }
 
-          var property = new AxialSpringProperty {
-            Stiffness = 0
+      double stiffnessX;
+      double stiffnessY;
+      double stiffnessZ;
+
+      switch (_mode) {
+        case SpringPropertyType.Axial:
+          var axialProperty = new AxialSpringProperty {
+            Stiffness = stiffness
           };
-          spring = new GsaAxialSpringProperty(property);
+          spring = new GsaSpringProperty(axialProperty);
+          break;
+
+        case SpringPropertyType.Torsional:
+          var torsionalProperty = new TorsionalSpringProperty {
+            Stiffness = stiffness
+          };
+          spring = new GsaSpringProperty(torsionalProperty);
+          break;
+
+        case SpringPropertyType.General:
+          stiffnessX = Input.UnitNumber(this, da, 1, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
+          stiffnessY = Input.UnitNumber(this, da, 2, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
+          stiffnessZ = Input.UnitNumber(this, da, 3, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
+          double stiffnessXX = Input.UnitNumber(this, da, 4, _rotationalStiffnessUnit).As(RotationalStiffnessUnit.NewtonMeterPerRadian);
+          double stiffnessYY = Input.UnitNumber(this, da, 5, _rotationalStiffnessUnit).As(RotationalStiffnessUnit.NewtonMeterPerRadian);
+          double stiffnessZZ = Input.UnitNumber(this, da, 6, _rotationalStiffnessUnit).As(RotationalStiffnessUnit.NewtonMeterPerRadian);
+
+          var generalProperty = new GeneralSpringProperty {
+            StiffnessX = stiffnessX,
+            StiffnessY = stiffnessY,
+            StiffnessZ = stiffnessZ,
+            StiffnessXX = stiffnessXX,
+            StiffnessYY = stiffnessYY,
+            StiffnessZZ = stiffnessZZ,
+          };
+          spring = new GsaSpringProperty(generalProperty);
+          break;
+
+        case SpringPropertyType.Matrix:
+          int matrix = 0;
+          if (da.GetData(0, ref matrix)) {
+            var matrixProperty = new MatrixSpringProperty {
+              SpringMatrix = matrix
+            };
+            spring = new GsaSpringProperty(matrixProperty);
+          } else {
+            // error
+            return;
+          }
+
+          break;
+
+        case SpringPropertyType.TensionOnly:
+          var tensionProperty = new TensionSpringProperty {
+            Stiffness = stiffness
+          };
+          spring = new GsaSpringProperty(tensionProperty);
+          break;
+
+        case SpringPropertyType.CompressionOnly:
+          var compressionProperty = new CompressionSpringProperty {
+            Stiffness = stiffness
+          };
+          spring = new GsaSpringProperty(compressionProperty);
+          break;
+
+        case SpringPropertyType.Connector:
+          var connectorProperty = new ConnectorSpringProperty();
+          spring = new GsaSpringProperty(connectorProperty);
+          break;
+
+        case SpringPropertyType.Lockup:
+          double positiveLockup = Input.UnitNumber(this, da, 2, _lengthUnit).As(LengthUnit.Meter);
+          double negativeLockup = Input.UnitNumber(this, da, 3, _lengthUnit).As(LengthUnit.Meter);
+          var lockupProperty = new LockupSpringProperty {
+            Stiffness = stiffness,
+            PositiveLockup = positiveLockup,
+            NegativeLockup = negativeLockup
+          };
+          spring = new GsaSpringProperty(lockupProperty);
+          break;
+
+        case SpringPropertyType.Gap:
+          var gapProperty = new GapSpringProperty() {
+            Stiffness = stiffness
+          };
+          spring = new GsaSpringProperty(gapProperty);
+          break;
+
+        case SpringPropertyType.Friction:
+          stiffnessX = Input.UnitNumber(this, da, 1, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
+          stiffnessY = Input.UnitNumber(this, da, 2, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
+          stiffnessZ = Input.UnitNumber(this, da, 3, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
+          double frictionCoefficient = 0;
+          if (da.GetData(0, ref frictionCoefficient)) {
+            var frictionProperty = new FrictionSpringProperty {
+              StiffnessX = stiffnessX,
+              StiffnessY = stiffnessY,
+              StiffnessZ = stiffnessZ,
+              FrictionCoefficient = frictionCoefficient
+            };
+            spring = new GsaSpringProperty(frictionProperty);
+          }
+          else {
+            // error
+            return;
+          }
           break;
 
         default:
@@ -199,9 +309,6 @@ namespace GsaGH.Components {
       if (da.GetData(0, ref name)) {
         spring.ApiProperty.Name = name;
       }
-
-
-
 
       da.SetData(0, new GsaSpringPropertyGoo(spring));
     }
@@ -262,22 +369,21 @@ namespace GsaGH.Components {
       }
     }
 
-    private void SetInputProperties(
-      int index, string nickname, string name, string description,
+    private void SetInputProperties(int index, string name, string nickname, string description,
       bool optional = true) {
-      Params.Input[index].NickName = nickname;
       Params.Input[index].Name = name;
+      Params.Input[index].NickName = nickname;
       Params.Input[index].Description = description;
       Params.Input[index].Access = GH_ParamAccess.item;
       Params.Input[index].Optional = optional;
     }
 
-    private void SetMaterialInputAt(int index) {
-      SetInputProperties(index, "Mat", "Material", "GSA Material");
+    private void SetDampingRatioInputAt(int index) {
+      SetInputProperties(index, "Damping Ratio", "DR", "[Optional] Damping Ratio (Default = 0.0 -> 0%)");
     }
 
-    private void SetReferenceEdgeInputAt(int index) {
-      SetInputProperties(index, "RE", "Reference edge", "Reference edge for automatic support type");
+    private void SetStiffnessInputAt(int index) {
+      SetInputProperties(index, "Stiffness [" + ForcePerLength.GetAbbreviation(_stiffnessUnit) + "]", "S", "Axial Stiffness");
     }
 
     private void UpdateDropDownItems(SpringPropertyType mode) {
@@ -309,47 +415,59 @@ namespace GsaGH.Components {
           break;
       }
 
-      if (mode == SpringPropertyType.Gap) {
+      if (mode == SpringPropertyType.Lockup) {
         AddLengthUnitDropDown();
       }
     }
 
     private void UpdateParameters(SpringPropertyType mode) {
-      if (_mode == mode && mode != Prop2dType.LoadPanel) {
+      if (mode == _mode) {
         return;
       }
 
       _springPropertyTypes.TryGetValue(mode, out string eventName);
       RecordUndoEvent($"{eventName} Parameters");
 
-      while (Params.Input.Count > 0) {
-        Params.UnregisterInputParameter(Params.Input[0], true);
+      while (Params.Input.Count > 1) {
+        Params.UnregisterInputParameter(Params.Input[1], true);
       }
 
       switch (mode) {
-        case Prop2dType.Shell:
-        case Prop2dType.FlatPlate:
-        case Prop2dType.CurvedShell:
-          Params.RegisterInputParam(new Param_GenericObject());
-          Params.RegisterInputParam(new GsaMaterialParameter());
+        case SpringPropertyType.Axial:
+        case SpringPropertyType.TensionOnly:
+        case SpringPropertyType.CompressionOnly:
+        case SpringPropertyType.Lockup:
+        case SpringPropertyType.Gap:
+        case SpringPropertyType.Torsional:
           Params.RegisterInputParam(new Param_GenericObject());
           Params.RegisterInputParam(new Param_Number());
           break;
 
-        case Prop2dType.PlaneStress:
+        case SpringPropertyType.General:
           Params.RegisterInputParam(new Param_GenericObject());
-          Params.RegisterInputParam(new GsaMaterialParameter());
+          Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_Number());
           break;
 
-        case Prop2dType.Fabric:
+        case SpringPropertyType.Matrix:
           Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_Number());
           break;
 
-        case Prop2dType.LoadPanel:
-          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
-            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges)) {
-            Params.RegisterInputParam(new Param_Integer());
-          }
+        case SpringPropertyType.Connector:
+          Params.RegisterInputParam(new Param_Number());
+          break;
+
+        case SpringPropertyType.Friction:
+          Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_Number());
+          Params.RegisterInputParam(new Param_Number());
           break;
       }
 
