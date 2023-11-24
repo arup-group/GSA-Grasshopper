@@ -71,8 +71,8 @@ namespace GsaGHTests.Parameters.Results {
     public void Element2dDisplacementsMaxFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
-      double expected = Math.Max(ExpectedCombinationCaseC4p1Values(component).Max(),
-        ExpectedCombinationCaseC4p2Values(component).Max());
+      double expected = Math.Max(ExpectedCombinationCaseC2p1Values(component).Max(),
+        ExpectedCombinationCaseC2p2Values(component).Max());
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
@@ -112,8 +112,8 @@ namespace GsaGHTests.Parameters.Results {
     public void Element2dDisplacementsMinFromcombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
-      double expected = Math.Min(ExpectedCombinationCaseC4p1Values(component).Min(),
-        ExpectedCombinationCaseC4p2Values(component).Min());
+      double expected = Math.Min(ExpectedCombinationCaseC2p1Values(component).Min(),
+        ExpectedCombinationCaseC2p2Values(component).Min());
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
@@ -161,8 +161,8 @@ namespace GsaGHTests.Parameters.Results {
     public void Element2dDisplacementsValuesFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
-      List<double> expectedP1 = ExpectedCombinationCaseC4p1Values(component);
-      List<double> expectedP2 = ExpectedCombinationCaseC4p2Values(component);
+      List<double> expectedP1 = ExpectedCombinationCaseC2p1Values(component);
+      List<double> expectedP2 = ExpectedCombinationCaseC2p2Values(component);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
@@ -206,7 +206,7 @@ namespace GsaGHTests.Parameters.Results {
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p1Values(ResultVector6HelperEnum component) {
+    private List<double> ExpectedCombinationCaseC2p1Values(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return Element2dDisplacementsC2p1.XInMillimeter();
         case ResultVector6HelperEnum.Y: return Element2dDisplacementsC2p1.YInMillimeter();
@@ -217,7 +217,7 @@ namespace GsaGHTests.Parameters.Results {
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p2Values(ResultVector6HelperEnum component) {
+    private List<double> ExpectedCombinationCaseC2p2Values(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return Element2dDisplacementsC2p2.XInMillimeter();
         case ResultVector6HelperEnum.Y: return Element2dDisplacementsC2p2.YInMillimeter();
