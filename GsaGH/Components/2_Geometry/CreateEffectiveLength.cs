@@ -120,7 +120,7 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
-        "Le calculation",
+        "Lₑ calc. option",
         "Load position",
       });
 

@@ -28,7 +28,7 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeDisplacement(nodelist);
             Parallel.ForEach(aCaseResults.Keys, nodeId => {
               var res = new Displacement(aCaseResults[nodeId]);
-              Cache.TryAdd(nodeId, new Collection<IDisplacement>() { res, });
+              Cache.TryAdd(nodeId, new Collection<IDisplacement>() { res });
             });
             break;
 
