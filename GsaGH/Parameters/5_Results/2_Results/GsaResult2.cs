@@ -47,7 +47,7 @@ namespace GsaGH.Parameters.Results {
       get;
       private set;
     }
-    public IEntity2dResultCache<IEntity2dQuantity<IForce2d>, IForce2d, ResultVector6<Entity2dExtremaKey>> Element2dForce {
+    public IEntity2dResultCache<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> Element2dForce {
       get;
       private set;
     }
