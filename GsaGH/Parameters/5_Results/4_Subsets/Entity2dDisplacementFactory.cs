@@ -26,7 +26,7 @@ namespace GsaGH.Parameters.Results {
         5 => new Entity2dQuadDisplacement(results),
         7 => new Entity2dTri6Displacement(results),
         9 => new Entity2dQuad8Displacement(results),
-        _ => throw new System.Exception("Unable to create 2d result"),
+        _ => throw new System.ArgumentException("Unable to create 2d result"),
       };
     }
   }
