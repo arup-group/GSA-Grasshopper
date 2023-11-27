@@ -1,0 +1,155 @@
+﻿using System.Collections.Generic;
+
+namespace GsaGHTests.Parameters.Results {
+  public class Element2dMomentsC2p2 {
+    // these are regression tests. the values are taken directly from GSA results
+    // "Element2d_Simple.gwb" for elements 420 430 440 445 for combination case C2p2
+    internal static List<double> MxInKiloNewton() {
+      return new List<double>() {
+        15.98,
+        15.02,
+        17.92,
+        18.35,
+        16.82,
+        -4.404,
+        -4.404,
+        -4.404,
+        -4.404,
+        8.228,
+        -11.86,
+        -2.811,
+        -1.815,
+        -7.335,
+        2.709,
+        -2.147,
+        -13.97,
+        5.064,
+        -12.43,
+        5.299,
+        -0.7332,
+        -4.102,
+        0.4365,
+        -4.488,
+        -0.4250,
+      };
+    }
+
+    internal static List<double>MyInKiloNewton(){
+      return new List<double>(){
+        4.685,
+        1.101,
+        10.66,
+        12.45,
+        7.225,
+        -2.293,
+        -2.293,
+        -2.293,
+        -2.293,
+        -10.92,
+        -21.53,
+        15.13,
+        -16.23,
+        -3.198,
+        2.105,
+        -5.773,
+        -9.915,
+        7.373,
+        -9.673,
+        7.935,
+        -0.4665,
+        -1.925,
+        0.2540,
+        -1.367,
+        -0.6718,
+      };
+    }
+
+    internal static List<double>MxyInKiloNewton(){
+      return new List<double>(){
+        -2.481,
+        -5.387,
+        -6.323,
+        -3.575,
+        -4.441,
+        -5.539,
+        -5.539,
+        -5.539,
+        -5.539,
+        1.744,
+        -6.615,
+        -2.475,
+        -2.436,
+        -4.545,
+        -0.3657,
+        -2.449,
+        8.942,
+        4.935,
+        8.824,
+        4.118,
+        5.890,
+        5.506,
+        5.450,
+        5.247,
+        4.344,
+      };
+    }
+    internal static List<double> WoodArmerXInKiloNewton() {
+      return new List<double>(){
+        18.46,
+        20.41,
+        24.25,
+        21.93,
+        21.26,
+        -9.943,
+        -9.943,
+        -9.943,
+        -9.943,
+        9.972,
+        -18.47,
+        -5.286,
+        -4.251,
+        -11.88,
+        3.074,
+        -4.596,
+        -22.91,
+        9.999,
+        -21.26,
+        9.417,
+        -6.623,
+        -9.608,
+        5.886,
+        -9.735,
+        -4.769,
+      };
+    }
+    internal static List<double> WoodArmerYInKiloNewton() {
+      return new List<double>(){
+        7.166,
+        6.488,
+        16.99,
+        16.03,
+        11.67,
+        -7.832,
+        -7.832,
+        -7.832,
+        -7.832,
+        -12.67,
+        -28.15,
+        17.61,
+        -18.66,
+        -7.744,
+        2.471,
+        -8.222,
+        -18.86,
+        12.31,
+        -18.50,
+        12.05,
+        -6.357,
+        -7.431,
+        5.704,
+        -6.614,
+        -5.016,
+      };
+    }
+  }
+}
