@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using Xunit;
@@ -10,15 +9,6 @@ using Xunit;
 namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
   public class Element2dStressesTests {
-    public enum ResultTensor3HelperEnum {
-      Xx,
-      Yy,
-      Zz,
-      Xy,
-      Yz,
-      Zx
-    }
-
     private static readonly string ElementList = "420 430 440 445";
 
     [Theory]
@@ -236,8 +226,8 @@ namespace GsaGHTests.Parameters.Results {
         Collection<IEntity2dQuantity<IStress>> stressQuantity = resultSet.Subset[id];
 
         Assert.Single(stressQuantity);
-        foreach (IStress displacement in stressQuantity[0].Results()) {
-          double x = TestsResultHelper.ResultsHelper(displacement, component);
+        foreach (IStress stress in stressQuantity[0].Results()) {
+          double x = TestsResultHelper.ResultsHelper(stress, component);
           Assert.Equal(expected[i++], x);
         }
       }

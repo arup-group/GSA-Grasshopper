@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public abstract class Entity3dBrick8Result<ApiResultType, QuantityResult> : IEntity3dBrick8Quantity<QuantityResult>
+  internal abstract class Entity3dBrick8Result<ApiResultType, QuantityResult> : IEntity3dBrick8Quantity<QuantityResult>
     where QuantityResult : IResultItem {
     public QuantityResult Node1 { get; private set; }
     public QuantityResult Node2 { get; private set; }

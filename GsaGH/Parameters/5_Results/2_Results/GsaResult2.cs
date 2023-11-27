@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Components;
 using GsaGH.Helpers;
 
 namespace GsaGH.Parameters.Results {
@@ -52,6 +53,10 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
     public IEntity2dResultCache<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> Element3dDisplacements {
+      get;
+      private set;
+    }
+    public IEntity2dResultCache<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element3dStresses {
       get;
       private set;
     }
@@ -188,6 +193,7 @@ namespace GsaGH.Parameters.Results {
       Element2dStresses = new Element2dStressCache(result);
 
       Element3dDisplacements = new Element3dDisplacementCache(result);
+      Element3dStresses = new Element3dStressCache(result);
 
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
@@ -221,6 +227,7 @@ namespace GsaGH.Parameters.Results {
       Element2dStresses = new Element2dStressCache(result);
 
       Element3dDisplacements = new Element3dDisplacementCache(result);
+      Element3dStresses = new Element3dStressCache(result);
 
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model.Model);
