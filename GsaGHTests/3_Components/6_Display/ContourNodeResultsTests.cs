@@ -20,6 +20,10 @@ namespace GsaGHTests.Components.Display {
       Assert.Equal("Resolved |F|", comp._selectedItems[1]);
 
       comp.SetSelected(0, 2);
+      Assert.Equal("SpringForce", comp._selectedItems[0]);
+      Assert.Equal("Resolved |F|", comp._selectedItems[1]);
+
+      comp.SetSelected(0, 3);
       Assert.Equal("Footfall", comp._selectedItems[0]);
       Assert.Equal("Resonant", comp._selectedItems[1]);
 
@@ -72,7 +76,7 @@ namespace GsaGHTests.Components.Display {
     public void DrawViewportMeshesAndWiresFootfallTest() {
       var comp = new ContourNodeResults();
       ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dFootfallResultsMother());
-      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 2);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 3);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
     }

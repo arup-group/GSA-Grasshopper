@@ -215,7 +215,7 @@ namespace GsaGH.Components {
             case 2:
               if (_dropDownItems[1] != _springForce) {
                 _dropDownItems[1] = _springForce;
-                _selectedItems[0] = _dropDownItems[0][1];
+                _selectedItems[0] = _dropDownItems[0][2];
                 _selectedItems[1] = _dropDownItems[1][3];
                 _disp = DisplayValue.ResXyz;
                 Mode3Clicked();
@@ -226,7 +226,7 @@ namespace GsaGH.Components {
             case 3:
               if (_dropDownItems[1] != _footfall) {
                 _dropDownItems[1] = _footfall;
-                _selectedItems[0] = _dropDownItems[0][2];
+                _selectedItems[0] = _dropDownItems[0][3];
                 _selectedItems[1] = _dropDownItems[1][0];
                 _disp = DisplayValue.X;
                 Mode4Clicked();
