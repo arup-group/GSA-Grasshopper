@@ -99,13 +99,6 @@ namespace GsaGHTests.Components.Display {
     }
 
     [Fact]
-    public void UpdateModelTest() {
-      var comp = new ContourNodeResults();
-      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
-      comp.UpdateModel("mm");
-    }
-
-    [Fact]
     public void UpdateMomentTest() {
       var comp = new ContourNodeResults();
       ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
