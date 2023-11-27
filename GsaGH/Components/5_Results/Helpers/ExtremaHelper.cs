@@ -78,6 +78,19 @@ namespace GsaGH.Components.Helpers {
         "Min |R|",
       });
 
+    internal static readonly ReadOnlyCollection<string> Vector3Translations
+      = new ReadOnlyCollection<string>(new[] {
+        "All",
+        "Max Ux",
+        "Max Uy",
+        "Max Uz",
+        "Max |U|",
+        "Min Ux",
+        "Min Uy",
+        "Min Uz",
+        "Min |U|",
+      });
+
     internal static readonly ReadOnlyCollection<string> Tensor2InAxis
       = new ReadOnlyCollection<string>(new[] {
         "All",
@@ -250,6 +263,22 @@ namespace GsaGH.Components.Helpers {
         "Min Ryy" => resultSet.Min.Yy,
         "Min Rzz" => resultSet.Min.Zz,
         "Min |R|" => resultSet.Min.Xxyyzz,
+        _ => throw new ArgumentException("Extrema case not found"),
+      };
+    }
+
+    internal static U DisplacementExtremaKey<T1, T2, U>(
+      IEntity2dResultSubset<T1, T2, ResultVector3InAxis<U>> resultSet, string key) where T1 : IEntity2dQuantity<T2>
+    where T2 : IResultItem {
+      return key switch {
+        "Max Ux" => resultSet.Max.X,
+        "Max Uy" => resultSet.Max.Y,
+        "Max Uz" => resultSet.Max.Z,
+        "Max |U|" => resultSet.Max.Xyz,
+        "Min Ux" => resultSet.Min.X,
+        "Min Uy" => resultSet.Min.Y,
+        "Min Uz" => resultSet.Min.Z,
+        "Min |U|" => resultSet.Min.Xyz,
         _ => throw new ArgumentException("Extrema case not found"),
       };
     }
