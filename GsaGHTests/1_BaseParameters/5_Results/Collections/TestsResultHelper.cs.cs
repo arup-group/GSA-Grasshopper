@@ -562,6 +562,24 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
+    public static double ResultsHelper(
+      IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> result,
+      ResultVector2HelperEnum component, bool max) {
+      double d = 0;
+      ResultVector2<Entity2dExtremaKey> extrema = max ? result.Max : result.Min;
+      switch (component) {
+        case ResultVector2HelperEnum.Qx:
+          d = result.GetExtrema(extrema.Qx).Qx.KilonewtonsPerMeter;
+          break;
+
+        case ResultVector2HelperEnum.Qy:
+          d = result.GetExtrema(extrema.Qy).Qy.KilonewtonsPerMeter;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
     public static double ResultsHelper(IForce2d result, ResultTensor2InAxisHelperEnum component) {
       double d = 0;
       switch (component) {
@@ -600,6 +618,21 @@ namespace GsaGHTests.Parameters.Results {
           break;
         case ResultTensor2AroundAxisHelperEnum.WoodArmerY:
           d = result.WoodArmerY.Kilonewtons;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
+    public static double ResultsHelper(IShear2d result, ResultVector2HelperEnum component) {
+      double d = 0;
+      switch (component) {
+        case ResultVector2HelperEnum.Qx:
+          d = result.Qx.KilonewtonsPerMeter;
+          break;
+
+        case ResultVector2HelperEnum.Qy:
+          d = result.Qy.KilonewtonsPerMeter;
           break;
       }
 
