@@ -98,7 +98,6 @@ namespace GsaGH.Components {
     private bool _showLegend = true;
     private bool _slider = true;
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
-    private bool _undefinedModelLengthUnit;
 
     public Contour3dResults() : base("Contour 3D Results", "Contour3D",
       "Displays GSA 3D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -288,23 +287,12 @@ namespace GsaGH.Components {
         EngineeringUnits.Stress, Pressure.GetAbbreviation(_stressUnitResult), UpdateStress);
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
-
       unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
         lengthUnitsMenu,
         stressUnitsMenu,
       });
-      if (_undefinedModelLengthUnit) {
-        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
-          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
-          UpdateModel);
-
-        unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
-      }
-
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
-
       menu.Items.Add(unitsMenu);
-
       var legendScale = new ToolStripTextBox {
         Text = _legendScale.ToString(),
       };
@@ -313,8 +301,8 @@ namespace GsaGH.Components {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
-      var menu2 = new GH_MenuCustomControl(legendScaleMenu.DropDown, legendScale.Control, true,
-        200);
+      var menu2 = new GH_MenuCustomControl(
+        legendScaleMenu.DropDown, legendScale.Control, true, 200);
       legendScaleMenu.DropDownItems[1].MouseUp += (s, e) => {
         UpdateLegendScale();
         (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
