@@ -569,11 +569,11 @@ namespace GsaGHTests.Parameters.Results {
       ResultVector2<Entity2dExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
         case ResultVector2HelperEnum.Qx:
-          d = result.GetExtrema(extrema.Vx).Vx.KilonewtonsPerMeter;
+          d = result.GetExtrema(extrema.Qx).Qx.KilonewtonsPerMeter;
           break;
 
         case ResultVector2HelperEnum.Qy:
-          d = result.GetExtrema(extrema.Vy).Vy.KilonewtonsPerMeter;
+          d = result.GetExtrema(extrema.Qy).Qy.KilonewtonsPerMeter;
           break;
       }
 
@@ -628,11 +628,11 @@ namespace GsaGHTests.Parameters.Results {
       double d = 0;
       switch (component) {
         case ResultVector2HelperEnum.Qx:
-          d = result.Vx.KilonewtonsPerMeter;
+          d = result.Qx.KilonewtonsPerMeter;
           break;
 
         case ResultVector2HelperEnum.Qy:
-          d = result.Vy.KilonewtonsPerMeter;
+          d = result.Qy.KilonewtonsPerMeter;
           break;
       }
 

@@ -34,24 +34,24 @@ namespace GsaGH.Parameters.Results {
       ref ResultVector2<Entity2dExtremaKey> maxKey, ref ResultVector2<Entity2dExtremaKey> minKey)
       where T : IResultVector2<Q1> where Q1 : IQuantity {
       for (int i = 0; i < item.Count; i++) {
-        if (item[i].Vx.Value > maxValue.Vx) {
-          maxValue.Vx = item[i].Vx.Value;
-          maxKey.Vx = new Entity2dExtremaKey(elementId, i, permutation);
+        if (item[i].Qx.Value > maxValue.Qx) {
+          maxValue.Qx = item[i].Qx.Value;
+          maxKey.Qx = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
-        if (item[i].Vy.Value > maxValue.Vy) {
-          maxValue.Vy = item[i].Vy.Value;
-          maxKey.Vy = new Entity2dExtremaKey(elementId, i, permutation);
+        if (item[i].Qy.Value > maxValue.Qy) {
+          maxValue.Qy = item[i].Qy.Value;
+          maxKey.Qy = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
-        if (item[i].Vx.Value < minValue.Vx) {
-          minValue.Vx = item[i].Vx.Value;
-          minKey.Vx = new Entity2dExtremaKey(elementId, i, permutation);
+        if (item[i].Qx.Value < minValue.Qx) {
+          minValue.Qx = item[i].Qx.Value;
+          minKey.Qx = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
-        if (item[i].Vy.Value < minValue.Vy) {
-          minValue.Vy = item[i].Vy.Value;
-          minKey.Vy = new Entity2dExtremaKey(elementId, i, permutation);
+        if (item[i].Qy.Value < minValue.Qy) {
+          minValue.Qy = item[i].Qy.Value;
+          minKey.Qy = new Entity2dExtremaKey(elementId, i, permutation);
         }
       }
     }
