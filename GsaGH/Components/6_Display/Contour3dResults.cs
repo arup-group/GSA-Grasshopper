@@ -432,7 +432,7 @@ namespace GsaGH.Components {
 
       ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
       int permutation = result.SelectedPermutationIds == null
-        ? 0 : result.SelectedPermutationIds[0];
+        ? 0 : result.SelectedPermutationIds[0] - 1;
       double dmax = 0;
       double dmin = 0;
       ConcurrentDictionary<int, List<IQuantity>> values = null;
