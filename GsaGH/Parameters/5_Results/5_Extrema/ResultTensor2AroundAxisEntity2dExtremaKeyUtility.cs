@@ -20,7 +20,7 @@ namespace GsaGH.Parameters.Results {
         for (int permutation = 0; permutation < values.Count; permutation++) {
           switch (values[permutation]) {
             case IEntity2dQuantity<IMoment2d> force:
-              UpdateExtrema<IMoment2d, ForcePerLength>(force.Results(),
+              UpdateExtrema<IMoment2d, Force>(force.Results(),
                 elementId, permutation, ref maxValue, ref minValue, ref maxKey, ref minKey);
               break;
 
