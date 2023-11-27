@@ -60,7 +60,6 @@ namespace GsaGH.Parameters.Results {
           maxValue.WoodArmerY = item[i].WoodArmerY.Value;
           maxKey.WoodArmerY = new Entity2dExtremaKey(elementId, i, permutation);
         }
-        /////// min
         if (item[i].Mx.Value < minValue.Mx) {
           minValue.Mx = item[i].Mx.Value;
           minKey.Mx = new Entity2dExtremaKey(elementId, i, permutation);
