@@ -482,6 +482,12 @@ namespace GsaGH.Components {
         case FoldMode.Displacement:
           INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> displacements 
             = result.NodeDisplacements.ResultSubset(nodeIds);
+
+          if (displacements.Ids.Count == 0) {
+            this.AddRuntimeWarning($"{result.CaseType} {result.CaseId} contains no Displacement results.");
+            return;
+          }
+
           switch (_disp) {
             case DisplayValue.X:
               _resType = "Translation, Ux";
@@ -559,6 +565,12 @@ namespace GsaGH.Components {
         case FoldMode.Reaction:
           INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> reactions
             = result.NodeReactionForces.ResultSubset(nodeIds);
+
+          if (reactions.Ids.Count == 0) {
+            this.AddRuntimeWarning($"{result.CaseType} {result.CaseId} contains no Reaction force results.");
+            return;
+          }
+
           switch (_disp) {
             case DisplayValue.X:
               _resType = "Reaction Force, Fx";
@@ -624,6 +636,7 @@ namespace GsaGH.Components {
                 values.TryAdd(kvp.Key, kvp.Value[permutation].Xxyyzz.ToUnit(_momentUnit)));
               break;
           }
+
           break;
 
         case FoldMode.Footfall:
@@ -637,6 +650,11 @@ namespace GsaGH.Components {
             case "Transient":
               footfall = result.NodeTransientFootfalls.ResultSubset(nodeIds);
               break;
+          }
+
+          if (footfall.Ids.Count == 0) {
+            this.AddRuntimeWarning($"{result.CaseType} {result.CaseId} contains no Footfall results.");
+            return;
           }
 
           dmax = footfall.GetExtrema(footfall.Max.MaximumResponseFactor).MaximumResponseFactor;
