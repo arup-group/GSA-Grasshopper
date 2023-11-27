@@ -165,59 +165,57 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
       switch (i) {
-        case 0: {
-            switch (j) {
-              case 0: {
-                  if (_dropDownItems[1] != _displacement) {
-                    _dropDownItems[1] = _displacement;
-                    _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
+        case 0:
+          switch (j) {
+            case 0:
+              if (_dropDownItems[1] != _displacement) {
+                _dropDownItems[1] = _displacement;
+                _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
 
-                    _disp = (DisplayValue)3; // Resolved XYZ
-                    DeformationModeClicked();
-                  }
-
-                  break;
-                }
-              case 1: {
-                  if (_dropDownItems[1] != _stress) {
-                    _dropDownItems[1] = _stress;
-                    _selectedItems[1] = _dropDownItems[1][2];
-
-                    _disp = (DisplayValue)2;
-                    StressModeClicked();
-                  }
-
-                  break;
-                }
-            }
-
-            break;
-          }
-        case 1: {
-            bool redraw = false;
-            _selectedItems[1] = _dropDownItems[1][j];
-            if (_mode == FoldMode.Displacement) {
-              if (((int)_disp > 3) & (j < 4)) {
-                redraw = true;
-                _slider = true;
+                _disp = (DisplayValue)3; // Resolved XYZ
+                DeformationModeClicked();
               }
 
-              if (((int)_disp < 4) & (j > 3)) {
-                redraw = true;
-                _slider = false;
+              break;
+
+            case 1:
+              if (_dropDownItems[1] != _stress) {
+                _dropDownItems[1] = _stress;
+                _selectedItems[1] = _dropDownItems[1][2];
+
+                _disp = (DisplayValue)2;
+                StressModeClicked();
               }
 
-              _disp = (DisplayValue)j;
-            } else {
-              _disp = j < 3 ? (DisplayValue)j : (DisplayValue)(j + 1);
-            }
-
-            if (redraw) {
-              ReDrawComponent();
-            }
-
-            break;
+              break;
           }
+
+          break;
+
+        case 1:
+          bool redraw = false;
+          _selectedItems[1] = _dropDownItems[1][j];
+          if (_mode == FoldMode.Displacement) {
+            if (((int)_disp > 3) & (j < 4)) {
+              redraw = true;
+              _slider = true;
+            }
+
+            if (((int)_disp < 4) & (j > 3)) {
+              redraw = true;
+              _slider = false;
+            }
+
+            _disp = (DisplayValue)j;
+          } else {
+            _disp = j < 3 ? (DisplayValue)j : (DisplayValue)(j + 1);
+          }
+
+          if (redraw) {
+            ReDrawComponent();
+          }
+
+          break;
       }
 
       base.UpdateUI();
@@ -385,49 +383,42 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       GsaResult2 result;
-      var oldResult = new GsaResult();
+      string elementlist = "All";
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp)) {
-        return;
-      }
-
-      #region Inputs
-
+      da.GetData(0, ref ghTyp);
       switch (ghTyp?.Value) {
+        case GsaResultGoo goo:
+          result = new GsaResult2((GsaResult)goo.Value);
+          elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
+          switch (result.CaseType) {
+            case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
+              this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
+                + result.SelectedPermutationIds.Count
+                + " permutations - only one permutation can be displayed at a time."
+                + Environment.NewLine
+                + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
+              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+              break;
+
+            case CaseType.CombinationCase:
+              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+              break;
+
+            case CaseType.AnalysisCase:
+              _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
+              break;
+          }
+          break;
+
         case null:
           this.AddRuntimeWarning("Input is null");
           return;
 
-        case GsaResultGoo goo: {
-            result = new GsaResult2((GsaResult)goo.Value);
-            oldResult = (GsaResult)goo.Value;
-            switch (result.CaseType) {
-              case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
-                this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
-                  + result.SelectedPermutationIds.Count
-                  + " permutations - only one permutation can be displayed at a time."
-                  + Environment.NewLine
-                  + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
-                _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-                break;
-
-              case CaseType.CombinationCase:
-                _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-                break;
-
-              case CaseType.AnalysisCase:
-                _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
-                break;
-            }
-
-            break;
-          }
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
       }
 
-      string elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
       ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
       if (elems.Count == 0) {
@@ -445,14 +436,11 @@ namespace GsaGH.Components {
       }
 
       GH_Gradient ghGradient = Colours.Stress_Gradient(colors);
-
       var ghInterval = new GH_Interval();
       Interval customMinMax = Interval.Unset;
       if (da.GetData(3, ref ghInterval)) {
         GH_Convert.ToInterval(ghInterval, ref customMinMax, GH_Conversion.Both);
       }
-
-      #endregion
 
       ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
       int permutation = result.SelectedPermutationIds == null
