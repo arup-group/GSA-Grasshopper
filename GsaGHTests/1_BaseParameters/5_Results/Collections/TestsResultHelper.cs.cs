@@ -534,6 +534,34 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
+    public static double ResultsHelper(
+      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> result,
+      ResultTensor2AroundAxisHelperEnum component, bool max) {
+      double d = 0;
+      ResultTensor2AroundAxis<Entity2dExtremaKey> extrema = max ? result.Max : result.Min;
+      switch (component) {
+        case ResultTensor2AroundAxisHelperEnum.Mx:
+          d = result.GetExtrema(extrema.Mx).Mx.Kilonewtons;
+          break;
+
+        case ResultTensor2AroundAxisHelperEnum.My:
+          d = result.GetExtrema(extrema.My).My.Kilonewtons;
+          break;
+
+        case ResultTensor2AroundAxisHelperEnum.Mxy:
+          d = result.GetExtrema(extrema.Mxy).Mxy.Kilonewtons;
+          break;
+        case ResultTensor2AroundAxisHelperEnum.WoodArmerX:
+          d = result.GetExtrema(extrema.WoodArmerX).WoodArmerX.Kilonewtons;
+          break;
+        case ResultTensor2AroundAxisHelperEnum.WoodArmerY:
+          d = result.GetExtrema(extrema.WoodArmerY).WoodArmerY.Kilonewtons;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
     public static double ResultsHelper(IForce2d result, ResultTensor2InAxisHelperEnum component) {
       double d = 0;
       switch (component) {
@@ -547,6 +575,31 @@ namespace GsaGHTests.Parameters.Results {
 
         case ResultTensor2InAxisHelperEnum.Nxy:
           d = result.Nxy.KilonewtonsPerMeter;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
+    public static double ResultsHelper(IMoment2d result, ResultTensor2AroundAxisHelperEnum component) {
+      double d = 0;
+      switch (component) {
+        case ResultTensor2AroundAxisHelperEnum.Mx:
+          d = result.Mx.Kilonewtons;
+          break;
+
+        case ResultTensor2AroundAxisHelperEnum.My:
+          d = result.My.Kilonewtons;
+          break;
+
+        case ResultTensor2AroundAxisHelperEnum.Mxy:
+          d = result.Mxy.Kilonewtons;
+          break;
+        case ResultTensor2AroundAxisHelperEnum.WoodArmerX:
+          d = result.WoodArmerX.Kilonewtons;
+          break;
+        case ResultTensor2AroundAxisHelperEnum.WoodArmerY:
+          d = result.WoodArmerY.Kilonewtons;
           break;
       }
 

@@ -397,7 +397,7 @@ namespace GsaGH.Components.Helpers {
       };
     }
 
-    internal static U ForceExtremaKey<T1, T2, U>(
+    internal static U Force2dExtremaKey<T1, T2, U>(
       IEntity2dResultSubset<T1, T2, ResultTensor2InAxis<U>> resultSet, string key) 
       where T1 : IEntity2dQuantity<T2> where T2 : IResultItem {
       return key switch {
