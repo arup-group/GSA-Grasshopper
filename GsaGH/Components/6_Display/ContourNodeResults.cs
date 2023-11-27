@@ -59,6 +59,7 @@ namespace GsaGH.Components {
       Displacement,
       Reaction,
       Footfall,
+      SpringForce
     }
 
     public override Guid ComponentGuid => new Guid("742b1398-4eee-49e6-98d0-00afac6813e6");
@@ -89,9 +90,20 @@ namespace GsaGH.Components {
       "Reaction Mzz",
       "Resolved |M|",
     });
+    private readonly List<string> _springForce = new List<string>(new[] {
+      "Axial Fx",
+      "Shear Fy",
+      "Shear Fz",
+      "Resolved |F|",
+      "Torsion Mxx",
+      "Moment Myy",
+      "Moment Mzz",
+      "Resolved |M|",
+    });
     private readonly List<string> _type = new List<string>(new[] {
       "Displacement",
       "Reaction",
+      "SpringForce",
       "Footfall",
     });
     private string _case = string.Empty;
@@ -201,12 +213,23 @@ namespace GsaGH.Components {
               break;
 
             case 2:
+              if (_dropDownItems[1] != _springForce) {
+                _dropDownItems[1] = _springForce;
+                _selectedItems[0] = _dropDownItems[0][1];
+                _selectedItems[1] = _dropDownItems[1][3];
+                _disp = DisplayValue.ResXyz;
+                Mode3Clicked();
+              }
+
+              break;
+
+            case 3:
               if (_dropDownItems[1] != _footfall) {
                 _dropDownItems[1] = _footfall;
                 _selectedItems[0] = _dropDownItems[0][2];
                 _selectedItems[1] = _dropDownItems[1][0];
                 _disp = DisplayValue.X;
-                Mode3Clicked();
+                Mode4Clicked();
               }
 
               break;
@@ -251,10 +274,12 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Reaction when (int)_disp < 4:
+        case FoldMode.SpringForce when (int)_disp < 4:
           Params.Output[2].Name = "Values [" + Force.GetAbbreviation(_forceUnit) + "]";
           break;
 
         case FoldMode.Reaction:
+        case FoldMode.SpringForce:
           Params.Output[2].Name = "Values [" + Moment.GetAbbreviation(_momentUnit) + "]";
           break;
 
@@ -343,6 +368,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Reaction:
+        case FoldMode.SpringForce:
           Message = (int)_disp < 4 ? Force.GetAbbreviation(_forceUnit) :
             Moment.GetAbbreviation(_momentUnit);
           break;
@@ -639,6 +665,83 @@ namespace GsaGH.Components {
 
           break;
 
+        case FoldMode.SpringForce:
+          INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> springForces
+            = result.NodeSpringForces.ResultSubset(nodeIds);
+
+          if (springForces.Ids.Count == 0) {
+            this.AddRuntimeError($"Model contains no results for nodes in list '{nodeList}'");
+            return;
+          }
+
+          switch (_disp) {
+            case DisplayValue.X:
+              _resType = "Reaction Force, Fx";
+              dmax = springForces.GetExtrema(springForces.Max.X).X.As(_forceUnit);
+              dmin = springForces.GetExtrema(springForces.Min.X).X.As(_forceUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].X.ToUnit(_forceUnit)));
+              break;
+
+            case DisplayValue.Y:
+              _resType = "Reaction Force, Fy";
+              dmax = springForces.GetExtrema(springForces.Max.Y).Y.As(_forceUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Y).Y.As(_forceUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Y.ToUnit(_forceUnit)));
+              break;
+
+            case DisplayValue.Z:
+              _resType = "Reaction Force, Fz";
+              dmax = springForces.GetExtrema(springForces.Max.Z).Z.As(_forceUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Z).Z.As(_forceUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Z.ToUnit(_forceUnit)));
+              break;
+
+            case DisplayValue.ResXyz:
+              _resType = "Reaction Force, |F|";
+              dmax = springForces.GetExtrema(springForces.Max.Xyz).Xyz.As(_forceUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Xyz).Xyz.As(_forceUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Xyz.ToUnit(_forceUnit)));
+              break;
+
+            case DisplayValue.Xx:
+              _resType = "Reaction Moment, Mxx";
+              dmax = springForces.GetExtrema(springForces.Max.Xx).Xx.As(_momentUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Xx).Xx.As(_momentUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Xx.ToUnit(_momentUnit)));
+              break;
+
+            case DisplayValue.Yy:
+              _resType = "Reaction Moment, Myy";
+              dmax = springForces.GetExtrema(springForces.Max.Yy).Yy.As(_momentUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Yy).Yy.As(_momentUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Yy.ToUnit(_momentUnit)));
+              break;
+
+            case DisplayValue.Zz:
+              _resType = "Reaction Moment, Mzz";
+              dmax = springForces.GetExtrema(springForces.Max.Zz).Zz.As(_momentUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Zz).Zz.As(_momentUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Zz.ToUnit(_momentUnit)));
+              break;
+
+            case DisplayValue.ResXxyyzz:
+              _resType = "Reaction Moment, |M|";
+              dmax = springForces.GetExtrema(springForces.Max.Xxyyzz).Xxyyzz.As(_momentUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Xxyyzz).Xxyyzz.As(_momentUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Xxyyzz.ToUnit(_momentUnit)));
+              break;
+          }
+
+          break;
+
         case FoldMode.Footfall:
           _resType = "Response Factor [-]";
           INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> footfall = null;
@@ -726,8 +829,6 @@ namespace GsaGH.Components {
       });
 
 
-      #region Legend
-
       int gripheight = _legend.Height / ghGradient.GripCount;
       _legendValues = new List<string>();
       _legendValuesPosY = new List<int>();
@@ -758,39 +859,40 @@ namespace GsaGH.Components {
         }
 
         switch (_mode) {
-          case FoldMode.Displacement when (int)_disp < 4: {
+          case FoldMode.Displacement when (int)_disp < 4: 
               var displacement = new Length(t, _lengthResultUnit);
               _legendValues.Add(displacement.ToString("f" + significantDigits));
               ts.Add(new GH_UnitNumber(displacement));
               break;
-            }
-          case FoldMode.Displacement: {
+            
+          case FoldMode.Displacement: 
               var rotation = new Angle(t, AngleUnit.Radian);
               _legendValues.Add(rotation.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(rotation));
               break;
-            }
-          case FoldMode.Reaction when (int)_disp < 4: {
+            
+          case FoldMode.Reaction when (int)_disp < 4: 
+          case FoldMode.SpringForce when (int)_disp < 4: 
               var reactionForce = new Force(t, _forceUnit);
               _legendValues.Add(reactionForce.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(reactionForce));
               Message = Force.GetAbbreviation(_forceUnit);
               break;
-            }
-          case FoldMode.Reaction: {
+            
+          case FoldMode.Reaction: 
+          case FoldMode.SpringForce: 
               var reactionMoment = new Moment(t, _momentUnit);
               _legendValues.Add(reactionMoment.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(reactionMoment));
               Message = Moment.GetAbbreviation(_momentUnit);
               break;
-            }
-          case FoldMode.Footfall: {
+            
+          case FoldMode.Footfall: 
               var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
               _legendValues.Add(responseFactor.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(responseFactor));
               Message = string.Empty;
               break;
-            }
         }
 
         if (Math.Abs(t) > 1) {
@@ -801,17 +903,11 @@ namespace GsaGH.Components {
         _legendValuesPosY.Add(_legend.Height - starty + (gripheight / 2) - 2);
       }
 
-      #endregion
-
       da.SetDataList(0, pts.OrderBy(x => x.Key).Select(y => y.Value).ToList());
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
-
-      GsaResultsValues.ResultType resultType = _mode == FoldMode.Reaction ?
-        GsaResultsValues.ResultType.Force :
-        (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType),
-          _mode.ToString());
-      PostHog.Result(result.CaseType, 0, resultType, _disp.ToString());
+      
+      PostHog.Result(result.CaseType, 0, _mode.ToString(), _disp.ToString());
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {
@@ -873,6 +969,19 @@ namespace GsaGH.Components {
     }
 
     private void Mode3Clicked() {
+      if (_mode == FoldMode.SpringForce) {
+        return;
+      }
+
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.SpringForce;
+      _slider = false;
+      _defScale = 0;
+
+      ReDrawComponent();
+    }
+
+    private void Mode4Clicked() {
       if (_mode == FoldMode.Footfall) {
         return;
       }
