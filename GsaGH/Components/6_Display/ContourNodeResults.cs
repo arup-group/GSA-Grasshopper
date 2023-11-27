@@ -484,7 +484,7 @@ namespace GsaGH.Components {
             = result.NodeDisplacements.ResultSubset(nodeIds);
 
           if (displacements.Ids.Count == 0) {
-            this.AddRuntimeWarning($"{result.CaseType} {result.CaseId} contains no Displacement results.");
+            this.AddRuntimeError($"Model contains no results for nodes in list '{nodeList}'");
             return;
           }
 
@@ -567,7 +567,7 @@ namespace GsaGH.Components {
             = result.NodeReactionForces.ResultSubset(nodeIds);
 
           if (reactions.Ids.Count == 0) {
-            this.AddRuntimeWarning($"{result.CaseType} {result.CaseId} contains no Reaction force results.");
+            this.AddRuntimeError($"Model contains no results for nodes in list '{nodeList}'");
             return;
           }
 
@@ -653,7 +653,7 @@ namespace GsaGH.Components {
           }
 
           if (footfall.Ids.Count == 0) {
-            this.AddRuntimeWarning($"{result.CaseType} {result.CaseId} contains no Footfall results.");
+            this.AddRuntimeError($"Model contains no results for nodes in list '{nodeList}'");
             return;
           }
 
