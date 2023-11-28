@@ -1,7 +1,7 @@
 ﻿namespace GsaGH.Parameters.Results {
   public enum Layer2d {
-    Top,
-    Middle,
-    Bottom
+    Top = 1,
+    Middle = 0,
+    Bottom = -1,
   }
 }
