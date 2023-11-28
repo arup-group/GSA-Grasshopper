@@ -411,44 +411,32 @@ namespace GsaGH.Components.Helpers {
       };
     }
 
-    internal static U Force2dExtremaKey<T1, T2, U>(
-      IEntity2dResultSubset<T1, T2, ResultTensor2InAxis<U>> resultSet, string key) 
-      where T1 : IEntity2dQuantity<T2> where T2 : IResultItem {
+    internal static U Elem2dForcesAndMomentsExtremaKey<T1, T2, T3, U>(
+      IEntity2dResultSubset<IEntity2dQuantity<T1>, T1, ResultTensor2InAxis<U>> resultSetForces,
+      IEntity2dResultSubset<IEntity2dQuantity<T2>, T2, ResultTensor2AroundAxis<U>> resultSetMoment, 
+      IEntity2dResultSubset<IEntity2dQuantity<T3>, T3, ResultVector2<U>> resultSetShear,
+      string key) where T1 : IResultItem where T2 : IResultItem where T3 : IResultItem {
       return key switch {
-        "Max Nx" => resultSet.Max.Nx,
-        "Max Ny" => resultSet.Max.Ny,
-        "Max Nxy" => resultSet.Max.Nxy,
-        "Min Nx" => resultSet.Min.Nx,
-        "Min Ny" => resultSet.Min.Ny,
-        "Min Nxy" => resultSet.Min.Nxy,
-        _ => throw new ArgumentException("Extrema case not found"),
-      };
-    }
-    internal static U Moment2dExtremaKey<T1, T2, U>(
-      IEntity2dResultSubset<T1, T2, ResultTensor2AroundAxis<U>> resultSet, string key) 
-      where T1 : IEntity2dQuantity<T2> where T2 : IResultItem {
-      return key switch {
-        "Max Mx" => resultSet.Max.Mx,
-        "Max My" => resultSet.Max.My,
-        "Max Mxy" => resultSet.Max.Mxy,
-        "Max WoodArmerX" => resultSet.Max.WoodArmerX,
-        "Max WoodArmerY" => resultSet.Max.WoodArmerY,
-        "Min Mx" => resultSet.Min.Mx,
-        "Min My" => resultSet.Min.My,
-        "Min Mxy" => resultSet.Min.Mxy,
-        "Min WoodArmerX" => resultSet.Min.WoodArmerX,
-        "Min WoodArmerY" => resultSet.Min.WoodArmerY,
-        _ => throw new ArgumentException("Extrema case not found"),
-      };
-    }
-    internal static U ShearForce2dExtremaKey<T1, T2, U>(
-      IEntity2dResultSubset<T1, T2, ResultVector2<U>> resultSet, string key) 
-      where T1 : IEntity2dQuantity<T2> where T2 : IResultItem {
-      return key switch {
-        "Max Qx" => resultSet.Max.Qx,
-        "Max Qy" => resultSet.Max.Qy,
-        "Min Qx" => resultSet.Min.Qx,
-        "Min Qy" => resultSet.Min.Qy,
+        "Max Nx" => resultSetForces.Max.Nx,
+        "Max Ny" => resultSetForces.Max.Ny,
+        "Max Nxy" => resultSetForces.Max.Nxy,
+        "Min Nx" => resultSetForces.Min.Nx,
+        "Min Ny" => resultSetForces.Min.Ny,
+        "Min Nxy" => resultSetForces.Min.Nxy,
+        "Max Mx" => resultSetMoment.Max.Mx,
+        "Max My" => resultSetMoment.Max.My,
+        "Max Mxy" => resultSetMoment.Max.Mxy,
+        "Max WoodArmerX" => resultSetMoment.Max.WoodArmerX,
+        "Max WoodArmerY" => resultSetMoment.Max.WoodArmerY,
+        "Min Mx" => resultSetMoment.Min.Mx,
+        "Min My" => resultSetMoment.Min.My,
+        "Min Mxy" => resultSetMoment.Min.Mxy,
+        "Min WoodArmerX" => resultSetMoment.Min.WoodArmerX,
+        "Min WoodArmerY" => resultSetMoment.Min.WoodArmerY,
+        "Max Qx" => resultSetShear.Max.Qx,
+        "Max Qy" => resultSetShear.Max.Qy,
+        "Min Qx" => resultSetShear.Min.Qx,
+        "Min Qy" => resultSetShear.Min.Qy,
         _ => throw new ArgumentException("Extrema case not found"),
       };
     }
