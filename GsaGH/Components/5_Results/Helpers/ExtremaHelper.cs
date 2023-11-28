@@ -91,15 +91,29 @@ namespace GsaGH.Components.Helpers {
         "Min |U|",
       });
 
-    internal static readonly ReadOnlyCollection<string> Tensor2InAxis
+    internal static readonly ReadOnlyCollection<string> Elem2dForcesAndMoments
       = new ReadOnlyCollection<string>(new[] {
         "All",
         "Max Nx",
         "Max Ny",
         "Max Nxy",
+        "Max Qx",
+        "Max Qy",
+        "Max Mx",
+        "Max My",
+        "Max Mxy",
+        "Max M*x",
+        "Max M*y",
         "Min Nx",
         "Min Ny",
         "Min Nxy",
+        "Min Qx",
+        "Min Qy",
+        "Min Mx",
+        "Min My",
+        "Min Mxy",
+        "Min M*x",
+        "Min M*y",
       });
 
     internal static readonly ReadOnlyCollection<string> Tensor3Stresses
@@ -407,6 +421,34 @@ namespace GsaGH.Components.Helpers {
         "Min Nx" => resultSet.Min.Nx,
         "Min Ny" => resultSet.Min.Ny,
         "Min Nxy" => resultSet.Min.Nxy,
+        _ => throw new ArgumentException("Extrema case not found"),
+      };
+    }
+    internal static U Moment2dExtremaKey<T1, T2, U>(
+      IEntity2dResultSubset<T1, T2, ResultTensor2AroundAxis<U>> resultSet, string key) 
+      where T1 : IEntity2dQuantity<T2> where T2 : IResultItem {
+      return key switch {
+        "Max Mx" => resultSet.Max.Mx,
+        "Max My" => resultSet.Max.My,
+        "Max Mxy" => resultSet.Max.Mxy,
+        "Max WoodArmerX" => resultSet.Max.WoodArmerX,
+        "Max WoodArmerY" => resultSet.Max.WoodArmerY,
+        "Min Mx" => resultSet.Min.Mx,
+        "Min My" => resultSet.Min.My,
+        "Min Mxy" => resultSet.Min.Mxy,
+        "Min WoodArmerX" => resultSet.Min.WoodArmerX,
+        "Min WoodArmerY" => resultSet.Min.WoodArmerY,
+        _ => throw new ArgumentException("Extrema case not found"),
+      };
+    }
+    internal static U ShearForce2dExtremaKey<T1, T2, U>(
+      IEntity2dResultSubset<T1, T2, ResultVector2<U>> resultSet, string key) 
+      where T1 : IEntity2dQuantity<T2> where T2 : IResultItem {
+      return key switch {
+        "Max Qx" => resultSet.Max.Qx,
+        "Max Qy" => resultSet.Max.Qy,
+        "Min Qx" => resultSet.Min.Qx,
+        "Min Qy" => resultSet.Min.Qy,
         _ => throw new ArgumentException("Extrema case not found"),
       };
     }
