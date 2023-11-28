@@ -21,6 +21,7 @@ using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -108,7 +109,7 @@ namespace GsaGH.Components {
     private string _case = string.Empty;
     private double _defScale = 250;
     private DisplayValue _disp = DisplayValue.ResXyz;
-    private int _flayer;
+    private Layer2d _flayer;
     private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private bool _isShear;
@@ -127,7 +128,6 @@ namespace GsaGH.Components {
     private bool _showLegend = true;
     private bool _slider = true;
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
-    private bool _undefinedModelLengthUnit;
 
     public Contour2dResults() : base("Contour 2D Results", "Contour2d",
       "Displays GSA 2D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -168,7 +168,7 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       _mode = (FoldMode)reader.GetInt32("Mode");
       _disp = (DisplayValue)reader.GetInt32("Display");
-      _flayer = reader.GetInt32("flayer");
+      _flayer = (Layer2d)reader.GetInt32("flayer");
       _slider = reader.GetBoolean("slider");
       _noDigits = reader.GetInt32("noDec");
       _maxValue = reader.GetDouble("valMax");
@@ -336,15 +336,15 @@ namespace GsaGH.Components {
         case 2 when _mode == FoldMode.Stress: {
             switch (j) {
               case 0:
-                _flayer = 1;
+                _flayer = Layer2d.Top;
                 break;
 
               case 1:
-                _flayer = 0;
+                _flayer = Layer2d.Middle;
                 break;
 
               case 2:
-                _flayer = -1;
+                _flayer = Layer2d.Bottom;
                 break;
             }
 
@@ -399,7 +399,7 @@ namespace GsaGH.Components {
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("Mode", (int)_mode);
       writer.SetInt32("Display", (int)_disp);
-      writer.SetInt32("flayer", _flayer);
+      writer.SetInt32("flayer", (int)_flayer);
       writer.SetBoolean("slider", _slider);
       writer.SetInt32("noDec", _noDigits);
       writer.SetDouble("valMax", _maxValue);
@@ -450,14 +450,6 @@ namespace GsaGH.Components {
         stressUnitsMenu,
       });
 
-      if (_undefinedModelLengthUnit) {
-        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
-          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
-          UpdateModel);
-
-        unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
-      }
-
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
 
       menu.Items.Add(unitsMenu);
@@ -490,7 +482,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Force:
-          Message = ((int)_disp < 3 | _isShear) ? ForcePerLength.GetAbbreviation(_forcePerLengthUnit) :
+          Message = (((int)_disp < 3) | _isShear) ? ForcePerLength.GetAbbreviation(_forcePerLengthUnit) :
             Force.GetAbbreviation(_forceUnit) + "·" + Length.GetAbbreviation(_lengthUnit) + "/"
             + Length.GetAbbreviation(_lengthUnit);
           break;
@@ -622,7 +614,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Stress:
-          res = result.Element2DStressValues(elementlist, _flayer, _stressUnitResult)[0];
+          res = result.Element2DStressValues(elementlist, (int)_flayer, _stressUnitResult)[0];
           break;
 
         case FoldMode.Footfall:
@@ -847,17 +839,7 @@ namespace GsaGH.Components {
       verticies.AsParallel().AsOrdered();
 
       LengthUnit lengthUnit = result.Model.ModelUnit;
-      _undefinedModelLengthUnit = false;
-      if (lengthUnit == LengthUnit.Undefined) {
-        lengthUnit = _lengthUnit;
-        _undefinedModelLengthUnit = true;
-        this.AddRuntimeRemark(
-          "Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in "
-          + lengthUnit.ToString()
-          + ". This can be changed by right-clicking the component -> 'Select Units'");
-      } else {
-        _lengthUnit = lengthUnit;
-      }
+      _lengthUnit = lengthUnit;
 
       Parallel.ForEach(elems.Keys, key => {
         Element element = elems[key];
