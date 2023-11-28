@@ -899,6 +899,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Footfall:
+          positionsCount = 2;
           _resType = "Response Factor [-]";
           INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfallCache
           = _selectedItems[1] == "Resonant" 
