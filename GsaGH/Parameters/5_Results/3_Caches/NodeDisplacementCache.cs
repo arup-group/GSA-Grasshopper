@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
 
@@ -26,27 +27,48 @@ namespace GsaGH.Parameters.Results {
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeDisplacement(nodelist);
-            Parallel.ForEach(aCaseResults.Keys, nodeId => {
-              var res = new Displacement(aCaseResults[nodeId]);
-              Cache.TryAdd(nodeId, new Collection<IDisplacement>() { res });
+            Parallel.ForEach(aCaseResults, resultKvp => {
+              if (IsInvalid(resultKvp)) {
+                return;
+              }
+
+              var res = new Displacement(resultKvp.Value);
+              Cache.TryAdd(resultKvp.Key, new Collection<IDisplacement>() { res });
             });
             break;
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults = combinationCase.NodeDisplacement(nodelist);
-            Parallel.ForEach(cCaseResults.Keys, nodeId => {
+            Parallel.ForEach(cCaseResults, resultKvp => {
+              if (IsInvalid(resultKvp)) {
+                return;
+              }
+
               var permutationResults = new Collection<IDisplacement>();
-              foreach (Double6 permutation in cCaseResults[nodeId]) {
+              foreach (Double6 permutation in resultKvp.Value) {
                 permutationResults.Add(new Displacement(permutation));
               }
 
-              Cache.TryAdd(nodeId, permutationResults);
+              Cache.TryAdd(resultKvp.Key, permutationResults);
             });
             break;
         }
       }
 
       return new NodeDisplacements(Cache.GetSubset(nodeIds));
+    }
+
+    private bool IsInvalid(KeyValuePair<int, ReadOnlyCollection<Double6>> kvp) {
+      return kvp.Value.Any(res => !IsNotNaN(res));
+    }
+
+    private bool IsInvalid(KeyValuePair<int, Double6> kvp) {
+      return !IsNotNaN(kvp.Value);
+    }
+
+    private bool IsNotNaN(Double6 values) {
+      return !double.IsNaN(values.X) || !double.IsNaN(values.Y) || !double.IsNaN(values.Z)
+        || !double.IsNaN(values.XX) || !double.IsNaN(values.YY) || !double.IsNaN(values.ZZ);
     }
   }
 }
