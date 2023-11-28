@@ -52,11 +52,14 @@ namespace GsaGH.Components {
       Yy,
       Zz,
       ResXxyyzz,
+      Extra
     }
 
     private enum FoldMode {
       Displacement,
       Force,
+      ProjectedStress,
+      DerivedStress,
       StrainEnergy,
       Footfall,
     }
@@ -93,9 +96,28 @@ namespace GsaGH.Components {
       "Intermediate Pts",
       "Average",
     });
+    private readonly List<string> _projStress = new List<string>(new[] {
+      "Axial, A",
+      "Shear, Sy",
+      "Shear, Sz",
+      "Bending, yy+",
+      "Bending, yy-",
+      "Bending, zz+",
+      "Bending, zz-",
+      "Combined, C1",
+      "Combined, C2",
+    });
+    private readonly List<string> _derivStress = new List<string>(new[] {
+      "Elastic Shear Y",
+      "Elastic Shear Z",
+      "Torsional",
+      "Von Mises",
+    });
     private readonly List<string> _type = new List<string>(new[] {
       "Displacement",
       "Force",
+      "Stress",
+      "Derived Stress",
       "Strain Energy",
       "Footfall",
     });
@@ -109,7 +131,6 @@ namespace GsaGH.Components {
     private List<string> _legendValues;
     private List<int> _legendValuesPosY;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private double _maxValue = 1000;
     private double _minValue;
     private FoldMode _mode = FoldMode.Displacement;
@@ -119,7 +140,7 @@ namespace GsaGH.Components {
     private string _scaleLegendTxt = string.Empty;
     private bool _showLegend = true;
     private bool _slider = true;
-    private bool _undefinedModelLengthUnit;
+    private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
 
     public Contour1dResults() : base("Contour 1D Results", "Contour1d",
       "Displays GSA 1D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -170,7 +191,10 @@ namespace GsaGH.Components {
         _legendScale = reader.GetDouble("legendScale");
       }
 
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
+      _stressUnit = reader.ItemExists("stress")
+        ? (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), reader.GetString("stress"))
+        : DefaultUnits.StressUnitResult;
+
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("force"));
@@ -189,7 +213,7 @@ namespace GsaGH.Components {
       switch (i) {
         case 0:
           switch (j) {
-            case 0: {
+            case 0: 
                 if (_dropDownItems[1] != _displacement) {
                   _dropDownItems[1] = _displacement;
 
@@ -201,8 +225,8 @@ namespace GsaGH.Components {
                 }
 
                 break;
-              }
-            case 1: {
+              
+            case 1: 
                 if (_dropDownItems[1] != _force) {
                   _dropDownItems[1] = _force;
 
@@ -214,33 +238,59 @@ namespace GsaGH.Components {
                 }
 
                 break;
+
+            case 2:
+              if (_dropDownItems[1] != _projStress) {
+                _dropDownItems[1] = _projStress;
+
+                _selectedItems[0] = _dropDownItems[0][2];
+                _selectedItems[1] = _dropDownItems[1][7]; // set C1 as default
+
+                _disp = DisplayValue.ResXxyyzz;
+                Mode3Clicked();
               }
-            case 2: {
+
+              break;
+
+            case 3:
+              if (_dropDownItems[1] != _derivStress) {
+                _dropDownItems[1] = _derivStress;
+
+                _selectedItems[0] = _dropDownItems[0][3];
+                _selectedItems[1] = _dropDownItems[1][3]; // set von Mises as default
+
+                _disp = DisplayValue.ResXyz;
+                Mode4Clicked();
+              }
+
+              break;
+
+            case 4: 
                 if (_dropDownItems[1] != _strainenergy) {
                   _dropDownItems[1] = _strainenergy;
 
-                  _selectedItems[0] = _dropDownItems[0][2];
+                  _selectedItems[0] = _dropDownItems[0][4];
                   _selectedItems[1] = _dropDownItems[1][1]; // set average as default
 
                   _disp = DisplayValue.Y;
-                  Mode3Clicked();
+                  Mode5Clicked();
                 }
 
                 break;
-              }
-            case 3: {
+              
+            case 5: 
                 if (_dropDownItems[1] != _footfall) {
                   _dropDownItems[1] = _footfall;
 
-                  _selectedItems[0] = _dropDownItems[0][3];
+                  _selectedItems[0] = _dropDownItems[0][5];
                   _selectedItems[1] = _dropDownItems[1][0];
 
                   _disp = DisplayValue.X;
-                  Mode4Clicked();
+                  Mode6Clicked();
                 }
 
                 break;
-              }
+              
           }
 
           break;
@@ -314,6 +364,11 @@ namespace GsaGH.Components {
           Params.Output[2].Name = "Legend Values [" + Moment.GetAbbreviation(_momentUnit) + "]";
           break;
 
+        case FoldMode.ProjectedStress:
+        case FoldMode.DerivedStress:
+          Params.Output[2].Name = "Legend Values [" + Pressure.GetAbbreviation(_stressUnit) + "]";
+          break;
+
         case FoldMode.StrainEnergy:
           Params.Output[2].Name
             = "Legend Values [" + Energy.GetAbbreviation(_energyResultUnit) + "]";
@@ -335,8 +390,8 @@ namespace GsaGH.Components {
       writer.SetDouble("valMin", _minValue);
       writer.SetDouble("val", _defScale);
       writer.SetDouble("legendScale", _legendScale);
-      writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
+      writer.SetString("stress", Pressure.GetAbbreviation(_stressUnit));
       writer.SetString("force", Force.GetAbbreviation(_forceUnit));
       writer.SetString("moment", Moment.GetAbbreviation(_momentUnit));
       writer.SetString("energy", Energy.GetAbbreviation(_energyResultUnit));
@@ -366,6 +421,9 @@ namespace GsaGH.Components {
       ToolStripMenuItem momentUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Moment",
         EngineeringUnits.Moment, Moment.GetAbbreviation(_momentUnit), UpdateMoment);
 
+      ToolStripMenuItem stressUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Stress",
+        EngineeringUnits.Stress, Pressure.GetAbbreviation(_stressUnit), UpdateStress);
+
       ToolStripMenuItem energyUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Energy",
         EngineeringUnits.Energy, Energy.GetAbbreviation(_energyResultUnit), UpdateEnergy);
 
@@ -375,16 +433,9 @@ namespace GsaGH.Components {
         lengthUnitsMenu,
         forceUnitsMenu,
         momentUnitsMenu,
+        stressUnitsMenu,
         energyUnitsMenu,
       });
-
-      if (_undefinedModelLengthUnit) {
-        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
-          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
-          UpdateModel);
-
-        unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
-      }
 
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
 
@@ -420,6 +471,11 @@ namespace GsaGH.Components {
         case FoldMode.Force:
           Message = (int)_disp < 4 ? Force.GetAbbreviation(_forceUnit) :
             Moment.GetAbbreviation(_momentUnit);
+          break;
+
+        case FoldMode.ProjectedStress:
+        case FoldMode.DerivedStress:
+          Message = Pressure.GetAbbreviation(_stressUnit);
           break;
 
         case FoldMode.StrainEnergy:
@@ -749,14 +805,6 @@ namespace GsaGH.Components {
 
       var resultLines = new DataTree<LineResultGoo>();
       LengthUnit lengthUnit = result.Model.ModelUnit;
-      _undefinedModelLengthUnit = false;
-      if (lengthUnit == LengthUnit.Undefined) {
-        lengthUnit = _lengthUnit;
-        _undefinedModelLengthUnit = true;
-        this.AddRuntimeRemark(
-          "Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in "
-          + lengthUnit + ". This can be changed by right-clicking the component -> 'Select Units'");
-      }
 
       Parallel.ForEach(elems, element => {
         if (element.Value.IsDummy || element.Value.Type == ElementType.LINK
@@ -1086,6 +1134,34 @@ namespace GsaGH.Components {
     }
 
     private void Mode3Clicked() {
+      if (_mode == FoldMode.ProjectedStress) {
+        return;
+      }
+
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.ProjectedStress;
+
+      _slider = false;
+      _defScale = 0;
+
+      ReDrawComponent();
+    }
+
+    private void Mode4Clicked() {
+      if (_mode == FoldMode.DerivedStress) {
+        return;
+      }
+
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.DerivedStress;
+
+      _slider = false;
+      _defScale = 0;
+
+      ReDrawComponent();
+    }
+
+    private void Mode5Clicked() {
       if (_mode == FoldMode.StrainEnergy) {
         return;
       }
@@ -1099,7 +1175,7 @@ namespace GsaGH.Components {
       ReDrawComponent();
     }
 
-    private void Mode4Clicked() {
+    private void Mode6Clicked() {
       if (_mode == FoldMode.Footfall) {
         return;
       }
@@ -1144,14 +1220,14 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    internal void UpdateModel(string unit) {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+    internal void UpdateMoment(string unit) {
+      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    internal void UpdateMoment(string unit) {
-      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
+    internal void UpdateStress(string unit) {
+      _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }

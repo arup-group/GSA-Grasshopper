@@ -107,17 +107,17 @@ namespace GsaGHTests.Components.Display {
     }
 
     [Fact]
-    public void UpdateModelTest() {
-      var comp = new Contour1dResults();
-      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
-      comp.UpdateModel("mm");
-    }
-
-    [Fact]
     public void UpdateMomentTest() {
       var comp = new Contour1dResults();
       ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
       comp.UpdateMoment("N·cm");
+    }
+
+    [Fact]
+    public void UpdateStressTest() {
+      var comp = new Contour1dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
+      comp.UpdateStress("MPa");
     }
 
     [Fact]
