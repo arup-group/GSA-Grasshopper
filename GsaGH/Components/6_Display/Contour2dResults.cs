@@ -110,7 +110,7 @@ namespace GsaGH.Components {
     private string _case = string.Empty;
     private double _defScale = 250;
     private DisplayValue _disp = DisplayValue.ResXyz;
-    private int _flayer;
+    private Layer2d _flayer;
     private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private bool _isShear;
@@ -169,7 +169,7 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       _mode = (FoldMode)reader.GetInt32("Mode");
       _disp = (DisplayValue)reader.GetInt32("Display");
-      _flayer = reader.GetInt32("flayer");
+      _flayer = (Layer2d)reader.GetInt32("flayer");
       _slider = reader.GetBoolean("slider");
       _noDigits = reader.GetInt32("noDec");
       _maxValue = reader.GetDouble("valMax");
@@ -336,15 +336,15 @@ namespace GsaGH.Components {
         case 2 when _mode == FoldMode.Stress: {
           switch (j) {
             case 0:
-              _flayer = 1;
+              _flayer = Layer2d.Top;
               break;
 
             case 1:
-              _flayer = 0;
+              _flayer = Layer2d.Middle;
               break;
 
             case 2:
-              _flayer = -1;
+              _flayer = Layer2d.Bottom;
               break;
           }
 
@@ -399,7 +399,7 @@ namespace GsaGH.Components {
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("Mode", (int)_mode);
       writer.SetInt32("Display", (int)_disp);
-      writer.SetInt32("flayer", _flayer);
+      writer.SetInt32("flayer", (int)_flayer);
       writer.SetBoolean("slider", _slider);
       writer.SetInt32("noDec", _noDigits);
       writer.SetDouble("valMax", _maxValue);
@@ -661,7 +661,7 @@ namespace GsaGH.Components {
         case FoldMode.Stress:
           IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress,
             ResultTensor3<Entity2dExtremaKey>> stresses
-            = result.Element2dStresses.ResultSubset(elementIds, (Layer2d)_flayer);
+            = result.Element2dStresses.ResultSubset(elementIds, _flayer);
           Func<IStress, IQuantity> stressSelector = null;
           switch (_disp) {
             case DisplayValue.X:
