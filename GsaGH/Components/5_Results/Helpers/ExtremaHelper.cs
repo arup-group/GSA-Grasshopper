@@ -91,15 +91,29 @@ namespace GsaGH.Components.Helpers {
         "Min |U|",
       });
 
-    internal static readonly ReadOnlyCollection<string> Tensor2InAxis
+    internal static readonly ReadOnlyCollection<string> Elem2dForcesAndMoments
       = new ReadOnlyCollection<string>(new[] {
         "All",
         "Max Nx",
         "Max Ny",
         "Max Nxy",
+        "Max Qx",
+        "Max Qy",
+        "Max Mx",
+        "Max My",
+        "Max Mxy",
+        "Max M*x",
+        "Max M*y",
         "Min Nx",
         "Min Ny",
         "Min Nxy",
+        "Min Qx",
+        "Min Qy",
+        "Min Mx",
+        "Min My",
+        "Min Mxy",
+        "Min M*x",
+        "Min M*y",
       });
 
     internal static readonly ReadOnlyCollection<string> Tensor3Stresses
@@ -397,16 +411,32 @@ namespace GsaGH.Components.Helpers {
       };
     }
 
-    internal static U Force2dExtremaKey<T1, T2, U>(
-      IEntity2dResultSubset<T1, T2, ResultTensor2InAxis<U>> resultSet, string key) 
-      where T1 : IEntity2dQuantity<T2> where T2 : IResultItem {
+    internal static U Elem2dForcesAndMomentsExtremaKey<T1, T2, T3, U>(
+      IEntity2dResultSubset<IEntity2dQuantity<T1>, T1, ResultTensor2InAxis<U>> resultSetForces,
+      IEntity2dResultSubset<IEntity2dQuantity<T2>, T2, ResultTensor2AroundAxis<U>> resultSetMoment, 
+      IEntity2dResultSubset<IEntity2dQuantity<T3>, T3, ResultVector2<U>> resultSetShear,
+      string key) where T1 : IResultItem where T2 : IResultItem where T3 : IResultItem {
       return key switch {
-        "Max Nx" => resultSet.Max.Nx,
-        "Max Ny" => resultSet.Max.Ny,
-        "Max Nxy" => resultSet.Max.Nxy,
-        "Min Nx" => resultSet.Min.Nx,
-        "Min Ny" => resultSet.Min.Ny,
-        "Min Nxy" => resultSet.Min.Nxy,
+        "Max Nx" => resultSetForces.Max.Nx,
+        "Max Ny" => resultSetForces.Max.Ny,
+        "Max Nxy" => resultSetForces.Max.Nxy,
+        "Min Nx" => resultSetForces.Min.Nx,
+        "Min Ny" => resultSetForces.Min.Ny,
+        "Min Nxy" => resultSetForces.Min.Nxy,
+        "Max Mx" => resultSetMoment.Max.Mx,
+        "Max My" => resultSetMoment.Max.My,
+        "Max Mxy" => resultSetMoment.Max.Mxy,
+        "Max M*x" => resultSetMoment.Max.WoodArmerX,
+        "Max M*y" => resultSetMoment.Max.WoodArmerY,
+        "Min Mx" => resultSetMoment.Min.Mx,
+        "Min My" => resultSetMoment.Min.My,
+        "Min Mxy" => resultSetMoment.Min.Mxy,
+        "Min M*x" => resultSetMoment.Min.WoodArmerX,
+        "Min M*y" => resultSetMoment.Min.WoodArmerY,
+        "Max Qx" => resultSetShear.Max.Qx,
+        "Max Qy" => resultSetShear.Max.Qy,
+        "Min Qx" => resultSetShear.Min.Qx,
+        "Min Qy" => resultSetShear.Min.Qy,
         _ => throw new ArgumentException("Extrema case not found"),
       };
     }
