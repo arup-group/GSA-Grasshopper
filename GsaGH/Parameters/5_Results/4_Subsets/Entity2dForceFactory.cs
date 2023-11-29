@@ -23,6 +23,7 @@ namespace GsaGH.Parameters.Results {
     private static IEntity2dQuantity<IForce2d> CreateFromApiCollection(
       ReadOnlyCollection<Tensor2> results) {
       return results.Count switch {
+        1 => new Entity2dCentreOnlyForce(results),
         4 => new Entity2dTriForce(results),
         5 => new Entity2dQuadForce(results),
         7 => new Entity2dTri6Force(results),

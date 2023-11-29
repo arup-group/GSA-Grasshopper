@@ -23,6 +23,7 @@ namespace GsaGH.Parameters.Results {
     private static IEntity2dQuantity<IShear2d> CreateShearForceFromApiCollection(
       ReadOnlyCollection<Vector2> results) {
       return results.Count switch {
+        1 => new Entity2dCentreOnlyShear(results),
         4 => new Entity2dTriShear(results),
         5 => new Entity2dQuadShear(results),
         7 => new Entity2dTri6Shear(results),
