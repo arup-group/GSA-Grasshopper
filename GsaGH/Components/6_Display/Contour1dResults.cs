@@ -590,7 +590,8 @@ namespace GsaGH.Components {
       if (elems.Count == 0) {
         this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
         return;
-      };
+      }
+
       LengthUnit lengthUnit = result.Model.ModelUnit;
 
       var ghDiv = new GH_Integer();
