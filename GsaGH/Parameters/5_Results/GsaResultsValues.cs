@@ -64,9 +64,7 @@ namespace GsaGH.Parameters {
         // create quaternion from two planes
         var q = Quaternion.Rotation(plane, local);
 
-        double angle = new double();
-        var axis = new Vector3d();
-        q.GetRotation(out angle, out axis);
+        q.GetRotation(out double angle, out Vector3d axis);
 
         if (angle > Math.PI) {
           angle -= 2 * Math.PI;

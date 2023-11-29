@@ -433,9 +433,7 @@ namespace GsaGH.Components {
       _resType = string.Empty;
 
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp)) {
-        return;
-      }
+      da.GetData(0, ref ghTyp);
 
       switch (ghTyp?.Value) {
         case GsaResultGoo goo:

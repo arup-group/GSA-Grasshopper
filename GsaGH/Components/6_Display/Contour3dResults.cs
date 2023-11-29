@@ -88,7 +88,6 @@ namespace GsaGH.Components {
     private List<string> _legendValues;
     private List<int> _legendValuesPosY;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private double _maxValue = 1000;
     private double _minValue;
     private FoldMode _mode = FoldMode.Displacement;
@@ -148,7 +147,6 @@ namespace GsaGH.Components {
         _legendScale = reader.GetDouble("legendScale");
       }
 
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
       _stressUnitResult
@@ -260,7 +258,6 @@ namespace GsaGH.Components {
       writer.SetDouble("val", _defScale);
       writer.SetDouble("legendScale", _legendScale);
       writer.SetBoolean("legend", _showLegend);
-      writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("stress", Pressure.GetAbbreviation(_stressUnitResult));
       return base.Write(writer);
@@ -413,6 +410,7 @@ namespace GsaGH.Components {
         this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
         return;
       };
+      LengthUnit lengthUnit = result.Model.ModelUnit;
 
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();
@@ -471,7 +469,7 @@ namespace GsaGH.Components {
               dmin = displacements.GetExtrema(displacements.Min.Xyz).Xyz.As(_lengthResultUnit);
               translationSelector = (r) => r.Xyz.ToUnit(_lengthResultUnit);
               valuesXyz = ResultsUtility.GetResultResultanTranslation(
-                displacements.Subset, _lengthUnit, permutation);
+                displacements.Subset, lengthUnit, permutation);
               break;
           }
 
@@ -551,7 +549,6 @@ namespace GsaGH.Components {
       values.AsParallel().AsOrdered();
       var verticies = new ConcurrentDictionary<int, Point3dList>();
       verticies.AsParallel().AsOrdered();
-      LengthUnit lengthUnit = result.Model.ModelUnit;
 
       Parallel.ForEach(elems.Keys, key => {
         Element element = elems[key];
@@ -775,12 +772,6 @@ namespace GsaGH.Components {
 
     internal void UpdateLength(string unit) {
       _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    internal void UpdateModel(string unit) {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
