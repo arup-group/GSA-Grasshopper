@@ -6,11 +6,11 @@ using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class Element3dDisplacementCache
-    : IEntity2dResultCache<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> {
+    : IMeshResultCache<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IEntity2dQuantity<ITranslation>>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IEntity2dQuantity<ITranslation>>>();
+    public ConcurrentDictionary<int, Collection<IMeshQuantity<ITranslation>>> Cache { get; }
+      = new ConcurrentDictionary<int, Collection<IMeshQuantity<ITranslation>>>();
 
     internal Element3dDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -20,7 +20,7 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public IEntity2dResultSubset<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>>
+    public IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>>
       ResultSubset(ICollection<int> elementIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(elementIds);
       if (missingIds.Count > 0) {

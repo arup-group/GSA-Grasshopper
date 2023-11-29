@@ -1,5 +1,5 @@
 ﻿namespace GsaGH.Parameters.Results {
-  public interface IEntity2dQuadQuantity<T> : IEntity2dQuantity<T> where T : IResultItem {
+  public interface IEntity2dQuadQuantity<T> : IMeshQuantity<T> where T : IResultItem {
     T Node1 { get; }
     T Node2 { get; }
     T Node3 { get; }

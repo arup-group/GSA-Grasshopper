@@ -4,26 +4,26 @@ using System.Collections.ObjectModel;
 namespace GsaGH.Parameters.Results {
   public static partial class Entity2dResultsFactory {
     
-    public static Collection<IEntity2dQuantity<IMoment2d>> CreateMoment(
+    public static Collection<IMeshQuantity<IMoment2d>> CreateMoment(
       ReadOnlyCollection<Tensor2> results) {
-      return new Collection<IEntity2dQuantity<IMoment2d>>() {
+      return new Collection<IMeshQuantity<IMoment2d>>() {
         CreateMomentFromApiCollection(results)
       };
     }
 
-    public static Collection<IEntity2dQuantity<IMoment2d>> CreateMoment(
+    public static Collection<IMeshQuantity<IMoment2d>> CreateMoment(
       ReadOnlyCollection<ReadOnlyCollection<Tensor2>> results) {
-      var permutations = new Collection<IEntity2dQuantity<IMoment2d>>();
+      var permutations = new Collection<IMeshQuantity<IMoment2d>>();
       foreach (ReadOnlyCollection<Tensor2> permutation in results) {
         permutations.Add(CreateMomentFromApiCollection(permutation));
       }
       return permutations;
     }
 
-    private static IEntity2dQuantity<IMoment2d> CreateMomentFromApiCollection(
+    private static IMeshQuantity<IMoment2d> CreateMomentFromApiCollection(
       ReadOnlyCollection<Tensor2> results) {
       return results.Count switch {
-        1 => new Entity2dCentreOnlyMoment(results),
+        1 => new MeshCentreOnlyMoment(results),
         4 => new Entity2dTriMoment(results),
         5 => new Entity2dQuadMoment(results),
         7 => new Entity2dTri6Moment(results),

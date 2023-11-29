@@ -20,7 +20,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -35,7 +35,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -55,7 +55,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -76,7 +76,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -96,7 +96,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -117,7 +117,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -137,13 +137,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
+        Collection<IMeshQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
 
         Assert.Single(displacementQuantity);
         foreach (IDisplacement displacement in displacementQuantity[0].Results()) {
@@ -166,13 +166,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
+        Collection<IMeshQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, displacementQuantity.Count);
@@ -185,7 +185,7 @@ namespace GsaGHTests.Parameters.Results {
 
       i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
+        Collection<IMeshQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
 
 
         foreach (IDisplacement displacement in displacementQuantity[1].Results()) {

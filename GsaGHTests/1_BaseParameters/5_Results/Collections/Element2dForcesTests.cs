@@ -20,7 +20,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -35,7 +35,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -54,7 +54,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -74,7 +74,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -93,7 +93,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -113,7 +113,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -132,13 +132,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IForce2d>> forceQuantity = resultSet.Subset[id];
+        Collection<IMeshQuantity<IForce2d>> forceQuantity = resultSet.Subset[id];
 
         Assert.Single(forceQuantity);
         foreach (IForce2d force2d in forceQuantity[0].Results()) {
@@ -160,13 +160,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IForce2d>> forceQuantity = resultSet.Subset[id];
+        Collection<IMeshQuantity<IForce2d>> forceQuantity = resultSet.Subset[id];
 
         Assert.Equal(2, forceQuantity.Count);
 
@@ -178,7 +178,7 @@ namespace GsaGHTests.Parameters.Results {
 
       i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IForce2d>> forceQuantity = resultSet.Subset[id];
+        Collection<IMeshQuantity<IForce2d>> forceQuantity = resultSet.Subset[id];
 
 
         foreach (IForce2d force2d in forceQuantity[1].Results()) {

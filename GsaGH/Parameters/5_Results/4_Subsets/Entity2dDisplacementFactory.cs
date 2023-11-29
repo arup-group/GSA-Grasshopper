@@ -3,23 +3,23 @@ using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
   public static partial class Entity2dResultsFactory {
-    public static Collection<IEntity2dQuantity<IDisplacement>> CreateDisplacements(
+    public static Collection<IMeshQuantity<IDisplacement>> CreateDisplacements(
       ReadOnlyCollection<Double6> results) {
-      return new Collection<IEntity2dQuantity<IDisplacement>> {
+      return new Collection<IMeshQuantity<IDisplacement>> {
               CreateFromApiCollection(results)
              };
     }
 
-    public static Collection<IEntity2dQuantity<IDisplacement>> CreateDisplacements(
+    public static Collection<IMeshQuantity<IDisplacement>> CreateDisplacements(
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results) {
-      var permutations = new Collection<IEntity2dQuantity<IDisplacement>>();
+      var permutations = new Collection<IMeshQuantity<IDisplacement>>();
       foreach (ReadOnlyCollection<Double6> permutation in results) {
         permutations.Add(CreateFromApiCollection(permutation));
       }
       return permutations;
     }
 
-    private static IEntity2dQuantity<IDisplacement> CreateFromApiCollection(
+    private static IMeshQuantity<IDisplacement> CreateFromApiCollection(
       ReadOnlyCollection<Double6> results) {
       return results.Count switch {
         4 => new Entity2dTriDisplacement(results),

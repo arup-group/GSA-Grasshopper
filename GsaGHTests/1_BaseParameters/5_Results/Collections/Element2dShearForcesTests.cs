@@ -20,7 +20,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
         = result.Element2dShearForces.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -35,7 +35,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
         = result.Element2dShearForces.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -53,7 +53,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
         = result.Element2dShearForces.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -72,7 +72,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
         = result.Element2dShearForces.ResultSubset(elementIds);
       // Assert Max in set
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
@@ -89,7 +89,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
         = result.Element2dShearForces.ResultSubset(elementIds);
       // Assert Max in set
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
@@ -107,7 +107,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
         = result.Element2dShearForces.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -125,12 +125,12 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
         = result.Element2dShearForces.ResultSubset(elementIds);
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IShear2d>> shearQuantity = resultSet.Subset[id];
+        Collection<IMeshQuantity<IShear2d>> shearQuantity = resultSet.Subset[id];
 
         Assert.Single(shearQuantity);
         foreach (IShear2d shear2d in shearQuantity[0].Results()) {
@@ -151,12 +151,12 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
         = result.Element2dShearForces.ResultSubset(elementIds);
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IShear2d>> shearQuantity = resultSet.Subset[id];
+        Collection<IMeshQuantity<IShear2d>> shearQuantity = resultSet.Subset[id];
 
         Assert.Equal(2, shearQuantity.Count);
 
@@ -168,7 +168,7 @@ namespace GsaGHTests.Parameters.Results {
 
       i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IShear2d>> shearQuantity = resultSet.Subset[id];
+        Collection<IMeshQuantity<IShear2d>> shearQuantity = resultSet.Subset[id];
 
 
         foreach (IShear2d shear2d in shearQuantity[1].Results()) {

@@ -620,7 +620,7 @@ namespace GsaGH.Components {
       double dmin = 0;
       switch (_mode) {
         case FoldMode.Displacement:
-          IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> displacements =
+          IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> displacements =
               result.Element2dDisplacements.ResultSubset(elementIds);
           Func<IDisplacement, IQuantity> translationSelector = null;
           switch (_disp) {
@@ -659,13 +659,13 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Force:
-          IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, 
+          IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, 
             ResultTensor2InAxis<Entity2dExtremaKey>> forces
               = result.Element2dForces.ResultSubset(elementIds);
-          IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, 
+          IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, 
             ResultVector2<Entity2dExtremaKey>> shears 
               = result.Element2dShearForces.ResultSubset(elementIds);
-          IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, 
+          IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, 
             ResultTensor2AroundAxis<Entity2dExtremaKey>> moments 
               = result.Element2dMoments.ResultSubset(elementIds);
           Func<IForce2d, IQuantity> forceSelector = null;
@@ -756,7 +756,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Stress:
-          IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress,
+          IMeshResultSubset<IMeshQuantity<IStress>, IStress,
             ResultTensor3<Entity2dExtremaKey>> stresses
             = result.Element2dStresses.ResultSubset(elementIds, _flayer);
           Func<IStress, IQuantity> stressSelector = null;

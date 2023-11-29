@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public interface IEntity2dResultSubset<T1, T2, T3>
-    where T1 : IEntity2dQuantity<T2>
+  public interface IMeshResultSubset<T1, T2, T3>
+    where T1 : IMeshQuantity<T2>
     where T2 : IResultItem {
     T3 Max { get; }
     T3 Min { get; }

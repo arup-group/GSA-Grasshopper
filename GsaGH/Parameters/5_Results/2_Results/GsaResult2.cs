@@ -39,32 +39,32 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
-    public IEntity2dResultCache<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> Element2dDisplacements {
+    public IMeshResultCache<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> Element2dDisplacements {
       get;
       private set;
     }
 
-    public IEntity2dLayeredResultCache<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element2dStresses {
+    public IEntity2dLayeredResultCache<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element2dStresses {
       get;
       private set;
     }
-    public IEntity2dResultCache<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> Element2dForces {
+    public IMeshResultCache<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> Element2dForces {
       get;
       private set;
     }
-    public IEntity2dResultCache<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> Element2dMoments {
+    public IMeshResultCache<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> Element2dMoments {
       get;
       private set;
     }
-    public IEntity2dResultCache<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> Element2dShearForces {
+    public IMeshResultCache<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> Element2dShearForces {
       get;
       private set;
     }
-    public IEntity2dResultCache<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> Element3dDisplacements {
+    public IMeshResultCache<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> Element3dDisplacements {
       get;
       private set;
     }
-    public IEntity2dResultCache<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element3dStresses {
+    public IMeshResultCache<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element3dStresses {
       get;
       private set;
     }

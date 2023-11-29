@@ -8,11 +8,11 @@ using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class Element2dShearForceCache
-    : IEntity2dResultCache<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> {
+    : IMeshResultCache<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IEntity2dQuantity<IShear2d>>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IEntity2dQuantity<IShear2d>>>();
+    public ConcurrentDictionary<int, Collection<IMeshQuantity<IShear2d>>> Cache { get; }
+      = new ConcurrentDictionary<int, Collection<IMeshQuantity<IShear2d>>>();
 
     internal Element2dShearForceCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -22,7 +22,7 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>>
+    public IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>>
       ResultSubset(ICollection<int> elementIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(elementIds);
       if (missingIds.Count > 0) {

@@ -3,23 +3,23 @@ using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
   public static partial class Entity3dResultsFactory {
-    public static Collection<IEntity2dQuantity<ITranslation>> CreateTranslations(
+    public static Collection<IMeshQuantity<ITranslation>> CreateTranslations(
       ReadOnlyCollection<Double3> results) {
-      return new Collection<IEntity2dQuantity<ITranslation>> {
+      return new Collection<IMeshQuantity<ITranslation>> {
               CreateFromApiCollection(results)
              };
     }
 
-    public static Collection<IEntity2dQuantity<ITranslation>> CreateTranslations(
+    public static Collection<IMeshQuantity<ITranslation>> CreateTranslations(
       ReadOnlyCollection<ReadOnlyCollection<Double3>> results) {
-      var permutations = new Collection<IEntity2dQuantity<ITranslation>>();
+      var permutations = new Collection<IMeshQuantity<ITranslation>>();
       foreach (ReadOnlyCollection<Double3> permutation in results) {
         permutations.Add(CreateFromApiCollection(permutation));
       }
       return permutations;
     }
 
-    private static IEntity2dQuantity<ITranslation> CreateFromApiCollection(
+    private static IMeshQuantity<ITranslation> CreateFromApiCollection(
       ReadOnlyCollection<Double3> results) {
       return results.Count switch {
         9 => new Entity3dTetra4Translation(results),

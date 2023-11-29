@@ -151,7 +151,7 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);
-        IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet =
+        IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet =
           result.Element2dStresses.ResultSubset(elementIds, layer);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -162,7 +162,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, Collection<IEntity2dQuantity<IStress>>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, Collection<IMeshQuantity<IStress>>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outXx.AddRange(kvp.Value[p - 1].Results().Select(

@@ -428,7 +428,7 @@ namespace GsaGH.Components {
         GH_Convert.ToInterval(ghInterval, ref customMinMax, GH_Conversion.Both);
       }
 
-      ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 3);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
       int permutation = result.SelectedPermutationIds == null
         ? 0 : result.SelectedPermutationIds[0] - 1;
       double dmax = 0;
@@ -437,7 +437,7 @@ namespace GsaGH.Components {
       ConcurrentDictionary<int, (List<double> x, List<double> y, List<double> z)> valuesXyz = null;
       switch (_mode) {
         case FoldMode.Displacement:
-          IEntity2dResultSubset<IEntity2dQuantity<ITranslation>, ITranslation,
+          IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation,
             ResultVector3InAxis<Entity2dExtremaKey>> displacements =
               result.Element3dDisplacements.ResultSubset(elementIds);
           Func<ITranslation, IQuantity> translationSelector = null;
@@ -477,7 +477,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Stress:
-          IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress,
+          IMeshResultSubset<IMeshQuantity<IStress>, IStress,
             ResultTensor3<Entity2dExtremaKey>> stresses =
               result.Element3dStresses.ResultSubset(elementIds);
           Func<IStress, IQuantity> stressSelector = null;

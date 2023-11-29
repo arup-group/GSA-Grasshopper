@@ -20,7 +20,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -35,7 +35,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -56,7 +56,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -78,7 +78,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -99,7 +99,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -121,7 +121,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -142,13 +142,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
+        Collection<IMeshQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
 
         Assert.Single(momentQuantity);
         foreach (IMoment2d moment2d in momentQuantity[0].Results()) {
@@ -172,13 +172,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
+        Collection<IMeshQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
 
         Assert.Equal(2, momentQuantity.Count);
 
@@ -190,7 +190,7 @@ namespace GsaGHTests.Parameters.Results {
 
       i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
+        Collection<IMeshQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
 
 
         foreach (IMoment2d moment2d in momentQuantity[1].Results()) {
