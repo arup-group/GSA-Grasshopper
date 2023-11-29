@@ -165,7 +165,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult2 result = null;
+      GsaResult result = null;
       string elementlist = "All";
 
       var ghTypes = new List<GH_ObjectWrapper>();
@@ -191,7 +191,7 @@ namespace GsaGH.Components {
             return;
 
           case GsaResultGoo goo:
-            result = new GsaResult2((GsaResult)goo.Value);
+            result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
 
@@ -303,7 +303,7 @@ namespace GsaGH.Components {
           }
         }
 
-        PostHog.Result(result.CaseType, 2, GsaResultsValues.ResultType.Force);
+        PostHog.Result(result.CaseType, 2, "Force");
       }
 
       da.SetDataTree(0, outX);

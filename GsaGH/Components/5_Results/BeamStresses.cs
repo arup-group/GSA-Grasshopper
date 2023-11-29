@@ -131,7 +131,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult2 result;
+      GsaResult result;
       string elementlist = "All";
       var ghDivisions = new GH_Integer();
       da.GetData(2, ref ghDivisions);
@@ -154,7 +154,7 @@ namespace GsaGH.Components {
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         switch (ghTyp?.Value) {
           case GsaResultGoo goo:
-            result = new GsaResult2((GsaResult)goo.Value);
+            result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
 
@@ -222,7 +222,7 @@ namespace GsaGH.Components {
           outC2.Add(new GH_UnitNumber(extrema.CombinedC2.ToUnit(_stressUnit)), path);
         }
 
-        PostHog.Result(result.CaseType, 1, GsaResultsValues.ResultType.Displacement);
+        PostHog.Result(result.CaseType, 1, "Displacement");
       }
 
       da.SetDataTree(0, outAxial);

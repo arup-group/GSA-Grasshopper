@@ -542,7 +542,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult2 result = null;
+      GsaResult result = null;
       string elementlist = "All";
       _case = string.Empty;
       _resType = string.Empty;
@@ -553,7 +553,7 @@ namespace GsaGH.Components {
 
       switch (ghTyp?.Value) {
         case GsaResultGoo goo:
-          result = new GsaResult2((GsaResult)goo.Value);
+          result = (GsaResult)goo.Value;
           elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
 
           switch (result.CaseType) {
@@ -1026,11 +1026,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
 
-      var resultType
-        = (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType),
-          _mode.ToString());
-      PostHog.Result(result.CaseType, 2, resultType, _disp.ToString());
-      
+      PostHog.Result(result.CaseType, 2, _mode.ToString(), _disp.ToString());
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {

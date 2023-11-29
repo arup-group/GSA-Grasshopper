@@ -101,7 +101,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult2 result = null;
+      GsaResult result = null;
       string elementlist = "All";
 
       var outXx = new DataTree<GH_UnitNumber>();
@@ -119,7 +119,7 @@ namespace GsaGH.Components {
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         switch (ghTyp?.Value) {
           case GsaResultGoo goo:
-            result = new GsaResult2((GsaResult)goo.Value);
+            result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
 
@@ -174,7 +174,7 @@ namespace GsaGH.Components {
           outZx.Add(new GH_UnitNumber(extrema.Zx.ToUnit(_stresshUnit)), path);
         }
 
-        PostHog.Result(result.CaseType, 3, GsaResultsValues.ResultType.Stress);
+        PostHog.Result(result.CaseType, 3, "Stress");
       }
 
       da.SetDataTree(0, outXx);

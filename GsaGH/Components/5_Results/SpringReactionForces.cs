@@ -124,7 +124,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult2 result;
+      GsaResult result;
 
       string nodeList = "All";
 
@@ -150,7 +150,7 @@ namespace GsaGH.Components {
             return;
 
           case GsaResultGoo goo:
-            result = new GsaResult2((GsaResult)goo.Value);
+            result = (GsaResult)goo.Value;
             nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
             break;
 
@@ -202,7 +202,7 @@ namespace GsaGH.Components {
           outIDs.Add(key.Id, path);
         }
 
-        PostHog.Result(result.CaseType, 0, GsaResultsValues.ResultType.Force, "Spring");
+        PostHog.Result(result.CaseType, 0, "Force", "Spring");
       }
 
       da.SetDataTree(0, outTransX);

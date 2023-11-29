@@ -6,8 +6,19 @@ using GsaGH.Components;
 using GsaGH.Helpers;
 
 namespace GsaGH.Parameters.Results {
-
-  public class GsaResult2 : IGsaResult {
+  /// <summary>
+  /// <para>A Result is used to select Cases from an analysed <see cref="GsaModel"/> and extract the values for post-processing or visualisation.</para>
+  /// <para>The following result types can be extracted if they are present in the model:
+  /// <list type="bullet">
+  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#noderesult">Node Results</see>: `Displacement` and `Reaction`.</description></item>
+  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element1dresult">1D Element Results</see>: `Displacement`, `Force` and `StrainEnergyDensity`.</description></item>
+  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element2dresult">2D Element Results</see>: `Displacement`, `Force`, `Moment`, `Shear` and `Stress`.</description></item>
+  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element3dresult">3D Element Results</see>: `Displacement` and `Stress`.</description></item>
+  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#globalresult">Global Results</see>: `Frequency`, `LoadFactor`, `ModalGeometricStiffness`, `ModalMass`, `ModalStiffness`, `TotalLoad`, `TotalReaction`, `Mode`, `EffectiveInertia`, `EffectiveMass` and `Eigenvalue`.</description></item>
+  /// </list></para>
+  /// <para>All result values from the <see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/introduction.html">.NET API</see> has been wrapped in <see href="https://docs.oasys-software.com/structural/gsa/references/gsagh/gsagh-unitnumber-parameter.html">Unit Number</see> and can be converted into different measures on the fly. The Result parameter caches the result values</para>
+  /// </summary>
+  public class GsaResult : IGsaResult {
     // Caches
     public INodeResultCache<IEnergyDensity, NodeExtremaKey> Element1dAverageStrainEnergyDensities {
       get;
@@ -105,25 +116,11 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
-    // temp conversion from old class
-    internal GsaResult2(GsaResult result) {
-      switch (result.CaseType) {
-        case CaseType.AnalysisCase:
-          InitialiseAnalysisCaseResults(result.Model, result.AnalysisCaseResult, result.CaseId);
-          break;
-
-        case CaseType.CombinationCase:
-          InitialiseCombinationsCaseResults(result.Model, result.CombinationCaseResult,
-            result.CaseId, result.SelectedPermutationIds);
-          break;
-      }
-    }
-
-    internal GsaResult2(GsaModel model, AnalysisCaseResult result, int caseId) {
+    internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseId) {
       InitialiseAnalysisCaseResults(model, result, caseId);
     }
 
-    internal GsaResult2(
+    internal GsaResult(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
       InitialiseCombinationsCaseResults(model, result, caseId, permutations.OrderBy(x => x));
     }

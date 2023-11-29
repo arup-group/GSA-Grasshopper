@@ -367,13 +367,13 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult2 result;
+      GsaResult result;
       string elementlist = "All";
       var ghTyp = new GH_ObjectWrapper();
       da.GetData(0, ref ghTyp);
       switch (ghTyp?.Value) {
         case GsaResultGoo goo:
-          result = new GsaResult2((GsaResult)goo.Value);
+          result = (GsaResult)goo.Value;
           elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
           switch (result.CaseType) {
             case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
@@ -428,7 +428,7 @@ namespace GsaGH.Components {
         GH_Convert.ToInterval(ghInterval, ref customMinMax, GH_Conversion.Both);
       }
 
-      ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 3);
       int permutation = result.SelectedPermutationIds == null
         ? 0 : result.SelectedPermutationIds[0] - 1;
       double dmax = 0;
@@ -692,10 +692,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
 
-      var resultType
-        = (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType),
-          _mode.ToString());
-      PostHog.Result(result.CaseType, 3, resultType, _disp.ToString());
+      PostHog.Result(result.CaseType, 3, _mode.ToString(), _disp.ToString());
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {

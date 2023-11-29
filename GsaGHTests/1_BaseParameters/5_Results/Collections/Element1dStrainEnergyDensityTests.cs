@@ -17,7 +17,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element1dStrainEnergyDensityElement1dIdsFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
@@ -32,7 +32,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element1dStrainEnergyDensitysElement1dIdsFromCombinationCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
@@ -47,7 +47,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element1dStrainEnergyDensitysMaxFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = Element1dStrainEnergyDensity.A1EnergyInkJ().Max();
 
       // Act
@@ -63,7 +63,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element1dStrainEnergyDensitysMaxFromCombinationCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Max(Element1dStrainEnergyDensity.C4p1EnergyInkJ().Max(),
         Element1dStrainEnergyDensity.C4p2EnergyInkJ().Max());
 
@@ -80,7 +80,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element1dStrainEnergyDensitysMinFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = Element1dStrainEnergyDensity.A1EnergyInkJ().Min();
 
       // Act
@@ -96,7 +96,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element1dStrainEnergyDensitysMinFromcombinationCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Min(Element1dStrainEnergyDensity.C4p1EnergyInkJ().Min(),
         Element1dStrainEnergyDensity.C4p2EnergyInkJ().Min());
 
@@ -113,7 +113,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element1dStrainEnergyDensitysValuesFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       List<double> expected = Element1dStrainEnergyDensity.A1EnergyInkJ();
       int positionsCount = 5;
 
@@ -141,7 +141,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element1dStrainEnergyDensitysValuesFromCombinationCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       List<double> expectedP1 = Element1dStrainEnergyDensity.C4p1EnergyInkJ();
       List<double> expectedP2 = Element1dStrainEnergyDensity.C4p2EnergyInkJ();
       int positionsCount = 5;

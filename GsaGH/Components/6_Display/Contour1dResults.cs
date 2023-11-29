@@ -543,7 +543,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult2 result;
+      GsaResult result;
       string elementlist = "All";
       _case = string.Empty;
       _resType = string.Empty;
@@ -555,7 +555,7 @@ namespace GsaGH.Components {
 
       switch (ghTyp?.Value) {
         case GsaResultGoo goo:
-          result = new GsaResult2((GsaResult)goo.Value);
+          result = (GsaResult)goo.Value;
           elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
           switch (result.CaseType) {
             case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:

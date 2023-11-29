@@ -16,7 +16,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element2dForcesElement2dIdsFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
@@ -31,7 +31,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element2dForcesElement2dIdsFromCombinationCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
@@ -49,7 +49,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
     public void Element2dForcesMaxFromAnalysisCaseTest(ResultTensor2InAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
@@ -68,7 +68,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
     public void Element2dForcesMaxFromCombinationCaseTest(ResultTensor2InAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Max(ExpectedCombinationCaseC2p1Values(component).Max(),
         ExpectedCombinationCaseC2p2Values(component).Max());
 
@@ -88,7 +88,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
     public void Element2dForcesMinFromAnalysisCaseTest(ResultTensor2InAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
@@ -107,7 +107,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
     public void Element2dForcesMinFromcombinationCaseTest(ResultTensor2InAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Min(ExpectedCombinationCaseC2p1Values(component).Min(),
         ExpectedCombinationCaseC2p2Values(component).Min());
 
@@ -127,7 +127,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
     public void Element2dForcesValuesFromAnalysisCaseTest(ResultTensor2InAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
 
       // Act
@@ -154,7 +154,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
     public void Element2dForcesValuesFromCombinationCaseTest(ResultTensor2InAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       List<double> expectedP1 = ExpectedCombinationCaseC2p1Values(component);
       List<double> expectedP2 = ExpectedCombinationCaseC2p2Values(component);
 
