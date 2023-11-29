@@ -40,6 +40,7 @@ namespace GsaGH.Parameters.Results {
           foreach (double position in positions) {
             if (!existing[key][0].Results.ContainsKey(position)) {
               missingIds.Add(key);
+              return;
             }
           }
         }

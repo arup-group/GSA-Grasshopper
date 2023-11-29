@@ -35,7 +35,7 @@ namespace GsaGH.Parameters.Results {
       this Collection<IEntity1dDisplacement> existing,
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < existing.Count; i++) {
-        for (int j = 0; j < results.Count; j++) {
+        for (int j = 0; j < results[i].Count; j++) {
           if (!existing[i].Results.ContainsKey(positions[j])) {
             existing[i].Results.Add(positions[j], new Displacement(results[i][j]));
           }
