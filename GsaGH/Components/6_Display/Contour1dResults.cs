@@ -17,6 +17,7 @@ using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
@@ -61,10 +62,10 @@ namespace GsaGH.Components {
     private enum FoldMode {
       Displacement,
       Force,
-      ProjectedStress,
-      DerivedStress,
       StrainEnergy,
       Footfall,
+      ProjectedStress,
+      DerivedStress,
     }
 
     public override Guid ComponentGuid => new Guid("ce7a8f84-4c72-4fd4-a207-485e8bf7ac38");
