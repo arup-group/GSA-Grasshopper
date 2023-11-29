@@ -23,6 +23,7 @@ namespace GsaGH.Parameters.Results {
     private static IEntity2dQuantity<IMoment2d> CreateMomentFromApiCollection(
       ReadOnlyCollection<Tensor2> results) {
       return results.Count switch {
+        1 => new Entity2dCentreOnlyMoment(results),
         4 => new Entity2dTriMoment(results),
         5 => new Entity2dQuadMoment(results),
         7 => new Entity2dTri6Moment(results),

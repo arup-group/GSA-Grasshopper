@@ -22,6 +22,7 @@ namespace GsaGH.Parameters.Results {
     private static IEntity2dQuantity<IStress> CreateFromApiCollection(
       ReadOnlyCollection<Tensor3> results) {
       return results.Count switch {
+        1 => new Entity2dCentreOnlyStress(results),
         4 => new Entity2dTriStress(results),
         5 => new Entity2dQuadStress(results),
         7 => new Entity2dTri6Stress(results),

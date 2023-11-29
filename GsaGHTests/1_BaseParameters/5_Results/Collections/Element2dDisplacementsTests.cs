@@ -19,7 +19,7 @@ namespace GsaGHTests.Parameters.Results {
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters.Results {
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
@@ -54,7 +54,7 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
@@ -75,7 +75,7 @@ namespace GsaGHTests.Parameters.Results {
         ExpectedCombinationCaseC2p2Values(component).Max());
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
@@ -95,7 +95,7 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
@@ -116,7 +116,7 @@ namespace GsaGHTests.Parameters.Results {
         ExpectedCombinationCaseC2p2Values(component).Min());
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
@@ -136,7 +136,7 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expected = ExpectedAnalysisCaseValues(component);
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
@@ -165,7 +165,7 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expectedP2 = ExpectedCombinationCaseC2p2Values(component);
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 

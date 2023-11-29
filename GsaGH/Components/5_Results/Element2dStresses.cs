@@ -150,7 +150,7 @@ namespace GsaGH.Components {
             return;
         }
 
-        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
+        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);
         IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet =
           result.Element2dStresses.ResultSubset(elementIds, layer);
 

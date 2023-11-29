@@ -184,7 +184,7 @@ namespace GsaGH.Components {
             return;
         }
 
-        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
+        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
         if (_average) {
           INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet =
             result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);

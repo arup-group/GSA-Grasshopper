@@ -20,7 +20,7 @@ namespace GsaGHTests.Parameters.Results {
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
       INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
@@ -35,7 +35,7 @@ namespace GsaGHTests.Parameters.Results {
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
       INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
@@ -51,7 +51,7 @@ namespace GsaGHTests.Parameters.Results {
       double expected = Element1dAverageStrainEnergyDensity.A1EnergyInkJ().Max();
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
       INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
@@ -69,7 +69,7 @@ namespace GsaGHTests.Parameters.Results {
         Element1dAverageStrainEnergyDensity.C4p2EnergyInkJ().Max());
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
       INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
@@ -85,7 +85,7 @@ namespace GsaGHTests.Parameters.Results {
       double expected = Element1dAverageStrainEnergyDensity.A1EnergyInkJ().Min();
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
       INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
@@ -103,7 +103,7 @@ namespace GsaGHTests.Parameters.Results {
         Element1dAverageStrainEnergyDensity.C4p2EnergyInkJ().Min());
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
       INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
@@ -119,7 +119,7 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expected = Element1dAverageStrainEnergyDensity.A1EnergyInkJ();
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
       INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
@@ -143,7 +143,7 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expectedP2 = Element1dAverageStrainEnergyDensity.C4p2EnergyInkJ();
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
       INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
