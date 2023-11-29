@@ -132,7 +132,7 @@ namespace GsaGH.Components {
             return;
         }
 
-        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
+        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
         IEntity1dResultSubset<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> resultSet = 
           result.Element1dDerivedStresses.ResultSubset(elementIds, positionsCount);
 

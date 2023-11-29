@@ -200,7 +200,7 @@ namespace GsaGH.Components {
             return;
         }
 
-        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
+        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);
         IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> forces
           = result.Element2dForces.ResultSubset(elementIds);
         IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> shears = result.Element2dShearForces.ResultSubset(elementIds);

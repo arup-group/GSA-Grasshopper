@@ -18,7 +18,7 @@ namespace GsaGHTests.Parameters.Results {
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds("1");
+      ReadOnlyCollection<int> elementIds = result.ElementIds("1", 1);
       IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 1);
 
@@ -37,7 +37,7 @@ namespace GsaGHTests.Parameters.Results {
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds("1");
+      ReadOnlyCollection<int> elementIds = result.ElementIds("1", 1);
       IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 1);
 

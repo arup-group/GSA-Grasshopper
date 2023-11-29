@@ -164,9 +164,24 @@ namespace GsaGH.Parameters.Results {
       return Model.Model.ExpandList(entityList);
     }
 
-    internal ReadOnlyCollection<int> ElementIds(string elementList) {
+    internal ReadOnlyCollection<int> ElementIds(string elementList, int dimension) {
+      string filter = string.Empty;
+      switch (dimension) {
+        case 1:
+          filter = " not (PA PV)";
+          break;
+
+        case 2:
+          filter = " not (PB PV)";
+          break;
+
+        case 3:
+          filter = " not (PB PA)";
+          break;
+      }
+
       var entityList = new EntityList() {
-        Definition = elementList,
+        Definition = elementList + filter,
         Type = GsaAPI.EntityType.Element,
         Name = "elem",
       };

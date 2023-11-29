@@ -609,7 +609,7 @@ namespace GsaGH.Components {
         GH_Convert.ToInterval(ghInterval, ref customMinMax, GH_Conversion.Both);
       }
 
-      ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);
       int permutation = result.SelectedPermutationIds == null
         ? 0 : result.SelectedPermutationIds[0] - 1;
 
@@ -656,6 +656,103 @@ namespace GsaGH.Components {
           }
 
           values = ResultsUtility.GetResultComponent(displacements.Subset, translationSelector, permutation);
+          break;
+
+        case FoldMode.Force:
+          IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, 
+            ResultTensor2InAxis<Entity2dExtremaKey>> forces
+              = result.Element2dForces.ResultSubset(elementIds);
+          IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, 
+            ResultVector2<Entity2dExtremaKey>> shears 
+              = result.Element2dShearForces.ResultSubset(elementIds);
+          IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, 
+            ResultTensor2AroundAxis<Entity2dExtremaKey>> moments 
+              = result.Element2dMoments.ResultSubset(elementIds);
+          Func<IForce2d, IQuantity> forceSelector = null;
+          Func<IShear2d, IQuantity> shearSelector = null;
+          Func<IMoment2d, IQuantity> momentSelector = null;
+          switch (_disp) {
+            case DisplayValue.X when _isShear:
+              _resType = "2D Shear, Qx";
+              dmax = shears.GetExtrema(shears.Max.Qx).Qx.As(_forcePerLengthUnit);
+              dmin = shears.GetExtrema(shears.Min.Qx).Qx.As(_forcePerLengthUnit);
+              shearSelector = (r) => r.Qx.ToUnit(_forcePerLengthUnit);
+              values = ResultsUtility.GetResultComponent(shears.Subset, shearSelector, permutation);
+              break;
+
+            case DisplayValue.Y when _isShear:
+              _resType = "2D Shear, Qy";
+              dmax = shears.GetExtrema(shears.Max.Qy).Qy.As(_forcePerLengthUnit);
+              dmin = shears.GetExtrema(shears.Min.Qy).Qy.As(_forcePerLengthUnit);
+              shearSelector = (r) => r.Qy.ToUnit(_forcePerLengthUnit);
+              values = ResultsUtility.GetResultComponent(shears.Subset, shearSelector, permutation);
+              break;
+
+            case DisplayValue.X:
+              _resType = "2D Force, Nx";
+              dmax = forces.GetExtrema(forces.Max.Nx).Nx.As(_forcePerLengthUnit);
+              dmin = forces.GetExtrema(forces.Min.Nx).Nx.As(_forcePerLengthUnit);
+              forceSelector = (r) => r.Nx.ToUnit(_forcePerLengthUnit);
+              values = ResultsUtility.GetResultComponent(forces.Subset, forceSelector, permutation);
+              break;
+
+            case DisplayValue.Y:
+              _resType = "2D Force, Ny";
+              dmax = forces.GetExtrema(forces.Max.Ny).Ny.As(_forcePerLengthUnit);
+              dmin = forces.GetExtrema(forces.Min.Ny).Ny.As(_forcePerLengthUnit);
+              forceSelector = (r) => r.Ny.ToUnit(_forcePerLengthUnit);
+              values = ResultsUtility.GetResultComponent(forces.Subset, forceSelector, permutation);
+              break;
+
+            case DisplayValue.Z:
+              _resType = "2D Force, Nxy";
+              dmax = forces.GetExtrema(forces.Max.Nxy).Nxy.As(_forcePerLengthUnit);
+              dmin = forces.GetExtrema(forces.Min.Nxy).Nxy.As(_forcePerLengthUnit);
+              forceSelector = (r) => r.Nxy.ToUnit(_forcePerLengthUnit);
+              values = ResultsUtility.GetResultComponent(forces.Subset, forceSelector, permutation);
+              break;
+
+            case DisplayValue.Xx:
+              _resType = "2D Moment, Mx";
+              dmax = moments.GetExtrema(moments.Max.Mx).Mx.As(_forceUnit);
+              dmin = moments.GetExtrema(moments.Min.Mx).Mx.As(_forceUnit);
+              momentSelector = (r) => r.Mx.ToUnit(_forceUnit);
+              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
+              break;
+
+            case DisplayValue.Yy:
+              _resType = "2D Moment, My";
+              dmax = moments.GetExtrema(moments.Max.My).My.As(_forceUnit);
+              dmin = moments.GetExtrema(moments.Min.My).My.As(_forceUnit);
+              momentSelector = (r) => r.My.ToUnit(_forceUnit);
+              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
+              break;
+
+            case DisplayValue.Zz:
+              _resType = "2D Moment, Mxy";
+              dmax = moments.GetExtrema(moments.Max.Mxy).Mxy.As(_forceUnit);
+              dmin = moments.GetExtrema(moments.Min.Mxy).Mxy.As(_forceUnit);
+              momentSelector = (r) => r.Mxy.ToUnit(_forceUnit);
+              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
+              break;
+
+            case DisplayValue.ResXyz:
+              _resType = "2D Moment, Mx+sgn(Mx)|Mxy|";
+              dmax = moments.GetExtrema(moments.Max.WoodArmerX).WoodArmerX.As(_forceUnit);
+              dmin = moments.GetExtrema(moments.Min.WoodArmerX).WoodArmerX.As(_forceUnit);
+              momentSelector = (r) => r.WoodArmerX.ToUnit(_forceUnit);
+              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
+              break;
+
+            case DisplayValue.ResXxyyzz:
+              _resType = "2D Moment, My+sgn(My)|Mxy|";
+              dmax = moments.GetExtrema(moments.Max.WoodArmerY).WoodArmerY.As(_forceUnit);
+              dmin = moments.GetExtrema(moments.Min.WoodArmerY).WoodArmerY.As(_forceUnit);
+              momentSelector = (r) => r.WoodArmerY.ToUnit(_forceUnit);
+              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
+              break;
+          }
+
           break;
 
         case FoldMode.Stress:
@@ -709,6 +806,23 @@ namespace GsaGH.Components {
 
           values = ResultsUtility.GetResultComponent(stresses.Subset, stressSelector, permutation);
           break;
+
+        case FoldMode.Footfall:
+          _resType = "Response Factor [-]";
+          INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfallCache
+          = _selectedItems[1] == "Resonant"
+            ? result.NodeResonantFootfalls
+            : result.NodeTransientFootfalls;
+          Func<IFootfall, IQuantity> footfallSelector =
+            (r) => new Ratio(r.MaximumResponseFactor, RatioUnit.DecimalFraction);
+          ICollection<int> nodeIds;
+          (values, nodeIds) = ResultsUtility.MapNodeResultToElements(
+            elems, nodeFootfallCache, footfallSelector, permutation);
+          INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfall
+            = nodeFootfallCache.ResultSubset(nodeIds);
+          dmax = nodeFootfall.GetExtrema(nodeFootfall.Max.MaximumResponseFactor).MaximumResponseFactor;
+          dmin = nodeFootfall.GetExtrema(nodeFootfall.Min.MaximumResponseFactor).MaximumResponseFactor;
+          break;
       }
 
       int significantDigits = 0;
@@ -728,7 +842,6 @@ namespace GsaGH.Components {
         new List<Point3dList>(), new List<int>());
       var meshes = new ConcurrentDictionary<int, Mesh>();
       meshes.AsParallel().AsOrdered();
-      //var values = new ConcurrentDictionary<int, List<IQuantity>>();
       values.AsParallel().AsOrdered();
       var verticies = new ConcurrentDictionary<int, Point3dList>();
       verticies.AsParallel().AsOrdered();
@@ -772,9 +885,8 @@ namespace GsaGH.Components {
               break;
           }
         }
-        for (int i = 0; i < tempmesh.Vertices.Count - 1;
-          i++) // start at i=0, now the last index is the centre point in GsaAPI output so to count -1
-        {
+
+        for (int i = 0; i < values[key].Count - 1; i++) {
           double tnorm = (2 * (values[key][i].Value - dmin) / (dmax - dmin)) - 1;
           Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
           tempmesh.VertexColors.Add(col);
@@ -787,8 +899,8 @@ namespace GsaGH.Components {
           tempmesh.Vertices[i] = def;
         }
 
-        if (values[key].Count == 9) // add the value/colour at the centre point if quad-8 (as it already has a vertex here)
-        {
+        if (values[key].Count == 9) {
+          // add the value/colour at the centre point if quad-8 (as it already has a vertex here)
           double tnorm = (2 * (values[key].Last().Value - dmin) / (dmax - dmin)) - 1;
           Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
           tempmesh.VertexColors.Add(col);
@@ -799,9 +911,9 @@ namespace GsaGH.Components {
           }
         }
 
-        if (values[key].Count == 1) // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
-        {
-          double tnorm = (2 * (values[0][key].Value - dmin) / (dmax - dmin)) - 1;
+        if (values[key].Count == 1) {
+          // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
+          double tnorm = (2 * (values[key][0].Value - dmin) / (dmax - dmin)) - 1;
           Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
           for (int i = 0; i < tempmesh.Vertices.Count; i++) {
             tempmesh.VertexColors.SetColor(i, col);
@@ -820,7 +932,6 @@ namespace GsaGH.Components {
         }
 
         meshes[key] = tempmesh;
-
       });
 
       resultMeshes.AddRange(meshes.Values.ToList(), values.Values.ToList(),
@@ -904,8 +1015,8 @@ namespace GsaGH.Components {
             }
 
         if (Math.Abs(t) > 1) {
-          _legendValues[i] = _legendValues[i]
-           .Replace(",", string.Empty); // remove thousand separator
+          // remove thousand separator
+          _legendValues[i] = _legendValues[i].Replace(",", string.Empty);
         }
 
         _legendValuesPosY.Add(_legend.Height - starty + (gripheight / 2) - 2);

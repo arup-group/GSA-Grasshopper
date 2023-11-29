@@ -621,7 +621,7 @@ namespace GsaGH.Components {
       da.GetData(5, ref ghScale);
       GH_Convert.ToDouble(ghScale, out double scale, GH_Conversion.Both);
 
-      ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
       int permutation = result.SelectedPermutationIds == null
         ? 0 : result.SelectedPermutationIds[0] - 1;
       double dmax = 0;

@@ -20,7 +20,7 @@ namespace GsaGHTests.Parameters.Results {
       var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
@@ -38,7 +38,7 @@ namespace GsaGHTests.Parameters.Results {
       var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
@@ -72,7 +72,7 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component, layer).Max();
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
@@ -109,7 +109,7 @@ namespace GsaGHTests.Parameters.Results {
         ExpectedCombinationCaseC2p2Values(component, layer).Max());
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
@@ -144,7 +144,7 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component, layer).Min();
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
@@ -181,7 +181,7 @@ namespace GsaGHTests.Parameters.Results {
         ExpectedCombinationCaseC2p2Values(component, layer).Min());
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
@@ -216,7 +216,7 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expected = ExpectedAnalysisCaseValues(component, layer);
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
@@ -260,7 +260,7 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expectedP2 = ExpectedCombinationCaseC2p2Values(component, layer);
 
       // Act
-      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
       IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
