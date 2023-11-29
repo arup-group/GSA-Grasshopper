@@ -327,7 +327,7 @@ namespace GsaGH.Components {
     }
 
     private (GsaVectorDiagram, GsaAnnotationGoo) CreateReactionForceVectorWithAnnotations(
-      KeyValuePair<int, GsaNodeGoo> node, IDictionary<int, Collection<IInternalForce>> forceValues,
+      KeyValuePair<int, GsaNodeGoo> node, IDictionary<int, IList<IInternalForce>> forceValues,
       int permutation, double scale, int significantDigits, Color color) {
       int nodeId = node.Key;
 

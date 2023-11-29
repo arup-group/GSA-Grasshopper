@@ -5,7 +5,7 @@ using OasysUnits;
 namespace GsaGH.Parameters.Results {
   public static partial class ExtremaKeyUtility {
     public static (ResultFootfall<NodeExtremaKey> Max, ResultFootfall<NodeExtremaKey> Min) GetResultFootfallExtremaKeys(
-      this IDictionary<int, Collection<IFootfall>> subset) {
+      this IDictionary<int, IList<IFootfall>> subset) {
 
       var maxValue = new ResultFootfall<double>(double.MinValue);
       var minValue = new ResultFootfall<double>(double.MaxValue);
@@ -14,7 +14,7 @@ namespace GsaGH.Parameters.Results {
       var minKey = new ResultFootfall<NodeExtremaKey>();
 
       foreach (int nodeId in subset.Keys) {
-        Collection<IFootfall> values = subset[nodeId];
+        IList<IFootfall> values = subset[nodeId];
         for (int permutation = 0; permutation < values.Count; permutation++) {
           UpdateExtrema(values[permutation], nodeId, permutation,
                   ref maxValue, ref minValue, ref maxKey, ref minKey);

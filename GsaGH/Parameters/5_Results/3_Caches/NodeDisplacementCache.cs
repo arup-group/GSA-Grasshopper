@@ -9,8 +9,8 @@ namespace GsaGH.Parameters.Results {
   public class NodeDisplacementCache : INodeResultCache<IDisplacement, ResultVector6<NodeExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IDisplacement>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IDisplacement>>();
+    public IDictionary<int, IList<IDisplacement>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IDisplacement>>();
 
     internal NodeDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -33,7 +33,8 @@ namespace GsaGH.Parameters.Results {
               }
 
               var res = new Displacement(resultKvp.Value);
-              Cache.TryAdd(resultKvp.Key, new Collection<IDisplacement>() { res });
+              ((ConcurrentDictionary<int, IList<IDisplacement>>)Cache).TryAdd(
+                resultKvp.Key, new Collection<IDisplacement>() { res });
             });
             break;
 
@@ -49,7 +50,8 @@ namespace GsaGH.Parameters.Results {
                 permutationResults.Add(new Displacement(permutation));
               }
 
-              Cache.TryAdd(resultKvp.Key, permutationResults);
+              ((ConcurrentDictionary<int, IList<IDisplacement>>)Cache).TryAdd(
+                resultKvp.Key, permutationResults);
             });
             break;
         }

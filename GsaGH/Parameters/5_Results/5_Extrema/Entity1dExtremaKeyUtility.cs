@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
   public static partial class ExtremaKeyUtility {
     public static (Entity1dExtremaKey Max, Entity1dExtremaKey Min) GetEntity1dExtremaKeys<T1, T2>(
-      this IDictionary<int, Collection<T1>> subset)
+      this IDictionary<int, IList<T1>> subset)
       where T1 : IEntity1dQuantity<T2>
       where T2 : IResultItem {
 
@@ -15,7 +14,7 @@ namespace GsaGH.Parameters.Results {
       Entity1dExtremaKey minKey = null;
 
       foreach (int elementId in subset.Keys) {
-        Collection<T1> values = subset[elementId];
+        IList<T1> values = subset[elementId];
         for (int permutation = 0; permutation < values.Count; permutation++) {
           foreach (double position in values[permutation].Results.Keys) {
             switch (values[permutation].Results[position]) {

@@ -1,26 +1,26 @@
-﻿using GsaAPI;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public static partial class Entity1dResultsFactory {
-    public static Collection<IEntity1dStrainEnergyDensity> CreateStrainEnergyDensities(
+  internal static partial class Entity1dResultsFactory {
+    internal static IList<IEntity1dStrainEnergyDensity> CreateStrainEnergyDensities(
       ReadOnlyCollection<double> results, ReadOnlyCollection<double> positions) {
-      return new Collection<IEntity1dStrainEnergyDensity> {
+      return new List<IEntity1dStrainEnergyDensity> {
               new Entity1dStrainEnergyDensity(results, positions)
              };
     }
 
-    public static Collection<IEntity1dStrainEnergyDensity> CreateStrainEnergyDensities(
+    internal static IList<IEntity1dStrainEnergyDensity> CreateStrainEnergyDensities(
       ReadOnlyCollection<ReadOnlyCollection<double>> results, ReadOnlyCollection<double> positions) {
-      var permutations = new Collection<IEntity1dStrainEnergyDensity>();
+      var permutations = new List<IEntity1dStrainEnergyDensity>();
       foreach (ReadOnlyCollection<double> permutation in results) {
         permutations.Add(new Entity1dStrainEnergyDensity(permutation, positions));
       }
       return permutations;
     }
 
-    public static Collection<IEntity1dStrainEnergyDensity> AddMissingPositions(
-      this Collection<IEntity1dStrainEnergyDensity> existing,
+    internal static IList<IEntity1dStrainEnergyDensity> AddMissingPositions(
+      this IList<IEntity1dStrainEnergyDensity> existing,
       ReadOnlyCollection<double> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < results.Count; i++) {
         if (!existing[0].Results.ContainsKey(positions[i])) {
@@ -31,8 +31,8 @@ namespace GsaGH.Parameters.Results {
       return existing;
     }
 
-    public static Collection<IEntity1dStrainEnergyDensity> AddMissingPositions(
-      this Collection<IEntity1dStrainEnergyDensity> existing,
+    internal static IList<IEntity1dStrainEnergyDensity> AddMissingPositions(
+      this IList<IEntity1dStrainEnergyDensity> existing,
       ReadOnlyCollection<ReadOnlyCollection<double>> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < existing.Count; i++) {
         for (int j = 0; j < results[i].Count; j++) {

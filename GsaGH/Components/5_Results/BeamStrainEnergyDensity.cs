@@ -197,7 +197,7 @@ namespace GsaGH.Components {
           }
 
           if (_selectedItems[0] == "All") {
-            foreach (KeyValuePair<int, Collection<IEnergyDensity>> kvp in resultSet.Subset) {
+            foreach (KeyValuePair<int, IList<IEnergyDensity>> kvp in resultSet.Subset) {
               foreach (int p in permutations) {
                 var path = new GH_Path(result.CaseId, 
                   result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
@@ -225,7 +225,7 @@ namespace GsaGH.Components {
           }
 
           if (_selectedItems[0] == "All") {
-            foreach (KeyValuePair<int, Collection<IEntity1dStrainEnergyDensity>> kvp in resultSet.Subset) {
+            foreach (KeyValuePair<int, IList<IEntity1dStrainEnergyDensity>> kvp in resultSet.Subset) {
               foreach (int p in permutations) {
                 var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
                 outResults.AddRange(kvp.Value[p - 1].Results.Values.Select(

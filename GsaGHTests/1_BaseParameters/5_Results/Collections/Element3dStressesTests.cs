@@ -154,7 +154,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IMeshQuantity<IStress>> stressQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IStress>> stressQuantity = resultSet.Subset[id];
 
         Assert.Single(stressQuantity);
         foreach (IStress stress in stressQuantity[0].Results()) {
@@ -185,7 +185,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IMeshQuantity<IStress>> stressQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IStress>> stressQuantity = resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, stressQuantity.Count);
@@ -198,7 +198,7 @@ namespace GsaGHTests.Parameters.Results {
 
       i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IMeshQuantity<IStress>> stressQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IStress>> stressQuantity = resultSet.Subset[id];
 
         foreach (IStress stress in stressQuantity[1].Results()) {
           double perm2 = TestsResultHelper.ResultsHelper(stress, component);

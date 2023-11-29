@@ -148,7 +148,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IMeshQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
 
         Assert.Single(momentQuantity);
         foreach (IMoment2d moment2d in momentQuantity[0].Results()) {
@@ -178,7 +178,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IMeshQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
 
         Assert.Equal(2, momentQuantity.Count);
 
@@ -190,7 +190,7 @@ namespace GsaGHTests.Parameters.Results {
 
       i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IMeshQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
 
 
         foreach (IMoment2d moment2d in momentQuantity[1].Results()) {

@@ -8,19 +8,19 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace GsaGH.Parameters.Results {
-  public static partial class ResultsUtility {
-    public static ConcurrentDictionary<int, List<IQuantity>> GetResultComponent<T1, T2>(
-      ConcurrentDictionary<int, Collection<T1>> subset, Func<T2, IQuantity> selector, int permutation = 0)
+  internal static partial class ResultsUtility {
+    internal static ConcurrentDictionary<int, IList<IQuantity>> GetResultComponent<T1, T2>(
+      IDictionary<int, IList<T1>> subset, Func<T2, IQuantity> selector, int permutation = 0)
       where T1 : IEntity1dQuantity<T2> where T2 : IResultItem {
-      var vals = new ConcurrentDictionary<int, List<IQuantity>>();
+      var vals = new ConcurrentDictionary<int, IList<IQuantity>>();
       Parallel.ForEach(subset, kvp =>
         vals.TryAdd(kvp.Key, kvp.Value[permutation].Results.Values.Select(selector).ToList()));
       return vals;
     }
 
-    public static ConcurrentDictionary<int, (List<double> x, List<double> y, List<double> z)> GetResultResultanTranslation(
-      ConcurrentDictionary<int, Collection<IEntity1dDisplacement>> subset, LengthUnit unit, int permutation = 0) {
-      var vals = new ConcurrentDictionary<int, (List<double> x, List<double> y, List<double> z)>();
+    internal static ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> GetResultResultanTranslation(
+      IDictionary<int, IList<IEntity1dDisplacement>> subset, LengthUnit unit, int permutation = 0) {
+      var vals = new ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)>();
       Parallel.ForEach(subset, kvp =>
         vals.TryAdd(kvp.Key, (
           kvp.Value[permutation].Results.Values.Select(r => r.X.As(unit)).ToList(),

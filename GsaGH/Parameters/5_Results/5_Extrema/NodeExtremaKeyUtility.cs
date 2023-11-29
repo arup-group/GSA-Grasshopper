@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 namespace GsaGH.Parameters.Results {
   public static partial class ExtremaKeyUtility {
     public static (NodeExtremaKey Max, NodeExtremaKey Min) GetNodeExtremaKeys<T>(
-      this IDictionary<int, Collection<T>> subset) {
+      this IDictionary<int, IList<T>> subset) {
 
       double maxValue = double.MinValue;
       double minValue = double.MaxValue;
@@ -13,7 +13,7 @@ namespace GsaGH.Parameters.Results {
       NodeExtremaKey minKey = null;
 
       foreach (int nodeId in subset.Keys) {
-        Collection<T> values = subset[nodeId];
+        IList<T> values = subset[nodeId];
         for (int permutation = 0; permutation < values.Count; permutation++) {
           switch (values[permutation]) {
             case IEnergyDensity energyDensity:

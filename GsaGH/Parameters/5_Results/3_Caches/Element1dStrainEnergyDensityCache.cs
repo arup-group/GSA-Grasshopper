@@ -11,8 +11,8 @@ namespace GsaGH.Parameters.Results {
     : IEntity1dResultCache<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IEntity1dStrainEnergyDensity>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IEntity1dStrainEnergyDensity>>();
+    public IDictionary<int, IList<IEntity1dStrainEnergyDensity>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IEntity1dStrainEnergyDensity>>();
 
     internal Element1dStrainEnergyDensityCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -39,7 +39,8 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<double>> aCaseResults
               = analysisCase.Element1dStrainEnergyDensity(elementList, positions);
-            Parallel.ForEach(aCaseResults.Keys, elementId => Cache.AddOrUpdate(
+            Parallel.ForEach(aCaseResults.Keys, elementId => 
+             ((ConcurrentDictionary<int, IList<IEntity1dStrainEnergyDensity>>)Cache).AddOrUpdate(
               elementId, 
               Entity1dResultsFactory.CreateStrainEnergyDensities(aCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
@@ -48,7 +49,8 @@ namespace GsaGH.Parameters.Results {
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<double>>> cCaseResults
               = combinationCase.Element1dStrainEnergyDensity(elementList, positions);
-            Parallel.ForEach(cCaseResults.Keys, elementId => Cache.AddOrUpdate(
+            Parallel.ForEach(cCaseResults.Keys, elementId => 
+             ((ConcurrentDictionary<int, IList<IEntity1dStrainEnergyDensity>>)Cache).AddOrUpdate(
               elementId, 
               Entity1dResultsFactory.CreateStrainEnergyDensities(cCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));

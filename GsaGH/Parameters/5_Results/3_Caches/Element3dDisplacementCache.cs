@@ -9,8 +9,8 @@ namespace GsaGH.Parameters.Results {
     : IMeshResultCache<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IMeshQuantity<ITranslation>>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IMeshQuantity<ITranslation>>>();
+    public IDictionary<int, IList<IMeshQuantity<ITranslation>>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IMeshQuantity<ITranslation>>>();
 
     internal Element3dDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -29,14 +29,16 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Double3>> aCaseResults
               = analysisCase.Element3dDisplacement(elementList);
-            Parallel.ForEach(aCaseResults.Keys, elementId => Cache.TryAdd(
+            Parallel.ForEach(aCaseResults.Keys, elementId => 
+             ((ConcurrentDictionary<int, IList<IMeshQuantity<ITranslation>>>)Cache).TryAdd(
               elementId, Entity3dResultsFactory.CreateTranslations(aCaseResults[elementId])));
             break;
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double3>>> cCaseResults
               = combinationCase.Element3dDisplacement(elementList);
-            Parallel.ForEach(cCaseResults.Keys, elementId => Cache.TryAdd(
+            Parallel.ForEach(cCaseResults.Keys, elementId => 
+             ((ConcurrentDictionary<int, IList<IMeshQuantity<ITranslation>>>)Cache).TryAdd(
               elementId, Entity3dResultsFactory.CreateTranslations(cCaseResults[elementId])));
             break;
         }

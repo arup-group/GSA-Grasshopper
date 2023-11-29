@@ -11,8 +11,8 @@ namespace GsaGH.Parameters.Results {
     : IMeshResultCache<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IMeshQuantity<IMoment2d>>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IMeshQuantity<IMoment2d>>>();
+    public IDictionary<int, IList<IMeshQuantity<IMoment2d>>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IMeshQuantity<IMoment2d>>>();
 
     internal Element2dMomentCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -31,14 +31,16 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Tensor2>> aCaseResults
               = analysisCase.Element2dMoment(elementList, 0);
-            Parallel.ForEach(aCaseResults.Keys, elementId => Cache.TryAdd(
+            Parallel.ForEach(aCaseResults.Keys, elementId => 
+             ((ConcurrentDictionary<int, IList<IMeshQuantity<IMoment2d>>>)Cache).TryAdd(
               elementId, Entity2dResultsFactory.CreateMoment(aCaseResults[elementId])));
             break;
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Tensor2>>> cCaseResults
               = combinationCase.Element2dMoment(elementList, 0);
-            Parallel.ForEach(cCaseResults.Keys, elementId => Cache.TryAdd(
+            Parallel.ForEach(cCaseResults.Keys, elementId => 
+             ((ConcurrentDictionary<int, IList<IMeshQuantity<IMoment2d>>>)Cache).TryAdd(
               elementId, Entity2dResultsFactory.CreateMoment(cCaseResults[elementId])));
             break;
         }

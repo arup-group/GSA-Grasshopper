@@ -1,18 +1,20 @@
 ﻿using GsaAPI;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public static partial class Entity2dResultsFactory {
-    public static Collection<IMeshQuantity<IStress>> CreateStresses(
+  internal static partial class Entity2dResultsFactory {
+    internal static IList<IMeshQuantity<IStress>> CreateStresses(
       ReadOnlyCollection<Tensor3> results) {
-      return new Collection<IMeshQuantity<IStress>> {
+      return new List<IMeshQuantity<IStress>> {
               CreateFromApiCollection(results)
              };
     }
 
-    public static Collection<IMeshQuantity<IStress>> CreateStresses(
+    internal static IList<IMeshQuantity<IStress>> CreateStresses(
       ReadOnlyCollection<ReadOnlyCollection<Tensor3>> results) {
-      var permutations = new Collection<IMeshQuantity<IStress>>();
+      var permutations = new List<IMeshQuantity<IStress>>();
       foreach (ReadOnlyCollection<Tensor3> permutation in results) {
         permutations.Add(CreateFromApiCollection(permutation));
       }

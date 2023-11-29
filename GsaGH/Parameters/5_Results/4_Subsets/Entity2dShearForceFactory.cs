@@ -1,19 +1,19 @@
 ﻿using GsaAPI;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public static partial class Entity2dResultsFactory {
-    
-    public static Collection<IMeshQuantity<IShear2d>> CreateShearForce(
+  internal static partial class Entity2dResultsFactory {
+    public static IList<IMeshQuantity<IShear2d>> CreateShearForce(
       ReadOnlyCollection<Vector2> results) {
-      return new Collection<IMeshQuantity<IShear2d>>() {
+      return new List<IMeshQuantity<IShear2d>>() {
         CreateShearForceFromApiCollection(results)
       };
     }
 
-    public static Collection<IMeshQuantity<IShear2d>> CreateShearForce(
+    internal static IList<IMeshQuantity<IShear2d>> CreateShearForce(
       ReadOnlyCollection<ReadOnlyCollection<Vector2>> results) {
-      var permutations = new Collection<IMeshQuantity<IShear2d>>();
+      var permutations = new List<IMeshQuantity<IShear2d>>();
       foreach (ReadOnlyCollection<Vector2> permutation in results) {
         permutations.Add(CreateShearForceFromApiCollection(permutation));
       }

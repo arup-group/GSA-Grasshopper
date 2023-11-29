@@ -1,19 +1,21 @@
 ﻿using GsaAPI;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public static partial class Entity2dResultsFactory {
-    
-    public static Collection<IMeshQuantity<IMoment2d>> CreateMoment(
+  internal static partial class Entity2dResultsFactory {
+
+    internal static IList<IMeshQuantity<IMoment2d>> CreateMoment(
       ReadOnlyCollection<Tensor2> results) {
-      return new Collection<IMeshQuantity<IMoment2d>>() {
+      return new List<IMeshQuantity<IMoment2d>>() {
         CreateMomentFromApiCollection(results)
       };
     }
 
-    public static Collection<IMeshQuantity<IMoment2d>> CreateMoment(
+    internal static IList<IMeshQuantity<IMoment2d>> CreateMoment(
       ReadOnlyCollection<ReadOnlyCollection<Tensor2>> results) {
-      var permutations = new Collection<IMeshQuantity<IMoment2d>>();
+      var permutations = new List<IMeshQuantity<IMoment2d>>();
       foreach (ReadOnlyCollection<Tensor2> permutation in results) {
         permutations.Add(CreateMomentFromApiCollection(permutation));
       }

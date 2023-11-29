@@ -130,7 +130,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IMeshQuantity<IShear2d>> shearQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IShear2d>> shearQuantity = resultSet.Subset[id];
 
         Assert.Single(shearQuantity);
         foreach (IShear2d shear2d in shearQuantity[0].Results()) {
@@ -156,7 +156,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IMeshQuantity<IShear2d>> shearQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IShear2d>> shearQuantity = resultSet.Subset[id];
 
         Assert.Equal(2, shearQuantity.Count);
 
@@ -168,7 +168,7 @@ namespace GsaGHTests.Parameters.Results {
 
       i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IMeshQuantity<IShear2d>> shearQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IShear2d>> shearQuantity = resultSet.Subset[id];
 
 
         foreach (IShear2d shear2d in shearQuantity[1].Results()) {

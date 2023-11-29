@@ -5,7 +5,7 @@ using OasysUnits;
 namespace GsaGH.Parameters.Results {
   public static partial class ExtremaKeyUtility {
     public static (ResultStress1d<Entity1dExtremaKey> Max, ResultStress1d<Entity1dExtremaKey> Min) GetResultStress1dExtremaKeys(
-      this IDictionary<int, Collection<IEntity1dStress>> subset) {
+      this IDictionary<int, IList<IEntity1dStress>> subset) {
 
       var maxValue = new ResultStress1d<double>(double.MinValue);
       var minValue = new ResultStress1d<double>(double.MaxValue);
@@ -14,7 +14,7 @@ namespace GsaGH.Parameters.Results {
       var minKey = new ResultStress1d<Entity1dExtremaKey>();
 
       foreach (int elementId in subset.Keys) {
-        Collection<IEntity1dStress> values = subset[elementId];
+        IList<IEntity1dStress> values = subset[elementId];
         for (int permutation = 0; permutation < values.Count; permutation++) {
           foreach (double position in values[permutation].Results.Keys) {
             UpdateExtrema(values[permutation].Results[position],

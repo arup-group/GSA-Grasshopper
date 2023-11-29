@@ -162,7 +162,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IDisplacement> displacementQuantity = resultSet.Subset[id];
+        IList<IDisplacement> displacementQuantity = resultSet.Subset[id];
 
         // for analysis case results we expect only one value in the collection
         Assert.Single(displacementQuantity);

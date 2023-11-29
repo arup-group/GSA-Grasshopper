@@ -159,7 +159,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IInternalForce> reactionForceQuantity = resultSet.Subset[id];
+        IList<IInternalForce> reactionForceQuantity = resultSet.Subset[id];
 
         // for analysis case results we expect only one value in the collection
         Assert.Single(reactionForceQuantity);
@@ -192,7 +192,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IInternalForce> reactionForceQuantity = resultSet.Subset[id];
+        IList<IInternalForce> reactionForceQuantity = resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, reactionForceQuantity.Count);

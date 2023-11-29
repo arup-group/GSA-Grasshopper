@@ -10,10 +10,10 @@ namespace GsaGH.Parameters.Results {
     public ResultTensor2AroundAxis<Entity2dExtremaKey> Min { get; private set; }
     public IList<int> Ids { get; private set; }
 
-    public ConcurrentDictionary<int, Collection<IMeshQuantity<IMoment2d>>> Subset { get; }
-      = new ConcurrentDictionary<int, Collection<IMeshQuantity<IMoment2d>>>();
+    public IDictionary<int, IList<IMeshQuantity<IMoment2d>>> Subset { get; }
+      = new ConcurrentDictionary<int, IList<IMeshQuantity<IMoment2d>>>();
 
-    public Entity2dMoment(ConcurrentDictionary<int, Collection<IMeshQuantity<IMoment2d>>> results) {
+    public Entity2dMoment(IDictionary<int, IList<IMeshQuantity<IMoment2d>>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
       (Max, Min) = results.GetResultTensor2AroundAxisEntity2dExtremaKeys();

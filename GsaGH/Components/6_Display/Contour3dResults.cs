@@ -433,8 +433,8 @@ namespace GsaGH.Components {
         ? 0 : result.SelectedPermutationIds[0] - 1;
       double dmax = 0;
       double dmin = 0;
-      ConcurrentDictionary<int, List<IQuantity>> values = null;
-      ConcurrentDictionary<int, (List<double> x, List<double> y, List<double> z)> valuesXyz = null;
+      ConcurrentDictionary<int, IList<IQuantity>> values = null;
+      ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> valuesXyz = null;
       switch (_mode) {
         case FoldMode.Displacement:
           IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation,
@@ -542,7 +542,7 @@ namespace GsaGH.Components {
         significantDigits = (int)rounded[2];
       }
 
-      var resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(),
+      var resultMeshes = new MeshResultGoo(new Mesh(), new List<IList<IQuantity>>(),
         new List<Point3dList>(), new List<int>());
       var meshes = new ConcurrentDictionary<int, Mesh>();
       meshes.AsParallel().AsOrdered();

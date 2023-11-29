@@ -143,7 +143,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IMeshQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
 
         Assert.Single(displacementQuantity);
         foreach (IDisplacement displacement in displacementQuantity[0].Results()) {
@@ -172,7 +172,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IMeshQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, displacementQuantity.Count);
@@ -185,7 +185,7 @@ namespace GsaGHTests.Parameters.Results {
 
       i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IMeshQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
 
 
         foreach (IDisplacement displacement in displacementQuantity[1].Results()) {

@@ -217,7 +217,7 @@ namespace GsaGH.Components {
           Parallel.For(0, 3, thread => {
             switch (thread) {
               case 0:
-                foreach (KeyValuePair<int, Collection<IMeshQuantity<IForce2d>>> kvp in forces
+                foreach (KeyValuePair<int, IList<IMeshQuantity<IForce2d>>> kvp in forces
                  .Subset) {
                   foreach (int p in permutations) {
                     var path = new GH_Path(result.CaseId,
@@ -237,7 +237,7 @@ namespace GsaGH.Components {
                 break;
 
               case 1:
-                foreach (KeyValuePair<int, Collection<IMeshQuantity<IShear2d>>> kvp in shears
+                foreach (KeyValuePair<int, IList<IMeshQuantity<IShear2d>>> kvp in shears
                  .Subset) {
                   foreach (int p in permutations) {
                     var path = new GH_Path(result.CaseId,
@@ -254,7 +254,7 @@ namespace GsaGH.Components {
                 break;
 
               case 2:
-                foreach (KeyValuePair<int, Collection<IMeshQuantity<IMoment2d>>> kvp in moments
+                foreach (KeyValuePair<int, IList<IMeshQuantity<IMoment2d>>> kvp in moments
                  .Subset) {
                   foreach (int p in permutations) {
                     var path = new GH_Path(result.CaseId,

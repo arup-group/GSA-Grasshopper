@@ -10,10 +10,10 @@ namespace GsaGH.Parameters.Results {
     public ResultVector2<Entity2dExtremaKey> Min { get; private set; }
     public IList<int> Ids { get; private set; }
 
-    public ConcurrentDictionary<int, Collection<IMeshQuantity<IShear2d>>> Subset { get; }
-      = new ConcurrentDictionary<int, Collection<IMeshQuantity<IShear2d>>>();
+    public IDictionary<int, IList<IMeshQuantity<IShear2d>>> Subset { get; }
+      = new ConcurrentDictionary<int, IList<IMeshQuantity<IShear2d>>>();
 
-    public Entity2dShearForce(ConcurrentDictionary<int, Collection<IMeshQuantity<IShear2d>>> results) {
+    public Entity2dShearForce(IDictionary<int, IList<IMeshQuantity<IShear2d>>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
       (Max, Min) = results.GetResultVector2Entity2dExtremaKeys();

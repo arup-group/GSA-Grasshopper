@@ -10,8 +10,8 @@ namespace GsaGH.Parameters.Results {
     NodeReactionForceCache : INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> {
     internal ConcurrentBag<int> SupportNodeIds { get; private set; }
     public IApiResult ApiResult { get; set; }
-    public ConcurrentDictionary<int, Collection<IInternalForce>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IInternalForce>>();
+    public IDictionary<int, IList<IInternalForce>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IInternalForce>>();
 
     internal ReadOnlyDictionary<int, Node> Nodes { get; private set; }
 
@@ -40,7 +40,8 @@ namespace GsaGH.Parameters.Results {
               }
 
               var res = new ReactionForce(resultKvp.Value);
-              Cache.TryAdd(resultKvp.Key, new Collection<IInternalForce>() {
+              ((ConcurrentDictionary<int, IList<IInternalForce>>)Cache).TryAdd(
+                resultKvp.Key, new Collection<IInternalForce>() {
                 res,
               });
             });
@@ -59,7 +60,8 @@ namespace GsaGH.Parameters.Results {
                 permutationResults.Add(new ReactionForce(permutation));
               }
 
-              Cache.TryAdd(resultKvp.Key, permutationResults);
+              ((ConcurrentDictionary<int, IList<IInternalForce>>)Cache).TryAdd(
+                resultKvp.Key, permutationResults);
             });
             break;
         }

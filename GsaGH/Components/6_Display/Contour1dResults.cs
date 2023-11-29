@@ -626,8 +626,8 @@ namespace GsaGH.Components {
         ? 0 : result.SelectedPermutationIds[0] - 1;
       double dmax = 0;
       double dmin = 0;
-      ConcurrentDictionary<int, List<IQuantity>> values = null;
-      ConcurrentDictionary<int, (List<double> x, List<double> y, List<double> z)> valuesXyz = null;
+      ConcurrentDictionary<int, IList<IQuantity>> values = null;
+      ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> valuesXyz = null;
       switch (_mode) {
         case FoldMode.Displacement:
           IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> displacements = Quarterion.CoordinateTransformationTo(
@@ -890,7 +890,7 @@ namespace GsaGH.Components {
               dmax = averageStrainEnergies.GetExtrema(averageStrainEnergies.Max).EnergyDensity.As(_energyResultUnit);
               dmin = averageStrainEnergies.GetExtrema(averageStrainEnergies.Min).EnergyDensity.As(_energyResultUnit);
               positionsCount = 2;
-              values = new ConcurrentDictionary<int, List<IQuantity>>();
+              values = new ConcurrentDictionary<int, IList<IQuantity>>();
               Parallel.ForEach(averageStrainEnergies.Subset, kvp => values.TryAdd(kvp.Key, new List<IQuantity>() {
                   kvp.Value[permutation].EnergyDensity.ToUnit(_energyResultUnit),
                   kvp.Value[permutation].EnergyDensity.ToUnit(_energyResultUnit),

@@ -20,7 +20,7 @@ namespace GsaGHTests.GooWrappers {
       var pol = new Polyline(pts);
       var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
         MeshingParameters.DefaultAnalysisMesh, 0.001);
-      var res = new List<List<IQuantity>>(){
+      var res = new List<IList<IQuantity>>(){
         new List<IQuantity>(){
           new Force(10, OasysUnits.Units.ForceUnit.Kilonewton)
           }

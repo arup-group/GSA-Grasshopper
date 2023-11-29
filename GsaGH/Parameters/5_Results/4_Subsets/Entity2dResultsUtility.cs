@@ -8,19 +8,19 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace GsaGH.Parameters.Results {
-  public static partial class ResultsUtility {
-    public static ConcurrentDictionary<int, List<IQuantity>> GetResultComponent<T>(
-      ConcurrentDictionary<int, Collection<IMeshQuantity<T>>> subset, Func<T, IQuantity> selector, int permutation = 0)
+  internal static partial class ResultsUtility {
+    internal static ConcurrentDictionary<int, IList<IQuantity>> GetResultComponent<T>(
+      IDictionary<int, IList<IMeshQuantity<T>>> subset, Func<T, IQuantity> selector, int permutation = 0)
       where T : IResultItem {
-      var vals = new ConcurrentDictionary<int, List<IQuantity>>();
+      var vals = new ConcurrentDictionary<int, IList<IQuantity>>();
       Parallel.ForEach(subset, kvp =>
         vals.TryAdd(kvp.Key, kvp.Value[permutation].Results().Select(selector).ToList()));
       return vals;
     }
 
-    public static ConcurrentDictionary<int, (List<double> x, List<double> y, List<double> z)> GetResultResultanTranslation(
-      ConcurrentDictionary<int, Collection<IMeshQuantity<ITranslation>>> subset, LengthUnit unit, int permutation = 0) {
-      var vals = new ConcurrentDictionary<int, (List<double> x, List<double> y, List<double> z)>();
+    internal static ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> GetResultResultanTranslation(
+      IDictionary<int, IList<IMeshQuantity<ITranslation>>> subset, LengthUnit unit, int permutation = 0) {
+      var vals = new ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)>();
       Parallel.ForEach(subset, kvp =>
         vals.TryAdd(kvp.Key, (
           kvp.Value[permutation].Results().Select(r => r.X.As(unit)).ToList(),
@@ -30,9 +30,9 @@ namespace GsaGH.Parameters.Results {
       return vals;
     }
 
-    public static ConcurrentDictionary<int, (List<double> x, List<double> y, List<double> z)> GetResultResultanTranslation(
-      ConcurrentDictionary<int, Collection<IMeshQuantity<IDisplacement>>> subset, LengthUnit unit, int permutation = 0) {
-      var vals = new ConcurrentDictionary<int, (List<double> x, List<double> y, List<double> z)>();
+    internal static ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> GetResultResultanTranslation(
+      IDictionary<int, IList<IMeshQuantity<IDisplacement>>> subset, LengthUnit unit, int permutation = 0) {
+      var vals = new ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)>();
       Parallel.ForEach(subset, kvp =>
         vals.TryAdd(kvp.Key, (
           kvp.Value[permutation].Results().Select(r => r.X.As(unit)).ToList(),

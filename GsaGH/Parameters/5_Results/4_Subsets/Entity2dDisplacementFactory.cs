@@ -1,18 +1,19 @@
 ﻿using GsaAPI;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public static partial class Entity2dResultsFactory {
-    public static Collection<IMeshQuantity<IDisplacement>> CreateDisplacements(
+  internal static partial class Entity2dResultsFactory {
+    internal static IList<IMeshQuantity<IDisplacement>> CreateDisplacements(
       ReadOnlyCollection<Double6> results) {
-      return new Collection<IMeshQuantity<IDisplacement>> {
+      return new List<IMeshQuantity<IDisplacement>> {
               CreateFromApiCollection(results)
              };
     }
 
-    public static Collection<IMeshQuantity<IDisplacement>> CreateDisplacements(
+    internal static IList<IMeshQuantity<IDisplacement>> CreateDisplacements(
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results) {
-      var permutations = new Collection<IMeshQuantity<IDisplacement>>();
+      var permutations = new List<IMeshQuantity<IDisplacement>>();
       foreach (ReadOnlyCollection<Double6> permutation in results) {
         permutations.Add(CreateFromApiCollection(permutation));
       }

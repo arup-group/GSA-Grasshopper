@@ -1,18 +1,19 @@
 ﻿using GsaAPI;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public static partial class Entity3dResultsFactory {
-    public static Collection<IMeshQuantity<ITranslation>> CreateTranslations(
+  internal static partial class Entity3dResultsFactory {
+    internal static IList<IMeshQuantity<ITranslation>> CreateTranslations(
       ReadOnlyCollection<Double3> results) {
-      return new Collection<IMeshQuantity<ITranslation>> {
+      return new List<IMeshQuantity<ITranslation>> {
               CreateFromApiCollection(results)
              };
     }
 
-    public static Collection<IMeshQuantity<ITranslation>> CreateTranslations(
+    internal static IList<IMeshQuantity<ITranslation>> CreateTranslations(
       ReadOnlyCollection<ReadOnlyCollection<Double3>> results) {
-      var permutations = new Collection<IMeshQuantity<ITranslation>>();
+      var permutations = new List<IMeshQuantity<ITranslation>>();
       foreach (ReadOnlyCollection<Double3> permutation in results) {
         permutations.Add(CreateFromApiCollection(permutation));
       }

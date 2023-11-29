@@ -5,7 +5,7 @@ using OasysUnits;
 namespace GsaGH.Parameters.Results {
   public static partial class ExtremaKeyUtility {
     public static (ResultTensor3<Entity2dExtremaKey> Max, ResultTensor3<Entity2dExtremaKey> Min) GetResultTensor3Entity2dExtremaKeys<T>(
-      this IDictionary<int, Collection<IMeshQuantity<T>>> subset)
+      this IDictionary<int, IList<IMeshQuantity<T>>> subset)
       where T : IResultItem {
 
       var maxValue = new ResultTensor3<double>(double.MinValue);
@@ -15,7 +15,7 @@ namespace GsaGH.Parameters.Results {
       var minKey = new ResultTensor3<Entity2dExtremaKey>();
 
       foreach (int elementId in subset.Keys) {
-        Collection<IMeshQuantity<T>> values = subset[elementId];
+        IList<IMeshQuantity<T>> values = subset[elementId];
         for (int permutation = 0; permutation < values.Count; permutation++) {
             switch (values[permutation]) {
               case IMeshQuantity<IStress> stress:

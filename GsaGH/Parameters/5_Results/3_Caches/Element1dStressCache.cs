@@ -11,8 +11,8 @@ namespace GsaGH.Parameters.Results {
     : IEntity1dResultCache<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IEntity1dStress>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IEntity1dStress>>();
+    public IDictionary<int, IList<IEntity1dStress>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IEntity1dStress>>();
 
     internal Element1dStressCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -39,7 +39,8 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<StressResult1d>> aCaseResults
               = analysisCase.Element1dStress(elementList, positions);
-            Parallel.ForEach(aCaseResults.Keys, elementId => Cache.AddOrUpdate(
+            Parallel.ForEach(aCaseResults.Keys, elementId => 
+             ((ConcurrentDictionary<int, IList<IEntity1dStress>>)Cache).AddOrUpdate(
               elementId, Entity1dResultsFactory.CreateStresses(aCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
             break;
@@ -47,7 +48,8 @@ namespace GsaGH.Parameters.Results {
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<StressResult1d>>> cCaseResults
               = combinationCase.Element1dStress(elementList, positions);
-            Parallel.ForEach(cCaseResults.Keys, elementId => Cache.AddOrUpdate(
+            Parallel.ForEach(cCaseResults.Keys, elementId => 
+            ((ConcurrentDictionary<int, IList<IEntity1dStress>>)Cache).AddOrUpdate(
               elementId, Entity1dResultsFactory.CreateStresses(cCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));
             break;

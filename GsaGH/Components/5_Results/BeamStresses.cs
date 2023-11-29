@@ -179,7 +179,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Stress1d[0]) {
-          foreach (KeyValuePair<int, Collection<IEntity1dStress>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IEntity1dStress>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outAxial.AddRange(kvp.Value[p - 1].Results.Values.Select(

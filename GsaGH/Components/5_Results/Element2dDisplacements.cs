@@ -148,7 +148,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, Collection<IMeshQuantity<IDisplacement>>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IMeshQuantity<IDisplacement>>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outTransX.AddRange(kvp.Value[p - 1].Results().Select(

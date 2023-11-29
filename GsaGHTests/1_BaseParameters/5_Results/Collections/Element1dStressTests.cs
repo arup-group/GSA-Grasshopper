@@ -180,7 +180,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity1dStress> stressQuantity = resultSet.Subset[id];
+        IList<IEntity1dStress> stressQuantity = resultSet.Subset[id];
 
         // for analysis case results we expect 4 positions
         Assert.Single(stressQuantity);
@@ -218,7 +218,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity1dStress> displacementQuantity = resultSet.Subset[id];
+        IList<IEntity1dStress> displacementQuantity = resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, displacementQuantity.Count);

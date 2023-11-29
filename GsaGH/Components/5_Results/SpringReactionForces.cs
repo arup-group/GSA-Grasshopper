@@ -172,7 +172,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6ReactionForces[0]) {
-          foreach (KeyValuePair<int, Collection<IInternalForce>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IInternalForce>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p);
               outTransX.Add(new GH_UnitNumber(kvp.Value[p - 1].X.ToUnit(_forceUnit)), path);

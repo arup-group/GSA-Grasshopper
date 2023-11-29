@@ -8,6 +8,9 @@ using GsaAPI;
 namespace GsaGH.Parameters.Results {
   public class
     NodeSpringForceCache : INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> {
+    public IApiResult ApiResult { get; set; }
+    public IDictionary<int, IList<IInternalForce>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IInternalForce>>();
 
     internal NodeSpringForceCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -16,10 +19,6 @@ namespace GsaGH.Parameters.Results {
     internal NodeSpringForceCache(CombinationCaseResult result) {
       ApiResult = new ApiResult(result);
     }
-
-    public IApiResult ApiResult { get; set; }
-    public ConcurrentDictionary<int, Collection<IInternalForce>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IInternalForce>>();
 
     public INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> ResultSubset(
       ICollection<int> nodeIds) {
@@ -36,7 +35,8 @@ namespace GsaGH.Parameters.Results {
               }
 
               var res = new ReactionForce(resultKvp.Value);
-              Cache.TryAdd(resultKvp.Key, new Collection<IInternalForce>() {
+              ((ConcurrentDictionary<int, IList<IInternalForce>>)Cache).TryAdd(
+                resultKvp.Key, new Collection<IInternalForce>() {
                 res,
               });
             });
@@ -55,7 +55,8 @@ namespace GsaGH.Parameters.Results {
                 permutationResults.Add(new ReactionForce(permutation));
               }
 
-              Cache.TryAdd(resultKvp.Key, permutationResults);
+              ((ConcurrentDictionary<int, IList<IInternalForce>>)Cache).TryAdd(
+                resultKvp.Key, permutationResults);
             });
             break;
             
