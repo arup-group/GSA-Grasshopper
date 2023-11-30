@@ -103,7 +103,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult2 result;
+      GsaResult result;
       string elementlist = "All";
 
       var outTransX = new DataTree<GH_UnitNumber>();
@@ -123,7 +123,7 @@ namespace GsaGH.Components {
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         switch (ghTyp?.Value) {
           case GsaResultGoo goo:
-            result = new GsaResult2((GsaResult)goo.Value);
+            result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
 
@@ -137,7 +137,7 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);
-        IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet =
+        IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet =
           result.Element2dDisplacements.ResultSubset(elementIds);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -148,7 +148,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, Collection<IEntity2dQuantity<IDisplacement>>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IMeshQuantity<IDisplacement>>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outTransX.AddRange(kvp.Value[p - 1].Results().Select(
@@ -184,7 +184,7 @@ namespace GsaGH.Components {
           outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz), path);
         }
 
-        PostHog.Result(result.CaseType, 2, GsaResultsValues.ResultType.Displacement);
+        PostHog.Result(result.CaseType, 2, "Displacement");
       }
 
       da.SetDataTree(0, outTransX);

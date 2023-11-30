@@ -5,15 +5,15 @@ using System.Linq;
 using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
-  public class Entity2dStresses : IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> {
+  public class MeshStresses : IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> {
     public ResultTensor3<Entity2dExtremaKey> Max { get; private set; }
     public ResultTensor3<Entity2dExtremaKey> Min { get; private set; }
     public IList<int> Ids { get; private set; }
 
-    public ConcurrentDictionary<int, Collection<IEntity2dQuantity<IStress>>> Subset { get; }
-      = new ConcurrentDictionary<int, Collection<IEntity2dQuantity<IStress>>>();
+    public IDictionary<int, IList<IMeshQuantity<IStress>>> Subset { get; }
+      = new ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>();
 
-    public Entity2dStresses(ConcurrentDictionary<int, Collection<IEntity2dQuantity<IStress>>> results) {
+    public MeshStresses(IDictionary<int, IList<IMeshQuantity<IStress>>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
       (Max, Min) = results.GetResultTensor3Entity2dExtremaKeys();

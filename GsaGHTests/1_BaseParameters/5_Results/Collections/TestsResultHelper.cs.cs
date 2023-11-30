@@ -445,7 +445,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> result,
+      IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> result,
       ResultVector6HelperEnum component, bool max) {
       double d = 0;
       ResultVector6<Entity2dExtremaKey> extrema = max ? result.Max : result.Min;
@@ -487,7 +487,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity2dResultSubset<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> result,
+      IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> result,
       ResultVector6HelperEnum component, bool max) {
       double d = 0;
       ResultVector3InAxis<Entity2dExtremaKey> extrema = max ? result.Max : result.Min;
@@ -513,7 +513,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> result,
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> result,
       ResultTensor2InAxisHelperEnum component, bool max) {
       double d = 0;
       ResultTensor2InAxis<Entity2dExtremaKey> extrema = max ? result.Max : result.Min;
@@ -535,7 +535,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> result,
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> result,
       ResultTensor2AroundAxisHelperEnum component, bool max) {
       double d = 0;
       ResultTensor2AroundAxis<Entity2dExtremaKey> extrema = max ? result.Max : result.Min;
@@ -563,7 +563,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> result,
+      IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> result,
       ResultVector2HelperEnum component, bool max) {
       double d = 0;
       ResultVector2<Entity2dExtremaKey> extrema = max ? result.Max : result.Min;
@@ -640,7 +640,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> result,
+      IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> result,
       ResultTensor3HelperEnum component, bool max) {
       double d = 0;
       ResultTensor3<Entity2dExtremaKey> extrema = max ? result.Max : result.Min;

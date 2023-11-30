@@ -8,16 +8,16 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace GsaGH.Parameters.Results {
-  public static partial class ResultsUtility {
-    internal static (ConcurrentDictionary<int, List<IQuantity>> values, ICollection<int> nodeIds)
+  internal static partial class ResultsUtility {
+    internal static (ConcurrentDictionary<int, IList<IQuantity>> values, ICollection<int> nodeIds)
       MapNodeResultToElements<T1, T2>(
       ReadOnlyDictionary<int, Element> elements, INodeResultCache<T1, T2> nodeResultsCache, 
       Func<T1, IQuantity> selector, int permutation = 0) where T1 : IResultItem {
-      var vals = new ConcurrentDictionary<int, List<IQuantity>>();
+      var vals = new ConcurrentDictionary<int, IList<IQuantity>>();
       var topology = new ConcurrentBag<int>();
       Parallel.ForEach(elements, kvp => {
         var list = new List<IQuantity>();
-        IDictionary<int, Collection<T1>> subset = nodeResultsCache.ResultSubset(kvp.Value.Topology).Subset;
+        IDictionary<int, IList<T1>> subset = nodeResultsCache.ResultSubset(kvp.Value.Topology).Subset;
         if (subset.Count == 0) {
           return;
         }

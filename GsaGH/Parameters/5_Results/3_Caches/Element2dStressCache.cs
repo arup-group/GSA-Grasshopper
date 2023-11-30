@@ -6,15 +6,15 @@ using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class Element2dStressCache
-    : IEntity2dLayeredResultCache<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> {
+    : IEntity2dLayeredResultCache<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IEntity2dQuantity<IStress>>> CacheBottomLayer { get; }
-      = new ConcurrentDictionary<int, Collection<IEntity2dQuantity<IStress>>>();
-    public ConcurrentDictionary<int, Collection<IEntity2dQuantity<IStress>>> CacheMiddleLayer { get; }
-      = new ConcurrentDictionary<int, Collection<IEntity2dQuantity<IStress>>>();
-    public ConcurrentDictionary<int, Collection<IEntity2dQuantity<IStress>>> CacheTopLayer { get; }
-      = new ConcurrentDictionary<int, Collection<IEntity2dQuantity<IStress>>>();
+    public IDictionary<int, IList<IMeshQuantity<IStress>>> CacheBottomLayer { get; }
+      = new ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>();
+    public IDictionary<int, IList<IMeshQuantity<IStress>>> CacheMiddleLayer { get; }
+      = new ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>();
+    public IDictionary<int, IList<IMeshQuantity<IStress>>> CacheTopLayer { get; }
+      = new ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>();
 
     internal Element2dStressCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -24,23 +24,23 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>>
+    public IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>>
       ResultSubset(ICollection<int> elementIds, Layer2d layer) {
-      ConcurrentDictionary<int, Collection<IEntity2dQuantity<IStress>>> cache = null;
+      ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>> cache = null;
       double fLayer = 0;
       switch (layer) {
         case Layer2d.Top:
-          cache = CacheTopLayer;
+          cache = (ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>)CacheTopLayer;
           fLayer = 1;
           break;
 
         case Layer2d.Middle:
-          cache = CacheMiddleLayer;
+          cache = (ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>)CacheMiddleLayer;
           fLayer = 0;
           break;
 
         case Layer2d.Bottom:
-          cache = CacheBottomLayer;
+          cache = (ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>)CacheBottomLayer;
           fLayer = -1;
           break;
       }
@@ -65,7 +65,7 @@ namespace GsaGH.Parameters.Results {
         }
       }
 
-      return new Entity2dStresses(cache.GetSubset(elementIds));
+      return new MeshStresses(cache.GetSubset(elementIds));
     }
   }
 }

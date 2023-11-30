@@ -18,7 +18,7 @@ namespace GsaGH.Parameters.Results {
     private IInternalForce _totalLoad;
     private IInternalForce _totalReaction;
 
-    private bool calculated = false;
+    private bool _calculated = false;
 
     internal GlobalResultsCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -28,14 +28,12 @@ namespace GsaGH.Parameters.Results {
     public IEffectiveInertia EffectiveInertia {
       get {
         Calculate();
-
         return _effectiveInertia;
       }
     }
     public IEffectiveMass EffectiveMass {
       get {
         Calculate();
-
         return _effectiveMass;
       }
     }
@@ -43,7 +41,6 @@ namespace GsaGH.Parameters.Results {
     public double? Eigenvalue {
       get {
         Calculate();
-
         return _eigenvalue;
       }
     }
@@ -51,56 +48,48 @@ namespace GsaGH.Parameters.Results {
     public Frequency Frequency {
       get {
         Calculate();
-
         return _frequency;
       }
     }
     public Ratio LoadFactor {
       get {
         Calculate();
-
         return _loadFactor;
       }
     }
     public ForcePerLength ModalGeometricStiffness {
       get {
         Calculate();
-
         return _modalGeometricStiffness;
       }
     }
     public Mass ModalMass {
       get {
         Calculate();
-
         return _modalMass;
       }
     }
     public ForcePerLength ModalStiffness {
       get {
         Calculate();
-
         return _modalStiffness;
       }
     }
     public int? Mode {
       get {
         Calculate();
-
         return _mode;
       }
     }
     public IInternalForce TotalLoad {
       get {
         Calculate();
-
         return _totalLoad;
       }
     }
     public IInternalForce TotalReaction {
       get {
         Calculate();
-
         return _totalReaction;
       }
     }
@@ -111,7 +100,7 @@ namespace GsaGH.Parameters.Results {
     //}
 
     private void Calculate() {
-      if (calculated) {
+      if (_calculated) {
         return;
       }
 
@@ -153,7 +142,7 @@ namespace GsaGH.Parameters.Results {
 
       _totalLoad = new ReactionForce(res.TotalLoad);
       _totalReaction = new ReactionForce(res.TotalReaction);
-      calculated = true;
+      _calculated = true;
     }
   }
 }

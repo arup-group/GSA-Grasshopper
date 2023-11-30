@@ -9,10 +9,10 @@ namespace GsaGH.Parameters.Results {
     public ResultFootfall<NodeExtremaKey> Min { get; private set; }
     public IList<int> Ids { get; private set; }
 
-    public IDictionary<int, Collection<IFootfall>> Subset { get; }
-      = new ConcurrentDictionary<int, Collection<IFootfall>>();
+    public IDictionary<int, IList<IFootfall>> Subset { get; }
+      = new ConcurrentDictionary<int, IList<IFootfall>>();
 
-    public NodeFootfalls(IDictionary<int, Collection<IFootfall>> results) {
+    public NodeFootfalls(IDictionary<int, IList<IFootfall>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
       (Max, Min) = results.GetResultFootfallExtremaKeys();

@@ -5,7 +5,7 @@ using OasysUnits;
 namespace GsaGH.Parameters.Results {
   public static partial class ExtremaKeyUtility {
     public static (ResultVector6<Entity2dExtremaKey> Max, ResultVector6<Entity2dExtremaKey> Min) GetResultVector6Entity2dExtremaKeys<T>(
-      this IDictionary<int, Collection<IEntity2dQuantity<T>>> subset)
+      this IDictionary<int, IList<IMeshQuantity<T>>> subset)
       where T : IResultItem {
 
       var maxValue = new ResultVector6<double>(double.MinValue);
@@ -15,10 +15,10 @@ namespace GsaGH.Parameters.Results {
       var minKey = new ResultVector6<Entity2dExtremaKey>();
 
       foreach (int elementId in subset.Keys) {
-        Collection<IEntity2dQuantity<T>> values = subset[elementId];
+        IList<IMeshQuantity<T>> values = subset[elementId];
         for (int permutation = 0; permutation < values.Count; permutation++) {
             switch (values[permutation]) {
-              case IEntity2dQuantity<IDisplacement> displacement:
+              case IMeshQuantity<IDisplacement> displacement:
                 UpdateExtrema<IDisplacement, Length, Angle>(displacement.Results(),
                   elementId, permutation, ref maxValue, ref minValue, ref maxKey, ref minKey);
                 break;

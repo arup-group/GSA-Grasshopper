@@ -17,11 +17,11 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(Layer2d.Bottom)]
     public void Element2dStressesElement2dIdsFromAnalysisCaseTest(Layer2d layer) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
       // Assert element IDs
@@ -35,11 +35,11 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(Layer2d.Bottom)]
     public void Element2dStressesElement2dIdsFromCombinationCaseTest(Layer2d layer) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
       // Assert element IDs
@@ -68,12 +68,12 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Bottom)]
     public void Element2dStressesMaxFromAnalysisCaseTest(ResultTensor3HelperEnum component, Layer2d layer) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component, layer).Max();
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
       // Assert Max in set
@@ -103,14 +103,14 @@ namespace GsaGHTests.Parameters.Results {
     public void Element2dStressesMaxFromCombinationCaseTest(
       ResultTensor3HelperEnum component, Layer2d layer) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Max(
         ExpectedCombinationCaseC2p1Values(component, layer).Max(),
         ExpectedCombinationCaseC2p2Values(component, layer).Max());
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
       // Assert Max in set
@@ -140,12 +140,12 @@ namespace GsaGHTests.Parameters.Results {
     public void Element2dStressesMinFromAnalysisCaseTest(
       ResultTensor3HelperEnum component, Layer2d layer) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component, layer).Min();
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
       // Assert Max in set
@@ -175,14 +175,14 @@ namespace GsaGHTests.Parameters.Results {
     public void Element2dStressesMinFromcombinationCaseTest(
       ResultTensor3HelperEnum component, Layer2d layer) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Min(
         ExpectedCombinationCaseC2p1Values(component, layer).Min(),
         ExpectedCombinationCaseC2p2Values(component, layer).Min());
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
       // Assert Max in set
@@ -212,18 +212,18 @@ namespace GsaGHTests.Parameters.Results {
     public void Element2dStressesValuesFromAnalysisCaseTest(
       ResultTensor3HelperEnum component, Layer2d layer) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component, layer);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IStress>> stressQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IStress>> stressQuantity = resultSet.Subset[id];
 
         Assert.Single(stressQuantity);
         foreach (IStress stress in stressQuantity[0].Results()) {
@@ -255,19 +255,19 @@ namespace GsaGHTests.Parameters.Results {
     public void Element2dStressesValuesFromCombinationCaseTest(
       ResultTensor3HelperEnum component, Layer2d layer) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       List<double> expectedP1 = ExpectedCombinationCaseC2p1Values(component, layer);
       List<double> expectedP2 = ExpectedCombinationCaseC2p2Values(component, layer);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet
         = result.Element2dStresses.ResultSubset(elementIds, layer);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IStress>> stressQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IStress>> stressQuantity = resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, stressQuantity.Count);
@@ -280,7 +280,7 @@ namespace GsaGHTests.Parameters.Results {
 
       i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IStress>> stressQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IStress>> stressQuantity = resultSet.Subset[id];
 
         foreach (IStress stress in stressQuantity[1].Results()) {
           double perm2 = TestsResultHelper.ResultsHelper(stress, component);

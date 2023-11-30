@@ -8,8 +8,8 @@ using GsaAPI;
 namespace GsaGH.Parameters.Results {
   public class NodeResonantFootfallCache : INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-    public ConcurrentDictionary<int, Collection<IFootfall>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IFootfall>>();
+    public IDictionary<int, IList<IFootfall>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IFootfall>>();
     
     internal NodeResonantFootfallCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -31,7 +31,8 @@ namespace GsaGH.Parameters.Results {
               }
 
               var res = new Footfall(resultKvp.Value);
-              Cache.TryAdd(resultKvp.Key, new Collection<IFootfall>() { res });
+              ((ConcurrentDictionary<int, IList<IFootfall>>)Cache).TryAdd(
+                resultKvp.Key, new Collection<IFootfall>() { res });
             });
             break;
 
@@ -47,7 +48,8 @@ namespace GsaGH.Parameters.Results {
                 permutationResults.Add(new Footfall(permutationResult));
               }
 
-              Cache.TryAdd(resultKvp.Key, permutationResults);
+              ((ConcurrentDictionary<int, IList<IFootfall>>)Cache).TryAdd(
+                resultKvp.Key, permutationResults);
             });
             break;
         }

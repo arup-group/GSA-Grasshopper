@@ -542,7 +542,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult2 result = null;
+      GsaResult result = null;
       string elementlist = "All";
       _case = string.Empty;
       _resType = string.Empty;
@@ -553,7 +553,7 @@ namespace GsaGH.Components {
 
       switch (ghTyp?.Value) {
         case GsaResultGoo goo:
-          result = new GsaResult2((GsaResult)goo.Value);
+          result = (GsaResult)goo.Value;
           elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
 
           switch (result.CaseType) {
@@ -613,14 +613,14 @@ namespace GsaGH.Components {
       int permutation = result.SelectedPermutationIds == null
         ? 0 : result.SelectedPermutationIds[0] - 1;
 
-      ConcurrentDictionary<int, List<IQuantity>> values = null;
-      ConcurrentDictionary<int, (List<double> x, List<double> y, List<double> z)> valuesXyz = null;
+      ConcurrentDictionary<int, IList<IQuantity>> values = null;
+      ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> valuesXyz = null;
 
       double dmax = 0;
       double dmin = 0;
       switch (_mode) {
         case FoldMode.Displacement:
-          IEntity2dResultSubset<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> displacements =
+          IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> displacements =
               result.Element2dDisplacements.ResultSubset(elementIds);
           Func<IDisplacement, IQuantity> translationSelector = null;
           switch (_disp) {
@@ -659,13 +659,13 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Force:
-          IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, 
+          IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, 
             ResultTensor2InAxis<Entity2dExtremaKey>> forces
               = result.Element2dForces.ResultSubset(elementIds);
-          IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, 
+          IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, 
             ResultVector2<Entity2dExtremaKey>> shears 
               = result.Element2dShearForces.ResultSubset(elementIds);
-          IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, 
+          IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, 
             ResultTensor2AroundAxis<Entity2dExtremaKey>> moments 
               = result.Element2dMoments.ResultSubset(elementIds);
           Func<IForce2d, IQuantity> forceSelector = null;
@@ -756,7 +756,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Stress:
-          IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress,
+          IMeshResultSubset<IMeshQuantity<IStress>, IStress,
             ResultTensor3<Entity2dExtremaKey>> stresses
             = result.Element2dStresses.ResultSubset(elementIds, _flayer);
           Func<IStress, IQuantity> stressSelector = null;
@@ -838,7 +838,7 @@ namespace GsaGH.Components {
         significantDigits = (int)rounded[2];
       }
       
-      var resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(),
+      var resultMeshes = new MeshResultGoo(new Mesh(), new List<IList<IQuantity>>(),
         new List<Point3dList>(), new List<int>());
       var meshes = new ConcurrentDictionary<int, Mesh>();
       meshes.AsParallel().AsOrdered();
@@ -1026,11 +1026,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
 
-      var resultType
-        = (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType),
-          _mode.ToString());
-      PostHog.Result(result.CaseType, 2, resultType, _disp.ToString());
-      
+      PostHog.Result(result.CaseType, 2, _mode.ToString(), _disp.ToString());
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {

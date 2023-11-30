@@ -165,7 +165,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult2 result = null;
+      GsaResult result = null;
       string elementlist = "All";
 
       var ghTypes = new List<GH_ObjectWrapper>();
@@ -191,7 +191,7 @@ namespace GsaGH.Components {
             return;
 
           case GsaResultGoo goo:
-            result = new GsaResult2((GsaResult)goo.Value);
+            result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
 
@@ -201,10 +201,10 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);
-        IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> forces
+        IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> forces
           = result.Element2dForces.ResultSubset(elementIds);
-        IEntity2dResultSubset<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> shears = result.Element2dShearForces.ResultSubset(elementIds);
-        IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> moments = result.Element2dMoments.ResultSubset(elementIds);
+        IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> shears = result.Element2dShearForces.ResultSubset(elementIds);
+        IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> moments = result.Element2dMoments.ResultSubset(elementIds);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
@@ -217,7 +217,7 @@ namespace GsaGH.Components {
           Parallel.For(0, 3, thread => {
             switch (thread) {
               case 0:
-                foreach (KeyValuePair<int, Collection<IEntity2dQuantity<IForce2d>>> kvp in forces
+                foreach (KeyValuePair<int, IList<IMeshQuantity<IForce2d>>> kvp in forces
                  .Subset) {
                   foreach (int p in permutations) {
                     var path = new GH_Path(result.CaseId,
@@ -237,7 +237,7 @@ namespace GsaGH.Components {
                 break;
 
               case 1:
-                foreach (KeyValuePair<int, Collection<IEntity2dQuantity<IShear2d>>> kvp in shears
+                foreach (KeyValuePair<int, IList<IMeshQuantity<IShear2d>>> kvp in shears
                  .Subset) {
                   foreach (int p in permutations) {
                     var path = new GH_Path(result.CaseId,
@@ -254,7 +254,7 @@ namespace GsaGH.Components {
                 break;
 
               case 2:
-                foreach (KeyValuePair<int, Collection<IEntity2dQuantity<IMoment2d>>> kvp in moments
+                foreach (KeyValuePair<int, IList<IMeshQuantity<IMoment2d>>> kvp in moments
                  .Subset) {
                   foreach (int p in permutations) {
                     var path = new GH_Path(result.CaseId,
@@ -303,7 +303,7 @@ namespace GsaGH.Components {
           }
         }
 
-        PostHog.Result(result.CaseType, 2, GsaResultsValues.ResultType.Force);
+        PostHog.Result(result.CaseType, 2, "Force");
       }
 
       da.SetDataTree(0, outX);

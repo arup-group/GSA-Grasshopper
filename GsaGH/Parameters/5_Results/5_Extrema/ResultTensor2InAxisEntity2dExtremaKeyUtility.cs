@@ -6,7 +6,7 @@ using OasysUnits;
 namespace GsaGH.Parameters.Results {
   public static partial class ExtremaKeyUtility {
     public static (ResultTensor2InAxis<Entity2dExtremaKey> Max, ResultTensor2InAxis<Entity2dExtremaKey> Min) GetResultTensor2InAxisEntity2dExtremaKeys<T>(
-      this IDictionary<int, Collection<IEntity2dQuantity<T>>> subset)
+      this IDictionary<int, IList<IMeshQuantity<T>>> subset)
       where T : IResultItem {
 
       var maxValue = new ResultTensor2InAxis<double>(double.MinValue);
@@ -16,10 +16,10 @@ namespace GsaGH.Parameters.Results {
       var minKey = new ResultTensor2InAxis<Entity2dExtremaKey>();
 
       foreach (int elementId in subset.Keys) {
-        Collection<IEntity2dQuantity<T>> values = subset[elementId];
+        IList<IMeshQuantity<T>> values = subset[elementId];
         for (int permutation = 0; permutation < values.Count; permutation++) {
           switch (values[permutation]) {
-            case IEntity2dQuantity<IForce2d> force:
+            case IMeshQuantity<IForce2d> force:
               UpdateExtrema<IForce2d, ForcePerLength>(force.Results(),
                 elementId, permutation, ref maxValue, ref minValue, ref maxKey, ref minKey);
               break;

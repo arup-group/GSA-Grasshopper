@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -6,6 +7,7 @@ using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -70,13 +72,16 @@ namespace GsaGH.Components {
 
       string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
-      GsaResultsValues res = result.NodeFootfallValues(nodeList, FootfallResultType.Resonant);
-      GsaResultsValues tra = result.NodeFootfallValues(nodeList, FootfallResultType.Transient);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
+      INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> resonant
+        = result.NodeResonantFootfalls.ResultSubset(nodeIds);
+      INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> transient
+        = result.NodeTransientFootfalls.ResultSubset(nodeIds);
 
-      da.SetData(0, res.DmaxX.Value);
-      da.SetData(1, tra.DmaxX.Value);
+      da.SetData(0, resonant.GetExtrema(resonant.Max.MaximumResponseFactor).MaximumResponseFactor);
+      da.SetData(1, transient.GetExtrema(transient.Max.MaximumResponseFactor).MaximumResponseFactor);
 
-      PostHog.Result(result.CaseType, 0, GsaResultsValues.ResultType.Footfall, "Max");
+      PostHog.Result(result.CaseType, 0, "Footfall", "Max");
     }
   }
 }

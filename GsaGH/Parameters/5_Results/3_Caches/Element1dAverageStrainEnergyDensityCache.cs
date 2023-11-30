@@ -9,8 +9,8 @@ namespace GsaGH.Parameters.Results {
   public class Element1dAverageStrainEnergyDensityCache : INodeResultCache<IEnergyDensity, NodeExtremaKey> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IEnergyDensity>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IEnergyDensity>>();
+    public IDictionary<int, IList<IEnergyDensity>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IEnergyDensity>>();
 
     internal Element1dAverageStrainEnergyDensityCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -30,7 +30,8 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, double> aCaseResults = analysisCase.Element1dAverageStrainEnergyDensity(elementList, positions);
             Parallel.ForEach(aCaseResults.Keys, elementId => {
               var res = new StrainEnergyDensity(aCaseResults[elementId]);
-              Cache.TryAdd(elementId, new Collection<IEnergyDensity>() { res });
+              ((ConcurrentDictionary<int, IList<IEnergyDensity>>)Cache).TryAdd(
+                elementId, new Collection<IEnergyDensity>() { res });
             });
             break;
 
@@ -42,7 +43,8 @@ namespace GsaGH.Parameters.Results {
                 permutationResults.Add(new StrainEnergyDensity(permutationResult));
               }
 
-              Cache.TryAdd(elementId, permutationResults);
+              ((ConcurrentDictionary<int, IList<IEnergyDensity>>)Cache).TryAdd(
+                elementId, permutationResults);
             });
             break;
         }

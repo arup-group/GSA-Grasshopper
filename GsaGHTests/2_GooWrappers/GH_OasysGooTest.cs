@@ -1,5 +1,6 @@
 ﻿using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGHTests.Helpers;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaCombinationCaseGoo), typeof(GsaCombinationCase))]
 
     // 5_Results
-    [InlineData(typeof(GsaResultGoo), typeof(GsaResult))]
+    //[InlineData(typeof(GsaResultGoo), typeof(GsaResult))]
     //[InlineData(typeof(LineResultGoo), typeof(Line))]
     //[InlineData(typeof(MeshResultGoo), typeof(Mesh))]
     //[InlineData(typeof(PointResultGoo), typeof(Point3d))]

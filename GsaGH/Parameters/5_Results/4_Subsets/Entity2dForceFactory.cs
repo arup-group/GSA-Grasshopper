@@ -1,29 +1,30 @@
 ﻿using GsaAPI;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public static partial class Entity2dResultsFactory {
-    
-    public static Collection<IEntity2dQuantity<IForce2d>> CreateForce(
+  internal static partial class Entity2dResultsFactory {
+
+    internal static IList<IMeshQuantity<IForce2d>> CreateForce(
       ReadOnlyCollection<Tensor2> results) {
-      return new Collection<IEntity2dQuantity<IForce2d>>() {
+      return new List<IMeshQuantity<IForce2d>>() {
               CreateFromApiCollection(results)
              };
     }
 
-    public static Collection<IEntity2dQuantity<IForce2d>> CreateForce(
+    internal static IList<IMeshQuantity<IForce2d>> CreateForce(
       ReadOnlyCollection<ReadOnlyCollection<Tensor2>> results) {
-      var permutations = new Collection<IEntity2dQuantity<IForce2d>>();
+      var permutations = new List<IMeshQuantity<IForce2d>>();
       foreach (ReadOnlyCollection<Tensor2> permutation in results) {
         permutations.Add(CreateFromApiCollection(permutation));
       }
       return permutations;
     }
 
-    private static IEntity2dQuantity<IForce2d> CreateFromApiCollection(
+    private static IMeshQuantity<IForce2d> CreateFromApiCollection(
       ReadOnlyCollection<Tensor2> results) {
       return results.Count switch {
-        1 => new Entity2dCentreOnlyForce(results),
+        1 => new MeshCentreOnlyForce(results),
         4 => new Entity2dTriForce(results),
         5 => new Entity2dQuadForce(results),
         7 => new Entity2dTri6Force(results),

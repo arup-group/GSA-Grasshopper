@@ -107,7 +107,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult2 result = null;
+      GsaResult result = null;
       string elementlist = "All";
 
       Layer2d layer = Layer2d.Middle;
@@ -137,7 +137,7 @@ namespace GsaGH.Components {
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         switch (ghTyp?.Value) {
           case GsaResultGoo goo:
-            result = new GsaResult2((GsaResult)goo.Value);
+            result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
 
@@ -151,7 +151,7 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);
-        IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet =
+        IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> resultSet =
           result.Element2dStresses.ResultSubset(elementIds, layer);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -162,7 +162,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, Collection<IEntity2dQuantity<IStress>>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IMeshQuantity<IStress>>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outXx.AddRange(kvp.Value[p - 1].Results().Select(
@@ -192,7 +192,7 @@ namespace GsaGH.Components {
           outZx.Add(new GH_UnitNumber(extrema.Zx.ToUnit(_stresshUnit)), path);
         }
 
-        PostHog.Result(result.CaseType, 2, GsaResultsValues.ResultType.Stress);
+        PostHog.Result(result.CaseType, 2, "Stress");
       }
 
       da.SetDataTree(0, outXx);

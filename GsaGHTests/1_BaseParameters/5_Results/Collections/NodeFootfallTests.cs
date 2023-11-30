@@ -17,7 +17,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void NodeFootfallNodeIdsFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -28,7 +28,7 @@ namespace GsaGHTests.Parameters.Results {
       var expectedIds = result.Model.Model.Nodes(NodeList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
 
-      result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
+      result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
       resultSet = result.NodeTransientFootfalls.ResultSubset(nodeIds);
       Assert.Equal(expectedIds, resultSet.Ids);
     }
@@ -36,7 +36,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void NodeFootfallResonantResponseFactorTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
       List<double> expected = NodeFootfallResonantA16.MaximumResponseFactor();
 
       // Act
@@ -61,7 +61,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void NodeFootfallTransientResponseFactorTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
       List<double> expected = NodeFootfallTransientA17.MaximumResponseFactor();
 
       // Act
@@ -86,7 +86,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void NodeFootfallResonantVelocitiesTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -119,7 +119,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void NodeFootfallTransientVelocitiesTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -152,7 +152,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void NodeFootfallResonantAccelerationsTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -185,7 +185,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void NodeFootfallTransientAccelerationsTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -218,7 +218,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void NodeFootfallResonantFrequencyTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -245,7 +245,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void NodeFootfallTransientFrequencyTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);

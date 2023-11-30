@@ -6,8 +6,19 @@ using GsaGH.Components;
 using GsaGH.Helpers;
 
 namespace GsaGH.Parameters.Results {
-
-  public class GsaResult2 : IGsaResult {
+  /// <summary>
+  /// <para>A Result is used to select Cases from an analysed <see cref="GsaModel"/> and extract the values for post-processing or visualisation.</para>
+  /// <para>The following result types can be extracted if they are present in the model:
+  /// <list type="bullet">
+  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#noderesult">Node Results</see>: `Displacement` and `Reaction`.</description></item>
+  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element1dresult">1D Element Results</see>: `Displacement`, `Force` and `StrainEnergyDensity`.</description></item>
+  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element2dresult">2D Element Results</see>: `Displacement`, `Force`, `Moment`, `Shear` and `Stress`.</description></item>
+  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element3dresult">3D Element Results</see>: `Displacement` and `Stress`.</description></item>
+  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#globalresult">Global Results</see>: `Frequency`, `LoadFactor`, `ModalGeometricStiffness`, `ModalMass`, `ModalStiffness`, `TotalLoad`, `TotalReaction`, `Mode`, `EffectiveInertia`, `EffectiveMass` and `Eigenvalue`.</description></item>
+  /// </list></para>
+  /// <para>All result values from the <see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/introduction.html">.NET API</see> has been wrapped in <see href="https://docs.oasys-software.com/structural/gsa/references/gsagh/gsagh-unitnumber-parameter.html">Unit Number</see> and can be converted into different measures on the fly. The Result parameter caches the result values</para>
+  /// </summary>
+  public class GsaResult : IGsaResult {
     // Caches
     public INodeResultCache<IEnergyDensity, NodeExtremaKey> Element1dAverageStrainEnergyDensities {
       get;
@@ -39,32 +50,32 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
-    public IEntity2dResultCache<IEntity2dQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> Element2dDisplacements {
+    public IMeshResultCache<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> Element2dDisplacements {
       get;
       private set;
     }
 
-    public IEntity2dLayeredResultCache<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element2dStresses {
+    public IEntity2dLayeredResultCache<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element2dStresses {
       get;
       private set;
     }
-    public IEntity2dResultCache<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> Element2dForces {
+    public IMeshResultCache<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> Element2dForces {
       get;
       private set;
     }
-    public IEntity2dResultCache<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> Element2dMoments {
+    public IMeshResultCache<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> Element2dMoments {
       get;
       private set;
     }
-    public IEntity2dResultCache<IEntity2dQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> Element2dShearForces {
+    public IMeshResultCache<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> Element2dShearForces {
       get;
       private set;
     }
-    public IEntity2dResultCache<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> Element3dDisplacements {
+    public IMeshResultCache<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> Element3dDisplacements {
       get;
       private set;
     }
-    public IEntity2dResultCache<IEntity2dQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element3dStresses {
+    public IMeshResultCache<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element3dStresses {
       get;
       private set;
     }
@@ -105,25 +116,11 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
-    // temp conversion from old class
-    internal GsaResult2(GsaResult result) {
-      switch (result.CaseType) {
-        case CaseType.AnalysisCase:
-          InitialiseAnalysisCaseResults(result.Model, result.AnalysisCaseResult, result.CaseId);
-          break;
-
-        case CaseType.CombinationCase:
-          InitialiseCombinationsCaseResults(result.Model, result.CombinationCaseResult,
-            result.CaseId, result.SelectedPermutationIds);
-          break;
-      }
-    }
-
-    internal GsaResult2(GsaModel model, AnalysisCaseResult result, int caseId) {
+    internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseId) {
       InitialiseAnalysisCaseResults(model, result, caseId);
     }
 
-    internal GsaResult2(
+    internal GsaResult(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
       InitialiseCombinationsCaseResults(model, result, caseId, permutations.OrderBy(x => x));
     }

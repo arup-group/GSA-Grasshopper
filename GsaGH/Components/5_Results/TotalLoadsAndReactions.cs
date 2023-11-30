@@ -125,7 +125,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult2 result;
+      GsaResult result;
       var ghTyp = new GH_ObjectWrapper();
       if (!da.GetData(0, ref ghTyp)) {
         return;
@@ -139,7 +139,7 @@ namespace GsaGH.Components {
           return;
 
         case GsaResultGoo goo: {
-          result = new GsaResult2((GsaResult)goo.Value);
+          result = (GsaResult)goo.Value;
           if (result.CaseType == CaseType.CombinationCase) {
             this.AddRuntimeError("Global Result only available for Analysis Cases");
             return;

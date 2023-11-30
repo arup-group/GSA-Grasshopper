@@ -11,11 +11,11 @@ namespace GsaGH.Parameters.Results {
     public Entity1dExtremaKey Min { get; private set; }
     public IList<int> Ids { get; private set; }
 
-    public ConcurrentDictionary<int, Collection<IEntity1dStrainEnergyDensity>> Subset { get; }
-      = new ConcurrentDictionary<int, Collection<IEntity1dStrainEnergyDensity>>();
+    public IDictionary<int, IList<IEntity1dStrainEnergyDensity>> Subset { get; }
+      = new ConcurrentDictionary<int, IList<IEntity1dStrainEnergyDensity>>();
 
     public Entity1dStrainEnergyDensities(
-      ConcurrentDictionary<int, Collection<IEntity1dStrainEnergyDensity>> results) {
+      IDictionary<int, IList<IEntity1dStrainEnergyDensity>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
       (Max, Min) = results.GetEntity1dExtremaKeys<IEntity1dStrainEnergyDensity, IEnergyDensity>();

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public interface INodeResultCache<T1, T2> where T1 : IResultItem {
+  public interface IMeshResultCache<T1, T2, T3>
+    where T1 : IMeshQuantity<T2> where T2 : IResultItem  {
     IApiResult ApiResult { get; }
     IDictionary<int, IList<T1>> Cache { get; }
-    INodeResultSubset<T1, T2> ResultSubset(ICollection<int> list);
+    IMeshResultSubset<T1, T2, T3> ResultSubset(ICollection<int> elementIds);
   }
 }

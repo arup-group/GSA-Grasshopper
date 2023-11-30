@@ -4,11 +4,11 @@ using System.Collections.ObjectModel;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public abstract class Entity2dCentreOnlyResult<ApiResultType, QuantityResult> : IEntity2dQuantity<QuantityResult>
+  public abstract class MeshCentreOnlyResult<ApiResultType, QuantityResult> : IMeshQuantity<QuantityResult>
     where QuantityResult : IResultItem {
     public QuantityResult Centre { get; private set; }
 
-    internal Entity2dCentreOnlyResult(
+    internal MeshCentreOnlyResult(
       ReadOnlyCollection<ApiResultType> apiResult, Func<ApiResultType, QuantityResult> constructor) {
       Centre = constructor(apiResult[0]);
     }

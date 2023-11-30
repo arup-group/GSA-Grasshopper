@@ -367,13 +367,13 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult2 result;
+      GsaResult result;
       string elementlist = "All";
       var ghTyp = new GH_ObjectWrapper();
       da.GetData(0, ref ghTyp);
       switch (ghTyp?.Value) {
         case GsaResultGoo goo:
-          result = new GsaResult2((GsaResult)goo.Value);
+          result = (GsaResult)goo.Value;
           elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
           switch (result.CaseType) {
             case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
@@ -433,11 +433,11 @@ namespace GsaGH.Components {
         ? 0 : result.SelectedPermutationIds[0] - 1;
       double dmax = 0;
       double dmin = 0;
-      ConcurrentDictionary<int, List<IQuantity>> values = null;
-      ConcurrentDictionary<int, (List<double> x, List<double> y, List<double> z)> valuesXyz = null;
+      ConcurrentDictionary<int, IList<IQuantity>> values = null;
+      ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> valuesXyz = null;
       switch (_mode) {
         case FoldMode.Displacement:
-          IEntity2dResultSubset<IEntity2dQuantity<ITranslation>, ITranslation,
+          IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation,
             ResultVector3InAxis<Entity2dExtremaKey>> displacements =
               result.Element3dDisplacements.ResultSubset(elementIds);
           Func<ITranslation, IQuantity> translationSelector = null;
@@ -477,7 +477,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Stress:
-          IEntity2dResultSubset<IEntity2dQuantity<IStress>, IStress,
+          IMeshResultSubset<IMeshQuantity<IStress>, IStress,
             ResultTensor3<Entity2dExtremaKey>> stresses =
               result.Element3dStresses.ResultSubset(elementIds);
           Func<IStress, IQuantity> stressSelector = null;
@@ -542,7 +542,7 @@ namespace GsaGH.Components {
         significantDigits = (int)rounded[2];
       }
 
-      var resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(),
+      var resultMeshes = new MeshResultGoo(new Mesh(), new List<IList<IQuantity>>(),
         new List<Point3dList>(), new List<int>());
       var meshes = new ConcurrentDictionary<int, Mesh>();
       meshes.AsParallel().AsOrdered();
@@ -692,10 +692,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
 
-      var resultType
-        = (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType),
-          _mode.ToString());
-      PostHog.Result(result.CaseType, 3, resultType, _disp.ToString());
+      PostHog.Result(result.CaseType, 3, _mode.ToString(), _disp.ToString());
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {

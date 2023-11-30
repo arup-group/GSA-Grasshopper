@@ -9,8 +9,8 @@ using Newtonsoft.Json.Linq;
 namespace GsaGH.Parameters.Results {
   public class NodeTransientFootfallCache : INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-    public ConcurrentDictionary<int, Collection<IFootfall>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IFootfall>>();
+    public IDictionary<int, IList<IFootfall>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IFootfall>>();
     
     internal NodeTransientFootfallCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -32,7 +32,8 @@ namespace GsaGH.Parameters.Results {
               }
 
               var res = new Footfall(resultKvp.Value);
-              Cache.TryAdd(resultKvp.Key, new Collection<IFootfall>() { res });
+              ((ConcurrentDictionary<int, IList<IFootfall>>)Cache).TryAdd(
+                resultKvp.Key, new List<IFootfall>() { res });
             });
             break;
 
@@ -43,12 +44,13 @@ namespace GsaGH.Parameters.Results {
                 return;
               }
 
-              var permutationResults = new Collection<IFootfall>();
+              var permutationResults = new List<IFootfall>();
               foreach (NodeFootfallResult permutationResult in resultKvp.Value) {
                 permutationResults.Add(new Footfall(permutationResult));
               }
 
-              Cache.TryAdd(resultKvp.Key, permutationResults);
+              ((ConcurrentDictionary<int, IList<IFootfall>>)Cache).TryAdd(
+                resultKvp.Key, permutationResults);
             });
             break;
         }

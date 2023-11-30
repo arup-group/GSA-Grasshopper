@@ -11,8 +11,8 @@ namespace GsaGH.Parameters.Results {
     : IEntity1dResultCache<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IEntity1dInternalForce>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IEntity1dInternalForce>>();
+    public IDictionary<int, IList<IEntity1dInternalForce>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IEntity1dInternalForce>>();
 
     internal Element1dInternalForceCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -39,7 +39,8 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
               = analysisCase.Element1dForce(elementList, positions);
-            Parallel.ForEach(aCaseResults.Keys, elementId => Cache.AddOrUpdate(
+            Parallel.ForEach(aCaseResults.Keys, elementId => 
+             ((ConcurrentDictionary<int, IList<IEntity1dInternalForce>>)Cache).AddOrUpdate(
               elementId, Entity1dResultsFactory.CreateForces(aCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
             break;
@@ -47,7 +48,8 @@ namespace GsaGH.Parameters.Results {
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
               = combinationCase.Element1dForce(elementList, positions);
-            Parallel.ForEach(cCaseResults.Keys, elementId => Cache.AddOrUpdate(
+            Parallel.ForEach(cCaseResults.Keys, elementId => 
+             ((ConcurrentDictionary<int, IList<IEntity1dInternalForce>>)Cache).AddOrUpdate(
               elementId, Entity1dResultsFactory.CreateForces(cCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));
             break;

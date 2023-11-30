@@ -16,11 +16,11 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element3dDisplacementsElement3dIdsFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element3dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element3dSimple, 1);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 3);
-      IEntity2dResultSubset<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
         = result.Element3dDisplacements.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -31,11 +31,11 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element3dDisplacementsElement3dIdsFromCombinationCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element3dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element3dSimple, 2);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 3);
-      IEntity2dResultSubset<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
         = result.Element3dDisplacements.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -50,12 +50,12 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6HelperEnum.Xyz)]
     public void Element3dDisplacementsMaxFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element3dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element3dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 3);
-      IEntity2dResultSubset<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
         = result.Element3dDisplacements.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -70,13 +70,13 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6HelperEnum.Xyz)]
     public void Element3dDisplacementsMaxFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element3dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element3dSimple, 2);
       double expected = Math.Max(ExpectedCombinationCaseC2p1Values(component).Max(),
         ExpectedCombinationCaseC2p2Values(component).Max());
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 3);
-      IEntity2dResultSubset<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
         = result.Element3dDisplacements.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -91,12 +91,12 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6HelperEnum.Xyz)]
     public void Element3dDisplacementsMinFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element3dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element3dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 3);
-      IEntity2dResultSubset<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
         = result.Element3dDisplacements.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -111,13 +111,13 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6HelperEnum.Xyz)]
     public void Element3dDisplacementsMinFromcombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element3dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element3dSimple, 2);
       double expected = Math.Min(ExpectedCombinationCaseC2p1Values(component).Min(),
         ExpectedCombinationCaseC2p2Values(component).Min());
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 3);
-      IEntity2dResultSubset<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
         = result.Element3dDisplacements.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -132,18 +132,18 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6HelperEnum.Xyz)]
     public void Element3dDisplacementsValuesFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element3dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element3dSimple, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 3);
-      IEntity2dResultSubset<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
         = result.Element3dDisplacements.ResultSubset(elementIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<ITranslation>> displacementQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<ITranslation>> displacementQuantity = resultSet.Subset[id];
 
         Assert.Single(displacementQuantity);
         foreach (ITranslation displacement in displacementQuantity[0].Results()) {
@@ -160,19 +160,19 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6HelperEnum.Xyz)]
     public void Element3dDisplacementsValuesFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element3dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element3dSimple, 2);
       List<double> expectedP1 = ExpectedCombinationCaseC2p1Values(component);
       List<double> expectedP2 = ExpectedCombinationCaseC2p2Values(component);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 3);
-      IEntity2dResultSubset<IEntity2dQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet
         = result.Element3dDisplacements.ResultSubset(elementIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<ITranslation>> displacementQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<ITranslation>> displacementQuantity = resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, displacementQuantity.Count);
@@ -185,7 +185,7 @@ namespace GsaGHTests.Parameters.Results {
 
       i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<ITranslation>> displacementQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<ITranslation>> displacementQuantity = resultSet.Subset[id];
 
 
         foreach (ITranslation displacement in displacementQuantity[1].Results()) {

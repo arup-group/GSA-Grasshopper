@@ -16,11 +16,11 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element2dForcesElement2dIdsFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -31,11 +31,11 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element2dForcesElement2dIdsFromCombinationCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -49,12 +49,12 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
     public void Element2dForcesMaxFromAnalysisCaseTest(ResultTensor2InAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -68,13 +68,13 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
     public void Element2dForcesMaxFromCombinationCaseTest(ResultTensor2InAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Max(ExpectedCombinationCaseC2p1Values(component).Max(),
         ExpectedCombinationCaseC2p2Values(component).Max());
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -88,12 +88,12 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
     public void Element2dForcesMinFromAnalysisCaseTest(ResultTensor2InAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -107,13 +107,13 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
     public void Element2dForcesMinFromcombinationCaseTest(ResultTensor2InAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Min(ExpectedCombinationCaseC2p1Values(component).Min(),
         ExpectedCombinationCaseC2p2Values(component).Min());
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -127,18 +127,18 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
     public void Element2dForcesValuesFromAnalysisCaseTest(ResultTensor2InAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IForce2d>> forceQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IForce2d>> forceQuantity = resultSet.Subset[id];
 
         Assert.Single(forceQuantity);
         foreach (IForce2d force2d in forceQuantity[0].Results()) {
@@ -154,19 +154,19 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
     public void Element2dForcesValuesFromCombinationCaseTest(ResultTensor2InAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       List<double> expectedP1 = ExpectedCombinationCaseC2p1Values(component);
       List<double> expectedP2 = ExpectedCombinationCaseC2p2Values(component);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IForce2d>> forceQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IForce2d>> forceQuantity = resultSet.Subset[id];
 
         Assert.Equal(2, forceQuantity.Count);
 
@@ -178,7 +178,7 @@ namespace GsaGHTests.Parameters.Results {
 
       i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IForce2d>> forceQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IForce2d>> forceQuantity = resultSet.Subset[id];
 
 
         foreach (IForce2d force2d in forceQuantity[1].Results()) {

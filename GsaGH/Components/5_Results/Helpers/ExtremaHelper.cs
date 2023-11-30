@@ -258,7 +258,7 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U DisplacementExtremaKey<T1, T2, U>(
-      IEntity2dResultSubset<T1, T2, ResultVector6<U>> resultSet, string key) where T1 : IEntity2dQuantity<T2>
+      IMeshResultSubset<T1, T2, ResultVector6<U>> resultSet, string key) where T1 : IMeshQuantity<T2>
     where T2 : IResultItem {
       return key switch {
         "Max Ux" => resultSet.Max.X,
@@ -282,7 +282,7 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U DisplacementExtremaKey<T1, T2, U>(
-      IEntity2dResultSubset<T1, T2, ResultVector3InAxis<U>> resultSet, string key) where T1 : IEntity2dQuantity<T2>
+      IMeshResultSubset<T1, T2, ResultVector3InAxis<U>> resultSet, string key) where T1 : IMeshQuantity<T2>
     where T2 : IResultItem {
       return key switch {
         "Max Ux" => resultSet.Max.X,
@@ -392,8 +392,8 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U StressExtremaKey<T1, T2, U>(
-      IEntity2dResultSubset<T1, T2, ResultTensor3<U>> resultSet, string key) 
-      where T1 : IEntity2dQuantity<T2> where T2 : IResultItem {
+      IMeshResultSubset<T1, T2, ResultTensor3<U>> resultSet, string key) 
+      where T1 : IMeshQuantity<T2> where T2 : IResultItem {
       return key switch {
         "Max xx" => resultSet.Max.Xx,
         "Max yy" => resultSet.Max.Yy,
@@ -412,9 +412,9 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U Elem2dForcesAndMomentsExtremaKey<T1, T2, T3, U>(
-      IEntity2dResultSubset<IEntity2dQuantity<T1>, T1, ResultTensor2InAxis<U>> resultSetForces,
-      IEntity2dResultSubset<IEntity2dQuantity<T2>, T2, ResultTensor2AroundAxis<U>> resultSetMoment, 
-      IEntity2dResultSubset<IEntity2dQuantity<T3>, T3, ResultVector2<U>> resultSetShear,
+      IMeshResultSubset<IMeshQuantity<T1>, T1, ResultTensor2InAxis<U>> resultSetForces,
+      IMeshResultSubset<IMeshQuantity<T2>, T2, ResultTensor2AroundAxis<U>> resultSetMoment, 
+      IMeshResultSubset<IMeshQuantity<T3>, T3, ResultVector2<U>> resultSetShear,
       string key) where T1 : IResultItem where T2 : IResultItem where T3 : IResultItem {
       return key switch {
         "Max Nx" => resultSetForces.Max.Nx,

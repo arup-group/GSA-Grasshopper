@@ -16,11 +16,11 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element2dMomentsElement2dIdsFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -31,11 +31,11 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element2dIMomentElement2dIdsFromCombinationCaseTest() {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -51,12 +51,12 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerY)]
     public void Element2dMomentsMaxFromAnalysisCaseTest(ResultTensor2AroundAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -72,13 +72,13 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerY)]
     public void Element2dMomentMaxFromCombinationCaseTest(ResultTensor2AroundAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Max(ExpectedCombinationCaseC2p1Values(component).Max(),
         ExpectedCombinationCaseC2p2Values(component).Max());
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -94,12 +94,12 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerY)]
     public void Element2dMomentsMinFromAnalysisCaseTest(ResultTensor2AroundAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -115,13 +115,13 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerY)]
     public void Element2dMomentsMinFromcombinationCaseTest(ResultTensor2AroundAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Min(ExpectedCombinationCaseC2p1Values(component).Min(),
         ExpectedCombinationCaseC2p2Values(component).Min());
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -137,18 +137,18 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerY)]
     public void Element2dMomentsValuesFromAnalysisCaseTest(ResultTensor2AroundAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
 
         Assert.Single(momentQuantity);
         foreach (IMoment2d moment2d in momentQuantity[0].Results()) {
@@ -166,19 +166,19 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerY)]
     public void Element2dMomentsValuesFromCombinationCaseTest(ResultTensor2AroundAxisHelperEnum component) {
       // Assemble
-      var result = (GsaResult2)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       List<double> expectedP1 = ExpectedCombinationCaseC2p1Values(component);
       List<double> expectedP2 = ExpectedCombinationCaseC2p2Values(component);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
-      IEntity2dResultSubset<IEntity2dQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
 
         Assert.Equal(2, momentQuantity.Count);
 
@@ -190,7 +190,7 @@ namespace GsaGHTests.Parameters.Results {
 
       i = 0;
       foreach (int id in resultSet.Ids) {
-        Collection<IEntity2dQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
+        IList<IMeshQuantity<IMoment2d>> momentQuantity = resultSet.Subset[id];
 
 
         foreach (IMoment2d moment2d in momentQuantity[1].Results()) {
