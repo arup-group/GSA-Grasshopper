@@ -15,7 +15,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void GetMissingKeysTests() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds("1", 1);
@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void GetMissingKeysAndPositionsTests() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds("1", 1);

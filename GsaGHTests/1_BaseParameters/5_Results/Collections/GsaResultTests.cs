@@ -7,7 +7,7 @@ using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
-  public partial class GsaResult2Tests {
+  public partial class GsaResultTests {
     public static IGsaResult AnalysisCaseResult(string file, int caseId) {
       var apiModel = new GsaAPI.Model(file);
       var model = new GsaModel(apiModel);

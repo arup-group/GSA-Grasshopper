@@ -27,7 +27,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element1dStressElement1dIdsFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
@@ -42,7 +42,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Element1dStresssElement1dIdsFromCombinationCaseTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
@@ -66,7 +66,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultStress1dHelperEnum.C2)]
     public void Element1dStresssMaxFromAnalysisCaseTest(ResultStress1dHelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
@@ -91,7 +91,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultStress1dHelperEnum.C2)]
     public void Element1dStresssMaxFromCombinationCaseTest(ResultStress1dHelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Max(ExpectedCombinationCaseC4p1Values(component).Max(),
         ExpectedCombinationCaseC4p2Values(component).Max());
 
@@ -117,7 +117,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultStress1dHelperEnum.C2)]
     public void Element1dStresssMinFromAnalysisCaseTest(ResultStress1dHelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
@@ -142,7 +142,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultStress1dHelperEnum.C2)]
     public void Element1dStresssMinFromcombinationCaseTest(ResultStress1dHelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Min(ExpectedCombinationCaseC4p1Values(component).Min(),
         ExpectedCombinationCaseC4p2Values(component).Min());
 
@@ -168,7 +168,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultStress1dHelperEnum.C2)]
     public void Element1dStresssValuesFromAnalysisCaseTest(ResultStress1dHelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
       int positionsCount = 4;
 
@@ -205,7 +205,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultStress1dHelperEnum.C2)]
     public void Element1dStresssValuesFromCombinationCaseTest(ResultStress1dHelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       List<double> expectedP1 = ExpectedCombinationCaseC4p1Values(component);
       List<double> expectedP2 = ExpectedCombinationCaseC4p2Values(component);
       int positionsCount = 4;
