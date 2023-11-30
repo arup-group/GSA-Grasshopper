@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaAPI;
@@ -122,7 +123,7 @@ namespace GsaGH.Parameters.Results {
 
     internal GsaResult(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
-      InitialiseCombinationsCaseResults(model, result, caseId, permutations.OrderBy(x => x));
+      InitialiseCombinationsCaseResults(model, result, caseId, permutations?.OrderBy(x => x));
     }
 
     // Other members
@@ -153,6 +154,10 @@ namespace GsaGH.Parameters.Results {
     }
 
     internal ReadOnlyCollection<int> NodeIds(string nodeList) {
+      if (string.IsNullOrEmpty(nodeList)) {
+        return new ReadOnlyCollection<int>(new List<int>());
+      }
+
       var entityList = new EntityList() {
         Definition = nodeList,
         Type = GsaAPI.EntityType.Node,
@@ -196,6 +201,10 @@ namespace GsaGH.Parameters.Results {
 
     private void InitialiseAnalysisCaseResults(
       GsaModel model, AnalysisCaseResult result, int caseId) {
+      if (model == null || result == null || caseId <= 0) {
+        return;
+      }
+
       Model = model;
       CaseType = CaseType.AnalysisCase;
       CaseId = caseId;
@@ -231,6 +240,10 @@ namespace GsaGH.Parameters.Results {
 
     private void InitialiseCombinationsCaseResults(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
+      if (model == null || result == null || caseId <= 0 || permutations == null || !permutations.Any()) {
+        return;
+      }
+
       Model = model;
       CaseType = CaseType.CombinationCase;
       CaseId = caseId;
