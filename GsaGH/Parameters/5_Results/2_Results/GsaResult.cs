@@ -163,11 +163,20 @@ namespace GsaGH.Parameters.Results {
     }
 
     internal ReadOnlyCollection<int> ElementIds(string elementList, int dimension) {
-      string filter = dimension switch {
-        1 => " not (PA PV)",
-        2 => " not (PB PV)",
-        3 => " not (PB PA)",
-      };
+      string filter = string.Empty;
+      switch (dimension) {
+        case 1:
+          filter = " not (PA PV)";
+          break;
+
+        case 2:
+          filter = " not (PB PV)";
+          break;
+
+        case 3:
+          filter = " not (PB PA)";
+          break;
+      }
 
       var entityList = new EntityList() {
         Definition = elementList + filter,
