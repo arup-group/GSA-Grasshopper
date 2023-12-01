@@ -209,7 +209,7 @@ namespace GsaGH.Components {
           var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
           outAxial.Add(new GH_UnitNumber(extrema.Axial.ToUnit(_stressUnit)), path);
           outShearY.Add(new GH_UnitNumber(extrema.ShearY.ToUnit(_stressUnit)), path);
-          outShearZ.Add(new GH_UnitNumber(extrema.ShearY.ToUnit(_stressUnit)), path);
+          outShearZ.Add(new GH_UnitNumber(extrema.ShearZ.ToUnit(_stressUnit)), path);
           outBendingYyPos.Add(new GH_UnitNumber(extrema.BendingYyPositiveZ.
             ToUnit(_stressUnit)), path);
           outBendingYyNeg.Add(new GH_UnitNumber(extrema.BendingYyNegativeZ.

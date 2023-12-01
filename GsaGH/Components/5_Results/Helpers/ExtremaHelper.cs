@@ -209,7 +209,7 @@ namespace GsaGH.Components.Helpers {
         "Min Axial" => resultSet.Min.Axial,
         "Min Shear Y" => resultSet.Min.ShearY,
         "Min Shear Z" => resultSet.Min.ShearZ,
-        "Min Bending Y+" => resultSet.Min.BendingYyNegativeZ,
+        "Min Bending Y+" => resultSet.Min.BendingYyPositiveZ,
         "Min Bending Y-" => resultSet.Min.BendingYyNegativeZ,
         "Min Bending Z+" => resultSet.Min.BendingZzPositiveY,
         "Min Bending Z-" => resultSet.Min.BendingZzNegativeY,
