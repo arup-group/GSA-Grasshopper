@@ -20,15 +20,42 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a 1D Element
   /// </summary>
-  public class Edit1dElement : Section3dPreviewComponent {
+  public class Edit1dElement : Section3dPreviewComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("e0bae222-f7ac-4440-a146-2df8b66b2389");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Edit1dElement;
     private AngleUnit _angleUnit = AngleUnit.Radian;
+    private bool _isSpring = false;
 
     public Edit1dElement() : base("Edit 1D Element", "Elem1dEdit", "Modify GSA 1D Element",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
+
+    public bool CanInsertParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public bool CanRemoveParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public IGH_Param CreateParameter(GH_ParameterSide side, int index) {
+      return null;
+    }
+
+    public bool DestroyParameter(GH_ParameterSide side, int index) {
+      return false;
+    }
+
+    public void VariableParameterMaintenance() {
+      if (_isSpring) {
+        SetInputProperties(3, "Spring Property", "SP", "Set new Spring Property");
+        SetOutputProperties(3, "Spring Property", "SP", "Get new Spring Property");
+      } else {
+        SetInputProperties(3, "Section", "PB", "Set new Section Property");
+        SetOutputProperties(3, "Section", "PB", "Get Section Property");
+      }
+    }
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
@@ -129,16 +156,6 @@ namespace GsaGH.Components {
         elem = new GsaElement1d(element1dGoo.Value);
       }
 
-      int id = 0;
-      if (da.GetData(1, ref id)) {
-        elem.Id = id;
-      }
-
-      GH_Line ghcrv = null;
-      if (da.GetData(2, ref ghcrv)) {
-        elem.Line = new LineCurve(ghcrv.Value);
-      }
-
       var ghString = new GH_String();
       if (da.GetData(5, ref ghString)) {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
@@ -150,13 +167,29 @@ namespace GsaGH.Components {
 
       GsaSectionGoo sectionGoo = null;
       if (elem.ApiElement.Type == ElementType.SPRING) {
+        if (!_isSpring) {
+          UpdateParameters();
+          _isSpring = true;
+        }
+
         GsaSpringPropertyGoo springPropertyGoo = null;
         if (da.GetData(3, ref springPropertyGoo)) {
-          elem.SpringProperty = springPropertyGoo.Value;
+          //elem.SpringProperty = springPropertyGoo.Value;
+        } else {
+          this.AddRuntimeWarning("Input PB failed to collect data for Spring Property");
         }
-      } else
-        if (da.GetData(3, ref sectionGoo)) {
+      } else if (da.GetData(3, ref sectionGoo)) {
         elem.Section = sectionGoo.Value;
+      }
+
+      int id = 0;
+      if (da.GetData(1, ref id)) {
+        elem.Id = id;
+      }
+
+      GH_Line ghcrv = null;
+      if (da.GetData(2, ref ghcrv)) {
+        elem.Line = new LineCurve(ghcrv.Value);
       }
 
       int group = 0;
@@ -231,6 +264,37 @@ namespace GsaGH.Components {
       var topo = new DataTree<int>();
       topo.AddRange(elem.ApiElement.Topology, new GH_Path(elem.Id));
       da.SetDataTree(15, topo);
+    }
+
+    private void SetInputProperties(int index, string name, string nickname, string description, bool optional = true) {
+      Params.Input[index].Name = name;
+      Params.Input[index].NickName = nickname;
+      Params.Input[index].Description = description;
+      Params.Input[index].Access = GH_ParamAccess.item;
+      Params.Input[index].Optional = optional;
+    }
+
+    private void SetOutputProperties(int index, string name, string nickname, string description) {
+      Params.Output[index].Name = name;
+      Params.Output[index].NickName = nickname;
+      Params.Output[index].Description = description;
+      Params.Output[index].Access = GH_ParamAccess.item;
+    
+    }
+
+    private void UpdateParameters() {
+      RecordUndoEvent($"Type changed from or to Spring");
+
+      Params.UnregisterInputParameter(Params.Input[3], true);
+      Params.UnregisterOutputParameter(Params.Output[3], true);
+
+      if (_isSpring) {
+        Params.RegisterInputParam(new GsaSpringPropertyParameter(), 3);
+        Params.RegisterOutputParam(new GsaSpringPropertyParameter(), 3);
+      } else {
+        Params.RegisterInputParam(new GsaSectionParameter(), 3);
+        Params.RegisterOutputParam(new GsaSectionParameter(), 3);
+      }
     }
   }
 }

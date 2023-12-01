@@ -9,7 +9,6 @@ namespace GsaGH.Parameters {
     public int Id { get; set; } = 0;
     public bool IsReferencedById { get; set; } = false;
     public SpringProperty ApiProperty { get; internal set; }
-    //public SpringPropertyType Type { get; set; }
 
     public GsaSpringProperty() {
       ApiProperty = new AxialSpringProperty();
@@ -20,16 +19,11 @@ namespace GsaGH.Parameters {
       IsReferencedById = true;
     }
 
-    //public GsaSpringProperty(SpringPropertyType type) {
-    //  Type = type;
-    //}
-
     public GsaSpringProperty(GsaSpringProperty other) {
       Id = other.Id;
       IsReferencedById = other.IsReferencedById;
       if (!IsReferencedById) {
         ApiProperty = other.DuplicateApiObject();
-        //Type = other.Type;
       }
     }
 
@@ -60,6 +54,12 @@ namespace GsaGH.Parameters {
             StiffnessXX = generalSpringProperty.StiffnessXX,
             StiffnessYY = generalSpringProperty.StiffnessYY,
             StiffnessZZ = generalSpringProperty.StiffnessZZ,
+            SpringCurveX = generalSpringProperty.SpringCurveX,
+            SpringCurveY = generalSpringProperty.SpringCurveY,
+            SpringCurveZ = generalSpringProperty.SpringCurveZ,
+            SpringCurveXX = generalSpringProperty.SpringCurveXX,
+            SpringCurveYY = generalSpringProperty.SpringCurveYY,
+            SpringCurveZZ = generalSpringProperty.SpringCurveZZ
           };
           break;
 
