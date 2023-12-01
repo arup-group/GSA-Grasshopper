@@ -17,19 +17,6 @@ using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
-  internal enum SpringPropertyType {
-    Axial,
-    Torsional,
-    General,
-    Matrix,
-    TensionOnly,
-    CompressionOnly,
-    Connector,
-    Lockup,
-    Gap,
-    Friction
-  }
-
   /// <summary>
   /// Component to create a new SpringProperty
   /// </summary>

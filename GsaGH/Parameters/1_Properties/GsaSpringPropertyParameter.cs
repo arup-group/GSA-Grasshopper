@@ -24,7 +24,7 @@ namespace GsaGH.Parameters {
 
     protected override GsaSpringPropertyGoo PreferredCast(object data) {
       string mes = string.Empty;
-      string defaultText = $"{data.GetTypeName()} does not contain a 2D Property";
+      string defaultText = $"{data.GetTypeName()} does not contain a Spring Property";
 
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
         GH_Convert.ToString(data, out string val, GH_Conversion.Both);

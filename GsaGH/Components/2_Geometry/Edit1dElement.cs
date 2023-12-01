@@ -139,16 +139,6 @@ namespace GsaGH.Components {
         elem.Line = new LineCurve(ghcrv.Value);
       }
 
-      GsaSectionGoo sectionGoo = null;
-      if (da.GetData(3, ref sectionGoo)) {
-        elem.Section = sectionGoo.Value;
-      }
-
-      int group = 0;
-      if (da.GetData(4, ref group)) {
-        elem.ApiElement.Group = group;
-      }
-
       var ghString = new GH_String();
       if (da.GetData(5, ref ghString)) {
         if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
@@ -156,6 +146,22 @@ namespace GsaGH.Components {
         } else {
           elem.ApiElement.Type = Mappings.GetElementType(ghString.Value);
         }
+      }
+
+      GsaSectionGoo sectionGoo = null;
+      if (elem.ApiElement.Type == ElementType.SPRING) {
+        GsaSpringPropertyGoo springPropertyGoo = null;
+        if (da.GetData(3, ref springPropertyGoo)) {
+          elem.SpringProperty = springPropertyGoo.Value;
+        }
+      } else
+        if (da.GetData(3, ref sectionGoo)) {
+        elem.Section = sectionGoo.Value;
+      }
+
+      int group = 0;
+      if (da.GetData(4, ref group)) {
+        elem.ApiElement.Group = group;
       }
 
       GsaOffsetGoo offset = null;
@@ -200,7 +206,7 @@ namespace GsaGH.Components {
 
       if (Preview3dSection || elem.Section3dPreview != null) {
         elem.CreateSection3dPreview();
-      } 
+      }
 
       elem.UpdateReleasesPreview();
 
@@ -209,7 +215,7 @@ namespace GsaGH.Components {
       da.SetData(2, new GH_Line(elem.Line.Line));
       da.SetData(3, new GsaSectionGoo(elem.Section));
       da.SetData(4, elem.ApiElement.Group);
-      da.SetData(5, 
+      da.SetData(5,
         Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == elem.ApiElement.Type).Key);
       da.SetData(6, new GsaOffsetGoo(elem.Offset));
       da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
