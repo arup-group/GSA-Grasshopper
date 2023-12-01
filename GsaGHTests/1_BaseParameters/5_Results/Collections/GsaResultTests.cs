@@ -82,33 +82,57 @@ namespace GsaGHTests.Parameters.Results {
         : new GsaResult(model, combinationCaseResult, caseId, permutationEmpty ? null : new List<int>(){1});
       
       Assert.NotNull(results);
-      Assert.Null(results.Model);
-      Assert.Equal(0, results.CaseId);
-      Assert.Null(results.CaseName);
-      Assert.Equal(0, (int)results.CaseType);
-      Assert.Null(results.SelectedPermutationIds);
+      if (model == null) {
+        Assert.Null(results.Model);
+      } else {
+        Assert.NotNull(results.Model);
+      }
+      switch (resultsAreNull) {
+        case true when analysisCase:
+          Assert.Equal("DL", results.CaseName);
+          break;
+        case true when !analysisCase:
+          Assert.Equal("ULS", results.CaseName);
+          break;
+        default:
+          Assert.Null(results.CaseName);
+          break;
+      }
+
+      Assert.Equal(caseId, results.CaseId);
+      Assert.Equal(analysisCase ? CaseType.AnalysisCase : CaseType.CombinationCase, results.CaseType);
+      if (!permutationEmpty && !analysisCase) {
+        Assert.Single(results.SelectedPermutationIds);
+      } else {
+        Assert.Null(results.SelectedPermutationIds);
+      } 
       //fields
-      Assert.Null(results.Element1dAverageStrainEnergyDensities);
-      Assert.Null(results.Element1dDisplacements);
-      Assert.Null(results.Element1dInternalForces);
-      Assert.Null(results.Element1dDerivedStresses);
-      Assert.Null(results.Element1dStrainEnergyDensities);
-      Assert.Null(results.Element1dStresses);
-      Assert.Null(results.Element2dDisplacements);
-      Assert.Null(results.Element2dForces);
-      Assert.Null(results.Element2dMoments);
-      Assert.Null(results.Element2dShearForces);
-      Assert.Null(results.Element2dStresses);
-      Assert.Null(results.Element3dDisplacements);
-      Assert.Null(results.Element3dStresses);
-      Assert.Null(results.NodeDisplacements);
-      Assert.Null(results.NodeReactionForces);
-      Assert.Null(results.NodeSpringForces);
-      Assert.Null(results.NodeResonantFootfalls);
-      Assert.Null(results.NodeTransientFootfalls);
-      Assert.Null(results.Member1dInternalForces);
-      Assert.Null(results.Member1dDisplacements);
-      Assert.Null(results.GlobalResults);
+      Assert.NotNull(results.Element1dAverageStrainEnergyDensities);
+      Assert.NotNull(results.Element1dDisplacements);
+      Assert.NotNull(results.Element1dInternalForces);
+      Assert.NotNull(results.Element1dDerivedStresses);
+      Assert.NotNull(results.Element1dStrainEnergyDensities);
+      Assert.NotNull(results.Element1dStresses);
+      Assert.NotNull(results.Element2dDisplacements);
+      Assert.NotNull(results.Element2dForces);
+      Assert.NotNull(results.Element2dMoments);
+      Assert.NotNull(results.Element2dShearForces);
+      Assert.NotNull(results.Element2dStresses);
+      Assert.NotNull(results.Element3dDisplacements);
+      Assert.NotNull(results.Element3dStresses);
+      Assert.NotNull(results.NodeDisplacements);
+      Assert.NotNull(results.NodeReactionForces);
+      Assert.NotNull(results.NodeSpringForces);
+      Assert.NotNull(results.NodeResonantFootfalls);
+      Assert.NotNull(results.NodeTransientFootfalls);
+      Assert.NotNull(results.Member1dInternalForces);
+      Assert.NotNull(results.Member1dDisplacements);
+
+      if(analysisCase) {
+        Assert.NotNull(results.GlobalResults);
+      } else {
+        Assert.Null(results.GlobalResults);
+      }
     }
 
     [Theory]
@@ -127,11 +151,10 @@ namespace GsaGHTests.Parameters.Results {
     public void NodeIdsReturnsValidNumbers() {
       var result = (GsaResult)AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       
-      Assert.Empty(result.NodeIds(null));
-      Assert.Empty(result.NodeIds(string.Empty));
-      Assert.Empty(result.NodeIds("0"));
-      Assert.Equal(new List<int>() {1} ,result.NodeIds("1"));
-      Assert.Equal(new List<int>() { 10 }, result.NodeIds("10 20 30"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1, 2}) ,result.NodeIds("all"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1}) ,result.NodeIds("1"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1, 2}), result.NodeIds("1 2"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){}), result.NodeIds("10 20"));
     }
   }
 }

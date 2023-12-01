@@ -154,10 +154,6 @@ namespace GsaGH.Parameters.Results {
     }
 
     internal ReadOnlyCollection<int> NodeIds(string nodeList) {
-      if (string.IsNullOrEmpty(nodeList)) {
-        return new ReadOnlyCollection<int>(new List<int>());
-      }
-
       var entityList = new EntityList() {
         Definition = nodeList,
         Type = GsaAPI.EntityType.Node,
@@ -167,20 +163,11 @@ namespace GsaGH.Parameters.Results {
     }
 
     internal ReadOnlyCollection<int> ElementIds(string elementList, int dimension) {
-      string filter = string.Empty;
-      switch (dimension) {
-        case 1:
-          filter = " not (PA PV)";
-          break;
-
-        case 2:
-          filter = " not (PB PV)";
-          break;
-
-        case 3:
-          filter = " not (PB PA)";
-          break;
-      }
+      string filter = dimension switch {
+        1 => " not (PA PV)",
+        2 => " not (PB PV)",
+        3 => " not (PB PA)",
+      };
 
       var entityList = new EntityList() {
         Definition = elementList + filter,
@@ -201,15 +188,7 @@ namespace GsaGH.Parameters.Results {
 
     private void InitialiseAnalysisCaseResults(
       GsaModel model, AnalysisCaseResult result, int caseId) {
-      if (model == null || result == null || caseId <= 0) {
-        return;
-      }
-
-      Model = model;
-      CaseType = CaseType.AnalysisCase;
-      CaseId = caseId;
-      CaseName = model.Model.AnalysisCaseName(CaseId);
-
+      
       Element1dAverageStrainEnergyDensities = new Element1dAverageStrainEnergyDensityCache(result);
       Element1dDisplacements = new Element1dDisplacementCache(result);
       Element1dInternalForces = new Element1dInternalForceCache(result);
@@ -227,7 +206,7 @@ namespace GsaGH.Parameters.Results {
       Element3dStresses = new Element3dStressCache(result);
 
       NodeDisplacements = new NodeDisplacementCache(result);
-      NodeReactionForces = new NodeReactionForceCache(result, model.Model);
+      NodeReactionForces = new NodeReactionForceCache(result, model?.Model);
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
@@ -236,20 +215,19 @@ namespace GsaGH.Parameters.Results {
       Member1dDisplacements = new Member1dDisplacementCache(result);
       
       GlobalResults = new GlobalResultsCache(result);
+
+      Model = model;
+      CaseType = CaseType.AnalysisCase;
+      CaseId = caseId;
+      if (model?.Model?.Results()?.ContainsKey(caseId) != true) {
+        return;
+      }
+      CaseName = model.Model.AnalysisCaseName(CaseId);
     }
 
     private void InitialiseCombinationsCaseResults(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
-      if (model == null || result == null || caseId <= 0 || permutations == null || !permutations.Any()) {
-        return;
-      }
-
-      Model = model;
-      CaseType = CaseType.CombinationCase;
-      CaseId = caseId;
-      CaseName = model.Model.CombinationCases()[caseId].Name;
-      SelectedPermutationIds = permutations.ToList();
-
+      
       Element1dAverageStrainEnergyDensities = new Element1dAverageStrainEnergyDensityCache(result);
       Element1dDisplacements = new Element1dDisplacementCache(result);
       Element1dInternalForces = new Element1dInternalForceCache(result);
@@ -267,13 +245,22 @@ namespace GsaGH.Parameters.Results {
       Element3dStresses = new Element3dStressCache(result);
 
       NodeDisplacements = new NodeDisplacementCache(result);
-      NodeReactionForces = new NodeReactionForceCache(result, model.Model);
+      NodeReactionForces = new NodeReactionForceCache(result, model?.Model);
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
 
       Member1dDisplacements = new Member1dDisplacementCache(result);
       Member1dInternalForces = new Member1dInternalForceCache(result);
+
+      Model = model;
+      CaseType = CaseType.CombinationCase;
+      CaseId = caseId;
+      SelectedPermutationIds = permutations?.ToList();
+      if (model?.Model?.CombinationCases()?.ContainsKey(caseId) != true) {
+        return;
+      }
+      CaseName = model.Model.CombinationCases()[CaseId].Name;
     }
   }
 }
