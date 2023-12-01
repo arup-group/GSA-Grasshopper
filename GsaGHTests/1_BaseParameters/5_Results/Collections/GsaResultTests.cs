@@ -156,5 +156,23 @@ namespace GsaGHTests.Parameters.Results {
       Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1, 2}), result.NodeIds("1 2"));
       Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){}), result.NodeIds("10 20"));
     }
+    [Fact]
+    public void ElementIdsReturnsValidNumbers() {
+      var result = (GsaResult)AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}) ,result.ElementIds("all",1));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}) ,result.ElementIds("1",1));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}), result.ElementIds("1 2",1));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){}), result.ElementIds("10 20",1));
+    }
+    [Fact]
+    public void MemberIdsReturnsValidNumbers() {
+      var result = (GsaResult)AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}) ,result.MemberIds("all"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}) ,result.MemberIds("1"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}), result.MemberIds("1 2"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){}), result.MemberIds("10 20"));
+    }
   }
 }
