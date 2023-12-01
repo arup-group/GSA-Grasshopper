@@ -14,7 +14,6 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using Rhino.Runtime;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
@@ -89,11 +88,11 @@ namespace GsaGH.Components {
       _selectedItems[i] = _dropDownItems[i][j];
 
       SpringPropertyType mode = GetModeBy(_selectedItems[0]);
-      ParseSelectedItems(mode);
       if (i == 0) {
         UpdateParameters(mode);
         UpdateDropDownItems(mode);
       }
+      ParseSelectedItems(mode);
 
       base.UpdateUI();
     }
@@ -114,6 +113,7 @@ namespace GsaGH.Components {
 
         case SpringPropertyType.Torsional:
           SetInputProperties(1, "Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "Stiffness xx");
+          SetDampingRatioInputAt(2);
           return;
 
         case SpringPropertyType.General:
@@ -137,8 +137,8 @@ namespace GsaGH.Components {
 
         case SpringPropertyType.Lockup:
           SetStiffnessInputAt(1, true);
-          SetInputProperties(2, "Lockup +ve [" + lengthAbr + "]", "L+ve", "Lockup +ve", false);
-          SetInputProperties(3, "Lockup -ve [" + lengthAbr + "]", "L-ve", "Lockup -ve", false);
+          SetInputProperties(2, "Lockup -ve [" + lengthAbr + "]", "L-ve", "Lockup -ve", false);
+          SetInputProperties(3, "Lockup +ve [" + lengthAbr + "]", "L+ve", "Lockup +ve", false);
           SetDampingRatioInputAt(4);
           return;
 
@@ -177,7 +177,7 @@ namespace GsaGH.Components {
       pManager[0].Optional = true;
       pManager[2].Optional = true;
     }
-    
+
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaSpringPropertyParameter());
     }
@@ -188,18 +188,22 @@ namespace GsaGH.Components {
       double stiffness = 0;
       switch (_mode) {
         case SpringPropertyType.Axial:
-        case SpringPropertyType.Torsional:
         case SpringPropertyType.TensionOnly:
         case SpringPropertyType.CompressionOnly:
         case SpringPropertyType.Lockup:
         case SpringPropertyType.Gap:
           stiffness = Input.UnitNumber(this, da, 1, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
           break;
+
+        case SpringPropertyType.Torsional:
+          stiffness = Input.UnitNumber(this, da, 1, _rotationalStiffnessUnit).As(RotationalStiffnessUnit.NewtonMeterPerRadian);
+          break;
       }
 
       double stiffnessX;
       double stiffnessY;
       double stiffnessZ;
+      int dampingRatioIndex = 2;
 
       switch (_mode) {
         case SpringPropertyType.Axial:
@@ -217,6 +221,7 @@ namespace GsaGH.Components {
           break;
 
         case SpringPropertyType.General:
+          dampingRatioIndex = 7;
 
           // do want to add spring curves??
 
@@ -267,17 +272,21 @@ namespace GsaGH.Components {
           break;
 
         case SpringPropertyType.Connector:
+          dampingRatioIndex = 1;
+
           var connectorProperty = new ConnectorSpringProperty();
           spring = new GsaSpringProperty(connectorProperty);
           break;
 
         case SpringPropertyType.Lockup:
-          double positiveLockup = Input.UnitNumber(this, da, 2, _lengthUnit).As(LengthUnit.Meter);
-          double negativeLockup = Input.UnitNumber(this, da, 3, _lengthUnit).As(LengthUnit.Meter);
+          dampingRatioIndex = 4;
+
+          double negativeLockup = Input.UnitNumber(this, da, 2, _lengthUnit).As(LengthUnit.Meter);
+          double positiveLockup = Input.UnitNumber(this, da, 3, _lengthUnit).As(LengthUnit.Meter);
           var lockupProperty = new LockupSpringProperty {
             Stiffness = stiffness,
-            PositiveLockup = positiveLockup,
-            NegativeLockup = negativeLockup
+            NegativeLockup = negativeLockup,
+            PositiveLockup = positiveLockup
           };
           spring = new GsaSpringProperty(lockupProperty);
           break;
@@ -290,11 +299,13 @@ namespace GsaGH.Components {
           break;
 
         case SpringPropertyType.Friction:
+          dampingRatioIndex = 5;
+
           stiffnessX = Input.UnitNumber(this, da, 1, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
           stiffnessY = Input.UnitNumber(this, da, 2, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
           stiffnessZ = Input.UnitNumber(this, da, 3, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
           double frictionCoefficient = 0;
-          if (da.GetData(0, ref frictionCoefficient)) {
+          if (da.GetData(4, ref frictionCoefficient)) {
             var frictionProperty = new FrictionSpringProperty {
               StiffnessX = stiffnessX,
               StiffnessY = stiffnessY,
@@ -315,6 +326,11 @@ namespace GsaGH.Components {
       string name = string.Empty;
       if (da.GetData(0, ref name)) {
         spring.ApiProperty.Name = name;
+      }
+
+      double dampingRatio = 0;
+      if (da.GetData(dampingRatioIndex, ref dampingRatio)) {
+        spring.ApiProperty.DampingRatio = dampingRatio;
       }
 
       da.SetData(0, new GsaSpringPropertyGoo(spring));
@@ -482,8 +498,8 @@ namespace GsaGH.Components {
           break;
 
         case SpringPropertyType.Matrix:
-          Params.RegisterInputParam(new Param_GenericObject());
           Params.RegisterInputParam(new Param_Integer());
+          Params.RegisterInputParam(new Param_Number());
           break;
 
         case SpringPropertyType.Connector:
