@@ -41,7 +41,22 @@ namespace GsaGHTests.CustomComponent {
     //Analysis
     [InlineData(typeof(AnalyseModel))]
     //Results
+    [InlineData(typeof(BeamDerivedStresses))]
+    [InlineData(typeof(BeamDisplacements))]
+    [InlineData(typeof(BeamForcesAndMoments))]
     [InlineData(typeof(BeamStrainEnergyDensity))]
+    [InlineData(typeof(BeamStresses))]
+    [InlineData(typeof(Element2dDisplacements))]
+    [InlineData(typeof(Element2dForcesAndMoments))]
+    [InlineData(typeof(Element2dStresses))]
+    [InlineData(typeof(Element3dDisplacements))]
+    [InlineData(typeof(Element3dStresses))]
+    [InlineData(typeof(FootfallResults))]
+    [InlineData(typeof(GlobalPerformanceResults))]
+    [InlineData(typeof(NodeDisplacements))]
+    [InlineData(typeof(ReactionForces))]
+    [InlineData(typeof(SpringReactionForces))]
+    [InlineData(typeof(TotalLoadsAndReactions))]
     //Display
     [InlineData(typeof(Contour1dResults))]
     [InlineData(typeof(ResultDiagrams))]
