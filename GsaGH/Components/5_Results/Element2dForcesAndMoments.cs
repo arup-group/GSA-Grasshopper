@@ -298,7 +298,7 @@ namespace GsaGH.Components {
             outXx.Add(new GH_UnitNumber(momentExtrema.Mx.ToUnit(_momentUnit)), path);
             outYy.Add(new GH_UnitNumber(momentExtrema.My.ToUnit(_momentUnit)), path);
             outXxyy.Add(new GH_UnitNumber(momentExtrema.Mxy.ToUnit(_momentUnit)), path);
-            outWaxx.Add(new GH_UnitNumber(momentExtrema.My.ToUnit(_momentUnit)), path);
+            outWaxx.Add(new GH_UnitNumber(momentExtrema.WoodArmerX.ToUnit(_momentUnit)), path);
             outWayy.Add(new GH_UnitNumber(momentExtrema.WoodArmerY.ToUnit(_momentUnit)), path);
           }
         }
