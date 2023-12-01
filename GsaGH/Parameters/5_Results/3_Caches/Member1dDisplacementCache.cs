@@ -8,7 +8,11 @@ using GsaAPI;
 namespace GsaGH.Parameters.Results {
   public class Member1dDisplacementCache : IEntity1dResultCache<IEntity1dDisplacement, IDisplacement,
     ResultVector6<Entity1dExtremaKey>> {
+    public IApiResult ApiResult { get; set; }
 
+    public IDictionary<int, IList<IEntity1dDisplacement>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IEntity1dDisplacement>>();
+    
     internal Member1dDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
     }
@@ -16,11 +20,6 @@ namespace GsaGH.Parameters.Results {
     internal Member1dDisplacementCache(CombinationCaseResult result) {
       ApiResult = new ApiResult(result);
     }
-
-    public IApiResult ApiResult { get; set; }
-
-    public ConcurrentDictionary<int, Collection<IEntity1dDisplacement>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IEntity1dDisplacement>>();
 
     public IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>>
       ResultSubset(ICollection<int> memberIds, int positionCount) {
@@ -40,7 +39,8 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
               = analysisCase.Member1dDisplacement(memberList, positions);
             Parallel.ForEach(aCaseResults.Keys,
-              memberId => Cache.AddOrUpdate(memberId,
+              memberId => 
+                ((ConcurrentDictionary<int, IList<IEntity1dDisplacement>>)Cache).AddOrUpdate(memberId,
                 Entity1dResultsFactory.CreateDisplacements(aCaseResults[memberId], positions),
                 (key, oldValue)
                   => oldValue.AddMissingPositions(aCaseResults[memberId], positions)));
@@ -50,7 +50,8 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
               = combinationCase.Member1dDisplacement(memberList, positions);
             Parallel.ForEach(cCaseResults.Keys,
-              memberId => Cache.AddOrUpdate(memberId,
+              memberId => 
+              ((ConcurrentDictionary<int, IList<IEntity1dDisplacement>>)Cache).AddOrUpdate(memberId,
                 Entity1dResultsFactory.CreateDisplacements(cCaseResults[memberId], positions),
                 (key, oldValue)
                   => oldValue.AddMissingPositions(cCaseResults[memberId], positions)));

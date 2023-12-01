@@ -11,8 +11,8 @@ namespace GsaGH.Parameters.Results {
     : IEntity1dResultCache<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IEntity1dDerivedStress>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IEntity1dDerivedStress>>();
+    public IDictionary<int, IList<IEntity1dDerivedStress>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IEntity1dDerivedStress>>();
 
     internal Element1dDerivedStressCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -39,7 +39,8 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<DerivedStressResult1d>> aCaseResults
               = analysisCase.Element1dDerivedStress(elementList, positions);
-            Parallel.ForEach(aCaseResults.Keys, elementId => Cache.AddOrUpdate(
+            Parallel.ForEach(aCaseResults.Keys, elementId => 
+             ((ConcurrentDictionary<int, IList<IEntity1dDerivedStress>>)Cache).AddOrUpdate(
               elementId, Entity1dResultsFactory.CreateDerivedStresses(aCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
             break;
@@ -47,7 +48,8 @@ namespace GsaGH.Parameters.Results {
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<DerivedStressResult1d>>> cCaseResults
               = combinationCase.Element1dDerivedStress(elementList, positions);
-            Parallel.ForEach(cCaseResults.Keys, elementId => Cache.AddOrUpdate(
+            Parallel.ForEach(cCaseResults.Keys, elementId => 
+             ((ConcurrentDictionary<int, IList<IEntity1dDerivedStress>>)Cache).AddOrUpdate(
               elementId, Entity1dResultsFactory.CreateDerivedStresses(cCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));
             break;

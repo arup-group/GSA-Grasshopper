@@ -40,13 +40,13 @@ namespace GsaGH.Parameters {
       }
     }
     public readonly List<int> ElementIds;
-    public readonly List<List<IQuantity>> ResultValues;
+    public readonly List<IList<IQuantity>> ResultValues;
     public readonly List<Point3dList> Vertices;
     private bool _finalised;
     private List<Mesh> _tempMeshes = new List<Mesh>();
 
     public MeshResultGoo(
-      Mesh mesh, List<List<IQuantity>> results, List<Point3dList> vertices,
+      Mesh mesh, List<IList<IQuantity>> results, List<Point3dList> vertices,
       List<int> ids) : base(mesh) {
       ResultValues = results;
       Vertices = vertices;
@@ -62,7 +62,7 @@ namespace GsaGH.Parameters {
     }
 
     public void AddRange(
-      List<Mesh> tempMesh, List<List<IQuantity>> results, List<Point3dList> vertices,
+      List<Mesh> tempMesh, List<IList<IQuantity>> results, List<Point3dList> vertices,
       List<int> ids) {
       _tempMeshes.AddRange(tempMesh);
       ResultValues.AddRange(results);

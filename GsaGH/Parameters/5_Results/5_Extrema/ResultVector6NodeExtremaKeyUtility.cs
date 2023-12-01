@@ -5,7 +5,7 @@ using OasysUnits;
 namespace GsaGH.Parameters.Results {
   public static partial class ExtremaKeyUtility {
     public static (ResultVector6<NodeExtremaKey> Max, ResultVector6<NodeExtremaKey> Min) GetResultVector6NodeExtremaKeys<T>(
-      this IDictionary<int, Collection<T>> subset) {
+      this IDictionary<int, IList<T>> subset) {
 
       var maxValue = new ResultVector6<double>(double.MinValue);
       var minValue = new ResultVector6<double>(double.MaxValue);
@@ -14,7 +14,7 @@ namespace GsaGH.Parameters.Results {
       var minKey = new ResultVector6<NodeExtremaKey>();
 
       foreach (int nodeId in subset.Keys) {
-        Collection<T> values = subset[nodeId];
+        IList<T> values = subset[nodeId];
         for (int permutation = 0; permutation < values.Count; permutation++) {
           switch (values[permutation]) {
             case IDisplacement displacement:

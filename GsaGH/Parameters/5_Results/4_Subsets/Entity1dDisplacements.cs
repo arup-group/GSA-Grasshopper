@@ -10,10 +10,10 @@ namespace GsaGH.Parameters.Results {
     public ResultVector6<Entity1dExtremaKey> Min { get; private set; }
     public IList<int> Ids { get; private set; }
 
-    public ConcurrentDictionary<int, Collection<IEntity1dDisplacement>> Subset { get; }
-      = new ConcurrentDictionary<int, Collection<IEntity1dDisplacement>>();
+    public IDictionary<int, IList<IEntity1dDisplacement>> Subset { get; }
+      = new ConcurrentDictionary<int, IList<IEntity1dDisplacement>>();
 
-    public Entity1dDisplacements(ConcurrentDictionary<int, Collection<IEntity1dDisplacement>> results) {
+    public Entity1dDisplacements(IDictionary<int, IList<IEntity1dDisplacement>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
       (Max, Min) = results.GetResultVector6Entity1dExtremaKeys<IEntity1dDisplacement, IDisplacement>();

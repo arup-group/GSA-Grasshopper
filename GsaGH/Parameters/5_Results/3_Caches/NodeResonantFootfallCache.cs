@@ -1,14 +1,15 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class NodeResonantFootfallCache : INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-    public ConcurrentDictionary<int, Collection<IFootfall>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IFootfall>>();
+    public IDictionary<int, IList<IFootfall>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IFootfall>>();
     
     internal NodeResonantFootfallCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -24,37 +25,45 @@ namespace GsaGH.Parameters.Results {
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, NodeFootfallResult> aCaseResults = analysisCase.NodeResonantFootfall(nodelist);
-            Parallel.ForEach(aCaseResults.Keys, nodeId => {
-              if (double.IsNaN(aCaseResults[nodeId].MaximumResponseFactor)) {
+            Parallel.ForEach(aCaseResults, resultKvp => {
+              if (IsInvalid(resultKvp)) {
                 return;
               }
 
-              var res = new Footfall(aCaseResults[nodeId]);
-              Cache.TryAdd(nodeId, new Collection<IFootfall>() { res });
+              var res = new Footfall(resultKvp.Value);
+              ((ConcurrentDictionary<int, IList<IFootfall>>)Cache).TryAdd(
+                resultKvp.Key, new Collection<IFootfall>() { res });
             });
             break;
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<NodeFootfallResult>> cCaseResults = combinationCase.NodeResonantFootfall(nodelist);
-            Parallel.ForEach(cCaseResults.Keys, nodeId => {
-              var permutationResults = new Collection<IFootfall>();
-              foreach (NodeFootfallResult permutationResult in cCaseResults[nodeId]) {
-                if (double.IsNaN(permutationResult.MaximumResponseFactor)) {
-                  continue;
-                }
+            Parallel.ForEach(cCaseResults, resultKvp => {
+              if (IsInvalid(resultKvp)) {
+                return;
+              }
 
+              var permutationResults = new Collection<IFootfall>();
+              foreach (NodeFootfallResult permutationResult in resultKvp.Value) {
                 permutationResults.Add(new Footfall(permutationResult));
               }
 
-              if (permutationResults.Count > 0) {
-                Cache.TryAdd(nodeId, permutationResults);
-              }
+              ((ConcurrentDictionary<int, IList<IFootfall>>)Cache).TryAdd(
+                resultKvp.Key, permutationResults);
             });
             break;
         }
       }
 
       return new NodeFootfalls(Cache.GetSubset(nodeIds));
+    }
+
+    private bool IsInvalid(KeyValuePair<int, ReadOnlyCollection<NodeFootfallResult>> kvp) {
+      return kvp.Value.Any(res => double.IsNaN(res.MaximumResponseFactor));
+    }
+
+    private bool IsInvalid(KeyValuePair<int, NodeFootfallResult> kvp) {
+      return double.IsNaN(kvp.Value.MaximumResponseFactor);
     }
   }
 }

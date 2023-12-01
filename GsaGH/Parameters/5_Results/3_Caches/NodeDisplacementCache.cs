@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
 
@@ -8,8 +9,8 @@ namespace GsaGH.Parameters.Results {
   public class NodeDisplacementCache : INodeResultCache<IDisplacement, ResultVector6<NodeExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, Collection<IDisplacement>> Cache { get; }
-      = new ConcurrentDictionary<int, Collection<IDisplacement>>();
+    public IDictionary<int, IList<IDisplacement>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IDisplacement>>();
 
     internal NodeDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -25,28 +26,51 @@ namespace GsaGH.Parameters.Results {
         string nodelist = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
-            ReadOnlyDictionary<int, NodeResult> aCaseResults = analysisCase.NodeResults(nodelist);
-            Parallel.ForEach(aCaseResults.Keys, nodeId => {
-              var res = new Displacement(aCaseResults[nodeId].Displacement);
-              Cache.TryAdd(nodeId, new Collection<IDisplacement>() { res });
+            ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeDisplacement(nodelist);
+            Parallel.ForEach(aCaseResults, resultKvp => {
+              if (IsInvalid(resultKvp)) {
+                return;
+              }
+
+              var res = new Displacement(resultKvp.Value);
+              ((ConcurrentDictionary<int, IList<IDisplacement>>)Cache).TryAdd(
+                resultKvp.Key, new Collection<IDisplacement>() { res });
             });
             break;
 
           case CombinationCaseResult combinationCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> cCaseResults = combinationCase.NodeResults(nodelist);
-            Parallel.ForEach(cCaseResults.Keys, nodeId => {
-              var permutationResults = new Collection<IDisplacement>();
-              foreach (NodeResult permutationResult in cCaseResults[nodeId]) {
-                permutationResults.Add(new Displacement(permutationResult.Displacement));
+            ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults = combinationCase.NodeDisplacement(nodelist);
+            Parallel.ForEach(cCaseResults, resultKvp => {
+              if (IsInvalid(resultKvp)) {
+                return;
               }
 
-              Cache.TryAdd(nodeId, permutationResults);
+              var permutationResults = new Collection<IDisplacement>();
+              foreach (Double6 permutation in resultKvp.Value) {
+                permutationResults.Add(new Displacement(permutation));
+              }
+
+              ((ConcurrentDictionary<int, IList<IDisplacement>>)Cache).TryAdd(
+                resultKvp.Key, permutationResults);
             });
             break;
         }
       }
 
       return new NodeDisplacements(Cache.GetSubset(nodeIds));
+    }
+
+    private bool IsInvalid(KeyValuePair<int, ReadOnlyCollection<Double6>> kvp) {
+      return kvp.Value.Any(res => !IsNotNaN(res));
+    }
+
+    private bool IsInvalid(KeyValuePair<int, Double6> kvp) {
+      return !IsNotNaN(kvp.Value);
+    }
+
+    private bool IsNotNaN(Double6 values) {
+      return !double.IsNaN(values.X) || !double.IsNaN(values.Y) || !double.IsNaN(values.Z)
+        || !double.IsNaN(values.XX) || !double.IsNaN(values.YY) || !double.IsNaN(values.ZZ);
     }
   }
 }

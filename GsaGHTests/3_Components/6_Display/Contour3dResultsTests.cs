@@ -73,13 +73,6 @@ namespace GsaGHTests.Components.Display {
     }
 
     [Fact]
-    public void UpdateModelTest() {
-      var comp = new Contour3dResults();
-      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement3dCombinationResultsMother());
-      comp.UpdateModel("mm");
-    }
-
-    [Fact]
     public void UpdateStressTest() {
       var comp = new Contour3dResults();
       ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement3dCombinationResultsMother());

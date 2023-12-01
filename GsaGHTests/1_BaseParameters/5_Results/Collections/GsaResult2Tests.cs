@@ -12,7 +12,7 @@ namespace GsaGHTests.Parameters.Results {
       var apiModel = new GsaAPI.Model(file);
       var model = new GsaModel(apiModel);
       ReadOnlyDictionary<int, AnalysisCaseResult> analysisCaseResults = model.Model.Results();
-      return new GsaResult2(model, analysisCaseResults[caseId], caseId);
+      return new GsaResult(model, analysisCaseResults[caseId], caseId);
     }
 
     public static IGsaResult CombinationCaseResult(string file, int caseId, IEnumerable<int> permutations = null) {
@@ -23,7 +23,7 @@ namespace GsaGHTests.Parameters.Results {
         permutations = new List<int>() { 1, 2 };
       }
 
-      return new GsaResult2(model, combinationCaseResults[caseId], caseId, permutations);
+      return new GsaResult(model, combinationCaseResults[caseId], caseId, permutations);
     }
   }
 }

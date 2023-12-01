@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using Grasshopper;
@@ -11,6 +12,7 @@ using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -38,7 +40,7 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
       base.UpdateUI();
     }
 
@@ -53,11 +55,15 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
+        "Envelope",
         "Unit",
       });
 
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
+
+      _dropDownItems.Add(ExtremaHelper.Vector3Translations.ToList());
+      _selectedItems.Add(_dropDownItems[0][0]);
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
@@ -86,8 +92,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var result = new GsaResult();
-
+      GsaResult result;
       string elementlist = "All";
 
       var outTransX = new DataTree<GH_UnitNumber>();
@@ -102,69 +107,73 @@ namespace GsaGH.Components {
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         switch (ghTyp?.Value) {
-          case null:
-            this.AddRuntimeWarning("Input is null");
-            return;
-
           case GsaResultGoo goo:
             result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
+
+          case null:
+            this.AddRuntimeWarning("Input is null");
+            return;
 
           default:
             this.AddRuntimeError("Error converting input to GSA Result");
             return;
         }
 
-        List<GsaResultsValues> vals = result.Element3DDisplacementValues(elementlist, _lengthUnit);
+        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 3);
+        IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> resultSet =
+          result.Element3dDisplacements.ResultSubset(elementIds);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
         };
         if (permutations.Count == 1 && permutations[0] == -1) {
-          permutations = Enumerable.Range(1, vals.Count).ToList();
+          permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
         }
 
-        foreach (int perm in permutations) {
-          if (vals[perm - 1].XyzResults.Count == 0 & vals[perm - 1].XxyyzzResults.Count == 0) {
-            string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-            this.AddRuntimeWarning("Case " + acase + " contains no Element3D results.");
-            continue;
-          }
-
-          foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in
-                  vals[perm - 1].XyzResults) {
-            int elementId = kvp.Key;
-            ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-            if (res.Count == 0) {
-              continue;
+        if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
+          foreach (KeyValuePair<int, IList<IMeshQuantity<ITranslation>>> kvp in resultSet.Subset) {
+            foreach (int p in permutations) {
+              var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
+              outTransX.AddRange(kvp.Value[p - 1].Results().Select(
+                r => new GH_UnitNumber(r.X.ToUnit(_lengthUnit))), path);
+              outTransY.AddRange(kvp.Value[p - 1].Results().Select(
+                r => new GH_UnitNumber(r.Y.ToUnit(_lengthUnit))), path);
+              outTransZ.AddRange(kvp.Value[p - 1].Results().Select(
+                r => new GH_UnitNumber(r.Z.ToUnit(_lengthUnit))), path);
+              outTransXyz.AddRange(kvp.Value[p - 1].Results().Select(
+                r => new GH_UnitNumber(r.Xyz.ToUnit(_lengthUnit))), path);
             }
-
-            var path = new GH_Path(result.CaseId,
-              result.SelectedPermutationIds == null ? 0 : perm, elementId);
-            // use ToUnit to capture changes in dropdown
-            outTransX.AddRange(
-              res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_lengthUnit))), path); 
-            outTransY.AddRange(
-              res.Select(x => new GH_UnitNumber(x.Value.Y.ToUnit(_lengthUnit))), path);
-            outTransZ.AddRange(
-              res.Select(x => new GH_UnitNumber(x.Value.Z.ToUnit(_lengthUnit))), path);
-            outTransXyz.AddRange(
-              res.Select(x => new GH_UnitNumber(x.Value.Xyz.ToUnit(_lengthUnit))), path);
           }
+        } else {
+          Entity2dExtremaKey key = ExtremaHelper.DisplacementExtremaKey(resultSet, _selectedItems[0]);
+          ITranslation extrema = resultSet.GetExtrema(key);
+          int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
+          var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
+          outTransX.Add(new GH_UnitNumber(extrema.X.ToUnit(_lengthUnit)), path);
+          outTransY.Add(new GH_UnitNumber(extrema.Y.ToUnit(_lengthUnit)), path);
+          outTransZ.Add(new GH_UnitNumber(extrema.Z.ToUnit(_lengthUnit)), path);
+          outTransXyz.Add(new GH_UnitNumber(extrema.Xyz.ToUnit(_lengthUnit)), path);
         }
+
+        PostHog.Result(result.CaseType, 3, "Displacement");
       }
 
       da.SetDataTree(0, outTransX);
       da.SetDataTree(1, outTransY);
       da.SetDataTree(2, outTransZ);
       da.SetDataTree(3, outTransXyz);
-
-      PostHog.Result(result.CaseType, 3, GsaResultsValues.ResultType.Displacement);
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
+      if (_selectedItems.Count == 1) {
+        _spacerDescriptions.Insert(0, "Envelope");
+        _dropDownItems.Insert(0, ExtremaHelper.Vector3Translations.ToList());
+        _selectedItems.Insert(0, _dropDownItems[0][0]);
+      }
+
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
   }

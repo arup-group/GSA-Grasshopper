@@ -9,6 +9,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.Graphics;
+using GsaGH.Parameters.Results;
 using OasysGH.Units;
 using OasysUnits;
 using Rhino;
