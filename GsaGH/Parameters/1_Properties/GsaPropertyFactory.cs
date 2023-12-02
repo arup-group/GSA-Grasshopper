@@ -82,5 +82,19 @@ namespace GsaGH.Parameters {
 
       return new GsaSectionGoo(sect);
     }
+
+    internal static ReadOnlyDictionary<int, GsaSpringPropertyGoo> CreateSpringPropsFromApi(ReadOnlyDictionary<int, SpringProperty> springProps) {
+      var dict = new Dictionary<int, GsaSpringPropertyGoo>();
+      foreach (KeyValuePair<int, SpringProperty> prop in springProps) {
+        dict.Add(prop.Key, CreateSpringPropFromApi(prop));
+      }
+      return new ReadOnlyDictionary<int, GsaSpringPropertyGoo>(dict);
+    }
+
+    private static GsaSpringPropertyGoo CreateSpringPropFromApi(KeyValuePair<int, SpringProperty> springProp) {
+      var prop = new GsaSpringProperty(springProp);
+
+      return new GsaSpringPropertyGoo(prop);
+    }
   }
 }

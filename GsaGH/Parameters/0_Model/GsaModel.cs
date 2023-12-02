@@ -80,6 +80,7 @@ namespace GsaGH.Parameters {
     internal ReadOnlyDictionary<int, GsaSectionGoo> Sections { get; private set; }
     internal ReadOnlyDictionary<int, GsaProperty2dGoo> Prop2ds { get; private set; }
     internal ReadOnlyDictionary<int, GsaProperty3dGoo> Prop3ds { get; private set; }
+    internal ReadOnlyDictionary<int, GsaSpringPropertyGoo> SpringProps { get; private set; }
     private BoundingBox _boundingBox = BoundingBox.Empty;
     private LengthUnit _lengthUnit = LengthUnit.Undefined;
     private Model _model = new Model();
@@ -284,6 +285,12 @@ namespace GsaGH.Parameters {
         : m.Property > 0 ? new GsaSection(m.Property) : null;
     }
 
+    internal GsaSpringProperty GetSpringProperty(Node n) {
+      return SpringProps.TryGetValue(n.SpringProperty, out GsaSpringPropertyGoo prop)
+        ? prop.Value
+        : n.SpringProperty > 0 ? new GsaSpringProperty(n.SpringProperty) : null;
+    }
+
     private void InstantiateApiFields() {
       ApiNodes = Model.Nodes();
       ApiAxis = Model.Axes();
@@ -299,6 +306,7 @@ namespace GsaGH.Parameters {
       Sections = GsaPropertyFactory.CreateSectionsFromApi(Model.Sections(), Materials, Model.SectionModifiers());
       Prop2ds = GsaPropertyFactory.CreateProp2dsFromApi(Model.Prop2Ds(), Materials, Model.Axes());
       Prop3ds = GsaPropertyFactory.CreateProp3dsFromApi(Model.Prop3Ds(), Materials);
+      SpringProps = GsaPropertyFactory.CreateSpringPropsFromApi(Model.SpringProperties());
     }
   }
 }

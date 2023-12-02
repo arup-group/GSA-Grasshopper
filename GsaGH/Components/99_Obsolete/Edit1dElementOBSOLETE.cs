@@ -20,42 +20,15 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a 1D Element
   /// </summary>
-  public class Edit1dElement : Section3dPreviewComponent, IGH_VariableParameterComponent {
-    public override Guid ComponentGuid => new Guid("0f829312-b92a-4247-9b6f-2422bfd4576c");
-    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+  public class Edit1dElement_OBSOLETE : Section3dPreviewComponent {
+    public override Guid ComponentGuid => new Guid("e0bae222-f7ac-4440-a146-2df8b66b2389");
+    public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Edit1dElement;
     private AngleUnit _angleUnit = AngleUnit.Radian;
-    private bool _isSpring = false;
 
-    public Edit1dElement() : base("Edit 1D Element", "Elem1dEdit", "Modify GSA 1D Element",
+    public Edit1dElement_OBSOLETE() : base("Edit 1D Element", "Elem1dEdit", "Modify GSA 1D Element",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
-
-    public bool CanInsertParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    public bool CanRemoveParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    public IGH_Param CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    public bool DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    public void VariableParameterMaintenance() {
-      if (_isSpring) {
-        SetInputProperties(3, "Spring Property", "SP", "Set new Spring Property");
-        SetOutputProperties(3, "Spring Property", "SP", "Get new Spring Property");
-      } else {
-        SetInputProperties(3, "Section", "PB", "Set new Section Property");
-        SetOutputProperties(3, "Section", "PB", "Get Section Property");
-      }
-    }
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
@@ -156,32 +129,6 @@ namespace GsaGH.Components {
         elem = new GsaElement1d(element1dGoo.Value);
       }
 
-      var ghString = new GH_String();
-      if (da.GetData(5, ref ghString)) {
-        if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
-          elem.ApiElement.Type = (ElementType)typeInt;
-        } else {
-          elem.ApiElement.Type = Mappings.GetElementType(ghString.Value);
-        }
-      }
-
-      GsaSectionGoo sectionGoo = null;
-      if (elem.ApiElement.Type == ElementType.SPRING) {
-        if (!_isSpring) {
-          UpdateParameters();
-          _isSpring = true;
-        }
-
-        GsaSpringPropertyGoo springPropertyGoo = null;
-        if (da.GetData(3, ref springPropertyGoo)) {
-          //elem.SpringProperty = springPropertyGoo.Value;
-        } else {
-          this.AddRuntimeWarning("Input PB failed to collect data for Spring Property");
-        }
-      } else if (da.GetData(3, ref sectionGoo)) {
-        elem.Section = sectionGoo.Value;
-      }
-
       int id = 0;
       if (da.GetData(1, ref id)) {
         elem.Id = id;
@@ -192,9 +139,23 @@ namespace GsaGH.Components {
         elem.Line = new LineCurve(ghcrv.Value);
       }
 
+      GsaSectionGoo sectionGoo = null;
+      if (da.GetData(3, ref sectionGoo)) {
+        elem.Section = sectionGoo.Value;
+      }
+
       int group = 0;
       if (da.GetData(4, ref group)) {
         elem.ApiElement.Group = group;
+      }
+
+      var ghString = new GH_String();
+      if (da.GetData(5, ref ghString)) {
+        if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
+          elem.ApiElement.Type = (ElementType)typeInt;
+        } else {
+          elem.ApiElement.Type = Mappings.GetElementType(ghString.Value);
+        }
       }
 
       GsaOffsetGoo offset = null;
@@ -239,7 +200,7 @@ namespace GsaGH.Components {
 
       if (Preview3dSection || elem.Section3dPreview != null) {
         elem.CreateSection3dPreview();
-      }
+      } 
 
       elem.UpdateReleasesPreview();
 
@@ -248,7 +209,7 @@ namespace GsaGH.Components {
       da.SetData(2, new GH_Line(elem.Line.Line));
       da.SetData(3, new GsaSectionGoo(elem.Section));
       da.SetData(4, elem.ApiElement.Group);
-      da.SetData(5,
+      da.SetData(5, 
         Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == elem.ApiElement.Type).Key);
       da.SetData(6, new GsaOffsetGoo(elem.Offset));
       da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
@@ -264,37 +225,6 @@ namespace GsaGH.Components {
       var topo = new DataTree<int>();
       topo.AddRange(elem.ApiElement.Topology, new GH_Path(elem.Id));
       da.SetDataTree(15, topo);
-    }
-
-    private void SetInputProperties(int index, string name, string nickname, string description, bool optional = true) {
-      Params.Input[index].Name = name;
-      Params.Input[index].NickName = nickname;
-      Params.Input[index].Description = description;
-      Params.Input[index].Access = GH_ParamAccess.item;
-      Params.Input[index].Optional = optional;
-    }
-
-    private void SetOutputProperties(int index, string name, string nickname, string description) {
-      Params.Output[index].Name = name;
-      Params.Output[index].NickName = nickname;
-      Params.Output[index].Description = description;
-      Params.Output[index].Access = GH_ParamAccess.item;
-    
-    }
-
-    private void UpdateParameters() {
-      RecordUndoEvent($"Type changed from or to Spring");
-
-      Params.UnregisterInputParameter(Params.Input[3], true);
-      Params.UnregisterOutputParameter(Params.Output[3], true);
-
-      if (_isSpring) {
-        Params.RegisterInputParam(new GsaSpringPropertyParameter(), 3);
-        Params.RegisterOutputParam(new GsaSpringPropertyParameter(), 3);
-      } else {
-        Params.RegisterInputParam(new GsaSectionParameter(), 3);
-        Params.RegisterOutputParam(new GsaSectionParameter(), 3);
-      }
     }
   }
 }

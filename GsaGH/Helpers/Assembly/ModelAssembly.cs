@@ -27,12 +27,13 @@ namespace GsaGH.Helpers.Assembly {
     private GsaGuidDictionary<Member> _members;
     private Model _model;
     private GsaIntDictionary<Node> _nodes;
+    private GsaGuidDictionary<SpringProperty> _springProperties;
     private LengthUnit _unit = LengthUnit.Meter;
     private bool _deleteResults = false;
     private int _initialNodeCount = 0;
     private bool _isSeedModel = true;
 
-    // assemble for local axis
+    // assembly for local axis
     internal ModelAssembly(GsaMember1d member) {
       SetupModel(null, LengthUnit.Meter);
       var mem1ds = new List<GsaMember1d>() {
@@ -42,7 +43,7 @@ namespace GsaGH.Helpers.Assembly {
       AssembleNodesElementsMembersAndLists();
     }
 
-    // assemble for local axis
+    // assembly for local axis
     internal ModelAssembly(GsaElement1d element) {
       SetupModel(null, LengthUnit.Meter);
       var elem1ds = new List<GsaElement1d>() {
@@ -52,7 +53,7 @@ namespace GsaGH.Helpers.Assembly {
       AssembleNodesElementsMembersAndLists();
     }
 
-    // assemble for preview
+    // assembly for preview
     internal ModelAssembly(GsaModel model, List<GsaList> lists, List<GsaElement1d> elem1ds,
       List<GsaElement2d> elem2ds, List<GsaMember1d> mem1ds,
       List<GsaMember2d> mem2ds, LengthUnit modelUnit) {
@@ -68,15 +69,15 @@ namespace GsaGH.Helpers.Assembly {
       List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds,
       List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
       List<GsaMaterial> mats, List<GsaSection> sections, List<GsaProperty2d> prop2Ds,
-      List<GsaProperty3d> prop3Ds, List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces,
-      List<GsaLoadCase> loadCases, List<GsaAnalysisTask> analysisTasks,
-      List<GsaCombinationCase> combinations, LengthUnit modelUnit,
+      List<GsaProperty3d> prop3Ds, List<GsaSpringProperty> springProps, List<IGsaLoad> loads,
+      List<GsaGridPlaneSurface> gridPlaneSurfaces, List<GsaLoadCase> loadCases,
+      List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations, LengthUnit modelUnit,
       Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner) {
 
       SetupModel(model, modelUnit);
 
       ConvertNodes(nodes);
-      ConvertProperties(mats, sections, prop2Ds, prop3Ds);
+      ConvertProperties(mats, sections, prop2Ds, prop3Ds, springProps);
       ConvertElements(elem1ds, elem2ds, elem3ds);
       ConvertMembers(mem1ds, mem2ds, mem3ds);
       ConvertNodeList(lists);
@@ -118,6 +119,10 @@ namespace GsaGH.Helpers.Assembly {
       _model.SetSectionModifiers(_secionModifiers.ReadOnlyDictionary);
       _model.SetProp2Ds(_prop2ds.ReadOnlyDictionary);
       _model.SetProp3Ds(_prop3ds.ReadOnlyDictionary);
+
+
+      _model.SetSpringProperty(_springProperties.ReadOnlyDictionary);
+
 
       ValidateMaterialsToDesignCodes(_model);
 
@@ -365,9 +370,12 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertProperties(List<GsaMaterial> materials, List<GsaSection> sections,
-      List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds) {
-      if ((!materials.IsNullOrEmpty()) || (!sections.IsNullOrEmpty())
-        || (!prop2Ds.IsNullOrEmpty()) || (!prop3Ds.IsNullOrEmpty())) {
+      List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds, List<GsaSpringProperty> springProps) {
+
+      // wtf is this?
+
+      if (!materials.IsNullOrEmpty() || !sections.IsNullOrEmpty() || !prop2Ds.IsNullOrEmpty()    || 
+        !prop3Ds.IsNullOrEmpty() || !springProps.IsNullOrEmpty()) {
         _deleteResults = true;
       }
 
@@ -380,6 +388,7 @@ namespace GsaGH.Helpers.Assembly {
       ConvertSections(sections);
       ConvertProp2ds(prop2Ds);
       ConvertProp3ds(prop3Ds);
+      ConvertSpringProps(springProps);
     }
 
     private void CreateModelFromDesignCodes() {
@@ -507,6 +516,11 @@ namespace GsaGH.Helpers.Assembly {
       _unit = unit;
       _model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_unit);
       UiUnits units = _model.UiUnits();
+
+
+      _springProperties = new GsaGuidDictionary<SpringProperty>(_model.SpringProperties());
+
+
       _nodes = new GsaIntDictionary<Node>(model.ApiNodes);
       _axes = new GsaIntDictionary<Axis>(model.ApiAxis);
       _elements = new GsaGuidIntListDictionary<Element>(_model.Elements());

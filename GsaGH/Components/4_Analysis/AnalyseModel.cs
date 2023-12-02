@@ -166,8 +166,8 @@ namespace GsaGH.Components {
     protected override void SolveInternal(IGH_DataAccess da) {
       // Collect inputs
       (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) = InputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
-      (List<GsaMaterial> materials, List<GsaSection> sections, List<GsaProperty2d> prop2Ds,
-        List<GsaProperty3d> prop3Ds) = InputsForModelAssembly.GetProperties(this, da, 1, true);
+      (List<GsaMaterial> materials, List<GsaSection> sections, List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds,
+        List<GsaSpringProperty> springProps) = InputsForModelAssembly.GetProperties(this, da, 1, true);
       (List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
         List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds,
         List<GsaMember3d> mem3ds) = InputsForModelAssembly.GetGeometry(this, da, 2, true);
@@ -175,6 +175,9 @@ namespace GsaGH.Components {
         = InputsForModelAssembly.GetLoading(this, da, 3, true);
       (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
         = InputsForModelAssembly.GetAnalysis(this, da, 4, true);
+
+      // why are we checking for null here? 
+      // in InputsForModelAssembly.GetProperties() we purposefully make prop2Ds null, if no property 2ds exist?!
 
       if (models is null & lists is null & gridLines is null & nodes is null
         & elem1ds is null & elem2ds is null & elem3ds is null
@@ -198,7 +201,7 @@ namespace GsaGH.Components {
 
       // Assemble model
       var assembly = new ModelAssembly(model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds,
-        mem1ds, mem2ds, mem3ds, materials, sections, prop2Ds, prop3Ds, loads, gridPlaneSurfaces,
+        mem1ds, mem2ds, mem3ds, materials, sections, prop2Ds, prop3Ds, springProps, loads, gridPlaneSurfaces,
         loadCases, analysisTasks, combinationCases, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
       model.Model = assembly.GetModel();
 

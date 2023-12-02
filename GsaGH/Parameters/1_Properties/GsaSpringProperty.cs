@@ -1,4 +1,6 @@
-﻿using GsaAPI;
+﻿using System;
+using System.Collections.Generic;
+using GsaAPI;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -6,6 +8,9 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-pr-spring/">Spring Properties</see> to read more.</para>
   /// </summary>
   public class GsaSpringProperty {
+
+    // do we need a guid?
+    public Guid Guid { get; set; } = Guid.NewGuid();
     public int Id { get; set; } = 0;
     public bool IsReferencedById { get; set; } = false;
     public SpringProperty ApiProperty { get; internal set; }
@@ -29,6 +34,11 @@ namespace GsaGH.Parameters {
 
     internal GsaSpringProperty(SpringProperty property) {
       ApiProperty = property;
+    }
+
+    internal GsaSpringProperty(KeyValuePair<int, SpringProperty> property) {
+      Id = property.Key;
+      ApiProperty = property.Value;
     }
 
     public SpringProperty DuplicateApiObject() {
