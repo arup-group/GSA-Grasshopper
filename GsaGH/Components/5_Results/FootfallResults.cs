@@ -51,7 +51,7 @@ namespace GsaGH.Components {
       }));
       _selectedItems.Add(_dropDownItems[0][0]);
 
-      _dropDownItems.Add(ExtremaHelper.Vector6Displacements.ToList());
+      _dropDownItems.Add(ExtremaHelper.Footfall.ToList());
       _selectedItems.Add(_dropDownItems[1][0]);
 
       _isInitialised = true;
@@ -84,7 +84,7 @@ namespace GsaGH.Components {
         "The node ID of the critical frequency" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Critical Frequency [" + hz + "]", "Cf",
         "The critical frequency" + note, GH_ParamAccess.tree);
-      pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value",
+      pManager.AddIntegerParameter("Nodes IDs", "ID", "Node IDs for each result value",
         GH_ParamAccess.tree);
     }
 
@@ -156,7 +156,7 @@ namespace GsaGH.Components {
             }
           }
         } else {
-          NodeExtremaKey key = ExtremaHelper.FootfallExtremaKey(resultSet, _selectedItems[0]);
+          NodeExtremaKey key = ExtremaHelper.FootfallExtremaKey(resultSet, _selectedItems[1]);
           IFootfall extrema = resultSet.GetExtrema(key);
           int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
           var path = new GH_Path(result.CaseId, key.Permutation + perm);

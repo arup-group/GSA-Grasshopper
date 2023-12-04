@@ -34,12 +34,20 @@ namespace GsaGHTests.Helpers {
         component.Params.Output[index].ExpireSolution(true);
         component.Params.Output[index].CollectData();
       }
-      
+
       return component.Params.Output[index].VolatileData.get_Branch(path)[item];
     }
 
     public static object GetOutput(IGH_Param param, int branch = 0, int item = 0) {
       return param.VolatileData.get_Branch(branch)[item];
+    }
+
+    public static System.Collections.IList GetListOutput(
+     GH_Component component, int index = 0, int branch = 0) {
+      component.ExpireSolution(true);
+      component.Params.Output[index].ExpireSolution(true);
+      component.Params.Output[index].CollectData();
+      return component.Params.Output[index].VolatileData.get_Branch(branch);
     }
 
     public static List<IQuantity> GetResultOutput(
