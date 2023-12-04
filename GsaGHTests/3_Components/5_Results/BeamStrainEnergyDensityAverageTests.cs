@@ -16,7 +16,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Xunit;
 
-namespace GsaGHTests.Results {
+namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class BeamStrainEnergyDensityAverageTests {
     private static readonly string ElementList = "2 to 38";

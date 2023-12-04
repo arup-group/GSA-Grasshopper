@@ -16,7 +16,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Xunit;
 
-namespace GsaGHTests.Results {
+namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class Element3dStressesTests {
     private static readonly string ElementList = "6444 6555 7000 7015";

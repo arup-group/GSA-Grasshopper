@@ -4,7 +4,7 @@ using GsaGHTests.Helpers;
 using OasysGH.Parameters;
 using Xunit;
 
-namespace GsaGHTests.Results {
+namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class ReactionForcesTests {
     [Fact]
