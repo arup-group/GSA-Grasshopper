@@ -27,7 +27,7 @@ namespace GsaGH.Parameters.Results {
         string elementList = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
-            ReadOnlyDictionary<int, double> aCaseResults = analysisCase.Element1dAverageStrainEnergyDensity(elementList);
+            ReadOnlyDictionary<int, double> aCaseResults = analysisCase.Element1dAverageStrainEnergyDensity(elementList, positions);
             Parallel.ForEach(aCaseResults.Keys, elementId => {
               var res = new StrainEnergyDensity(aCaseResults[elementId]);
               ((ConcurrentDictionary<int, IList<IEnergyDensity>>)Cache).TryAdd(
@@ -36,7 +36,7 @@ namespace GsaGH.Parameters.Results {
             break;
 
           case CombinationCaseResult combinationCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<double>> cCaseResults = combinationCase.Element1dAverageStrainEnergyDensity(elementList);
+            ReadOnlyDictionary<int, ReadOnlyCollection<double>> cCaseResults = combinationCase.Element1dAverageStrainEnergyDensity(elementList, positions);
             Parallel.ForEach(cCaseResults.Keys, elementId => {
               var permutationResults = new Collection<IEnergyDensity>();
               foreach (double permutationResult in cCaseResults[elementId]) {
