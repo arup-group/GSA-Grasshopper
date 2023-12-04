@@ -256,8 +256,6 @@ namespace GsaGH.Parameters.Results {
       NodeDisplacements = new NodeDisplacementCache(result);
       NodeReactionForces = new NodeReactionForceCache(result, model?.Model);
       NodeSpringForces = new NodeSpringForceCache(result);
-      NodeResonantFootfalls = new NodeResonantFootfallCache(result);
-      NodeTransientFootfalls = new NodeTransientFootfallCache(result);
 
       Member1dDisplacements = new Member1dDisplacementCache(result);
       Member1dInternalForces = new Member1dInternalForceCache(result);

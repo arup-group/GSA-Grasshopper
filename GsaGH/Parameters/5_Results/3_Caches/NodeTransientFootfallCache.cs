@@ -15,9 +15,6 @@ namespace GsaGH.Parameters.Results {
     internal NodeTransientFootfallCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
     }
-    internal NodeTransientFootfallCache(CombinationCaseResult result) {
-      ApiResult = new ApiResult(result);
-    }
 
     public INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> ResultSubset(ICollection<int> nodeIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(nodeIds);
@@ -34,23 +31,6 @@ namespace GsaGH.Parameters.Results {
               var res = new Footfall(resultKvp.Value);
               ((ConcurrentDictionary<int, IList<IFootfall>>)Cache).TryAdd(
                 resultKvp.Key, new List<IFootfall>() { res });
-            });
-            break;
-
-          case CombinationCaseResult combinationCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<NodeFootfallResult>> cCaseResults = combinationCase.NodeTransientFootfall(nodelist);
-            Parallel.ForEach(cCaseResults, resultKvp => {
-              if (IsInvalid(resultKvp)) {
-                return;
-              }
-
-              var permutationResults = new List<IFootfall>();
-              foreach (NodeFootfallResult permutationResult in resultKvp.Value) {
-                permutationResults.Add(new Footfall(permutationResult));
-              }
-
-              ((ConcurrentDictionary<int, IList<IFootfall>>)Cache).TryAdd(
-                resultKvp.Key, permutationResults);
             });
             break;
         }

@@ -123,15 +123,17 @@ namespace GsaGHTests.Parameters.Results {
       Assert.NotNull(results.NodeDisplacements);
       Assert.NotNull(results.NodeReactionForces);
       Assert.NotNull(results.NodeSpringForces);
-      Assert.NotNull(results.NodeResonantFootfalls);
-      Assert.NotNull(results.NodeTransientFootfalls);
       Assert.NotNull(results.Member1dInternalForces);
       Assert.NotNull(results.Member1dDisplacements);
 
       if(analysisCase) {
         Assert.NotNull(results.GlobalResults);
+        Assert.NotNull(results.NodeTransientFootfalls);
+        Assert.NotNull(results.NodeResonantFootfalls);
       } else {
         Assert.Null(results.GlobalResults);
+        Assert.Null(results.NodeTransientFootfalls);
+        Assert.Null(results.NodeResonantFootfalls);
       }
     }
 
