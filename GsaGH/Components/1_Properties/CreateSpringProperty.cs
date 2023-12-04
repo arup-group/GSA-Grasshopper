@@ -7,6 +7,7 @@ using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
@@ -55,7 +56,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("f48965a0-00e7-4de8-9839-a4480075459f");
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => null;
+    protected override Bitmap Icon => Resources.CreateSpringProperty;
     private readonly IReadOnlyDictionary<SpringPropertyType, string> _springPropertyTypes
       = new Dictionary<SpringPropertyType, string> {
         { SpringPropertyType.Axial, "Axial" },

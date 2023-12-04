@@ -16,7 +16,7 @@ namespace GsaGH.Parameters {
       => m_data.DataCount == 0 ? "Empty " + GsaSpringPropertyGoo.Name + " parameter" :
         base.InstanceDescription;
     public override string TypeName => SourceCount == 0 ? GsaSpringPropertyGoo.Name : base.TypeName;
-    protected override Bitmap Icon => Resources.Property2dParam;
+    protected override Bitmap Icon => Resources.SpringPropertyParam;
 
     public GsaSpringPropertyParameter() : base(new GH_InstanceDescription(GsaSpringPropertyGoo.Name,
       GsaSpringPropertyGoo.NickName, GsaSpringPropertyGoo.Description + " parameter", CategoryName.Name(),
