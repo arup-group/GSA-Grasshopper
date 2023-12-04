@@ -54,19 +54,21 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(Element3dStresses))]
     [InlineData(typeof(FootfallResults))]
     [InlineData(typeof(GlobalPerformanceResults))]
+    [InlineData(typeof(Member1dDisplacements))]
+    [InlineData(typeof(Member1dForcesAndMoments))]
     [InlineData(typeof(NodeDisplacements))]
     [InlineData(typeof(ReactionForces))]
     [InlineData(typeof(SpringReactionForces))]
     [InlineData(typeof(TotalLoadsAndReactions))]
     //Display
+    [InlineData(typeof(AnnotateDetailed))]
     [InlineData(typeof(Contour1dResults))]
-    [InlineData(typeof(ResultDiagrams))]
     [InlineData(typeof(Contour2dResults))]
     [InlineData(typeof(Contour3dResults))]
     [InlineData(typeof(ContourNodeResults))]
-    [InlineData(typeof(ReactionForceDiagrams))]
-    [InlineData(typeof(AnnotateDetailed))]
     [InlineData(typeof(LoadDiagrams))]
+    [InlineData(typeof(ResultDiagrams))]
+    [InlineData(typeof(ReactionForceDiagrams))]
     public void DeSerializeComponentTest(Type t) {
       var comp = (GH_OasysComponent)Activator.CreateInstance(t);
       OasysDropDownComponentTestHelper.TestDeserialize(comp);
