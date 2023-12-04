@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using Grasshopper.Kernel.Data;
+﻿using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+using GsaGH.Components;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
+using GsaGHTests.Parameters.Results;
 using OasysUnits;
 using OasysUnits.Units;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Xunit;
-using NodeDisplacements = GsaGH.Components.NodeDisplacements;
 
-namespace GsaGHTests.Parameters.Results {
+namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class NodeDisplacementsTests {
-
     private static readonly string NodeList = "442 to 468";
 
     [Fact]
@@ -27,31 +27,12 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      var comp = new NodeDisplacements();
-      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      ComponentTestHelper.SetInput(comp, NodeList, 1);
+      INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> resultSet
+        = result.NodeDisplacements.ResultSubset(nodeIds);
 
-      for (int i = 0; i < comp.Params.Output.Count; i++) { // loop through each output
-        IList<GH_Path> paths = ComponentTestHelper.GetPathOutput(comp, i);
-        Assert.Single(paths);
-
-        var cases = paths.Select(x => x.Indices[0]).ToList();
-        foreach (int caseid in cases) {
-          Assert.Equal(1, caseid);
-        }
-
-        var permutations = paths.Select(x => x.Indices[1]).ToList();
-        foreach (int permutation in permutations) {
-          Assert.Equal(0, permutation);
-        }
-      }
-
-      var ids = (IList<GH_Integer>)ComponentTestHelper.GetListOutput(comp, 8);
-      for (int j = 0; j < ids.Count; j++) {
-        // Assert element IDs
-        var expectedIds = result.Model.Model.Nodes(NodeList).Keys.OrderBy(x => x).ToList();
-        Assert.Equal(expectedIds[j], ids[j].Value);
-      }
+      // Assert node IDs
+      var expectedIds = result.Model.Model.Nodes(NodeList).Keys.OrderBy(x => x).ToList();
+      Assert.Equal(expectedIds, resultSet.Ids);
     }
 
     [Fact]
@@ -61,31 +42,12 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      var comp = new NodeDisplacements();
-      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      ComponentTestHelper.SetInput(comp, NodeList, 1);
+      INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> resultSet
+        = result.NodeDisplacements.ResultSubset(nodeIds);
 
-      for (int i = 0; i < comp.Params.Output.Count; i++) { // loop through each output
-        IList<GH_Path> paths = ComponentTestHelper.GetPathOutput(comp, i);
-        Assert.Equal(2, paths.Count);
-
-        var cases = paths.Select(x => x.Indices[0]).ToList();
-        foreach (int caseid in cases) {
-          Assert.Equal(4, caseid);
-        }
-
-        var permutations = paths.Select(x => x.Indices[1]).ToList();
-        for (int j = 0; j < permutations.Count; j++) {
-          Assert.Equal(j + 1, permutations[j]);
-        }
-      }
-
-      var ids = (IList<GH_Integer>)ComponentTestHelper.GetListOutput(comp, 8);
-      for (int j = 0; j < ids.Count; j++) {
-        // Assert element IDs
-        var expectedIds = result.Model.Model.Nodes(NodeList).Keys.OrderBy(x => x).ToList();
-        Assert.Equal(expectedIds[j], ids[j].Value);
-      }
+      // Assert node IDs
+      var expectedIds = result.Model.Model.Nodes(NodeList).Keys.ToList();
+      Assert.Equal(expectedIds, resultSet.Ids);
     }
 
     [Theory]
@@ -103,15 +65,13 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
-      var comp = new NodeDisplacements();
-      comp.SetSelected(0, 1 + (int)component);
-      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      ComponentTestHelper.SetInput(comp, NodeList, 1);
-      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> resultSet
+        = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
-      double max = output.Max().As(Unit(component));
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max);
     }
 
     [Theory]
@@ -130,15 +90,13 @@ namespace GsaGHTests.Parameters.Results {
         ExpectedCombinationCaseC4p2Values(component).Max());
 
       // Act
-      var comp = new NodeDisplacements();
-      comp.SetSelected(0, 1 + (int)component);
-      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      ComponentTestHelper.SetInput(comp, NodeList, 1);
-      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> resultSet
+        = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert Max in set
-      double max = output.Max().As(Unit(component));
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max);
     }
 
     [Theory]
@@ -156,15 +114,13 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
-      var comp = new NodeDisplacements();
-      comp.SetSelected(0, 9 + (int)component);
-      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      ComponentTestHelper.SetInput(comp, NodeList, 1);
-      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> resultSet
+        = result.NodeDisplacements.ResultSubset(nodeIds);
 
-      // Assert Min in set
-      double min = output.Min().As(Unit(component));
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      // Assert Max in set
+      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min);
     }
 
     [Theory]
@@ -183,16 +139,13 @@ namespace GsaGHTests.Parameters.Results {
         ExpectedCombinationCaseC4p2Values(component).Min());
 
       // Act
-      var comp = new NodeDisplacements();
-      comp.SetSelected(0, 9 + (int)component);
-      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      ComponentTestHelper.SetInput(comp, NodeList, 1);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> resultSet
+        = result.NodeDisplacements.ResultSubset(nodeIds);
 
-      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
-
-      // Assert Min in set
-      double min = output.Min().As(Unit(component));
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      // Assert Max in set
+      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min);
     }
 
     [Theory]
@@ -210,15 +163,19 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expected = ExpectedAnalysisCaseValues(component);
 
       // Act
-      var comp = new NodeDisplacements();
-      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      ComponentTestHelper.SetInput(comp, NodeList, 1);
-      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> resultSet
+        = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert result values
       int i = 0;
-      foreach (IQuantity value in output) {
-        double x = ResultHelper.RoundToSignificantDigits(value.As(Unit(component)), 4);
+      foreach (int id in resultSet.Ids) {
+        IList<IDisplacement> displacementQuantity = resultSet.Subset[id];
+
+        // for analysis case results we expect only one value in the collection
+        Assert.Single(displacementQuantity);
+
+        double x = TestsResultHelper.ResultsHelper(displacementQuantity[0], component);
         Assert.Equal(expected[i++], x);
       }
     }
@@ -239,25 +196,22 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expectedP2 = ExpectedCombinationCaseC4p2Values(component);
 
       // Act
-      var comp = new NodeDisplacements();
-      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      ComponentTestHelper.SetInput(comp, NodeList, 1);
-      var p1 = new GH_Path(4, 1);
-      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component, p1);
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
+      INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> resultSet
+        = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert result values
-      for (int i = 0; i < output.Count; i++) {
-        double perm = ResultHelper.RoundToSignificantDigits(output[i].As(Unit(component)), 4);
-        Assert.Equal(expectedP1[i], perm);
-      }
+      int i = 0;
+      foreach (int id in resultSet.Ids) {
+        var displacementQuantity = (Collection<IDisplacement>)resultSet.Subset[id];
 
-      var p2 = new GH_Path(4, 2);
-      output = ComponentTestHelper.GetResultOutput(comp, (int)component, p2);
+        // for C4 case results we expect two permutations in the collection
+        Assert.Equal(2, displacementQuantity.Count);
 
-      // Assert result values
-      for (int i = 0; i < output.Count; i++) {
-        double perm = ResultHelper.RoundToSignificantDigits(output[i].As(Unit(component)), 4);
-        Assert.Equal(expectedP2[i], perm);
+        double perm1 = TestsResultHelper.ResultsHelper(displacementQuantity[0], component);
+        Assert.Equal(expectedP1[i], perm1);
+        double perm2 = TestsResultHelper.ResultsHelper(displacementQuantity[1], component);
+        Assert.Equal(expectedP2[i++], perm2);
       }
     }
 
@@ -327,12 +281,6 @@ namespace GsaGHTests.Parameters.Results {
       throw new NotImplementedException();
     }
 
-    private Enum Unit(ResultVector6HelperEnum component) {
-      Enum unit = LengthUnit.Millimeter;
-      if ((int)component > 3) {
-        unit = AngleUnit.Radian;
-      }
-      return unit;
-    }
+
   }
 }

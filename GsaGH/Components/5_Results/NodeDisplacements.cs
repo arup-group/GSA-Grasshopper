@@ -97,7 +97,7 @@ namespace GsaGH.Components {
         "Rotations around Z-axis in Global Axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|",
         "Combined |XXYYZZ| Rotations in Global Axis" + note, GH_ParamAccess.tree);
-      pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value",
+      pManager.AddIntegerParameter("Nodes IDs", "ID", "Node IDs for each result value",
         GH_ParamAccess.tree);
     }
 

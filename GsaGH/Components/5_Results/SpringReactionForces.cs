@@ -119,7 +119,7 @@ namespace GsaGH.Components {
         "Reaction Moments around Z-axis" + axis + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]", "|M|",
         "Combined |XXYYZZ| Reaction Moments" + axis + note, GH_ParamAccess.tree);
-      pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value",
+      pManager.AddIntegerParameter("Nodes IDs", "ID", "Node IDs for each result value",
         GH_ParamAccess.list);
     }
 
