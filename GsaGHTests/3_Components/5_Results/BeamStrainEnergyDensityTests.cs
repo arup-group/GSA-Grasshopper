@@ -175,5 +175,15 @@ namespace GsaGHTests.Components.Results {
       double min = output.Min().As(EnergyUnit.Kilojoule);
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
+
+    [Fact]
+    public void Element1dStrainEnergyDensityToggleAverageTest() {
+      var comp = new BeamStrainEnergyDensity();
+      Assert.Equal(2, comp.Params.Input.Count);
+      comp.SetAnalysis(new List<bool> { false });
+      Assert.Equal(3, comp.Params.Input.Count);
+      comp.SetAnalysis(new List<bool> { true });
+      Assert.Equal(2, comp.Params.Input.Count);
+    }
   }
 }
