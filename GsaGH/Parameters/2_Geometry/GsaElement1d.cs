@@ -57,7 +57,6 @@ namespace GsaGH.Parameters {
       ApiElement = new Element {
         Type = ElementType.BEAM,
       };
-      SpringProperty = new GsaSpringProperty();
     }
 
     /// <summary>

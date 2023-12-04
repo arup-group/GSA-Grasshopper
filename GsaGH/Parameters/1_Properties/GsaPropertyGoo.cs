@@ -8,7 +8,7 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaPropertyGoo : GH_OasysGoo<IGsaProperty> {
     public static string Description => "GSA Section Property (Beam) or Spring Property";
-    public static string Name => "Section";
+    public static string Name => "Property";
     public static string NickName => "PB";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

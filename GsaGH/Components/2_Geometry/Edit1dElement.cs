@@ -139,9 +139,7 @@ namespace GsaGH.Components {
       }
 
       GsaPropertyGoo sectionGoo = null;
-
       if (da.GetData(3, ref sectionGoo)) {
-
         switch (sectionGoo.Value) {
           case GsaSection section:
             if (elem.ApiElement.Type == ElementType.SPRING) {

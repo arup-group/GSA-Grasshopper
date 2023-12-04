@@ -176,15 +176,11 @@ namespace GsaGH.Components {
       (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
         = InputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
-      // why are we checking for null here? 
-      // in InputsForModelAssembly.GetProperties() we purposefully make prop2Ds null, if no property 2ds exist?!
-
-      if (models is null & lists is null & gridLines is null & nodes is null
-        & elem1ds is null & elem2ds is null & elem3ds is null
-        & mem1ds is null & mem2ds is null & mem3ds is null
-        & materials is null & sections is null & prop2Ds is null
-        & loads is null & loadCases is null & gridPlaneSurfaces is null
-        & analysisTasks is null & combinationCases is null) {
+      if (models is null & lists is null & gridLines is null & nodes is null & elem1ds is null
+        & elem2ds is null & elem3ds is null & mem1ds is null & mem2ds is null & mem3ds is null
+        & materials is null & sections is null & prop2Ds is null & prop3Ds is null & springProps is null
+        & loads is null & loadCases is null & gridPlaneSurfaces is null & analysisTasks is null
+        & combinationCases is null) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
