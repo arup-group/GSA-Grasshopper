@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -54,7 +55,7 @@ namespace GsaGH.Components {
     });
 
     public override Guid ComponentGuid => new Guid("f48965a0-00e7-4de8-9839-a4480075459f");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateSpringProperty;
     private readonly IReadOnlyDictionary<SpringPropertyType, string> _springPropertyTypes
@@ -118,13 +119,19 @@ namespace GsaGH.Components {
           return;
 
         case SpringPropertyType.General:
-          SetInputProperties(1, "Stiffness x [" + stiffnessAbr + "]", "Sx", "Stiffness x", false);
-          SetInputProperties(2, "Stiffness y [" + stiffnessAbr + "]", "Sy", "Stiffness y", false);
-          SetInputProperties(3, "Stiffness z [" + stiffnessAbr + "]", "Sz", "Stiffness z", false);
-          SetInputProperties(4, "Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "Stiffness xx", false);
-          SetInputProperties(5, "Stiffness yy [" + rotationalStiffnessAbr + "]", "Syy", "Stiffness yy", false);
-          SetInputProperties(6, "Stiffness zz [" + rotationalStiffnessAbr + "]", "Szz", "Stiffness zz", false);
-          SetDampingRatioInputAt(7);
+          SetInputProperties(1, "Spring Curve x", "SCx", "Spring Curve x");
+          SetInputProperties(2, "Stiffness x [" + stiffnessAbr + "]", "Sx", "Stiffness x");
+          SetInputProperties(3, "Spring Curve y", "SCy", "Spring Curve y");
+          SetInputProperties(4, "Stiffness y [" + stiffnessAbr + "]", "Sy", "Stiffness y");
+          SetInputProperties(5, "Spring Curve z", "SCz", "Spring Curve z");
+          SetInputProperties(6, "Stiffness z [" + stiffnessAbr + "]", "Sz", "Stiffness z");
+          SetInputProperties(7, "Spring Curve xx", "SCxx", "Spring Curve xx");
+          SetInputProperties(8, "Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "Stiffness xx");
+          SetInputProperties(9, "Spring Curve yy", "SCyy", "Spring Curve yy");
+          SetInputProperties(10, "Stiffness yy [" + rotationalStiffnessAbr + "]", "Syy", "Stiffness yy");
+          SetInputProperties(11, "Spring Curve zz", "SCzz", "Spring Curve zz");
+          SetInputProperties(12, "Stiffness zz [" + rotationalStiffnessAbr + "]", "Szz", "Stiffness zz");
+          SetDampingRatioInputAt(13);
           return;
 
         case SpringPropertyType.Matrix:
@@ -201,9 +208,6 @@ namespace GsaGH.Components {
           break;
       }
 
-      double stiffnessX;
-      double stiffnessY;
-      double stiffnessZ;
       int dampingRatioIndex = 2;
 
       switch (_mode) {
@@ -222,18 +226,55 @@ namespace GsaGH.Components {
           break;
 
         case SpringPropertyType.General:
-          dampingRatioIndex = 7;
+          dampingRatioIndex = 13;
 
-          // do want to add spring curves??
+          int? springCurveX = null;
+          int? springCurveY = null;
+          int? springCurveZ = null;
+          int? springCurveXX = null;
+          int? springCurveYY = null;
+          int? springCurveZZ = null;
+          da.GetData(1, ref springCurveX);
+          da.GetData(3, ref springCurveY);
+          da.GetData(5, ref springCurveZ);
+          da.GetData(7, ref springCurveXX);
+          da.GetData(9, ref springCurveYY);
+          da.GetData(11, ref springCurveZZ);
 
-          stiffnessX = Input.UnitNumber(this, da, 1, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
-          stiffnessY = Input.UnitNumber(this, da, 2, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
-          stiffnessZ = Input.UnitNumber(this, da, 3, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
-          double stiffnessXX = Input.UnitNumber(this, da, 4, _rotationalStiffnessUnit).As(RotationalStiffnessUnit.NewtonMeterPerRadian);
-          double stiffnessYY = Input.UnitNumber(this, da, 5, _rotationalStiffnessUnit).As(RotationalStiffnessUnit.NewtonMeterPerRadian);
-          double stiffnessZZ = Input.UnitNumber(this, da, 6, _rotationalStiffnessUnit).As(RotationalStiffnessUnit.NewtonMeterPerRadian);
+          double? stiffnessX = null;
+          double? stiffnessY = null;
+          double? stiffnessZ = null;
+          double? stiffnessXX = null;
+          double? stiffnessYY = null;
+          double? stiffnessZZ = null;
+
+          var gh_typ = new GH_ObjectWrapper();
+          if (da.GetData(2, ref gh_typ)) {
+            stiffnessX = Input.UnitNumber(this, da, 2, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
+          }
+          if (da.GetData(4, ref gh_typ)) {
+            stiffnessY = Input.UnitNumber(this, da, 4, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
+          }
+          if (da.GetData(6, ref gh_typ)) {
+            stiffnessZ = Input.UnitNumber(this, da, 6, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
+          }
+          if (da.GetData(8, ref gh_typ)) {
+            stiffnessXX = Input.UnitNumber(this, da, 8, _rotationalStiffnessUnit).As(RotationalStiffnessUnit.NewtonMeterPerRadian);
+          }
+          if (da.GetData(10, ref gh_typ)) {
+            stiffnessYY = Input.UnitNumber(this, da, 10, _rotationalStiffnessUnit).As(RotationalStiffnessUnit.NewtonMeterPerRadian);
+          }
+          if (da.GetData(12, ref gh_typ)) {
+            stiffnessZZ = Input.UnitNumber(this, da, 12, _rotationalStiffnessUnit).As(RotationalStiffnessUnit.NewtonMeterPerRadian);
+          }
 
           var generalProperty = new GeneralSpringProperty {
+            SpringCurveX = springCurveX,
+            SpringCurveY = springCurveY,
+            SpringCurveZ = springCurveZ,
+            SpringCurveXX = springCurveXX,
+            SpringCurveYY = springCurveYY,
+            SpringCurveZZ = springCurveZZ,
             StiffnessX = stiffnessX,
             StiffnessY = stiffnessY,
             StiffnessZ = stiffnessZ,
@@ -302,15 +343,15 @@ namespace GsaGH.Components {
         case SpringPropertyType.Friction:
           dampingRatioIndex = 5;
 
-          stiffnessX = Input.UnitNumber(this, da, 1, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
-          stiffnessY = Input.UnitNumber(this, da, 2, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
-          stiffnessZ = Input.UnitNumber(this, da, 3, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
+          double frictionStiffnessX = Input.UnitNumber(this, da, 1, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
+          double frictionStiffnessY = Input.UnitNumber(this, da, 2, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
+          double frictionStiffnessZ = Input.UnitNumber(this, da, 3, _stiffnessUnit).As(ForcePerLengthUnit.NewtonPerMeter);
           double frictionCoefficient = 0;
           if (da.GetData(4, ref frictionCoefficient)) {
             var frictionProperty = new FrictionSpringProperty {
-              StiffnessX = stiffnessX,
-              StiffnessY = stiffnessY,
-              StiffnessZ = stiffnessZ,
+              StiffnessX = frictionStiffnessX,
+              StiffnessY = frictionStiffnessY,
+              StiffnessZ = frictionStiffnessZ,
               FrictionCoefficient = frictionCoefficient
             };
             spring = new GsaSpringProperty(frictionProperty);
@@ -489,11 +530,17 @@ namespace GsaGH.Components {
           break;
 
         case SpringPropertyType.General:
+          Params.RegisterInputParam(new Param_Integer());
           Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_Integer());
           Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_Integer());
           Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_Integer());
           Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_Integer());
           Params.RegisterInputParam(new Param_GenericObject());
+          Params.RegisterInputParam(new Param_Integer());
           Params.RegisterInputParam(new Param_GenericObject());
           Params.RegisterInputParam(new Param_Number());
           break;

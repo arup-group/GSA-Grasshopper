@@ -74,7 +74,7 @@ namespace GsaGHTests.Components.Properties {
       return comp;
     }
 
-    public static GH_OasysDropDownComponent GeneralComponentMother() {
+    public static GH_OasysDropDownComponent GeneralComponentMother1() {
       var comp = new CreateSpringProperty();
       comp.CreateAttributes();
 
@@ -82,13 +82,32 @@ namespace GsaGHTests.Components.Properties {
       comp.SetSelected(1, 2); // N/m
       comp.SetSelected(2, 1); // Nm/rad
       ComponentTestHelper.SetInput(comp, "Name", 0);
-      ComponentTestHelper.SetInput(comp, 1.2, 1);
-      ComponentTestHelper.SetInput(comp, 1.3, 2);
-      ComponentTestHelper.SetInput(comp, 1.4, 3);
-      ComponentTestHelper.SetInput(comp, 1.5, 4);
-      ComponentTestHelper.SetInput(comp, 1.6, 5);
-      ComponentTestHelper.SetInput(comp, 1.7, 6);
-      ComponentTestHelper.SetInput(comp, 0.1, 7);
+      ComponentTestHelper.SetInput(comp, 1, 1);
+      ComponentTestHelper.SetInput(comp, 2, 3);
+      ComponentTestHelper.SetInput(comp, 3, 5);
+      ComponentTestHelper.SetInput(comp, 4, 7);
+      ComponentTestHelper.SetInput(comp, 5, 9);
+      ComponentTestHelper.SetInput(comp, 6, 11);
+      ComponentTestHelper.SetInput(comp, 0.1, 13);
+
+      return comp;
+    }
+
+    public static GH_OasysDropDownComponent GeneralComponentMother2() {
+      var comp = new CreateSpringProperty();
+      comp.CreateAttributes();
+
+      comp.SetSelected(0, 5);
+      comp.SetSelected(1, 2); // N/m
+      comp.SetSelected(2, 1); // Nm/rad
+      ComponentTestHelper.SetInput(comp, "Name", 0);
+      ComponentTestHelper.SetInput(comp, 1.2, 2);
+      ComponentTestHelper.SetInput(comp, 1.3, 4);
+      ComponentTestHelper.SetInput(comp, 1.4, 6);
+      ComponentTestHelper.SetInput(comp, 1.5, 8);
+      ComponentTestHelper.SetInput(comp, 1.6, 10);
+      ComponentTestHelper.SetInput(comp, 1.7, 12);
+      ComponentTestHelper.SetInput(comp, 0.1, 13);
 
       return comp;
     }
@@ -190,10 +209,24 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(1.2, ((GapSpringProperty)output.Value.ApiProperty).Stiffness, 8);
     }
 
+    [Fact]
+    public void CreateGeneralComponent1() {
+      GH_OasysDropDownComponent comp = GeneralComponentMother1();
+
+      var output = (GsaSpringPropertyGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal("Name", output.Value.ApiProperty.Name);
+      Assert.Equal(0.1, output.Value.ApiProperty.DampingRatio);
+      Assert.Equal(1, ((GeneralSpringProperty)output.Value.ApiProperty).SpringCurveX);
+      Assert.Equal(2, ((GeneralSpringProperty)output.Value.ApiProperty).SpringCurveY);
+      Assert.Equal(3, ((GeneralSpringProperty)output.Value.ApiProperty).SpringCurveZ);
+      Assert.Equal(4, ((GeneralSpringProperty)output.Value.ApiProperty).SpringCurveXX);
+      Assert.Equal(5, ((GeneralSpringProperty)output.Value.ApiProperty).SpringCurveYY);
+      Assert.Equal(6, ((GeneralSpringProperty)output.Value.ApiProperty).SpringCurveZZ);
+    }
 
     [Fact]
-    public void CreateGeneralComponent() {
-      GH_OasysDropDownComponent comp = GeneralComponentMother();
+    public void CreateGeneralComponent2() {
+      GH_OasysDropDownComponent comp = GeneralComponentMother2();
 
       var output = (GsaSpringPropertyGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal("Name", output.Value.ApiProperty.Name);
@@ -204,14 +237,7 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(1.5, ((GeneralSpringProperty)output.Value.ApiProperty).StiffnessXX);
       Assert.Equal(1.6, ((GeneralSpringProperty)output.Value.ApiProperty).StiffnessYY);
       Assert.Equal(1.7, ((GeneralSpringProperty)output.Value.ApiProperty).StiffnessZZ);
-      Assert.Null(((GeneralSpringProperty)output.Value.ApiProperty).SpringCurveX);
-      Assert.Null(((GeneralSpringProperty)output.Value.ApiProperty).SpringCurveY);
-      Assert.Null(((GeneralSpringProperty)output.Value.ApiProperty).SpringCurveZ);
-      Assert.Null(((GeneralSpringProperty)output.Value.ApiProperty).SpringCurveXX);
-      Assert.Null(((GeneralSpringProperty)output.Value.ApiProperty).SpringCurveYY);
-      Assert.Null(((GeneralSpringProperty)output.Value.ApiProperty).SpringCurveZZ);
     }
-
 
     [Fact]
     public void CreateLockupComponent() {

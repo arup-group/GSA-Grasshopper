@@ -17,16 +17,16 @@ using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
-  public class GetSectionModifier : GH_OasysComponent, IGH_VariableParameterComponent {
-    public override Guid ComponentGuid => new Guid("495dab75-6404-43b5-9f20-4a8caaaf41ab");
+  public class GetSpringProperty : GH_OasysComponent, IGH_VariableParameterComponent {
+    public override Guid ComponentGuid => new Guid("e6e90fc4-157a-4fad-85ec-6957aed91fa9");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GetSectionModifier;
+    protected override Bitmap Icon => Resources.GetSpringProperty;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private LinearDensityUnit _linearDensityUnit = DefaultUnits.LinearDensityUnit;
 
-    public GetSectionModifier() : base("Get Section Modifier", "GetPBM",
-      "Get GSA Section Modifier", CategoryName.Name(), SubCategoryName.Cat1()) {
+    public GetSpringProperty() : base("Get Spring Property", "GetSP",
+      "Get GSA Spring Property", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }
 
@@ -119,21 +119,15 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name,
-        GsaSectionModifierGoo.NickName,
-        GsaSectionModifierGoo.Description
+      pManager.AddParameter(new GsaSpringPropertyParameter(), GsaSpringPropertyGoo.Name,
+        GsaSpringPropertyGoo.NickName,
+        GsaSpringPropertyGoo.Description
         + " to get information for."
-        + GsaSectionModifierGoo.Name, GH_ParamAccess.item);
+        + GsaSpringPropertyGoo.Name, GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name,
-        GsaSectionModifierGoo.NickName,
-        GsaSectionModifierGoo.Description, GH_ParamAccess.item);
-
-      pManager.AddGenericParameter("Area Modifier", "A", "Effective Area", GH_ParamAccess.item);
-
-      pManager.AddGenericParameter("I11 Modifier", "I11", "Effective Iyy/Iuu", GH_ParamAccess.item);
+      pManager.AddTextParameter("Type", "T", "Spring Property Type", GH_ParamAccess.item);
 
       pManager.AddGenericParameter("I22 Modifier", "I22", "Effective Izz/Ivv", GH_ParamAccess.item);
 

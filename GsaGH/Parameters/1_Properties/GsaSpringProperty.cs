@@ -7,7 +7,7 @@ namespace GsaGH.Parameters {
   /// A spring is a general type of element which can be used to model both simple springs and more sophisticated types of behaviour. Spring properties describe those behaviours.
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-pr-spring/">Spring Properties</see> to read more.</para>
   /// </summary>
-  public class GsaSpringProperty {
+  public class GsaSpringProperty : IGsaProperty {
 
     // do we need a guid?
     public Guid Guid { get; set; } = Guid.NewGuid();

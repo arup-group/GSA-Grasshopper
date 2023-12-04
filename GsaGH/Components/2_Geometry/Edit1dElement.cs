@@ -20,42 +20,15 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to edit a 1D Element
   /// </summary>
-  public class Edit1dElement : Section3dPreviewComponent, IGH_VariableParameterComponent {
+  public class Edit1dElement : Section3dPreviewComponent {
     public override Guid ComponentGuid => new Guid("0f829312-b92a-4247-9b6f-2422bfd4576c");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Edit1dElement;
     private AngleUnit _angleUnit = AngleUnit.Radian;
-    private bool _isSpring = false;
 
     public Edit1dElement() : base("Edit 1D Element", "Elem1dEdit", "Modify GSA 1D Element",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
-
-    public bool CanInsertParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    public bool CanRemoveParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    public IGH_Param CreateParameter(GH_ParameterSide side, int index) {
-      return null;
-    }
-
-    public bool DestroyParameter(GH_ParameterSide side, int index) {
-      return false;
-    }
-
-    public void VariableParameterMaintenance() {
-      if (_isSpring) {
-        SetInputProperties(3, "Spring Property", "SP", "Set new Spring Property");
-        SetOutputProperties(3, "Spring Property", "SP", "Get new Spring Property");
-      } else {
-        SetInputProperties(3, "Section", "PB", "Set new Section Property");
-        SetOutputProperties(3, "Section", "PB", "Get Section Property");
-      }
-    }
 
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
@@ -73,7 +46,7 @@ namespace GsaGH.Components {
         "Set Element Number. If ID is set it will replace any existing 1D Element in the model",
         GH_ParamAccess.item);
       pManager.AddLineParameter("Line", "L", "Reposition Element Line", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Set new Section Property",
+      pManager.AddParameter(new GsaPropertyParameter(), "Section", "PB", "Set new Section or Spring Property",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Group", "Gr", "Set Element Group", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "eT",
@@ -119,7 +92,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddLineParameter("Line", "L", "Element Line", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Get Section Property",
+      pManager.AddGenericParameter("Section", "PB", "Get Section or Spring Property",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "eT", "Get Element Type", GH_ParamAccess.item);
@@ -165,21 +138,27 @@ namespace GsaGH.Components {
         }
       }
 
-      GsaSectionGoo sectionGoo = null;
-      if (elem.ApiElement.Type == ElementType.SPRING) {
-        if (!_isSpring) {
-          UpdateParameters();
-          _isSpring = true;
-        }
+      GsaPropertyGoo sectionGoo = null;
 
-        GsaSpringPropertyGoo springPropertyGoo = null;
-        if (da.GetData(3, ref springPropertyGoo)) {
-          //elem.SpringProperty = springPropertyGoo.Value;
-        } else {
-          this.AddRuntimeWarning("Input PB failed to collect data for Spring Property");
+      if (da.GetData(3, ref sectionGoo)) {
+
+        switch (sectionGoo.Value) {
+          case GsaSection section:
+            if (elem.ApiElement.Type == ElementType.SPRING) {
+              this.AddRuntimeError("Input PB has to be a Spring Property");
+              return;
+            }
+            elem.Section = section;
+            break;
+
+          case GsaSpringProperty springProperty:
+            elem.SpringProperty = springProperty;
+            break;
+
+          default:
+            this.AddRuntimeWarning("Input PB failed to collect data");
+            return;
         }
-      } else if (da.GetData(3, ref sectionGoo)) {
-        elem.Section = sectionGoo.Value;
       }
 
       int id = 0;
@@ -246,7 +225,11 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaElement1dGoo(elem));
       da.SetData(1, elem.Id);
       da.SetData(2, new GH_Line(elem.Line.Line));
-      da.SetData(3, new GsaSectionGoo(elem.Section));
+      if (elem.ApiElement.Type == ElementType.SPRING) {
+        da.SetData(3, new GsaSpringPropertyGoo(elem.SpringProperty));
+      } else {
+        da.SetData(3, new GsaSectionGoo(elem.Section));
+      }
       da.SetData(4, elem.ApiElement.Group);
       da.SetData(5,
         Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == elem.ApiElement.Type).Key);
@@ -264,37 +247,6 @@ namespace GsaGH.Components {
       var topo = new DataTree<int>();
       topo.AddRange(elem.ApiElement.Topology, new GH_Path(elem.Id));
       da.SetDataTree(15, topo);
-    }
-
-    private void SetInputProperties(int index, string name, string nickname, string description, bool optional = true) {
-      Params.Input[index].Name = name;
-      Params.Input[index].NickName = nickname;
-      Params.Input[index].Description = description;
-      Params.Input[index].Access = GH_ParamAccess.item;
-      Params.Input[index].Optional = optional;
-    }
-
-    private void SetOutputProperties(int index, string name, string nickname, string description) {
-      Params.Output[index].Name = name;
-      Params.Output[index].NickName = nickname;
-      Params.Output[index].Description = description;
-      Params.Output[index].Access = GH_ParamAccess.item;
-    
-    }
-
-    private void UpdateParameters() {
-      RecordUndoEvent($"Type changed from or to Spring");
-
-      Params.UnregisterInputParameter(Params.Input[3], true);
-      Params.UnregisterOutputParameter(Params.Output[3], true);
-
-      if (_isSpring) {
-        Params.RegisterInputParam(new GsaSpringPropertyParameter(), 3);
-        Params.RegisterOutputParam(new GsaSpringPropertyParameter(), 3);
-      } else {
-        Params.RegisterInputParam(new GsaSectionParameter(), 3);
-        Params.RegisterOutputParam(new GsaSectionParameter(), 3);
-      }
     }
   }
 }

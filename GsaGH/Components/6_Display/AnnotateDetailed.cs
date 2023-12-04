@@ -460,6 +460,18 @@ namespace GsaGH.Components {
       return s.Trim();
     }
 
+    private static string SpringPropertyToString(GsaSpringProperty springProperty) {
+      if (springProperty == null) {
+        return string.Empty;
+      }
+
+      string s = string.Empty;
+      s += springProperty.Id > 0 ? $"SP{springProperty.Id}" : string.Empty;
+      AddSeparator(ref s);
+      s += springProperty.ApiProperty.Name;
+      return s.Trim();
+    }
+
     private static void AddSeparator(ref string s) {
       if (s.Length == 0 || s[s.Length - 1] == ' ') {
         return;
