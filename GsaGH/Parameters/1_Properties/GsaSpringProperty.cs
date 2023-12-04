@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers;
+using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -135,20 +138,9 @@ namespace GsaGH.Parameters {
         return (Id > 0) ? $"{sp} (referenced)" : string.Empty; ;
       }
 
-      //string type = Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == ApiProp2d.Type).Key;
-      //string desc = ApiProp2d.Description.Replace("(", string.Empty).Replace(")", string.Empty);
-      //if (ApiProp2d.Type != Property2D_Type.LOAD) {
-      //  string mat = Material != null ? MaterialType
-      //  : ApiProp2d.MaterialType.ToString().ToPascalCase();
-      //  return string.Join(" ", pa, type, desc, mat).TrimSpaces();
-      //}
-      //string supportType = ApiProp2d.SupportType.ToString().ToSentenceCase();
-      //string referenceEdge =
-      //  ApiProp2d.SupportType != SupportType.Auto && ApiProp2d.SupportType != SupportType.AllEdges
-      //  ? $"RefEdge:{ApiProp2d.ReferenceEdge}" : string.Empty;
-      //return string.Join(" ", pa, type, supportType, referenceEdge, desc).TrimSpaces();
-
-      return sp;
+      string name = ApiProperty.Name;
+      string type = Mappings.SpringPropertyTypeMapping.FirstOrDefault(x => x.Value == ApiProperty.GetType()).Key;
+      return string.Join(" ", sp, type, name, type).TrimSpaces();
     }
   }
 }

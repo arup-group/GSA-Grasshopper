@@ -10,7 +10,6 @@ using DiagramType = GsaAPI.DiagramType;
 
 namespace GsaGH.Helpers.GsaApi {
   internal static class Mappings {
-
     internal static readonly Dictionary<string, AlignmentType> alignmentTypeMapping
       = new Dictionary<string, AlignmentType>() {
         {
@@ -56,6 +55,7 @@ namespace GsaGH.Helpers.GsaApi {
           "Rigid Diaphragm", AnalysisOrder.RIGID_DIAPHRAGM
         },
       };
+
     internal static readonly Dictionary<string, ElementType> elementTypeMapping
       = new Dictionary<string, ElementType>() {
         {
@@ -114,6 +114,7 @@ namespace GsaGH.Helpers.GsaApi {
           "2D Load", ElementType.TWO_D_LOAD
         },
       };
+
     internal static readonly Dictionary<string, MatType> materialTypeMapping
       = new Dictionary<string, MatType>() {
         {
@@ -169,6 +170,7 @@ namespace GsaGH.Helpers.GsaApi {
           "Generic 3D", MemberType.GENERIC_3D
         },
       };
+
     internal static readonly Dictionary<string, Property2D_Type> prop2dTypeMapping
       = new Dictionary<string, Property2D_Type>() {
         {
@@ -198,8 +200,17 @@ namespace GsaGH.Helpers.GsaApi {
         },
       };
 
+    internal static readonly Dictionary<string, Type> SpringPropertyTypeMapping
+      = new Dictionary<string, Type>() {
+        {
+          "Axial", typeof(AxialSpringProperty)
+        }, {
+          "Torsional", typeof(TorsionalSpringProperty)
+        }
+      };
+
     internal static readonly IList<DiagramTypeMapping> diagramTypeMappingForce
-      = new List<DiagramTypeMapping>() {
+          = new List<DiagramTypeMapping>() {
         new DiagramTypeMapping("Axial Fx", DiagramType.AxialForceFx,
           Diagram.ApiDiagramType.AxialForceFx),
         new DiagramTypeMapping("Shear Fy", DiagramType.ShearForceFy,
