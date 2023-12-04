@@ -169,9 +169,7 @@ namespace GsaGH.Components {
       string elementlist = "All";
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      if (!da.GetDataList(0, ghTypes)) {
-        return;
-      }
+      da.GetDataList(0, ghTypes);
 
       var outX = new DataTree<GH_UnitNumber>();
       var outY = new DataTree<GH_UnitNumber>();
@@ -186,10 +184,6 @@ namespace GsaGH.Components {
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         switch (ghTyp?.Value) {
-          case null:
-            this.AddRuntimeWarning("Input is null");
-            return;
-
           case GsaResultGoo goo:
             result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
@@ -298,7 +292,7 @@ namespace GsaGH.Components {
             outXx.Add(new GH_UnitNumber(momentExtrema.Mx.ToUnit(_momentUnit)), path);
             outYy.Add(new GH_UnitNumber(momentExtrema.My.ToUnit(_momentUnit)), path);
             outXxyy.Add(new GH_UnitNumber(momentExtrema.Mxy.ToUnit(_momentUnit)), path);
-            outWaxx.Add(new GH_UnitNumber(momentExtrema.My.ToUnit(_momentUnit)), path);
+            outWaxx.Add(new GH_UnitNumber(momentExtrema.WoodArmerX.ToUnit(_momentUnit)), path);
             outWayy.Add(new GH_UnitNumber(momentExtrema.WoodArmerY.ToUnit(_momentUnit)), path);
           }
         }

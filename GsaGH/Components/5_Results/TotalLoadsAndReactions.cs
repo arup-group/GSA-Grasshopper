@@ -127,18 +127,10 @@ namespace GsaGH.Components {
     protected override void SolveInternal(IGH_DataAccess da) {
       GsaResult result;
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp)) {
-        return;
-      }
-
-      #region Inputs
+      da.GetData(0, ref ghTyp);
 
       switch (ghTyp?.Value) {
-        case null:
-          this.AddRuntimeWarning("Input is null");
-          return;
-
-        case GsaResultGoo goo: {
+        case GsaResultGoo goo: 
           result = (GsaResult)goo.Value;
           if (result.CaseType == CaseType.CombinationCase) {
             this.AddRuntimeError("Global Result only available for Analysis Cases");
@@ -146,19 +138,13 @@ namespace GsaGH.Components {
           }
 
           break;
-        }
+        
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
       }
 
-      #endregion
-
-      #region Get results from GSA
-
       IGlobalResultsCache globalResultsCache = result.GlobalResults;
-
-      #endregion
 
       int i = 0;
       IInternalForce f = globalResultsCache.TotalLoad;
