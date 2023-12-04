@@ -38,11 +38,6 @@ namespace GsaGH.Parameters.Results {
 
       return new NodeFootfalls(Cache.GetSubset(nodeIds));
     }
-
-    private bool IsInvalid(KeyValuePair<int, ReadOnlyCollection<NodeFootfallResult>> kvp) {
-      return kvp.Value.Any(res => double.IsNaN(res.MaximumResponseFactor));
-    }
-
     private bool IsInvalid(KeyValuePair<int, NodeFootfallResult> kvp) {
       return double.IsNaN(kvp.Value.MaximumResponseFactor);
     }
