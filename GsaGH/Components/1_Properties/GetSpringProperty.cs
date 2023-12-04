@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
@@ -22,8 +23,10 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetSpringProperty;
+    private RotationalStiffnessUnit _rotationalStiffnessUnit = RotationalStiffnessUnit.NewtonMeterPerRadian;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-    private LinearDensityUnit _linearDensityUnit = DefaultUnits.LinearDensityUnit;
+    private List<string> _rotationalStiffnessUnitAbbreviations = new List<string>();
+    private ForcePerLengthUnit _stiffnessUnit = DefaultUnits.ForcePerLengthUnit;
 
     public GetSpringProperty() : base("Get Spring Property", "GetSP",
       "Get GSA Spring Property", CategoryName.Name(), SubCategoryName.Cat1()) {
@@ -37,6 +40,29 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
+      var stiffnessUnitsMenu = new ToolStripMenuItem("Stiffness") {
+        Enabled = true,
+      };
+      foreach (string unit in
+        UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.ForcePerLength)) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateStiffness(unit)) {
+          Checked = unit == ForcePerLength.GetAbbreviation(_stiffnessUnit),
+          Enabled = true,
+        };
+        stiffnessUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      var rotationalStiffnessUnitsMenu = new ToolStripMenuItem("Rotational Stiffness") {
+        Enabled = true,
+      };
+      foreach (string unit in CreateSpringProperty.FilteredRotationalStiffnessUnits) {
+        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateRotationalStiffness(unit)) {
+          Checked = unit == RotationalStiffness.GetAbbreviation(_rotationalStiffnessUnit),
+          Enabled = true,
+        };
+        rotationalStiffnessUnitsMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
       var lengthUnitsMenu = new ToolStripMenuItem("Length") {
         Enabled = true,
       };
@@ -48,22 +74,11 @@ namespace GsaGH.Components {
         lengthUnitsMenu.DropDownItems.Add(toolStripMenuItem);
       }
 
-      var densityUnitsMenu = new ToolStripMenuItem("Density") {
-        Enabled = true,
-      };
-      foreach (string unit in
-        UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.LinearDensity)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => UpdateDensity(unit)) {
-          Checked = unit == LinearDensity.GetAbbreviation(_linearDensityUnit),
-          Enabled = true,
-        };
-        densityUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
       unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
+        stiffnessUnitsMenu,
+        rotationalStiffnessUnitsMenu,
         lengthUnitsMenu,
-        densityUnitsMenu,
       });
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
 
@@ -91,26 +106,26 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       _lengthUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      _linearDensityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit),
-        reader.GetString("DensityUnit"));
+      _stiffnessUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit),
+        reader.GetString("StiffnessUnit"));
+      _rotationalStiffnessUnit = (RotationalStiffnessUnit)UnitsHelper.Parse(typeof(RotationalStiffnessUnit),
+        reader.GetString("RotationalStiffnessUnit"));
       return base.Read(reader);
     }
 
     public virtual void VariableParameterMaintenance() {
-      string unit = Length.GetAbbreviation(_lengthUnit);
-      string volUnit
-        = VolumePerLength.GetAbbreviation(UnitsHelper.GetVolumePerLengthUnit(_lengthUnit));
-      Params.Output[1].Name = "Area Modifier [" + unit + "\u00B2]";
-      Params.Output[2].Name = "I11 Modifier [" + unit + "\u2074]";
-      Params.Output[3].Name = "I22 Modifier [" + unit + "\u2074]";
-      Params.Output[7].Name = "Volume Modifier [" + volUnit + "]";
-      string unitAbbreviation = LinearDensity.GetAbbreviation(_linearDensityUnit);
-      Params.Output[8].Name = "Additional Mass [" + unitAbbreviation + "]";
+      string lengthAbr = Length.GetAbbreviation(_lengthUnit);
+      string rotationalStiffnessAbr = RotationalStiffness.GetAbbreviation(_rotationalStiffnessUnit);
+      string stiffnessAbr = ForcePerLength.GetAbbreviation(_stiffnessUnit);
+
+      Params.Output[0].Name = "Name";
+
     }
 
     public override bool Write(GH_IWriter writer) {
+      writer.SetString("StiffnessUnit", _stiffnessUnit.ToString());
+      writer.SetString("RotationalStiffnessUnit", _rotationalStiffnessUnit.ToString());
       writer.SetString("LengthUnit", _lengthUnit.ToString());
-      writer.SetString("DensityUnit", _linearDensityUnit.ToString());
       return base.Write(writer);
     }
 
@@ -127,86 +142,141 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddTextParameter("Type", "T", "Spring Property Type", GH_ParamAccess.item);
+      string lengthAbr = Length.GetAbbreviation(_lengthUnit);
+      string rotationalStiffnessAbr = RotationalStiffness.GetAbbreviation(_rotationalStiffnessUnit);
+      string stiffnessAbr = ForcePerLength.GetAbbreviation(_stiffnessUnit);
 
-      pManager.AddGenericParameter("I22 Modifier", "I22", "Effective Izz/Ivv", GH_ParamAccess.item);
+      pManager.AddTextParameter("Name", "Na", "Spring Property Name", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("J Modifier", "J", "Effective J", GH_ParamAccess.item);
+      pManager.AddTextParameter("Spring Curve x", "SCx", "Spring Curve x", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("K11 Modifier", "K11", "Effective Kyy/Kuu", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness x [" + stiffnessAbr + "]", "Sx", "Stiffness x", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("K22 Modifier", "K22", "Effective Kzz/Kvv", GH_ParamAccess.item);
+      pManager.AddTextParameter("Spring Curve y", "SCy", "Spring Curve y", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Volume Modifier", "V", "Effective Volume/Length", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness y [" + stiffnessAbr + "]", "Sy", "Stiffness y", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Additional Mass", "+kg", "Additional mass per unit length",
-        GH_ParamAccess.item);
+      pManager.AddTextParameter("Spring Curve z", "SCz", "Spring Curve z", GH_ParamAccess.item);
 
-      pManager.AddBooleanParameter("Principal Bending Axis", "Ax",
-        "If 'true' GSA will use Principal (u,v) Axis for Bending. If false, Local (y,z) Axis will be used",
-        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness z [" + stiffnessAbr + "]", "Sz", "Stiffness z", GH_ParamAccess.item);
 
-      pManager.AddBooleanParameter("Reference Point Centroid", "Ref",
-        "If 'true' GSA will use the Centroid as Analysis Reference Point. If false, the specified point will be used",
-        GH_ParamAccess.item);
+      pManager.AddTextParameter("Spring Curve xx", "SCxx", "Spring Curve xx", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Stress Option Type", "Str",
-        "Get the Stress Option Type:" + Environment.NewLine + "0: No Calculation"
-        + Environment.NewLine + "1: Use Modified section properties" + Environment.NewLine
-        + "2: Use Unmodified section properties", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "Stiffness xx", GH_ParamAccess.item);
+
+      pManager.AddTextParameter("Spring Curve yy", "SCyy", "Spring Curve yy", GH_ParamAccess.item);
+
+      pManager.AddGenericParameter("Stiffness yy [" + rotationalStiffnessAbr + "]", "Syy", "Stiffness yy", GH_ParamAccess.item);
+
+      pManager.AddTextParameter("Spring Curve zz", "SCzz", "Spring Curve zz", GH_ParamAccess.item);
+
+      pManager.AddGenericParameter("Stiffness zz [" + rotationalStiffnessAbr + "]", "Szz", "Stiffness zz", GH_ParamAccess.item);
+
+      pManager.AddGenericParameter("Spring Matrix", "SM", "Spring Matrix", GH_ParamAccess.item);
+
+      pManager.AddGenericParameter("Lockup -ve [" + lengthAbr + "]", "L-ve", "Lockup -ve", GH_ParamAccess.item);
+
+      pManager.AddGenericParameter("Lockup +ve [" + lengthAbr + "]", "L+ve", "Lockup +ve", GH_ParamAccess.item);
+
+      pManager.AddGenericParameter("Coeff. of Friction [" + stiffnessAbr + "]", "CF", "Coefficient of Friction", GH_ParamAccess.item);
+
+      pManager.AddGenericParameter("Damping Ratio", "DR", "[Optional] Damping Ratio (Default = 0.0 -> 0%)", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var modifier = new GsaSectionModifier();
-
-      GsaSectionModifierGoo modifierGoo = null;
-      if (da.GetData(0, ref modifierGoo)) {
-        modifier = modifierGoo.Value;
+      GsaSpringPropertyGoo springPropertyGoo = null;
+      if (!da.GetData(0, ref springPropertyGoo)) {
+        this.AddRuntimeWarning("Input PB failed to collect data");
+        return;
       }
+      GsaSpringProperty springProperty = springPropertyGoo.Value;
 
-      da.SetData(0, new GsaSectionModifierGoo(modifier));
-      da.SetData(1,
-        modifier.ApiSectionModifier.AreaModifier.Option == SectionModifierOptionType.BY ?
-          new GH_UnitNumber(modifier.AreaModifier) :
-          new GH_UnitNumber(modifier.AreaModifier.ToUnit(UnitsHelper.GetAreaUnit(_lengthUnit))));
+      da.SetData(0, springProperty.ApiProperty.Name);
 
-      da.SetData(2,
-        modifier.ApiSectionModifier.I11Modifier.Option == SectionModifierOptionType.BY ?
-          new GH_UnitNumber(modifier.I11Modifier) : new GH_UnitNumber(
-            modifier.I11Modifier.ToUnit(UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit))));
+      switch (springProperty.ApiProperty) {
+        case AxialSpringProperty axial:
+          da.SetData(2, new GH_UnitNumber(new ForcePerLength(axial.Stiffness, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          break;
 
-      da.SetData(3,
-        modifier.ApiSectionModifier.I22Modifier.Option == SectionModifierOptionType.BY ?
-          new GH_UnitNumber(modifier.I22Modifier) : new GH_UnitNumber(
-            modifier.I22Modifier.ToUnit(UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit))));
+        case TensionSpringProperty tension:
+          da.SetData(2, new GH_UnitNumber(new ForcePerLength(tension.Stiffness, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          break;
 
-      da.SetData(4,
-        modifier.ApiSectionModifier.JModifier.Option == SectionModifierOptionType.BY ?
-          new GH_UnitNumber(modifier.JModifier) : new GH_UnitNumber(
-            modifier.JModifier.ToUnit(UnitsHelper.GetAreaMomentOfInertiaUnit(_lengthUnit))));
+        case CompressionSpringProperty compression:
+          da.SetData(2, new GH_UnitNumber(new ForcePerLength(compression.Stiffness, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          break;
 
-      da.SetData(5, new GH_UnitNumber(modifier.K11Modifier));
-      da.SetData(6, new GH_UnitNumber(modifier.K22Modifier));
+        case GapSpringProperty gap:
+          da.SetData(2, new GH_UnitNumber(new ForcePerLength(gap.Stiffness, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          break;
 
-      da.SetData(7,
-        modifier.ApiSectionModifier.VolumeModifier.Option == SectionModifierOptionType.BY ?
-          new GH_UnitNumber(modifier.VolumeModifier) : new GH_UnitNumber(
-            modifier.VolumeModifier.ToUnit(UnitsHelper.GetVolumePerLengthUnit(_lengthUnit))));
+        case TorsionalSpringProperty torsional:
+          da.SetData(8, new GH_UnitNumber(new RotationalStiffness(torsional.Stiffness, RotationalStiffnessUnit.NewtonMeterPerRadian).ToUnit(_rotationalStiffnessUnit)));
+          break;
 
-      da.SetData(8, new GH_UnitNumber(modifier.AdditionalMass.ToUnit(_linearDensityUnit)));
+        case GeneralSpringProperty general:
+          da.SetData(1, general.SpringCurveX);
+          da.SetData(3, general.SpringCurveY);
+          da.SetData(5, general.SpringCurveZ);
+          da.SetData(7, general.SpringCurveXX);
+          da.SetData(9, general.SpringCurveYY);
+          da.SetData(11, general.SpringCurveZZ);
 
-      da.SetData(9, modifier.IsBendingAxesPrincipal);
-      da.SetData(10, modifier.IsReferencePointCentroid);
-      da.SetData(11, (int)modifier.StressOption);
-    }
+          if (general.StiffnessX != null) {
+            da.SetData(2, new GH_UnitNumber(new ForcePerLength((double)general.StiffnessX, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          }
+          if (general.StiffnessY != null) {
+            da.SetData(4, new GH_UnitNumber(new ForcePerLength((double)general.StiffnessY, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          }
+          if (general.StiffnessZ != null) {
+            da.SetData(6, new GH_UnitNumber(new ForcePerLength((double)general.StiffnessZ, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          }
+          if (general.StiffnessXX != null) {
+            da.SetData(8, new GH_UnitNumber(new RotationalStiffness((double)general.StiffnessXX, RotationalStiffnessUnit.NewtonMeterPerRadian).ToUnit(_rotationalStiffnessUnit)));
+          }
+          if (general.StiffnessYY != null) {
+            da.SetData(10, new GH_UnitNumber(new RotationalStiffness((double)general.StiffnessYY, RotationalStiffnessUnit.NewtonMeterPerRadian).ToUnit(_rotationalStiffnessUnit)));
+          }
+          if (general.StiffnessZZ != null) {
+            da.SetData(12, new GH_UnitNumber(new RotationalStiffness((double)general.StiffnessZZ, RotationalStiffnessUnit.NewtonMeterPerRadian).ToUnit(_rotationalStiffnessUnit)));
+          }
+          break;
 
-    internal void UpdateDensity(string unit) {
-      _linearDensityUnit = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), unit);
-      Update();
+        case MatrixSpringProperty matrix:
+          da.SetData(13, matrix.SpringMatrix);
+          break;
+
+        case LockupSpringProperty lockup:
+          da.SetData(14, new GH_UnitNumber(new Length((double)lockup.NegativeLockup, LengthUnit.Meter).ToUnit(_lengthUnit)));
+          da.SetData(15, new GH_UnitNumber(new Length((double)lockup.PositiveLockup, LengthUnit.Meter).ToUnit(_lengthUnit)));
+          return;
+
+        case FrictionSpringProperty friction:
+            da.SetData(2, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessX, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+            da.SetData(4, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessY, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+            da.SetData(6, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessZ, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          da.SetData(16, friction.FrictionCoefficient);
+          break;
+
+        case ConnectorSpringProperty connector:
+        default:
+          break;
+      }
+      da.SetData(17, new GH_UnitNumber(new Ratio(springProperty.ApiProperty.DampingRatio, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent)));
     }
 
     internal void UpdateLength(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+      Update();
+    }
+
+    internal void UpdateStiffness(string unit) {
+      _stiffnessUnit = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), unit);
+      Update();
+    }
+
+    internal void UpdateRotationalStiffness(string unit) {
+      _rotationalStiffnessUnit = (RotationalStiffnessUnit)UnitsHelper.Parse(typeof(RotationalStiffnessUnit), unit);
       Update();
     }
 
@@ -217,8 +287,9 @@ namespace GsaGH.Components {
     }
 
     private void UpdateMessage() {
-      Message = Length.GetAbbreviation(_lengthUnit) + ", "
-        + LinearDensity.GetAbbreviation(_linearDensityUnit);
+      Message = ForcePerLength.GetAbbreviation(_stiffnessUnit) + ", "
+        + RotationalStiffness.GetAbbreviation(_rotationalStiffnessUnit) + ", "
+        + Length.GetAbbreviation(_lengthUnit);
     }
   }
 }

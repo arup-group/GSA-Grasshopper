@@ -114,28 +114,28 @@ namespace GsaGH.Components {
           return;
 
         case SpringPropertyType.Torsional:
-          SetInputProperties(1, "Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "Stiffness xx");
+          SetInputProperties(1, "Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "Stiffness xx", false);
           SetDampingRatioInputAt(2);
           return;
 
         case SpringPropertyType.General:
-          SetInputProperties(1, "Spring Curve x", "SCx", "Spring Curve x");
-          SetInputProperties(2, "Stiffness x [" + stiffnessAbr + "]", "Sx", "Stiffness x");
-          SetInputProperties(3, "Spring Curve y", "SCy", "Spring Curve y");
-          SetInputProperties(4, "Stiffness y [" + stiffnessAbr + "]", "Sy", "Stiffness y");
-          SetInputProperties(5, "Spring Curve z", "SCz", "Spring Curve z");
-          SetInputProperties(6, "Stiffness z [" + stiffnessAbr + "]", "Sz", "Stiffness z");
-          SetInputProperties(7, "Spring Curve xx", "SCxx", "Spring Curve xx");
-          SetInputProperties(8, "Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "Stiffness xx");
-          SetInputProperties(9, "Spring Curve yy", "SCyy", "Spring Curve yy");
-          SetInputProperties(10, "Stiffness yy [" + rotationalStiffnessAbr + "]", "Syy", "Stiffness yy");
-          SetInputProperties(11, "Spring Curve zz", "SCzz", "Spring Curve zz");
-          SetInputProperties(12, "Stiffness zz [" + rotationalStiffnessAbr + "]", "Szz", "Stiffness zz");
+          SetInputProperties(1, "Spring Curve x", "SCx", "[Optional] Spring Curve x");
+          SetInputProperties(2, "Stiffness x [" + stiffnessAbr + "]", "Sx", "[Optional] Stiffness x");
+          SetInputProperties(3, "Spring Curve y", "SCy", "[Optional] Spring Curve y");
+          SetInputProperties(4, "Stiffness y [" + stiffnessAbr + "]", "Sy", "[Optional] Stiffness y");
+          SetInputProperties(5, "Spring Curve z", "SCz", "[Optional] Spring Curve z");
+          SetInputProperties(6, "Stiffness z [" + stiffnessAbr + "]", "Sz", "[Optional] Stiffness z");
+          SetInputProperties(7, "Spring Curve xx", "SCxx", "[Optional] Spring Curve xx");
+          SetInputProperties(8, "Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "[Optional] Stiffness xx");
+          SetInputProperties(9, "Spring Curve yy", "SCyy", "[Optional] Spring Curve yy");
+          SetInputProperties(10, "Stiffness yy [" + rotationalStiffnessAbr + "]", "Syy", "[Optional] Stiffness yy");
+          SetInputProperties(11, "Spring Curve zz", "SCzz", "[Optional] Spring Curve zz");
+          SetInputProperties(12, "Stiffness zz [" + rotationalStiffnessAbr + "]", "Szz", "[Optional] Stiffness zz");
           SetDampingRatioInputAt(13);
           return;
 
         case SpringPropertyType.Matrix:
-          SetInputProperties(1, "Spring Matrix", "SM", "Spring Matrix");
+          SetInputProperties(1, "Spring Matrix", "SM", "Spring Matrix", false);
           SetDampingRatioInputAt(2);
           return;
 
@@ -470,7 +470,12 @@ namespace GsaGH.Components {
     }
 
     private void SetStiffnessInputAt(int index, bool optional = false) {
-      SetInputProperties(index, "Stiffness [" + ForcePerLength.GetAbbreviation(_stiffnessUnit) + "]", "S", "Axial Stiffness", optional);
+      string description = string.Empty;
+      if (optional) {
+        description += "[Optional]";
+      }
+      description += " Axial Stiffness";
+      SetInputProperties(index, "Stiffness [" + ForcePerLength.GetAbbreviation(_stiffnessUnit) + "]", "S", description, optional);
     }
 
     private void UpdateDropDownItems(SpringPropertyType mode) {
