@@ -20,6 +20,14 @@ namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class BeamStressesTests {
     private static readonly string ElementList = "2 to 3";
+    
+    [Fact]
+    public void InvalidInputErrorTests() {
+      var comp = new BeamStresses();
+      ComponentTestHelper.SetInput(comp, "not a result");
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
 
     [Fact]
     public void Element1dStressElement1dIdsFromAnalysisCaseTest() {

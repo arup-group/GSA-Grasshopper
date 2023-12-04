@@ -21,6 +21,14 @@ namespace GsaGHTests.Components.Results {
     private static readonly string NodeList = "1 to 4";
 
     [Fact]
+    public void InvalidInputErrorTests() {
+      var comp = new SpringReactionForces();
+      ComponentTestHelper.SetInput(comp, "not a result");
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
+    [Fact]
     public void NodeReactionForceNodeIdsFromAnalysisCaseTest() {
       // Assemble
       var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SpringForces, 1);

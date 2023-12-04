@@ -22,6 +22,14 @@ namespace GsaGHTests.Components.Results {
     private static readonly string ElementList = "6444 6555 7000 7015";
 
     [Fact]
+    public void InvalidInputErrorTests() {
+      var comp = new Element3dStresses();
+      ComponentTestHelper.SetInput(comp, "not a result");
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
+    [Fact]
     public void Element3dStressesElement3dIdsFromAnalysisCaseTest() {
       // Assemble
       var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element3dSimple, 1);

@@ -53,6 +53,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(Element2dStresses))]
     [InlineData(typeof(Element3dDisplacements))]
     [InlineData(typeof(Element3dStresses))]
+    [InlineData(typeof(FootfallResults))]
     [InlineData(typeof(GlobalPerformanceResults_OBSOLETE))]
     [InlineData(typeof(GlobalPerformanceResults))]
     [InlineData(typeof(Member1dDisplacements))]

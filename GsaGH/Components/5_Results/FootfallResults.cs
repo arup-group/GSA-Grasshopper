@@ -93,9 +93,7 @@ namespace GsaGH.Components {
       string nodeList = "All";
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      if (!da.GetDataList(0, ghTypes)) {
-        return;
-      }
+      da.GetDataList(0, ghTypes);
 
       var rf = new DataTree<double>();
       var peakVelo = new DataTree<GH_UnitNumber>();
@@ -110,12 +108,13 @@ namespace GsaGH.Components {
         switch (ghTyp?.Value) {
           case GsaResultGoo goo:
             result = (GsaResult)goo.Value;
+            if (result.CaseType == CaseType.CombinationCase) {
+              this.AddRuntimeError("Footfall Result only available for Analysis Cases");
+              return;
+            }
+
             nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
             break;
-
-          case null:
-            this.AddRuntimeWarning("Input is null");
-            return;
 
           default:
             this.AddRuntimeError("Error converting input to GSA Result");

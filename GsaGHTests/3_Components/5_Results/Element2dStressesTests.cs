@@ -21,6 +21,14 @@ namespace GsaGHTests.Components.Results {
   public class Element2dStressesTests {
     private static readonly string ElementList = "420 430 440 445";
 
+    [Fact]
+    public void InvalidInputErrorTests() {
+      var comp = new Element2dStresses();
+      ComponentTestHelper.SetInput(comp, "not a result");
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
     [Theory]
     [InlineData(Layer2d.Top)]
     [InlineData(Layer2d.Middle)]

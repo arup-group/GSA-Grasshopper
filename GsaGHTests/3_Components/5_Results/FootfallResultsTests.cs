@@ -20,6 +20,19 @@ namespace GsaGHTests.Components.Results {
     private static readonly string NodeList = "200 to 206";
 
     [Fact]
+    public void InvalidInputErrorTests() {
+      var comp = new FootfallResults();
+      ComponentTestHelper.SetInput(comp, "not a result");
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+      
+      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelFootfall, 1);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
+    [Fact]
     public void NodeFootfallNodeIdsFromAnalysisCaseTest() {
       // Assemble
       var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);

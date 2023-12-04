@@ -169,9 +169,7 @@ namespace GsaGH.Components {
       string elementlist = "All";
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      if (!da.GetDataList(0, ghTypes)) {
-        return;
-      }
+      da.GetDataList(0, ghTypes);
 
       var outX = new DataTree<GH_UnitNumber>();
       var outY = new DataTree<GH_UnitNumber>();
@@ -186,10 +184,6 @@ namespace GsaGH.Components {
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         switch (ghTyp?.Value) {
-          case null:
-            this.AddRuntimeWarning("Input is null");
-            return;
-
           case GsaResultGoo goo:
             result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);

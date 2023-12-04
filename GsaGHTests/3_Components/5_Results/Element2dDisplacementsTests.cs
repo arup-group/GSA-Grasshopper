@@ -22,6 +22,14 @@ namespace GsaGHTests.Components.Results {
     private static readonly string ElementList = "420 430 440 445";
 
     [Fact]
+    public void InvalidInputErrorTests() {
+      var comp = new Element2dDisplacements();
+      ComponentTestHelper.SetInput(comp, "not a result");
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
+    [Fact]
     public void Element2dDisplacementsElement2dIdsFromAnalysisCaseTest() {
       // Assemble
       var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);

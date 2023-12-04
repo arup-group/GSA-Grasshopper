@@ -22,6 +22,14 @@ namespace GsaGHTests.Components.Results {
     private static readonly string ElementList = "2 to 3";
 
     [Fact]
+    public void InvalidInputErrorTests() {
+      var comp = new BeamDerivedStresses();
+      ComponentTestHelper.SetInput(comp, "not a result");
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
+    [Fact]
     public void Element1dDerivedStressElement1dIdsFromAnalysisCaseTest() {
       // Assemble
       var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);

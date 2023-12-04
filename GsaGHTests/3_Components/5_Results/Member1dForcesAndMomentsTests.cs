@@ -23,6 +23,14 @@ namespace GsaGHTests.Components.Results {
     private static readonly string MemberList = "all";
 
     [Fact]
+    public void InvalidInputErrorTests() {
+      var comp = new Member1dForcesAndMoments();
+      ComponentTestHelper.SetInput(comp, "not a result");
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
+    [Fact]
     public void Member1dForcesAndMomentsMember1dIdsFromAnalysisCaseTest() {
       // Assemble
       var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
