@@ -1,6 +1,8 @@
 ﻿using Grasshopper.Kernel.Special;
 using GsaGH.Components;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
+using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters;
 using OasysGH.UI;
@@ -51,6 +53,7 @@ namespace GsaGHTests.Components.Display {
       var comp = new ContourNodeResults();
       ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 0);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 0);
 
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
@@ -61,6 +64,7 @@ namespace GsaGHTests.Components.Display {
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 6);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 7);
 
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 1);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 1);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
@@ -77,8 +81,26 @@ namespace GsaGHTests.Components.Display {
       var comp = new ContourNodeResults();
       ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dFootfallResultsMother());
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 3);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 3);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
+    }
+
+    [Fact]
+    public void DrawViewportMeshesAndWiresSpringForceTest() {
+      var comp = new ContourNodeResults();
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SpringForces, 1);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 2);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 2);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 2);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 3);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 4);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 5);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 6);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 7);
     }
 
     [Fact]

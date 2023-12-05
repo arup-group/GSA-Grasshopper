@@ -727,16 +727,10 @@ namespace GsaGH.Components {
     }
 
     private void DeformationModeClicked() {
-      if (_mode == FoldMode.Displacement) {
-        return;
-      }
-
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Displacement;
-
       _slider = true;
       _defScale = 100;
-
       ReDrawComponent();
     }
 
@@ -754,16 +748,10 @@ namespace GsaGH.Components {
     }
 
     private void StressModeClicked() {
-      if (_mode == FoldMode.Stress) {
-        return;
-      }
-
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Stress;
-
       _slider = false;
       _defScale = 0;
-
       ReDrawComponent();
     }
 
@@ -788,7 +776,6 @@ namespace GsaGH.Components {
       }
 
       _legend = new Bitmap((int)(15 * _legendScale), (int)(120 * _legendScale));
-
       ExpirePreview(true);
       base.UpdateUI();
     }

@@ -195,9 +195,13 @@ namespace GsaGH.Components {
         _legendScale = reader.GetDouble("legendScale");
       }
 
-      _stressUnit = reader.ItemExists("stress")
-        ? (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), reader.GetString("stress"))
-        : DefaultUnits.StressUnitResult;
+      if (reader.ItemExists("stress")) {
+        _stressUnit = (PressureUnit)UnitsHelper.Parse(
+          typeof(PressureUnit), reader.GetString("stress"));
+        _dropDownItems[0] = _type;
+      } else {
+        _stressUnit = DefaultUnits.StressUnitResult;
+      }
 
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
@@ -225,7 +229,7 @@ namespace GsaGH.Components {
                   _selectedItems[1] = _dropDownItems[1][3];
 
                   _disp = DisplayValue.ResXyz;
-                  Mode1Clicked();
+                  DisplacementModeClicked();
                 }
 
                 break;
@@ -238,7 +242,7 @@ namespace GsaGH.Components {
                   _selectedItems[1] = _dropDownItems[1][5]; // set Myy as default
 
                   _disp = DisplayValue.Yy;
-                  Mode2Clicked();
+                  ForceModeClicked();
                 }
 
                 break;
@@ -251,7 +255,7 @@ namespace GsaGH.Components {
                 _selectedItems[1] = _dropDownItems[1][7]; // set C1 as default
 
                 _disp = DisplayValue.ResXxyyzz;
-                Mode3Clicked();
+                StressModeClicked();
               }
 
               break;
@@ -264,7 +268,7 @@ namespace GsaGH.Components {
                 _selectedItems[1] = _dropDownItems[1][3]; // set von Mises as default
 
                 _disp = DisplayValue.ResXyz;
-                Mode4Clicked();
+                DerivedStressModeClicked();
               }
 
               break;
@@ -277,7 +281,7 @@ namespace GsaGH.Components {
                   _selectedItems[1] = _dropDownItems[1][1]; // set average as default
 
                   _disp = DisplayValue.Y;
-                  Mode5Clicked();
+                  StrainEnergyModeClicked();
                 }
 
                 break;
@@ -290,7 +294,7 @@ namespace GsaGH.Components {
                   _selectedItems[1] = _dropDownItems[1][0];
 
                   _disp = DisplayValue.X;
-                  Mode6Clicked();
+                  FootfallModeClicked();
                 }
 
                 break;
@@ -1140,87 +1144,51 @@ namespace GsaGH.Components {
       return gradient;
     }
 
-    private void Mode1Clicked() {
-      if (_mode == FoldMode.Displacement) {
-        return;
-      }
-
+    private void DisplacementModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Displacement;
-
       _slider = true;
       _defScale = 100;
-
       ReDrawComponent();
     }
 
-    private void Mode2Clicked() {
-      if (_mode == FoldMode.Force) {
-        return;
-      }
-
+    private void ForceModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Force;
-
       _slider = false;
       _defScale = 0;
-
       ReDrawComponent();
     }
 
-    private void Mode3Clicked() {
-      if (_mode == FoldMode.ProjectedStress) {
-        return;
-      }
-
+    private void StressModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.ProjectedStress;
-
       _slider = false;
       _defScale = 0;
-
       ReDrawComponent();
     }
 
-    private void Mode4Clicked() {
-      if (_mode == FoldMode.DerivedStress) {
-        return;
-      }
-
+    private void DerivedStressModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.DerivedStress;
-
       _slider = false;
       _defScale = 0;
-
       ReDrawComponent();
     }
 
-    private void Mode5Clicked() {
-      if (_mode == FoldMode.StrainEnergy) {
-        return;
-      }
-
+    private void StrainEnergyModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.StrainEnergy;
-
       _slider = false;
       _defScale = 0;
-
       ReDrawComponent();
     }
 
-    private void Mode6Clicked() {
-      if (_mode == FoldMode.Footfall) {
-        return;
-      }
-
+    private void FootfallModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Footfall;
-
       _slider = false;
       _defScale = 0;
-
       ReDrawComponent();
     }
 
@@ -1276,7 +1244,6 @@ namespace GsaGH.Components {
       }
 
       _legend = new Bitmap((int)(15 * _legendScale), (int)(120 * _legendScale));
-
       ExpirePreview(true);
       base.UpdateUI();
     }
