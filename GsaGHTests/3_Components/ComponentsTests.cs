@@ -25,6 +25,8 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(Create2dElementsFromBrep), 2)]
     [InlineData(typeof(CreateElementsFromMembers), 1)]
     [InlineData(typeof(SectionAlignment), 1)]
+    [InlineData(typeof(CreateEffectiveLength), 2)]
+    [InlineData(typeof(CreateMemberEndRestraint), 1)]
     //Loads
     [InlineData(typeof(CreateBeamLoad), 2)]
     [InlineData(typeof(CreateBeamThermalLoad), 2)]
