@@ -5,7 +5,7 @@ using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Xunit;
 
-namespace GsaGHTests.Results {
+namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class SelectResultsTests {
     public static GH_OasysDropDownComponent ResultsComponentMother() {

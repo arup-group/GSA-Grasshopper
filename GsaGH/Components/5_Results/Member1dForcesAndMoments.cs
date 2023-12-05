@@ -157,10 +157,6 @@ namespace GsaGH.Components {
             elementlist = Inputs.GetMemberListDefinition(this, da, 1, result.Model);
             break;
 
-          case null:
-            this.AddRuntimeWarning("Input is null");
-            return;
-
           default:
             this.AddRuntimeError("Error converting input to GSA Result");
             return;
@@ -177,7 +173,7 @@ namespace GsaGH.Components {
           permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
         }
 
-        if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
+        if (_selectedItems[0] == ExtremaHelper.Vector6InternalForces[0]) {
           foreach (KeyValuePair<int, IList<IEntity1dInternalForce>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
@@ -228,12 +224,6 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      if (_selectedItems.Count == 2) {
-        _spacerDescriptions.Insert(0, "Envelope");
-        _dropDownItems.Insert(0, ExtremaHelper.Vector6InternalForces.ToList());
-        _selectedItems.Insert(0, _dropDownItems[0][0]);
-      }
-
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[1]);
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[2]);
       base.UpdateUIFromSelectedItems();

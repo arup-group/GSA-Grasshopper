@@ -119,7 +119,7 @@ namespace GsaGH.Components {
         "Reaction Moments around Z-axis" + axis + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]", "|M|",
         "Combined |XXYYZZ| Reaction Moments" + axis + note, GH_ParamAccess.tree);
-      pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value",
+      pManager.AddIntegerParameter("Nodes IDs", "ID", "Node IDs for each result value",
         GH_ParamAccess.list);
     }
 
@@ -129,9 +129,7 @@ namespace GsaGH.Components {
       string nodeList = "All";
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      if (!da.GetDataList(0, ghTypes)) {
-        return;
-      }
+      da.GetDataList(0, ghTypes);
 
       var outTransX = new DataTree<GH_UnitNumber>();
       var outTransY = new DataTree<GH_UnitNumber>();
@@ -145,10 +143,6 @@ namespace GsaGH.Components {
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         switch (ghTyp?.Value) {
-          case null:
-            this.AddRuntimeWarning("Input is null");
-            return;
-
           case GsaResultGoo goo:
             result = (GsaResult)goo.Value;
             nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);

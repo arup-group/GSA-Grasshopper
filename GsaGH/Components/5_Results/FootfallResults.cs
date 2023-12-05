@@ -51,7 +51,7 @@ namespace GsaGH.Components {
       }));
       _selectedItems.Add(_dropDownItems[0][0]);
 
-      _dropDownItems.Add(ExtremaHelper.Vector6Displacements.ToList());
+      _dropDownItems.Add(ExtremaHelper.Footfall.ToList());
       _selectedItems.Add(_dropDownItems[1][0]);
 
       _isInitialised = true;
@@ -84,7 +84,7 @@ namespace GsaGH.Components {
         "The node ID of the critical frequency" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Critical Frequency [" + hz + "]", "Cf",
         "The critical frequency" + note, GH_ParamAccess.tree);
-      pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value",
+      pManager.AddIntegerParameter("Nodes IDs", "ID", "Node IDs for each result value",
         GH_ParamAccess.tree);
     }
 
@@ -93,9 +93,7 @@ namespace GsaGH.Components {
       string nodeList = "All";
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      if (!da.GetDataList(0, ghTypes)) {
-        return;
-      }
+      da.GetDataList(0, ghTypes);
 
       var rf = new DataTree<double>();
       var peakVelo = new DataTree<GH_UnitNumber>();
@@ -110,12 +108,13 @@ namespace GsaGH.Components {
         switch (ghTyp?.Value) {
           case GsaResultGoo goo:
             result = (GsaResult)goo.Value;
+            if (result.CaseType == CaseType.CombinationCase) {
+              this.AddRuntimeError("Footfall Result only available for Analysis Cases");
+              return;
+            }
+
             nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
             break;
-
-          case null:
-            this.AddRuntimeWarning("Input is null");
-            return;
 
           default:
             this.AddRuntimeError("Error converting input to GSA Result");
@@ -156,7 +155,7 @@ namespace GsaGH.Components {
             }
           }
         } else {
-          NodeExtremaKey key = ExtremaHelper.FootfallExtremaKey(resultSet, _selectedItems[0]);
+          NodeExtremaKey key = ExtremaHelper.FootfallExtremaKey(resultSet, _selectedItems[1]);
           IFootfall extrema = resultSet.GetExtrema(key);
           int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
           var path = new GH_Path(result.CaseId, key.Permutation + perm);
