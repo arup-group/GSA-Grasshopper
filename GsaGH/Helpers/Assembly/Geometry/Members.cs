@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
-using OasysGH.Parameters;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Collections;
 using Rhino.Geometry;
 
@@ -62,7 +59,11 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
 
-      apiMember.Property = ConvertSection(member1d.Section);
+      if (member1d.ApiMember.Type1D != ElementType.SPRING) {
+        apiMember.Property = ConvertSection(member1d.Section);
+      } else {
+        apiMember.Property = ConvertSpringProp(member1d.SpringProperty);
+      }
 
       AddMember(member1d.Id, member1d.Guid, apiMember);
     }
