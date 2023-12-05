@@ -15,7 +15,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Member1dForcesMember1dIdsFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
@@ -30,7 +30,7 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void Member1dForesMember1dIdsFromCombinationCaseTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
@@ -53,7 +53,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6HelperEnum.Xxyyzz)]
     public void Member1dForcesMaxFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
@@ -77,7 +77,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6HelperEnum.Xxyyzz)]
     public void Member1dDisplacementsMaxFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
       double expected = ExpectedCombinationCaseC1Values(component).Max();
 
       // Act
@@ -101,7 +101,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6HelperEnum.Xxyyzz)]
     public void Member1dDisplacementsMinFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
@@ -125,7 +125,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6HelperEnum.Xxyyzz)]
     public void Member1dDisplacementsMinFromcombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
       double expected = ExpectedCombinationCaseC1Values(component).Min();
 
       // Act
@@ -149,7 +149,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6HelperEnum.Xxyyzz)]
     public void Member1dDisplacementsValuesFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
       int positionsCount = 5;
 
@@ -187,7 +187,7 @@ namespace GsaGHTests.Parameters.Results {
     public void Member1dDisplacementsValuesFromCombinationCaseTest(
       ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
       List<double> expectedP1 = ExpectedCombinationCaseC1Values(component);
       int positionsCount = 5;
 

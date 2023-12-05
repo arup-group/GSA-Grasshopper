@@ -807,7 +807,7 @@ namespace GsaGH.Components {
           values = ResultsUtility.GetResultComponent(stresses.Subset, stressSelector, permutation);
           break;
 
-        case FoldMode.Footfall:
+        case FoldMode.Footfall when result.CaseType == CaseType.AnalysisCase:
           _resType = "Response Factor [-]";
           INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfallCache
           = _selectedItems[1] == "Resonant"

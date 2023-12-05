@@ -35,7 +35,7 @@ namespace GsaGHTests.Components.Results {
     [InlineData(Layer2d.Bottom)]
     public void Element2dStressesElement2dIdsFromAnalysisCaseTest(Layer2d layer) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
@@ -73,7 +73,7 @@ namespace GsaGHTests.Components.Results {
     [InlineData(Layer2d.Bottom)]
     public void Element2dStressesElement2dIdsFromCombinationCaseTest(Layer2d layer) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 2);
@@ -131,7 +131,7 @@ namespace GsaGHTests.Components.Results {
     [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Bottom)]
     public void Element2dStressesMaxFromAnalysisCaseTest(ResultTensor3HelperEnum component, Layer2d layer) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component, layer).Max();
 
       // Act
@@ -170,7 +170,7 @@ namespace GsaGHTests.Components.Results {
     public void Element2dStressesMaxFromCombinationCaseTest(
       ResultTensor3HelperEnum component, Layer2d layer) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Max(
         ExpectedCombinationCaseC2p1Values(component, layer).Max(),
         ExpectedCombinationCaseC2p2Values(component, layer).Max());
@@ -211,7 +211,7 @@ namespace GsaGHTests.Components.Results {
     public void Element2dStressesMinFromAnalysisCaseTest(
       ResultTensor3HelperEnum component, Layer2d layer) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component, layer).Min();
 
       // Act
@@ -250,7 +250,7 @@ namespace GsaGHTests.Components.Results {
     public void Element2dStressesMinFromcombinationCaseTest(
       ResultTensor3HelperEnum component, Layer2d layer) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Min(
         ExpectedCombinationCaseC2p1Values(component, layer).Min(),
         ExpectedCombinationCaseC2p2Values(component, layer).Min());
