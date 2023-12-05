@@ -13,7 +13,7 @@ namespace GsaGHTests.Parameters.Results {
 
     [Fact]
     public void NullEffectiveInnertiaTest() {
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
       List<double> expected = TotalLoadsAndReactionsA3.EffectiveInertia; //null here!
 
       IEffectiveInertia actual = result.GlobalResults.EffectiveInertia;
@@ -24,7 +24,7 @@ namespace GsaGHTests.Parameters.Results {
 
     [Fact]
     public void EffectiveMassTest() {
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
       List<double> expected = TotalLoadsAndReactionsA3.EffectiveMass;
 
       IEffectiveMass actual = result.GlobalResults.EffectiveMass;
@@ -36,7 +36,7 @@ namespace GsaGHTests.Parameters.Results {
 
     [Fact]
     public void EigenValueTest() {
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
       double? expected = TotalLoadsAndReactionsA3.EigenValue;
 
       double? actual = result.GlobalResults.Eigenvalue;
@@ -46,7 +46,7 @@ namespace GsaGHTests.Parameters.Results {
 
     [Fact]
     public void FrequencyValueTest() {
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
       double expected = TotalLoadsAndReactionsA3.Frequency;
 
       Frequency actual = result.GlobalResults.Frequency;
@@ -56,7 +56,7 @@ namespace GsaGHTests.Parameters.Results {
 
     [Fact]
     public void LoadFactorValueTest() {
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
       double? expected = TotalLoadsAndReactionsA3.LoadFactor;
 
       Ratio actual = result.GlobalResults.LoadFactor;
@@ -66,7 +66,7 @@ namespace GsaGHTests.Parameters.Results {
 
     [Fact]
     public void ModalGeometricStiffnessValueTest() {
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
       double? expected = TotalLoadsAndReactionsA3.ModalGeometricStiffness;
 
       ForcePerLength actual = result.GlobalResults.ModalGeometricStiffness;
@@ -76,7 +76,7 @@ namespace GsaGHTests.Parameters.Results {
 
     [Fact]
     public void ModalStiffnessValueTest() {
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
       double expected = TotalLoadsAndReactionsA3.ModalStiffness;
 
       ForcePerLength actual
@@ -87,7 +87,7 @@ namespace GsaGHTests.Parameters.Results {
 
     [Fact]
     public void ModalMassValueTest() {
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
       double expected = TotalLoadsAndReactionsA3.ModalMass;
 
       Mass actual = result.GlobalResults.ModalMass;
@@ -97,7 +97,7 @@ namespace GsaGHTests.Parameters.Results {
 
     [Fact]
     public void ModeValueTest() {
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
       int expected = TotalLoadsAndReactionsA3.Mode;
 
       int? actual = result.GlobalResults.Mode;
@@ -107,7 +107,7 @@ namespace GsaGHTests.Parameters.Results {
 
     [Fact]
     public void TotalLoadTest() {
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
       List<double> expected = TotalLoadsAndReactionsA3.TotalLoad;
 
       IInternalForce actual = result.GlobalResults.TotalLoad;
@@ -124,7 +124,7 @@ namespace GsaGHTests.Parameters.Results {
 
     [Fact]
     public void TotalReactionTest() {
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
       List<double> expected = TotalLoadsAndReactionsA3.TotalReaction;
 
       IInternalForce actual = result.GlobalResults.TotalReaction;

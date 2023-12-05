@@ -33,7 +33,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void Member1dForcesAndMomentsMember1dIdsFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
@@ -67,7 +67,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void Member1dForcesAndMomentsMember1dIdsFromCombinationCaseTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
       result.SelectedPermutationIds = new List<int>() { 1 };
 
       // Act
@@ -115,7 +115,7 @@ namespace GsaGHTests.Components.Results {
     [InlineData(ResultVector6HelperEnum.Xxyyzz)]
     public void Element1dInternalForcesMaxFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
@@ -143,7 +143,7 @@ namespace GsaGHTests.Components.Results {
     [InlineData(ResultVector6HelperEnum.Xxyyzz)]
     public void Element1dInternalForcesMaxFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
       result.SelectedPermutationIds = new List<int>() { 1 };
       double expected = ExpectedCombinationCaseC1Values(component).Max();
 
@@ -172,7 +172,7 @@ namespace GsaGHTests.Components.Results {
     [InlineData(ResultVector6HelperEnum.Xxyyzz)]
     public void Element1dInternalForcesMinFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
@@ -200,7 +200,7 @@ namespace GsaGHTests.Components.Results {
     [InlineData(ResultVector6HelperEnum.Xxyyzz)]
     public void Element1dInternalForcesMinFromcombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
       result.SelectedPermutationIds = new List<int>() { 1 };
       double expected = ExpectedCombinationCaseC1Values(component).Min();
 

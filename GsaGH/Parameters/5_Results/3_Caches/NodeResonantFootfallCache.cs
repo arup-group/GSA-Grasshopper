@@ -14,9 +14,6 @@ namespace GsaGH.Parameters.Results {
     internal NodeResonantFootfallCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
     }
-    internal NodeResonantFootfallCache(CombinationCaseResult result) {
-      ApiResult = new ApiResult(result);
-    }
 
     public INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> ResultSubset(ICollection<int> nodeIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(nodeIds);
@@ -35,31 +32,10 @@ namespace GsaGH.Parameters.Results {
                 resultKvp.Key, new Collection<IFootfall>() { res });
             });
             break;
-
-          case CombinationCaseResult combinationCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<NodeFootfallResult>> cCaseResults = combinationCase.NodeResonantFootfall(nodelist);
-            Parallel.ForEach(cCaseResults, resultKvp => {
-              if (IsInvalid(resultKvp)) {
-                return;
-              }
-
-              var permutationResults = new Collection<IFootfall>();
-              foreach (NodeFootfallResult permutationResult in resultKvp.Value) {
-                permutationResults.Add(new Footfall(permutationResult));
-              }
-
-              ((ConcurrentDictionary<int, IList<IFootfall>>)Cache).TryAdd(
-                resultKvp.Key, permutationResults);
-            });
-            break;
         }
       }
 
       return new NodeFootfalls(Cache.GetSubset(nodeIds));
-    }
-
-    private bool IsInvalid(KeyValuePair<int, ReadOnlyCollection<NodeFootfallResult>> kvp) {
-      return kvp.Value.Any(res => double.IsNaN(res.MaximumResponseFactor));
     }
 
     private bool IsInvalid(KeyValuePair<int, NodeFootfallResult> kvp) {

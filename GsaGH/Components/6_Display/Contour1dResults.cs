@@ -899,7 +899,7 @@ namespace GsaGH.Components {
           }
           break;
 
-        case FoldMode.Footfall:
+        case FoldMode.Footfall when result.CaseType == CaseType.AnalysisCase:
           positionsCount = 2;
           _resType = "Response Factor [-]";
           INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfallCache

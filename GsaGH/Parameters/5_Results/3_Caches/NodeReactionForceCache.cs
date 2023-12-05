@@ -88,6 +88,7 @@ namespace GsaGH.Parameters.Results {
     }
 
     private void SetSupportNodeIds(Model model) {
+      if (model == null) { return;}
       ConcurrentBag<int> supportnodeIDs = null;
       supportnodeIDs = new ConcurrentBag<int>();
       ReadOnlyDictionary<int, Node> nodes = model.Nodes();

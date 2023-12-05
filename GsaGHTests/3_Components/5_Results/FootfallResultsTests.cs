@@ -26,7 +26,7 @@ namespace GsaGHTests.Components.Results {
       comp.Params.Output[0].CollectData();
       Assert.True((int)comp.RuntimeMessageLevel >= 10);
       
-      var result = (GsaResult)GsaResult2Tests.CombinationCaseResult(GsaFile.SteelFootfall, 1);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelFootfall, 1);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       comp.Params.Output[0].CollectData();
       Assert.True((int)comp.RuntimeMessageLevel >= 10);
@@ -35,7 +35,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void NodeFootfallNodeIdsFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -70,7 +70,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void NodeFootfallResonantResponseFactorTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
       List<double> expected = NodeFootfallResonantA16.MaximumResponseFactor();
 
       // Act
@@ -103,7 +103,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void NodeFootfallTransientResponseFactorTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
       List<double> expected = NodeFootfallTransientA17.MaximumResponseFactor();
 
       // Act
@@ -136,7 +136,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void NodeFootfallResonantVelocitiesTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
       List<double> expectedPeak = NodeFootfallResonantA16.PeakVelocity();
       List<double> expectedRMS = NodeFootfallResonantA16.RMSVelocity();
 
@@ -196,7 +196,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void NodeFootfallTransientVelocitiesTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
       List<double> expectedPeak = NodeFootfallTransientA17.PeakVelocity();
       List<double> expectedRMS = NodeFootfallTransientA17.RMSVelocity();
 
@@ -256,7 +256,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void NodeFootfallResonantAccelerationsTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
       List<double> expectedPeak = NodeFootfallResonantA16.PeakAcceleration();
       List<double> expectedRMS = NodeFootfallResonantA16.RMSAcceleration();
 
@@ -316,7 +316,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void NodeFootfallTransientAccelerationsTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
       List<double> expectedPeak = NodeFootfallTransientA17.PeakAcceleration();
       List<double> expectedRMS = NodeFootfallTransientA17.RMSAcceleration();
 
@@ -376,7 +376,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void NodeFootfallResonantFrequencyTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelFootfall, 16);
       List<double> expected = NodeFootfallResonantA16.CriticalFrequency();
 
       // Act
@@ -409,7 +409,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void NodeFootfallTransientFrequencyTest() {
       // Assemble
-      var result = (GsaResult)GsaResult2Tests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
       List<double> expected = NodeFootfallTransientA17.CriticalFrequency();
 
       // Act
