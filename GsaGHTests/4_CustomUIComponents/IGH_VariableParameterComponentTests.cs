@@ -13,6 +13,8 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(EditOffset))]
     [InlineData(typeof(EditSection))]
     [InlineData(typeof(GetSectionModifier))]
+    [InlineData(typeof(CreateSpringProperty))]
+    [InlineData(typeof(GetSpringProperty))]
     [InlineData(typeof(MaterialProperties))]
     [InlineData(typeof(ProfileDimensions))]
     [InlineData(typeof(SectionProperties))]
@@ -26,6 +28,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(Contour3dResults))]
     [InlineData(typeof(ContourNodeResults))]
     [InlineData(typeof(GridPlaneSurfaceProperties))]
+    [InlineData(typeof(Edit1dMember_OBSOLETE))]
     public void DropDownComponentTest(Type t) {
       var comp = (IGH_VariableParameterComponent)Activator.CreateInstance(t);
       Assert.False(comp.CanRemoveParameter(GH_ParameterSide.Input, 0));
@@ -48,6 +51,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(Edit3dMember))]
     [InlineData(typeof(EditNode))]
     [InlineData(typeof(GridPlaneSurfaceProperties))]
+    [InlineData(typeof(Edit1dMember_OBSOLETE))]
     public void CreateDestroyParamIGH_VariableParameterComponentTest(Type t) {
       var comp = (IGH_VariableParameterComponent)Activator.CreateInstance(t);
       Assert.Null(comp.CreateParameter(GH_ParameterSide.Input, 0));
