@@ -293,7 +293,7 @@ namespace GsaGH.Components {
             };
             spring = new GsaSpringProperty(matrixProperty);
           } else {
-            this.AddRuntimeWarning("Input SM failed to collect data");
+            this.AddRuntimeError("Input SM failed to collect data");
             return;
           }
 
@@ -356,7 +356,7 @@ namespace GsaGH.Components {
             };
             spring = new GsaSpringProperty(frictionProperty);
           } else {
-            this.AddRuntimeWarning("Input CF failed to collect data");
+            this.AddRuntimeError("Input CF failed to collect data");
             return;
           }
           break;
@@ -412,7 +412,7 @@ namespace GsaGH.Components {
           return item.Key;
         }
       }
-      throw new Exception("Unable to convert " + name + " to Spring Property Type");
+      throw new ArgumentException("Unable to convert " + name + " to Spring Property Type");
     }
 
     private void ResetDropdownMenus() {

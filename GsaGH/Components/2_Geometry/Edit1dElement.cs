@@ -147,16 +147,21 @@ namespace GsaGH.Components {
               return;
             }
             elem.Section = section;
+            elem.SpringProperty = null;
             break;
 
           case GsaSpringProperty springProperty:
+            if (elem.ApiElement.Type != ElementType.SPRING) {
+              this.AddRuntimeError("Element Type is not Spring");
+              return;
+            }
+            elem.Section = null;
             elem.SpringProperty = springProperty;
             break;
-
-          default:
-            this.AddRuntimeWarning("Input PB failed to collect data");
-            return;
         }
+      } else if (elem.ApiElement.Type == ElementType.SPRING) {
+        this.AddRuntimeError("Input PB has to be a Spring Property");
+        return;
       }
 
       int id = 0;

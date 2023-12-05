@@ -193,18 +193,23 @@ namespace GsaGH.Components {
               return;
             }
             mem.Section = section;
+            mem.SpringProperty = null;
             break;
 
           case GsaSpringProperty springProperty:
+            if (mem.ApiMember.Type1D != ElementType.SPRING) {
+              this.AddRuntimeError("1D Element Type is not Spring");
+              return;
+            }
+            mem.Section = null;
             mem.SpringProperty = springProperty;
             break;
-
-          default:
-            this.AddRuntimeWarning("Input PB failed to collect data");
-            return;
         }
+      } else if (mem.ApiMember.Type1D == ElementType.SPRING) {
+        this.AddRuntimeError("Input PB has to be a Spring Property");
+        return;
       }
-      
+
       int id = 0;
       if (da.GetData(1, ref id)) {
         mem.Id = id;

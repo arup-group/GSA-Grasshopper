@@ -282,5 +282,25 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(0.1, output.Value.ApiProperty.DampingRatio);
       Assert.Equal(1.2, ((TorsionalSpringProperty)output.Value.ApiProperty).Stiffness, 8);
     }
+
+    [Fact]
+    public void ParseSpringMatrixErrorTest() {
+      GH_OasysDropDownComponent comp = MatrixComponentMother();
+      ComponentTestHelper.SetInput(comp, "matrix", 1);
+
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+      Assert.Equal(2, comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error).Count);
+    }
+
+    [Fact]
+    public void ParseFrictionCoefficientErrorTest() {
+      GH_OasysDropDownComponent comp = FrictionComponentMother();
+      ComponentTestHelper.SetInput(comp, "friction", 4);
+
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+      Assert.Equal(2, comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error).Count);
+    }
   }
 }
