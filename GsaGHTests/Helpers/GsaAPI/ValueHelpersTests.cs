@@ -17,7 +17,7 @@ namespace GsaGHTests.Helpers.GsaApi {
     }
 
     [Theory]
-    [InlineData(0, 0, 0, 0)]
+    [InlineData(0, 0, 0.000000000001, -0.000000000001)]
     [InlineData(74, 26, 75, 25)]
     [InlineData(7499, 26, 8000, 0)]
     [InlineData(24, 15, 25, 15)]
