@@ -171,5 +171,24 @@ namespace GsaGHTests.Components.Geometry {
       comp.Params.Output[0].CollectData();
       Assert.True((int)comp.RuntimeMessageLevel >= 10);
     }
+
+    [Theory]
+    [InlineData("F1L F2L TR MAJV MINV", "Pinned")]
+    [InlineData("F1L", "TopFlangeLateral")]
+    [InlineData("", "Free")]
+    [InlineData("F1LW F2W MAJVW MINV", "F1LW F2W MAJVW MINV")]
+    [InlineData("F1LP F2P MAJVP MINV", "F1LP F2P MAJVP MINV")]
+    [InlineData("F1W", "F1W")]
+    [InlineData("F1P", "F1P")]
+    [InlineData("F2W", "F2W")]
+    [InlineData("F2P", "F2P")]
+    [InlineData("TR", "TR")]
+    [InlineData("MAJV", "MAJV")]
+    [InlineData("MINV", "MINV")]
+    public void MemberEndRestraintCreateFromStringsTests(string s, string expected) {
+      MemberEndRestraint restraint = MemberEndRestraintFactory.CreateFromStrings(s);
+      string value = MemberEndRestraintFactory.MemberEndRestraintToString(restraint);
+      Assert.Equal(expected, value);
+    }
   }
 }

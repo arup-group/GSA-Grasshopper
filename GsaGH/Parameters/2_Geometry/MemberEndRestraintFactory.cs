@@ -141,14 +141,27 @@ namespace GsaGH.Parameters {
       }
 
       string s = string.Join(" ", output).TrimSpaces();
-      s = s.Replace("F1L F2L TR MAJV MINV", "Pinned");
-      s = s.Replace("F1LW F2LW TR MAJVW MINVW", "Fixed");
-      s = s.Replace("F1LW F2W TR MAJVW MINV", "FullRotational");
-      s = s.Replace("F1LP F2P TR MAJVP MINV", "PartialRotational");
-      s = s.Replace("F1L", "TopFlangeLateral");
+      switch (s) {
+        case "F1L F2L TR MAJV MINV":
+          return "Pinned";
+
+        case "F1LW F2LW TR MAJVW MINVW":
+          return "Fixed";
+
+        case "F1LW F2W TR MAJVW MINV":
+          return "FullRotational";
+
+        case "F1LP F2P TR MAJVP MINV":
+          return "PartialRotational";
+
+        case "F1L":
+          return "TopFlangeLateral";
+      }
+
       if (string.IsNullOrEmpty(s)) {
         return "Free";
       }
+
       return s;
     }
 
