@@ -229,7 +229,6 @@ namespace GsaGH.Helpers.GH {
 
     internal static string GetElementListDefinition(
       GH_Component owner, IGH_DataAccess da, int inputid, GsaModel model) {
-      // to-do GSAGH-350
       string elementlist = "All";
       var ghType = new GH_ObjectWrapper();
       if (!da.GetData(inputid, ref ghType)) {
