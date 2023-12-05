@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
+using GsaGHTests.Parameters.Results;
+using System;
 using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
-  public class GsaNodeReactionForcesTests {
+  public class NodeReactionForcesTests {
     private static readonly string NodeList = "1324 to 1327";
 
     [Fact]
@@ -272,5 +273,7 @@ namespace GsaGHTests.Parameters.Results {
 
       throw new NotImplementedException();
     }
+
+
   }
 }

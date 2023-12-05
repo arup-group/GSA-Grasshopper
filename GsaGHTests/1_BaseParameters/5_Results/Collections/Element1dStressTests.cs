@@ -10,18 +10,6 @@ using Xunit;
 namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
   public class Element1dStressTests {
-    public enum ResultStress1dHelperEnum {
-      Axial,
-      ShearY,
-      ShearZ,
-      ByPos,
-      ByNeg,
-      BzPos,
-      BzNeg,
-      C1,
-      C2
-    }
-
     private static readonly string ElementList = "2 to 3";
 
     [Fact]

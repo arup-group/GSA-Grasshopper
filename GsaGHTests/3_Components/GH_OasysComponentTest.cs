@@ -94,9 +94,11 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateCombinationCase))]
     [InlineData(typeof(EditAnalysisTask))]
     // 5_Results
+    [InlineData(typeof(BeamDerivedStresses))]
     [InlineData(typeof(BeamDisplacements))]
     [InlineData(typeof(BeamForcesAndMoments))]
     [InlineData(typeof(BeamStrainEnergyDensity))]
+    [InlineData(typeof(BeamStresses))]
     [InlineData(typeof(Contour1dResults))]
     [InlineData(typeof(Contour2dResults))]
     [InlineData(typeof(Element2dDisplacements))]

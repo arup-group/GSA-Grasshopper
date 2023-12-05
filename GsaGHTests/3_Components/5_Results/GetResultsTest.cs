@@ -7,7 +7,7 @@ using GsaGHTests.Model;
 using OasysGH.Components;
 using Xunit;
 
-namespace GsaGHTests.Results {
+namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class GetResultsTest {
     public static GH_OasysComponent ResultsComponentMother() {

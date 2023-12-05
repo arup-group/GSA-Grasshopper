@@ -209,7 +209,7 @@ namespace GsaGH.Components.Helpers {
         "Min Axial" => resultSet.Min.Axial,
         "Min Shear Y" => resultSet.Min.ShearY,
         "Min Shear Z" => resultSet.Min.ShearZ,
-        "Min Bending Y+" => resultSet.Min.BendingYyNegativeZ,
+        "Min Bending Y+" => resultSet.Min.BendingYyPositiveZ,
         "Min Bending Y-" => resultSet.Min.BendingYyNegativeZ,
         "Min Bending Z+" => resultSet.Min.BendingZzPositiveY,
         "Min Bending Z-" => resultSet.Min.BendingZzNegativeY,
@@ -317,29 +317,6 @@ namespace GsaGH.Components.Helpers {
         "Min Ryy" => resultSet.Min.Yy,
         "Min Rzz" => resultSet.Min.Zz,
         "Min |R|" => resultSet.Min.Xxyyzz,
-        _ => throw new ArgumentException("Extrema case not found"),
-      };
-    }
-
-    internal static U InternalForceExtremaKey<T, U>(
-      INodeResultSubset<T, ResultVector6<U>> resultSet, string key) where T : IResultItem {
-      return key switch {
-        "Max Fx" => resultSet.Max.X,
-        "Max Fy" => resultSet.Max.Y,
-        "Max Fz" => resultSet.Max.Z,
-        "Max |Fyz|" => resultSet.Max.Xyz,
-        "Max Mxx" => resultSet.Max.Xx,
-        "Max Myy" => resultSet.Max.Yy,
-        "Max Mzz" => resultSet.Max.Zz,
-        "Max |Myz|" => resultSet.Max.Xxyyzz,
-        "Min Fx" => resultSet.Min.X,
-        "Min Fy" => resultSet.Min.Y,
-        "Min Fz" => resultSet.Min.Z,
-        "Min |Fyz|" => resultSet.Min.Xyz,
-        "Min Mxx" => resultSet.Min.Xx,
-        "Min Myy" => resultSet.Min.Yy,
-        "Min Mzz" => resultSet.Min.Zz,
-        "Min |Myz|" => resultSet.Min.Xxyyzz,
         _ => throw new ArgumentException("Extrema case not found"),
       };
     }

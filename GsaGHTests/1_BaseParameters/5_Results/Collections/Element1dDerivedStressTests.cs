@@ -10,13 +10,6 @@ using Xunit;
 namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
   public class Element1dDerivedStressTests {
-    public enum ResultDerivedStress1dHelperEnum {
-      ShearY,
-      ShearZ,
-      Torsion,
-      VonMises
-    }
-
     private static readonly string ElementList = "2 to 3";
 
     [Fact]

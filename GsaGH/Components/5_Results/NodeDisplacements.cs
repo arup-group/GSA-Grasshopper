@@ -97,7 +97,7 @@ namespace GsaGH.Components {
         "Rotations around Z-axis in Global Axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|",
         "Combined |XXYYZZ| Rotations in Global Axis" + note, GH_ParamAccess.tree);
-      pManager.AddTextParameter("Nodes IDs", "ID", "Node IDs for each result value",
+      pManager.AddIntegerParameter("Nodes IDs", "ID", "Node IDs for each result value",
         GH_ParamAccess.tree);
     }
 
@@ -106,9 +106,7 @@ namespace GsaGH.Components {
       string nodeList = "All";
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      if (!da.GetDataList(0, ghTypes)) {
-        return;
-      }
+      da.GetDataList(0, ghTypes);
 
       var outTransX = new DataTree<GH_UnitNumber>();
       var outTransY = new DataTree<GH_UnitNumber>();
@@ -126,10 +124,6 @@ namespace GsaGH.Components {
             result = (GsaResult)goo.Value;
             nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
             break;
-
-          case null:
-            this.AddRuntimeWarning("Input is null");
-            return;
 
           default:
             this.AddRuntimeError("Error converting input to GSA Result");
