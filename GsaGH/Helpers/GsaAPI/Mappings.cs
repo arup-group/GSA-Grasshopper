@@ -202,11 +202,16 @@ namespace GsaGH.Helpers.GsaApi {
 
     internal static readonly Dictionary<string, Type> SpringPropertyTypeMapping
       = new Dictionary<string, Type>() {
-        {
-          "Axial", typeof(AxialSpringProperty)
-        }, {
-          "Torsional", typeof(TorsionalSpringProperty)
-        }
+        { "Axial", typeof(AxialSpringProperty) },
+        { "Compression-only", typeof(CompressionSpringProperty) },
+        { "Connector", typeof(ConnectorSpringProperty) },
+        { "Friction", typeof(FrictionSpringProperty) },
+        { "Gap", typeof(GapSpringProperty) },
+        { "General", typeof(GeneralSpringProperty) },
+        { "Lockup", typeof(LockupSpringProperty) },
+        { "Matrix", typeof(MatrixSpringProperty) },
+        { "Tension-only", typeof(TensionSpringProperty) },
+        { "Torsional", typeof(TorsionalSpringProperty) }
       };
 
     internal static readonly IList<DiagramTypeMapping> diagramTypeMappingForce

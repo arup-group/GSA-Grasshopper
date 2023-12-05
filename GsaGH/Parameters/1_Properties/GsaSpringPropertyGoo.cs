@@ -9,7 +9,7 @@ namespace GsaGH.Parameters {
   public class GsaSpringPropertyGoo : GH_OasysGoo<GsaSpringProperty> {
     public static string Description => "GSA Spring Property";
     public static string Name => "Spring Property";
-    public static string NickName => "SP";
+    public static string NickName => "PS";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
     public GsaSpringPropertyGoo(GsaSpringProperty item) : base(item) { }

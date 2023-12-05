@@ -466,7 +466,7 @@ namespace GsaGH.Components {
       }
 
       string s = string.Empty;
-      s += springProperty.Id > 0 ? $"SP{springProperty.Id}" : string.Empty;
+      s += springProperty.Id > 0 ? $"PS{springProperty.Id}" : string.Empty;
       AddSeparator(ref s);
       s += springProperty.ApiProperty.Name;
       return s.Trim();

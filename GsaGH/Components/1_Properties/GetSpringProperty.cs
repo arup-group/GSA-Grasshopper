@@ -28,7 +28,7 @@ namespace GsaGH.Components {
     private List<string> _rotationalStiffnessUnitAbbreviations = new List<string>();
     private ForcePerLengthUnit _stiffnessUnit = DefaultUnits.ForcePerLengthUnit;
 
-    public GetSpringProperty() : base("Get Spring Property", "GetSP",
+    public GetSpringProperty() : base("Get Spring Property", "GetPS",
       "Get GSA Spring Property", CategoryName.Name(), SubCategoryName.Cat1()) {
       Hidden = true;
     }

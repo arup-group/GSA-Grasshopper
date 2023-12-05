@@ -133,14 +133,14 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string sp = (Id > 0) ? "SP" + Id : string.Empty;
+      string ps = (Id > 0) ? "PS" + Id : string.Empty;
       if (IsReferencedById) {
-        return (Id > 0) ? $"{sp} (referenced)" : string.Empty; ;
+        return (Id > 0) ? $"{ps} (referenced)" : string.Empty; ;
       }
 
       string name = ApiProperty.Name;
       string type = Mappings.SpringPropertyTypeMapping.FirstOrDefault(x => x.Value == ApiProperty.GetType()).Key;
-      return string.Join(" ", sp, type, name, type).TrimSpaces();
+      return string.Join(" ", ps, type, name).TrimSpaces();
     }
   }
 }

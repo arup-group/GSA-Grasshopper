@@ -32,7 +32,7 @@ namespace GsaGH.Components {
         "2D Properties from GSA Model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaProperty3dParameter(), "3D Properties", "PV",
         "3D Properties from GSA Model", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaSpringPropertyParameter(), "Spring Properties", "SP",
+      pManager.AddParameter(new GsaSpringPropertyParameter(), "Spring Properties", "PS",
         "Spring Properties from GSA Model", GH_ParamAccess.list);
     }
 

@@ -119,10 +119,7 @@ namespace GsaGH.Helpers.Assembly {
       _model.SetSectionModifiers(_secionModifiers.ReadOnlyDictionary);
       _model.SetProp2Ds(_prop2ds.ReadOnlyDictionary);
       _model.SetProp3Ds(_prop3ds.ReadOnlyDictionary);
-
-
       _model.SetSpringProperty(_springProperties.ReadOnlyDictionary);
-
 
       ValidateMaterialsToDesignCodes(_model);
 
