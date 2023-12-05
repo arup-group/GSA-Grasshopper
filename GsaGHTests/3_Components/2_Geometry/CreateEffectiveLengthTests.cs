@@ -136,5 +136,40 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(1.5, specific.EffectiveLengthLaterialTorsional.Value);
       Assert.Equal(EffectiveLengthOptionType.Relative, specific.EffectiveLengthLaterialTorsional.Option);
     }
+
+    [Theory]
+    [InlineData("2", "3", "Pinned", "TopAndBottomFlangeLateral")]
+    [InlineData("0", "0", "Free", "Free")]
+    [InlineData("free", "free", "Free", "Free")]
+    [InlineData("2s", "3s", "Pinned", "TopAndBottomFlangeLateral")]
+    [InlineData("pin", "top and bottom", "Pinned", "TopAndBottomFlangeLateral")]
+    [InlineData("1", "top", "TopFlangeLateral", "TopFlangeLateral")]
+    [InlineData("top", "bot", "TopFlangeLateral", "BottomFlangeLateral")]
+    [InlineData("top", "2", "TopFlangeLateral", "BottomFlangeLateral")]
+    public void IntermediateRestraintStringInputTest(
+        string contin, string interm, string expectedContin, string expectedInterm) {
+      var comp = new CreateEffectiveLength();
+      comp.CreateAttributes();
+      comp.SetSelected(0, 1);
+      ComponentTestHelper.SetInput(comp, contin, 3);
+      ComponentTestHelper.SetInput(comp, interm, 4);
+
+      var output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      var intermediate = (EffectiveLengthFromEndAndInternalRestraint)output.Value.EffectiveLength;
+      Assert.Equal(expectedContin, intermediate.RestraintAlongMember.ToString());
+      Assert.Equal(expectedInterm, intermediate.RestraintAtBracedPoints.ToString());
+    }
+
+    [Theory]
+    [InlineData("asd", 3)]
+    [InlineData("asd", 4)]
+    public void IntermediateRestraintStringInputErrorTest(string input, int id) {
+      var comp = new CreateEffectiveLength();
+      comp.CreateAttributes();
+      comp.SetSelected(0, 1);
+      ComponentTestHelper.SetInput(comp, input, id);
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
   }
 }
