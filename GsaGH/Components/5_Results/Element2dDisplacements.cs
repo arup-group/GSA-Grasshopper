@@ -54,7 +54,7 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
-        "Envelope",
+        "Max/Min",
         "Unit",
       });
 
@@ -191,7 +191,7 @@ namespace GsaGH.Components {
 
     protected override void UpdateUIFromSelectedItems() {
       if (_selectedItems.Count == 1) {
-        _spacerDescriptions.Insert(0, "Envelope");
+        _spacerDescriptions.Insert(0, "Max/Min");
         _dropDownItems.Insert(0, ExtremaHelper.Vector6Displacements.ToList());
         _selectedItems.Insert(0, _dropDownItems[0][0]);
       }
