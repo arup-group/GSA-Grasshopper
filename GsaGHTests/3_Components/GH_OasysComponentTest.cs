@@ -125,8 +125,6 @@ namespace GsaGHTests.Components {
     // 99_Obsolete
     [InlineData(typeof(GlobalPerformanceResults_OBSOLETE), true)]
     [InlineData(typeof(GetModelProperties_OBSOLETE), true)]
-    [InlineData(typeof(Edit1dElement_OBSOLETE), true)]
-    [InlineData(typeof(Edit1dMember_OBSOLETE), true)]
     public void GH_OasysComponentTest(Type t, bool obsolete = false) {
       var comp = (GH_OasysComponent)Activator.CreateInstance(t);
       Assert.NotNull(comp.Icon_24x24);

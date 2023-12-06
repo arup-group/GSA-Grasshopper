@@ -19,7 +19,7 @@ namespace GsaGH.Components {
   ///   Component to edit a 1D Member
   /// </summary>
   public class Edit1dMember : Section3dPreviewComponent, IGH_VariableParameterComponent {
-    public override Guid ComponentGuid => new Guid("70e960f5-f5d3-47d9-bb02-61e337a25ab9");
+    public override Guid ComponentGuid => new Guid("32e744e5-7352-4308-81d0-13bf06db5e82");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Edit1dMember;
