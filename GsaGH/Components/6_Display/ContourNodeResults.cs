@@ -15,6 +15,7 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel.Types.Transforms;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
@@ -22,6 +23,7 @@ using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -57,6 +59,7 @@ namespace GsaGH.Components {
       Displacement,
       Reaction,
       Footfall,
+      SpringForce
     }
 
     public override Guid ComponentGuid => new Guid("742b1398-4eee-49e6-98d0-00afac6813e6");
@@ -87,9 +90,20 @@ namespace GsaGH.Components {
       "Reaction Mzz",
       "Resolved |M|",
     });
+    private readonly List<string> _springForce = new List<string>(new[] {
+      "Axial Fx",
+      "Shear Fy",
+      "Shear Fz",
+      "Resolved |F|",
+      "Torsion Mxx",
+      "Moment Myy",
+      "Moment Mzz",
+      "Resolved |M|",
+    });
     private readonly List<string> _type = new List<string>(new[] {
       "Displacement",
       "Reaction",
+      "SpringForce",
       "Footfall",
     });
     private string _case = string.Empty;
@@ -101,7 +115,6 @@ namespace GsaGH.Components {
     private List<string> _legendValues;
     private List<int> _legendValuesPosY;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private double _maxValue = 1000;
     private double _minValue;
     private FoldMode _mode = FoldMode.Displacement;
@@ -111,7 +124,6 @@ namespace GsaGH.Components {
     private string _scaleLegendTxt = string.Empty;
     private bool _showLegend = true;
     private bool _slider = true;
-    private bool _undefinedModelLengthUnit;
 
     public ContourNodeResults() : base("Contour Node Results", "NodeContour",
       "Diplays GSA Node Results as Contours", CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -162,9 +174,7 @@ namespace GsaGH.Components {
       }
 
       _showLegend = reader.GetBoolean("legend");
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
-      _lengthResultUnit
-        = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
+      _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("force"));
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), reader.GetString("moment"));
       _legend = new Bitmap((int)(15 * _legendScale), (int)(120 * _legendScale));
@@ -178,9 +188,9 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       switch (i) {
-        case 0: {
+        case 0:
           switch (j) {
-            case 0: {
+            case 0:
               if (_dropDownItems[1] != _displacement) {
                 _dropDownItems[1] = _displacement;
                 _selectedItems[0] = _dropDownItems[0][0];
@@ -190,8 +200,8 @@ namespace GsaGH.Components {
               }
 
               break;
-            }
-            case 1: {
+
+            case 1:
               if (_dropDownItems[1] != _reaction) {
                 _dropDownItems[1] = _reaction;
                 _selectedItems[0] = _dropDownItems[0][1];
@@ -201,22 +211,33 @@ namespace GsaGH.Components {
               }
 
               break;
-            }
-            case 2: {
-              if (_dropDownItems[1] != _footfall) {
-                _dropDownItems[1] = _footfall;
+
+            case 2:
+              if (_dropDownItems[1] != _springForce) {
+                _dropDownItems[1] = _springForce;
                 _selectedItems[0] = _dropDownItems[0][2];
-                _selectedItems[1] = _dropDownItems[1][0];
-                _disp = DisplayValue.X;
+                _selectedItems[1] = _dropDownItems[1][3];
+                _disp = DisplayValue.ResXyz;
                 Mode3Clicked();
               }
 
               break;
-            }
+
+            case 3:
+              if (_dropDownItems[1] != _footfall) {
+                _dropDownItems[1] = _footfall;
+                _selectedItems[0] = _dropDownItems[0][3];
+                _selectedItems[1] = _dropDownItems[1][0];
+                _disp = DisplayValue.X;
+                Mode4Clicked();
+              }
+
+              break;
+
           }
 
           break;
-        }
+
         case 1:
           _disp = (DisplayValue)j;
           _selectedItems[1] = _dropDownItems[1][j];
@@ -253,10 +274,12 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Reaction when (int)_disp < 4:
+        case FoldMode.SpringForce when (int)_disp < 4:
           Params.Output[2].Name = "Values [" + Force.GetAbbreviation(_forceUnit) + "]";
           break;
 
         case FoldMode.Reaction:
+        case FoldMode.SpringForce:
           Params.Output[2].Name = "Values [" + Moment.GetAbbreviation(_momentUnit) + "]";
           break;
 
@@ -276,7 +299,6 @@ namespace GsaGH.Components {
       writer.SetDouble("val", _defScale);
       writer.SetDouble("legendScale", _legendScale);
       writer.SetBoolean("legend", _showLegend);
-      writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("force", Force.GetAbbreviation(_forceUnit));
       writer.SetString("moment", Moment.GetAbbreviation(_momentUnit));
@@ -313,13 +335,6 @@ namespace GsaGH.Components {
         forceUnitsMenu,
         momentUnitsMenu,
       });
-      if (_undefinedModelLengthUnit) {
-        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
-          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
-          UpdateModel);
-
-        unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
-      }
 
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
 
@@ -353,6 +368,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Reaction:
+        case FoldMode.SpringForce:
           Message = (int)_disp < 4 ? Force.GetAbbreviation(_forceUnit) :
             Moment.GetAbbreviation(_momentUnit);
           break;
@@ -411,50 +427,53 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var result = new GsaResult();
+      GsaResult result;
+      string nodeList = "All";
       _case = string.Empty;
       _resType = string.Empty;
 
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp)) {
-        return;
-      }
-
-      #region Inputs
+      da.GetData(0, ref ghTyp);
 
       switch (ghTyp?.Value) {
+        case GsaResultGoo goo:
+          result = (GsaResult)goo.Value;
+          nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
+          switch (result.CaseType) {
+            case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
+              this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
+                + result.SelectedPermutationIds.Count
+                + " permutations - only one permutation can be displayed at a time."
+                + Environment.NewLine
+                + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
+              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+              break;
+
+            case CaseType.CombinationCase:
+              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+              break;
+
+            case CaseType.AnalysisCase:
+              _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
+              break;
+          }
+          break;
+
         case null:
           this.AddRuntimeWarning("Input is null");
           return;
 
-        case GsaResultGoo goo: {
-          result = goo.Value;
-          if (result.Type == CaseType.CombinationCase
-            && result.SelectedPermutationIds.Count > 1) {
-            this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
-              + result.SelectedPermutationIds.Count
-              + " permutations - only one permutation can be displayed at a time."
-              + Environment.NewLine
-              + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
-            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-          }
-
-          if (result.Type == CaseType.CombinationCase) {
-            _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-          }
-
-          if (result.Type == CaseType.AnalysisCase) {
-            _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
-          }
-
-          break;
-        }
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
       }
 
-      string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
+      ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes(nodeList);
+      if (nodes.Count == 0) {
+        this.AddRuntimeError($"Model contains no results for nodes in list '{nodeList}'");
+        return;
+      }
+      LengthUnit lengthUnit = result.Model.ModelUnit;
 
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();
@@ -466,7 +485,6 @@ namespace GsaGH.Components {
       }
 
       GH_Gradient ghGradient = Colours.Stress_Gradient(colors);
-
       var ghInterval = new GH_Interval();
       Interval customMinMax = Interval.Unset;
       if (da.GetData(3, ref ghInterval)) {
@@ -477,254 +495,327 @@ namespace GsaGH.Components {
       da.GetData(4, ref ghScale);
       GH_Convert.ToDouble(ghScale, out double scale, GH_Conversion.Both);
 
-      #endregion
-
-      var res = new GsaResultsValues();
-      switch (_mode) {
-        case FoldMode.Displacement:
-          res = result.NodeDisplacementValues(nodeList, _lengthResultUnit)[0];
-          break;
-
-        case FoldMode.Reaction:
-          res = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit)[0];
-          nodeList = string.Join(" ", res.Ids);
-          break;
-
-        case FoldMode.Footfall:
-          var footfallType
-            = (FootfallResultType)Enum.Parse(typeof(FootfallResultType), _selectedItems[1]);
-          res = result.NodeFootfallValues(nodeList, footfallType);
-          break;
-      }
-
-      ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes(nodeList);
-      if (nodes.Count == 0) {
-        this.AddRuntimeError($"Model contains no results for nodes in list '{nodeList}'");
-        return;
-      }
-
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
-        = res.XyzResults;
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults
-        = res.XxyyzzResults;
-
-      Enum xyzunit = _lengthResultUnit;
-      Enum xxyyzzunit = AngleUnit.Radian;
-      switch (_mode) {
-        case FoldMode.Reaction:
-          xyzunit = _forceUnit;
-          xxyyzzunit = _momentUnit;
-          break;
-
-        case FoldMode.Footfall:
-          xyzunit = RatioUnit.DecimalFraction;
-          xxyyzzunit = AngleUnit.Radian;
-          _disp = DisplayValue.X;
-          break;
-      }
-
-      double dmaxX = res.DmaxX.As(xyzunit);
-      double dmaxY = _mode == FoldMode.Footfall ? 0 : res.DmaxY.As(xyzunit);
-      double dmaxZ = _mode == FoldMode.Footfall ? 0 : res.DmaxZ.As(xyzunit);
-      double dmaxXyz = _mode == FoldMode.Footfall ? 0 : res.DmaxXyz.As(xyzunit);
-      double dminX = _mode == FoldMode.Footfall ? 0 : res.DminX.As(xyzunit);
-      double dminY = _mode == FoldMode.Footfall ? 0 : res.DminY.As(xyzunit);
-      double dminZ = _mode == FoldMode.Footfall ? 0 : res.DminZ.As(xyzunit);
-      double dminXyz = _mode == FoldMode.Footfall ? 0 : res.DminXyz.As(xyzunit);
-      double dmaxXx = _mode == FoldMode.Footfall ? 0 : res.DmaxXx.As(xxyyzzunit);
-      double dmaxYy = _mode == FoldMode.Footfall ? 0 : res.DmaxYy.As(xxyyzzunit);
-      double dmaxZz = _mode == FoldMode.Footfall ? 0 : res.DmaxZz.As(xxyyzzunit);
-      double dmaxXxyyzz = _mode == FoldMode.Footfall ? 0 : res.DmaxXxyyzz.As(xxyyzzunit);
-      double dminXx = _mode == FoldMode.Footfall ? 0 : res.DminXx.As(xxyyzzunit);
-      double dminYy = _mode == FoldMode.Footfall ? 0 : res.DminYy.As(xxyyzzunit);
-      double dminZz = _mode == FoldMode.Footfall ? 0 : res.DminZz.As(xxyyzzunit);
-      double dminXxyyzz = _mode == FoldMode.Footfall ? 0 : res.DminXxyyzz.As(xxyyzzunit);
-
-      #region Result point values
-
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
+      int permutation = result.SelectedPermutationIds == null
+        ? 0 : result.SelectedPermutationIds[0] - 1;
       double dmax = 0;
       double dmin = 0;
-      switch (_disp) {
-        case DisplayValue.X:
-          dmax = dmaxX;
-          dmin = dminX;
-          _resType = _mode == FoldMode.Displacement ? "Translation, Ux" : "Reaction Force, Fx";
+      var values = new ConcurrentDictionary<int, IQuantity>();
+      ConcurrentDictionary<int, (double x, double y, double z)> valuesXyz = null;
+      switch (_mode) {
+        case FoldMode.Displacement:
+          INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> displacements 
+            = result.NodeDisplacements.ResultSubset(nodeIds);
+
+          if (displacements.Ids.Count == 0) {
+            this.AddRuntimeError($"Model contains no results for nodes in list '{nodeList}'");
+            return;
+          }
+
+          switch (_disp) {
+            case DisplayValue.X:
+              _resType = "Translation, Ux";
+              dmax = displacements.GetExtrema(displacements.Max.X).X.As(_lengthResultUnit);
+              dmin = displacements.GetExtrema(displacements.Min.X).X.As(_lengthResultUnit);
+              Parallel.ForEach(displacements.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].X.ToUnit(_lengthResultUnit)));
+              break;
+
+            case DisplayValue.Y:
+              _resType = "Translation, Uy";
+              dmax = displacements.GetExtrema(displacements.Max.Y).Y.As(_lengthResultUnit);
+              dmin = displacements.GetExtrema(displacements.Min.Y).Y.As(_lengthResultUnit);
+              Parallel.ForEach(displacements.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Y.ToUnit(_lengthResultUnit)));
+              break;
+
+            case DisplayValue.Z:
+              _resType = "Translation, Uz";
+              dmax = displacements.GetExtrema(displacements.Max.Z).Z.As(_lengthResultUnit);
+              dmin = displacements.GetExtrema(displacements.Min.Z).Z.As(_lengthResultUnit);
+              Parallel.ForEach(displacements.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Z.ToUnit(_lengthResultUnit)));
+              break;
+
+            case DisplayValue.ResXyz:
+              _resType = "Translation, |U|";
+              dmax = displacements.GetExtrema(displacements.Max.Xyz).Xyz.As(_lengthResultUnit);
+              dmin = displacements.GetExtrema(displacements.Min.Xyz).Xyz.As(_lengthResultUnit);
+              Parallel.ForEach(displacements.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Xyz.ToUnit(_lengthResultUnit)));
+              valuesXyz = new ConcurrentDictionary<int, (double x, double y, double z)>();
+              Parallel.ForEach(displacements.Subset, kvp =>
+                valuesXyz.TryAdd(kvp.Key, (
+                kvp.Value[permutation].X.As(lengthUnit),
+                kvp.Value[permutation].Y.As(lengthUnit),
+                kvp.Value[permutation].Z.As(lengthUnit))));
+              break;
+
+            case DisplayValue.Xx:
+              _resType = "Rotation, Rxx";
+              dmax = displacements.GetExtrema(displacements.Max.Xx).Xx.Value;
+              dmin = displacements.GetExtrema(displacements.Min.Xx).Xx.Value;
+              Parallel.ForEach(displacements.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Xx));
+              break;
+
+            case DisplayValue.Yy:
+              _resType = "Rotation, Ryy";
+              dmax = displacements.GetExtrema(displacements.Max.Yy).Yy.Value;
+              dmin = displacements.GetExtrema(displacements.Min.Yy).Yy.Value;
+              Parallel.ForEach(displacements.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Yy));
+              break;
+
+            case DisplayValue.Zz:
+              _resType = "Rotation, Rzz";
+              dmax = displacements.GetExtrema(displacements.Max.Zz).Zz.Value;
+              dmin = displacements.GetExtrema(displacements.Min.Zz).Zz.Value;
+              Parallel.ForEach(displacements.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Zz));
+              break;
+
+            case DisplayValue.ResXxyyzz:
+              _resType = "Rotation, |R|";
+              dmax = displacements.GetExtrema(displacements.Max.Xxyyzz).Xxyyzz.Value;
+              dmin = displacements.GetExtrema(displacements.Min.Xxyyzz).Xxyyzz.Value;
+              Parallel.ForEach(displacements.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Xxyyzz));
+              break;
+          }
+
           break;
 
-        case DisplayValue.Y:
-          dmax = dmaxY;
-          dmin = dminY;
-          _resType = _mode == FoldMode.Displacement ? "Translation, Uy" : "Reaction Force, Fy";
+        case FoldMode.Reaction:
+          INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> reactions
+            = result.NodeReactionForces.ResultSubset(nodeIds);
+
+          if (reactions.Ids.Count == 0) {
+            this.AddRuntimeError($"Model contains no results for nodes in list '{nodeList}'");
+            return;
+          }
+
+          switch (_disp) {
+            case DisplayValue.X:
+              _resType = "Reaction Force, Fx";
+              dmax = reactions.GetExtrema(reactions.Max.X).X.As(_forceUnit);
+              dmin = reactions.GetExtrema(reactions.Min.X).X.As(_forceUnit);
+              Parallel.ForEach(reactions.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].X.ToUnit(_forceUnit)));
+              break;
+
+            case DisplayValue.Y:
+              _resType = "Reaction Force, Fy";
+              dmax = reactions.GetExtrema(reactions.Max.Y).Y.As(_forceUnit);
+              dmin = reactions.GetExtrema(reactions.Min.Y).Y.As(_forceUnit);
+              Parallel.ForEach(reactions.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Y.ToUnit(_forceUnit)));
+              break;
+
+            case DisplayValue.Z:
+              _resType = "Reaction Force, Fz";
+              dmax = reactions.GetExtrema(reactions.Max.Z).Z.As(_forceUnit);
+              dmin = reactions.GetExtrema(reactions.Min.Z).Z.As(_forceUnit);
+              Parallel.ForEach(reactions.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Z.ToUnit(_forceUnit)));
+              break;
+
+            case DisplayValue.ResXyz:
+              _resType = "Reaction Force, |F|";
+              dmax = reactions.GetExtrema(reactions.Max.Xyz).Xyz.As(_forceUnit);
+              dmin = reactions.GetExtrema(reactions.Min.Xyz).Xyz.As(_forceUnit);
+              Parallel.ForEach(reactions.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Xyz.ToUnit(_forceUnit)));
+              break;
+
+            case DisplayValue.Xx:
+              _resType = "Reaction Moment, Mxx";
+              dmax = reactions.GetExtrema(reactions.Max.Xx).Xx.As(_momentUnit);
+              dmin = reactions.GetExtrema(reactions.Min.Xx).Xx.As(_momentUnit);
+              Parallel.ForEach(reactions.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Xx.ToUnit(_momentUnit)));
+              break;
+
+            case DisplayValue.Yy:
+              _resType = "Reaction Moment, Myy";
+              dmax = reactions.GetExtrema(reactions.Max.Yy).Yy.As(_momentUnit);
+              dmin = reactions.GetExtrema(reactions.Min.Yy).Yy.As(_momentUnit);
+              Parallel.ForEach(reactions.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Yy.ToUnit(_momentUnit)));
+              break;
+
+            case DisplayValue.Zz:
+              _resType = "Reaction Moment, Mzz";
+              dmax = reactions.GetExtrema(reactions.Max.Zz).Zz.As(_momentUnit);
+              dmin = reactions.GetExtrema(reactions.Min.Zz).Zz.As(_momentUnit);
+              Parallel.ForEach(reactions.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Zz.ToUnit(_momentUnit)));
+              break;
+
+            case DisplayValue.ResXxyyzz:
+              _resType = "Reaction Moment, |M|";
+              dmax = reactions.GetExtrema(reactions.Max.Xxyyzz).Xxyyzz.As(_momentUnit);
+              dmin = reactions.GetExtrema(reactions.Min.Xxyyzz).Xxyyzz.As(_momentUnit);
+              Parallel.ForEach(reactions.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Xxyyzz.ToUnit(_momentUnit)));
+              break;
+          }
+
           break;
 
-        case DisplayValue.Z:
-          dmax = dmaxZ;
-          dmin = dminZ;
-          _resType = _mode == FoldMode.Displacement ? "Translation, Uz" : "Reaction Force, Fz";
+        case FoldMode.SpringForce:
+          INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> springForces
+            = result.NodeSpringForces.ResultSubset(nodeIds);
+
+          if (springForces.Ids.Count == 0) {
+            this.AddRuntimeError($"Model contains no results for nodes in list '{nodeList}'");
+            return;
+          }
+
+          switch (_disp) {
+            case DisplayValue.X:
+              _resType = "Reaction Force, Fx";
+              dmax = springForces.GetExtrema(springForces.Max.X).X.As(_forceUnit);
+              dmin = springForces.GetExtrema(springForces.Min.X).X.As(_forceUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].X.ToUnit(_forceUnit)));
+              break;
+
+            case DisplayValue.Y:
+              _resType = "Reaction Force, Fy";
+              dmax = springForces.GetExtrema(springForces.Max.Y).Y.As(_forceUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Y).Y.As(_forceUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Y.ToUnit(_forceUnit)));
+              break;
+
+            case DisplayValue.Z:
+              _resType = "Reaction Force, Fz";
+              dmax = springForces.GetExtrema(springForces.Max.Z).Z.As(_forceUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Z).Z.As(_forceUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Z.ToUnit(_forceUnit)));
+              break;
+
+            case DisplayValue.ResXyz:
+              _resType = "Reaction Force, |F|";
+              dmax = springForces.GetExtrema(springForces.Max.Xyz).Xyz.As(_forceUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Xyz).Xyz.As(_forceUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Xyz.ToUnit(_forceUnit)));
+              break;
+
+            case DisplayValue.Xx:
+              _resType = "Reaction Moment, Mxx";
+              dmax = springForces.GetExtrema(springForces.Max.Xx).Xx.As(_momentUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Xx).Xx.As(_momentUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Xx.ToUnit(_momentUnit)));
+              break;
+
+            case DisplayValue.Yy:
+              _resType = "Reaction Moment, Myy";
+              dmax = springForces.GetExtrema(springForces.Max.Yy).Yy.As(_momentUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Yy).Yy.As(_momentUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Yy.ToUnit(_momentUnit)));
+              break;
+
+            case DisplayValue.Zz:
+              _resType = "Reaction Moment, Mzz";
+              dmax = springForces.GetExtrema(springForces.Max.Zz).Zz.As(_momentUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Zz).Zz.As(_momentUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Zz.ToUnit(_momentUnit)));
+              break;
+
+            case DisplayValue.ResXxyyzz:
+              _resType = "Reaction Moment, |M|";
+              dmax = springForces.GetExtrema(springForces.Max.Xxyyzz).Xxyyzz.As(_momentUnit);
+              dmin = springForces.GetExtrema(springForces.Min.Xxyyzz).Xxyyzz.As(_momentUnit);
+              Parallel.ForEach(springForces.Subset, kvp =>
+                values.TryAdd(kvp.Key, kvp.Value[permutation].Xxyyzz.ToUnit(_momentUnit)));
+              break;
+          }
+
           break;
 
-        case DisplayValue.ResXyz:
-          dmax = dmaxXyz;
-          dmin = dminXyz;
-          _resType = _mode == FoldMode.Displacement ? "Res. Trans., |U|" : "Res. Rxn. Force, |F|";
-          break;
+        case FoldMode.Footfall:
+          _resType = "Response Factor [-]";
+          INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> footfall = null;
+          switch (_selectedItems[1]) {
+            case "Resonant":
+              footfall = result.NodeResonantFootfalls.ResultSubset(nodeIds);
+              break;
 
-        case DisplayValue.Xx:
-          dmax = dmaxXx;
-          dmin = dminXx;
-          _resType = _mode == FoldMode.Displacement ? "Rotation, Rxx" : "Reaction Moment, Mxx";
-          break;
+            case "Transient":
+              footfall = result.NodeTransientFootfalls.ResultSubset(nodeIds);
+              break;
+          }
 
-        case DisplayValue.Yy:
-          dmax = dmaxYy;
-          dmin = dminYy;
-          _resType = _mode == FoldMode.Displacement ? "Rotation, Ryy" : "Reaction Moment, Ryy";
-          break;
+          if (footfall.Ids.Count == 0) {
+            this.AddRuntimeError($"Model contains no results for nodes in list '{nodeList}'");
+            return;
+          }
 
-        case DisplayValue.Zz:
-          dmax = dmaxZz;
-          dmin = dminZz;
-          _resType = _mode == FoldMode.Displacement ? "Rotation, Rzz" : "Reaction Moment, Rzz";
-          break;
-
-        case DisplayValue.ResXxyyzz:
-          dmax = dmaxXxyyzz;
-          dmin = dminXxyyzz;
-          _resType = _mode == FoldMode.Displacement ? "Res. Rot., |R|" : "Res. Rxn. Mom., |M|";
+          dmax = footfall.GetExtrema(footfall.Max.MaximumResponseFactor).MaximumResponseFactor;
+          dmin = footfall.GetExtrema(footfall.Min.MaximumResponseFactor).MaximumResponseFactor;
+          Parallel.ForEach(footfall.Subset, kvp =>
+            values.TryAdd(kvp.Key, 
+            new Ratio(kvp.Value[permutation].MaximumResponseFactor, RatioUnit.DecimalFraction)));
           break;
       }
 
-      if (_mode == FoldMode.Footfall) {
-        _resType = "Response Factor [-]";
-      }
-
+      int significantDigits = 0;
       if (customMinMax != Interval.Unset) {
         dmin = customMinMax.Min;
         dmax = customMinMax.Max;
-      }
-
-      List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
-      dmax = rounded[0];
-      dmin = rounded[1];
-      int significantDigits = (int)rounded[2];
-      if (customMinMax != Interval.Unset) {
-        dmin = customMinMax.Min;
-        dmax = customMinMax.Max;
+        List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
+        significantDigits = (int)rounded[2];
+      } else {
+        List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
+        dmax = rounded[0];
+        dmin = rounded[1];
+        significantDigits = (int)rounded[2];
       }
 
       var pts = new ConcurrentDictionary<int, PointResultGoo>();
-      LengthUnit lengthUnit = result.Model.ModelUnit;
-      _undefinedModelLengthUnit = false;
-      if (lengthUnit == LengthUnit.Undefined) {
-        lengthUnit = _lengthUnit;
-        _undefinedModelLengthUnit = true;
-        this.AddRuntimeRemark(
-          "Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in "
-          + lengthUnit.ToString()
-          + ". This can be changed by right-clicking the component -> 'Select Units'");
-      }
-
       ConcurrentDictionary<int, GsaNodeGoo> gsanodes = Nodes.GetNodeDictionary(nodes, lengthUnit);
 
-      Parallel.ForEach(gsanodes, node => {
-        if (node.Value.Value == null) {
+      Parallel.ForEach(gsanodes, kvp => {
+        if (kvp.Value.Value == null) {
           return;
         }
 
-        int nodeId = node.Value.Value.Id;
-        if (!xyzResults.ContainsKey(nodeId) || (dmin == 0) & (dmax == 0)) {
+        if (!values.ContainsKey(kvp.Key) || (dmin == 0) & (dmax == 0)) {
           return;
         }
 
-        var def = new Point3d(node.Value.Value.Point);
+        var pt = new Point3d(kvp.Value.Value.Point);
+        IQuantity t = values[kvp.Key];
+        if (_mode == FoldMode.Displacement) {
+          var translation = new Vector3d(0, 0, 0);
+          switch (_disp) {
+            case DisplayValue.X:
+              translation.X = values[kvp.Key].As(lengthUnit) * _defScale;
+              break;
 
-        IQuantity t = null;
-        switch (_mode) {
-          case FoldMode.Displacement:
-            var translation = new Vector3d(0, 0, 0);
-            switch (_disp) {
-              case DisplayValue.X:
-                t = xyzResults[nodeId][0].X.ToUnit(_lengthResultUnit);
-                translation.X = xyzResults[nodeId][0].X.As(lengthUnit) * _defScale;
-                break;
+            case DisplayValue.Y:
+              translation.Y = values[kvp.Key].As(lengthUnit) * _defScale;
+              break;
 
-              case DisplayValue.Y:
-                t = xyzResults[nodeId][0].Y.ToUnit(_lengthResultUnit);
-                translation.Y = xyzResults[nodeId][0].Y.As(lengthUnit) * _defScale;
-                break;
+            case DisplayValue.Z:
+              translation.Z = values[kvp.Key].As(lengthUnit) * _defScale;
+              break;
 
-              case DisplayValue.Z:
-                t = xyzResults[nodeId][0].Z.ToUnit(_lengthResultUnit);
-                translation.Z = xyzResults[nodeId][0].Z.As(lengthUnit) * _defScale;
-                break;
+            case DisplayValue.ResXyz:
+              translation.X = valuesXyz[kvp.Key].x * _defScale;
+              translation.Y = valuesXyz[kvp.Key].y * _defScale;
+              translation.Z = valuesXyz[kvp.Key].z * _defScale;
+              break;
+          }
 
-              case DisplayValue.ResXyz:
-                t = xyzResults[nodeId][0].Xyz.ToUnit(_lengthResultUnit);
-                translation.X = xyzResults[nodeId][0].X.As(lengthUnit) * _defScale;
-                translation.Y = xyzResults[nodeId][0].Y.As(lengthUnit) * _defScale;
-                translation.Z = xyzResults[nodeId][0].Z.As(lengthUnit) * _defScale;
-                break;
-
-              case DisplayValue.Xx:
-                t = xxyyzzResults[nodeId][0].X.ToUnit(AngleUnit.Radian);
-                break;
-
-              case DisplayValue.Yy:
-                t = xxyyzzResults[nodeId][0].Y.ToUnit(AngleUnit.Radian);
-                break;
-
-              case DisplayValue.Zz:
-                t = xxyyzzResults[nodeId][0].Z.ToUnit(AngleUnit.Radian);
-                break;
-
-              case DisplayValue.ResXxyyzz:
-                t = xxyyzzResults[nodeId][0].Xyz.ToUnit(AngleUnit.Radian);
-                break;
-            }
-
-            def.Transform(Transform.Translation(translation));
-            break;
-
-          case FoldMode.Reaction:
-            switch (_disp) {
-              case DisplayValue.X:
-                t = xyzResults[nodeId][0].X.ToUnit(_forceUnit);
-                break;
-
-              case DisplayValue.Y:
-                t = xyzResults[nodeId][0].Y.ToUnit(_forceUnit);
-                break;
-
-              case DisplayValue.Z:
-                t = xyzResults[nodeId][0].Z.ToUnit(_forceUnit);
-                break;
-
-              case DisplayValue.ResXyz:
-                t = xyzResults[nodeId][0].Xyz.ToUnit(_forceUnit);
-                break;
-
-              case DisplayValue.Xx:
-                t = xxyyzzResults[nodeId][0].X.ToUnit(_momentUnit);
-                break;
-
-              case DisplayValue.Yy:
-                t = xxyyzzResults[nodeId][0].Y.ToUnit(_momentUnit);
-                break;
-
-              case DisplayValue.Zz:
-                t = xxyyzzResults[nodeId][0].Z.ToUnit(_momentUnit);
-                break;
-
-              case DisplayValue.ResXxyyzz:
-                t = xxyyzzResults[nodeId][0].Xyz.ToUnit(_momentUnit);
-                break;
-            }
-
-            break;
-
-          case FoldMode.Footfall:
-            t = xyzResults[nodeId][0].X.ToUnit(RatioUnit.DecimalFraction);
-            break;
+          pt.Transform(Transform.Translation(translation));
         }
 
         double tnorm = (2 * (t.Value - dmin) / (dmax - dmin)) - 1;
@@ -732,12 +823,9 @@ namespace GsaGH.Components {
         float size = t.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t.Value / dmax * scale)) :
           Math.Max(2, (float)(Math.Abs(t.Value) / Math.Abs(dmin) * scale));
 
-        pts[nodeId] = new PointResultGoo(def, t, valcol, size, nodeId);
+        pts[kvp.Key] = new PointResultGoo(pt, t, valcol, size, kvp.Key);
       });
 
-      #endregion
-
-      #region Legend
 
       int gripheight = _legend.Height / ghGradient.GripCount;
       _legendValues = new List<string>();
@@ -769,39 +857,40 @@ namespace GsaGH.Components {
         }
 
         switch (_mode) {
-          case FoldMode.Displacement when (int)_disp < 4: {
-            var displacement = new Length(t, _lengthResultUnit);
-            _legendValues.Add(displacement.ToString("f" + significantDigits));
-            ts.Add(new GH_UnitNumber(displacement));
-            break;
-          }
-          case FoldMode.Displacement: {
-            var rotation = new Angle(t, AngleUnit.Radian);
-            _legendValues.Add(rotation.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(rotation));
-            break;
-          }
-          case FoldMode.Reaction when (int)_disp < 4: {
-            var reactionForce = new Force(t, _forceUnit);
-            _legendValues.Add(reactionForce.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(reactionForce));
-            Message = Force.GetAbbreviation(_forceUnit);
-            break;
-          }
-          case FoldMode.Reaction: {
-            var reactionMoment = new Moment(t, _momentUnit);
-            _legendValues.Add(reactionMoment.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(reactionMoment));
-            Message = Moment.GetAbbreviation(_momentUnit);
-            break;
-          }
-          case FoldMode.Footfall: {
-            var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-            _legendValues.Add(responseFactor.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(responseFactor));
-            Message = string.Empty;
-            break;
-          }
+          case FoldMode.Displacement when (int)_disp < 4: 
+              var displacement = new Length(t, _lengthResultUnit);
+              _legendValues.Add(displacement.ToString("f" + significantDigits));
+              ts.Add(new GH_UnitNumber(displacement));
+              break;
+            
+          case FoldMode.Displacement: 
+              var rotation = new Angle(t, AngleUnit.Radian);
+              _legendValues.Add(rotation.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(rotation));
+              break;
+            
+          case FoldMode.Reaction when (int)_disp < 4: 
+          case FoldMode.SpringForce when (int)_disp < 4: 
+              var reactionForce = new Force(t, _forceUnit);
+              _legendValues.Add(reactionForce.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(reactionForce));
+              Message = Force.GetAbbreviation(_forceUnit);
+              break;
+            
+          case FoldMode.Reaction: 
+          case FoldMode.SpringForce: 
+              var reactionMoment = new Moment(t, _momentUnit);
+              _legendValues.Add(reactionMoment.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(reactionMoment));
+              Message = Moment.GetAbbreviation(_momentUnit);
+              break;
+            
+          case FoldMode.Footfall: 
+              var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
+              _legendValues.Add(responseFactor.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(responseFactor));
+              Message = string.Empty;
+              break;
         }
 
         if (Math.Abs(t) > 1) {
@@ -812,17 +901,11 @@ namespace GsaGH.Components {
         _legendValuesPosY.Add(_legend.Height - starty + (gripheight / 2) - 2);
       }
 
-      #endregion
-
       da.SetDataList(0, pts.OrderBy(x => x.Key).Select(y => y.Value).ToList());
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
-
-      GsaResultsValues.ResultType resultType = _mode == FoldMode.Reaction ?
-        GsaResultsValues.ResultType.Force :
-        (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType),
-          _mode.ToString());
-      PostHog.Result(result.Type, 0, resultType, _disp.ToString());
+      
+      PostHog.Result(result.CaseType, 0, _mode.ToString(), _disp.ToString());
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {
@@ -884,6 +967,19 @@ namespace GsaGH.Components {
     }
 
     private void Mode3Clicked() {
+      if (_mode == FoldMode.SpringForce) {
+        return;
+      }
+
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.SpringForce;
+      _slider = false;
+      _defScale = 0;
+
+      ReDrawComponent();
+    }
+
+    private void Mode4Clicked() {
       if (_mode == FoldMode.Footfall) {
         return;
       }
@@ -921,12 +1017,6 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    internal void UpdateModel(string unit) {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
     internal void UpdateMoment(string unit) {
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
       ExpirePreview(true);
@@ -936,8 +1026,7 @@ namespace GsaGH.Components {
     internal void UpdateLegendScale() {
       try {
         _legendScale = double.Parse(_scaleLegendTxt);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         this.AddRuntimeWarning(e.Message);
         return;
       }

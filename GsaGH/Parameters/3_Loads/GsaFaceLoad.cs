@@ -52,9 +52,12 @@ namespace GsaGH.Parameters {
         case FaceLoadType.POINT:
           dup.ApiLoad.IsProjected = ApiLoad.IsProjected;
           dup.ApiLoad.SetValue(0, ApiLoad.Value(0));
-          dup.ApiLoad.Position = ApiLoad.Position; // todo
-          //note Vector2 currently only get in GsaAPI
-          // duplicate Position.X and Position.Y when fixed
+          dup.ApiLoad.Position = new Vector2(ApiLoad.Position.X, ApiLoad.Position.Y); 
+          break;
+
+        case FaceLoadType.EQUATION:
+          dup.ApiLoad.IsProjected = ApiLoad.IsProjected;
+          dup.ApiLoad.SetEquation(ApiLoad.Equation());
           break;
       }
 

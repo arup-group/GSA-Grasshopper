@@ -9,6 +9,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.Graphics;
+using GsaGH.Parameters.Results;
 using OasysGH.Units;
 using OasysUnits;
 using Rhino;
@@ -355,7 +356,7 @@ namespace GsaGH.Parameters {
 
     private static GraphicSpecification ResultSpec(
       GsaResult res, string elementList = "all", double scaleFactor = 1.0) {
-      string caseType = res.Type == CaseType.AnalysisCase ? "A" : "C";
+      string caseType = res.CaseType == CaseType.AnalysisCase ? "A" : "C";
       string caseDefinition = $"{caseType}{res.CaseId}";
       return new GraphicSpecification() {
         Entities = new EntityList() {

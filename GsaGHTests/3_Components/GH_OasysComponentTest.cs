@@ -27,7 +27,6 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SaveGsaModel))]
     [InlineData(typeof(ModelTitles))]
     [InlineData(typeof(CreateBool6))]
-    [InlineData(typeof(CreateBucklingFactors))]
     [InlineData(typeof(CreateCustomMaterial))]
     [InlineData(typeof(CreateMaterial))]
     [InlineData(typeof(CreateOffset))]
@@ -37,7 +36,6 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateSection))]
     [InlineData(typeof(CreateSectionModifier))]
     [InlineData(typeof(EditBool6))]
-    [InlineData(typeof(EditBucklingFactors))]
     [InlineData(typeof(EditMaterial))]
     [InlineData(typeof(EditOffset))]
     [InlineData(typeof(EditProfile))]
@@ -66,6 +64,10 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(EditNode))]
     [InlineData(typeof(Create2dElementsFromBrep))]
     [InlineData(typeof(CreateElementsFromMembers))]
+    [InlineData(typeof(CreateEffectiveLength))]
+    [InlineData(typeof(EffectiveLengthInfo))]
+    [InlineData(typeof(CreateMemberEndRestraint))]
+    [InlineData(typeof(MemberEndRestraintInfo))]
     [InlineData(typeof(LocalAxes))]
     [InlineData(typeof(SectionAlignment))]
     [InlineData(typeof(Annotate))]
@@ -92,9 +94,11 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateCombinationCase))]
     [InlineData(typeof(EditAnalysisTask))]
     // 5_Results
+    [InlineData(typeof(BeamDerivedStresses))]
     [InlineData(typeof(BeamDisplacements))]
     [InlineData(typeof(BeamForcesAndMoments))]
     [InlineData(typeof(BeamStrainEnergyDensity))]
+    [InlineData(typeof(BeamStresses))]
     [InlineData(typeof(Contour1dResults))]
     [InlineData(typeof(Contour2dResults))]
     [InlineData(typeof(Element2dDisplacements))]
@@ -108,6 +112,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(MeshResultInfo))]
     [InlineData(typeof(PointResultInfo))]
     [InlineData(typeof(GetResult))]
+    [InlineData(typeof(GlobalPerformanceResults_OBSOLETE), true)]
     [InlineData(typeof(GlobalPerformanceResults))]
     [InlineData(typeof(ContourNodeResults))]
     [InlineData(typeof(NodeDisplacements))]
@@ -117,10 +122,12 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SelectResult))]
     [InlineData(typeof(SpringReactionForces))]
     [InlineData(typeof(TotalLoadsAndReactions))]
-    public void GH_OasysComponentTest(Type t) {
+    public void GH_OasysComponentTest(Type t, bool obsolete = false) {
       var comp = (GH_OasysComponent)Activator.CreateInstance(t);
       Assert.NotNull(comp.Icon_24x24);
-      Assert.NotEqual(GH_Exposure.hidden, comp.Exposure);
+      if (!obsolete) {
+        Assert.NotEqual(GH_Exposure.hidden, comp.Exposure);
+      }
       Assert.NotEqual(new Guid(), comp.ComponentGuid);
       Assert.Equal(PluginInfo.Instance, comp.PluginInfo);
     }

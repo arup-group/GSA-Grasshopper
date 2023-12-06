@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
@@ -24,7 +25,7 @@ namespace GsaGH.Components {
       Uniform,
       Variable,
       Point,
-      Edge, //note implementation of edge-load is not yet supported in GsaAPI
+      Equation, 
     }
 
     public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");
@@ -35,7 +36,7 @@ namespace GsaGH.Components {
       "Uniform",
       "Variable",
       "Point",
-      //"Edge" note implementation of edge-load is not yet supported in GsaAPI
+      "Equation"
     });
     private bool _duringLoad;
     private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
@@ -63,7 +64,7 @@ namespace GsaGH.Components {
             Mode3Clicked();
             break;
 
-          case "Edge":
+          case "Equation":
             Mode4Clicked();
             break;
         }
@@ -159,22 +160,24 @@ namespace GsaGH.Components {
           Params.Input[8].Optional = true;
           break;
 
-        case FoldMode.Edge:
-          Params.Input[5].NickName = "Ed";
-          Params.Input[5].Name = "Edge";
-          Params.Input[5].Description = "Edge (1, 2, 3 or 4)";
+        case FoldMode.Equation:
+          Params.Input[5].NickName = "Ae";
+          Params.Input[5].Name = "Equation Axis";
+          Params.Input[5].Description = "The Axis ID for which the equation is specified. " +
+            "By defualt global is used.";
           Params.Input[5].Access = GH_ParamAccess.item;
-          Params.Input[5].Optional = false;
+          Params.Input[5].Optional = true;
 
-          Params.Input[6].NickName = "V1";
-          Params.Input[6].Name = "Value 1 [" + unitAbbreviation + "]";
-          Params.Input[6].Description = "Load Value Corner 1";
+          Params.Input[6].NickName = "PT";
+          Params.Input[6].Name = "Use Constant pressure type?";
+          Params.Input[6].Description = "Constant pressure across the face of the element? " +
+            "By default false meaning Variable pressure across the face of the element.";
           Params.Input[6].Access = GH_ParamAccess.item;
-          Params.Input[6].Optional = false;
+          Params.Input[6].Optional = true;
 
-          Params.Input[7].NickName = "V2";
-          Params.Input[7].Name = "Value 2 [" + unitAbbreviation + "]";
-          Params.Input[7].Description = "Load Value Corner 2";
+          Params.Input[7].NickName = "E";
+          Params.Input[7].Name = "Equation";
+          Params.Input[7].Description = EquationTextHelp();
           Params.Input[7].Access = GH_ParamAccess.item;
           Params.Input[7].Optional = false;
           break;
@@ -407,28 +410,89 @@ namespace GsaGH.Components {
 
             double r = 0;
             da.GetData(7, ref r);
+            if (r < -1 || r > 1) {
+              this.AddRuntimeWarning("Position r must be between −1 to 1 for Quad and 0 to 1 for Tri elements");
+            }
+
             double s = 0;
+            if (s < -1 || s > 1) {
+              this.AddRuntimeWarning("Position s must be between −1 to 1 for Quad and 0 to 1 for Tri elements");
+            }
+
             da.GetData(8, ref s);
+            faceLoad.ApiLoad.Position = new Vector2(r, s);
             faceLoad.ApiLoad.SetValue(0,
               ((Pressure)Input.UnitNumber(this, da, 6, _forcePerAreaUnit)).NewtonsPerSquareMeter);
-            this.AddRuntimeWarning("Warning: the position cannot be set in GsaAPI at the moment");
           }
 
           break;
 
-        case FoldMode.Edge:
-          if (_mode == FoldMode.Edge) {
-            int edge = 1;
-            da.GetData(5, ref edge);
+        case FoldMode.Equation:
+          if (_mode == FoldMode.Equation) {
+            int axis = 0;
+            da.GetData(5, ref axis);
+            bool isUniform = false;
+            da.GetData(6, ref isUniform);
+            string expression = string.Empty;
+            da.GetData(7, ref expression);
+            GsaAPI.LengthUnit lengthUnit = GsaAPI.LengthUnit.Meter;
+            GsaAPI.StressUnit forceunit = GsaAPI.StressUnit.Kilopascal;
 
-            faceLoad.ApiLoad.SetValue(0,
-              ((Pressure)Input.UnitNumber(this, da, 6, _forcePerAreaUnit)).NewtonsPerSquareMeter);
-            faceLoad.ApiLoad.SetValue(1,
-              Params.Input[7].SourceCount != 0 ?
-                ((Pressure)Input.UnitNumber(this, da, 7, _forcePerAreaUnit)).NewtonsPerSquareMeter :
-                faceLoad.ApiLoad.Value(0));
+            switch (_forcePerAreaUnit) {
+              case PressureUnit.NewtonPerSquareMillimeter:
+                forceunit = StressUnit.NewtonPerSquareMillimeter;
+                lengthUnit = GsaAPI.LengthUnit.Millimeter;
+                break;
 
-            this.AddRuntimeWarning("Warning: edge-load is not yet supported in GsaAPI");
+              case PressureUnit.KilonewtonPerSquareMillimeter:
+                forceunit = StressUnit.Gigapascal;
+                lengthUnit = GsaAPI.LengthUnit.Millimeter;
+                break;
+
+              case PressureUnit.NewtonPerSquareCentimeter:
+                throw new ArgumentException("Unit for equation cannot be N/cm²");
+
+              case PressureUnit.KilonewtonPerSquareCentimeter:
+                throw new ArgumentException("Unit for equation cannot be kN/cm²");
+
+              case PressureUnit.NewtonPerSquareMeter:
+                forceunit = StressUnit.NewtonPerSquareMeter;
+                lengthUnit = GsaAPI.LengthUnit.Meter;
+                break;
+              case PressureUnit.KilonewtonPerSquareMeter:
+                forceunit = StressUnit.Kilopascal;
+                lengthUnit = GsaAPI.LengthUnit.Meter;
+                break;
+
+              case PressureUnit.PoundForcePerSquareInch:
+                forceunit = StressUnit.PoundForcePerSquareInch;
+                lengthUnit = GsaAPI.LengthUnit.Inch;
+                break;
+              case PressureUnit.KilopoundForcePerSquareInch:
+                forceunit = StressUnit.KilopoundForcePerSquareInch;
+                lengthUnit = GsaAPI.LengthUnit.Inch;
+                break;
+
+              case PressureUnit.PoundForcePerSquareFoot:
+                forceunit = StressUnit.PoundForcePerSquareFoot;
+                lengthUnit = GsaAPI.LengthUnit.Foot;
+                break;
+              case PressureUnit.KilopoundForcePerSquareFoot:
+                forceunit = StressUnit.KilopoundForcePerSquareFoot;
+                lengthUnit = GsaAPI.LengthUnit.Foot;
+                break;
+            }
+            
+            var equ = new PressureEquation() {
+              LengthUnits = lengthUnit,
+              PressureUnits = forceunit,
+              Axis = axis,
+              IsUniform = isUniform,
+              Expression = expression
+            };
+
+            faceLoad.ApiLoad.Type = FaceLoadType.EQUATION;
+            faceLoad.ApiLoad.SetEquation(equ);
           }
 
           break;
@@ -455,7 +519,7 @@ namespace GsaGH.Components {
           Mode3Clicked();
           break;
 
-        case "Edge":
+        case "Equation":
           Mode4Clicked();
           break;
       }
@@ -473,7 +537,7 @@ namespace GsaGH.Components {
       RecordUndoEvent("Uniform Parameters");
       _mode = FoldMode.Uniform;
 
-      if (_mode == FoldMode.Edge) {
+      if (_mode == FoldMode.Equation) {
         while (Params.Input.Count > 5) {
           Params.UnregisterInputParameter(Params.Input[5], true);
         }
@@ -497,7 +561,7 @@ namespace GsaGH.Components {
       RecordUndoEvent("Variable Parameters");
       _mode = FoldMode.Variable;
 
-      if (_mode == FoldMode.Edge) {
+      if (_mode == FoldMode.Equation) {
         while (Params.Input.Count > 5) {
           Params.UnregisterInputParameter(Params.Input[5], true);
         }
@@ -527,7 +591,7 @@ namespace GsaGH.Components {
       RecordUndoEvent("Point Parameters");
       _mode = FoldMode.Point;
 
-      if (_mode == FoldMode.Edge) {
+      if (_mode == FoldMode.Equation) {
         while (Params.Input.Count > 5) {
           Params.UnregisterInputParameter(Params.Input[5], true);
         }
@@ -548,20 +612,63 @@ namespace GsaGH.Components {
     }
 
     private void Mode4Clicked() {
-      if (!_duringLoad && _mode == FoldMode.Edge) {
+      if (!_duringLoad && _mode == FoldMode.Equation) {
         return;
       }
 
-      RecordUndoEvent("Edge Parameters");
-      _mode = FoldMode.Edge;
+      RecordUndoEvent("Equation Parameters");
+      _mode = FoldMode.Equation;
 
       while (Params.Input.Count > 5) {
         Params.UnregisterInputParameter(Params.Input[5], true);
       }
 
-      Params.RegisterInputParam(new Param_Number());
-      Params.RegisterInputParam(new Param_Number());
-      Params.RegisterInputParam(new Param_Number());
+      Params.RegisterInputParam(new Param_Integer());
+      Params.RegisterInputParam(new Param_Boolean());
+      Params.RegisterInputParam(new Param_String());
+    }
+
+    [ExcludeFromCodeCoverage]
+    private string EquationTextHelp() {
+      return
+       "Normal mathematical notation is used in expressions:\n"
+	    + "\n"
+	    + "The arithmetic operators are +,-,*,/,^: normal operator precedence is followed\n"
+	    + "The constants pi (3.14...) and g (9.81...) are defined\n"
+	    + "Parenthesis can be used to clarify the order of operations\n"
+	    + "\n"
+	    + "The following functions can be used:\n"
+	    + "   sqrt(x)    square root\n"
+	    + "   abs(x)     absolute value\n"
+	    + "   exp(x)     e raised to power of\n"
+	    + "   ln(x)      natural logarithm\n"
+	    + "   log(x)     base 10 logarithm\n"
+	    + "   sin(x)     sine (in radians)\n"
+	    + "   cos(x)     cosine (in radians)\n"
+	    + "   tan(x)     tangent (in radians)\n"
+	    + "   asin(x)    inverse sine (in radians)\n"
+	    + "   acos(x)    inverse cosine (in radians)\n"
+	    + "   atan(x)    inverse tangent (in radians)\n"
+	    + "   atan(y,x)  inverse tangent of (y/x) (in radians)\n"
+	    + "   sinh(x)    hyperbolic sine\n"
+	    + "   cosh(x)    hyperbolic cosine\n"
+	    + "   tanh(x)    hyperbolic tangent\n"
+	    + "   asinh(x)   inverse hyperbolic sine\n"
+	    + "   acosh(x)   inverse hyperbolic cosine\n"
+	    + "   atanh(x)   inverse hyperbolic tangent\n"
+	    + "   radians(x) conversion of degrees to radians\n"
+	    + "   degrees(x) conversion of radians to degrees\n"
+	    + "   floor(x)   round a number down to integer value\n"
+	    + "   ceil(x)    round a number up to integer value\n"
+	    + "   sign(x)    return sign of number\n"
+	    + "   max(x,y)   maximum of two numbers\n"
+	    + "   min(x,y)   minimum of two numbers\n"
+     + "\n"
+	    + "Conditional expressions can be specified in the form:\n"
+	    + "   if(condition,true_expression,false_expression)\n"
+	    + "The conditional operators are >,<,!=(or <>),>=,<=,==(or=)\n"
+	    + "and the logical operators are && (and) and || (or)\n"
+	    + "Conditional expressions can be nested.\n";
     }
   }
 }

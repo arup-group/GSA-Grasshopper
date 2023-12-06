@@ -7,7 +7,7 @@ using GsaGHTests.Model;
 using OasysGH.Components;
 using Xunit;
 
-namespace GsaGHTests.Results {
+namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class GetResultsTest {
     public static GH_OasysComponent ResultsComponentMother() {
@@ -25,7 +25,7 @@ namespace GsaGHTests.Results {
       var comp = (GetResult)ResultsComponentMother();
       var result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
 
-      Assert.Equal(CaseType.AnalysisCase, result.Value.Type);
+      Assert.Equal(CaseType.AnalysisCase, result.Value.CaseType);
       Assert.Equal(1, result.Value.CaseId);
       Assert.Equal(GH_RuntimeMessageLevel.Remark, comp.RuntimeMessageLevel);
       Assert.Equal("By default, Analysis Case 1 has been selected.",
@@ -44,7 +44,7 @@ namespace GsaGHTests.Results {
       ComponentTestHelper.SetInput(comp, 2, 2);
 
       var result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(CaseType.AnalysisCase, result.Value.Type);
+      Assert.Equal(CaseType.AnalysisCase, result.Value.CaseType);
       Assert.Equal(2, result.Value.CaseId);
       Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
     }
@@ -61,7 +61,7 @@ namespace GsaGHTests.Results {
       ComponentTestHelper.SetInput(comp, 1, 2);
 
       var result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(CaseType.CombinationCase, result.Value.Type);
+      Assert.Equal(CaseType.CombinationCase, result.Value.CaseType);
       Assert.Equal(1, result.Value.CaseId);
       Assert.Equal(new List<int>() {
         1,
@@ -84,7 +84,7 @@ namespace GsaGHTests.Results {
       ComponentTestHelper.SetInput(comp, 1, 3);
 
       var result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(CaseType.CombinationCase, result.Value.Type);
+      Assert.Equal(CaseType.CombinationCase, result.Value.CaseType);
       Assert.Equal(1, result.Value.CaseId);
       Assert.Equal(new List<int>() {
         1,

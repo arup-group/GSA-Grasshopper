@@ -1,5 +1,6 @@
 ﻿using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGHTests.Helpers;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaMember2dGoo), typeof(GsaMember2d))]
     [InlineData(typeof(GsaMember3dGoo), typeof(GsaMember3d))]
     [InlineData(typeof(GsaNodeGoo), typeof(GsaNode))]
-    [InlineData(typeof(GsaBucklingFactorsGoo), typeof(GsaBucklingFactors))]
+    [InlineData(typeof(GsaEffectiveLengthGoo), typeof(GsaEffectiveLength))]
     // 3_Loads
     [InlineData(typeof(GsaGridPlaneSurfaceGoo), typeof(GsaGridPlaneSurface))]
     [InlineData(typeof(GsaLoadGoo), typeof(GsaBeamLoad))]
@@ -56,7 +57,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaCombinationCaseGoo), typeof(GsaCombinationCase))]
 
     // 5_Results
-    [InlineData(typeof(GsaResultGoo), typeof(GsaResult))]
+    //[InlineData(typeof(GsaResultGoo), typeof(GsaResult))]
     //[InlineData(typeof(LineResultGoo), typeof(Line))]
     //[InlineData(typeof(MeshResultGoo), typeof(Mesh))]
     //[InlineData(typeof(PointResultGoo), typeof(Point3d))]
