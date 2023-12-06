@@ -33,7 +33,6 @@ using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Collections;
 using Rhino.Display;
-using Rhino.DocObjects;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using ForceUnit = OasysUnits.Units.ForceUnit;

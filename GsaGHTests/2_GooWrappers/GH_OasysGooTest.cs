@@ -1,6 +1,5 @@
 ﻿using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
-using GsaGH.Parameters.Results;
 using GsaGHTests.Helpers;
 using System;
 using System.Collections.Generic;

@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
-using OasysGH.Parameters;
 using OasysUnits;
-using OasysUnits.Units;
 using Rhino.Collections;
 using Rhino.Geometry;
 

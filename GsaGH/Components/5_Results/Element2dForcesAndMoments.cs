@@ -16,14 +16,12 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using GsaGH.Parameters.Results;
-using GsaGH.Helpers.Import;
 
 namespace GsaGH.Components {
   /// <summary>

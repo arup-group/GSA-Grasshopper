@@ -15,7 +15,6 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
-using Grasshopper.Kernel.Types.Transforms;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;

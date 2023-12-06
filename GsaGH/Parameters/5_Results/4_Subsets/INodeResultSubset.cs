@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
   public interface INodeResultSubset<T1, T2> where T1 : IResultItem {
