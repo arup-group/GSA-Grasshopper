@@ -285,6 +285,12 @@ namespace GsaGH.Parameters {
         : m.Property > 0 ? new GsaSection(m.Property) : null;
     }
 
+    internal GsaSpringProperty GetSpringProperty(Element m) {
+      return SpringProps.TryGetValue(m.Property, out GsaSpringPropertyGoo prop)
+        ? prop.Value
+        : m.Property > 0 ? new GsaSpringProperty(m.Property) : null;
+    }
+
     internal GsaSpringProperty GetSpringProperty(Node n) {
       return SpringProps.TryGetValue(n.SpringProperty, out GsaSpringPropertyGoo prop)
         ? prop.Value
