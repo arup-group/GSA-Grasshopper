@@ -27,7 +27,8 @@ namespace GsaGH.Components {
   /// </summary>
   public class Member1dForcesAndMoments : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("36973d2e-ee21-4165-aa7e-2fd07a76aec3");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    // to-do: bug in GSA 10.2.3 member results, hide this component for now
+    public override GH_Exposure Exposure => GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Member1dForcesAndMoments;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
@@ -92,7 +93,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaElementMemberListParameter());
+      pManager.AddParameter(new GsaMemberListParameter());
       pManager[1].Optional = true;
       pManager.AddIntegerParameter("Intermediate Points", "nP",
         "Number of intermediate equidistant points (default 3)", GH_ParamAccess.item, 3);
@@ -132,7 +133,7 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       GsaResult result;
-      string elementlist = "All";
+      string memberList = "All";
       var ghDivisions = new GH_Integer();
       da.GetData(2, ref ghDivisions);
       GH_Convert.ToInt32(ghDivisions, out int positionsCount, GH_Conversion.Both);
@@ -154,7 +155,7 @@ namespace GsaGH.Components {
         switch (ghTyp?.Value) {
           case GsaResultGoo goo:
             result = (GsaResult)goo.Value;
-            elementlist = Inputs.GetMemberListDefinition(this, da, 1, result.Model);
+            memberList = Inputs.GetMemberListDefinition(this, da, 1, result.Model);
             break;
 
           default:
@@ -162,7 +163,7 @@ namespace GsaGH.Components {
             return;
         }
 
-        ReadOnlyCollection<int> elementIds = result.MemberIds(elementlist);
+        ReadOnlyCollection<int> elementIds = result.MemberIds(memberList);
         IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet =
           result.Member1dInternalForces.ResultSubset(elementIds, positionsCount);
 
