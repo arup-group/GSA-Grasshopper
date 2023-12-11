@@ -70,7 +70,7 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
-        "Envelope",
+        "Max/Min",
         "Force Unit",
         "Moment Unit",
       });

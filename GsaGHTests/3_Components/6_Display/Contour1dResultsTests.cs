@@ -82,6 +82,23 @@ namespace GsaGHTests.Components.Display {
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 2);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 2);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 3);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 4);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 5);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 6);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 7);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 8);
+
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 3);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 2);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 3);
+
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 4);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
+      SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
     }
 
     [Fact]

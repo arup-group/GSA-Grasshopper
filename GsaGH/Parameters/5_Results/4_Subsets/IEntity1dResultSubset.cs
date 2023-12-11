@@ -1,6 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 
 namespace GsaGH.Parameters.Results {
   public interface IEntity1dResultSubset<T1, T2, T3>

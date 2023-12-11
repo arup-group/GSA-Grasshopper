@@ -6,8 +6,6 @@ using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
-using GsaGHTests.Parameters.Results;
-using OasysGH.Helpers;
 using OasysGH.Parameters;
 using OasysUnits;
 using Rhino.Geometry;

@@ -196,7 +196,6 @@ namespace GsaGH.Helpers.GH {
 
     internal static EntityList GetElementOrMemberList(
       GH_Component owner, IGH_DataAccess da, int inputid) {
-      // to-do GSAGH-350
       var list = new EntityList() {
         Definition = "All",
         Type = GsaAPI.EntityType.Element
@@ -229,7 +228,6 @@ namespace GsaGH.Helpers.GH {
 
     internal static string GetElementListDefinition(
       GH_Component owner, IGH_DataAccess da, int inputid, GsaModel model) {
-      // to-do GSAGH-350
       string elementlist = "All";
       var ghType = new GH_ObjectWrapper();
       if (!da.GetData(inputid, ref ghType)) {
@@ -281,11 +279,11 @@ namespace GsaGH.Helpers.GH {
           }
 
           ReadOnlyCollection<int> memberIds = model.Model.ExpandList(list);
-
           var elementIds = new List<int>();
           var warnings = new List<int>(); ;
           foreach (int memberId in memberIds) {
             if (!memberElementRelationship.ContainsKey(memberId)) {
+              warnings.Add(memberId);
               continue;
             }
 
@@ -314,6 +312,7 @@ namespace GsaGH.Helpers.GH {
       var warnings2 = new List<int>(); ;
       foreach (int memberId in memberIds2) {
         if (!memberElementRelationship.ContainsKey(memberId)) {
+          warnings2.Add(memberId);
           continue;
         }
 
@@ -321,14 +320,14 @@ namespace GsaGH.Helpers.GH {
       }
 
       if (elementIds2.Count > 0) {
-        if (warnings2.Count > 0) {
-          string warningIds = GsaList.CreateListDefinition(warnings2);
-          owner.AddRuntimeWarning($"No child elements found for Members {warningIds}");
-        }
-
         owner.AddRuntimeRemark($"Element definition was derived from Elements with Parent "
           + $"Member included in '{listGoo.Value.Name}' List");
         return GsaList.CreateListDefinition(elementIds2);
+      }
+
+      if (warnings2.Count > 0) {
+        string warningIds = GsaList.CreateListDefinition(warnings2);
+        owner.AddRuntimeWarning($"No child elements found for Members {warningIds}");
       }
 
       return string.Empty;

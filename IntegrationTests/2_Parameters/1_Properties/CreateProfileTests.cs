@@ -2,9 +2,6 @@
 using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaGH.Parameters;
-using OasysUnits;
-using OasysUnits.Units;
 using Xunit;
 
 namespace IntegrationTests.Parameters {
