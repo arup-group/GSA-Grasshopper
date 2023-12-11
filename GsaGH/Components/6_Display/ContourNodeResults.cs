@@ -458,10 +458,6 @@ namespace GsaGH.Components {
           }
           break;
 
-        case null:
-          this.AddRuntimeWarning("Input is null");
-          return;
-
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;

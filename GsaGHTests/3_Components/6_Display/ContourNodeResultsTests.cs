@@ -53,7 +53,6 @@ namespace GsaGHTests.Components.Display {
       var comp = new ContourNodeResults();
       ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 0);
-      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 0);
 
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
@@ -64,7 +63,6 @@ namespace GsaGHTests.Components.Display {
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 6);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 7);
 
-      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 1);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 1);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
@@ -91,7 +89,6 @@ namespace GsaGHTests.Components.Display {
       var comp = new ContourNodeResults();
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SpringForces, 1);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 2);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 2);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 1);
