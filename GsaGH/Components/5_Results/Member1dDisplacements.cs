@@ -27,7 +27,8 @@ namespace GsaGH.Components {
   /// </summary>
   public class Member1dDisplacements : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("d15f1830-d383-4495-af8e-c78478482bcd");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    // to-do: bug in GSA 10.2.3 member results, hide this component for now
+    public override GH_Exposure Exposure => GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Member1dDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
