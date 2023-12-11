@@ -21,6 +21,7 @@ using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -108,7 +109,7 @@ namespace GsaGH.Components {
     private string _case = string.Empty;
     private double _defScale = 250;
     private DisplayValue _disp = DisplayValue.ResXyz;
-    private int _flayer;
+    private Layer2d _flayer;
     private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private bool _isShear;
@@ -127,7 +128,6 @@ namespace GsaGH.Components {
     private bool _showLegend = true;
     private bool _slider = true;
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
-    private bool _undefinedModelLengthUnit;
 
     public Contour2dResults() : base("Contour 2D Results", "Contour2d",
       "Displays GSA 2D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -168,7 +168,7 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       _mode = (FoldMode)reader.GetInt32("Mode");
       _disp = (DisplayValue)reader.GetInt32("Display");
-      _flayer = reader.GetInt32("flayer");
+      _flayer = (Layer2d)reader.GetInt32("flayer");
       _slider = reader.GetBoolean("slider");
       _noDigits = reader.GetInt32("noDec");
       _maxValue = reader.GetDouble("valMax");
@@ -199,157 +199,156 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
       switch (i) {
-        case 0: {
-            switch (j) {
-              case 0: {
-                  if (_dropDownItems[1] != _displacement) {
-                    while (
-                      _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
-                    {
-                      _dropDownItems.RemoveAt(2);
-                      _selectedItems.RemoveAt(2);
-                      _spacerDescriptions.RemoveAt(2);
-                    }
-
-                    _dropDownItems[1] = _displacement;
-                    _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
-
-                    _disp = (DisplayValue)3;
-                    _isShear = false;
-                    _flayer = 0;
-                    Mode1Clicked();
+        case 0: { 
+          switch (j) {
+              case 0: 
+                if (_dropDownItems[1] != _displacement) {
+                  while (
+                    _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
+                  {
+                    _dropDownItems.RemoveAt(2);
+                    _selectedItems.RemoveAt(2);
+                    _spacerDescriptions.RemoveAt(2);
                   }
 
-                  break;
+                  _dropDownItems[1] = _displacement;
+                  _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
+
+                  _disp = (DisplayValue)3;
+                  _isShear = false;
+                  _flayer = 0;
+                  DisplacementModeClicked();
                 }
-              case 1: {
-                  if (_dropDownItems[1] != _force) {
-                    while (
-                      _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
-                    {
-                      _dropDownItems.RemoveAt(2);
-                      _selectedItems.RemoveAt(2);
-                      _spacerDescriptions.RemoveAt(2);
-                    }
 
-                    _dropDownItems[1] = _force;
-                    _selectedItems[1] = _dropDownItems[1][0];
-
-                    _disp = 0;
-                    _isShear = false;
-                    _flayer = 0;
-                    Mode2Clicked();
+                break;
+                
+              case 1: 
+                if (_dropDownItems[1] != _force) {
+                  while (
+                    _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
+                  {
+                    _dropDownItems.RemoveAt(2);
+                    _selectedItems.RemoveAt(2);
+                    _spacerDescriptions.RemoveAt(2);
                   }
 
-                  break;
+                  _dropDownItems[1] = _force;
+                  _selectedItems[1] = _dropDownItems[1][0];
+
+                  _disp = 0;
+                  _isShear = false;
+                  _flayer = 0;
+                  ForceModeClicked();
                 }
-              case 2: {
-                  if (_dropDownItems[1] != _stress) {
-                    if (_dropDownItems.Count < 3) {
-                      _dropDownItems.Insert(2, _layer); //insert layer dropdown as third dd list
-                      _spacerDescriptions.Insert(2, "Layer");
-                    }
 
-                    _dropDownItems[1] = _stress;
-                    _selectedItems[1] = _dropDownItems[1][0];
-
-                    if (_selectedItems.Count < 3) {
-                      _selectedItems.Insert(2, _dropDownItems[2][1]);
-                    } else {
-                      _selectedItems[2] = _dropDownItems[2][1];
-                    }
-
-                    _disp = 0;
-                    _isShear = false;
-                    Mode4Clicked();
+                break;
+                
+              case 2: 
+                if (_dropDownItems[1] != _stress) {
+                  if (_dropDownItems.Count < 3) {
+                    _dropDownItems.Insert(2, _layer); //insert layer dropdown as third dd list
+                    _spacerDescriptions.Insert(2, "Layer");
                   }
 
-                  break;
-                }
-              case 3: {
-                  if (_dropDownItems[1] != _footfall) {
-                    while (
-                      _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
-                    {
-                      _dropDownItems.RemoveAt(2);
-                      _selectedItems.RemoveAt(2);
-                      _spacerDescriptions.RemoveAt(2);
-                    }
+                  _dropDownItems[1] = _stress;
+                  _selectedItems[1] = _dropDownItems[1][0];
 
-                    _dropDownItems[1] = _footfall;
-                    _selectedItems[1] = _dropDownItems[1][0];
-
-                    _disp = 0;
-                    _isShear = false;
-                    _flayer = 0;
-                    Mode5Clicked();
+                  if (_selectedItems.Count < 3) {
+                    _selectedItems.Insert(2, _dropDownItems[2][1]);
+                  } else {
+                    _selectedItems[2] = _dropDownItems[2][1];
                   }
 
-                  break;
+                  _disp = 0;
+                  _isShear = false;
+                  StressModeClicked();
                 }
+
+                break;
+                
+              case 3: 
+                if (_dropDownItems[1] != _footfall) {
+                  while (
+                    _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
+                  {
+                    _dropDownItems.RemoveAt(2);
+                    _selectedItems.RemoveAt(2);
+                    _spacerDescriptions.RemoveAt(2);
+                  }
+
+                  _dropDownItems[1] = _footfall;
+                  _selectedItems[1] = _dropDownItems[1][0];
+
+                  _disp = 0;
+                  _isShear = false;
+                  _flayer = 0;
+                  FootfallModeClicked();
+                }
+
+                break;
             }
 
-            break;
-          }
+          break;
+        }
         case 1: {
-            bool redraw = false;
-            _selectedItems[1] = _dropDownItems[1][j];
-            if (_mode == FoldMode.Displacement) {
-              if (((int)_disp > 3) & (j < 4)) {
-                redraw = true;
-                _slider = true;
-              }
-
-              if (((int)_disp < 4) & (j > 3)) {
-                redraw = true;
-                _slider = false;
-              }
+          bool redraw = false;
+          _selectedItems[1] = _dropDownItems[1][j];
+          if (_mode == FoldMode.Displacement) {
+            if (((int)_disp > 3) & (j < 4)) {
+              redraw = true;
+              _slider = true;
             }
 
-            _disp = (DisplayValue)j;
-            if (_dropDownItems[1] != _displacement) {
-              _isShear = false;
-              if (_mode == FoldMode.Force) {
-                if ((j == 3) | (j == 4)) {
-                  _disp = (DisplayValue)j - 3;
-                  _isShear = true;
-                } else if (j > 4) {
-                  _disp = j switch {
-                    8 => DisplayValue.ResXyz,
-                    9 => DisplayValue.ResXxyyzz,
-                    _ => (DisplayValue)j - 1,
-                  };
-                }
-              } else if (_mode == FoldMode.Force || _mode == FoldMode.Stress) {
-                if (j > 2) {
-                  _disp = (DisplayValue)j + 1;
-                }
-              }
+            if (((int)_disp < 4) & (j > 3)) {
+              redraw = true;
+              _slider = false;
             }
-
-            if (redraw) {
-              ReDrawComponent();
-            }
-
-            break;
           }
+
+          _disp = (DisplayValue)j;
+          if (_dropDownItems[1] != _displacement) {
+            _isShear = false;
+            if (_mode == FoldMode.Force) {
+              if ((j == 3) | (j == 4)) {
+                _disp = (DisplayValue)j - 3;
+                _isShear = true;
+              } else if (j > 4) {
+                _disp = j switch {
+                  8 => DisplayValue.ResXyz,
+                  9 => DisplayValue.ResXxyyzz,
+                  _ => (DisplayValue)j - 1,
+                };
+              }
+            } else if (_mode == FoldMode.Force || _mode == FoldMode.Stress) {
+              if (j > 2) {
+                _disp = (DisplayValue)j + 1;
+              }
+            }
+          }
+
+          if (redraw) {
+            ReDrawComponent();
+          }
+
+          break;
+        }
         case 2 when _mode == FoldMode.Stress: {
-            switch (j) {
-              case 0:
-                _flayer = 1;
-                break;
+          switch (j) {
+            case 0:
+              _flayer = Layer2d.Top;
+              break;
 
-              case 1:
-                _flayer = 0;
-                break;
+            case 1:
+              _flayer = Layer2d.Middle;
+              break;
 
-              case 2:
-                _flayer = -1;
-                break;
-            }
-
-            break;
+            case 2:
+              _flayer = Layer2d.Bottom;
+              break;
           }
+
+          break;
+        }
       }
 
       base.UpdateUI();
@@ -399,7 +398,7 @@ namespace GsaGH.Components {
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("Mode", (int)_mode);
       writer.SetInt32("Display", (int)_disp);
-      writer.SetInt32("flayer", _flayer);
+      writer.SetInt32("flayer", (int)_flayer);
       writer.SetBoolean("slider", _slider);
       writer.SetInt32("noDec", _noDigits);
       writer.SetDouble("valMax", _maxValue);
@@ -450,14 +449,6 @@ namespace GsaGH.Components {
         stressUnitsMenu,
       });
 
-      if (_undefinedModelLengthUnit) {
-        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
-          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
-          UpdateModel);
-
-        unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
-      }
-
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
 
       menu.Items.Add(unitsMenu);
@@ -490,7 +481,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Force:
-          Message = ((int)_disp < 3 | _isShear) ? ForcePerLength.GetAbbreviation(_forcePerLengthUnit) :
+          Message = (((int)_disp < 3) | _isShear) ? ForcePerLength.GetAbbreviation(_forcePerLengthUnit) :
             Force.GetAbbreviation(_forceUnit) + "·" + Length.GetAbbreviation(_lengthUnit) + "/"
             + Length.GetAbbreviation(_lengthUnit);
           break;
@@ -550,7 +541,8 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var result = new GsaResult();
+      GsaResult result = null;
+      string elementlist = "All";
       _case = string.Empty;
       _resType = string.Empty;
       var ghTyp = new GH_ObjectWrapper();
@@ -560,12 +552,10 @@ namespace GsaGH.Components {
 
       switch (ghTyp?.Value) {
         case GsaResultGoo goo:
-          if (goo.Value == null) {
-            return;
-          }
+          result = (GsaResult)goo.Value;
+          elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
 
-          result = goo.Value;
-          switch (result.Type) {
+          switch (result.CaseType) {
             case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
               this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
                 + result.SelectedPermutationIds.Count
@@ -591,7 +581,13 @@ namespace GsaGH.Components {
           return;
       }
 
-      string elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
+      ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
+      ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
+
+      if (elems.Count == 0) {
+        this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
+        return;
+      };
 
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();
@@ -609,255 +605,244 @@ namespace GsaGH.Components {
         GH_Convert.ToInterval(ghInterval, ref customMinMax, GH_Conversion.Both);
       }
 
-      var res = new GsaResultsValues();
-      var resShear = new GsaResultsValues();
-      switch (_mode) {
-        case FoldMode.Displacement:
-          res = result.Element2DDisplacementValues(elementlist, _lengthResultUnit)[0];
-          break;
+      ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);
+      int permutation = result.SelectedPermutationIds == null
+        ? 0 : result.SelectedPermutationIds[0] - 1;
 
-        case FoldMode.Force:
-          res = result.Element2DForceValues(elementlist, _forcePerLengthUnit, _forceUnit)[0];
-          resShear = result.Element2DShearValues(elementlist, _forcePerLengthUnit)[0];
-          break;
-
-        case FoldMode.Stress:
-          res = result.Element2DStressValues(elementlist, _flayer, _stressUnitResult)[0];
-          break;
-
-        case FoldMode.Footfall:
-          var footfallType
-            = (FootfallResultType)Enum.Parse(typeof(FootfallResultType), _selectedItems[1]);
-          res = result.Element2DFootfallValues(elementlist, footfallType)[0];
-          break;
-      }
-
-      ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
-      ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
-      if (elems.Count == 0) {
-        this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
-        return;
-      };
-
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
-        = _isShear ? resShear.XyzResults : res.XyzResults;
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults
-        = res.XxyyzzResults;
-
-      Enum xyzunit = _lengthResultUnit;
-      Enum xxyyzzunit = AngleUnit.Radian;
-      switch (_mode) {
-        case FoldMode.Force:
-          xyzunit = _forcePerLengthUnit;
-          xxyyzzunit = _forceUnit;
-          break;
-
-        case FoldMode.Stress:
-          xyzunit = _stressUnitResult;
-          xxyyzzunit = _stressUnitResult;
-          break;
-
-        case FoldMode.Footfall:
-          xyzunit = RatioUnit.DecimalFraction;
-          _disp = DisplayValue.X;
-          break;
-      }
-
-      if ((_isShear ? resShear.DmaxX : res.DmaxX) == null) {
-        string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-        string filter = string.Empty;
-        if (elementlist.ToLower() != "all") {
-          filter = " for element list " + elementlist;
-        }
-
-        this.AddRuntimeWarning("Case " + acase + " contains no Element2D results" + filter);
-        return;
-      }
-
-      double dmaxX = _isShear ? resShear.DmaxX.As(xyzunit) : res.DmaxX.As(xyzunit);
-      double dmaxY = 0;
-      double dmaxZ = 0;
-      double dmaxXyz = 0;
-      double dminX = 0;
-      double dminY = 0;
-      double dminZ = 0;
-      double dminXyz = 0;
-      double dmaxXx = 0;
-      double dmaxYy = 0;
-      double dmaxZz = 0;
-      double dmaxXxyyzz = 0;
-      double dminXx = 0;
-      double dminYy = 0;
-      double dminZz = 0;
-      double dminXxyyzz = 0;
-      if (_mode != FoldMode.Footfall) {
-        dmaxY = _isShear ? resShear.DmaxY.As(xyzunit) : res.DmaxY.As(xyzunit);
-        dmaxZ = res.DmaxZ.As(xyzunit);
-        dmaxXyz = _mode == FoldMode.Displacement ? res.DmaxXyz.As(xyzunit) : 0;
-        dminX = _isShear ? resShear.DminX.As(xyzunit) : res.DminX.As(xyzunit);
-        dminY = _isShear ? resShear.DminY.As(xyzunit) : res.DminY.As(xyzunit);
-        dminZ = res.DminZ.As(xyzunit);
-        dminXyz = _mode == FoldMode.Displacement ? res.DminXyz.As(xyzunit) : 0;
-        dmaxXx = _isShear ? 0 : res.DmaxXx.As(xxyyzzunit);
-        dmaxYy = _isShear ? 0 : res.DmaxYy.As(xxyyzzunit);
-        dmaxZz = _isShear ? 0 : res.DmaxZz.As(xxyyzzunit);
-        dmaxXxyyzz = _mode == FoldMode.Force ? res.DmaxXxyyzz.As(xxyyzzunit) : 0;
-        dminXx = _isShear ? 0 : res.DminXx.As(xxyyzzunit);
-        dminYy = _isShear ? 0 : res.DminYy.As(xxyyzzunit);
-        dminZz = _isShear ? 0 : res.DminZz.As(xxyyzzunit);
-        dminXxyyzz = _mode == FoldMode.Force ? res.DminXxyyzz.As(xxyyzzunit) : 0;
-      }
-
-      if (_mode == FoldMode.Force && _disp == DisplayValue.ResXyz) {
-        dmaxXyz = res.DmaxXyz.As(xxyyzzunit);
-        dminXyz = res.DminXyz.As(xxyyzzunit);
-      }
-
-      #region Result mesh values
+      ConcurrentDictionary<int, IList<IQuantity>> values = null;
+      ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> valuesXyz = null;
 
       double dmax = 0;
       double dmin = 0;
-      switch (_disp) {
-        case DisplayValue.X:
-          dmax = dmaxX;
-          dmin = dminX;
-          if (_mode == FoldMode.Displacement) {
-            _resType = "Translation, Ux";
-          } else if ((_mode == FoldMode.Force) & !_isShear) {
-            _resType = "2D Force, Nx";
-          } else if ((_mode == FoldMode.Force) & _isShear) {
-            _resType = "2D Shear, Qx";
-          } else if (_mode == FoldMode.Stress) {
-            _resType = "Stress, xx";
-          } else if (_mode == FoldMode.Footfall) {
-            _resType = "Response Factor [-]";
-          }
-
-          break;
-
-        case DisplayValue.Y:
-          dmax = dmaxY;
-          dmin = dminY;
-          if (_mode == FoldMode.Displacement) {
-            _resType = "Translation, Uy";
-          } else if ((_mode == FoldMode.Force) & !_isShear) {
-            _resType = "2D Force, Ny";
-          } else if ((_mode == FoldMode.Force) & _isShear) {
-            _resType = "2D Shear, Qy";
-          } else if (_mode == FoldMode.Stress) {
-            _resType = "2D Stress, yy";
-          }
-
-          break;
-
-        case DisplayValue.Z:
-          dmax = dmaxZ;
-          dmin = dminZ;
-          if (_mode == FoldMode.Displacement) {
-            _resType = "Translation, Uz";
-          } else if ((_mode == FoldMode.Force) & !_isShear) {
-            _resType = "2D Force, Nxy";
-          } else if (_mode == FoldMode.Stress) {
-            _resType = "Stress, zz";
-          }
-
-          break;
-
-        case DisplayValue.ResXyz:
-          dmax = dmaxXyz;
-          dmin = dminXyz;
-          switch (_mode) {
-            case FoldMode.Displacement:
-              _resType = "Res. Trans., |U|";
+      switch (_mode) {
+        case FoldMode.Displacement:
+          IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> displacements =
+              result.Element2dDisplacements.ResultSubset(elementIds);
+          Func<IDisplacement, IQuantity> translationSelector = null;
+          switch (_disp) {
+            case DisplayValue.X:
+              _resType = "Translation, Ux";
+              dmax = displacements.GetExtrema(displacements.Max.X).X.As(_lengthResultUnit);
+              dmin = displacements.GetExtrema(displacements.Min.X).X.As(_lengthResultUnit);
+              translationSelector = (r) => r.X.ToUnit(_lengthResultUnit);
               break;
 
-            case FoldMode.Force:
+            case DisplayValue.Y:
+              _resType = "Translation, Uy";
+              dmax = displacements.GetExtrema(displacements.Max.Y).Y.As(_lengthResultUnit);
+              dmin = displacements.GetExtrema(displacements.Min.Y).Y.As(_lengthResultUnit);
+              translationSelector = (r) => r.Y.ToUnit(_lengthResultUnit);
+              break;
+
+            case DisplayValue.Z:
+              _resType = "Translation, Uz";
+              dmax = displacements.GetExtrema(displacements.Max.Z).Z.As(_lengthResultUnit);
+              dmin = displacements.GetExtrema(displacements.Min.Z).Z.As(_lengthResultUnit);
+              translationSelector = (r) => r.Z.ToUnit(_lengthResultUnit);
+              break;
+
+            case DisplayValue.ResXyz:
+              _resType = "Translation, |U|";
+              dmax = displacements.GetExtrema(displacements.Max.Xyz).Xyz.As(_lengthResultUnit);
+              dmin = displacements.GetExtrema(displacements.Min.Xyz).Xyz.As(_lengthResultUnit);
+              translationSelector = (r) => r.Xyz.ToUnit(_lengthResultUnit);
+              valuesXyz = ResultsUtility.GetResultResultanTranslation(
+                displacements.Subset, _lengthUnit, permutation);
+              break;
+          }
+
+          values = ResultsUtility.GetResultComponent(displacements.Subset, translationSelector, permutation);
+          break;
+
+        case FoldMode.Force:
+          IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, 
+            ResultTensor2InAxis<Entity2dExtremaKey>> forces
+              = result.Element2dForces.ResultSubset(elementIds);
+          IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, 
+            ResultVector2<Entity2dExtremaKey>> shears 
+              = result.Element2dShearForces.ResultSubset(elementIds);
+          IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, 
+            ResultTensor2AroundAxis<Entity2dExtremaKey>> moments 
+              = result.Element2dMoments.ResultSubset(elementIds);
+          Func<IForce2d, IQuantity> forceSelector = null;
+          Func<IShear2d, IQuantity> shearSelector = null;
+          Func<IMoment2d, IQuantity> momentSelector = null;
+          switch (_disp) {
+            case DisplayValue.X when _isShear:
+              _resType = "2D Shear, Qx";
+              dmax = shears.GetExtrema(shears.Max.Qx).Qx.As(_forcePerLengthUnit);
+              dmin = shears.GetExtrema(shears.Min.Qx).Qx.As(_forcePerLengthUnit);
+              shearSelector = (r) => r.Qx.ToUnit(_forcePerLengthUnit);
+              values = ResultsUtility.GetResultComponent(shears.Subset, shearSelector, permutation);
+              break;
+
+            case DisplayValue.Y when _isShear:
+              _resType = "2D Shear, Qy";
+              dmax = shears.GetExtrema(shears.Max.Qy).Qy.As(_forcePerLengthUnit);
+              dmin = shears.GetExtrema(shears.Min.Qy).Qy.As(_forcePerLengthUnit);
+              shearSelector = (r) => r.Qy.ToUnit(_forcePerLengthUnit);
+              values = ResultsUtility.GetResultComponent(shears.Subset, shearSelector, permutation);
+              break;
+
+            case DisplayValue.X:
+              _resType = "2D Force, Nx";
+              dmax = forces.GetExtrema(forces.Max.Nx).Nx.As(_forcePerLengthUnit);
+              dmin = forces.GetExtrema(forces.Min.Nx).Nx.As(_forcePerLengthUnit);
+              forceSelector = (r) => r.Nx.ToUnit(_forcePerLengthUnit);
+              values = ResultsUtility.GetResultComponent(forces.Subset, forceSelector, permutation);
+              break;
+
+            case DisplayValue.Y:
+              _resType = "2D Force, Ny";
+              dmax = forces.GetExtrema(forces.Max.Ny).Ny.As(_forcePerLengthUnit);
+              dmin = forces.GetExtrema(forces.Min.Ny).Ny.As(_forcePerLengthUnit);
+              forceSelector = (r) => r.Ny.ToUnit(_forcePerLengthUnit);
+              values = ResultsUtility.GetResultComponent(forces.Subset, forceSelector, permutation);
+              break;
+
+            case DisplayValue.Z:
+              _resType = "2D Force, Nxy";
+              dmax = forces.GetExtrema(forces.Max.Nxy).Nxy.As(_forcePerLengthUnit);
+              dmin = forces.GetExtrema(forces.Min.Nxy).Nxy.As(_forcePerLengthUnit);
+              forceSelector = (r) => r.Nxy.ToUnit(_forcePerLengthUnit);
+              values = ResultsUtility.GetResultComponent(forces.Subset, forceSelector, permutation);
+              break;
+
+            case DisplayValue.Xx:
+              _resType = "2D Moment, Mx";
+              dmax = moments.GetExtrema(moments.Max.Mx).Mx.As(_forceUnit);
+              dmin = moments.GetExtrema(moments.Min.Mx).Mx.As(_forceUnit);
+              momentSelector = (r) => r.Mx.ToUnit(_forceUnit);
+              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
+              break;
+
+            case DisplayValue.Yy:
+              _resType = "2D Moment, My";
+              dmax = moments.GetExtrema(moments.Max.My).My.As(_forceUnit);
+              dmin = moments.GetExtrema(moments.Min.My).My.As(_forceUnit);
+              momentSelector = (r) => r.My.ToUnit(_forceUnit);
+              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
+              break;
+
+            case DisplayValue.Zz:
+              _resType = "2D Moment, Mxy";
+              dmax = moments.GetExtrema(moments.Max.Mxy).Mxy.As(_forceUnit);
+              dmin = moments.GetExtrema(moments.Min.Mxy).Mxy.As(_forceUnit);
+              momentSelector = (r) => r.Mxy.ToUnit(_forceUnit);
+              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
+              break;
+
+            case DisplayValue.ResXyz:
               _resType = "2D Moment, Mx+sgn(Mx)|Mxy|";
+              dmax = moments.GetExtrema(moments.Max.WoodArmerX).WoodArmerX.As(_forceUnit);
+              dmin = moments.GetExtrema(moments.Min.WoodArmerX).WoodArmerX.As(_forceUnit);
+              momentSelector = (r) => r.WoodArmerX.ToUnit(_forceUnit);
+              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
+              break;
+
+            case DisplayValue.ResXxyyzz:
+              _resType = "2D Moment, My+sgn(My)|Mxy|";
+              dmax = moments.GetExtrema(moments.Max.WoodArmerY).WoodArmerY.As(_forceUnit);
+              dmin = moments.GetExtrema(moments.Min.WoodArmerY).WoodArmerY.As(_forceUnit);
+              momentSelector = (r) => r.WoodArmerY.ToUnit(_forceUnit);
+              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
               break;
           }
 
           break;
 
-        case DisplayValue.Xx:
-          dmax = dmaxXx;
-          dmin = dminXx;
-          if ((_mode == FoldMode.Force) & !_isShear) {
-            _resType = "2D Moment, Mx";
-          } else if (_mode == FoldMode.Stress) {
-            _resType = "Stress, xy";
+        case FoldMode.Stress:
+          IMeshResultSubset<IMeshQuantity<IStress>, IStress,
+            ResultTensor3<Entity2dExtremaKey>> stresses
+            = result.Element2dStresses.ResultSubset(elementIds, _flayer);
+          Func<IStress, IQuantity> stressSelector = null;
+          switch (_disp) {
+            case DisplayValue.X:
+              _resType = "Stress, xx";
+              dmax = stresses.GetExtrema(stresses.Max.Xx).Xx.As(_stressUnitResult);
+              dmin = stresses.GetExtrema(stresses.Min.Xx).Xx.As(_stressUnitResult);
+              stressSelector = (r) => r.Xx.ToUnit(_stressUnitResult);
+              break;
+
+            case DisplayValue.Y:
+              _resType = "Stress, yy";
+              dmax = stresses.GetExtrema(stresses.Max.Yy).Yy.As(_stressUnitResult);
+              dmin = stresses.GetExtrema(stresses.Min.Yy).Yy.As(_stressUnitResult);
+              stressSelector = (r) => r.Yy.ToUnit(_stressUnitResult);
+              break;
+
+            case DisplayValue.Z:
+              _resType = "Stress, zz";
+              dmax = stresses.GetExtrema(stresses.Max.Zz).Zz.As(_stressUnitResult);
+              dmin = stresses.GetExtrema(stresses.Min.Zz).Zz.As(_stressUnitResult);
+              stressSelector = (r) => r.Zz.ToUnit(_stressUnitResult);
+              break;
+
+            case DisplayValue.Xx:
+              _resType = "Stress, xy";
+              dmax = stresses.GetExtrema(stresses.Max.Xy).Xy.As(_stressUnitResult);
+              dmin = stresses.GetExtrema(stresses.Min.Xy).Xy.As(_stressUnitResult);
+              stressSelector = (r) => r.Xx.ToUnit(_stressUnitResult);
+              break;
+
+            case DisplayValue.Yy:
+              _resType = "Stress, yz";
+              dmax = stresses.GetExtrema(stresses.Max.Yz).Yz.As(_stressUnitResult);
+              dmin = stresses.GetExtrema(stresses.Min.Yz).Yz.As(_stressUnitResult);
+              stressSelector = (r) => r.Yz.ToUnit(_stressUnitResult);
+              break;
+
+            case DisplayValue.Zz:
+              _resType = "Stress, zx";
+              dmax = stresses.GetExtrema(stresses.Max.Zx).Zx.As(_stressUnitResult);
+              dmin = stresses.GetExtrema(stresses.Min.Zx).Zx.As(_stressUnitResult);
+              stressSelector = (r) => r.Zx.ToUnit(_stressUnitResult);
+              break;
           }
 
+          values = ResultsUtility.GetResultComponent(stresses.Subset, stressSelector, permutation);
           break;
 
-        case DisplayValue.Yy:
-          dmax = dmaxYy;
-          dmin = dminYy;
-          if ((_mode == FoldMode.Force) & !_isShear) {
-            _resType = "2D Moment, My";
-          } else if (_mode == FoldMode.Stress) {
-            _resType = "Stress, yz";
-          }
-
-          break;
-
-        case DisplayValue.Zz:
-          dmax = dmaxZz;
-          dmin = dminZz;
-          if ((_mode == FoldMode.Force) & !_isShear) {
-            _resType = "2D Moment, Mxy";
-          } else if (_mode == FoldMode.Stress) {
-            _resType = "Stress, zy";
-          }
-
-          break;
-
-        case DisplayValue.ResXxyyzz:
-          if (_mode == FoldMode.Force) {
-            _resType = "2D Moment, My+sgn(My)|Mxy|";
-          }
-
-          dmax = dmaxXxyyzz;
-          dmin = dminXxyyzz;
+        case FoldMode.Footfall when result.CaseType == CaseType.AnalysisCase:
+          _resType = "Response Factor [-]";
+          INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfallCache
+          = _selectedItems[1] == "Resonant"
+            ? result.NodeResonantFootfalls
+            : result.NodeTransientFootfalls;
+          Func<IFootfall, IQuantity> footfallSelector =
+            (r) => new Ratio(r.MaximumResponseFactor, RatioUnit.DecimalFraction);
+          ICollection<int> nodeIds;
+          (values, nodeIds) = ResultsUtility.MapNodeResultToElements(
+            elems, nodeFootfallCache, footfallSelector, permutation);
+          INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfall
+            = nodeFootfallCache.ResultSubset(nodeIds);
+          dmax = nodeFootfall.GetExtrema(nodeFootfall.Max.MaximumResponseFactor).MaximumResponseFactor;
+          dmin = nodeFootfall.GetExtrema(nodeFootfall.Min.MaximumResponseFactor).MaximumResponseFactor;
           break;
       }
 
+      int significantDigits = 0;
       if (customMinMax != Interval.Unset) {
         dmin = customMinMax.Min;
         dmax = customMinMax.Max;
+        List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
+        significantDigits = (int)rounded[2];
+      } else {
+        List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
+        dmax = rounded[0];
+        dmin = rounded[1];
+        significantDigits = (int)rounded[2];
       }
 
-      List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
-      dmax = rounded[0];
-      dmin = rounded[1];
-      int significantDigits = (int)rounded[2];
-      if (customMinMax != Interval.Unset) {
-        dmin = customMinMax.Min;
-        dmax = customMinMax.Max;
-      }
-
-      #region create mesh
-
-      var resultMeshes = new MeshResultGoo(new Mesh(), new List<List<IQuantity>>(),
+      var resultMeshes = new MeshResultGoo(new Mesh(), new List<IList<IQuantity>>(),
         new List<Point3dList>(), new List<int>());
       var meshes = new ConcurrentDictionary<int, Mesh>();
       meshes.AsParallel().AsOrdered();
-      var values = new ConcurrentDictionary<int, List<IQuantity>>();
       values.AsParallel().AsOrdered();
       var verticies = new ConcurrentDictionary<int, Point3dList>();
       verticies.AsParallel().AsOrdered();
 
       LengthUnit lengthUnit = result.Model.ModelUnit;
-      _undefinedModelLengthUnit = false;
-      if (lengthUnit == LengthUnit.Undefined) {
-        lengthUnit = _lengthUnit;
-        _undefinedModelLengthUnit = true;
-        this.AddRuntimeRemark(
-          "Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in "
-          + lengthUnit.ToString()
-          + ". This can be changed by right-clicking the component -> 'Select Units'");
-      } else {
-        _lengthUnit = lengthUnit;
-      }
 
       Parallel.ForEach(elems.Keys, key => {
         Element element = elems[key];
@@ -871,69 +856,34 @@ namespace GsaGH.Components {
         }
 
         List<Vector3d> transformation = null;
-        var vals = new List<IQuantity>();
-        switch (_disp) {
-          case DisplayValue.X:
-            vals = xyzResults[key].Select(item => item.Value.X.ToUnit(xyzunit)).ToList();
-            if (_mode == FoldMode.Displacement) {
-              transformation = xyzResults[key].Select(item
-                => new Vector3d(item.Value.X.As(lengthUnit) * _defScale, 0, 0)).ToList();
-            }
-
-            break;
-
-          case DisplayValue.Y:
-            vals = xyzResults[key].Select(item => item.Value.Y.ToUnit(xyzunit)).ToList();
-            if (_mode == FoldMode.Displacement) {
-              transformation = xyzResults[key].Select(item
-                => new Vector3d(0, item.Value.Y.As(lengthUnit) * _defScale, 0)).ToList();
-            }
-
-            break;
-
-          case DisplayValue.Z:
-            vals = xyzResults[key].Select(item => item.Value.Z.ToUnit(xyzunit)).ToList();
-            if (_mode == FoldMode.Displacement) {
-              transformation = xyzResults[key].Select(item
-                => new Vector3d(0, 0, item.Value.Z.As(lengthUnit) * _defScale)).ToList();
-            }
-
-            break;
-
-          case DisplayValue.ResXyz:
-            vals = xyzResults[key].Select(item
-              => item.Value.Xyz.ToUnit(_mode == FoldMode.Force ? xxyyzzunit : xyzunit)).ToList();
-            if (_mode == FoldMode.Displacement) {
-              transformation = xyzResults[key].Select(item
-                  => new Vector3d(item.Value.X.As(lengthUnit) * _defScale,
-                    item.Value.Y.As(lengthUnit) * _defScale,
-                    item.Value.Z.As(lengthUnit) * _defScale))
-               .ToList();
-            }
-
-            break;
-
-          case DisplayValue.Xx:
-            vals = xxyyzzResults[key].Select(item => item.Value.X.ToUnit(xxyyzzunit)).ToList();
-            break;
-
-          case DisplayValue.Yy:
-            vals = xxyyzzResults[key].Select(item => item.Value.Y.ToUnit(xxyyzzunit)).ToList();
-            break;
-
-          case DisplayValue.Zz:
-            vals = xxyyzzResults[key].Select(item => item.Value.Z.ToUnit(xxyyzzunit)).ToList();
-            break;
-
-          case DisplayValue.ResXxyyzz:
-            vals = xxyyzzResults[key].Select(item => item.Value.Xyz.ToUnit(xxyyzzunit)).ToList();
-            break;
+        if (_mode == FoldMode.Displacement) {
+          switch (_disp) {
+            case DisplayValue.X:
+              transformation = values[key].Select(item
+                => new Vector3d(item.As(lengthUnit) * _defScale, 0, 0)).ToList();
+              break;
+            case DisplayValue.Y:
+              transformation = values[key].Select(item
+                => new Vector3d(0, item.As(lengthUnit) * _defScale, 0)).ToList();
+              break;
+            case DisplayValue.Z:
+              transformation = values[key].Select(item
+                => new Vector3d(0, 0, item.As(lengthUnit) * _defScale)).ToList();
+              break;
+            case DisplayValue.ResXyz:
+              transformation = new List<Vector3d>();
+              for (int i = 0; i < valuesXyz[key].x.Count; i++) {
+                transformation.Add(new Vector3d(
+                  valuesXyz[key].x[i] * _defScale,
+                  valuesXyz[key].y[i] * _defScale,
+                  valuesXyz[key].z[i] * _defScale));
+              }
+              break;
+          }
         }
 
-        for (int i = 0; i < vals.Count - 1;
-          i++) // start at i=0, now the last index is the centre point in GsaAPI output so to count -1
-        {
-          double tnorm = (2 * (vals[i].Value - dmin) / (dmax - dmin)) - 1;
+        for (int i = 0; i < values[key].Count - 1; i++) {
+          double tnorm = (2 * (values[key][i].Value - dmin) / (dmax - dmin)) - 1;
           Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
           tempmesh.VertexColors.Add(col);
           if (transformation == null) {
@@ -945,11 +895,9 @@ namespace GsaGH.Components {
           tempmesh.Vertices[i] = def;
         }
 
-        if (
-          tempmesh.Vertices.Count
-          == 9) // add the value/colour at the centre point if quad-8 (as it already has a vertex here)
-        {
-          double tnorm = (2 * (vals.Last().Value - dmin) / (dmax - dmin)) - 1;
+        if (values[key].Count == 9) {
+          // add the value/colour at the centre point if quad-8 (as it already has a vertex here)
+          double tnorm = (2 * (values[key].Last().Value - dmin) / (dmax - dmin)) - 1;
           Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
           tempmesh.VertexColors.Add(col);
           if (transformation != null) {
@@ -959,11 +907,9 @@ namespace GsaGH.Components {
           }
         }
 
-        if (
-          vals.Count
-          == 1) // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
-        {
-          double tnorm = (2 * (vals[0].Value - dmin) / (dmax - dmin)) - 1;
+        if (values[key].Count == 1) {
+          // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
+          double tnorm = (2 * (values[key][0].Value - dmin) / (dmax - dmin)) - 1;
           Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
           for (int i = 0; i < tempmesh.Vertices.Count; i++) {
             tempmesh.VertexColors.SetColor(i, col);
@@ -974,23 +920,18 @@ namespace GsaGH.Components {
               tempmesh.Vertices.Select(pt => pt.Y).Average(),
               tempmesh.Vertices.Select(pt => pt.Z).Average()), } : new Point3dList() {
             new Point3d(tempmesh.Vertices.Last().X, tempmesh.Vertices.Last().Y,
-              tempmesh.Vertices.Last().Z), };
+              tempmesh.Vertices.Last().Z),
+          };
         } else {
-          verticies[key] = new Point3dList(tempmesh.Vertices.Select(pt => (Point3d)pt).ToList());
+          verticies[key]
+            = new Point3dList(tempmesh.Vertices.Select(pt => (Point3d)pt).ToList());
         }
 
         meshes[key] = tempmesh;
-        values[key] = vals;
-
-        #endregion
       });
 
-      #endregion
-
-      resultMeshes.AddRange(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList(),
-        meshes.Keys.ToList());
-
-      #region Legend
+      resultMeshes.AddRange(meshes.Values.ToList(), values.Values.ToList(),
+        verticies.Values.ToList(), meshes.Keys.ToList());
 
       int gripheight = _legend.Height / ghGradient.GripCount;
       _legendValues = new List<string>();
@@ -1022,71 +963,66 @@ namespace GsaGH.Components {
         }
 
         switch (_mode) {
-          case FoldMode.Displacement when (int)_disp < 4: {
-              var displacement = new Length(t, _lengthResultUnit);
-              _legendValues.Add(displacement.ToString("f" + significantDigits));
-              ts.Add(new GH_UnitNumber(displacement));
-              Message = Length.GetAbbreviation(_lengthResultUnit);
-              break;
+              case FoldMode.Displacement when (int)_disp < 4: {
+                var displacement = new Length(t, _lengthResultUnit);
+                _legendValues.Add(displacement.ToString("f" + significantDigits));
+                ts.Add(new GH_UnitNumber(displacement));
+                Message = Length.GetAbbreviation(_lengthResultUnit);
+                break;
+              }
+              case FoldMode.Displacement: {
+                var rotation = new Angle(t, AngleUnit.Radian);
+                _legendValues.Add(rotation.ToString("s" + significantDigits));
+                ts.Add(new GH_UnitNumber(rotation));
+                Message = Angle.GetAbbreviation(AngleUnit.Radian);
+                break;
+              }
+              case FoldMode.Force when ((int)_disp < 3) | _isShear: {
+                var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
+                _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
+                ts.Add(new GH_UnitNumber(forcePerLength));
+                Message = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
+                break;
+              }
+              case FoldMode.Force: {
+                _legendValues.Add(
+                  new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)).ToString(
+                    "s" + significantDigits) + "/" + Length.GetAbbreviation(lengthUnit));
+                var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
+                ts.Add(new GH_UnitNumber(moment));
+                Message = Moment.GetAbbreviation(UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit))
+                  + "/" + Length.GetAbbreviation(lengthUnit);
+                break;
+              }
+              case FoldMode.Stress: {
+                var stress = new Pressure(t, _stressUnitResult);
+                _legendValues.Add(stress.ToString("s" + significantDigits));
+                ts.Add(new GH_UnitNumber(stress));
+                Message = Pressure.GetAbbreviation(_stressUnitResult);
+                break;
+              }
+              case FoldMode.Footfall: {
+                var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
+                _legendValues.Add(responseFactor.ToString("s" + significantDigits));
+                ts.Add(new GH_UnitNumber(responseFactor));
+                Message = string.Empty;
+                break;
+              }
             }
-          case FoldMode.Displacement: {
-              var rotation = new Angle(t, AngleUnit.Radian);
-              _legendValues.Add(rotation.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(rotation));
-              Message = Angle.GetAbbreviation(AngleUnit.Radian);
-              break;
-            }
-          case FoldMode.Force when ((int)_disp < 3) | _isShear: {
-              var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
-              _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(forcePerLength));
-              Message = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
-              break;
-            }
-          case FoldMode.Force: {
-              _legendValues.Add(
-                new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)).ToString(
-                  "s" + significantDigits) + "/" + Length.GetAbbreviation(lengthUnit));
-              var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
-              ts.Add(new GH_UnitNumber(moment));
-              Message = Moment.GetAbbreviation(UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit))
-                + "/" + Length.GetAbbreviation(lengthUnit);
-              break;
-            }
-          case FoldMode.Stress: {
-              var stress = new Pressure(t, _stressUnitResult);
-              _legendValues.Add(stress.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(stress));
-              Message = Pressure.GetAbbreviation(_stressUnitResult);
-              break;
-            }
-          case FoldMode.Footfall: {
-              var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-              _legendValues.Add(responseFactor.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(responseFactor));
-              Message = string.Empty;
-              break;
-            }
-        }
 
         if (Math.Abs(t) > 1) {
-          _legendValues[i] = _legendValues[i]
-           .Replace(",", string.Empty); // remove thousand separator
+          // remove thousand separator
+          _legendValues[i] = _legendValues[i].Replace(",", string.Empty);
         }
 
         _legendValuesPosY.Add(_legend.Height - starty + (gripheight / 2) - 2);
       }
 
-      #endregion
-
       da.SetData(0, resultMeshes);
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
 
-      var resultType
-        = (GsaResultsValues.ResultType)Enum.Parse(typeof(GsaResultsValues.ResultType),
-          _mode.ToString());
-      PostHog.Result(result.Type, 2, resultType, _disp.ToString());
+      PostHog.Result(result.CaseType, 2, _mode.ToString(), _disp.ToString());
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {
@@ -1120,60 +1056,36 @@ namespace GsaGH.Components {
       return gradient;
     }
 
-    private void Mode1Clicked() {
-      if (_mode == FoldMode.Displacement) {
-        return;
-      }
-
+    private void DisplacementModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Displacement;
-
       _slider = true;
       _defScale = 100;
-
       ReDrawComponent();
     }
 
-    private void Mode2Clicked() {
-      if (_mode == FoldMode.Force) {
-        return;
-      }
-
+    private void ForceModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Force;
-
       _slider = false;
       _defScale = 0;
       _spacerDescriptions[2] = "Deform Shape";
-
       ReDrawComponent();
     }
 
-    private void Mode4Clicked() {
-      if (_mode == FoldMode.Stress) {
-        return;
-      }
-
+    private void StressModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Stress;
-
       _slider = false;
       _defScale = 0;
-
       ReDrawComponent();
     }
 
-    private void Mode5Clicked() {
-      if (_mode == FoldMode.Footfall) {
-        return;
-      }
-
+    private void FootfallModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Footfall;
-
       _slider = false;
       _defScale = 0;
-
       ReDrawComponent();
     }
 
@@ -1229,7 +1141,6 @@ namespace GsaGH.Components {
       }
 
       _legend = new Bitmap((int)(15 * _legendScale), (int)(120 * _legendScale));
-
       ExpirePreview(true);
       base.UpdateUI();
     }

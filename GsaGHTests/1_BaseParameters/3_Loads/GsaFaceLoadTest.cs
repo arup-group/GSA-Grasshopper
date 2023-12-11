@@ -1,7 +1,6 @@
 ﻿using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using System;
 using Xunit;
 using LoadCaseType = GsaGH.Parameters.LoadCaseType;
 
@@ -23,72 +22,176 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(99, load.LoadCase.Id);
     }
 
-    [Theory]
-    [InlineData("UNDEF", "CONSTANT")]
-    [InlineData("CONSTANT", "UNDEF")]
-    [InlineData("GENERAL", "UNDEF")]
-    [InlineData("POINT", "UNDEF")]
-    public void DuplicateTest(string originalTypeString, string duplicateTypeString) {
-      var originalType = (FaceLoadType)Enum.Parse(typeof(FaceLoadType), originalTypeString);
-      var duplicateType = (FaceLoadType)Enum.Parse(typeof(FaceLoadType), duplicateTypeString);
-
+    [Fact]
+    public void DuplicateConstantTest() {
       var original = new GsaFaceLoad {
         ApiLoad = {
           AxisProperty = 5,
           Case = 6,
-          Direction = Direction.ZZ,
+          Direction = Direction.Z,
           EntityList = "all",
           EntityType = GsaAPI.EntityType.Element,
           Name = "name",
-          Type = originalType,
+          Type = FaceLoadType.CONSTANT,
         },
       };
       var duplicate = (GsaFaceLoad)original.Duplicate();
 
       Duplicates.AreEqual(original, duplicate);
 
-      duplicate.ApiLoad.Type = duplicateType;
+      duplicate.ApiLoad.Type = FaceLoadType.POINT;
       duplicate.ApiLoad.AxisProperty = 1;
       duplicate.ApiLoad.Case = 1;
-      duplicate.ApiLoad.Direction = Direction.XX;
+      duplicate.ApiLoad.Direction = Direction.X;
       duplicate.ApiLoad.EntityList = "";
       duplicate.ApiLoad.Name = "";
       duplicate.ApiLoad.IsProjected = true;
       duplicate.ApiLoad.SetValue(0, 99);
-      duplicate.ApiLoad.SetValue(1, 99);
-      duplicate.ApiLoad.SetValue(2, 99);
-      duplicate.ApiLoad.SetValue(3, 99);
 
-      Assert.Equal(originalType, original.ApiLoad.Type);
+      Assert.Equal(FaceLoadType.CONSTANT, original.ApiLoad.Type);
       Assert.Equal(5, original.ApiLoad.AxisProperty);
       Assert.Equal(6, original.ApiLoad.Case);
-      Assert.Equal(Direction.ZZ, original.ApiLoad.Direction);
+      Assert.Equal(Direction.Z, original.ApiLoad.Direction);
       Assert.Equal("all", original.ApiLoad.EntityList);
       Assert.Equal(GsaAPI.EntityType.Element, original.ApiLoad.EntityType);
       Assert.Equal("name", original.ApiLoad.Name);
-
-      switch (original.ApiLoad.Type) {
-        case FaceLoadType.CONSTANT:
-          Assert.False(original.ApiLoad.IsProjected);
-          Assert.Equal(0, original.ApiLoad.Value(0));
-          break;
-
-        case FaceLoadType.GENERAL:
-          Assert.False(original.ApiLoad.IsProjected);
-          Assert.Equal(0, original.ApiLoad.Value(0));
-          Assert.Equal(0, original.ApiLoad.Value(1));
-          Assert.Equal(0, original.ApiLoad.Value(2));
-          Assert.Equal(0, original.ApiLoad.Value(3));
-          break;
-
-        case FaceLoadType.POINT:
-          Assert.False(original.ApiLoad.IsProjected);
-          Assert.Equal(0, original.ApiLoad.Value(0));
-          Assert.Equal(0, original.ApiLoad.Position.X);
-          Assert.Equal(0, original.ApiLoad.Position.Y);
-          break;
-      }
+      Assert.False(original.ApiLoad.IsProjected);
+      Assert.Equal(0, original.ApiLoad.Value(0));
     }
+
+    [Fact]
+    public void DuplicateGeneralTest() {
+      var original = new GsaFaceLoad {
+        ApiLoad = {
+          AxisProperty = 5,
+          Case = 6,
+          Direction = Direction.Z,
+          EntityList = "all",
+          EntityType = GsaAPI.EntityType.Element,
+          Name = "name",
+          Type = FaceLoadType.GENERAL,
+        },
+      };
+      var duplicate = (GsaFaceLoad)original.Duplicate();
+
+      Duplicates.AreEqual(original, duplicate);
+
+      duplicate.ApiLoad.Type = FaceLoadType.POINT;
+      duplicate.ApiLoad.AxisProperty = 1;
+      duplicate.ApiLoad.Case = 1;
+      duplicate.ApiLoad.Direction = Direction.X;
+      duplicate.ApiLoad.EntityList = "";
+      duplicate.ApiLoad.Name = "";
+      duplicate.ApiLoad.IsProjected = true;
+      duplicate.ApiLoad.SetValue(0, 99);
+
+      Assert.Equal(FaceLoadType.GENERAL, original.ApiLoad.Type);
+      Assert.Equal(5, original.ApiLoad.AxisProperty);
+      Assert.Equal(6, original.ApiLoad.Case);
+      Assert.Equal(Direction.Z, original.ApiLoad.Direction);
+      Assert.Equal("all", original.ApiLoad.EntityList);
+      Assert.Equal(GsaAPI.EntityType.Element, original.ApiLoad.EntityType);
+      Assert.Equal("name", original.ApiLoad.Name);
+      Assert.False(original.ApiLoad.IsProjected);
+      Assert.Equal(0, original.ApiLoad.Value(0));
+      Assert.Equal(0, original.ApiLoad.Value(1));
+      Assert.Equal(0, original.ApiLoad.Value(2));
+      Assert.Equal(0, original.ApiLoad.Value(3));
+    }
+
+    [Fact]
+    public void DuplicatePointTest() {
+      var original = new GsaFaceLoad {
+        ApiLoad = {
+          AxisProperty = 5,
+          Case = 6,
+          Direction = Direction.Z,
+          EntityList = "all",
+          EntityType = GsaAPI.EntityType.Element,
+          Name = "name",
+          Type = FaceLoadType.POINT,
+          Position = new Vector2(0.5, 0.5)
+        },
+      };
+      var duplicate = (GsaFaceLoad)original.Duplicate();
+
+      Duplicates.AreEqual(original, duplicate);
+
+      duplicate.ApiLoad.Type = FaceLoadType.GENERAL;
+      duplicate.ApiLoad.AxisProperty = 1;
+      duplicate.ApiLoad.Case = 1;
+      duplicate.ApiLoad.Direction = Direction.X;
+      duplicate.ApiLoad.EntityList = "";
+      duplicate.ApiLoad.Name = "";
+      duplicate.ApiLoad.IsProjected = true;
+      duplicate.ApiLoad.SetValue(0, 99);
+
+      Assert.Equal(FaceLoadType.POINT, original.ApiLoad.Type);
+      Assert.Equal(5, original.ApiLoad.AxisProperty);
+      Assert.Equal(6, original.ApiLoad.Case);
+      Assert.Equal(Direction.Z, original.ApiLoad.Direction);
+      Assert.Equal("all", original.ApiLoad.EntityList);
+      Assert.Equal(GsaAPI.EntityType.Element, original.ApiLoad.EntityType);
+      Assert.Equal("name", original.ApiLoad.Name);
+      Assert.False(original.ApiLoad.IsProjected);
+      Assert.Equal(0, original.ApiLoad.Value(0));
+      Assert.Equal(0.5, original.ApiLoad.Position.X);
+      Assert.Equal(0.5, original.ApiLoad.Position.Y);
+    }
+
+    [Fact]
+    public void DuplicateEquationTest() {
+      var original = new GsaFaceLoad {
+        ApiLoad = {
+          AxisProperty = 5,
+          Case = 6,
+          Direction = Direction.Z,
+          EntityList = "all",
+          EntityType = GsaAPI.EntityType.Element,
+          Name = "name",
+          Type = FaceLoadType.EQUATION,
+        },
+      };
+      var equation = new PressureEquation() {
+        Axis = 1,
+        Expression = "2*x+4*y+z",
+        LengthUnits = LengthUnit.Meter,
+        IsUniform = true,
+      };
+      original.ApiLoad.SetEquation(equation);
+      var duplicate = (GsaFaceLoad)original.Duplicate();
+
+      Duplicates.AreEqual(original, duplicate);
+
+      duplicate.ApiLoad.AxisProperty = 1;
+      duplicate.ApiLoad.Case = 1;
+      duplicate.ApiLoad.Direction = Direction.X;
+      duplicate.ApiLoad.EntityList = "";
+      duplicate.ApiLoad.Name = "";
+      duplicate.ApiLoad.IsProjected = true;
+      var newEquation = new PressureEquation() {
+        Axis = 2,
+        Expression = "3*x+5*y+7*z",
+        LengthUnits = LengthUnit.Millimeter,
+        IsUniform = false,
+      };
+      duplicate.ApiLoad.SetEquation(newEquation);
+
+      Assert.Equal(FaceLoadType.EQUATION, original.ApiLoad.Type);
+      Assert.Equal(5, original.ApiLoad.AxisProperty);
+      Assert.Equal(6, original.ApiLoad.Case);
+      Assert.Equal(Direction.Z, original.ApiLoad.Direction);
+      Assert.Equal("all", original.ApiLoad.EntityList);
+      Assert.Equal(GsaAPI.EntityType.Element, original.ApiLoad.EntityType);
+      Assert.Equal("name", original.ApiLoad.Name);
+      Assert.False(original.ApiLoad.IsProjected);
+      
+      Assert.Equal(equation.Axis, original.ApiLoad.Equation().Axis);
+      Assert.Equal(equation.Expression, original.ApiLoad.Equation().Expression);
+      Assert.Equal(equation.LengthUnits, original.ApiLoad.Equation().LengthUnits);
+      Assert.Equal(equation.IsUniform, original.ApiLoad.Equation().IsUniform);
+    }
+
 
     [Fact]
     public void DuplicateLoadCaseTest() {

@@ -28,6 +28,7 @@ namespace GsaGH.Parameters {
     public List<string> TopologyType { get; internal set; }
     public GsaNode OrientationNode { get; set; }
     public GsaSection Section { get; set; }
+    public GsaSpringProperty SpringProperty { get; set; }
     public LocalAxes LocalAxes { get; private set; }
     public Section3dPreview Section3dPreview { get; private set; }
     public ReleasePreview ReleasePreview { get; private set; }
@@ -87,6 +88,7 @@ namespace GsaGH.Parameters {
       TopologyType = other.TopologyType;
       OrientationNode = other.OrientationNode;
       Section = other.Section;
+      SpringProperty = other.SpringProperty;
       Section3dPreview = other.Section3dPreview?.Duplicate();
     }
 
@@ -94,15 +96,19 @@ namespace GsaGH.Parameters {
     /// Create a new instance from an API object from an existing model
     /// </summary>
     internal GsaMember1d(KeyValuePair<int, Member> mem, Point3dList topology,
-      List<string> topoType, ReadOnlyCollection<double> localAxis, GsaNode orientationNode, 
-      LengthUnit modelUnit) {
+      List<string> topoType, ReadOnlyCollection<double> localAxis, GsaNode orientationNode,
+      LengthUnit modelUnit, GsaSpringProperty springProperty = null) {
       Id = mem.Key;
       ApiMember = mem.Value;
       ApiMember.MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
+
+      AdjustToModelUnit(modelUnit);
+
       PolyCurve = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topoType);
       Topology = topology;
       TopologyType = topoType;
       OrientationNode = orientationNode;
+      SpringProperty = springProperty;
       LocalAxes = new LocalAxes(localAxis);
       UpdateReleasesPreview();
     }
@@ -127,6 +133,7 @@ namespace GsaGH.Parameters {
         Type = ApiMember.Type,
         Type1D = ApiMember.Type1D,
         AutomaticOffset = ApiMember.AutomaticOffset,
+        EffectiveLength = ApiMember.EffectiveLength,
       };
       if (ApiMember.Topology != string.Empty) {
         mem.Topology = ApiMember.Topology;
@@ -151,13 +158,15 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string id = Id > 0 ? $"ID:{Id}" : string.Empty;
       string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
-      string pb = string.Empty;
+      string property = string.Empty;
       if (Section != null) {
-        pb = Section.Id > 0 ? $"PB{Section.Id}"
+        property = Section.Id > 0 ? $"PB{Section.Id}"
         : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
+      } else if (SpringProperty != null) {
+        property = SpringProperty.Id > 0 ? $"SP{SpringProperty.Id}"
+        : SpringProperty.ApiProperty != null ? SpringProperty.ApiProperty.Name : string.Empty;
       }
-
-      return string.Join(" ", id, type, pb).TrimSpaces();
+      return string.Join(" ", id, type, property).TrimSpaces();
     }
 
     public void UpdateGeometry(Curve crv) {
@@ -166,6 +175,29 @@ namespace GsaGH.Parameters {
       PolyCurve = convertCrv.Item1;
       Topology = convertCrv.Item2;
       TopologyType = convertCrv.Item3;
+    }
+
+    private void AdjustToModelUnit(LengthUnit modelUnit) {
+      ApiMember.EffectiveLength.DestablisingLoad
+        = new Length(ApiMember.EffectiveLength.DestablisingLoad, LengthUnit.Meter).As(modelUnit);
+      if (modelUnit != LengthUnit.Meter
+        && ApiMember.EffectiveLength is EffectiveLengthFromUserSpecifiedValue user) {
+        if (user.EffectiveLengthAboutY.Option == EffectiveLengthOptionType.Absolute) {
+          user.EffectiveLengthAboutY = new EffectiveLengthAttribute(EffectiveLengthOptionType.Absolute,
+            new Length(user.EffectiveLengthAboutY.Value, LengthUnit.Meter).As(modelUnit));
+        }
+
+        if (user.EffectiveLengthAboutZ.Option == EffectiveLengthOptionType.Absolute) {
+          user.EffectiveLengthAboutZ = new EffectiveLengthAttribute(EffectiveLengthOptionType.Absolute,
+            new Length(user.EffectiveLengthAboutZ.Value, LengthUnit.Meter).As(modelUnit));
+        }
+
+        if (user.EffectiveLengthLaterialTorsional.Option == EffectiveLengthOptionType.Absolute) {
+          user.EffectiveLengthLaterialTorsional = new EffectiveLengthAttribute(
+            EffectiveLengthOptionType.Absolute,
+            new Length(user.EffectiveLengthLaterialTorsional.Value, LengthUnit.Meter).As(modelUnit));
+        }
+      }
     }
 
     private GsaOffset GetOffSetFromApiMember() {

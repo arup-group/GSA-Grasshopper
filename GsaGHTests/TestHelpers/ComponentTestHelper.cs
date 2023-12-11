@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using OasysGH.Parameters;
 using OasysUnits;
 using Rhino.Geometry;
@@ -35,6 +38,37 @@ namespace GsaGHTests.Helpers {
 
     public static object GetOutput(IGH_Param param, int branch = 0, int item = 0) {
       return param.VolatileData.get_Branch(branch)[item];
+    }
+
+    public static System.Collections.IList GetListOutput(
+     GH_Component component, int index = 0, int branch = 0) {
+      component.ExpireSolution(true);
+      component.Params.Output[index].ExpireSolution(true);
+      component.Params.Output[index].CollectData();
+      return component.Params.Output[index].VolatileData.get_Branch(branch);
+    }
+
+    public static List<IQuantity> GetResultOutput(
+      GH_Component component, int index, GH_Path path = null) {
+      if (path == null) {
+        component.Params.Output[index].DataMapping = GH_DataMapping.Flatten;
+      }
+      component.ExpireSolution(true);
+      component.Params.Output[index].ExpireSolution(true);
+      component.Params.Output[index].CollectData();
+
+      IList<IGH_Goo> output = path == null
+        ? component.Params.Output[index].VolatileData.AllData(false).ToList()
+        : (IList<IGH_Goo>)component.Params.Output[index].VolatileData.get_Branch(path);
+      return output.Select(x => ((GH_UnitNumber)x).Value).ToList();
+    }
+
+    public static IList<GH_Path> GetPathOutput(GH_Component component, int index) {
+      component.ExpireSolution(true);
+      component.Params.Output[index].ExpireSolution(true);
+      component.Params.Output[index].CollectData();
+
+      return component.Params.Output[index].VolatileData.Paths;
     }
 
     public static void SetInput(IGH_Param param, object data, int index = 0) {
@@ -120,6 +154,13 @@ namespace GsaGHTests.Helpers {
       input.CreateAttributes();
       input.PersistentData.Append(new GH_Mesh(mesh));
       component.Params.Input[index].AddSource(input);
+    }
+
+    public static void SetResultInput(GH_Component component, GsaResult result) {
+      var input = new GsaResultParameter();
+      var resultGoo = new GsaResultGoo(result);
+      input.PersistentData.Append(resultGoo);
+      component.Params.Input[0].AddSource(input);
     }
   }
 }

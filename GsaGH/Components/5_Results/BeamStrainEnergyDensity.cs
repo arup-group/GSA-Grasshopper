@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using GH_IO.Serialization;
@@ -13,6 +13,7 @@ using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -21,7 +22,7 @@ using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
+using EnergyUnit = OasysUnits.Units.EnergyUnit;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -29,7 +30,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class BeamStrainEnergyDensity : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("c1a927cb-ad0e-4a69-94ce-9ad079047d21");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.BeamStrainEnergyDensity;
     private readonly List<string> _checkboxText = new List<string>() {
@@ -71,7 +72,10 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      _energyUnit = (EnergyUnit)UnitsHelper.Parse(typeof(EnergyUnit), _selectedItems[i]);
+      if (i == 1) {
+        _energyUnit = (EnergyUnit)UnitsHelper.Parse(typeof(EnergyUnit), _selectedItems[i]);
+      }
+
       base.UpdateUI();
     }
 
@@ -96,12 +100,20 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
+        "Max/Min",
         "Energy Unit",
         "Settings",
       });
 
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
+
+      _dropDownItems.Add(new List<string>(new[] {
+        "All",
+        "Max",
+        "Min",
+      }));
+      _selectedItems.Add(_dropDownItems[0][0]);
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Energy));
       _selectedItems.Add(Energy.GetAbbreviation(_energyUnit));
@@ -132,9 +144,8 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var result = new GsaResult();
+      GsaResult result;
       string elementlist = "All";
-
       int positionsCount = 3;
       if (!_average) {
         var ghDivisions = new GH_Integer();
@@ -147,21 +158,15 @@ namespace GsaGH.Components {
         positionsCount = Math.Abs(positionsCount) + 2; // taken absolute value and add 2 end points.
       }
 
-      var outTransX = new DataTree<GH_UnitNumber>();
+      var outResults = new DataTree<GH_UnitNumber>();
 
       var ghTypes = new List<GH_ObjectWrapper>();
-      if (!da.GetDataList(0, ghTypes)) {
-        return;
-      }
+      da.GetDataList(0, ghTypes);
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         switch (ghTyp?.Value) {
-          case null:
-            this.AddRuntimeWarning("Input is null");
-            return;
-
           case GsaResultGoo goo:
-            result = goo.Value;
+            result = (GsaResult)goo.Value;
             elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
             break;
 
@@ -170,48 +175,81 @@ namespace GsaGH.Components {
             return;
         }
 
-        List<GsaResultsValues> vals = _average ?
-          result.Element1DAverageStrainEnergyDensityValues(elementlist, 0, _energyUnit) :
-          result.Element1DStrainEnergyDensityValues(elementlist, positionsCount, 0, _energyUnit);
+        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
+        if (_average) {
+          INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet =
+            result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
-        List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
-          1,
-        };
-        if (permutations.Count == 1 && permutations[0] == -1) {
-          permutations = Enumerable.Range(1, vals.Count).ToList();
-        }
-
-        foreach (int perm in permutations) {
-          if (vals[perm - 1].XyzResults.Count == 0) {
-            string acase = result.ToString().Replace('}', ' ').Replace('{', ' ');
-            this.AddRuntimeWarning("Case " + acase + " contains no Element1D results.");
-            continue;
+          List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
+            1,
+          };
+          if (permutations.Count == 1 && permutations[0] == -1) {
+            permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
           }
 
-          foreach (KeyValuePair<int, ConcurrentDictionary<int, GsaResultQuantity>> kvp in vals[
-            perm - 1].XyzResults) {
-            int elementId = kvp.Key;
-            ConcurrentDictionary<int, GsaResultQuantity> res = kvp.Value;
-            if (res.Count == 0) {
-              continue;
+          if (_selectedItems[0] == "All") {
+            foreach (KeyValuePair<int, IList<IEnergyDensity>> kvp in resultSet.Subset) {
+              foreach (int p in permutations) {
+                var path = new GH_Path(result.CaseId, 
+                  result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
+                outResults.Add(new GH_UnitNumber(kvp.Value[p - 1].EnergyDensity
+                  .ToUnit(_energyUnit)), path);
+              }
             }
+          } else {
+            NodeExtremaKey key = _selectedItems[0] == "Max" ? resultSet.Max : resultSet.Min;
+            IEnergyDensity extrema = resultSet.GetExtrema(key);
+            int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
+            var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
+            outResults.Add(new GH_UnitNumber(extrema.EnergyDensity
+                  .ToUnit(_energyUnit)), path);
+          }
+        } else {
+          IEntity1dResultSubset<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> resultSet =
+            result.Element1dStrainEnergyDensities.ResultSubset(elementIds, positionsCount);
 
-            var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : perm,
-              elementId);
+          List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
+            1,
+          };
+          if (permutations.Count == 1 && permutations[0] == -1) {
+            permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
+          }
 
-            outTransX.AddRange(res.Select(x => new GH_UnitNumber(x.Value.X.ToUnit(_energyUnit))),
-              path);
+          if (_selectedItems[0] == "All") {
+            foreach (KeyValuePair<int, IList<IEntity1dStrainEnergyDensity>> kvp in resultSet.Subset) {
+              foreach (int p in permutations) {
+                var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
+                outResults.AddRange(kvp.Value[p - 1].Results.Values.Select(
+                  r => new GH_UnitNumber(r.EnergyDensity.ToUnit(_energyUnit))), path);
+              }
+            }
+          } else {
+            Entity1dExtremaKey key = _selectedItems[0] == "Max" ? resultSet.Max : resultSet.Min;
+            IEnergyDensity extrema = resultSet.GetExtrema(key);
+            int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
+            var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
+            outResults.Add(new GH_UnitNumber(extrema.EnergyDensity.ToUnit(_energyUnit)), path);
           }
         }
+
+        PostHog.Result(result.CaseType, 1, "StrainEnergy");
       }
 
-      da.SetDataTree(0, outTransX);
-
-      PostHog.Result(result.Type, 1, GsaResultsValues.ResultType.StrainEnergy);
+      da.SetDataTree(0, outResults);
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      _energyUnit = (EnergyUnit)UnitsHelper.Parse(typeof(EnergyUnit), _selectedItems[0]);
+      if (_selectedItems.Count == 1) {
+        _spacerDescriptions.Insert(0, "Max/Min");
+        _dropDownItems.Insert(0, new List<string>(new[] {
+          "All",
+          "Max",
+          "Min",
+        }));
+        _selectedItems.Insert(0, _dropDownItems[0][0]);
+      }
+
+      _energyUnit = (EnergyUnit)UnitsHelper.Parse(typeof(EnergyUnit), _selectedItems[1]);
       UpdateInputs();
       base.UpdateUIFromSelectedItems();
     }

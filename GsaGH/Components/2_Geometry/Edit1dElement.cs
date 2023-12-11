@@ -46,7 +46,7 @@ namespace GsaGH.Components {
         "Set Element Number. If ID is set it will replace any existing 1D Element in the model",
         GH_ParamAccess.item);
       pManager.AddLineParameter("Line", "L", "Reposition Element Line", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Set new Section Property",
+      pManager.AddParameter(new GsaPropertyParameter(), "Section", "PB", "Set new Section or Spring Property",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Group", "Gr", "Set Element Group", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "eT",
@@ -92,7 +92,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddLineParameter("Line", "L", "Element Line", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Get Section Property",
+      pManager.AddGenericParameter("Section", "PB", "Get Section or Spring Property",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "eT", "Get Element Type", GH_ParamAccess.item);
@@ -129,6 +129,41 @@ namespace GsaGH.Components {
         elem = new GsaElement1d(element1dGoo.Value);
       }
 
+      var ghString = new GH_String();
+      if (da.GetData(5, ref ghString)) {
+        if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
+          elem.ApiElement.Type = (ElementType)typeInt;
+        } else {
+          elem.ApiElement.Type = Mappings.GetElementType(ghString.Value);
+        }
+      }
+
+      GsaPropertyGoo sectionGoo = null;
+      if (da.GetData(3, ref sectionGoo)) {
+        switch (sectionGoo.Value) {
+          case GsaSection section:
+            if (elem.ApiElement.Type == ElementType.SPRING) {
+              this.AddRuntimeError("Input PB has to be a Spring Property");
+              return;
+            }
+            elem.Section = section;
+            elem.SpringProperty = null;
+            break;
+
+          case GsaSpringProperty springProperty:
+            if (elem.ApiElement.Type != ElementType.SPRING) {
+              this.AddRuntimeError("Element Type is not Spring");
+              return;
+            }
+            elem.Section = null;
+            elem.SpringProperty = springProperty;
+            break;
+        }
+      } else if (elem.ApiElement.Type == ElementType.SPRING) {
+        this.AddRuntimeError("Input PB has to be a Spring Property");
+        return;
+      }
+
       int id = 0;
       if (da.GetData(1, ref id)) {
         elem.Id = id;
@@ -139,23 +174,9 @@ namespace GsaGH.Components {
         elem.Line = new LineCurve(ghcrv.Value);
       }
 
-      GsaSectionGoo sectionGoo = null;
-      if (da.GetData(3, ref sectionGoo)) {
-        elem.Section = sectionGoo.Value;
-      }
-
       int group = 0;
       if (da.GetData(4, ref group)) {
         elem.ApiElement.Group = group;
-      }
-
-      var ghString = new GH_String();
-      if (da.GetData(5, ref ghString)) {
-        if (GH_Convert.ToInt32(ghString, out int typeInt, GH_Conversion.Both)) {
-          elem.ApiElement.Type = (ElementType)typeInt;
-        } else {
-          elem.ApiElement.Type = Mappings.GetElementType(ghString.Value);
-        }
       }
 
       GsaOffsetGoo offset = null;
@@ -200,16 +221,20 @@ namespace GsaGH.Components {
 
       if (Preview3dSection || elem.Section3dPreview != null) {
         elem.CreateSection3dPreview();
-      } 
+      }
 
       elem.UpdateReleasesPreview();
 
       da.SetData(0, new GsaElement1dGoo(elem));
       da.SetData(1, elem.Id);
       da.SetData(2, new GH_Line(elem.Line.Line));
-      da.SetData(3, new GsaSectionGoo(elem.Section));
+      if (elem.ApiElement.Type == ElementType.SPRING) {
+        da.SetData(3, new GsaSpringPropertyGoo(elem.SpringProperty));
+      } else {
+        da.SetData(3, new GsaSectionGoo(elem.Section));
+      }
       da.SetData(4, elem.ApiElement.Group);
-      da.SetData(5, 
+      da.SetData(5,
         Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == elem.ApiElement.Type).Key);
       da.SetData(6, new GsaOffsetGoo(elem.Offset));
       da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));

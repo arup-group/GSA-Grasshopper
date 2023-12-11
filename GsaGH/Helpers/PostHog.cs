@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 
@@ -91,24 +90,6 @@ namespace GsaGH.Helpers {
           "refType", refType ? "Node" : "None"
         }, {
           "loadSubType", subType
-        },
-      };
-      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
-    }
-
-    internal static void Result(
-      CaseType caseType, int dimension, GsaResultsValues.ResultType resultType,
-      string subType = "-") {
-      const string eventName = "Result";
-      var properties = new Dictionary<string, object>() {
-        {
-          "caseType", caseType.ToString()
-        }, {
-          "elementType", dimension
-        }, {
-          "resultType", resultType.ToString()
-        }, {
-          "resultSubType", subType
         },
       };
       _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);

@@ -224,8 +224,7 @@ namespace GsaGH.Helpers.GH {
 
         return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>>
           (inLoads, inGps, inCases);
-      }
-      else if (!isOptional) {
+      } else if (!isOptional) {
         owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName
           + " failed to collect data!");
       }
@@ -294,14 +293,16 @@ namespace GsaGH.Helpers.GH {
       return (null, null, null);
     }
 
-    internal static Tuple<List<GsaMaterial>, List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>> GetProperties(
-      GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
+    internal static Tuple<List<GsaMaterial>, List<GsaSection>, List<GsaProperty2d>,
+      List<GsaProperty3d>, List<GsaSpringProperty>> GetProperties(GH_Component owner,
+      IGH_DataAccess da, int inputid, bool isOptional = false) {
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(inputid, ghTypes)) {
         var inMat = new List<GsaMaterial>();
         var inSect = new List<GsaSection>();
         var inProp2d = new List<GsaProperty2d>();
         var inProp3d = new List<GsaProperty3d>();
+        var inSpringProps = new List<GsaSpringProperty>();
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -311,47 +312,54 @@ namespace GsaGH.Helpers.GH {
           }
 
           switch (ghTyp.Value) {
-            case GsaMaterialGoo materialGoo: {
-                inMat.Add(materialGoo.Value);
-                break;
-              }
-            case GsaSectionGoo sectionGoo: {
-                inSect.Add(sectionGoo.Value);
-                break;
-              }
-            case GsaProperty2dGoo prop2dGoo: {
-                inProp2d.Add(prop2dGoo.Value);
-                break;
-              }
-            case GsaProperty3dGoo prop3dGoo: {
-                inProp3d.Add(prop3dGoo.Value);
-                break;
-              }
-            default: {
-                string type = ghTyp.Value.GetType().ToString();
-                type = type.Replace("GsaGH.Parameters.", string.Empty);
-                type = type.Replace("Goo", string.Empty);
-                owner.AddRuntimeError("Unable to convert Prop input parameter of type " + type
-                  + " to GsaSection or GsaProp2d");
-                break;
-              }
+            case GsaMaterialGoo materialGoo:
+              inMat.Add(materialGoo.Value);
+              break;
+
+            case GsaSectionGoo sectionGoo:
+              inSect.Add(sectionGoo.Value);
+              break;
+
+            case GsaProperty2dGoo prop2dGoo:
+              inProp2d.Add(prop2dGoo.Value);
+              break;
+
+            case GsaProperty3dGoo prop3dGoo:
+              inProp3d.Add(prop3dGoo.Value);
+              break;
+
+            case GsaSpringPropertyGoo springPropGoo:
+              inSpringProps.Add(springPropGoo.Value);
+              break;
+
+            default:
+              string type = ghTyp.Value.GetType().ToString();
+              type = type.Replace("GsaGH.Parameters.", string.Empty);
+              type = type.Replace("Goo", string.Empty);
+              owner.AddRuntimeError("Unable to convert Prop input parameter of type " + type
+                + " to GsaSection or GsaProp2d");
+              break;
           }
         }
 
-        if (!(inSect.Count > 0)) {
+        if (inSect.IsNullOrEmpty()) {
           inSect = null;
         }
 
-        if (!(inProp2d.Count > 0)) {
+        if (inProp2d.IsNullOrEmpty()) {
           inProp2d = null;
         }
 
-        if (!(inProp3d.Count > 0)) {
+        if (inProp3d.IsNullOrEmpty()) {
           inProp3d = null;
         }
 
-        return new Tuple<List<GsaMaterial>, List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>>
-          (inMat, inSect, inProp2d, inProp3d);
+        if (inSpringProps.IsNullOrEmpty()) {
+          inSpringProps = null;
+        }
+
+        return new Tuple<List<GsaMaterial>, List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>,
+          List<GsaSpringProperty>>(inMat, inSect, inProp2d, inProp3d, inSpringProps);
       }
 
       if (!isOptional) {
@@ -359,8 +367,8 @@ namespace GsaGH.Helpers.GH {
           + " failed to collect data!");
       }
 
-      return new Tuple<List<GsaMaterial>, List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>>
-        (null, null, null, null);
+      return new Tuple<List<GsaMaterial>, List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>,
+        List<GsaSpringProperty>> (null, null, null, null, null);
     }
   }
 }

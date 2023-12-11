@@ -14,10 +14,17 @@ namespace GsaGH.Parameters {
   ConcurrentDictionary<int, Element> elements, GsaModel model) {
       var elem1dGoos = new ConcurrentBag<GsaElement1dGoo>();
       Parallel.ForEach(elements, item => {
+        if(item.Value.Type == ElementType.SPRING) {
+          GsaSpringProperty springProperty = model.GetSpringProperty(item.Value);
+          var elem = new GsaElement1d(
+            item, model.ApiNodes, springProperty, model.ApiElementLocalAxes[item.Key], model.ModelUnit);
+          elem1dGoos.Add(new GsaElement1dGoo(elem));
+        } else {
         GsaSection section = model.GetSection(item.Value);
         var elem = new GsaElement1d(
           item, model.ApiNodes, section, model.ApiElementLocalAxes[item.Key], model.ModelUnit);
         elem1dGoos.Add(new GsaElement1dGoo(elem));
+        }
       });
       return elem1dGoos;
     }

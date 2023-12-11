@@ -9,11 +9,11 @@ namespace GsaGHTests.CustomComponent {
   public class DeserializeTests {
 
     [Theory]
-    //Model
+    // Model
     [InlineData(typeof(CreateModel))]
     [InlineData(typeof(OpenModel))]
     [InlineData(typeof(SaveGsaModel))]
-    //Properties
+    // Properties
     [InlineData(typeof(CreateBool6))]
     [InlineData(typeof(Create2dPropertyModifier))]
     [InlineData(typeof(CreateSectionModifier))]
@@ -24,13 +24,15 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(ProfileDimensions))]
     [InlineData(typeof(GetSectionModifier))]
     [InlineData(typeof(SectionProperties))]
-    //Geometry
+    [InlineData(typeof(GetSpringProperty))]
+    // Geometry
     [InlineData(typeof(Create1dMember))]
     [InlineData(typeof(CreateSupport))]
-    [InlineData(typeof(Edit1dMember))]
     [InlineData(typeof(EditNode))]
     [InlineData(typeof(Create2dElementsFromBrep))]
     [InlineData(typeof(CreateElementsFromMembers))]
+    [InlineData(typeof(CreateEffectiveLength))]
+    [InlineData(typeof(CreateMemberEndRestraint))]
     //Loads
     [InlineData(typeof(CreateGridAreaLoad))]
     [InlineData(typeof(CreateGridLineLoad))]
@@ -38,19 +40,36 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(CreateGridPointLoad))]
     [InlineData(typeof(CreateGridSurface))]
     [InlineData(typeof(GridPlaneSurfaceProperties))]
-    //Analysis
+    // Analysis
     [InlineData(typeof(AnalyseModel))]
-    //Results
+    // Results
+    [InlineData(typeof(BeamDerivedStresses))]
+    [InlineData(typeof(BeamDisplacements))]
+    [InlineData(typeof(BeamForcesAndMoments))]
     [InlineData(typeof(BeamStrainEnergyDensity))]
-    //Display
+    [InlineData(typeof(BeamStresses))]
+    [InlineData(typeof(Element2dDisplacements))]
+    [InlineData(typeof(Element2dForcesAndMoments))]
+    [InlineData(typeof(Element2dStresses))]
+    [InlineData(typeof(Element3dDisplacements))]
+    [InlineData(typeof(Element3dStresses))]
+    [InlineData(typeof(FootfallResults))]
+    [InlineData(typeof(GlobalPerformanceResults))]
+    [InlineData(typeof(Member1dDisplacements))]
+    [InlineData(typeof(Member1dForcesAndMoments))]
+    [InlineData(typeof(NodeDisplacements))]
+    [InlineData(typeof(ReactionForces))]
+    [InlineData(typeof(SpringReactionForces))]
+    [InlineData(typeof(TotalLoadsAndReactions))]
+    // Display
+    [InlineData(typeof(AnnotateDetailed))]
     [InlineData(typeof(Contour1dResults))]
-    [InlineData(typeof(ResultDiagrams))]
     [InlineData(typeof(Contour2dResults))]
     [InlineData(typeof(Contour3dResults))]
     [InlineData(typeof(ContourNodeResults))]
-    [InlineData(typeof(ReactionForceDiagrams))]
-    [InlineData(typeof(AnnotateDetailed))]
     [InlineData(typeof(LoadDiagrams))]
+    [InlineData(typeof(ResultDiagrams))]
+    [InlineData(typeof(ReactionForceDiagrams))]
     public void DeSerializeComponentTest(Type t) {
       var comp = (GH_OasysComponent)Activator.CreateInstance(t);
       OasysDropDownComponentTestHelper.TestDeserialize(comp);

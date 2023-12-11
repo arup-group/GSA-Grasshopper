@@ -79,7 +79,7 @@ namespace GsaGHTests.Helpers.Export {
         CreateModelTest.CreateModelFromProperties(new List<GsaSectionGoo>() {
           section1,
           section2,
-        }, null, null);
+        }, null, null, null);
 
       var ln1 = new GH_Line(new Line(new Point3d(0, 0, 0), new Point3d(10, 0, 0)));
       GsaElement1dGoo elem1d1 = Element1d(ln1, section1.Value.Id);

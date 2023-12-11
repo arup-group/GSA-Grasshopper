@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
-using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
@@ -12,12 +10,9 @@ using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
-using OasysGH.Units;
-using OasysGH.Units.Helpers;
 using OasysUnits;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
-using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -29,31 +24,15 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Edit1dMember;
     private AngleUnit _angleUnit = AngleUnit.Radian;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public Edit1dMember() : base("Edit 1D Member", "Mem1dEdit", "Modify GSA 1D Member",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 
-    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
-      if (!(menu is ContextMenuStrip)) {
-        return; // this method is also called when clicking EWR balloon
+    protected override void BeforeSolveInstance() {
+      base.BeforeSolveInstance();
+      if (Params.Input[10] is Param_Number angleParameter) {
+        _angleUnit = angleParameter.UseDegrees ? AngleUnit.Degree : AngleUnit.Radian;
       }
-      
-      base.AppendAdditionalMenuItems(menu);
-      var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-      foreach (string unit in UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length)) {
-        var toolStripMenuItem = new ToolStripMenuItem(unit, null, (s, e) => Update(unit)) {
-          Enabled = true,
-          Checked = unit == Length.GetAbbreviation(_lengthUnit),
-        };
-        unitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      menu.Items.Add(unitsMenu);
-      Menu_AppendSeparator(menu);
     }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
@@ -72,27 +51,7 @@ namespace GsaGH.Components {
       return false;
     }
 
-    public override bool Read(GH_IReader reader) {
-      _lengthUnit
-        = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
-      return base.Read(reader);
-    }
-
     public void VariableParameterMaintenance() { }
-
-    public override bool Write(GH_IWriter writer) {
-      writer.SetString("LengthUnit", _lengthUnit.ToString());
-      return base.Write(writer);
-    }
-
-    protected override void BeforeSolveInstance() {
-      base.BeforeSolveInstance();
-      if (Params.Input[10] is Param_Number angleParameter) {
-        _angleUnit = angleParameter.UseDegrees ? AngleUnit.Degree : AngleUnit.Radian;
-      }
-
-      Message = Length.GetAbbreviation(_lengthUnit);
-    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaMember1dParameter(), GsaMember1dGoo.Name,
@@ -103,7 +62,7 @@ namespace GsaGH.Components {
         "Set Member Number. If ID is set it will replace any existing 1D Member in the model.",
         GH_ParamAccess.item);
       pManager.AddCurveParameter("Curve", "C", "Member Curve", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Set new Section Property.",
+      pManager.AddParameter(new GsaPropertyParameter(), "Section", "PB", "Set new Section or Spring Property.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member1d Group", "Gr", "Set Member 1D Group",
         GH_ParamAccess.item);
@@ -138,9 +97,9 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBucklingFactorsParameter(),
-        "Set " + GsaBucklingFactorsGoo.Name, GsaBucklingFactorsGoo.NickName,
-        GsaBucklingFactorsGoo.Description, GH_ParamAccess.item);
+      pManager.AddParameter(new GsaEffectiveLengthParameter(),
+        "Set " + GsaEffectiveLengthGoo.Name, GsaEffectiveLengthGoo.NickName,
+        GsaEffectiveLengthGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member1d Name", "Na", "Set Name of Member1d", GH_ParamAccess.item);
       pManager.AddColourParameter("Member1d Colour", "Co", "Set Member 1D Colour",
         GH_ParamAccess.item);
@@ -163,7 +122,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddCurveParameter("Curve", "C", "Member Curve", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddParameter(new GsaSectionParameter(), "Section", "PB", "Get Section Property",
+      pManager.AddGenericParameter("Section", "PB", "Get Section or Spring Property",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
       pManager.AddTextParameter("Member Type", "mT", "Get 1D Member Type", GH_ParamAccess.item);
@@ -191,9 +150,9 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBucklingFactorsParameter(),
-        "Get " + GsaBucklingFactorsGoo.Name, GsaBucklingFactorsGoo.NickName,
-        GsaBucklingFactorsGoo.Description, GH_ParamAccess.item);
+      pManager.AddParameter(new GsaEffectiveLengthParameter(),
+        "Get " + GsaEffectiveLengthGoo.Name, GsaEffectiveLengthGoo.NickName,
+        GsaEffectiveLengthGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member1d", GH_ParamAccess.item);
 
       pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
@@ -212,6 +171,45 @@ namespace GsaGH.Components {
         mem = new GsaMember1d(member1dGoo.Value);
       }
 
+      GH_String ghstring = null;
+      if (da.GetData(6, ref ghstring)) {
+        if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both)) {
+          mem.ApiMember.Type1D = (ElementType)typeInt;
+        } else {
+          try {
+            mem.ApiMember.Type1D = Mappings.GetElementType(ghstring.Value);
+          } catch (ArgumentException) {
+            this.AddRuntimeError("Unable to change Element Type");
+          }
+        }
+      }
+
+      GsaPropertyGoo sectionGoo = null;
+      if (da.GetData(3, ref sectionGoo)) {
+        switch (sectionGoo.Value) {
+          case GsaSection section:
+            if (mem.ApiMember.Type1D == ElementType.SPRING) {
+              this.AddRuntimeError("Input PB has to be a Spring Property");
+              return;
+            }
+            mem.Section = section;
+            mem.SpringProperty = null;
+            break;
+
+          case GsaSpringProperty springProperty:
+            if (mem.ApiMember.Type1D != ElementType.SPRING) {
+              this.AddRuntimeError("1D Element Type is not Spring");
+              return;
+            }
+            mem.Section = null;
+            mem.SpringProperty = springProperty;
+            break;
+        }
+      } else if (mem.ApiMember.Type1D == ElementType.SPRING) {
+        this.AddRuntimeError("Input PB has to be a Spring Property");
+        return;
+      }
+
       int id = 0;
       if (da.GetData(1, ref id)) {
         mem.Id = id;
@@ -225,17 +223,12 @@ namespace GsaGH.Components {
         }
       }
 
-      GsaSectionGoo sectionGoo = null;
-      if (da.GetData(3, ref sectionGoo)) {
-        mem.Section = sectionGoo.Value;
-      }
-
       int group = 0;
       if (da.GetData(4, ref group)) {
         mem.ApiMember.Group = group;
       }
 
-      GH_String ghstring = null;
+      ghstring = null;
       if (da.GetData(5, ref ghstring)) {
         if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both)) {
           mem.ApiMember.Type = (MemberType)typeInt;
@@ -244,19 +237,6 @@ namespace GsaGH.Components {
             mem.ApiMember.Type = Mappings.GetMemberType(ghstring.Value);
           } catch (ArgumentException) {
             this.AddRuntimeError("Unable to change Member Type");
-          }
-        }
-      }
-
-      ghstring = null;
-      if (da.GetData(6, ref ghstring)) {
-        if (GH_Convert.ToInt32(ghstring, out int typeInt, GH_Conversion.Both)) {
-          mem.ApiMember.Type1D = (ElementType)typeInt;
-        } else {
-          try {
-            mem.ApiMember.Type1D = Mappings.GetElementType(ghstring.Value);
-          } catch (ArgumentException) {
-            this.AddRuntimeError("Unable to change Element Type");
           }
         }
       }
@@ -306,15 +286,16 @@ namespace GsaGH.Components {
         mem.ApiMember.IsIntersector = intersector;
       }
 
-      GsaBucklingFactorsGoo blfGoo = null;
-      if (da.GetData(16, ref blfGoo)) {
-        GsaBucklingFactors blf = blfGoo.Value;
+      GsaEffectiveLengthGoo effLengthGoo = null;
+      if (da.GetData(16, ref effLengthGoo)) {
+        GsaBucklingFactors blf = effLengthGoo.Value.BucklingFactors;
         mem.ApiMember.MomentAmplificationFactorStrongAxis
           = blf.MomentAmplificationFactorStrongAxis;
         mem.ApiMember.MomentAmplificationFactorWeakAxis
           = blf.MomentAmplificationFactorWeakAxis;
         mem.ApiMember.EquivalentUniformMomentFactor
           = blf.EquivalentUniformMomentFactor;
+        mem.ApiMember.EffectiveLength = effLengthGoo.Value.EffectiveLength;
       }
 
       string name = string.Empty;
@@ -347,11 +328,15 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaMember1dGoo(mem));
       da.SetData(1, mem.Id);
       da.SetData(2, mem.PolyCurve);
-      da.SetData(3, new GsaSectionGoo(mem.Section));
+      if (mem.ApiMember.Type1D == ElementType.SPRING) {
+        da.SetData(3, new GsaSpringPropertyGoo(mem.SpringProperty));
+      } else {
+        da.SetData(3, new GsaSectionGoo(mem.Section));
+      }
       da.SetData(4, mem.ApiMember.Group);
-      da.SetData(5, 
+      da.SetData(5,
         Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type).Key);
-      da.SetData(6, 
+      da.SetData(6,
         Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type1D).Key);
       da.SetData(7, new GsaOffsetGoo(mem.Offset));
       da.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
@@ -364,18 +349,14 @@ namespace GsaGH.Components {
       da.SetData(15, new GsaNodeGoo(mem.OrientationNode));
       da.SetData(16, mem.ApiMember.MeshSize);
       da.SetData(17, mem.ApiMember.IsIntersector);
-      da.SetData(18, new GsaBucklingFactorsGoo(new GsaBucklingFactors(mem)));
+      var effLength = new GsaEffectiveLength(mem) {
+        BucklingFactors = new GsaBucklingFactors(mem)
+      };
+      da.SetData(18, new GsaEffectiveLengthGoo(effLength));
       da.SetData(19, mem.ApiMember.Name);
       da.SetData(20, (Color)mem.ApiMember.Colour);
       da.SetData(21, mem.ApiMember.IsDummy);
       da.SetData(22, mem.ApiMember.Topology);
-    }
-
-    private void Update(string unit) {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      Message = unit;
-      (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      ExpireSolution(true);
     }
   }
 }

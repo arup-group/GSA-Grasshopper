@@ -37,7 +37,33 @@ namespace GsaGH.Helpers.Assembly {
         apiMember.OrientationNode = AddNode(member1d.OrientationNode.Point);
       }
 
-      apiMember.Property = ConvertSection(member1d.Section);
+      apiMember.EffectiveLength.DestablisingLoad = new Length(
+        apiMember.EffectiveLength.DestablisingLoad, _unit).Meters;
+
+      if (_unit != OasysUnits.Units.LengthUnit.Meter &&
+        apiMember.EffectiveLength is EffectiveLengthFromUserSpecifiedValue user) {
+        if (user.EffectiveLengthAboutY.Option == EffectiveLengthOptionType.Absolute) {
+          user.EffectiveLengthAboutY = new EffectiveLengthAttribute(EffectiveLengthOptionType.Absolute,
+            new Length(user.EffectiveLengthAboutY.Value, _unit).Meters);
+        }
+
+        if (user.EffectiveLengthAboutZ.Option == EffectiveLengthOptionType.Absolute) {
+          user.EffectiveLengthAboutZ = new EffectiveLengthAttribute(EffectiveLengthOptionType.Absolute,
+            new Length(user.EffectiveLengthAboutZ.Value, _unit).Meters);
+        }
+
+        if (user.EffectiveLengthLaterialTorsional.Option == EffectiveLengthOptionType.Absolute) {
+          user.EffectiveLengthLaterialTorsional = new EffectiveLengthAttribute(
+            EffectiveLengthOptionType.Absolute,
+            new Length(user.EffectiveLengthLaterialTorsional.Value, _unit).Meters);
+        }
+      }
+
+      if (member1d.ApiMember.Type1D != ElementType.SPRING) {
+        apiMember.Property = ConvertSection(member1d.Section);
+      } else {
+        apiMember.Property = ConvertSpringProp(member1d.SpringProperty);
+      }
 
       AddMember(member1d.Id, member1d.Guid, apiMember);
     }

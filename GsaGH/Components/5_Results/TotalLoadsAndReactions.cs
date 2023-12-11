@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -16,7 +15,6 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using ForceUnit = OasysUnits.Units.ForceUnit;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -129,69 +127,51 @@ namespace GsaGH.Components {
     protected override void SolveInternal(IGH_DataAccess da) {
       GsaResult result;
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp)) {
-        return;
-      }
-
-      #region Inputs
+      da.GetData(0, ref ghTyp);
 
       switch (ghTyp?.Value) {
-        case null:
-          this.AddRuntimeWarning("Input is null");
-          return;
-
-        case GsaResultGoo goo: {
-          result = goo.Value;
-          if (result.Type == CaseType.CombinationCase) {
+        case GsaResultGoo goo: 
+          result = (GsaResult)goo.Value;
+          if (result.CaseType == CaseType.CombinationCase) {
             this.AddRuntimeError("Global Result only available for Analysis Cases");
             return;
           }
 
           break;
-        }
+        
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
       }
 
-      #endregion
-
-      #region Get results from GSA
-
-      AnalysisCaseResult analysisCaseResult = result.AnalysisCaseResult;
-
-      #endregion
+      IGlobalResultsCache globalResultsCache = result.GlobalResults;
 
       int i = 0;
-      GsaResultQuantity f
-        = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalLoad, _forceUnit);
-      da.SetData(i++, new GH_UnitNumber(f.X));
-      da.SetData(i++, new GH_UnitNumber(f.Y));
-      da.SetData(i++, new GH_UnitNumber(f.Z));
-      da.SetData(i++, new GH_UnitNumber(f.Xyz));
+      IInternalForce f = globalResultsCache.TotalLoad;
+      da.SetData(i++, new GH_UnitNumber(f.X.ToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(f.Y.ToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(f.Z.ToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(f.Xyz.ToUnit(_forceUnit)));
 
-      GsaResultQuantity m
-        = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalLoad, _momentUnit);
-      da.SetData(i++, new GH_UnitNumber(m.X));
-      da.SetData(i++, new GH_UnitNumber(m.Y));
-      da.SetData(i++, new GH_UnitNumber(m.Z));
-      da.SetData(i++, new GH_UnitNumber(m.Xyz));
+      IInternalForce m = globalResultsCache.TotalLoad;
+      da.SetData(i++, new GH_UnitNumber(m.Xx.ToUnit(_momentUnit)));
+      da.SetData(i++, new GH_UnitNumber(m.Yy.ToUnit(_momentUnit)));
+      da.SetData(i++, new GH_UnitNumber(m.Zz.ToUnit(_momentUnit)));
+      da.SetData(i++, new GH_UnitNumber(m.Xxyyzz));
 
-      GsaResultQuantity rf
-        = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalReaction, _forceUnit);
-      da.SetData(i++, new GH_UnitNumber(rf.X));
-      da.SetData(i++, new GH_UnitNumber(rf.Y));
-      da.SetData(i++, new GH_UnitNumber(rf.Z));
+      IInternalForce rf = globalResultsCache.TotalLoad;
+      da.SetData(i++, new GH_UnitNumber(rf.X.ToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(rf.Y.ToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(rf.Z.ToUnit(_forceUnit)));
       da.SetData(i++, new GH_UnitNumber(rf.Xyz));
 
-      GsaResultQuantity rm
-        = ResultHelper.GetQuantityResult(analysisCaseResult.Global.TotalReaction, _momentUnit);
-      da.SetData(i++, new GH_UnitNumber(rm.X));
-      da.SetData(i++, new GH_UnitNumber(rm.Y));
-      da.SetData(i++, new GH_UnitNumber(rm.Z));
-      da.SetData(i, new GH_UnitNumber(rm.Xyz));
+      IInternalForce rm = globalResultsCache.TotalLoad;
+      da.SetData(i++, new GH_UnitNumber(rm.Xx.ToUnit(_momentUnit)));
+      da.SetData(i++, new GH_UnitNumber(rm.Yy.ToUnit(_momentUnit)));
+      da.SetData(i++, new GH_UnitNumber(rm.Zz.ToUnit(_momentUnit)));
+      da.SetData(i, new GH_UnitNumber(rm.Xxyyzz.ToUnit(_momentUnit)));
 
-      PostHog.Result(result.Type, -1, "Global", "TotalLoadsAndReactions");
+      PostHog.Result(result.CaseType, -1, "Global", "TotalLoadsAndReactions");
     }
 
     protected override void UpdateUIFromSelectedItems() {

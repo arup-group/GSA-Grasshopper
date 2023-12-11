@@ -43,7 +43,7 @@ namespace GsaGH.Components {
 
       var vertices = new Point3dList();
       var values = new List<GH_UnitNumber>();
-      for (int i = 0; i < res.ResultValues.Count; i++) {
+      for (int i = 0; i < res.Vertices.Count; i++) {
         vertices.AddRange(res.Vertices[i]);
         values.AddRange(res.ResultValues[i].Select(r => new GH_UnitNumber(r)));
       }

@@ -14,6 +14,7 @@ using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
@@ -177,20 +178,22 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var result = new GsaResult();
       var ghObject = new GH_ObjectWrapper();
-
       if (!da.GetData(0, ref ghObject) || !IsGhObjectValid(ghObject)) {
         return;
       }
 
-      result = (ghObject.Value as GsaResultGoo).Value;
+      var result = (GsaResult)(ghObject.Value as GsaResultGoo).Value;
       string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
-      GsaResultsValues forceValues
-        = result.NodeReactionForceValues(nodeList, _forceUnit, _momentUnit)[0];
+      ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
+      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> forceValues 
+        = result.NodeReactionForces.ResultSubset(nodeIds);
       nodeList = string.Join(" ", forceValues.Ids);
       LengthUnit lengthUnit = GetLengthUnit(result);
+
+      int permutation = result.SelectedPermutationIds == null
+        ? 0 : result.SelectedPermutationIds[0] - 1;
 
       ReadOnlyDictionary<int, Node> gsaFilteredNodes = result.Model.Model.Nodes(nodeList);
       ConcurrentDictionary<int, GsaNodeGoo> nodes = Nodes.GetNodeDictionary(gsaFilteredNodes,
@@ -215,7 +218,7 @@ namespace GsaGH.Components {
       Parallel.ForEach(nodes, node => {
         (GsaVectorDiagram reactionForceVector, GsaAnnotationGoo annotation) 
           = CreateReactionForceVectorWithAnnotations(
-              node, forceValues, scale, significantDigits, color);
+              node, forceValues.Subset, permutation, scale, significantDigits, color);
         if (reactionForceVector == null) {
           return;
         }
@@ -227,49 +230,49 @@ namespace GsaGH.Components {
       });
 
       SetOutputs(da, reactionForceVectors, annotations);
-      PostHog.Diagram("Result", result.Type, "ReactionForce", _selectedDisplayValue.ToString(), Parameters.EntityType.Node);
+      PostHog.Diagram("Result", result.CaseType, "ReactionForce", _selectedDisplayValue.ToString(), Parameters.EntityType.Node);
     }
 
-    private double ComputeAutoScale(GsaResultsValues forceValues, BoundingBox bbox) {
-      double maxValue = 0;
+    private double ComputeAutoScale(INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> forceValues, BoundingBox bbox) {
+      double max = 0;
+      double min = 0;
       switch (_selectedDisplayValue) {
         case DisplayValue.X:
-          maxValue = Math.Max(forceValues.DmaxX.As(_forceUnit),
-            Math.Abs(forceValues.DminX.As(_forceUnit)));
+          max = forceValues.GetExtrema(forceValues.Max.X).X.As(_forceUnit); 
+          min = forceValues.GetExtrema(forceValues.Min.X).X.As(_forceUnit);
           break;
         case DisplayValue.Y:
-          maxValue = Math.Max(forceValues.DmaxY.As(_forceUnit),
-            Math.Abs(forceValues.DminY.As(_forceUnit)));
+          max = forceValues.GetExtrema(forceValues.Max.Y).Y.As(_forceUnit);
+          min = forceValues.GetExtrema(forceValues.Min.Y).Y.As(_forceUnit);
           break;
         case DisplayValue.Z:
-          maxValue = Math.Max(forceValues.DmaxZ.As(_forceUnit),
-            Math.Abs(forceValues.DminZ.As(_forceUnit)));
+          max = forceValues.GetExtrema(forceValues.Max.Z).Z.As(_forceUnit);
+          min = forceValues.GetExtrema(forceValues.Min.Z).Z.As(_forceUnit);
           break;
         case DisplayValue.ResXyz:
-          maxValue = Math.Max(forceValues.DmaxXyz.As(_forceUnit),
-            Math.Abs(forceValues.DminXyz.As(_forceUnit)));
+          max = forceValues.GetExtrema(forceValues.Max.Xyz).Xyz.As(_forceUnit);
+          min = forceValues.GetExtrema(forceValues.Min.Xyz).Xyz.As(_forceUnit);
           break;
 
         case DisplayValue.Xx:
-          maxValue = Math.Max(forceValues.DmaxXx.As(_momentUnit),
-            Math.Abs(forceValues.DminXx.As(_momentUnit)));
+          max = forceValues.GetExtrema(forceValues.Max.Xx).Xx.As(_momentUnit);
+          min = forceValues.GetExtrema(forceValues.Min.Xx).Xx.As(_momentUnit);
           break;
         case DisplayValue.Yy:
-          maxValue = Math.Max(forceValues.DmaxYy.As(_momentUnit),
-            Math.Abs(forceValues.DminYy.As(_momentUnit)));
+          max = forceValues.GetExtrema(forceValues.Max.Yy).Yy.As(_momentUnit);
+          min = forceValues.GetExtrema(forceValues.Min.Yy).Yy.As(_momentUnit);
           break;
         case DisplayValue.Zz:
-          maxValue = Math.Max(forceValues.DmaxZz.As(_momentUnit),
-            Math.Abs(forceValues.DminZz.As(_momentUnit)));
+          max = forceValues.GetExtrema(forceValues.Max.Zz).Zz.As(_momentUnit);
+          min = forceValues.GetExtrema(forceValues.Min.Zz).Zz.As(_momentUnit);
           break;
         case DisplayValue.ResXxyyzz:
-          maxValue = Math.Max(forceValues.DmaxXxyyzz.As(_momentUnit),
-            Math.Abs(forceValues.DminXxyyzz.As(_momentUnit)));
+          max = forceValues.GetExtrema(forceValues.Max.Xxyyzz).Xxyyzz.As(_momentUnit);
+          min = forceValues.GetExtrema(forceValues.Min.Xxyyzz).Xxyyzz.As(_momentUnit);
           break;
       }
 
-      ;
-
+      double maxValue = Math.Max(max, Math.Abs(min));
       double factor = 0.1; // maxVector = 10% of bbox diagonal
       return bbox.Diagonal.Length * factor / maxValue;
     }
@@ -324,67 +327,67 @@ namespace GsaGH.Components {
     }
 
     private (GsaVectorDiagram, GsaAnnotationGoo) CreateReactionForceVectorWithAnnotations(
-      KeyValuePair<int, GsaNodeGoo> node, GsaResultsValues forceValues, double scale,
-      int significantDigits, Color color) {
+      KeyValuePair<int, GsaNodeGoo> node, IDictionary<int, IList<IInternalForce>> forceValues,
+      int permutation, double scale, int significantDigits, Color color) {
       int nodeId = node.Key;
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xyzResults
-        = forceValues.XyzResults;
-      ConcurrentDictionary<int, ConcurrentDictionary<int, GsaResultQuantity>> xxyyzzResults
-        = forceValues.XxyyzzResults;
 
-      if (!xyzResults.ContainsKey(nodeId)) {
+      if (!forceValues.ContainsKey(nodeId)) {
         return (null, null);
       }
 
-      bool isForce = (int)_selectedDisplayValue < 4;
-      GsaResultQuantity quantity;
-      Enum unit;
-
-      if (isForce) {
-        quantity = xyzResults[nodeId][0];
-        unit = _forceUnit;
-      } else {
-        quantity = xxyyzzResults[nodeId][0];
-        unit = _momentUnit;
-      }
-
+      IInternalForce result = forceValues[nodeId][permutation];
       var direction = new Vector3d();
       IQuantity forceValue = null;
 
-      Vector3d xAxis = Vector3d.XAxis;
-      Vector3d yAxis = Vector3d.YAxis;
-      Vector3d zAxis = Vector3d.ZAxis;
-
-      xAxis *= quantity.X.As(unit) * scale;
-      yAxis *= quantity.Y.As(unit) * scale;
-      zAxis *= quantity.Z.As(unit) * scale;
-
       switch (_selectedDisplayValue) {
         case DisplayValue.X:
-        case DisplayValue.Xx:
-          direction = xAxis;
-          forceValue = quantity.X.ToUnit(unit);
+          direction = Vector3d.XAxis * result.X.As(_forceUnit) * scale;
+          forceValue = result.X.ToUnit(_forceUnit);
           break;
 
         case DisplayValue.Y:
-        case DisplayValue.Yy:
-          direction = yAxis;
-          forceValue = quantity.Y.ToUnit(unit);
+          direction = Vector3d.YAxis * result.Y.As(_forceUnit) * scale;
+          forceValue = result.Y.ToUnit(_forceUnit);
           break;
 
         case DisplayValue.Z:
-        case DisplayValue.Zz:
-          direction = zAxis;
-          forceValue = quantity.Z.ToUnit(unit);
+          direction = Vector3d.ZAxis * result.Z.As(_forceUnit) * scale;
+          forceValue = result.Z.ToUnit(_forceUnit);
           break;
 
         case DisplayValue.ResXyz:
-        case DisplayValue.ResXxyyzz:
+          Vector3d xAxis = Vector3d.XAxis * result.X.As(_forceUnit) * scale;
+          Vector3d yAxis = Vector3d.YAxis * result.Y.As(_forceUnit) * scale;
+          Vector3d zAxis = Vector3d.ZAxis * result.Z.As(_forceUnit) * scale;
           direction = xAxis + yAxis + zAxis;
-          forceValue = quantity.Xyz.ToUnit(unit);
+          forceValue = result.Xyz.ToUnit(_forceUnit);
+          break;
+
+        case DisplayValue.Xx:
+          direction = Vector3d.XAxis * result.Xx.As(_momentUnit) * scale;
+          forceValue = result.Xx.ToUnit(_momentUnit);
+          break;
+
+        case DisplayValue.Yy:
+          direction = Vector3d.YAxis * result.Yy.As(_momentUnit) * scale;
+          forceValue = result.Yy.ToUnit(_momentUnit);
+          break;
+
+        case DisplayValue.Zz:
+          direction = Vector3d.ZAxis * result.Zz.As(_momentUnit) * scale;
+          forceValue = result.Zz.ToUnit(_momentUnit);
+          break;
+
+        case DisplayValue.ResXxyyzz:
+          Vector3d xxAxis = Vector3d.XAxis * result.Xx.As(_momentUnit) * scale;
+          Vector3d yyAxis = Vector3d.YAxis * result.Yy.As(_momentUnit) * scale;
+          Vector3d zzAxis = Vector3d.ZAxis * result.Zz.As(_momentUnit) * scale;
+          direction = xxAxis + yyAxis + zzAxis;
+          forceValue = result.Xxyyzz.ToUnit(_momentUnit);
           break;
       }
 
+      bool isForce = (int)_selectedDisplayValue < 4;
       var vectorResult = new GsaVectorDiagram(node.Value.Value.Point, direction, !isForce, color);
 
       var annotation = new GsaAnnotationGoo(new GsaAnnotationDot(
