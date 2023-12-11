@@ -28,6 +28,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(CreateGridAreaLoad), 6)]
     [InlineData(typeof(CreateGridLineLoad), 6)]
     [InlineData(typeof(CreateGridPointLoad), 6)]
+    [InlineData(typeof(CreateSpringProperty), 6)]
     [InlineData(typeof(Contour1dResults), 7)]
     [InlineData(typeof(Contour2dResults), 7)]
     [InlineData(typeof(Contour3dResults), 7)]
