@@ -15,7 +15,6 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
-using Grasshopper.Kernel.Types.Transforms;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
@@ -196,7 +195,7 @@ namespace GsaGH.Components {
                 _selectedItems[0] = _dropDownItems[0][0];
                 _selectedItems[1] = _dropDownItems[1][3];
                 _disp = DisplayValue.ResXyz;
-                Mode1Clicked();
+                DisplacementModeClicked();
               }
 
               break;
@@ -207,7 +206,7 @@ namespace GsaGH.Components {
                 _selectedItems[0] = _dropDownItems[0][1];
                 _selectedItems[1] = _dropDownItems[1][3];
                 _disp = DisplayValue.ResXyz;
-                Mode2Clicked();
+                ReactionModeClicked();
               }
 
               break;
@@ -218,7 +217,7 @@ namespace GsaGH.Components {
                 _selectedItems[0] = _dropDownItems[0][2];
                 _selectedItems[1] = _dropDownItems[1][3];
                 _disp = DisplayValue.ResXyz;
-                Mode3Clicked();
+                SpringForceClicked();
               }
 
               break;
@@ -229,7 +228,7 @@ namespace GsaGH.Components {
                 _selectedItems[0] = _dropDownItems[0][3];
                 _selectedItems[1] = _dropDownItems[1][0];
                 _disp = DisplayValue.X;
-                Mode4Clicked();
+                FootfallModeClicked();
               }
 
               break;
@@ -458,10 +457,6 @@ namespace GsaGH.Components {
               break;
           }
           break;
-
-        case null:
-          this.AddRuntimeWarning("Input is null");
-          return;
 
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
@@ -939,56 +934,35 @@ namespace GsaGH.Components {
       return gradient;
     }
 
-    private void Mode1Clicked() {
-      if (_mode == FoldMode.Displacement) {
-        return;
-      }
-
+    private void DisplacementModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Displacement;
-
       _slider = true;
       _defScale = 100;
-
       ReDrawComponent();
     }
 
-    private void Mode2Clicked() {
-      if (_mode == FoldMode.Reaction) {
-        return;
-      }
-
+    private void ReactionModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Reaction;
       _slider = false;
       _defScale = 0;
-
       ReDrawComponent();
     }
 
-    private void Mode3Clicked() {
-      if (_mode == FoldMode.SpringForce) {
-        return;
-      }
-
+    private void SpringForceClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.SpringForce;
       _slider = false;
       _defScale = 0;
-
       ReDrawComponent();
     }
 
-    private void Mode4Clicked() {
-      if (_mode == FoldMode.Footfall) {
-        return;
-      }
-
+    private void FootfallModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Footfall;
       _slider = false;
       _defScale = 0;
-
       ReDrawComponent();
     }
 
@@ -1032,7 +1006,6 @@ namespace GsaGH.Components {
       }
 
       _legend = new Bitmap((int)(15 * _legendScale), (int)(120 * _legendScale));
-
       ExpirePreview(true);
       base.UpdateUI();
     }

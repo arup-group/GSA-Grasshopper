@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using GsaAPI;
 using OasysUnits;
 
 namespace GsaGH.Parameters.Results {

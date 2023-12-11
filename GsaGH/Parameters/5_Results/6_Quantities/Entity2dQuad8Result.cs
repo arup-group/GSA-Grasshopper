@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public abstract class Entity2dQuad8Result<ApiResultType, QuantityResult> : IEntity2dQuad8Quantity<QuantityResult>

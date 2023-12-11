@@ -1,10 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
-using Newtonsoft.Json.Linq;
 
 namespace GsaGH.Parameters.Results {
   public class NodeTransientFootfallCache : INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> {

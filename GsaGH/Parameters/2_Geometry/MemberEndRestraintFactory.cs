@@ -7,17 +7,15 @@ namespace GsaGH.Parameters {
   public class MemberEndRestraintFactory {
     internal static MemberEndRestraint CreateFromStrings(string f1, string f2, string t, 
       string maj, string min) {
-
-      var topRot = RotationalRestraint(f1);
-      var botRot = RotationalRestraint(f2);
-      var majRot = RotationalRestraint(maj);
-      var minRot = RotationalRestraint(min);
-      var tor = TorsionalRestraint(t);
-      var topTrans = TranslationalRestraint(f1);
-      var botTrans = TranslationalRestraint(f2);
-      var majTrans = TranslationalRestraint(maj);
-      var minTrans = TranslationalRestraint(min);
-
+      RotationalRestraint topRot = RotationalRestraint(f1);
+      RotationalRestraint botRot = RotationalRestraint(f2);
+      RotationalRestraint majRot = RotationalRestraint(maj);
+      RotationalRestraint minRot = RotationalRestraint(min);
+      TorsionalRestraint tor = TorsionalRestraint(t);
+      TranslationalRestraint topTrans = TranslationalRestraint(f1);
+      TranslationalRestraint botTrans = TranslationalRestraint(f2);
+      TranslationalRestraint majTrans = TranslationalRestraint(maj);
+      TranslationalRestraint minTrans = TranslationalRestraint(min);
       return new MemberEndRestraint(topRot, botRot, majRot, minRot, tor,
         topTrans, botTrans, majTrans, minTrans);
     }
@@ -26,7 +24,7 @@ namespace GsaGH.Parameters {
       if (Enum.TryParse(s, true, out StandardRestraint std)) {
         return new MemberEndRestraint(std);
       }
-        
+
       string f1 = string.Empty;
       string f2 = string.Empty;
       string maj = string.Empty;
@@ -143,14 +141,27 @@ namespace GsaGH.Parameters {
       }
 
       string s = string.Join(" ", output).TrimSpaces();
-      s = s.Replace("F1L F2L TR MAJV MINV", "Pinned");
-      s = s.Replace("F1LW F2LW TR MAJVW MINVW", "Fixed");
-      s = s.Replace("F1LW F2W TR MAJVW MINV", "FullRotational");
-      s = s.Replace("F1LP F2P TR MAJVP MINV", "PartialRotational");
-      s = s.Replace("F1L", "TopFlangeLateral");
+      switch (s) {
+        case "F1L F2L TR MAJV MINV":
+          return "Pinned";
+
+        case "F1LW F2LW TR MAJVW MINVW":
+          return "Fixed";
+
+        case "F1LW F2W TR MAJVW MINV":
+          return "FullRotational";
+
+        case "F1LP F2P TR MAJVP MINV":
+          return "PartialRotational";
+
+        case "F1L":
+          return "TopFlangeLateral";
+      }
+
       if (string.IsNullOrEmpty(s)) {
         return "Free";
       }
+
       return s;
     }
 
