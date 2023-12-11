@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.IO;
+using System.Windows.Forms;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -10,22 +13,14 @@ using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
-using Oasys.Taxonomy.Profiles;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
-using OasysGH.Parameters;
-using OasysUnits.Units;
 using OasysUnits;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
-using Line = Rhino.Geometry.Line;
-using OasysGH.Units;
-using GH_IO.Serialization;
-using OasysGH.Units.Helpers;
-using System.Windows.Forms;
-using GsaGH.Helpers.Import;
-using System.Linq;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -33,10 +28,13 @@ namespace GsaGH.Components {
   /// </summary>
   public class ExpandBeamToShell : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("42221f6b-b0f1-41ae-abcf-df5521565464");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ExpandBeamToShell;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+    internal ToleranceContextMenu ToleranceMenu { get; set; } = new ToleranceContextMenu() {
+      Tolerance = DefaultUnits.Tolerance * 2
+    };
     public ExpandBeamToShell() : base("Expand Beam to Shell", "B2S",
       "Expand 1D Entities to 2D Entities from profile, orientation and offset",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
@@ -47,7 +45,7 @@ namespace GsaGH.Components {
       }
 
       Menu_AppendSeparator(menu);
-
+      ToleranceMenu.AppendAdditionalMenuItems(this, menu, _lengthUnit);
       var unitsMenu = new ToolStripMenuItem("Select unit", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
@@ -84,6 +82,8 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       _lengthUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("LengthUnit"));
+      double tol = reader.GetDouble("Tolerance");
+      ToleranceMenu.Tolerance = new Length(tol, _lengthUnit);
       return base.Read(reader);
     }
 
@@ -91,11 +91,14 @@ namespace GsaGH.Components {
 
     public override bool Write(GH_IWriter writer) {
       writer.SetString("LengthUnit", _lengthUnit.ToString());
+      writer.SetDouble("Tolerance", ToleranceMenu.Tolerance.Value);
       return base.Write(writer);
     }
 
     protected override void BeforeSolveInstance() {
-      Message = Length.GetAbbreviation(_lengthUnit);
+      base.BeforeSolveInstance();
+      Message = Length.GetAbbreviation(_lengthUnit) +
+      " - Tol: " + ToleranceMenu.Tolerance.ToString().Replace(" ", string.Empty);
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -126,8 +129,9 @@ namespace GsaGH.Components {
             }
 
             member = memberGoo.Value;
-            if (member.Section == null) {
-
+            if (member.Section == null || member.Section.ApiSection == null) {
+              this.AddRuntimeError("Member has no section with valid profile");
+              return;
             }
 
             axes = member.LocalAxes;
@@ -141,6 +145,11 @@ namespace GsaGH.Components {
             }
 
             crv = member.PolyCurve.DuplicatePolyCurve();
+            if (crv.SpanCount > 1) {
+              this.AddRuntimeWarning("Curve has more than one span, but has been " +
+                "simplified to a straight line");
+            }
+
             section = member.Section;
             offset = member.Offset;
             break;
@@ -152,6 +161,11 @@ namespace GsaGH.Components {
             }
 
             element = elementGoo.Value;
+            if (element.Section == null || element.Section.ApiSection == null) {
+              this.AddRuntimeError("Element has no section with valid profile");
+              return;
+            }
+
             axes = element.LocalAxes;
             if (axes == null) {
               var assembly = new ModelAssembly(element);
@@ -178,11 +192,11 @@ namespace GsaGH.Components {
         return;
       }
 
+      var mem2ds = new List<GsaMember2d>();
+      LengthUnit unit = LengthUnit.Meter;
       crv.LengthParameter(offset.X1.As(_lengthUnit), out double t0);
       crv.LengthParameter(crv.GetLength() - offset.X2.As(_lengthUnit), out double t1);
       crv = crv.Trim(t0, t1);
-      LengthUnit unit = LengthUnit.Meter;
-      var mem2ds = new List<GsaMember2d>();
       var pt = new Point3d(crv.PointAtStart);
       var pln = new Plane(crv.PointAtStart, axes.Z, axes.Y);
       var translation = new Vector3d(
@@ -199,8 +213,9 @@ namespace GsaGH.Components {
       pt.Transform(move);
       pln.Origin = pt;
       string[] angleString = profile.Split(new string[] { "[R(", ")]" }, StringSplitOptions.None);
+      double angle = 0;
       if (angleString.Length > 1) {
-        double angle = double.Parse(angleString[1]);
+        angle = double.Parse(angleString[1]);
         pln.Rotate(Rhino.RhinoMath.ToRadians(angle), axes.X);
       }
 
@@ -212,6 +227,12 @@ namespace GsaGH.Components {
         unit = parser.Parse<LengthUnit>(type[1]);
       }
 
+      if (section.ApiSection.BasicOffset != BasicOffset.Centroid && angle != 0) {
+        this.AddRuntimeError("Unable to expand rotated profile " +
+          "combined with non-centroid BaseOffset");
+        return;
+      }
+
       // angle
       if (profile.StartsWith("STD A")) {
         double height = ValueFromString(parts[2], unit);
@@ -219,7 +240,57 @@ namespace GsaGH.Components {
         double webThk = ValueFromString(parts[4], unit);
         double flangeThk = ValueFromString(parts[5], unit);
 
-        pln.Origin = BaseOffset(pln, section, height, width);
+        if (section.ApiSection.BasicOffset != BasicOffset.Centroid) {
+          switch (section.ApiSection.BasicOffset) {
+            case BasicOffset.Top:
+              pln.Origin = pln.PointAt(
+                -height + section.SectionProperties.Cz.As(_lengthUnit),
+                0);
+              break;
+
+            case BasicOffset.TopLeft:
+              pln.Origin = pln.PointAt(
+                -height + section.SectionProperties.Cz.As(_lengthUnit),
+                section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.TopRight:
+              pln.Origin = pln.PointAt(
+                -height + section.SectionProperties.Cz.As(_lengthUnit),
+                -width + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.Left:
+              pln.Origin = pln.PointAt(
+                0,
+                section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.Right:
+              pln.Origin = pln.PointAt(
+                0,
+                -width + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.Bottom:
+              pln.Origin = pln.PointAt(
+                section.SectionProperties.Cz.As(_lengthUnit),
+                0);
+              break;
+
+            case BasicOffset.BottomLeft:
+              pln.Origin = pln.PointAt(
+                section.SectionProperties.Cz.As(_lengthUnit),
+                section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.BottomRight:
+              pln.Origin = pln.PointAt(
+                section.SectionProperties.Cz.As(_lengthUnit),
+                -width + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+          }
+        }
 
         Brep web = ExtrudePlate(pln, crv,
           flangeThk / 2, webThk / 2,
@@ -239,7 +310,13 @@ namespace GsaGH.Components {
         double webThk = ValueFromString(parts[4], unit);
         double flangeThk = ValueFromString(parts[5], unit);
 
-        pln.Origin = BaseOffset(pln, section, height, width);
+        if (section.ApiSection.BasicOffset != BasicOffset.Centroid) {
+          double widthLeft = section.SectionProperties.Cy.As(_lengthUnit);
+          double widthRight = width - section.SectionProperties.Cy.As(_lengthUnit);
+          pln.Origin = BaseOffset(pln, section, height, widthLeft * 2, widthRight * 2);
+        } else {
+          pln.Origin = BaseOffset(pln, section, height, width);
+        }
 
         Brep web = ExtrudePlate(pln, crv,
           (height / 2) - (flangeThk / 2), webThk / 2,
@@ -259,33 +336,28 @@ namespace GsaGH.Components {
 
       // circle hollow
       else if (profile.StartsWith("STD CHS")) {
-        //SetOutput(da, i++, parts[2], unit); //Depth
-        //da.SetData(i++, null); //Width
-        //da.SetData(i++, null); //Width Top
-        //da.SetData(i++, null); //Width Bottom
-        //da.SetData(i++, null); //Flange Thk Top
-        //da.SetData(i++, null); //Flange Thk Bottom
-        //SetOutput(da, i++, parts[3], unit); //Web Thk Bottom
-        //da.SetData(i++, null); //Root radius
-        //da.SetData(i++, null); //Spacing
-        //da.SetData(i, type[0]);
-        this.AddRuntimeError("Unable to expand CHS profile");
-        return;
+        double diameter = ValueFromString(parts[2], unit);
+        double webThk = ValueFromString(parts[3], unit);
+
+        pln.Origin = BaseOffset(pln, section, diameter, diameter);
+
+        var circle = new Circle(pln, (diameter - webThk) / 2);
+        int divisions = (int)Math.Ceiling(
+          circle.Circumference / ToleranceMenu.Tolerance.As(_lengthUnit));
+        var positions = Enumerable.Range(0, divisions + 1)
+          .Select(i => (double)i / divisions * Math.PI * 2).ToList();
+
+        for (int j = 1; j < positions.Count; j++) {
+          Point3d pt1 = circle.PointAt(positions[j - 1]);
+          Point3d pt2 = circle.PointAt(positions[j]);
+          Brep strip = ExtrudePlate(crv, pt1, pt2);
+          mem2ds.Add(CreateMember2d(strip, webThk, section));
+        }
       }
 
       // circle
       else if (profile.StartsWith("STD C ") || profile.StartsWith("STD C(")) {
-        //SetOutput(da, i++, parts[2], unit); //Depth
-        //da.SetData(i++, null); //Width
-        //da.SetData(i++, null); //Width Top
-        //da.SetData(i++, null); //Width Bottom
-        //da.SetData(i++, null); //Flange Thk Top
-        //da.SetData(i++, null); //Flange Thk Bottom
-        //da.SetData(i++, null); //Web Thk Bottom
-        //da.SetData(i++, null); //Root radius
-        //da.SetData(i++, null); //Spacing
-        //da.SetData(i, type[0]);
-        this.AddRuntimeError("Unable to expand Circle profile");
+        this.AddRuntimeError("Unable to expand solid Circle profile");
         return;
       }
 
@@ -311,33 +383,30 @@ namespace GsaGH.Components {
 
       // IEllipseHollowProfile
       else if (profile.StartsWith("STD OVAL")) {
-        //SetOutput(da, i++, parts[2], unit); //Depth
-        //SetOutput(da, i++, parts[3], unit); //Width
-        //SetOutput(da, i++, parts[3], unit); //Width Top
-        //SetOutput(da, i++, parts[3], unit); //Width Bottom
-        //SetOutput(da, i++, parts[4], unit); //Flange Thk Top
-        //SetOutput(da, i++, parts[4], unit); //Flange Thk Bottom
-        //SetOutput(da, i++, parts[4], unit); //Web Thk Bottom
-        //da.SetData(i++, null); //Root radius
-        //da.SetData(i++, null); //Spacing
-        //da.SetData(i, type[0]);
-        this.AddRuntimeError("Unable to expand Oval profile");
-        return;
+        double height = ValueFromString(parts[2], unit);
+        double width = ValueFromString(parts[3], unit);
+        double webThk = ValueFromString(parts[4], unit);
+
+        pln.Origin = BaseOffset(pln, section, height, width);
+
+        var ellipse = new Ellipse(pln, (height - webThk) / 2, (width - webThk) / 2)
+          .ToNurbsCurve();
+        int divisions = (int)Math.Ceiling(
+          ellipse.GetLength() / ToleranceMenu.Tolerance.As(_lengthUnit));
+        var positions = Enumerable.Range(0, divisions + 1)
+          .Select(i => (double)i / divisions * Math.PI * 2).ToList();
+
+        for (int j = 1; j < positions.Count; j++) {
+          Point3d pt1 = ellipse.PointAt(positions[j - 1]);
+          Point3d pt2 = ellipse.PointAt(positions[j]);
+          Brep strip = ExtrudePlate(crv, pt1, pt2);
+          mem2ds.Add(CreateMember2d(strip, webThk, section));
+        }
       }
 
       // IEllipseProfile
       else if (profile.StartsWith("STD E")) {
-        //SetOutput(da, i++, parts[2], unit); //Depth
-        //SetOutput(da, i++, parts[3], unit); //Width
-        //SetOutput(da, i++, parts[3], unit); //Width Top
-        //SetOutput(da, i++, parts[3], unit); //Width Bottom
-        //da.SetData(i++, null); //Flange Thk Top
-        //da.SetData(i++, null); //Flange Thk Bottom
-        //da.SetData(i++, null); //Web Thk Bottom
-        //da.SetData(i++, null); //Root radius
-        //da.SetData(i++, null); //Spacing
-        //da.SetData(i, type[0]);
-        this.AddRuntimeError("Unable to expand Ellipse profile");
+        this.AddRuntimeError("Unable to expand solid Ellipse profile");
         return;
       }
 
@@ -348,7 +417,13 @@ namespace GsaGH.Components {
         double flangeThk = ValueFromString(parts[5], unit);
         double lip = ValueFromString(parts[4], unit);
 
-        pln.Origin = BaseOffset(pln, section, height, width);
+        if (section.ApiSection.BasicOffset != BasicOffset.Centroid) {
+          double widthLeft = section.SectionProperties.Cy.As(_lengthUnit);
+          double widthRight = width - section.SectionProperties.Cy.As(_lengthUnit);
+          pln.Origin = BaseOffset(pln, section, height, widthLeft * 2, widthRight * 2);
+        } else {
+          pln.Origin = BaseOffset(pln, section, height, width);
+        }
 
         Brep web = ExtrudePlate(pln, crv,
           (height / 2) - (flangeThk / 2), flangeThk / 2,
@@ -385,7 +460,57 @@ namespace GsaGH.Components {
         double topLip = ValueFromString(parts[5], unit);
         double bottomLip = ValueFromString(parts[6], unit);
 
-        pln.Origin = BaseOffset(pln, section, height, bottomWidth, topWidth);
+        if (section.ApiSection.BasicOffset != BasicOffset.Centroid) {
+          switch (section.ApiSection.BasicOffset) {
+            case BasicOffset.Top:
+              pln.Origin = pln.PointAt(
+                (-height / 2) + section.SectionProperties.Cz.As(_lengthUnit),
+                0);
+              break;
+
+            case BasicOffset.TopLeft:
+              pln.Origin = pln.PointAt(
+                (-height / 2) + section.SectionProperties.Cz.As(_lengthUnit),
+                bottomWidth - (flangeThk / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.TopRight:
+              pln.Origin = pln.PointAt(
+                (-height / 2) + section.SectionProperties.Cz.As(_lengthUnit),
+                -topWidth + (flangeThk / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.Left:
+              pln.Origin = pln.PointAt(
+                0,
+                bottomWidth - (flangeThk / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.Right:
+              pln.Origin = pln.PointAt(
+                0,
+                -topWidth + (flangeThk / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.Bottom:
+              pln.Origin = pln.PointAt(
+                (height / 2) + section.SectionProperties.Cz.As(_lengthUnit),
+                0);
+              break;
+
+            case BasicOffset.BottomLeft:
+              pln.Origin = pln.PointAt(
+                (height / 2) + section.SectionProperties.Cz.As(_lengthUnit),
+                bottomWidth - (flangeThk / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.BottomRight:
+              pln.Origin = pln.PointAt(
+                (height / 2) + section.SectionProperties.Cz.As(_lengthUnit),
+                -topWidth + (flangeThk / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+          }
+        }
 
         Brep web = ExtrudePlate(pln, crv,
           (height / 2) - (flangeThk / 2), 0,
@@ -421,8 +546,59 @@ namespace GsaGH.Components {
         double flangeThkTop = ValueFromString(parts[6], unit);
         double flangeThkBottom = ValueFromString(parts[7], unit);
         double webThk = ValueFromString(parts[5], unit);
+        double maxWidth = Math.Max(topWidth, bottomWidth);
 
-        pln.Origin = BaseOffset(pln, section, height, Math.Max(bottomWidth, topWidth));
+        if (section.ApiSection.BasicOffset != BasicOffset.Centroid) {
+          switch (section.ApiSection.BasicOffset) {
+            case BasicOffset.Top:
+              pln.Origin = pln.PointAt(
+                (-height / 2) + section.SectionProperties.Cz.As(_lengthUnit),
+                0);
+              break;
+
+            case BasicOffset.TopLeft:
+              pln.Origin = pln.PointAt(
+                (-height / 2) + section.SectionProperties.Cz.As(_lengthUnit),
+                (maxWidth / 2) - section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.TopRight:
+              pln.Origin = pln.PointAt(
+                (-height / 2) + section.SectionProperties.Cz.As(_lengthUnit),
+                (-maxWidth / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.Left:
+              pln.Origin = pln.PointAt(
+                0,
+                (maxWidth / 2) - section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.Right:
+              pln.Origin = pln.PointAt(
+                0,
+                (-maxWidth / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.Bottom:
+              pln.Origin = pln.PointAt(
+                (height / 2) + section.SectionProperties.Cz.As(_lengthUnit),
+                0);
+              break;
+
+            case BasicOffset.BottomLeft:
+              pln.Origin = pln.PointAt(
+                (height / 2) + section.SectionProperties.Cz.As(_lengthUnit),
+                (maxWidth / 2) - section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.BottomRight:
+              pln.Origin = pln.PointAt(
+                (height / 2) + section.SectionProperties.Cz.As(_lengthUnit),
+                (-maxWidth / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+          }
+        }
 
         Brep web = ExtrudePlate(pln, crv,
           (height / 2) - (flangeThkTop / 2), 0,
@@ -442,18 +618,33 @@ namespace GsaGH.Components {
 
       // IIBeamCellularProfile
       else if (profile.StartsWith("STD CB")) {
-        //SetOutput(da, i++, parts[2], unit); //Depth/Diameter
-        //SetOutput(da, i++, parts[3], unit); //Width
-        //SetOutput(da, i++, parts[3], unit); //Width Top
-        //SetOutput(da, i++, parts[3], unit); //Width Bottom
-        //SetOutput(da, i++, parts[5], unit); //Flange Thk Top
-        //SetOutput(da, i++, parts[5], unit); //Flange Thk Bottom
-        //SetOutput(da, i++, parts[4], unit); //Web Thk Bottom
-        //SetOutput(da, i++, parts[6], unit); //hole size
-        //SetOutput(da, i++, parts[7], unit); //pitch
-        //da.SetData(i, type[0]);
-        this.AddRuntimeError("Unable to expand Cellular Beam profile");
-        return;
+        double height = ValueFromString(parts[2], unit);
+        double width = ValueFromString(parts[3], unit);
+        double flangeThk = ValueFromString(parts[5], unit);
+        double webThk = ValueFromString(parts[4], unit);
+        double holeDiameter = ValueFromString(parts[6], unit);
+
+        pln.Origin = BaseOffset(pln, section, height, width);
+
+        Brep webTop = ExtrudePlate(pln, crv,
+          (height / 2) - (flangeThk / 2), 0,
+          holeDiameter / 2, 0);
+        mem2ds.Add(CreateMember2d(webTop, webThk, section));
+
+        Brep webBottom = ExtrudePlate(pln, crv,
+          -holeDiameter / 2, 0,
+          -(height / 2) + (flangeThk / 2), 0);
+        mem2ds.Add(CreateMember2d(webBottom, webThk, section));
+
+        Brep topFlange = ExtrudePlate(pln, crv,
+          (height / 2) - (flangeThk / 2), width / 2,
+          (height / 2) - (flangeThk / 2), -width / 2);
+        mem2ds.Add(CreateMember2d(topFlange, flangeThk, section));
+
+        Brep bottomFlange = ExtrudePlate(pln, crv,
+          -(height / 2) + (flangeThk / 2), width / 2,
+          -(height / 2) + (flangeThk / 2), -width / 2);
+        mem2ds.Add(CreateMember2d(bottomFlange, flangeThk, section));
       }
 
       // IIBeamSymmetricalProfile
@@ -491,137 +682,58 @@ namespace GsaGH.Components {
         pln.Origin = BaseOffset(pln, section, height, width);
 
         Brep webLeft = ExtrudePlate(pln, crv,
-          (height / 2) - (flangeThk / 2), -(width / 2) + (flangeThk / 2),
-          -(height / 2) + (flangeThk / 2), -(width / 2) + (flangeThk / 2));
+          (height / 2) - (flangeThk / 2), -(width / 2) + (webThk / 2),
+          -(height / 2) + (flangeThk / 2), -(width / 2) + (webThk / 2));
         mem2ds.Add(CreateMember2d(webLeft, webThk, section));
 
         Brep webRight = ExtrudePlate(pln, crv,
-          (height / 2) - (flangeThk / 2), (width / 2) - (flangeThk / 2),
-          -(height / 2) + (flangeThk / 2), (width / 2) - (flangeThk / 2));
+          (height / 2) - (flangeThk / 2), (width / 2) - (webThk / 2),
+          -(height / 2) + (flangeThk / 2), (width / 2) - (webThk / 2));
         mem2ds.Add(CreateMember2d(webRight, webThk, section));
 
         Brep topFlange = ExtrudePlate(pln, crv,
-          (height / 2) - (flangeThk / 2), -(width / 2) + (flangeThk / 2),
-          (height / 2) - (flangeThk / 2), (width / 2) - (flangeThk / 2));
+          (height / 2) - (flangeThk / 2), -(width / 2) + (webThk / 2),
+          (height / 2) - (flangeThk / 2), (width / 2) - (webThk / 2));
         mem2ds.Add(CreateMember2d(topFlange, flangeThk, section));
 
         Brep bottomFlange = ExtrudePlate(pln, crv,
-          -(height / 2) + (flangeThk / 2), -(width / 2) + (flangeThk / 2),
-          -(height / 2) + (flangeThk / 2), (width / 2) - (flangeThk / 2));
+          -(height / 2) + (flangeThk / 2), -(width / 2) + (webThk / 2),
+          -(height / 2) + (flangeThk / 2), (width / 2) - (webThk / 2));
         mem2ds.Add(CreateMember2d(bottomFlange, flangeThk, section));
       }
 
       // IRectangleProfile
       else if (profile.StartsWith("STD R ") || profile.StartsWith("STD R(")) {
-        //SetOutput(da, i++, parts[2], unit); //Depth/Diameter
-        //SetOutput(da, i++, parts[3], unit); //Width
-        //SetOutput(da, i++, parts[3], unit); //Width Top
-        //SetOutput(da, i++, parts[3], unit); //Width Bottom
-        //da.SetData(i++, null); //Flange Thk Top
-        //da.SetData(i++, null); //Flange Thk Bottom
-        //da.SetData(i++, null); //Web Thk Bottom
-        //da.SetData(i++, null); //Root radius
-        //da.SetData(i++, null); //Spacing
-        //da.SetData(i, type[0]);
-        this.AddRuntimeError("Unable to expand Rectangle profile");
+        this.AddRuntimeError("Unable to expand solid Rectangle profile");
         return;
       }
 
       // IRectoEllipseProfile
       else if (profile.StartsWith("STD RE")) {
-        //SetOutput(da, i++, parts[2], unit); //Depth
-        //SetOutput(da, i++, parts[4], unit); //Width
-        //SetOutput(da, i++, parts[3], unit); //Width Top
-        //SetOutput(da, i++, parts[5], unit); //Width Bottom
-        //da.SetData(i++, null); //Flange Thk Top
-        //da.SetData(i++, null); //Flange Thk Bottom
-        //da.SetData(i++, null); //Web Thk Bottom
-        //da.SetData(i++, null); //Root radius
-        //da.SetData(i++, null); //Spacing
-        //da.SetData(i, type[0]);
-        this.AddRuntimeError("Unable to expand Recto-ellipse profile");
+        this.AddRuntimeError("Unable to expand solid Recto-ellipse profile");
         return;
       }
 
       // ISecantPileProfile
       else if (profile.StartsWith("STD SP")) {
-        //SetOutput(da, i++, parts[2], unit); //Depth/Diameter
-        //Length length;
-        //if (profile.StartsWith("STD SPW")) {
-        //  // STD SPW 250 100 4
-        //  int count = int.Parse(parts[4], CultureInfo.InvariantCulture);
-        //  double spacing = double.Parse(parts[3], CultureInfo.InvariantCulture);
-        //  length = new Length(count * spacing, unit);
-        //} else {
-        //  // STD SP 250 100 4
-        //  int count = int.Parse(parts[4], CultureInfo.InvariantCulture);
-        //  double spacing = double.Parse(parts[3], CultureInfo.InvariantCulture);
-        //  double diameter = double.Parse(parts[2], CultureInfo.InvariantCulture);
-        //  length = new Length(((count - 1) * spacing) + diameter, unit);
-        //}
-
-        //da.SetData(i++, new GH_UnitNumber(length.ToUnit(_lengthUnit))); //Width
-        //da.SetData(i++, null); //Width Top
-        //da.SetData(i++, null); //Width Bottom
-        //da.SetData(i++, null); //Flange Thk Top
-        //da.SetData(i++, null); //Flange Thk Bottom
-        //da.SetData(i++, null); //Web Thk Bottom
-        //da.SetData(i++, null); //Root radius
-        //SetOutput(da, i++, parts[3], unit); //Spacing
-        //da.SetData(i, type[0]);
-
         this.AddRuntimeError("Unable to expand Secant pile profile");
         return;
       }
 
       // ISheetPileProfile
       else if (profile.StartsWith("STD SHT")) {
-        //SetOutput(da, i++, parts[2], unit); //Depth
-        //SetOutput(da, i++, parts[3], unit); //Width
-        //SetOutput(da, i++, parts[4], unit); //Width Top
-        //SetOutput(da, i++, parts[5], unit); //Width Bottom
-        //SetOutput(da, i++, parts[6], unit); //Flange Thk Top
-        //SetOutput(da, i++, parts[6], unit); //Flange Thk Bottom
-        //SetOutput(da, i++, parts[7], unit); //Web Thk Bottom
-        //da.SetData(i++, null); //Root radius
-        //da.SetData(i++, null); //Spacing
-        //da.SetData(i, type[0]);
-
         this.AddRuntimeError("Unable to expand Sheet pile profile");
         return;
       }
 
       // IStadiumProfile
       else if (profile.StartsWith("STD RC")) {
-        //SetOutput(da, i++, parts[2], unit); //Depth
-        //SetOutput(da, i++, parts[3], unit); //Width
-        //da.SetData(i++, null); //Width Top
-        //da.SetData(i++, null); //Width Bottom
-        //da.SetData(i++, null); //Flange Thk Top
-        //da.SetData(i++, null); //Flange Thk Bottom
-        //da.SetData(i++, null); //Web Thk Bottom
-        //da.SetData(i++, null); //Root radius
-        //da.SetData(i++, null); //Spacing
-        //da.SetData(i, type[0]);
-        this.AddRuntimeError("Unable to expand Recto-circular profile");
+        this.AddRuntimeError("Unable to expand solid Recto-circular profile");
         return;
       }
 
       // ITrapezoidProfile
       else if (profile.StartsWith("STD TR")) {
-        //double top = double.Parse(parts[3], CultureInfo.InvariantCulture);
-        //double bottom = double.Parse(parts[4], CultureInfo.InvariantCulture);
-        //var length = new Length(Math.Max(top, bottom), unit);
-        //SetOutput(da, i++, parts[2], unit); //Depth
-        //da.SetData(i++, new GH_UnitNumber(length.ToUnit(_lengthUnit))); //Width
-        //SetOutput(da, i++, parts[3], unit); //Width Top
-        //SetOutput(da, i++, parts[4], unit); //Width Bottom
-        //da.SetData(i++, null); //Flange Thk Top
-        //da.SetData(i++, null); //Flange Thk Bottom
-        //da.SetData(i++, null); //Web Thk Bottom
-        //da.SetData(i++, null); //Root radius
-        //da.SetData(i++, null); //Spacing
-        //da.SetData(i, type[0]);
         this.AddRuntimeError("Unable to expand Trapezoid profile");
         return;
       }
@@ -633,7 +745,57 @@ namespace GsaGH.Components {
         double webThk = ValueFromString(parts[4], unit);
         double flangeThk = ValueFromString(parts[5], unit);
 
-        pln.Origin = BaseOffset(pln, section, height, width);
+        if (section.ApiSection.BasicOffset != BasicOffset.Centroid) {
+          switch (section.ApiSection.BasicOffset) {
+            case BasicOffset.Top:
+              pln.Origin = pln.PointAt(
+                section.SectionProperties.Cz.As(_lengthUnit),
+                0);
+              break;
+
+            case BasicOffset.TopLeft:
+              pln.Origin = pln.PointAt(
+                section.SectionProperties.Cz.As(_lengthUnit),
+                (width / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.TopRight:
+              pln.Origin = pln.PointAt(
+                section.SectionProperties.Cz.As(_lengthUnit),
+                (-width / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.Left:
+              pln.Origin = pln.PointAt(
+                0,
+                (width / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.Right:
+              pln.Origin = pln.PointAt(
+                0,
+                (-width / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.Bottom:
+              pln.Origin = pln.PointAt(
+                height + section.SectionProperties.Cz.As(_lengthUnit),
+                0);
+              break;
+
+            case BasicOffset.BottomLeft:
+              pln.Origin = pln.PointAt(
+                height + section.SectionProperties.Cz.As(_lengthUnit),
+                (width / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+
+            case BasicOffset.BottomRight:
+              pln.Origin = pln.PointAt(
+                height + section.SectionProperties.Cz.As(_lengthUnit),
+                (-width / 2) + section.SectionProperties.Cy.As(_lengthUnit));
+              break;
+          }
+        }
 
         Brep web = ExtrudePlate(pln, crv,
           -flangeThk / 2, 0,
@@ -651,68 +813,35 @@ namespace GsaGH.Components {
         unit = LengthUnit.Meter;
         sqlValues.ForEach(x => new Length(x, unit).As(_lengthUnit));
 
-        //if (sqlValues.Count == 2) {
-          //    da.SetData(i++,
-          //      new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(_lengthUnit))); //Depth
-          //    da.SetData(i++,
-          //      new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(_lengthUnit))); //Width
-          //    da.SetData(i++, null); //Width Top
-          //    da.SetData(i++, null); //Width Bottom
-          //    da.SetData(i++, null); //Flange Thk Top
-          //    da.SetData(i++, null); //Flange Thk Bottom
-          //    da.SetData(i++,
-          //      new GH_UnitNumber(
-          //        new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Web Thk Bottom
-          //    da.SetData(i++, null); //root radius
-          //    da.SetData(i++, null); //Spacing
-        //} else {
-          
-          //    da.SetData(i++,
-          //      new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(_lengthUnit))); //Depth
-          //    da.SetData(i++,
-          //      new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Width
-          //    da.SetData(i++,
-          //      new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Width Top
-          //    da.SetData(i++,
-          //      new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Width Bottom
-          //    da.SetData(i++,
-          //    new GH_UnitNumber(
-          //        new Length(sqlValues[3], unit).ToUnit(_lengthUnit))); //Flange Thk Top
-          //    da.SetData(i++,
-          //    new GH_UnitNumber(
-          //        new Length(sqlValues[3], unit).ToUnit(_lengthUnit))); //Flange Thk Bottom
-          //    da.SetData(i++,
-          //      new GH_UnitNumber(
-          //        new Length(sqlValues[2], unit).ToUnit(_lengthUnit))); //Web Thk Bottom
-          //    da.SetData(i++,
-          //    sqlValues.Count > 4 ?
-          //        new GH_UnitNumber(new Length(sqlValues[4], unit).ToUnit(_lengthUnit)) :
-          //        new GH_UnitNumber(
-          //          Length.Zero.ToUnit(_lengthUnit))); // welded section don´t have a root radius
-          //                                             //Root radius
-          //    da.SetData(i++, null); //Spacing
+        if (sqlValues.Count == 2) {
+          this.AddRuntimeError("Unable to expand none-I Cat profile");
+          return;
+        } else {
+          double height = sqlValues[0];
+          double width = sqlValues[1];
+          double webThk = sqlValues[2];
+          double flangeThk = sqlValues[3];
 
-        double height = sqlValues[0];
-        double width = sqlValues[1];
-        double webThk = sqlValues[2];
-        double flangeThk = sqlValues[3];
+          pln.Origin = BaseOffset(pln, section, height, width);
 
-        pln.Origin = BaseOffset(pln, section, height, width);
+          Brep topFlange = ExtrudePlate(pln, crv,
+            (height / 2) - (flangeThk / 2), -width / 2,
+            (height / 2) - (flangeThk / 2), width / 2);
+          mem2ds.Add(CreateMember2d(topFlange, flangeThk, section));
 
-        Brep topFlange = ExtrudePlate(pln, crv,
-          (height / 2) - (flangeThk / 2), -width / 2,
-          (height / 2) - (flangeThk / 2), width / 2);
-        mem2ds.Add(CreateMember2d(topFlange, flangeThk, section));
+          Brep web = ExtrudePlate(pln, crv,
+            (height / 2) - (flangeThk / 2), 0,
+            -(height / 2) + (flangeThk / 2), 0);
+          mem2ds.Add(CreateMember2d(web, webThk, section));
 
-        Brep web = ExtrudePlate(pln, crv,
-          (height / 2) - (flangeThk / 2), 0,
-          -(height / 2) + (flangeThk / 2), 0);
-        mem2ds.Add(CreateMember2d(web, webThk, section));
-
-        Brep bottomFlange = ExtrudePlate(pln, crv,
-          -(height / 2) + (flangeThk / 2), -width / 2,
-          -(height / 2) + (flangeThk / 2), width / 2);
-        mem2ds.Add(CreateMember2d(bottomFlange, flangeThk, section));
+          Brep bottomFlange = ExtrudePlate(pln, crv,
+            -(height / 2) + (flangeThk / 2), -width / 2,
+            -(height / 2) + (flangeThk / 2), width / 2);
+          mem2ds.Add(CreateMember2d(bottomFlange, flangeThk, section));
+        }
+      } else {
+        this.AddRuntimeError($"Unable to expand profile: {profile}");
+        return;
       }
 
       da.SetDataList(0, mem2ds.ConvertAll(x => new GsaMember2dGoo(x)));
@@ -728,6 +857,12 @@ namespace GsaGH.Components {
       return sweep[0];
     }
 
+    private Brep ExtrudePlate(Curve crv, Point3d pt1, Point3d pt2) {
+      var ln = new LineCurve(pt1, pt2);
+      var sweepOneRail = new SweepOneRail();
+      Brep[] sweep = sweepOneRail.PerformSweep(crv, ln);
+      return sweep[0];
+    }
     private GsaMember2d CreateMember2d(Brep brep, double thickness, GsaSection section) {
       return new GsaMember2d(brep) {
         Prop2d = new GsaProperty2d(new Length(thickness, _lengthUnit)) {
