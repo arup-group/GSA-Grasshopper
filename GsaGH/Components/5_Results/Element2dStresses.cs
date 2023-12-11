@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
@@ -59,7 +56,7 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
-        "Envelope",
+        "Max/Min",
         "Unit",
       });
 
@@ -199,7 +196,7 @@ namespace GsaGH.Components {
 
     protected override void UpdateUIFromSelectedItems() {
       if (_selectedItems.Count == 1) {
-        _spacerDescriptions.Insert(0, "Envelope");
+        _spacerDescriptions.Insert(0, "Max/Min");
         _dropDownItems.Insert(0, ExtremaHelper.Tensor3Stresses.ToList());
         _selectedItems.Insert(0, _dropDownItems[0][0]);
       }

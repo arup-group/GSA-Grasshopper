@@ -1,6 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 
 namespace GsaGH.Parameters.Results {
   public interface INodeResultCache<T1, T2> where T1 : IResultItem {

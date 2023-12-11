@@ -1,12 +1,16 @@
 ﻿using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGHTests.Components.Geometry;
 using GsaGHTests.Components.Loads;
 using GsaGHTests.Helper;
 using GsaGHTests.Model;
+using GsaGHTests.Parameters;
 using OasysGH.Components;
 using Xunit;
+using NodeDisplacements = GsaGH.Components.NodeDisplacements;
 
 namespace GsaGHTests.Helpers.GH {
   [Collection("GrasshopperFixture collection")]
@@ -251,6 +255,328 @@ namespace GsaGHTests.Helpers.GH {
       Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
       Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
       Assert.NotEmpty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void TestGetMemberListDefinitionFromMemberList() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var apiList = new EntityList() {
+        Type = GsaAPI.EntityType.Member,
+        Definition = "1",
+        Name = "myList"
+      };
+      result.Model.Model.AddList(apiList);
+
+      var comp = new Member1dDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList("myList", "1", GsaAPI.EntityType.Member);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.True((int)comp.RuntimeMessageLevel < 10);
+    }
+
+    [Fact]
+    public void TestGetMemberListDefinitionErrorFromElementList() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var apiList = new EntityList() {
+        Type = GsaAPI.EntityType.Element,
+        Definition = "1",
+        Name = "myList"
+      };
+      result.Model.Model.AddList(apiList);
+
+      var comp = new Member1dDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList("myList", "1", GsaAPI.EntityType.Element);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
+    [Fact]
+    public void TestGetMemberListDefinitionFromUnnamedMemberList() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var apiList = new EntityList() {
+        Type = GsaAPI.EntityType.Member,
+        Definition = "1",
+        Name = string.Empty
+      };
+      result.Model.Model.AddList(apiList);
+
+      var comp = new Member1dDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Member);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.True((int)comp.RuntimeMessageLevel < 10);
+    }
+
+    [Fact]
+    public void TestGetMemberListDefinitionFromUnnamedMemberListNotInModel() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var comp = new Member1dDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Member);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.True((int)comp.RuntimeMessageLevel < 10);
+    }
+
+    [Fact]
+    public void TestGetMemberListDefinitionFromString() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var comp = new Member1dDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, "all", 1);
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel < 10);
+    }
+
+
+    [Fact]
+    public void TestGetNodeListDefinitionFromNodeList() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var apiList = new EntityList() {
+        Type = GsaAPI.EntityType.Node,
+        Definition = "2",
+        Name = "myList"
+      };
+      result.Model.Model.AddList(apiList);
+
+      var comp = new NodeDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList("myList", "2", GsaAPI.EntityType.Node);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.True((int)comp.RuntimeMessageLevel < 10);
+    }
+
+    [Fact]
+    public void TestGetNodeListDefinitionErrorFromElementList() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var apiList = new EntityList() {
+        Type = GsaAPI.EntityType.Element,
+        Definition = "2",
+        Name = "myList"
+      };
+      result.Model.Model.AddList(apiList);
+
+      var comp = new NodeDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList("myList", "2", GsaAPI.EntityType.Element);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
+    [Fact]
+    public void TestGetNodeListDefinitionFromUnnamedMemberList() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var apiList = new EntityList() {
+        Type = GsaAPI.EntityType.Node,
+        Definition = "1",
+        Name = string.Empty
+      };
+      result.Model.Model.AddList(apiList);
+
+      var comp = new NodeDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Node);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.True((int)comp.RuntimeMessageLevel < 10);
+    }
+
+    [Fact]
+    public void TestGetNodeListDefinitionFromUnnamedMemberListNotInModel() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var comp = new NodeDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Node);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.True((int)comp.RuntimeMessageLevel < 10);
+    }
+
+    [Fact]
+    public void TestGetNodeListDefinitionFromString() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var comp = new NodeDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, "all", 1);
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel < 10);
+    }
+
+    [Fact]
+    public void TestGetElementListDefinitionErrorFromNodeList() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      var comp = new BeamDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList("myList", "2", GsaAPI.EntityType.Node);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
+    [Fact]
+    public void TestGetElementListDefinitionFromMemberChildList() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      string listName = "myList";
+      var apiList = new EntityList() {
+        Type = GsaAPI.EntityType.Element,
+        Definition = "1 2",
+        Name = $"Children of '{listName}'"
+      };
+      result.Model.Model.AddList(apiList);
+
+      var comp = new BeamDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList("myList", "1", GsaAPI.EntityType.Member);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Equal($"Element definition was derived from Children of '{listName}' List", 
+            comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark)[0]);
+    }
+
+    [Fact]
+    public void TestGetElementListDefinitionFromMemberList() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      string listName = "myList";
+      var apiList = new EntityList() {
+        Type = GsaAPI.EntityType.Member,
+        Definition = "1",
+        Name = listName
+      };
+      result.Model.Model.AddList(apiList);
+
+      var comp = new BeamDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList(listName, "1", GsaAPI.EntityType.Member);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Equal($"Element definition was derived from Elements with Parent " +
+            $"Member included in '{listName}' List",
+            comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark)[0]);
+    }
+
+    [Fact]
+    public void TestGetElementListDefinitionErrorFromMemberListWithoutChildren() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      string listName = "myList";
+      var apiList = new EntityList() {
+        Type = GsaAPI.EntityType.Member,
+        Definition = "2",
+        Name = listName
+      };
+      result.Model.Model.AddList(apiList);
+      result.Model.Model.AddMember(new Member());
+
+      var comp = new BeamDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList(listName, "2", GsaAPI.EntityType.Member);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Equal($"No child elements found for Members 2",
+            comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning)[0]);
+    }
+
+    [Fact]
+    public void TestGetElementListDefinitionErrorFromMemberListNotInModel() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      result.Model.Model.AddMember(new Member());
+
+      var comp = new BeamDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList(string.Empty, "2", GsaAPI.EntityType.Member);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Equal($"No child elements found for Members 2",
+            comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning)[0]);
+    }
+
+    [Fact]
+    public void TestGetElementListDefinitionFromMemberListNotInModel() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      result.Model.Model.AddMember(new Member());
+
+      var comp = new BeamDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Member);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.Equal($"Element definition was derived from Elements with Parent "
+          + $"Member included in 'Member list' List",
+            comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark)[0]);
+    }
+
+    [Fact]
+    public void TestGetElementOrMemberListFromString() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      result.Model.Model.AddMember(new Member());
+
+      var comp = new ResultDiagrams();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, "all", 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.True((int)comp.RuntimeMessageLevel < 10);
+    }
+
+    [Fact]
+    public void TestGetElementOrMemberListFromElementList() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      result.Model.Model.AddMember(new Member());
+
+      var comp = new ResultDiagrams();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Element);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.True((int)comp.RuntimeMessageLevel < 10);
+    }
+
+    [Fact]
+    public void TestGetElementOrMemberListFromMemberList() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      result.Model.Model.AddMember(new Member());
+
+      var comp = new ResultDiagrams();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Member);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.True((int)comp.RuntimeMessageLevel < 10);
+    }
+
+    [Fact]
+    public void TestGetElementOrMemberListErrorFromNodeList() {
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
+      result.Model.Model.AddMember(new Member());
+
+      var comp = new ResultDiagrams();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Node);
+      ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
+      comp.Params.Output[0].CollectData();
+
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
     }
   }
 }
