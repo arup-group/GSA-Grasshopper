@@ -11,7 +11,7 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void ChangeCalculationTypeDropdownTest() {
-      var comp = new CreateEffectiveLength();
+      var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       
       var output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
@@ -36,7 +36,7 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void ChangeLoadReferenceDropdownTest() {
-      var comp = new CreateEffectiveLength();
+      var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       ComponentTestHelper.SetInput(comp, 0.15, 0);
 
@@ -63,7 +63,7 @@ namespace GsaGHTests.Components.Geometry {
     [InlineData(0)]
     [InlineData(1)]
     public void EndReleaseInputTests(int index) {
-      var comp = new CreateEffectiveLength();
+      var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       comp.SetSelected(0, index);
       ComponentTestHelper.SetInput(comp, "Pinned", 1);
@@ -84,7 +84,7 @@ namespace GsaGHTests.Components.Geometry {
     [InlineData(1)]
     [InlineData(2)]
     public void BucklingFactorsTests(int index) {
-      var comp = new CreateEffectiveLength();
+      var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       comp.SetSelected(0, index);
       int max = comp.Params.Input.Count - 1;
@@ -101,7 +101,7 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void UserSpecifiedLengthAsNumberInputTest() {
-      var comp = new CreateEffectiveLength();
+      var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       comp.SetSelected(0, 2);
       ComponentTestHelper.SetInput(comp, 0.1, 1);
@@ -120,7 +120,7 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void UserSpecifiedLengthAsPercentInputTest() {
-      var comp = new CreateEffectiveLength();
+      var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       comp.SetSelected(0, 2);
       ComponentTestHelper.SetInput(comp, -0.1, 1);
