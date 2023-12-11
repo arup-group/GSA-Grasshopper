@@ -1,8 +1,6 @@
 ﻿using GsaAPI;
 using OasysUnits;
 using OasysUnits.Units;
-using AngleUnit = OasysUnits.Units.AngleUnit;
-using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters.Results {
   public class Force2d : IForce2d {

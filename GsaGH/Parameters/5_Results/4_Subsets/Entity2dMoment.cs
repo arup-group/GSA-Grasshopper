@@ -1,8 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
   public class Entity2dMoment : IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> {

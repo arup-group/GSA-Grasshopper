@@ -2,7 +2,6 @@
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using OasysGH.Components;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
@@ -135,6 +134,60 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(EffectiveLengthOptionType.Relative, specific.EffectiveLengthAboutZ.Option);
       Assert.Equal(1.5, specific.EffectiveLengthLaterialTorsional.Value);
       Assert.Equal(EffectiveLengthOptionType.Relative, specific.EffectiveLengthLaterialTorsional.Option);
+    }
+
+    [Theory]
+    [InlineData("2", "3", "Pinned", "TopAndBottomFlangeLateral")]
+    [InlineData("0", "0", "Free", "Free")]
+    [InlineData("free", "free", "Free", "Free")]
+    [InlineData("2s", "3s", "Pinned", "TopAndBottomFlangeLateral")]
+    [InlineData("pin", "top and bottom", "Pinned", "TopAndBottomFlangeLateral")]
+    [InlineData("1", "top", "TopFlangeLateral", "TopFlangeLateral")]
+    [InlineData("top", "bot", "TopFlangeLateral", "BottomFlangeLateral")]
+    [InlineData("top", "2", "TopFlangeLateral", "BottomFlangeLateral")]
+    public void IntermediateRestraintStringInputTest(
+        string contin, string interm, string expectedContin, string expectedInterm) {
+      var comp = new CreateEffectiveLength();
+      comp.CreateAttributes();
+      comp.SetSelected(0, 1);
+      ComponentTestHelper.SetInput(comp, contin, 3);
+      ComponentTestHelper.SetInput(comp, interm, 4);
+
+      var output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      var intermediate = (EffectiveLengthFromEndAndInternalRestraint)output.Value.EffectiveLength;
+      Assert.Equal(expectedContin, intermediate.RestraintAlongMember.ToString());
+      Assert.Equal(expectedInterm, intermediate.RestraintAtBracedPoints.ToString());
+    }
+
+    [Theory]
+    [InlineData("asd", 3)]
+    [InlineData("asd", 4)]
+    public void IntermediateRestraintStringInputErrorTest(string input, int id) {
+      var comp = new CreateEffectiveLength();
+      comp.CreateAttributes();
+      comp.SetSelected(0, 1);
+      ComponentTestHelper.SetInput(comp, input, id);
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
+    [Theory]
+    [InlineData("F1L F2L TR MAJV MINV", "Pinned")]
+    [InlineData("F1L", "TopFlangeLateral")]
+    [InlineData("", "Free")]
+    [InlineData("F1LW F2W MAJVW MINV", "F1LW F2W MAJVW MINV")]
+    [InlineData("F1LP F2P MAJVP MINV", "F1LP F2P MAJVP MINV")]
+    [InlineData("F1W", "F1W")]
+    [InlineData("F1P", "F1P")]
+    [InlineData("F2W", "F2W")]
+    [InlineData("F2P", "F2P")]
+    [InlineData("TR", "TR")]
+    [InlineData("MAJV", "MAJV")]
+    [InlineData("MINV", "MINV")]
+    public void MemberEndRestraintCreateFromStringsTests(string s, string expected) {
+      MemberEndRestraint restraint = MemberEndRestraintFactory.CreateFromStrings(s);
+      string value = MemberEndRestraintFactory.MemberEndRestraintToString(restraint);
+      Assert.Equal(expected, value);
     }
   }
 }

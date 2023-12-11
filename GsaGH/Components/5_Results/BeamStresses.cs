@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -62,7 +60,7 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
-        "Envelope",
+        "Max/Min",
         "Unit",
       });
 
