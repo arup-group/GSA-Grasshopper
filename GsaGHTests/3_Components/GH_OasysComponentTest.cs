@@ -66,7 +66,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(Create2dElementsFromBrep))]
     [InlineData(typeof(CreateElementsFromMembers))]
     [InlineData(typeof(CreateEffectiveLengthOptions))]
-    [InlineData(typeof(EffectiveLengthInfo))]
+    [InlineData(typeof(GetEffectiveLengthOptions))]
     [InlineData(typeof(CreateMemberEndRestraint))]
     [InlineData(typeof(MemberEndRestraintInfo))]
     [InlineData(typeof(LocalAxes))]

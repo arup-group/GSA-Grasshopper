@@ -25,7 +25,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to create Effective Length properties for member 1d
   /// </summary>
-  public class CreateEffectiveLength_OBSOLETE : GH_OasysDropDownComponent {
+  public class CreateEffectiveLengthOptions_OBSOLETE : GH_OasysDropDownComponent {
     private enum FoldMode {
       Automatic,
       InternalRestraints,
@@ -34,11 +34,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("3b63d584-5f61-4779-b576-14ab8682c1b9");
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateEffectiveLength;
+    protected override Bitmap Icon => Resources.CreateEffectiveLengthOptions;
     private FoldMode _mode = FoldMode.Automatic;
 
 
-    public CreateEffectiveLength_OBSOLETE() : base("Create Effective Length", "EffectiveLength",
+    public CreateEffectiveLengthOptions_OBSOLETE() : base("Create Effective Length", "EffectiveLength",
       "Create 1D Member Design Properties for Effective Length, Restraints and Buckling Factors",
       CategoryName.Name(), SubCategoryName.Cat2()) {
       Hidden = true;
@@ -153,7 +153,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaEffectiveLengthParameter());
+      pManager.AddParameter(new GsaEffectiveLengthOptionsParameter());
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {

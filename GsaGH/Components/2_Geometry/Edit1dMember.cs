@@ -97,7 +97,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaEffectiveLengthParameter(),
+      pManager.AddParameter(new GsaEffectiveLengthOptionsParameter(),
         "Set " + GsaEffectiveLengthGoo.Name, GsaEffectiveLengthGoo.NickName,
         GsaEffectiveLengthGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member1d Name", "Na", "Set Name of Member1d", GH_ParamAccess.item);
@@ -150,7 +150,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaEffectiveLengthParameter(),
+      pManager.AddParameter(new GsaEffectiveLengthOptionsParameter(),
         "Get " + GsaEffectiveLengthGoo.Name, GsaEffectiveLengthGoo.NickName,
         GsaEffectiveLengthGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member1d", GH_ParamAccess.item);

@@ -10,7 +10,7 @@ namespace GsaGH.Parameters {
   ///   This class provides a parameter interface for the <see cref="GsaEffectiveLengthGoo" /> type.
   /// </summary>
   public class
-    GsaEffectiveLengthParameter : GH_OasysPersistentParam<GsaEffectiveLengthGoo> {
+    GsaEffectiveLengthOptionsParameter : GH_OasysPersistentParam<GsaEffectiveLengthGoo> {
     public override Guid ComponentGuid => new Guid("e2349b4f-1ebb-4661-99d9-07c6a3ef22b9");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override string InstanceDescription
@@ -18,9 +18,9 @@ namespace GsaGH.Parameters {
         base.InstanceDescription;
     public override string TypeName
       => SourceCount == 0 ? GsaEffectiveLengthGoo.Name : base.TypeName;
-    protected override Bitmap Icon => Resources.EffectiveLengthParam;
+    protected override Bitmap Icon => Resources.EffectiveLengthOptionsParam;
 
-    public GsaEffectiveLengthParameter() : base(new GH_InstanceDescription(
+    public GsaEffectiveLengthOptionsParameter() : base(new GH_InstanceDescription(
       GsaEffectiveLengthGoo.Name, GsaEffectiveLengthGoo.NickName,
       GsaEffectiveLengthGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }

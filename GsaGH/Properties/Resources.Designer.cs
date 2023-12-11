@@ -433,9 +433,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap CreateEffectiveLength {
+        internal static System.Drawing.Bitmap CreateEffectiveLengthOptions {
             get {
-                object obj = ResourceManager.GetObject("CreateEffectiveLength", resourceCulture);
+                object obj = ResourceManager.GetObject("CreateEffectiveLengthOptions", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -873,9 +873,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap EffectiveLengthInfo {
+        internal static System.Drawing.Bitmap GetEffectiveLengthOptions {
             get {
-                object obj = ResourceManager.GetObject("EffectiveLengthInfo", resourceCulture);
+                object obj = ResourceManager.GetObject("GetEffectiveLengthOptions", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -883,9 +883,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap EffectiveLengthParam {
+        internal static System.Drawing.Bitmap EffectiveLengthOptionsParam {
             get {
-                object obj = ResourceManager.GetObject("EffectiveLengthParam", resourceCulture);
+                object obj = ResourceManager.GetObject("EffectiveLengthOptionsParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -24,7 +24,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaEffectiveLengthParameter());
+      pManager.AddParameter(new GsaEffectiveLengthOptionsParameter());
       pManager.AddNumberParameter("Factor Lsy", "fLy", "Moment Amplification Factor, Strong Axis",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Factor Lsz", "fLz", "Moment Amplification Factor, Weak Axis",
@@ -38,7 +38,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaEffectiveLengthParameter());
+      pManager.AddParameter(new GsaEffectiveLengthOptionsParameter());
       pManager.AddNumberParameter("Factor Lsy", "fLy", "Moment Amplification Factor, Strong Axis",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Factor Lsz", "fLz", "Moment Amplification Factor, Weak Axis",

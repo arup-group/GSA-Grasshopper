@@ -7,7 +7,7 @@ using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
-  public class CreateEffectiveLengthTests {
+  public class CreateEffectiveLengthOptionsTests {
 
     [Fact]
     public void ChangeCalculationTypeDropdownTest() {

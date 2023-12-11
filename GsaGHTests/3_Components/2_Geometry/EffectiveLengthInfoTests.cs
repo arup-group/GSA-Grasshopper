@@ -6,14 +6,14 @@ using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
-  public class EffectiveLengthInfoTests {
+  public class GetEffectiveLengthOptionsTests {
 
     [Theory]
     [InlineData(0, "Automatic")]
     [InlineData(1, "InternalRestraints")]
     [InlineData(2, "UserSpecified")]
     public void AutomaticTypeTest(int index, string expected) {
-      var comp = new EffectiveLengthInfo();
+      var comp = new GetEffectiveLengthOptions();
       comp.CreateAttributes();
 
       var leffComponent = new CreateEffectiveLengthOptions();

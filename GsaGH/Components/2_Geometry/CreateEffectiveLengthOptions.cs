@@ -1,29 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to create Effective Length properties for member 1d
+  ///   Component to create Effective Length Options for a Member 1D
   /// </summary>
   public class CreateEffectiveLengthOptions : GH_OasysDropDownComponent {
     private enum FoldMode {
@@ -35,7 +29,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("a477dee8-8ac6-4d3d-880c-4b2d6364d3c6");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateEffectiveLength;
+    protected override Bitmap Icon => Resources.CreateEffectiveLengthOptions;
     private FoldMode _mode = FoldMode.Automatic;
     private readonly IReadOnlyDictionary<FoldMode, string> _effectiveLengthOptions
       = new Dictionary<FoldMode, string> {
@@ -56,24 +50,6 @@ namespace GsaGH.Components {
       Hidden = true;
     }
 
-    private FoldMode GetModeBy(string value) {
-      foreach (KeyValuePair<FoldMode, string> item in _effectiveLengthOptions) {
-        if (item.Value.Equals(value)) {
-          return item.Key;
-        }
-      }
-      throw new ArgumentException("Unable to convert " + value + " to Effective Length Options");
-    }
-
-    private LoadReference GetLoadReferenceBy(string value) {
-      foreach (KeyValuePair<LoadReference, string> item in _loadReferenceTypes) {
-        if (item.Value.Equals(value)) {
-          return item.Key;
-        }
-      }
-      throw new ArgumentException("Unable to convert " + value + " to Load Reference");
-    }
-
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
       _mode = GetModeBy(_selectedItems[i]);
@@ -89,12 +65,12 @@ namespace GsaGH.Components {
       Param_String end1 = End1Restraint();
       Param_String end2 = End2Restraint();
       if (Params.Input.Count != 7 & Params.Input.Count != 4) {
-        end1 = (Param_String)Params.Input[1];
-        end2 = (Param_String)Params.Input[2];
+        end1 = (Param_String)Params.Input[0];
+        end2 = (Param_String)Params.Input[1];
       }
 
-      while (Params.Input.Count > 1) {
-        Params.UnregisterInputParameter(Params.Input[1], false);
+      while (Params.Input.Count > 0) {
+        Params.UnregisterInputParameter(Params.Input[0], false);
       }
 
       switch (_mode) {
@@ -116,6 +92,8 @@ namespace GsaGH.Components {
           Params.RegisterInputParam(EffectiveLengthLtbParam());
           break;
       }
+
+      Params.RegisterInputParam(DestabilisingLoadHeight());
 
       Params.RegisterInputParam(fLy);
       Params.RegisterInputParam(fLz);
@@ -141,7 +119,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddNumberParameter("Destabilising Load Height", "L",
+      pManager.AddNumberParameter("Destabilising Load Height", "h",
         "Destabilising Load Height in model units", GH_ParamAccess.item, 0);
       pManager.AddNumberParameter("Factor Lsy", "fLy", "Moment Amplification Factor, Strong Axis",
         GH_ParamAccess.item);
@@ -156,21 +134,22 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaEffectiveLengthParameter());
+      pManager.AddParameter(new GsaEffectiveLengthOptionsParameter());
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
       var leff = new GsaEffectiveLength();
       string end1 = string.Empty;
       string end2 = string.Empty;
+      int destablisingLoadIndex = 3;
       switch (_mode) {
         case FoldMode.Automatic:
           var auto = new EffectiveLengthFromEndRestraintAndGeometry();
-          if (da.GetData(1, ref end1)) {
+          if (da.GetData(0, ref end1)) {
             auto.End1 = MemberEndRestraintFactory.CreateFromStrings(end1);
           }
 
-          if (da.GetData(2, ref end2)) {
+          if (da.GetData(1, ref end2)) {
             auto.End2 = MemberEndRestraintFactory.CreateFromStrings(end2);
           }
 
@@ -179,21 +158,21 @@ namespace GsaGH.Components {
 
         case FoldMode.InternalRestraints:
           var internalRes = new EffectiveLengthFromEndAndInternalRestraint();
-          if (da.GetData(1, ref end1)) {
+          if (da.GetData(0, ref end1)) {
             internalRes.End1 = MemberEndRestraintFactory.CreateFromStrings(end1);
           }
 
-          if (da.GetData(2, ref end2)) {
+          if (da.GetData(1, ref end2)) {
             internalRes.End2 = MemberEndRestraintFactory.CreateFromStrings(end2);
           }
 
           string continous = string.Empty;
-          if (da.GetData(3, ref continous)) {
+          if (da.GetData(2, ref continous)) {
             internalRes.RestraintAlongMember = InternalContinuousRestraint(continous);
           }
 
           string intermed = string.Empty;
-          if (da.GetData(4, ref intermed)) {
+          if (da.GetData(3, ref intermed)) {
             internalRes.RestraintAtBracedPoints = InternalIntermediateRestraint(intermed);
           }
 
@@ -204,23 +183,23 @@ namespace GsaGH.Components {
           var specific = new EffectiveLengthFromUserSpecifiedValue();
           if (Params.Input[1].SourceCount > 0) {
             specific.EffectiveLengthAboutY = EffectiveLengthAttribute(
-              Input.LengthOrRatio(this, da, 1, LengthUnit.Meter, true));
+              Input.LengthOrRatio(this, da, 0, LengthUnit.Meter, true));
           }
 
           if (Params.Input[2].SourceCount > 0) {
             specific.EffectiveLengthAboutZ = EffectiveLengthAttribute(
-              Input.LengthOrRatio(this, da, 2, LengthUnit.Meter, true));
+              Input.LengthOrRatio(this, da, 1, LengthUnit.Meter, true));
           }
 
           if (Params.Input[3].SourceCount > 0) {
             specific.EffectiveLengthLaterialTorsional = EffectiveLengthAttribute(
-              Input.LengthOrRatio(this, da, 3, LengthUnit.Meter, true));
+              Input.LengthOrRatio(this, da, 2 , LengthUnit.Meter, true));
           }
 
           leff.EffectiveLength = specific;
           break;
       }
-
+      
       var fls = new GsaBucklingFactors();
       double? input = null;
       if (da.GetData(Params.Input.Count - 3, ref input)) {
@@ -237,13 +216,23 @@ namespace GsaGH.Components {
 
       leff.BucklingFactors = fls;
 
-      if (da.GetData(0, ref input)) {
+      if (da.GetData(destablisingLoadIndex, ref input)) {
         leff.EffectiveLength.DestablisingLoad = (double)input;
       }
 
       leff.EffectiveLength.DestablisingLoadPositionRelativeTo = GetLoadReferenceBy(_selectedItems[1]);
 
       da.SetData(0, new GsaEffectiveLengthGoo(leff));
+    }
+
+    private Param_Number DestabilisingLoadHeight() {
+      return new Param_Number {
+        Access = GH_ParamAccess.item,
+        Name = "Destabilising Load Height",
+        NickName = "h",
+        Description = "Destabilising Load Height in model units", 
+        Optional = true
+      };
     }
 
     private Param_GenericObject EffectiveLengthAboutYParam() {
@@ -303,6 +292,24 @@ namespace GsaGH.Components {
         "\nor the " + MemberEndRestraintFactory.RestraintSyntax(),
         Optional = true
       };
+    }
+
+    private FoldMode GetModeBy(string value) {
+      foreach (KeyValuePair<FoldMode, string> item in _effectiveLengthOptions) {
+        if (item.Value.Equals(value)) {
+          return item.Key;
+        }
+      }
+      throw new ArgumentException("Unable to convert " + value + " to Effective Length Options");
+    }
+
+    private LoadReference GetLoadReferenceBy(string value) {
+      foreach (KeyValuePair<LoadReference, string> item in _loadReferenceTypes) {
+        if (item.Value.Equals(value)) {
+          return item.Key;
+        }
+      }
+      throw new ArgumentException("Unable to convert " + value + " to Load Reference");
     }
 
     private Param_String InternalContinuousRestraint() {
