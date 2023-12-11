@@ -52,7 +52,7 @@ namespace GsaGH.Parameters {
         gH_BakeUtility.BakeObject(new GH_Brep(goo.Value.Brep), objAtt, doc);
         goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
       }
-      gH_BakeUtility.BakeObjects(m_data.Select(x => new GH_Brep(x.Value.Brep)), att, doc);
+      
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }
 
