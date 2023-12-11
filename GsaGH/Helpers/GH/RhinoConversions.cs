@@ -210,7 +210,7 @@ namespace GsaGH.Helpers.GH {
 
       var assembly = new ModelAssembly(null, null, null, nodes, elem1ds, null, null, mem1ds,
         new List<GsaMember2d> { mem }, null, null, null, null, null, null, null, null, null, null,
-        unit, tolerance, true, null);
+        null, unit, tolerance, true, null);
       Model model = assembly.GetModel();
 
       var tempModel = new GsaModel(model);

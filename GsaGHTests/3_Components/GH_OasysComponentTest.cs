@@ -48,6 +48,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(ProfileDimensions))]
     [InlineData(typeof(SectionProperties))]
     [InlineData(typeof(TaperProfile))]
+    [InlineData(typeof(GetSpringProperty))]
     // 2_Geometry
     [InlineData(typeof(Create1dElement))]
     [InlineData(typeof(Create2dElement))]
@@ -112,7 +113,6 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(MeshResultInfo))]
     [InlineData(typeof(PointResultInfo))]
     [InlineData(typeof(GetResult))]
-    [InlineData(typeof(GlobalPerformanceResults_OBSOLETE), true)]
     [InlineData(typeof(GlobalPerformanceResults))]
     [InlineData(typeof(ContourNodeResults))]
     [InlineData(typeof(NodeDisplacements))]
@@ -122,6 +122,9 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SelectResult))]
     [InlineData(typeof(SpringReactionForces))]
     [InlineData(typeof(TotalLoadsAndReactions))]
+    // 99_Obsolete
+    [InlineData(typeof(GlobalPerformanceResults_OBSOLETE), true)]
+    [InlineData(typeof(GetModelProperties_OBSOLETE), true)]
     public void GH_OasysComponentTest(Type t, bool obsolete = false) {
       var comp = (GH_OasysComponent)Activator.CreateInstance(t);
       Assert.NotNull(comp.Icon_24x24);

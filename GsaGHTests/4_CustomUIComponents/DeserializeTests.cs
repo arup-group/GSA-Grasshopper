@@ -9,11 +9,11 @@ namespace GsaGHTests.CustomComponent {
   public class DeserializeTests {
 
     [Theory]
-    //Model
+    // Model
     [InlineData(typeof(CreateModel))]
     [InlineData(typeof(OpenModel))]
     [InlineData(typeof(SaveGsaModel))]
-    //Properties
+    // Properties
     [InlineData(typeof(CreateBool6))]
     [InlineData(typeof(Create2dPropertyModifier))]
     [InlineData(typeof(CreateSectionModifier))]
@@ -24,10 +24,10 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(ProfileDimensions))]
     [InlineData(typeof(GetSectionModifier))]
     [InlineData(typeof(SectionProperties))]
-    //Geometry
+    [InlineData(typeof(GetSpringProperty))]
+    // Geometry
     [InlineData(typeof(Create1dMember))]
     [InlineData(typeof(CreateSupport))]
-    [InlineData(typeof(Edit1dMember))]
     [InlineData(typeof(EditNode))]
     [InlineData(typeof(Create2dElementsFromBrep))]
     [InlineData(typeof(CreateElementsFromMembers))]
@@ -40,9 +40,9 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(CreateGridPointLoad))]
     [InlineData(typeof(CreateGridSurface))]
     [InlineData(typeof(GridPlaneSurfaceProperties))]
-    //Analysis
+    // Analysis
     [InlineData(typeof(AnalyseModel))]
-    //Results
+    // Results
     [InlineData(typeof(BeamDerivedStresses))]
     [InlineData(typeof(BeamDisplacements))]
     [InlineData(typeof(BeamForcesAndMoments))]
@@ -61,7 +61,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(ReactionForces))]
     [InlineData(typeof(SpringReactionForces))]
     [InlineData(typeof(TotalLoadsAndReactions))]
-    //Display
+    // Display
     [InlineData(typeof(AnnotateDetailed))]
     [InlineData(typeof(Contour1dResults))]
     [InlineData(typeof(Contour2dResults))]

@@ -125,7 +125,7 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
-      
+
       var nodeGoos = new List<GsaNodeGoo>();
       var nodes = new List<GsaNode>();
       if (da.GetDataList(0, nodeGoos)) {
@@ -157,8 +157,8 @@ namespace GsaGH.Components {
       }
 
       var assembly = new ModelAssembly(null, null, null, nodes, null, null, null, member1ds,
-        member2ds, member3ds, null, null, null, null, null, null, null, null, null, _lengthUnit,
-        ToleranceMenu.Tolerance, true, this);
+        member2ds, member3ds, null, null, null, null, null, null, null, null, null, null,
+        _lengthUnit, ToleranceMenu.Tolerance, true, this);
       Model gsa = assembly.GetModel();
 
       var outModel = new GsaModel {

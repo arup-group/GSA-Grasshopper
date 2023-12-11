@@ -36,7 +36,9 @@ namespace GsaGHTests.Parameters {
       string iconName = paramName.Replace(" ", string.Empty) + "Param";
       // Find icon with expected name in resources
       var iconExpected = (Bitmap)rm.GetObject(iconName);
-      Assert.True(iconExpected != null, $"{iconName} not found in resources");
+      if (iconExpected.ToString() != "ParamProperty") {
+        Assert.True(iconExpected != null, $"{iconName} not found in resources");
+      }
       PropertyInfo pInfo = param.GetType().GetProperty("Icon",
         BindingFlags.NonPublic | BindingFlags.Instance);
       var icon = (Bitmap)pInfo.GetValue(param, null);

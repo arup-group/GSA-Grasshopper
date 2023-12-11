@@ -104,7 +104,7 @@ namespace GsaGH.Components {
         "Point. If you input grid plane below only x and y coordinates will be used from this point, but if not a new Grid Plane Surface (xy-plane) will be created at the z-elevation of this point.",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Grid Plane Surface", "GPS",
-        "Grid Plane Surface or Plane (optional). If no input here then the point's z-coordinate will be used for an xy-plane at that elevation.",
+        "Grid Plane Surface or Plane [Optional]. If no input here then the point's z-coordinate will be used for an xy-plane at that elevation.",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Direction", "Di",
         "Load direction (default z)." + Environment.NewLine + "Accepted inputs are:"

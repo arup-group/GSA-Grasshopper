@@ -23,8 +23,9 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaProperty3dParameter))]
     [InlineData(typeof(GsaSectionModifierParameter))]
     [InlineData(typeof(GsaSectionParameter))]
+    [InlineData(typeof(GsaSpringPropertyParameter))]
     // 2_Geometry
-    [InlineData(typeof(GsaGH.Parameters.GsaElement1dParameter))]
+    [InlineData(typeof(GsaElement1dParameter))]
     [InlineData(typeof(GsaElement2dParameter))]
     [InlineData(typeof(GsaElement3dParameter))]
     [InlineData(typeof(GsaMember1dParameter))]
