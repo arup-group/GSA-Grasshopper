@@ -146,8 +146,8 @@ namespace GsaGHTests.Components.Geometry {
     [InlineData("top", "bot", "TopFlangeLateral", "BottomFlangeLateral")]
     [InlineData("top", "2", "TopFlangeLateral", "BottomFlangeLateral")]
     public void IntermediateRestraintStringInputTest(
-        string contin, string interm, string expectedContin, string expectedInterm) {
-      var comp = new CreateEffectiveLength();
+        string contin, string interm, string expectedContin, string expectedInterm) { 
+      var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       comp.SetSelected(0, 1);
       ComponentTestHelper.SetInput(comp, contin, 3);
@@ -163,7 +163,7 @@ namespace GsaGHTests.Components.Geometry {
     [InlineData("asd", 3)]
     [InlineData("asd", 4)]
     public void IntermediateRestraintStringInputErrorTest(string input, int id) {
-      var comp = new CreateEffectiveLength();
+      var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       comp.SetSelected(0, 1);
       ComponentTestHelper.SetInput(comp, input, id);
