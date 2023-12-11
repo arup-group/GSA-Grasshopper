@@ -1,8 +1,6 @@
 ﻿using OasysUnits;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace GsaGH.Parameters.Results {
   public static class QuantityUtility {

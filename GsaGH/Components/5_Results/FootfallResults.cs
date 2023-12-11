@@ -39,7 +39,7 @@ namespace GsaGH.Components {
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Type",
-        "Envelope",
+        "Max/Min",
       });
 
       _dropDownItems = new List<List<string>>();

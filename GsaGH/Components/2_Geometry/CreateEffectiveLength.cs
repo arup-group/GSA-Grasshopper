@@ -1,24 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
@@ -36,7 +29,6 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateEffectiveLength;
     private FoldMode _mode = FoldMode.Automatic;
-
 
     public CreateEffectiveLength() : base("Create Effective Length", "EffectiveLength",
       "Create 1D Member Design Properties for Effective Length, Restraints and Buckling Factors",
@@ -327,15 +319,15 @@ namespace GsaGH.Components {
       }
       s = s.ToLower();
 
-      if (s.Contains("0") || s.Contains("f")) {
+      if (s.Contains("0") || s.Contains("free")) {
         return GsaAPI.InternalContinuousRestraint.Free;
       }
 
-      if (s.Contains("2") || s.Contains("p")) {
+      if (s.Contains("2") || s.Contains("pin")) {
         return GsaAPI.InternalContinuousRestraint.Pinned;
       }
 
-      if (s.Contains("1") || s.Contains("t")) {
+      if (s.Contains("1") || s.Contains("top")) {
         return GsaAPI.InternalContinuousRestraint.TopFlangeLateral;
       }
 
@@ -367,7 +359,7 @@ namespace GsaGH.Components {
       }
       s = s.ToLower();
 
-      if (s.Contains("0") || s.Contains("f")) {
+      if (s.Contains("0") || s.Contains("free")) {
         return GsaAPI.InternalIntermediateRestraint.Free;
       }
 
@@ -399,6 +391,11 @@ namespace GsaGH.Components {
         default:
           return null;
       }
+    }
+
+    protected override void UpdateUIFromSelectedItems() {
+      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0]);
+      base.UpdateUIFromSelectedItems();
     }
   }
 }

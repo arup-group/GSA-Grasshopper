@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
   public static partial class ExtremaKeyUtility {

@@ -26,7 +26,13 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaEffectiveLengthGoo PreferredCast(object data) {
-      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to BucklingLengthFactors");
+      switch (data) {
+        case GsaMember1dGoo mem1d:
+          var eff = new GsaEffectiveLength(mem1d.Value);
+          return new GsaEffectiveLengthGoo(eff);
+      }
+
+      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Effective Length");
       return new GsaEffectiveLengthGoo(null);
     }
   }

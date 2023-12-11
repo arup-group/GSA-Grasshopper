@@ -1,8 +1,5 @@
 ﻿using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
-using static GsaGHTests.Parameters.Results.Element1dDerivedStressTests;
-using static GsaGHTests.Parameters.Results.Element1dStressTests;
-using static GsaGHTests.Parameters.Results.Element2dStressesTests;
 
 namespace GsaGHTests.Parameters.Results {
   public static class TestsResultHelper {

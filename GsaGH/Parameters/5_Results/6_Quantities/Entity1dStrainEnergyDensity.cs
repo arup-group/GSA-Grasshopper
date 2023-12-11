@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class Entity1dStrainEnergyDensity : IEntity1dStrainEnergyDensity {

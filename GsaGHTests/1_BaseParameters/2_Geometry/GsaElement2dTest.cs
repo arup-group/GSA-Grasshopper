@@ -2,14 +2,12 @@
 using System.Collections.ObjectModel;
 using System.Drawing;
 using Grasshopper;
-using Grasshopper.Kernel.Data;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using Rhino.Collections;
 using Rhino.Geometry;
-using Rhino.Geometry.Collections;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 

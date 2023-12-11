@@ -1,5 +1,4 @@
-﻿using System;
-using GsaAPI;
+﻿using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
