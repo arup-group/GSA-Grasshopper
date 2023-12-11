@@ -80,7 +80,7 @@ namespace GsaGHTests.Helpers.Export {
         CreateModelTest.CreateModelFromProperties(new List<GsaSectionGoo>() {
           section1,
           section2,
-        }, null, null);
+        }, null, null, null);
 
       var crv1 = new GH_Curve(new Line(new Point3d(0, 0, 0), new Point3d(10, 0, 0)).ToNurbsCurve());
       GsaMember1dGoo mem1d1 = Member1d(crv1, section1.Value.Id);

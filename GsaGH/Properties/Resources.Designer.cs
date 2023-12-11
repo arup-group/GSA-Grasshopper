@@ -663,6 +663,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CreateSpringProperty {
+            get {
+                object obj = ResourceManager.GetObject("CreateSpringProperty", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CreateSupport {
             get {
                 object obj = ResourceManager.GetObject("CreateSupport", resourceCulture);
@@ -1143,6 +1153,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap GetSpringProperty {
+            get {
+                object obj = ResourceManager.GetObject("GetSpringProperty", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap GlobalPerformanceResults {
             get {
                 object obj = ResourceManager.GetObject("GlobalPerformanceResults", resourceCulture);
@@ -1346,6 +1366,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap MaterialProperties {
             get {
                 object obj = ResourceManager.GetObject("MaterialProperties", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Member1dDisplacements {
+            get {
+                object obj = ResourceManager.GetObject("Member1dDisplacements", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1673,9 +1703,9 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap SpringParam {
+        internal static System.Drawing.Bitmap SpringPropertyParam {
             get {
-                object obj = ResourceManager.GetObject("SpringParam", resourceCulture);
+                object obj = ResourceManager.GetObject("SpringPropertyParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1719,15 +1749,5 @@ namespace GsaGH.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Member1dDisplacements {
-          get {
-            object obj = ResourceManager.GetObject("Member1dDisplacements", resourceCulture);
-            return ((System.Drawing.Bitmap)(obj));
-          }
-        }
-  }
+    }
 }

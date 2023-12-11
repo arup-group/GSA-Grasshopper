@@ -21,8 +21,8 @@ namespace GsaGHTests.Parameters {
       original.Model.Open(GsaFile.SteelDesignSimple);
 
       var assembly = new ModelAssembly(original, null, null, null, null, null, null, null, null,
-        null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero,
-        false, null);
+        null, null, null, null, null, null, null, null, null, null, null, LengthUnit.Meter,
+        Length.Zero, false, null);
       var assembled = new GsaModel() {
         Model = assembly.GetModel()
       };

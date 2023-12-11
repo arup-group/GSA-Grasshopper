@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
@@ -36,11 +37,8 @@ namespace GsaGHTests.Components.Geometry {
       var output7 = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 7);
       var output8 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8);
       var output9 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9);
-
       var output10 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 10);
-
       var output12 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 12);
-
       var output14 = (GH_Number)ComponentTestHelper.GetOutput(comp, 14);
       var output15 = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 15);
       var output16 = (GH_Number)ComponentTestHelper.GetOutput(comp, 16);
@@ -225,6 +223,124 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, 1.0, 14);
       output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
       Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+    }
+
+    [Fact]
+    public void ChangeToSpringMember() {
+      GH_OasysComponent comp = ComponentMother();
+      var property = new AxialSpringProperty {
+        Stiffness = 3.0
+      };
+      ComponentTestHelper.SetInput(comp, new GsaPropertyGoo(new GsaSpringProperty(property)), 3);
+      ComponentTestHelper.SetInput(comp, "Spring", 6);
+
+      var output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
+      var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
+      var output2 = (GH_Curve)ComponentTestHelper.GetOutput(comp, 2);
+      var output3 = (GsaSpringPropertyGoo)ComponentTestHelper.GetOutput(comp, 3);
+      var output4 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
+      var output5 = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
+      var output6 = (GH_String)ComponentTestHelper.GetOutput(comp, 6);
+      var output7 = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 7);
+      var output8 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8);
+      var output9 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9);
+      var output10 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 10);
+      var output12 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 12);
+      var output14 = (GH_Number)ComponentTestHelper.GetOutput(comp, 14);
+      var output15 = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 15);
+      var output16 = (GH_Number)ComponentTestHelper.GetOutput(comp, 16);
+      var output17 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 17);
+      var output18 = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp, 18);
+      var output19 = (GH_String)ComponentTestHelper.GetOutput(comp, 19);
+      var output20 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 20);
+      var output21 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 21);
+      var output22 = (GH_String)ComponentTestHelper.GetOutput(comp, 22);
+
+      Assert.Equal(0, output0.Value.PolyCurve.PointAtStart.X, 6);
+      Assert.Equal(-1, output0.Value.PolyCurve.PointAtStart.Y, 6);
+      Assert.Equal(0, output0.Value.PolyCurve.PointAtStart.Z, 6);
+      Assert.Equal(7, output0.Value.PolyCurve.PointAtEnd.X, 6);
+      Assert.Equal(3, output0.Value.PolyCurve.PointAtEnd.Y, 6);
+      Assert.Equal(1, output0.Value.PolyCurve.PointAtEnd.Z, 6);
+      Assert.Null(output0.Value.Section);
+      Assert.Equal(0, output1.Value);
+      Assert.Equal(0, output2.Value.PointAtStart.X, 6);
+      Assert.Equal(-1, output2.Value.PointAtStart.Y, 6);
+      Assert.Equal(0, output2.Value.PointAtStart.Z, 6);
+      Assert.Equal(7, output2.Value.PointAtEnd.X, 6);
+      Assert.Equal(3, output2.Value.PointAtEnd.Y, 6);
+      Assert.Equal(1, output2.Value.PointAtEnd.Z, 6);
+      Assert.NotNull(output3.Value);
+      Assert.Equal(0, output4.Value);
+      Assert.Equal("Generic 1D", output5.Value);
+      Assert.Equal("Spring", output6.Value);
+      Assert.Equal(0, output7.Value.X1.Value, 6);
+      Assert.Equal(0, output7.Value.X2.Value, 6);
+      Assert.Equal(0, output7.Value.Y.Value, 6);
+      Assert.Equal(0, output7.Value.Z.Value, 6);
+      Assert.False(output8.Value.X);
+      Assert.False(output8.Value.Y);
+      Assert.False(output8.Value.Z);
+      Assert.False(output8.Value.Xx);
+      Assert.False(output8.Value.Yy);
+      Assert.False(output8.Value.Zz);
+      Assert.False(output9.Value.X);
+      Assert.False(output9.Value.Y);
+      Assert.False(output9.Value.Z);
+      Assert.False(output9.Value.Xx);
+      Assert.False(output9.Value.Yy);
+      Assert.False(output9.Value.Zz);
+      Assert.False(output10.Value);
+      Assert.False(output12.Value);
+      Assert.Equal(0, output14.Value, 6);
+      Assert.Null(output15.Value);
+      Assert.Equal(0.5, output16.Value, 6);
+      Assert.True(output17.Value);
+      Assert.Null(output18.Value.BucklingFactors.MomentAmplificationFactorStrongAxis);
+      Assert.Null(output18.Value.BucklingFactors.MomentAmplificationFactorWeakAxis);
+      Assert.Null(output18.Value.BucklingFactors.EquivalentUniformMomentFactor);
+      Assert.Equal("", output19.Value);
+      Assert.Equal(0, output20.Value.R);
+      Assert.Equal(0, output20.Value.G);
+      Assert.Equal(0, output20.Value.B);
+      Assert.False(output21.Value);
+      Assert.Equal("", output22.Value);
+    }
+
+    [Fact]
+    public void InvalidPropertyElement1DTypeCombination1() {
+      GH_OasysComponent comp = ComponentMother();
+      var property = new AxialSpringProperty {
+        Stiffness = 3.0
+      };
+      ComponentTestHelper.SetInput(comp, new GsaPropertyGoo(new GsaSpringProperty(property)), 3);
+      ComponentTestHelper.SetInput(comp, "Beam", 6);
+
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void InvalidPropertyElement1DTypeCombination2() {
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, "STD CH 10 20 30 40", 3);
+      ComponentTestHelper.SetInput(comp, "Spring", 6);
+
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void InvalidPropertyElement1DTypeCombination3() {
+      var comp = new Edit1dMember();
+      comp.CreateAttributes();
+      ComponentTestHelper.SetInput(comp, "Spring", 6);
+
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
     }
   }
 }
