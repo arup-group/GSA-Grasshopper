@@ -27,7 +27,12 @@ namespace GsaGH.Helpers.Assembly {
           = AddNode(element1d.OrientationNode.Point);
       }
 
-      apiElement.Property = ConvertSection(element1d.Section);
+      if (element1d.ApiElement.Type != ElementType.SPRING) {
+        apiElement.Property = ConvertSection(element1d.Section);
+      } else {
+        apiElement.Property = ConvertSpringProp(element1d.SpringProperty);
+      }
+
       AddElement(element1d.Id, element1d.Guid, apiElement, true);
     }
 

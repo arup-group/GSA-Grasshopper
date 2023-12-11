@@ -26,6 +26,7 @@ namespace GsaGH.Parameters {
     public LineCurve Line { get; internal set; } = new LineCurve();
     public GsaNode OrientationNode { get; set; }
     public GsaSection Section { get; set; }
+    public GsaSpringProperty SpringProperty { get; set; }
     public LocalAxes LocalAxes { get; private set; }
     public Section3dPreview Section3dPreview { get; private set; }
     public ReleasePreview ReleasePreview { get; private set; }
@@ -82,6 +83,7 @@ namespace GsaGH.Parameters {
       Line = (LineCurve)other.Line.DuplicateShallow();
       OrientationNode = other.OrientationNode;
       Section = other.Section;
+      SpringProperty = other.SpringProperty;
       Section3dPreview = other.Section3dPreview?.Duplicate();
     }
 
@@ -102,6 +104,25 @@ namespace GsaGH.Parameters {
         Nodes.Point3dFromNode(nodes[ApiElement.Topology[1]], modelUnit)));
       LocalAxes = new LocalAxes(localAxes);
       Section = section;
+    }
+
+    /// <summary>
+    /// Create a new instance from an API object from an existing model
+    /// </summary>
+    internal GsaElement1d(KeyValuePair<int, Element> element, IReadOnlyDictionary<int, Node> nodes,
+      GsaSpringProperty springProperty, ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
+      Id = element.Key;
+      ApiElement = element.Value;
+      if (nodes.Keys.Contains(ApiElement.OrientationNode)) {
+        OrientationNode
+          = new GsaNode(Nodes.Point3dFromNode(nodes[ApiElement.OrientationNode], modelUnit));
+      }
+
+      Line = new LineCurve(new Line(
+        Nodes.Point3dFromNode(nodes[ApiElement.Topology[0]], modelUnit),
+        Nodes.Point3dFromNode(nodes[ApiElement.Topology[1]], modelUnit)));
+      LocalAxes = new LocalAxes(localAxes);
+      SpringProperty = springProperty;
     }
 
     public void CreateSection3dPreview() {
@@ -139,13 +160,15 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string id = Id > 0 ? $"ID:{Id}" : string.Empty;
       string type = Mappings.elementTypeMapping.FirstOrDefault(x => x.Value == ApiElement.Type).Key;
-      string pb = string.Empty;
+      string property = string.Empty;
       if (Section != null) {
-        pb = Section.Id > 0 ? $"PB{Section.Id}"
+        property = Section.Id > 0 ? $"PB{Section.Id}"
         : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
+      } else if (SpringProperty != null) {
+        property = SpringProperty.Id > 0 ? $"SP{SpringProperty.Id}"
+        : SpringProperty.ApiProperty != null ? SpringProperty.ApiProperty.Name : string.Empty;
       }
-
-      return string.Join(" ", id, type, pb).TrimSpaces();
+      return string.Join(" ", id, type, property).TrimSpaces();
     }
 
     public void UpdateReleasesPreview() {

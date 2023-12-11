@@ -188,12 +188,11 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(MatType.Custom, modelProp3d.Material.MaterialType);
 
       var assembly = new ModelAssembly(null, null, null, null, null, null, null, null, null,
-        null, null, 
+        null, null,
         new List<GsaSection> { modelSection },
         new List<GsaProperty2d> { modelProp2d },
         new List<GsaProperty3d> { modelProp3d },
-        null, null, null, null, null, LengthUnit.Meter, Length.Zero,
-        false, null);
+        null, null, null, null, null, null, LengthUnit.Meter, Length.Zero, false, null);
       GsaAPI.Model assembled = assembly.GetModel();
       Assert.Equal(99, assembled.Sections()[1].MaterialGradeProperty);
       Assert.Equal(7, assembled.Prop2Ds()[1].MaterialGradeProperty);

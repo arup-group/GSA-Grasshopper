@@ -79,8 +79,8 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaProperty2dModifierParameter(), GsaProperty2dModifierGoo.Name,
-        GsaProperty2dModifierGoo.NickName, GsaProperty2dModifierGoo.Description + " to get or set" +
-        "information for. Leave blank to create a new " + GsaProperty2dModifierGoo.Name, GH_ParamAccess.item);
+        GsaProperty2dModifierGoo.NickName, GsaProperty2dModifierGoo.Description + " to get" +
+        "information for." + GsaProperty2dModifierGoo.Name, GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {

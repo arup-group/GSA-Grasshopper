@@ -107,7 +107,7 @@ namespace GsaGH.Components {
         "PolyLine. If you input grid plane below only x and y coordinate positions will be used from this polyline, but if not a new Grid Plane Surface (best-fit plane) will be created from PolyLine control points.",
         GH_ParamAccess.item);
       pManager.AddGenericParameter("Grid Plane Surface", "GPS",
-        "Grid Plane Surface or Plane (optional). If no input here then the line's best-fit plane will be used",
+        "Grid Plane Surface or Plane [Optional]. If no input here then the line's best-fit plane will be used",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Direction", "Di",
         "Load direction (default z)." + Environment.NewLine + "Accepted inputs are:"

@@ -54,7 +54,7 @@ namespace GsaGHTests.Components.Properties {
       GH_OasysDropDownComponent createModel =
         CreateModelTest.CreateModelFromProperties(new List<GsaSectionGoo>() {
           sectionGoo,
-        }, null, null);
+        }, null, null, null);
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(createModel);
 

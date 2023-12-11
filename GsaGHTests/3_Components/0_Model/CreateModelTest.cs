@@ -13,9 +13,9 @@ namespace GsaGHTests.Model {
 
     public static GH_OasysDropDownComponent CreateModel(
       List<GsaModel> models, List<GsaSection> sections, List<GsaProperty2d> prop2ds,
-      List<GsaProperty3d> prop3ds, List<GsaNodeGoo> node, List<GsaElement1dGoo> elem1d,
-      List<GsaElement2dGoo> elem2d, List<GsaMember1dGoo> mem1d, List<GsaMember2dGoo> mem2d,
-      List<GsaMember3dGoo> mem3d, ModelUnit unit, List<IGsaLoad> loads,
+      List<GsaProperty3d> prop3ds, List<GsaSpringProperty> springProps, List<GsaNodeGoo> node,
+      List<GsaElement1dGoo> elem1d, List<GsaElement2dGoo> elem2d, List<GsaMember1dGoo> mem1d,
+      List<GsaMember2dGoo> mem2d, List<GsaMember3dGoo> mem3d, ModelUnit unit, List<IGsaLoad> loads,
       List<GsaGridPlaneSurface> gridPlaneSurfaces) {
       var comp = new CreateModel();
       comp.CreateAttributes();
@@ -44,6 +44,12 @@ namespace GsaGHTests.Model {
 
       if (prop3ds != null) {
         foreach (GsaProperty3d input in prop3ds) {
+          ComponentTestHelper.SetInput(comp, input, 1);
+        }
+      }
+
+      if (springProps != null) {
+        foreach (GsaSpringProperty input in springProps) {
           ComponentTestHelper.SetInput(comp, input, 1);
         }
       }
@@ -181,8 +187,8 @@ namespace GsaGHTests.Model {
       return comp;
     }
 
-    public static GH_OasysDropDownComponent CreateModelFromProperties(
-      List<GsaSectionGoo> sections, List<GsaProperty2dGoo> prop2ds, List<GsaProperty3dGoo> prop3ds) {
+    public static GH_OasysDropDownComponent CreateModelFromProperties(List<GsaSectionGoo> sections,
+      List<GsaProperty2dGoo> prop2ds, List<GsaProperty3dGoo> prop3ds, List<GsaSpringPropertyGoo> springProps) {
       var comp = new CreateModel();
       comp.CreateAttributes();
       comp.Params.Input[1].DataMapping = GH_DataMapping.Flatten;
@@ -200,6 +206,12 @@ namespace GsaGHTests.Model {
 
       if (prop3ds != null) {
         foreach (GsaProperty3dGoo input in prop3ds) {
+          ComponentTestHelper.SetInput(comp, input, 1);
+        }
+      }
+
+      if (springProps != null) {
+        foreach (GsaSpringPropertyGoo input in springProps) {
           ComponentTestHelper.SetInput(comp, input, 1);
         }
       }

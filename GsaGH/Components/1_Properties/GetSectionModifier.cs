@@ -122,14 +122,14 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name,
         GsaSectionModifierGoo.NickName,
         GsaSectionModifierGoo.Description
-        + " to get or set information for. Leave blank to create a new "
+        + " to get information for."
         + GsaSectionModifierGoo.Name, GH_ParamAccess.item);
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaSectionModifierParameter(), GsaSectionModifierGoo.Name,
         GsaSectionModifierGoo.NickName,
-        GsaSectionModifierGoo.Description + " with applied changes.", GH_ParamAccess.item);
+        GsaSectionModifierGoo.Description, GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Area Modifier", "A", "Effective Area", GH_ParamAccess.item);
 

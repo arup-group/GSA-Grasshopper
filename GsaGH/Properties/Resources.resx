@@ -595,8 +595,8 @@
   <data name="SelectResult" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\SelectResult.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SpringParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\SpringParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="SpringPropertyParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\SpringPropertyParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="SpringReactionForces" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\SpringReactionForces.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -615,5 +615,11 @@
   </data>
   <data name="Member1dForcesAndMoments" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Member1dForcesAndMoments.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateSpringProperty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateSpringProperty.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GetSpringProperty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\GetSpringProperty.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
