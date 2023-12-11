@@ -25,6 +25,7 @@ namespace GsaGHTests.Components {
         .Replace(" 3D", " 3d")
         .Replace(" and", " And")
         .Replace(" from", " From")
+        .Replace(" to", " To")
         .Replace("GWA", "Gwa")
         .Replace("GSA", "Gsa");
       
