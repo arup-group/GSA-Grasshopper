@@ -58,9 +58,9 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaEffectiveLengthGoo effLengthGoo = null;
+      GsaEffectiveLengthOptionsGoo effLengthGoo = null;
       da.GetData(0, ref effLengthGoo);
-      GsaEffectiveLength leff = effLengthGoo.Value;
+      GsaEffectiveLengthOptions leff = effLengthGoo.Value;
       switch (leff.EffectiveLength) {
         case EffectiveLengthFromEndAndInternalRestraint internalRes:
           da.SetData(0, "InternalRestraints");

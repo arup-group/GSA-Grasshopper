@@ -150,7 +150,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var leff = new GsaEffectiveLength();
+      var leff = new GsaEffectiveLengthOptions();
       string end1 = string.Empty;
       string end2 = string.Empty;
       switch (_mode) {
@@ -234,7 +234,7 @@ namespace GsaGH.Components {
       leff.EffectiveLength.DestablisingLoadPositionRelativeTo
         = (LoadReference)Enum.Parse(typeof(LoadReference), _selectedItems[1]);
 
-      da.SetData(0, new GsaEffectiveLengthGoo(leff));
+      da.SetData(0, new GsaEffectiveLengthOptionsGoo(leff));
     }
 
     private Param_GenericObject EffectiveLengthAboutYParam() {

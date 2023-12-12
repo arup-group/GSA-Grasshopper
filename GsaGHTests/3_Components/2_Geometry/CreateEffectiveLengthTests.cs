@@ -13,22 +13,22 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       
-      var output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
-      GsaEffectiveLength leff = output.Value;
+      var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
+      GsaEffectiveLengthOptions leff = output.Value;
       Assert.True(leff.EffectiveLength is EffectiveLengthFromEndRestraintAndGeometry);
 
       comp.SetSelected(0, 1);
-      output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       leff = output.Value;
       Assert.True(leff.EffectiveLength is EffectiveLengthFromEndAndInternalRestraint);
 
       comp.SetSelected(0, 2);
-      output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       leff = output.Value;
       Assert.True(leff.EffectiveLength is EffectiveLengthFromUserSpecifiedValue);
 
       comp.SetSelected(0, 0);
-      output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       leff = output.Value;
       Assert.True(leff.EffectiveLength is EffectiveLengthFromEndRestraintAndGeometry);
     }
@@ -40,19 +40,19 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, 0.15, 0);
 
       comp.SetSelected(1, 0);
-      var output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       LoadReference refr = output.Value.EffectiveLength.DestablisingLoadPositionRelativeTo;
       Assert.Equal(LoadReference.ShearCentre, refr);
       Assert.Equal(0.15, output.Value.EffectiveLength.DestablisingLoad);
 
       comp.SetSelected(1, 1);
-      output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       refr = output.Value.EffectiveLength.DestablisingLoadPositionRelativeTo;
       Assert.Equal(LoadReference.TopFlange, refr);
       Assert.Equal(0.15, output.Value.EffectiveLength.DestablisingLoad);
 
       comp.SetSelected(1, 2);
-      output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       refr = output.Value.EffectiveLength.DestablisingLoadPositionRelativeTo;
       Assert.Equal(LoadReference.BottomFlange, refr);
       Assert.Equal(0.15, output.Value.EffectiveLength.DestablisingLoad);
@@ -68,7 +68,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, "Pinned", 1);
       ComponentTestHelper.SetInput(comp, "Fixed", 2);
 
-      var output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       var leff = (EffectiveLengthFromEndRestraintAndGeometry)output.Value.EffectiveLength;
       var expected = new EffectiveLengthFromEndRestraintAndGeometry {
         End1 = new MemberEndRestraint(StandardRestraint.Pinned),
@@ -91,7 +91,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, 1.2, max - 1);
       ComponentTestHelper.SetInput(comp, 9.9, max);
 
-      var output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       GsaBucklingFactors bf = output.Value.BucklingFactors;
       Assert.Equal(0.5, bf.MomentAmplificationFactorStrongAxis);
       Assert.Equal(1.2, bf.MomentAmplificationFactorWeakAxis);
@@ -107,7 +107,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, 0.2, 2);
       ComponentTestHelper.SetInput(comp, 1.5, 3);
 
-      var output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       var specific = (EffectiveLengthFromUserSpecifiedValue)output.Value.EffectiveLength;
       Assert.Equal(0.1, specific.EffectiveLengthAboutY.Value);
       Assert.Equal(EffectiveLengthOptionType.Absolute, specific.EffectiveLengthAboutY.Option);
@@ -126,7 +126,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, -0.2, 2);
       ComponentTestHelper.SetInput(comp, -1.5, 3);
 
-      var output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       var specific = (EffectiveLengthFromUserSpecifiedValue)output.Value.EffectiveLength;
       Assert.Equal(0.1, specific.EffectiveLengthAboutY.Value);
       Assert.Equal(EffectiveLengthOptionType.Relative, specific.EffectiveLengthAboutY.Option);
@@ -153,7 +153,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, contin, 3);
       ComponentTestHelper.SetInput(comp, interm, 4);
 
-      var output = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       var intermediate = (EffectiveLengthFromEndAndInternalRestraint)output.Value.EffectiveLength;
       Assert.Equal(expectedContin, intermediate.RestraintAlongMember.ToString());
       Assert.Equal(expectedInterm, intermediate.RestraintAtBracedPoints.ToString());

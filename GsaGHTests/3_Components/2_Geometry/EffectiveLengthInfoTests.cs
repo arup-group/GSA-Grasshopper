@@ -19,7 +19,7 @@ namespace GsaGHTests.Components.Geometry {
       var leffComponent = new CreateEffectiveLengthOptions();
       leffComponent.CreateAttributes();
       leffComponent.SetSelected(0, index);
-      var input = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(leffComponent);
+      var input = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(leffComponent);
 
       ComponentTestHelper.SetInput(comp, input);
       var output = (GH_String)ComponentTestHelper.GetOutput(comp);

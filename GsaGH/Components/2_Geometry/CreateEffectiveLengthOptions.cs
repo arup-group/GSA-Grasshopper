@@ -138,10 +138,10 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var leff = new GsaEffectiveLength();
+      var leff = new GsaEffectiveLengthOptions();
       string end1 = string.Empty;
       string end2 = string.Empty;
-      int destablisingLoadIndex = 3;
+      int destablisingLoadIndex = 2;
       switch (_mode) {
         case FoldMode.Automatic:
           var auto = new EffectiveLengthFromEndRestraintAndGeometry();
@@ -157,6 +157,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.InternalRestraints:
+          destablisingLoadIndex = 4;
           var internalRes = new EffectiveLengthFromEndAndInternalRestraint();
           if (da.GetData(0, ref end1)) {
             internalRes.End1 = MemberEndRestraintFactory.CreateFromStrings(end1);
@@ -180,6 +181,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.UserSpecified:
+          destablisingLoadIndex = 3;
           var specific = new EffectiveLengthFromUserSpecifiedValue();
           if (Params.Input[1].SourceCount > 0) {
             specific.EffectiveLengthAboutY = EffectiveLengthAttribute(
@@ -200,8 +202,12 @@ namespace GsaGH.Components {
           break;
       }
       
-      var fls = new GsaBucklingFactors();
       double? input = null;
+      if (da.GetData(destablisingLoadIndex, ref input)) {
+        leff.EffectiveLength.DestablisingLoad = (double)input;
+      }
+
+      var fls = new GsaBucklingFactors();
       if (da.GetData(Params.Input.Count - 3, ref input)) {
         fls.MomentAmplificationFactorStrongAxis = input;
       }
@@ -216,13 +222,9 @@ namespace GsaGH.Components {
 
       leff.BucklingFactors = fls;
 
-      if (da.GetData(destablisingLoadIndex, ref input)) {
-        leff.EffectiveLength.DestablisingLoad = (double)input;
-      }
-
       leff.EffectiveLength.DestablisingLoadPositionRelativeTo = GetLoadReferenceBy(_selectedItems[1]);
 
-      da.SetData(0, new GsaEffectiveLengthGoo(leff));
+      da.SetData(0, new GsaEffectiveLengthOptionsGoo(leff));
     }
 
     private Param_Number DestabilisingLoadHeight() {

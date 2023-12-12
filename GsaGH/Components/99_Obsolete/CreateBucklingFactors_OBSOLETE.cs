@@ -18,9 +18,9 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateBucklingFactors;
 
     public CreateBucklingFactors_OBSOLETE() : base(
-      "Create " + GsaEffectiveLengthGoo.Name,
-      GsaEffectiveLengthGoo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaEffectiveLengthGoo.Description, CategoryName.Name(),
+      "Create " + GsaEffectiveLengthOptionsGoo.Name,
+      GsaEffectiveLengthOptionsGoo.NickName.Replace(" ", string.Empty),
+      "Create a " + GsaEffectiveLengthOptionsGoo.Description, CategoryName.Name(),
       SubCategoryName.Cat2()) {
       Hidden = true;
     }
@@ -60,11 +60,11 @@ namespace GsaGH.Components {
         fls.EquivalentUniformMomentFactor = input;
       }
 
-      var leff = new GsaEffectiveLength(new GsaMember1d()) {
+      var leff = new GsaEffectiveLengthOptions(new GsaMember1d()) {
         BucklingFactors = fls
       };
 
-      da.SetData(0, new GsaEffectiveLengthGoo(leff));
+      da.SetData(0, new GsaEffectiveLengthOptionsGoo(leff));
     }
   }
 }
