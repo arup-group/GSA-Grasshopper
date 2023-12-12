@@ -33,6 +33,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(CreateElementsFromMembers))]
     [InlineData(typeof(CreateEffectiveLength))]
     [InlineData(typeof(CreateMemberEndRestraint))]
+    [InlineData(typeof(ExpandBeamToShell))]
     //Loads
     [InlineData(typeof(CreateGridAreaLoad))]
     [InlineData(typeof(CreateGridLineLoad))]
