@@ -24,7 +24,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class ProfileDimensions : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("98765d83-2b23-47c1-ad1d-201b5a2eed8b");
-    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ProfileDimensions;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
