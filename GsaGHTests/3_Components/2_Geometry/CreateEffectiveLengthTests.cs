@@ -65,8 +65,8 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       comp.SetSelected(0, index);
-      ComponentTestHelper.SetInput(comp, "Pinned", 1);
-      ComponentTestHelper.SetInput(comp, "Fixed", 2);
+      ComponentTestHelper.SetInput(comp, "Pinned", 0);
+      ComponentTestHelper.SetInput(comp, "Fixed", 1);
 
       var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       var leff = (EffectiveLengthFromEndRestraintAndGeometry)output.Value.EffectiveLength;
