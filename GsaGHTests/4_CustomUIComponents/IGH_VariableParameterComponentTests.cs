@@ -22,6 +22,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(Edit2dMember))]
     [InlineData(typeof(Edit3dMember))]
     [InlineData(typeof(EditNode))]
+    [InlineData(typeof(ExpandBeamToShell))]
     [InlineData(typeof(BeamStrainEnergyDensity))]
     [InlineData(typeof(Contour1dResults))]
     [InlineData(typeof(Contour2dResults))]
@@ -49,6 +50,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(Edit2dMember))]
     [InlineData(typeof(Edit3dMember))]
     [InlineData(typeof(EditNode))]
+    [InlineData(typeof(ExpandBeamToShell))]
     [InlineData(typeof(GridPlaneSurfaceProperties))]
     public void CreateDestroyParamIGH_VariableParameterComponentTest(Type t) {
       var comp = (IGH_VariableParameterComponent)Activator.CreateInstance(t);
