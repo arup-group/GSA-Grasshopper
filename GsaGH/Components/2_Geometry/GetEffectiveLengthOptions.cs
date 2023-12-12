@@ -13,19 +13,19 @@ using OasysUnits;
 using OasysUnits.Units;
 
 namespace GsaGH.Components {
-  public class EffectiveLengthInfo : GH_OasysComponent {
+  public class GetEffectiveLengthOptions : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("363fe80b-d18d-4d5a-88ad-dd3ab72595d9");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.EffectiveLengthInfo;
+    protected override Bitmap Icon => Resources.GetEffectiveLengthOptions;
 
-    public EffectiveLengthInfo() : base("Effective Length Info", "EffectiveLengthInfo", "Get information of a 1D Member's Design Properties for Effective Length, Restraints and Buckling Factors", CategoryName.Name(),
+    public GetEffectiveLengthOptions() : base("Get Effective Length Options", "EffectiveLengthOptions", "Get information of a 1D Member's Design Options for Effective Length, Restraints and Buckling Factors", CategoryName.Name(),
       SubCategoryName.Cat2()) { 
       Hidden = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaEffectiveLengthParameter());
+      pManager.AddParameter(new GsaEffectiveLengthOptionsParameter());
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -45,7 +45,7 @@ namespace GsaGH.Components {
         "The user-defined effective length about y.", GH_ParamAccess.item);
       pManager.AddGenericParameter("Effective Length LTB", "Ltb",
         "The user-defined effective length for lateral torsional buckling.", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Destabilising Load Height", "L",
+      pManager.AddNumberParameter("Destabilising Load Height", "h",
         "Destabilising Load Height in model units", GH_ParamAccess.item);
       pManager.AddTextParameter("Load Position", "LP", "The destabilising load height is relative to this reference position.", GH_ParamAccess.item);
       pManager.AddNumberParameter("Factor Lsy", "fLy", "Moment Amplification Factor, Strong Axis",
@@ -58,9 +58,9 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaEffectiveLengthGoo effLengthGoo = null;
+      GsaEffectiveLengthOptionsGoo effLengthGoo = null;
       da.GetData(0, ref effLengthGoo);
-      GsaEffectiveLength leff = effLengthGoo.Value;
+      GsaEffectiveLengthOptions leff = effLengthGoo.Value;
       switch (leff.EffectiveLength) {
         case EffectiveLengthFromEndAndInternalRestraint internalRes:
           da.SetData(0, "InternalRestraints");

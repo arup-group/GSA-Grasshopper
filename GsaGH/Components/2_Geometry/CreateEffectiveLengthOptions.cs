@@ -7,85 +7,88 @@ using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysUnits;
+using Rhino.Runtime;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to create Effective Length properties for member 1d
+  ///   Component to create Effective Length Options for a Member 1D
   /// </summary>
-  public class CreateEffectiveLength : GH_OasysDropDownComponent {
+  public class CreateEffectiveLengthOptions : GH_OasysDropDownComponent {
     private enum FoldMode {
       Automatic,
       InternalRestraints,
       UserSpecified,
     }
-    public override Guid ComponentGuid => new Guid("3b63d584-5f61-4779-b576-14ab8682c1b9");
+
+    public override Guid ComponentGuid => new Guid("a477dee8-8ac6-4d3d-880c-4b2d6364d3c6");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateEffectiveLength;
+    protected override Bitmap Icon => Resources.CreateEffectiveLengthOptions;
     private FoldMode _mode = FoldMode.Automatic;
+    private readonly IReadOnlyDictionary<FoldMode, string> _effectiveLengthOptions
+      = new Dictionary<FoldMode, string> {
+        { FoldMode.Automatic, "Automatic" },
+        { FoldMode.InternalRestraints, "Internal restraints" },
+        { FoldMode.UserSpecified, "User specified" },
+      };
+    private readonly IReadOnlyDictionary<LoadReference, string> _loadReferenceTypes
+      = new Dictionary<LoadReference, string> {
+        { LoadReference.ShearCentre, "Shear centre" },
+        { LoadReference.TopFlange, "Top flange" },
+        { LoadReference.BottomFlange, "Bottom flange" },
+      };
 
-    public CreateEffectiveLength() : base("Create Effective Length", "EffectiveLength",
-      "Create 1D Member Design Properties for Effective Length, Restraints and Buckling Factors",
+    public CreateEffectiveLengthOptions() : base("Create Effective Length Options",
+      "EffectiveLengthOptions",
+      "Create 1D Member Design Options for Effective Length, Restraints and Buckling Factors",
       CategoryName.Name(), SubCategoryName.Cat2()) {
       Hidden = true;
     }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
+
+      FoldMode mode = GetModeBy(_selectedItems[0]);
       if (i == 0) {
-        switch (_selectedItems[i]) {
-          case "Automatic":
-            if (_mode == FoldMode.Automatic) {
-              return;
-            }
-
-            _mode = FoldMode.Automatic;
-            break;
-
-          case "InternalRestraints":
-            if (_mode == FoldMode.InternalRestraints) {
-              return;
-            }
-
-            _mode = FoldMode.InternalRestraints;
-            break;
-
-          case "UserSpecified":
-            if (_mode == FoldMode.UserSpecified) {
-              return;
-            }
-
-            _mode = FoldMode.UserSpecified;
-            break;
-        }
+        UpdateParameters(mode);
       }
 
       base.UpdateUI();
     }
 
     public override void VariableParameterMaintenance() {
+      UpdateParameters(_mode);
+    }
+
+    private void UpdateParameters(FoldMode mode) {
+      if (mode == _mode) {
+        return;
+      }
+
       var fLtb = (Param_Number)Params.Input[Params.Input.Count - 1];
       var fLz = (Param_Number)Params.Input[Params.Input.Count - 2];
       var fLy = (Param_Number)Params.Input[Params.Input.Count - 3];
+      var h = (Param_Number)Params.Input[Params.Input.Count - 4];
 
       Param_String end1 = End1Restraint();
       Param_String end2 = End2Restraint();
-      if (Params.Input.Count != 7 & Params.Input.Count != 4) { 
-        end1 = (Param_String)Params.Input[1];
-        end2 = (Param_String)Params.Input[2];
+      if (Params.Input.Count != 7 & Params.Input.Count != 4) {
+        end1 = (Param_String)Params.Input[0];
+        end2 = (Param_String)Params.Input[1];
       }
 
-      while (Params.Input.Count > 1) {
-        Params.UnregisterInputParameter(Params.Input[1], false);
+      while (Params.Input.Count > 0) {
+        Params.UnregisterInputParameter(Params.Input[0], false);
       }
 
-      switch (_mode) {
+      switch (mode) {
         case FoldMode.Automatic:
           Params.RegisterInputParam(end1);
           Params.RegisterInputParam(end2);
@@ -105,32 +108,44 @@ namespace GsaGH.Components {
           break;
       }
 
+      Params.RegisterInputParam(h);
       Params.RegisterInputParam(fLy);
       Params.RegisterInputParam(fLz);
       Params.RegisterInputParam(fLtb);
+
+      _mode = mode;
     }
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
-        "Lₑ calc. option",
+        "Options",
         "Load position",
       });
 
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-
-      _dropDownItems.Add(Enum.GetNames(typeof(FoldMode)).ToList());
+      _dropDownItems.Add(_effectiveLengthOptions.Values.ToList());
       _selectedItems.Add(_dropDownItems[0][0]);
 
-      _dropDownItems.Add(Enum.GetNames(typeof(LoadReference)).ToList());
-      _selectedItems.Add(LoadReference.ShearCentre.ToString());
+      _dropDownItems.Add(_loadReferenceTypes.Values.ToList());
+      _selectedItems.Add(_loadReferenceTypes[0]);
 
       _isInitialised = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddNumberParameter("Destabilising Load Height", "L",
+      pManager.AddTextParameter("Member Restraint Start", "ER1",
+      "Set the Member's Start Restraint" +
+      "\nUse either shortcut names ('Pinned', 'Fixed', 'Free'," +
+      "\n'FullRotational', 'PartialRotational' or 'TopFlangeLateral')" +
+      "\nor the " + MemberEndRestraintFactory.RestraintSyntax(), GH_ParamAccess.item);
+      pManager.AddTextParameter("Member Restraint End", "ER2",
+        "Set the Member's End Restraint." +
+        "\nUse either shortcut names ('Pinned', 'Fixed', 'Free'," +
+        "\n'FullRotational', 'PartialRotational' or 'TopFlangeLateral')" +
+        "\nor the " + MemberEndRestraintFactory.RestraintSyntax(), GH_ParamAccess.item);
+      pManager.AddNumberParameter("Destabilising Load Height", "h",
         "Destabilising Load Height in model units", GH_ParamAccess.item, 0);
       pManager.AddNumberParameter("Factor Lsy", "fLy", "Moment Amplification Factor, Strong Axis",
         GH_ParamAccess.item);
@@ -139,27 +154,30 @@ namespace GsaGH.Components {
       pManager.AddNumberParameter("Equivalent uniform moment factor for LTB", "fLtb",
         $"Override the automatically calculated factor to account for the shape of the moment diagram in lateral torsional buckling design equations. This override is applied for all bending segments in the member.  This override is applied to the following variable for each design code:{Environment.NewLine} AISC 360: C_b {Environment.NewLine} AS 4100: alpha_m {Environment.NewLine} BS 5950: m_LT {Environment.NewLine} CSA S16: omega_2 {Environment.NewLine} EN 1993-1-1 and EN 1993-1-2: C_1 {Environment.NewLine} Hong Kong Code of Practice: m_LT {Environment.NewLine} IS 800: C_mLT {Environment.NewLine} SANS 10162-1: omega_2",
         GH_ParamAccess.item);
+      pManager[0].Optional = true;
       pManager[1].Optional = true;
-      pManager[2].Optional = true;
       pManager[3].Optional = true;
+      pManager[4].Optional = true;
+      pManager[5].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaEffectiveLengthParameter());
+      pManager.AddParameter(new GsaEffectiveLengthOptionsParameter());
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var leff = new GsaEffectiveLength();
+      var leff = new GsaEffectiveLengthOptions();
       string end1 = string.Empty;
       string end2 = string.Empty;
+      int destablisingLoadIndex = 2;
       switch (_mode) {
         case FoldMode.Automatic:
           var auto = new EffectiveLengthFromEndRestraintAndGeometry();
-          if (da.GetData(1, ref end1)) {
+          if (da.GetData(0, ref end1)) {
             auto.End1 = MemberEndRestraintFactory.CreateFromStrings(end1);
           }
 
-          if (da.GetData(2, ref end2)) {
+          if (da.GetData(1, ref end2)) {
             auto.End2 = MemberEndRestraintFactory.CreateFromStrings(end2);
           }
 
@@ -167,22 +185,23 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.InternalRestraints:
+          destablisingLoadIndex = 4;
           var internalRes = new EffectiveLengthFromEndAndInternalRestraint();
-          if (da.GetData(1, ref end1)) {
+          if (da.GetData(0, ref end1)) {
             internalRes.End1 = MemberEndRestraintFactory.CreateFromStrings(end1);
           }
 
-          if (da.GetData(2, ref end2)) {
+          if (da.GetData(1, ref end2)) {
             internalRes.End2 = MemberEndRestraintFactory.CreateFromStrings(end2);
           }
 
           string continous = string.Empty;
-          if (da.GetData(3, ref continous)) {
+          if (da.GetData(2, ref continous)) {
             internalRes.RestraintAlongMember = InternalContinuousRestraint(continous);
           }
 
           string intermed = string.Empty;
-          if (da.GetData(4, ref intermed)) {
+          if (da.GetData(3, ref intermed)) {
             internalRes.RestraintAtBracedPoints = InternalIntermediateRestraint(intermed);
           }
 
@@ -190,28 +209,33 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.UserSpecified:
+          destablisingLoadIndex = 3;
           var specific = new EffectiveLengthFromUserSpecifiedValue();
-          if (Params.Input[1].SourceCount > 0) {
+          if (Params.Input[0].SourceCount > 0) {
             specific.EffectiveLengthAboutY = EffectiveLengthAttribute(
+              Input.LengthOrRatio(this, da, 0, LengthUnit.Meter, true));
+          }
+
+          if (Params.Input[1].SourceCount > 0) {
+            specific.EffectiveLengthAboutZ = EffectiveLengthAttribute(
               Input.LengthOrRatio(this, da, 1, LengthUnit.Meter, true));
           }
 
           if (Params.Input[2].SourceCount > 0) {
-            specific.EffectiveLengthAboutZ = EffectiveLengthAttribute(
-              Input.LengthOrRatio(this, da, 2, LengthUnit.Meter, true));
-          }
-
-          if (Params.Input[3].SourceCount > 0) {
             specific.EffectiveLengthLaterialTorsional = EffectiveLengthAttribute(
-              Input.LengthOrRatio(this, da, 3, LengthUnit.Meter, true));
+              Input.LengthOrRatio(this, da, 2, LengthUnit.Meter, true));
           }
 
           leff.EffectiveLength = specific;
           break;
       }
 
-      var fls = new GsaBucklingFactors();
       double? input = null;
+      if (da.GetData(destablisingLoadIndex, ref input)) {
+        leff.EffectiveLength.DestablisingLoad = (double)input;
+      }
+
+      var fls = new GsaBucklingFactors();
       if (da.GetData(Params.Input.Count - 3, ref input)) {
         fls.MomentAmplificationFactorStrongAxis = input;
       }
@@ -226,14 +250,16 @@ namespace GsaGH.Components {
 
       leff.BucklingFactors = fls;
 
-      if (da.GetData(0, ref input)) {
-        leff.EffectiveLength.DestablisingLoad = (double)input;
-      }
+      leff.EffectiveLength.DestablisingLoadPositionRelativeTo = GetLoadReferenceBy(_selectedItems[1]);
 
-      leff.EffectiveLength.DestablisingLoadPositionRelativeTo
-        = (LoadReference)Enum.Parse(typeof(LoadReference), _selectedItems[1]);
+      da.SetData(0, new GsaEffectiveLengthOptionsGoo(leff));
+    }
 
-      da.SetData(0, new GsaEffectiveLengthGoo(leff));
+    protected override void UpdateUIFromSelectedItems() {
+      FoldMode mode = GetModeBy(_selectedItems[0]);
+      UpdateParameters(mode);
+
+      base.UpdateUIFromSelectedItems();
     }
 
     private Param_GenericObject EffectiveLengthAboutYParam() {
@@ -293,6 +319,24 @@ namespace GsaGH.Components {
         "\nor the " + MemberEndRestraintFactory.RestraintSyntax(),
         Optional = true
       };
+    }
+
+    private FoldMode GetModeBy(string value) {
+      foreach (KeyValuePair<FoldMode, string> item in _effectiveLengthOptions) {
+        if (item.Value.Equals(value)) {
+          return item.Key;
+        }
+      }
+      throw new ArgumentException("Unable to convert " + value + " to Effective Length Options");
+    }
+
+    private LoadReference GetLoadReferenceBy(string value) {
+      foreach (KeyValuePair<LoadReference, string> item in _loadReferenceTypes) {
+        if (item.Value.Equals(value)) {
+          return item.Key;
+        }
+      }
+      throw new ArgumentException("Unable to convert " + value + " to Load Reference");
     }
 
     private Param_String InternalContinuousRestraint() {
@@ -359,7 +403,7 @@ namespace GsaGH.Components {
       }
       s = s.ToLower();
 
-      if (s.Contains("0") || s.Contains("free")) {
+      if (s.Contains("0") || s.Contains("f")) {
         return GsaAPI.InternalIntermediateRestraint.Free;
       }
 
@@ -383,7 +427,7 @@ namespace GsaGH.Components {
         case Length length:
           return new EffectiveLengthAttribute(EffectiveLengthOptionType.Absolute,
             length.Meters);
-        
+
         case Ratio ratio:
           return new EffectiveLengthAttribute(EffectiveLengthOptionType.Relative,
             ratio.DecimalFractions);
@@ -391,11 +435,6 @@ namespace GsaGH.Components {
         default:
           return null;
       }
-    }
-
-    protected override void UpdateUIFromSelectedItems() {
-      _mode = (FoldMode)Enum.Parse(typeof(FoldMode), _selectedItems[0]);
-      base.UpdateUIFromSelectedItems();
     }
   }
 }

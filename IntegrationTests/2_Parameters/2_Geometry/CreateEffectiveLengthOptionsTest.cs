@@ -6,7 +6,7 @@ using Xunit;
 
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class CreateEditBucklingFactorsTest {
+  public class CreateEffectiveLengthOptionsTest {
     private static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
 
@@ -47,7 +47,7 @@ namespace IntegrationTests.Parameters {
         solutiondir,
         "ExampleFiles",
         "Parameters",
-        "1_Properties",
+        "2_Geometry"
       });
 
       return Helper.CreateDocument(Path.Combine(path, fileName));
