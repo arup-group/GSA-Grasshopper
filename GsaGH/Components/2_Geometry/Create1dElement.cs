@@ -2,6 +2,7 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -24,7 +25,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddLineParameter("Line", "L", "Line to create GSA Element", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaSectionParameter());
+      pManager.AddParameter(new GsaPropertyParameter());
       pManager[1].Optional = true;
       pManager.HideParameter(0);
     }
@@ -38,11 +39,22 @@ namespace GsaGH.Components {
       da.GetData(0, ref ghln);
       var elem = new GsaElement1d(new LineCurve(ghln.Value));
 
-      GsaSectionGoo sectionGoo = null;
+      GsaPropertyGoo sectionGoo = null;
       if (da.GetData(1, ref sectionGoo)) {
-        elem.Section = sectionGoo.Value;
-        if (Preview3dSection) {
-          elem.CreateSection3dPreview();
+        switch (sectionGoo.Value) {
+          case GsaSection section:
+            elem.Section = section;
+            elem.SpringProperty = null;
+            if (Preview3dSection) {
+              elem.CreateSection3dPreview();
+            }
+            break;
+
+          case GsaSpringProperty springProperty:
+            elem.ApiElement.Type = ElementType.SPRING;
+            elem.Section = null;
+            elem.SpringProperty = springProperty;
+            break;
         }
       }
 

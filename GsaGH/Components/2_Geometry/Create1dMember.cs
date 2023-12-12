@@ -4,6 +4,7 @@ using System.Drawing;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -136,7 +137,7 @@ namespace GsaGH.Components {
       pManager.AddCurveParameter("Curve", "C",
         "Curve (a NURBS curve will automatically be converted in to a Polyline of Arc and Line segments)",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaSectionParameter());
+      pManager.AddParameter(new GsaPropertyParameter());
       pManager.AddNumberParameter("Mesh Size in model units", "Ms", "Target mesh size",
         GH_ParamAccess.item);
       pManager[1].Optional = true;
@@ -188,11 +189,22 @@ namespace GsaGH.Components {
       };
       mem.ReleaseEnd = rel2;
 
-      GsaSectionGoo sectionGoo = null;
+      GsaPropertyGoo sectionGoo = null;
       if (da.GetData(1, ref sectionGoo)) {
-        mem.Section = sectionGoo.Value;
-        if (Preview3dSection) {
-          mem.CreateSection3dPreview();
+        switch (sectionGoo.Value) {
+          case GsaSection section:
+            mem.Section = section;
+            mem.SpringProperty = null;
+            if (Preview3dSection) {
+              mem.CreateSection3dPreview();
+            }
+            break;
+
+          case GsaSpringProperty springProperty:
+            mem.ApiMember.Type1D = ElementType.SPRING;
+            mem.Section = null;
+            mem.SpringProperty = springProperty;
+            break;
         }
       }
 

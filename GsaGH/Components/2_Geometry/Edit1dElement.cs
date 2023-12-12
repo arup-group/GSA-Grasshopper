@@ -92,8 +92,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddLineParameter("Line", "L", "Element Line", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddGenericParameter("Section", "PB", "Get Section or Spring Property",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaPropertyParameter());
       pManager.AddIntegerParameter("Group", "Gr", "Get Element Group", GH_ParamAccess.item);
       pManager.AddTextParameter("Type", "eT", "Get Element Type", GH_ParamAccess.item);
 
@@ -159,9 +158,6 @@ namespace GsaGH.Components {
             elem.SpringProperty = springProperty;
             break;
         }
-      } else if (elem.ApiElement.Type == ElementType.SPRING) {
-        this.AddRuntimeError("Input PB has to be a Spring Property");
-        return;
       }
 
       int id = 0;
