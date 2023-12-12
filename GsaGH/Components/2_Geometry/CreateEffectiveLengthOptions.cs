@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using GsaAPI;
@@ -49,14 +48,6 @@ namespace GsaGH.Components {
       "Create 1D Member Design Options for Effective Length, Restraints and Buckling Factors",
       CategoryName.Name(), SubCategoryName.Cat2()) {
       Hidden = true;
-    }
-
-    public override bool Read(GH_IReader reader) {
-      bool flag = base.Read(reader);
-      GH_IReader attributes = reader.FindChunk("Attributes");
-      Attributes.Bounds = (RectangleF)attributes.Items[0].InternalData;
-      Attributes.Pivot = (PointF)attributes.Items[1].InternalData;
-      return flag;
     }
 
     public override void SetSelected(int i, int j) {
@@ -206,13 +197,13 @@ namespace GsaGH.Components {
 
           if (Params.Input[2].SourceCount > 0) {
             specific.EffectiveLengthLaterialTorsional = EffectiveLengthAttribute(
-              Input.LengthOrRatio(this, da, 2 , LengthUnit.Meter, true));
+              Input.LengthOrRatio(this, da, 2, LengthUnit.Meter, true));
           }
 
           leff.EffectiveLength = specific;
           break;
       }
-      
+
       double? input = null;
       if (da.GetData(destablisingLoadIndex, ref input)) {
         leff.EffectiveLength.DestablisingLoad = (double)input;
@@ -411,6 +402,11 @@ namespace GsaGH.Components {
         default:
           return null;
       }
+    }
+
+    protected override void UpdateUIFromSelectedItems() {
+      _mode = GetModeBy(_selectedItems[0]);
+      base.UpdateUIFromSelectedItems();
     }
   }
 }
