@@ -14,7 +14,7 @@ namespace GsaGHTests.Components.Display {
   [Collection("GrasshopperFixture collection")]
   public class Contour3dResultsTests {
     [Fact]
-    public void InvalidInputErrorTests() {
+    public void CombinationCaseWithMultiplePermutationsMessageTests() {
       var caseResult = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 2, new List<int>() { 1, 2, 3, });
 
       var comp = new Contour3dResults();

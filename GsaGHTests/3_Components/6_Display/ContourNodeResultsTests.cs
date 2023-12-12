@@ -14,19 +14,8 @@ using Xunit;
 namespace GsaGHTests.Components.Display {
   [Collection("GrasshopperFixture collection")]
   public class ContourNodeResultsTests {
-    public static LoadDiagrams Mother() {
-      var open = new GetResult();
-      open.CreateAttributes();
-      string file = GsaFile.SteelDesignComplex;
-      ComponentTestHelper.SetInput(open, file);
-      var model = (GsaModelGoo)ComponentTestHelper.GetOutput(open);
-      var comp = new LoadDiagrams();
-      ComponentTestHelper.SetInput(comp, model);
-      return comp;
-    }
-
     [Fact]
-    public void InvalidInputErrorTests() {
+    public void CombinationCaseWithMultiplePermutationsMessageTests() {
       var caseResult = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 2, new List<int>(){1, 2, 3,});
 
       var comp = new ContourNodeResults();
