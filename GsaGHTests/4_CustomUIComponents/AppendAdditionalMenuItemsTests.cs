@@ -25,6 +25,7 @@ namespace GsaGHTests.CustomComponent {
     // AppendAdditionalComponentMenuItems
     [InlineData(typeof(GetModelGeometry), 7)]
     [InlineData(typeof(EditNode), 4)]
+    [InlineData(typeof(ExpandBeamToShell), 4)]
     [InlineData(typeof(CreateGridAreaLoad), 6)]
     [InlineData(typeof(CreateGridLineLoad), 6)]
     [InlineData(typeof(CreateGridPointLoad), 6)]
