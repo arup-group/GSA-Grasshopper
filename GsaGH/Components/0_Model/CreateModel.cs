@@ -59,18 +59,7 @@ namespace GsaGH.Components {
       _initialCheckState = new List<bool>() {
         _reMesh,
       };
-      if (reader.ItemExists("dropdown") || reader.ChunkExists("ParameterData")) {
-        base.Read(reader);
-      } else {
-        BaseReader.Read(reader, this, true);
-        _isInitialised = true;
-        UpdateUIFromSelectedItems();
-      }
-
-      GH_IReader attributes = reader.FindChunk("Attributes");
-      Attributes.Bounds = (RectangleF)attributes.Items[0].InternalData;
-      Attributes.Pivot = (PointF)attributes.Items[1].InternalData;
-
+      bool flag = base.Read(reader);
       if (reader.ItemExists("Tolerance")) {
         double tol = reader.GetDouble("Tolerance");
         ToleranceMenu.Tolerance = new Length(tol, _lengthUnit);
@@ -79,7 +68,7 @@ namespace GsaGH.Components {
       }
 
       ToleranceMenu.UpdateMessage(this, _lengthUnit);
-      return base.Read(reader);
+      return flag;
     }
 
     public void SetAnalysis(List<bool> value) {
