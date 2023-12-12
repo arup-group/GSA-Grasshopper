@@ -52,7 +52,9 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      _mode = GetModeBy(_selectedItems[i]);
+      if (i == 0) {
+        _mode = GetModeBy(_selectedItems[i]);
+      }
 
       base.UpdateUI();
     }
@@ -61,6 +63,7 @@ namespace GsaGH.Components {
       var fLtb = (Param_Number)Params.Input[Params.Input.Count - 1];
       var fLz = (Param_Number)Params.Input[Params.Input.Count - 2];
       var fLy = (Param_Number)Params.Input[Params.Input.Count - 3];
+      var h = (Param_Number)Params.Input[Params.Input.Count - 4];
 
       Param_String end1 = End1Restraint();
       Param_String end2 = End2Restraint();
@@ -93,7 +96,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      Params.RegisterInputParam(DestabilisingLoadHeight());
+      Params.RegisterInputParam(h);
 
       Params.RegisterInputParam(fLy);
       Params.RegisterInputParam(fLz);
@@ -183,17 +186,17 @@ namespace GsaGH.Components {
         case FoldMode.UserSpecified:
           destablisingLoadIndex = 3;
           var specific = new EffectiveLengthFromUserSpecifiedValue();
-          if (Params.Input[1].SourceCount > 0) {
+          if (Params.Input[0].SourceCount > 0) {
             specific.EffectiveLengthAboutY = EffectiveLengthAttribute(
               Input.LengthOrRatio(this, da, 0, LengthUnit.Meter, true));
           }
 
-          if (Params.Input[2].SourceCount > 0) {
+          if (Params.Input[1].SourceCount > 0) {
             specific.EffectiveLengthAboutZ = EffectiveLengthAttribute(
               Input.LengthOrRatio(this, da, 1, LengthUnit.Meter, true));
           }
 
-          if (Params.Input[3].SourceCount > 0) {
+          if (Params.Input[2].SourceCount > 0) {
             specific.EffectiveLengthLaterialTorsional = EffectiveLengthAttribute(
               Input.LengthOrRatio(this, da, 2 , LengthUnit.Meter, true));
           }
@@ -225,16 +228,6 @@ namespace GsaGH.Components {
       leff.EffectiveLength.DestablisingLoadPositionRelativeTo = GetLoadReferenceBy(_selectedItems[1]);
 
       da.SetData(0, new GsaEffectiveLengthOptionsGoo(leff));
-    }
-
-    private Param_Number DestabilisingLoadHeight() {
-      return new Param_Number {
-        Access = GH_ParamAccess.item,
-        Name = "Destabilising Load Height",
-        NickName = "h",
-        Description = "Destabilising Load Height in model units", 
-        Optional = true
-      };
     }
 
     private Param_GenericObject EffectiveLengthAboutYParam() {

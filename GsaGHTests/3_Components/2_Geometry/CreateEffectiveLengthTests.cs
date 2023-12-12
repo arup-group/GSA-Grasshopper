@@ -37,7 +37,7 @@ namespace GsaGHTests.Components.Geometry {
     public void ChangeLoadReferenceDropdownTest() {
       var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
-      ComponentTestHelper.SetInput(comp, 0.15, 0);
+      ComponentTestHelper.SetInput(comp, 0.15, 2);
 
       comp.SetSelected(1, 0);
       var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
@@ -103,9 +103,9 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       comp.SetSelected(0, 2);
-      ComponentTestHelper.SetInput(comp, 0.1, 1);
-      ComponentTestHelper.SetInput(comp, 0.2, 2);
-      ComponentTestHelper.SetInput(comp, 1.5, 3);
+      ComponentTestHelper.SetInput(comp, 0.1, 0);
+      ComponentTestHelper.SetInput(comp, 0.2, 1);
+      ComponentTestHelper.SetInput(comp, 1.5, 2);
 
       var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       var specific = (EffectiveLengthFromUserSpecifiedValue)output.Value.EffectiveLength;
@@ -122,9 +122,9 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       comp.SetSelected(0, 2);
-      ComponentTestHelper.SetInput(comp, -0.1, 1);
-      ComponentTestHelper.SetInput(comp, -0.2, 2);
-      ComponentTestHelper.SetInput(comp, -1.5, 3);
+      ComponentTestHelper.SetInput(comp, -0.1, 0);
+      ComponentTestHelper.SetInput(comp, -0.2, 1);
+      ComponentTestHelper.SetInput(comp, -1.5, 2);
 
       var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       var specific = (EffectiveLengthFromUserSpecifiedValue)output.Value.EffectiveLength;
@@ -150,8 +150,8 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       comp.SetSelected(0, 1);
-      ComponentTestHelper.SetInput(comp, contin, 3);
-      ComponentTestHelper.SetInput(comp, interm, 4);
+      ComponentTestHelper.SetInput(comp, contin, 2);
+      ComponentTestHelper.SetInput(comp, interm, 3);
 
       var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       var intermediate = (EffectiveLengthFromEndAndInternalRestraint)output.Value.EffectiveLength;
