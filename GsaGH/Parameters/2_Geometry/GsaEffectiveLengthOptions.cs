@@ -9,18 +9,18 @@ namespace GsaGH.Parameters {
   /// Effective length calculation options are part of a <see cref="GsaMember1d"/>. These options are available for 1D members when the section material is steel. They define the properties relating to design from the interaction of the member with the rest of the structure.
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidd-page-member-steel.html">Member Design properties</see> to read more.</para>
   /// </summary>
-  public class GsaEffectiveLength {
+  public class GsaEffectiveLengthOptions {
     public GsaBucklingFactors BucklingFactors { get; set; } = null;
     public EffectiveLength EffectiveLength { get; set; }
 
-    public GsaEffectiveLength() { }
+    public GsaEffectiveLengthOptions() { }
 
-    public GsaEffectiveLength(GsaMember1d member) {
+    public GsaEffectiveLengthOptions(GsaMember1d member) {
       BucklingFactors = new GsaBucklingFactors(member);
       EffectiveLength = member.ApiMember.EffectiveLength;
     }
 
-    public GsaEffectiveLength(GsaEffectiveLength other) {
+    public GsaEffectiveLengthOptions(GsaEffectiveLengthOptions other) {
       BucklingFactors = other.BucklingFactors;
       EffectiveLength = other.EffectiveLength;
     }
@@ -47,7 +47,7 @@ namespace GsaGH.Parameters {
         case EffectiveLengthFromEndAndInternalRestraint internalRestraints:
           e1 = MemberEndRestraintFactory.MemberEndRestraintToString(internalRestraints.End1);
           e2 = MemberEndRestraintFactory.MemberEndRestraintToString(internalRestraints.End1);
-          string intern = $"End1: {e1}, End2: {e2} " +
+          string intern = $"End1: {e1}, End2: {e2}" +
             $", Along Member: {internalRestraints.RestraintAlongMember}, " +
             $"Intermediate Points: {internalRestraints.RestraintAtBracedPoints}";
           return "User-specified internal restraints: " + intern + destabilisingLoad + bucklingFacts;
@@ -56,7 +56,7 @@ namespace GsaGH.Parameters {
           string y = ConvertEffectiveLengthAttribute(userSpecified.EffectiveLengthAboutY);
           string z = ConvertEffectiveLengthAttribute(userSpecified.EffectiveLengthAboutZ);
           string ltb = ConvertEffectiveLengthAttribute(userSpecified.EffectiveLengthLaterialTorsional);
-          string user = $"\nAbout y: {userSpecified.EffectiveLengthAboutY.Option} {y}, " +
+          string user = $"About y: {userSpecified.EffectiveLengthAboutY.Option} {y}, " +
             $"About z: {userSpecified.EffectiveLengthAboutZ.Option} {z}, " +
             $"lateral torsional: {userSpecified.EffectiveLengthAboutZ.Option} {ltb}";
           return "User-specified effective length: " + user + destabilisingLoad + bucklingFacts;

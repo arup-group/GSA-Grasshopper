@@ -97,9 +97,9 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Mesh with others?",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaEffectiveLengthParameter(),
-        "Set " + GsaEffectiveLengthGoo.Name, GsaEffectiveLengthGoo.NickName,
-        GsaEffectiveLengthGoo.Description, GH_ParamAccess.item);
+      pManager.AddParameter(new GsaEffectiveLengthOptionsParameter(),
+        "Set " + GsaEffectiveLengthOptionsGoo.Name, GsaEffectiveLengthOptionsGoo.NickName,
+        GsaEffectiveLengthOptionsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member1d Name", "Na", "Set Name of Member1d", GH_ParamAccess.item);
       pManager.AddColourParameter("Member1d Colour", "Co", "Set Member 1D Colour",
         GH_ParamAccess.item);
@@ -150,9 +150,9 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddBooleanParameter("Mesh With Others", "M/o", "Get if to mesh with others",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaEffectiveLengthParameter(),
-        "Get " + GsaEffectiveLengthGoo.Name, GsaEffectiveLengthGoo.NickName,
-        GsaEffectiveLengthGoo.Description, GH_ParamAccess.item);
+      pManager.AddParameter(new GsaEffectiveLengthOptionsParameter(),
+        "Get " + GsaEffectiveLengthOptionsGoo.Name, GsaEffectiveLengthOptionsGoo.NickName,
+        GsaEffectiveLengthOptionsGoo.Description, GH_ParamAccess.item);
       pManager.AddTextParameter("Member Name", "Na", "Get Name of Member1d", GH_ParamAccess.item);
 
       pManager.AddColourParameter("Member Colour", "Co", "Get Member Colour", GH_ParamAccess.item);
@@ -286,7 +286,7 @@ namespace GsaGH.Components {
         mem.ApiMember.IsIntersector = intersector;
       }
 
-      GsaEffectiveLengthGoo effLengthGoo = null;
+      GsaEffectiveLengthOptionsGoo effLengthGoo = null;
       if (da.GetData(16, ref effLengthGoo)) {
         GsaBucklingFactors blf = effLengthGoo.Value.BucklingFactors;
         mem.ApiMember.MomentAmplificationFactorStrongAxis
@@ -349,10 +349,10 @@ namespace GsaGH.Components {
       da.SetData(15, new GsaNodeGoo(mem.OrientationNode));
       da.SetData(16, mem.ApiMember.MeshSize);
       da.SetData(17, mem.ApiMember.IsIntersector);
-      var effLength = new GsaEffectiveLength(mem) {
+      var effLength = new GsaEffectiveLengthOptions(mem) {
         BucklingFactors = new GsaBucklingFactors(mem)
       };
-      da.SetData(18, new GsaEffectiveLengthGoo(effLength));
+      da.SetData(18, new GsaEffectiveLengthOptionsGoo(effLength));
       da.SetData(19, mem.ApiMember.Name);
       da.SetData(20, (Color)mem.ApiMember.Colour);
       da.SetData(21, mem.ApiMember.IsDummy);

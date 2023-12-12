@@ -5,6 +5,11 @@
     <Platforms>x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="3_Components\99_Obsolete\**" />
+    <EmbeddedResource Remove="3_Components\99_Obsolete\**" />
+    <None Remove="3_Components\99_Obsolete\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="TestHelpers\Steel_Design_Complex.gwb.lok" />
   </ItemGroup>
   <ItemGroup>
@@ -35,10 +40,6 @@
     <None Update="xunit.runner.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="3_Components\99_Obsolete\" />
   </ItemGroup>
 
   <Import Project="PreBuild.targets" />
