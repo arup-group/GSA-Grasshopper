@@ -401,6 +401,11 @@ namespace GsaGH.Components {
         return;
       }
 
+      if (!_combinationCaseResults.ContainsKey(_caseId)) {
+        _caseId = _combinationCaseResults.First().Key;
+        _selectedItems[1] = $"C{_caseId}";
+      }
+
       IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult
         = _combinationCaseResults[_caseId]
          .NodeResults(_gsaModel.Model.Nodes().Keys.First().ToString());
