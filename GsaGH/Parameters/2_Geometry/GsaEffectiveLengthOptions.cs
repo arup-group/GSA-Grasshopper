@@ -47,7 +47,7 @@ namespace GsaGH.Parameters {
         case EffectiveLengthFromEndAndInternalRestraint internalRestraints:
           e1 = MemberEndRestraintFactory.MemberEndRestraintToString(internalRestraints.End1);
           e2 = MemberEndRestraintFactory.MemberEndRestraintToString(internalRestraints.End1);
-          string intern = $"End1: {e1}, End2: {e2} " +
+          string intern = $"End1: {e1}, End2: {e2}" +
             $", Along Member: {internalRestraints.RestraintAlongMember}, " +
             $"Intermediate Points: {internalRestraints.RestraintAtBracedPoints}";
           return "User-specified internal restraints: " + intern + destabilisingLoad + bucklingFacts;
@@ -56,7 +56,7 @@ namespace GsaGH.Parameters {
           string y = ConvertEffectiveLengthAttribute(userSpecified.EffectiveLengthAboutY);
           string z = ConvertEffectiveLengthAttribute(userSpecified.EffectiveLengthAboutZ);
           string ltb = ConvertEffectiveLengthAttribute(userSpecified.EffectiveLengthLaterialTorsional);
-          string user = $"\nAbout y: {userSpecified.EffectiveLengthAboutY.Option} {y}, " +
+          string user = $"About y: {userSpecified.EffectiveLengthAboutY.Option} {y}, " +
             $"About z: {userSpecified.EffectiveLengthAboutZ.Option} {z}, " +
             $"lateral torsional: {userSpecified.EffectiveLengthAboutZ.Option} {ltb}";
           return "User-specified effective length: " + user + destabilisingLoad + bucklingFacts;
