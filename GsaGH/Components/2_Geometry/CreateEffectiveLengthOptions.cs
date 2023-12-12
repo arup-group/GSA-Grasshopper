@@ -331,15 +331,15 @@ namespace GsaGH.Components {
       }
       s = s.ToLower();
 
-      if (s.Contains("0") || s.Contains("f")) {
+      if (s.Contains("0") || s.Contains("free")) {
         return GsaAPI.InternalContinuousRestraint.Free;
       }
 
-      if (s.Contains("2") || s.Contains("p")) {
+      if (s.Contains("2") || s.Contains("pin")) {
         return GsaAPI.InternalContinuousRestraint.Pinned;
       }
 
-      if (s.Contains("1") || s.Contains("t")) {
+      if (s.Contains("1") || s.Contains("top")) {
         return GsaAPI.InternalContinuousRestraint.TopFlangeLateral;
       }
 
