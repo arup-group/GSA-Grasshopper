@@ -39,20 +39,13 @@ namespace GsaGH.Components {
 
     private string _case = string.Empty;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
-    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
-    private bool _undefinedModelLengthUnit;
 
     public ResultDiagrams() : base("Result Diagrams", "ResultDiagram",
       "Displays GSA 1D Element Result Diagram", CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     public override bool Read(GH_IReader reader) {
-      //warning - sensitive for description string! do not change description if not needed!
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
-      _lengthResultUnit
-        = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("force"));
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), reader.GetString("moment"));
       _stressUnit
@@ -84,8 +77,6 @@ namespace GsaGH.Components {
     }
 
     public override bool Write(GH_IWriter writer) {
-      writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
-      writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("force", Force.GetAbbreviation(_forceUnit));
       writer.SetString("moment", Moment.GetAbbreviation(_momentUnit));
       writer.SetString("stress", Pressure.GetAbbreviation(_stressUnit));
@@ -99,8 +90,6 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
-      ToolStripMenuItem lengthUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Displacement",
-        EngineeringUnits.Length, Length.GetAbbreviation(_lengthResultUnit), UpdateLength);
       ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
         EngineeringUnits.Force, Force.GetAbbreviation(_forceUnit), UpdateForce);
       ToolStripMenuItem momentUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Moment",
@@ -111,19 +100,10 @@ namespace GsaGH.Components {
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
 
       unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-        lengthUnitsMenu,
         forceUnitsMenu,
         momentUnitsMenu,
         stressUnitsMenu,
       });
-
-      if (_undefinedModelLengthUnit) {
-        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
-          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
-          UpdateModel);
-
-        unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
-      }
 
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
       menu.Items.Add(unitsMenu);
@@ -231,13 +211,6 @@ namespace GsaGH.Components {
       }
 
       LengthUnit lengthUnit = result.Model.ModelUnit;
-      _undefinedModelLengthUnit = false;
-      if (lengthUnit == LengthUnit.Undefined) {
-        lengthUnit = _lengthUnit;
-        _undefinedModelLengthUnit = true;
-        this.AddRuntimeRemark(
-          $"Model came straight out of GSA and we couldn't read the units. The geometry has been scaled to be in {lengthUnit}. This can be changed by right-clicking the component -> 'Select Units'");
-      }
 
       DiagramType type = _selectedItems[0] == "Force" 
         ? Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
@@ -247,7 +220,7 @@ namespace GsaGH.Components {
 
       double unitScale = ComputeUnitScale(autoScale);
       double computedScale
-        = GraphicsScalar.ComputeScale(result.Model, scale, _lengthUnit, autoScale, unitScale);
+        = GraphicsScalar.ComputeScale(result.Model, scale, lengthUnit, autoScale, unitScale);
       var graphic = new DiagramSpecification() {
         ListDefinition = list.Definition,
         ListType = list.Type,
@@ -412,31 +385,19 @@ namespace GsaGH.Components {
       return isStress;
     }
 
-    private void UpdateForce(string unit) {
+    internal void UpdateForce(string unit) {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateStress(string unit) {
+    internal void UpdateStress(string unit) {
       _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    private void UpdateLength(string unit) {
-      _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    private void UpdateModel(string unit) {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    private void UpdateMoment(string unit) {
+    internal void UpdateMoment(string unit) {
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
