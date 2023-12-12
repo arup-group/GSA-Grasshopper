@@ -36,6 +36,7 @@ namespace GsaGH.Components {
       "Planar Quads",
       "Quad-8 only"
     };
+
     public Create2dElementsFromBrep() : base("Create 2D Elements from Brep", "Elem2dFromBrep",
       "Mesh a non-planar Brep", CategoryName.Name(), SubCategoryName.Cat2()) { }
 

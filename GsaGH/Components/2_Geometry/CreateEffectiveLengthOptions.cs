@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -44,10 +44,19 @@ namespace GsaGH.Components {
         { LoadReference.BottomFlange, "Bottom flange" },
       };
 
-    public CreateEffectiveLengthOptions() : base("Create Effective Length Options", "EffectiveLengthOptions",
+    public CreateEffectiveLengthOptions() : base("Create Effective Length Options",
+      "EffectiveLengthOptions",
       "Create 1D Member Design Options for Effective Length, Restraints and Buckling Factors",
       CategoryName.Name(), SubCategoryName.Cat2()) {
       Hidden = true;
+    }
+
+    public override bool Read(GH_IReader reader) {
+      bool flag = base.Read(reader);
+      GH_IReader attributes = reader.FindChunk("Attributes");
+      Attributes.Bounds = (RectangleF)attributes.Items[0].InternalData;
+      Attributes.Pivot = (PointF)attributes.Items[1].InternalData;
+      return flag;
     }
 
     public override void SetSelected(int i, int j) {
@@ -97,7 +106,6 @@ namespace GsaGH.Components {
       }
 
       Params.RegisterInputParam(h);
-
       Params.RegisterInputParam(fLy);
       Params.RegisterInputParam(fLz);
       Params.RegisterInputParam(fLtb);
