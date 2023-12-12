@@ -43,7 +43,7 @@ namespace GsaGHTests.Components.Geometry {
       var output15 = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 15);
       var output16 = (GH_Number)ComponentTestHelper.GetOutput(comp, 16);
       var output17 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 17);
-      var output18 = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp, 18);
+      var output18 = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp, 18);
       var output19 = (GH_String)ComponentTestHelper.GetOutput(comp, 19);
       var output20 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 20);
       var output21 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 21);
@@ -124,11 +124,11 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, new GsaNodeGoo(node), 13);
       ComponentTestHelper.SetInput(comp, 0.7, 14);
       ComponentTestHelper.SetInput(comp, false, 15);
-      var leff = new GsaEffectiveLength(new GsaMember1d()) {
+      var leff = new GsaEffectiveLengthOptions(new GsaMember1d()) {
         BucklingFactors = new GsaBucklingFactors(1, 2, 3)
       };
       ComponentTestHelper.SetInput(comp,
-        new GsaEffectiveLengthGoo(leff), 16);
+        new GsaEffectiveLengthOptionsGoo(leff), 16);
       ComponentTestHelper.SetInput(comp, "name", 17);
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 18);
       ComponentTestHelper.SetInput(comp, true, 19);
@@ -151,7 +151,7 @@ namespace GsaGHTests.Components.Geometry {
       var output15 = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 15);
       var output16 = (GH_Number)ComponentTestHelper.GetOutput(comp, 16);
       var output17 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 17);
-      var output18 = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp, 18);
+      var output18 = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp, 18);
       var output19 = (GH_String)ComponentTestHelper.GetOutput(comp, 19);
       var output20 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 20);
       var output21 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 21);
@@ -250,7 +250,7 @@ namespace GsaGHTests.Components.Geometry {
       var output15 = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 15);
       var output16 = (GH_Number)ComponentTestHelper.GetOutput(comp, 16);
       var output17 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 17);
-      var output18 = (GsaEffectiveLengthGoo)ComponentTestHelper.GetOutput(comp, 18);
+      var output18 = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp, 18);
       var output19 = (GH_String)ComponentTestHelper.GetOutput(comp, 19);
       var output20 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 20);
       var output21 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 21);

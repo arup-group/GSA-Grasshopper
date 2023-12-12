@@ -17,14 +17,14 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditBucklingFactors;
 
-    public EditBucklingFactors_OBSOLETE() : base("Edit " + GsaEffectiveLengthGoo.Name,
-      "EditBucklingFactors", "Modify " + GsaEffectiveLengthGoo.Description, 
+    public EditBucklingFactors_OBSOLETE() : base("Edit " + GsaEffectiveLengthOptionsGoo.Name,
+      "EditBucklingFactors", "Modify " + GsaEffectiveLengthOptionsGoo.Description, 
       CategoryName.Name(), SubCategoryName.Cat2()) {
       Hidden = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaEffectiveLengthParameter());
+      pManager.AddParameter(new GsaEffectiveLengthOptionsParameter());
       pManager.AddNumberParameter("Factor Lsy", "fLy", "Moment Amplification Factor, Strong Axis",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Factor Lsz", "fLz", "Moment Amplification Factor, Weak Axis",
@@ -38,7 +38,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaEffectiveLengthParameter());
+      pManager.AddParameter(new GsaEffectiveLengthOptionsParameter());
       pManager.AddNumberParameter("Factor Lsy", "fLy", "Moment Amplification Factor, Strong Axis",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Factor Lsz", "fLz", "Moment Amplification Factor, Weak Axis",
@@ -54,7 +54,7 @@ namespace GsaGH.Components {
         "your script to use that instead.");
       var fls = new GsaBucklingFactors();
 
-      GsaEffectiveLengthGoo bucklingFactorsGoo = null;
+      GsaEffectiveLengthOptionsGoo bucklingFactorsGoo = null;
       if (da.GetData(0, ref bucklingFactorsGoo)) {
         fls = new GsaBucklingFactors(bucklingFactorsGoo.Value.BucklingFactors);
       }
@@ -74,11 +74,11 @@ namespace GsaGH.Components {
         fls.EquivalentUniformMomentFactor = lt;
       }
 
-      var designprops = new GsaEffectiveLength(new GsaMember1d()) {
+      var designprops = new GsaEffectiveLengthOptions(new GsaMember1d()) {
         BucklingFactors = fls
       };
 
-      da.SetData(0, new GsaEffectiveLengthGoo(designprops));
+      da.SetData(0, new GsaEffectiveLengthOptionsGoo(designprops));
       da.SetData(1, fls.MomentAmplificationFactorStrongAxis);
       da.SetData(2, fls.MomentAmplificationFactorWeakAxis);
       da.SetData(3, fls.EquivalentUniformMomentFactor);
