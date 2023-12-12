@@ -15,6 +15,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(EditSection), 2)]
     [InlineData(typeof(Get2dPropertyModifier), 2)]
     [InlineData(typeof(GetSectionModifier), 2)]
+    [InlineData(typeof(GetSpringProperty), 2)]
     [InlineData(typeof(MaterialProperties), 2)]
     [InlineData(typeof(ProfileDimensions), 2)]
     [InlineData(typeof(SectionProperties), 2)]
@@ -39,7 +40,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(ResultDiagrams), 4)]
     [InlineData(typeof(Create1dElement), 1)] // Section3dPreviewComponent
     [InlineData(typeof(Create1dMember), 1)] // Section3dPreviewDropDownComponent
-    public void DropDownComponentTest(Type t, int expectedItems) {
+    public void AppendAdditionalMenuItemsTest(Type t, int expectedItems) {
       var comp = (GH_Component)Activator.CreateInstance(t);
       var form = new ContextMenuStrip();
       comp.AppendAdditionalMenuItems(form);

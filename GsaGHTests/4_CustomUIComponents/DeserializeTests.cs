@@ -17,6 +17,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(CreateBool6))]
     [InlineData(typeof(Create2dPropertyModifier))]
     [InlineData(typeof(CreateSectionModifier))]
+    [InlineData(typeof(CreateSpringProperty))]
     [InlineData(typeof(EditOffset))]
     [InlineData(typeof(Edit2dProperty))]
     [InlineData(typeof(MaterialProperties))]
