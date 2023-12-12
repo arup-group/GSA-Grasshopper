@@ -44,17 +44,13 @@ namespace GsaGH.Components {
     }
 
     public override bool Read(GH_IReader reader) {
-      if (reader.ChunkExists("ParameterData")) {
-        return base.Read(reader);
-      }
-
-      BaseReader.Read(reader, this);
+      bool flag = base.Read(reader);
       _isInitialised = true;
       UpdateUIFromSelectedItems();
       GH_IReader attributes = reader.FindChunk("Attributes");
       Attributes.Bounds = (RectangleF)attributes.Items[0].InternalData;
       Attributes.Pivot = (PointF)attributes.Items[1].InternalData;
-      return true;
+      return flag;
     }
 
     public override void SetSelected(int i, int j) {
