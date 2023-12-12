@@ -3,6 +3,7 @@ using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
+using Rhino.Commands;
 using Xunit;
 
 namespace GsaGHTests.Components.Results {
@@ -90,6 +91,26 @@ namespace GsaGHTests.Components.Results {
       ComponentTestHelper.SetInput(comp, "C", 1);
       result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal("C1", comp._selectedItems[1]);
+    }
+
+    [Fact]
+    public void ChangeFromAnalysisCaseToNonExistentCombinationCase() {
+      var comp = new SelectResult();
+
+      var apiModel = new GsaAPI.Model(GsaFile.SteelDesignComplex);
+      var model = new GsaModel(apiModel);
+      ComponentTestHelper.SetInput(comp, new GsaModelGoo(model));
+      comp.Params.Output[0].CollectData();
+
+      // pick a high analysis case id
+      comp.SetSelected(1, 12);
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("A13", comp._selectedItems[1]);
+
+      // change first dropdown to Combination case
+      comp.SetSelected(0, 1);
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("C4", comp._selectedItems[1]);
     }
   }
 }
