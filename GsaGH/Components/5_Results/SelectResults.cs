@@ -140,9 +140,7 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp)) {
-        return;
-      }
+      da.GetData(0, ref ghTyp);
 
       if (ghTyp.Value is GsaModelGoo modelGoo) {
         if (_gsaModel != null) {
@@ -167,7 +165,6 @@ namespace GsaGH.Components {
       if (da.GetData(1, ref ghType)) {
         if (GH_Convert.ToString(ghType, out string type, GH_Conversion.Both)) {
           if (type.ToUpper().StartsWith("A")) {
-            _resultType = CaseType.AnalysisCase;
             _selectedItems[0] = _dropDownItems[0][0];
             if (_resultType != CaseType.AnalysisCase) {
               _resultType = CaseType.AnalysisCase;

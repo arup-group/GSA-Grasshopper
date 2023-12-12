@@ -112,5 +112,123 @@ namespace GsaGHTests.Components.Results {
       comp.Params.Output[0].CollectData();
       Assert.Equal("C4", comp._selectedItems[1]);
     }
+
+    [Fact]
+    public void UpdateDropdownsTest() {
+      var comp = new SelectResult();
+      var apiModel = new GsaAPI.Model(GsaFile.SteelDesignComplex);
+      var model = new GsaModel(apiModel);
+      ComponentTestHelper.SetInput(comp, new GsaModelGoo(model));
+      comp.Params.Output[0].CollectData();
+      Assert.Equal(2, comp._dropDownItems.Count);
+      Assert.Equal(2, comp._dropDownItems[0].Count);
+      Assert.Equal(13, comp._dropDownItems[1].Count);
+      comp.SetSelected(0, 1); // combination case
+      comp.Params.Output[0].CollectData();
+      Assert.Equal(3, comp._dropDownItems.Count);
+      Assert.Equal(2, comp._dropDownItems[0].Count);
+      Assert.Equal(4, comp._dropDownItems[1].Count);
+      Assert.Equal(3, comp._dropDownItems[2].Count);
+    }
+
+    [Fact]
+    public void UpdateModelTest() {
+      var comp = new SelectResult();
+      var apiModel1 = new GsaAPI.Model(GsaFile.SteelDesignComplex);
+      var model1 = new GsaModel(apiModel1);
+      ComponentTestHelper.SetInput(comp, new GsaModelGoo(model1));
+      comp.Params.Output[0].CollectData();
+      Assert.Equal(2, comp._dropDownItems.Count);
+      Assert.Equal(2, comp._dropDownItems[0].Count);
+      Assert.Equal(13, comp._dropDownItems[1].Count);
+      var apiModel2 = new GsaAPI.Model(GsaFile.SteelDesignSimple);
+      var model2 = new GsaModel(apiModel2);
+      ComponentTestHelper.SetInput(comp, new GsaModelGoo(model2));
+      comp.Params.Output[0].CollectData();
+      Assert.Equal(2, comp._dropDownItems.Count);
+      Assert.Equal(2, comp._dropDownItems[0].Count);
+      Assert.Equal(2, comp._dropDownItems[1].Count);
+    }
+
+    [Fact]
+    public void InvalidModelInputsTest() {
+      var comp = new SelectResult();
+      ComponentTestHelper.SetInput(comp, "not a model");
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
+    [Fact]
+    public void SetCombinationCaseByDropdownThenAnalysisCaseByInput() {
+      var comp = new SelectResult();
+      var apiModel = new GsaAPI.Model(GsaFile.SteelDesignComplex);
+      var model = new GsaModel(apiModel);
+      ComponentTestHelper.SetInput(comp, new GsaModelGoo(model));
+      comp.SetSelected(0, 1); // combination case
+      comp.Params.Output[0].CollectData();
+      comp.SetSelected(1, 1); // case C2
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("Combination", comp._selectedItems[0]);
+      Assert.Equal(3, comp._dropDownItems.Count);
+      ComponentTestHelper.SetInput(comp, "Analysis", 1);
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("AnalysisCase", comp._selectedItems[0]);
+      Assert.Equal("A2", comp._selectedItems[1]);
+      Assert.Equal(2, comp._dropDownItems.Count);
+    }
+
+    [Fact]
+    public void SetAnalysisCaseByDropdownThenCombinationCaseByInput() {
+      var comp = new SelectResult();
+      var apiModel = new GsaAPI.Model(GsaFile.SteelDesignComplex);
+      var model = new GsaModel(apiModel);
+      ComponentTestHelper.SetInput(comp, new GsaModelGoo(model));
+      comp.SetSelected(0, 0); // analysis case
+      comp.Params.Output[0].CollectData();
+      comp.SetSelected(1, 1); // case A2
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("AnalysisCase", comp._selectedItems[0]);
+      Assert.Equal(2, comp._dropDownItems.Count);
+      ComponentTestHelper.SetInput(comp, "Combination", 1);
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("Combination", comp._selectedItems[0]);
+      Assert.Equal("C2", comp._selectedItems[1]);
+      Assert.Equal(3, comp._dropDownItems.Count);
+    }
+
+    [Fact]
+    public void SetAnalysisCaseIdByInput() {
+      var comp = new SelectResult();
+      var apiModel = new GsaAPI.Model(GsaFile.SteelDesignComplex);
+      var model = new GsaModel(apiModel);
+      ComponentTestHelper.SetInput(comp, new GsaModelGoo(model));
+      ComponentTestHelper.SetInput(comp, 0, 2);
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("All", comp._selectedItems[1]);
+      ComponentTestHelper.SetInput(comp, 2, 2);
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("A2", comp._selectedItems[1]);
+    }
+
+    [Fact]
+    public void SetPermutationIdByInput() {
+      var comp = new SelectResult();
+      var apiModel = new GsaAPI.Model(GsaFile.SteelDesignComplex);
+      var model = new GsaModel(apiModel);
+      ComponentTestHelper.SetInput(comp, new GsaModelGoo(model));
+      comp.SetSelected(0, 1); // combination case
+      comp.Params.Output[0].CollectData();
+      comp.SetSelected(1, 3); // C4
+      comp.Params.Output[0].CollectData();
+      comp.SetSelected(2, 2); // C4p2
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("P2", comp._selectedItems[2]);
+      ComponentTestHelper.SetInput(comp, 0, 3);
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("All", comp._selectedItems[2]);
+      ComponentTestHelper.SetInput(comp, 2, 3);
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("from input", comp._selectedItems[2]);
+    }
   }
 }
