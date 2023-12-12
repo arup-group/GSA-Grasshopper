@@ -7,11 +7,13 @@ using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysUnits;
+using Rhino.Runtime;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
@@ -52,14 +54,24 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
+
+      FoldMode mode = GetModeBy(_selectedItems[0]);
       if (i == 0) {
-        _mode = GetModeBy(_selectedItems[i]);
+        UpdateParameters(mode);
       }
 
       base.UpdateUI();
     }
 
     public override void VariableParameterMaintenance() {
+      UpdateParameters(_mode);
+    }
+
+    private void UpdateParameters(FoldMode mode) {
+      if (mode == _mode) {
+        return;
+      }
+
       var fLtb = (Param_Number)Params.Input[Params.Input.Count - 1];
       var fLz = (Param_Number)Params.Input[Params.Input.Count - 2];
       var fLy = (Param_Number)Params.Input[Params.Input.Count - 3];
@@ -76,7 +88,7 @@ namespace GsaGH.Components {
         Params.UnregisterInputParameter(Params.Input[0], false);
       }
 
-      switch (_mode) {
+      switch (mode) {
         case FoldMode.Automatic:
           Params.RegisterInputParam(end1);
           Params.RegisterInputParam(end2);
@@ -100,6 +112,8 @@ namespace GsaGH.Components {
       Params.RegisterInputParam(fLy);
       Params.RegisterInputParam(fLz);
       Params.RegisterInputParam(fLtb);
+
+      _mode = mode;
     }
 
     protected override void InitialiseDropdowns() {
@@ -121,6 +135,16 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
+      pManager.AddTextParameter("Member Restraint Start", "ER1",
+      "Set the Member's Start Restraint" +
+      "\nUse either shortcut names ('Pinned', 'Fixed', 'Free'," +
+      "\n'FullRotational', 'PartialRotational' or 'TopFlangeLateral')" +
+      "\nor the " + MemberEndRestraintFactory.RestraintSyntax(), GH_ParamAccess.item);
+      pManager.AddTextParameter("Member Restraint End", "ER2",
+        "Set the Member's End Restraint." +
+        "\nUse either shortcut names ('Pinned', 'Fixed', 'Free'," +
+        "\n'FullRotational', 'PartialRotational' or 'TopFlangeLateral')" +
+        "\nor the " + MemberEndRestraintFactory.RestraintSyntax(), GH_ParamAccess.item);
       pManager.AddNumberParameter("Destabilising Load Height", "h",
         "Destabilising Load Height in model units", GH_ParamAccess.item, 0);
       pManager.AddNumberParameter("Factor Lsy", "fLy", "Moment Amplification Factor, Strong Axis",
@@ -130,9 +154,11 @@ namespace GsaGH.Components {
       pManager.AddNumberParameter("Equivalent uniform moment factor for LTB", "fLtb",
         $"Override the automatically calculated factor to account for the shape of the moment diagram in lateral torsional buckling design equations. This override is applied for all bending segments in the member.  This override is applied to the following variable for each design code:{Environment.NewLine} AISC 360: C_b {Environment.NewLine} AS 4100: alpha_m {Environment.NewLine} BS 5950: m_LT {Environment.NewLine} CSA S16: omega_2 {Environment.NewLine} EN 1993-1-1 and EN 1993-1-2: C_1 {Environment.NewLine} Hong Kong Code of Practice: m_LT {Environment.NewLine} IS 800: C_mLT {Environment.NewLine} SANS 10162-1: omega_2",
         GH_ParamAccess.item);
+      pManager[0].Optional = true;
       pManager[1].Optional = true;
-      pManager[2].Optional = true;
       pManager[3].Optional = true;
+      pManager[4].Optional = true;
+      pManager[5].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -227,6 +253,13 @@ namespace GsaGH.Components {
       leff.EffectiveLength.DestablisingLoadPositionRelativeTo = GetLoadReferenceBy(_selectedItems[1]);
 
       da.SetData(0, new GsaEffectiveLengthOptionsGoo(leff));
+    }
+
+    protected override void UpdateUIFromSelectedItems() {
+      FoldMode mode = GetModeBy(_selectedItems[0]);
+      UpdateParameters(mode);
+
+      base.UpdateUIFromSelectedItems();
     }
 
     private Param_GenericObject EffectiveLengthAboutYParam() {
@@ -402,11 +435,6 @@ namespace GsaGH.Components {
         default:
           return null;
       }
-    }
-
-    protected override void UpdateUIFromSelectedItems() {
-      _mode = GetModeBy(_selectedItems[0]);
-      base.UpdateUIFromSelectedItems();
     }
   }
 }
