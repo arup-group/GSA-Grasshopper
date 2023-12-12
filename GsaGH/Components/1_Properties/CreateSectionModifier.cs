@@ -20,7 +20,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateSectionModifier : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("e65d2554-75a9-4fac-9f12-1400e84aeee9");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateSectionModifier;
     private readonly List<string> _optionTypes = new List<string>(new[] {

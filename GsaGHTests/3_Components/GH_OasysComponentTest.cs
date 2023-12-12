@@ -35,6 +35,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(Create3dProperty))]
     [InlineData(typeof(CreateSection))]
     [InlineData(typeof(CreateSectionModifier))]
+    [InlineData(typeof(CreateSpringProperty))]
     [InlineData(typeof(EditBool6))]
     [InlineData(typeof(EditMaterial))]
     [InlineData(typeof(EditOffset))]

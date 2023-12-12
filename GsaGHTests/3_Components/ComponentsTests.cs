@@ -21,6 +21,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(Create2dPropertyModifier), 2)]
     [InlineData(typeof(CreateSection), 1)]
     [InlineData(typeof(CreateSectionModifier), 3)]
+    [InlineData(typeof(CreateSpringProperty), 2)]
     //Geometry
     [InlineData(typeof(Create2dElementsFromBrep), 2)]
     [InlineData(typeof(CreateElementsFromMembers), 1)]

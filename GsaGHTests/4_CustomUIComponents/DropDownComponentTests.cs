@@ -22,6 +22,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(Create2dPropertyModifier))]
     [InlineData(typeof(CreateSection))]
     [InlineData(typeof(CreateSectionModifier))]
+    [InlineData(typeof(CreateSpringProperty))]
     [InlineData(typeof(CreateProfile), true)]
     //geometry
     [InlineData(typeof(Create2dElementsFromBrep))]
@@ -72,7 +73,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(LoadDiagrams), true)]
     [InlineData(typeof(ReactionForceDiagrams))]
     [InlineData(typeof(ResultDiagrams))]
-    public void DropDownComponentTest(Type t, bool ignoreSpacerDescriptionCount = false) {
+    public void ToggleDropDownsTest(Type t, bool ignoreSpacerDescriptionCount = false) {
       var comp = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
       OasysDropDownComponentTestHelper.ChangeDropDownTest(comp, ignoreSpacerDescriptionCount);
     }

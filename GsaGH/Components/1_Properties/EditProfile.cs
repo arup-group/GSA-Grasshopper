@@ -14,7 +14,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class EditProfile : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("980f43b3-5d3d-445a-9a52-b82e1cf4b27f");
-    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.EditProfile;
     private bool _useDegrees = false;
