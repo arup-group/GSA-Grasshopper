@@ -55,7 +55,7 @@ namespace GsaGH.Components {
     });
 
     public override Guid ComponentGuid => new Guid("f48965a0-00e7-4de8-9839-a4480075459f");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary;
+    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateSpringProperty;
     private readonly IReadOnlyDictionary<SpringPropertyType, string> _springPropertyTypes
