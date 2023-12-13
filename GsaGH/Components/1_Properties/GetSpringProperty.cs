@@ -25,7 +25,6 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.GetSpringProperty;
     private RotationalStiffnessUnit _rotationalStiffnessUnit = RotationalStiffnessUnit.NewtonMeterPerRadian;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-    private List<string> _rotationalStiffnessUnitAbbreviations = new List<string>();
     private ForcePerLengthUnit _stiffnessUnit = DefaultUnits.ForcePerLengthUnit;
 
     public GetSpringProperty() : base("Get Spring Property", "GetPS",
@@ -249,7 +248,7 @@ namespace GsaGH.Components {
         case LockupSpringProperty lockup:
           da.SetData(14, new GH_UnitNumber(new Length((double)lockup.NegativeLockup, LengthUnit.Meter).ToUnit(_lengthUnit)));
           da.SetData(15, new GH_UnitNumber(new Length((double)lockup.PositiveLockup, LengthUnit.Meter).ToUnit(_lengthUnit)));
-          return;
+          break;
 
         case FrictionSpringProperty friction:
             da.SetData(2, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessX, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
@@ -262,6 +261,7 @@ namespace GsaGH.Components {
         default:
           break;
       }
+
       da.SetData(17, new GH_UnitNumber(new Ratio(springProperty.ApiProperty.DampingRatio, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent)));
     }
 
