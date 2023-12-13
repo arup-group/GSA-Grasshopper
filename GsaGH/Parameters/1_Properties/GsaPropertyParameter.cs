@@ -31,22 +31,6 @@ namespace GsaGH.Parameters {
 
         case GsaSpringPropertyGoo springProperty:
           return new GsaPropertyGoo(springProperty.Value);
-        
-        //case GsaElement1dGoo elem1d:
-        //  if (elem1d.Value.Section == null) {
-        //    mes = defaultText;
-        //    break;
-        //  }
-
-        //  return new GsaPropertyGoo(elem1d.Value.Section);
-
-        //case GsaMember1dGoo mem1d:
-        //  if (mem1d.Value.Section == null) {
-        //    mes = defaultText;
-        //    break;
-        //  }
-
-        //  return new GsaPropertyGoo(mem1d.Value.Section);
       }
 
       if (!string.IsNullOrEmpty(mes)) {
