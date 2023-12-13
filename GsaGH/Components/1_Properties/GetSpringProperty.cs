@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
@@ -185,7 +184,7 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       GsaSpringPropertyGoo springPropertyGoo = null;
       if (!da.GetData(0, ref springPropertyGoo)) {
-        this.AddRuntimeWarning("Input PB failed to collect data");
+        this.AddRuntimeWarning("Input PS failed to collect data");
         return;
       }
       GsaSpringProperty springProperty = springPropertyGoo.Value;
@@ -251,9 +250,9 @@ namespace GsaGH.Components {
           break;
 
         case FrictionSpringProperty friction:
-            da.SetData(2, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessX, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
-            da.SetData(4, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessY, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
-            da.SetData(6, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessZ, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          da.SetData(2, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessX, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          da.SetData(4, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessY, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          da.SetData(6, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessZ, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
           da.SetData(16, friction.FrictionCoefficient);
           break;
 
