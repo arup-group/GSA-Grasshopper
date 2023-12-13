@@ -195,9 +195,7 @@ namespace GsaGH.Helpers.GsaApi {
           "Torsion", Property2D_Type.TORSION
         }, {
           "Load Panel", Property2D_Type.LOAD
-        }, {
-          "Num Type", Property2D_Type.NUM_TYPE
-        },
+        }, 
       };
 
     internal static readonly Dictionary<string, Type> SpringPropertyTypeMapping

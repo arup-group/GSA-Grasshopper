@@ -118,7 +118,6 @@ namespace GsaGHTests.Helpers.GsaAPITests {
     [InlineData("Curved Shell", 7)]
     [InlineData("Torsion", 8)]
     [InlineData("Load Panel", 10)]
-    [InlineData("Num Type", 11)]
     public void GetProperty2D_TypeTest(string input, int expected) {
       Property2D_Type actual = Mappings.GetProperty2D_Type(input);
 

@@ -25,8 +25,11 @@ namespace GsaGH.Parameters {
     internal Point3d _refPoint = Point3d.Unset;
 
     public GsaNodeLoad() {
-      ApiLoad = new NodeLoad();
+      ApiLoad = new NodeLoad() {
+        Direction = Direction.Z,
+      };
       Type = NodeLoadType.NodeLoad;
+
     }
 
     public IGsaLoad Duplicate() {

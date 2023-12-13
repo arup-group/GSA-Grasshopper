@@ -36,6 +36,7 @@ using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using ForceUnit = OasysUnits.Units.ForceUnit;
+using Layer2d = GsaGH.Parameters.Results.Layer2d;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {

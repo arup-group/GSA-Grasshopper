@@ -20,6 +20,7 @@ namespace GsaGH.Parameters {
     public GsaFaceLoad() {
       ApiLoad = new FaceLoad {
         Type = FaceLoadType.CONSTANT,
+        Direction = Direction.Z,
       };
     }
 

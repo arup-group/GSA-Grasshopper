@@ -20,6 +20,7 @@ namespace GsaGH.Parameters {
     public GsaBeamLoad() {
       ApiLoad = new BeamLoad {
         Type = BeamLoadType.UNIFORM,
+        Direction = Direction.Z,
       };
     }
 

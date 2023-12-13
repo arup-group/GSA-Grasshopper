@@ -23,6 +23,7 @@ namespace GsaGH.Parameters {
 
     public GsaGridLineLoad() {
       ApiLoad.PolyLineReference = 0;
+      ApiLoad.Direction = Direction.Z;
     }
 
     public IGsaLoad Duplicate() {

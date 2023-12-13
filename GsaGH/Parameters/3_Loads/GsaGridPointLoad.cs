@@ -21,7 +21,10 @@ namespace GsaGH.Parameters {
       get => ApiLoad.Name;
       set => ApiLoad.Name = value;
     }
-    public GsaGridPointLoad() { }
+
+    public GsaGridPointLoad() {
+      ApiLoad.Direction = Direction.Z;
+    }
 
     public IGsaLoad Duplicate() {
       var dup = new GsaGridPointLoad {
