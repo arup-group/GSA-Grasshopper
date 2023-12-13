@@ -23,12 +23,9 @@ using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
-  /// <summary>
-  ///   Component to edit a Node
-  /// </summary>
   public class ExpandBeamToShell : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("42221f6b-b0f1-41ae-abcf-df5521565464");
-    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ExpandBeamToShell;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
