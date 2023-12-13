@@ -57,13 +57,8 @@ namespace GsaGH.Components {
     public override bool Read(GH_IReader reader) {
       bool flag = base.Read(reader);
       if (Params.Input[3].Name == new GsaSectionParameter().Name) {
-        var sources = Params.Input[3].Sources.ToList();
-        Params.UnregisterInputParameter(Params.Input[3], false);
-        Params.RegisterInputParam(new GsaPropertyParameter(), 3);
-        Params.Input[3].Optional = true;
-        foreach (IGH_Param source in sources) {
-          Params.Input[3].AddSource(source);
-        }
+        Params.ReplaceInputParameter(new GsaPropertyParameter(), 3, true);
+        Params.ReplaceOutputParameter(new GsaPropertyParameter(), 3);
       }
 
       return flag;

@@ -96,13 +96,7 @@ namespace GsaGH.Components {
       _zz2 = reader.GetBoolean("zz2");
       bool flag = base.Read(reader);
       if (Params.Input[1].Name == new GsaSectionParameter().Name) {
-        var sources = Params.Input[1].Sources.ToList();
-        Params.UnregisterInputParameter(Params.Input[1], false);
-        Params.RegisterInputParam(new GsaPropertyParameter(), 1);
-        Params.Input[1].Optional = true;
-        foreach (IGH_Param source in sources) {
-          Params.Input[1].AddSource(source);
-        }
+        Params.ReplaceInputParameter(new GsaPropertyParameter(), 1, true);
       }
 
       return flag;
