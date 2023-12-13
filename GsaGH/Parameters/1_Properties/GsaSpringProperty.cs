@@ -167,39 +167,39 @@ namespace GsaGH.Parameters {
       switch (ApiProperty) {
         case AxialSpringProperty axial:
           value = new ForcePerLength(axial.Stiffness, ForcePerLengthUnit.NewtonPerMeter)
-            .ToUnit(_stiffnessUnit).ToString();
+            .ToUnit(_stiffnessUnit).ToString().Replace(" ", string.Empty);
           break;
 
         case TensionSpringProperty tension:
           value = new ForcePerLength(tension.Stiffness, ForcePerLengthUnit.NewtonPerMeter)
-            .ToUnit(_stiffnessUnit).ToString();
+            .ToUnit(_stiffnessUnit).ToString().Replace(" ", string.Empty);
           break;
 
         case CompressionSpringProperty compression:
           value = new ForcePerLength(compression.Stiffness, ForcePerLengthUnit.NewtonPerMeter)
-            .ToUnit(_stiffnessUnit).ToString();
+            .ToUnit(_stiffnessUnit).ToString().Replace(" ", string.Empty);
           break;
 
         case GapSpringProperty gap:
           value = new ForcePerLength(gap.Stiffness, ForcePerLengthUnit.NewtonPerMeter)
-            .ToUnit(_stiffnessUnit).ToString();
+            .ToUnit(_stiffnessUnit).ToString().Replace(" ", string.Empty);
           break;
 
         case TorsionalSpringProperty torsional:
           value = new RotationalStiffness(torsional.Stiffness, RotationalStiffnessUnit.NewtonMeterPerRadian)
-            .ToUnit(_rotationalStiffnessUnit).ToString();
+            .ToUnit(_rotationalStiffnessUnit).ToString().Replace(" ", string.Empty);
           break;
 
         case GeneralSpringProperty general:
-          string x = GeneralSpringToString("X:", general.SpringCurveX, general.StiffnessX);
-          string y = GeneralSpringToString("Y:", general.SpringCurveY, general.StiffnessY);
-          string z = GeneralSpringToString("Z:", general.SpringCurveZ, general.StiffnessZ);
+          string x = GeneralSpringToString("X", general.SpringCurveX, general.StiffnessX);
+          string y = GeneralSpringToString("Y", general.SpringCurveY, general.StiffnessY);
+          string z = GeneralSpringToString("Z", general.SpringCurveZ, general.StiffnessZ);
           string xx = GeneralRotationalSpringToString(
-            "XX:", general.SpringCurveXX, general.StiffnessXX);
+            "XX", general.SpringCurveXX, general.StiffnessXX);
           string yy = GeneralRotationalSpringToString(
-            "YY:", general.SpringCurveYY, general.StiffnessYY);
+            "YY", general.SpringCurveYY, general.StiffnessYY);
           string zz = GeneralRotationalSpringToString(
-            "ZZ:", general.SpringCurveZZ, general.StiffnessZZ);
+            "ZZ", general.SpringCurveZZ, general.StiffnessZZ);
           value = string.Join(" ", x, y, z, xx, yy, zz);
           break;
 
@@ -209,15 +209,15 @@ namespace GsaGH.Parameters {
 
         case LockupSpringProperty lockup:
           value = "+ve:" + new Length((double)lockup.PositiveLockup, LengthUnit.Meter)
-            .ToUnit(_lengthUnit).ToString()
+            .ToUnit(_lengthUnit).ToString().Replace(" ", string.Empty)
             + " -ve:" + new Length((double)lockup.NegativeLockup, LengthUnit.Meter)
-            .ToUnit(_lengthUnit).ToString();
+            .ToUnit(_lengthUnit).ToString().Replace(" ", string.Empty);
           break;
 
         case FrictionSpringProperty friction:
-          string fx = GeneralSpringToString("X:", null, friction.StiffnessX);
-          string fy = GeneralSpringToString("Y:", null, friction.StiffnessY);
-          string fz = GeneralSpringToString("Z:", null, friction.StiffnessZ);
+          string fx = GeneralSpringToString("X", null, friction.StiffnessX);
+          string fy = GeneralSpringToString("Y", null, friction.StiffnessY);
+          string fz = GeneralSpringToString("Z", null, friction.StiffnessZ);
           string coeff = friction.FrictionCoefficient == 0 ? string.Empty 
             : $"Coeff.:{friction.FrictionCoefficient}";
           value = string.Join(" ", fx, fy, fz, coeff);
@@ -228,7 +228,7 @@ namespace GsaGH.Parameters {
       }
 
       string damping = ApiProperty.DampingRatio == 0 ? string.Empty 
-        : new Ratio(ApiProperty.DampingRatio, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString();
+        : new Ratio(ApiProperty.DampingRatio, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString().Replace(" ", string.Empty);
 
       return string.Join(" ", value, damping).Replace(",", string.Empty).TrimSpaces();
     }
@@ -240,7 +240,7 @@ namespace GsaGH.Parameters {
 
       string val = curve != null ? $"CurveID:{curve}" 
         : new ForcePerLength((double)stiffness, ForcePerLengthUnit.NewtonPerMeter)
-          .ToUnit(DefaultUnits.ForcePerLengthUnit).ToString();
+          .ToUnit(DefaultUnits.ForcePerLengthUnit).ToString().Replace(" ", string.Empty);
       return $"{prefix}:{val}";
     }
 
@@ -251,7 +251,7 @@ namespace GsaGH.Parameters {
 
       string val = curve != null ? $"CurveID:{curve}"
         : new RotationalStiffness((double)stiffness, RotationalStiffnessUnit.NewtonMeterPerRadian)
-          .ToString();
+          .ToString().Replace(" ", string.Empty);
       return $"{prefix}:{val}";
     }
   }
