@@ -26,29 +26,27 @@ namespace GsaGH.Parameters {
       string mes = string.Empty;
       string defaultText = $"{data.GetTypeName()} does not contain a Section";
       switch (data) {
-        case GsaElement1dGoo elem1d:
-          if (elem1d.Value.Section == null) {
-            mes = defaultText;
-            break;
-          }
-
-          return new GsaPropertyGoo(elem1d.Value.Section);
-
-        case GsaMember1dGoo mem1d:
-          if (mem1d.Value.Section == null) {
-            mes = defaultText;
-            break;
-          }
-
-          return new GsaPropertyGoo(mem1d.Value.Section);
+        case GsaSectionGoo section:
+          return new GsaPropertyGoo(section.Value);
 
         case GsaSpringPropertyGoo springProperty:
-          if (springProperty.Value.ApiProperty == null) {
-            mes = defaultText;
-            break;
-          }
-
           return new GsaPropertyGoo(springProperty.Value);
+        
+        //case GsaElement1dGoo elem1d:
+        //  if (elem1d.Value.Section == null) {
+        //    mes = defaultText;
+        //    break;
+        //  }
+
+        //  return new GsaPropertyGoo(elem1d.Value.Section);
+
+        //case GsaMember1dGoo mem1d:
+        //  if (mem1d.Value.Section == null) {
+        //    mes = defaultText;
+        //    break;
+        //  }
+
+        //  return new GsaPropertyGoo(mem1d.Value.Section);
       }
 
       if (!string.IsNullOrEmpty(mes)) {

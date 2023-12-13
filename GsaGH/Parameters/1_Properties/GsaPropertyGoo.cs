@@ -17,5 +17,14 @@ namespace GsaGH.Parameters {
     public override IGH_Goo Duplicate() {
       return new GsaPropertyGoo(Value);
     }
+
+    public override string ToString() {
+      if (Value == null) {
+        return "Null";
+      }
+
+      string typeName = Value.GetType().Name.TrimStart('I').Replace("Gsa", string.Empty);
+      return PluginInfo.ProductName + " " + typeName + " (" + Value.ToString() + ")";
+    }
   }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using GH_IO.Serialization;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -35,6 +36,21 @@ namespace GsaGH.Components {
       if (Params.Input[9] is Param_Number angleParameter) {
         _angleUnit = angleParameter.UseDegrees ? AngleUnit.Degree : AngleUnit.Radian;
       }
+    }
+
+    public override bool Read(GH_IReader reader) {
+      bool flag = base.Read(reader);
+      if (Params.Input[3].Name == new GsaSectionParameter().Name) {
+        var sources = Params.Input[3].Sources.ToList();
+        Params.UnregisterInputParameter(Params.Input[3], false);
+        Params.RegisterInputParam(new GsaPropertyParameter(), 3);
+        Params.Input[3].Optional = true;
+        foreach (IGH_Param source in sources) {
+          Params.Input[3].AddSource(source);
+        }
+      }
+
+      return flag;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -141,19 +157,23 @@ namespace GsaGH.Components {
       if (da.GetData(3, ref sectionGoo)) {
         switch (sectionGoo.Value) {
           case GsaSection section:
-            if (elem.ApiElement.Type == ElementType.SPRING) {
-              this.AddRuntimeError("Input PB has to be a Spring Property");
-              return;
+            if (section.IsReferencedById && elem.ApiElement.Type == ElementType.SPRING) {
+              elem.Section = null;
+              elem.SpringProperty = new GsaSpringProperty(section.Id);
+            } else {
+              if (elem.ApiElement.Type == ElementType.SPRING) {
+                this.AddRuntimeError("PB input must be a SpringProperty");
+                return;
+              }
+              elem.Section = section;
+              elem.SpringProperty = null;
             }
-            elem.Section = section;
-            elem.SpringProperty = null;
+
             break;
 
           case GsaSpringProperty springProperty:
-            if (elem.ApiElement.Type != ElementType.SPRING) {
-              this.AddRuntimeError("Element Type is not Spring");
-              return;
-            }
+            elem.ApiElement.Type = ElementType.SPRING;
+            this.AddRuntimeRemark("ElementType changed to Spring");
             elem.Section = null;
             elem.SpringProperty = springProperty;
             break;

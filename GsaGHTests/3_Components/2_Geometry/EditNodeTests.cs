@@ -33,7 +33,7 @@ namespace GsaGHTests.Components.Geometry {
       var output4 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 4);
       var output5 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 5);
       var output6 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 6);
-      var output7 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 7);
+      var output7 = (GsaSpringPropertyGoo)ComponentTestHelper.GetOutput(comp, 7);
       var output8 = (GH_String)ComponentTestHelper.GetOutput(comp, 8);
       var output9 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 9);
 
@@ -61,7 +61,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(0, output0.Value.ApiNode.MassProperty);
       Assert.Equal(0, output6.Value);
       Assert.Equal(0, output0.Value.ApiNode.SpringProperty);
-      Assert.Equal(0, output7.Value);
+      Assert.Null(output7.Value);
 
       Assert.Equal("", output8.Value);
       Assert.Equal(0, output9.Value.R);
@@ -91,7 +91,7 @@ namespace GsaGHTests.Components.Geometry {
       var output4 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 4);
       var output5 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 5);
       var output6 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 6);
-      var output7 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 7);
+      var output7 = (GsaSpringPropertyGoo)ComponentTestHelper.GetOutput(comp, 7);
       var output8 = (GH_String)ComponentTestHelper.GetOutput(comp, 8);
       var output9 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 9);
 
@@ -119,8 +119,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(3, output5.Value);
       Assert.Equal(6, output0.Value.ApiNode.MassProperty);
       Assert.Equal(6, output6.Value);
-      Assert.Equal(9, output0.Value.ApiNode.SpringProperty);
-      Assert.Equal(9, output7.Value);
+      Assert.Equal(9, output7.Value.Id);
 
       Assert.Equal("name", output8.Value);
       Assert.Equal(255, output9.Value.R);

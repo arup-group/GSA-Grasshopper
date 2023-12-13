@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Drawing;
 using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers;
@@ -125,7 +127,11 @@ namespace GsaGH.Parameters {
           return null;
       }
 
-      property.Colour = ApiProperty.Colour;
+      // workaround to handle that Color is non-nullable type
+      if ((Color)ApiProperty.Colour != Color.FromArgb(0, 0, 0)) {
+        property.Colour = ApiProperty.Colour;
+      }
+      
       property.DampingRatio = ApiProperty.DampingRatio;
       property.Name = ApiProperty.Name;
 

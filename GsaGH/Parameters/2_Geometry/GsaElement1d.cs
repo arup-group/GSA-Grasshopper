@@ -165,7 +165,7 @@ namespace GsaGH.Parameters {
         property = Section.Id > 0 ? $"PB{Section.Id}"
         : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
       } else if (SpringProperty != null) {
-        property = SpringProperty.Id > 0 ? $"PS{SpringProperty.Id}"
+        property = SpringProperty.Id > 0 ? $"SP{SpringProperty.Id}"
         : SpringProperty.ApiProperty != null ? SpringProperty.ApiProperty.Name : string.Empty;
       }
       return string.Join(" ", id, type, property).TrimSpaces();

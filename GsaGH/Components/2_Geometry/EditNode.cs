@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
@@ -49,7 +50,18 @@ namespace GsaGH.Components {
 
     public override bool Read(GH_IReader reader) {
       _mode = (FoldMode)reader.GetInt32("Mode");
-      return base.Read(reader);
+      bool flag = base.Read(reader);
+      if (Params.Input[7].Description == "Set Spring Property by reference") {
+        var sources = Params.Input[7].Sources.ToList();
+        Params.UnregisterInputParameter(Params.Input[7], false);
+        Params.RegisterInputParam(new GsaSpringPropertyParameter(), 7);
+        Params.Input[7].Optional = true;
+        foreach (IGH_Param source in sources) {
+          Params.Input[7].AddSource(source);
+        }
+      }
+
+      return flag;
     }
 
     public void VariableParameterMaintenance() {

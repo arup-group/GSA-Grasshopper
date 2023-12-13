@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using GH_IO.Serialization;
+using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
@@ -22,6 +24,21 @@ namespace GsaGH.Components {
 
     public Create1dElement() : base("Create 1D Element", "Elem1D", "Create GSA 1D Element",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
+
+    public override bool Read(GH_IReader reader) {
+      bool flag = base.Read(reader);
+      if (Params.Input[1].Name == new GsaSectionParameter().Name) {
+        var sources = Params.Input[1].Sources.ToList();
+        Params.UnregisterInputParameter(Params.Input[1], false);
+        Params.RegisterInputParam(new GsaPropertyParameter(), 1);
+        Params.Input[1].Optional = true;
+        foreach (IGH_Param source in sources) {
+          Params.Input[1].AddSource(source);
+        }
+      }
+
+      return flag;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddLineParameter("Line", "L", "Line to create GSA Element", GH_ParamAccess.item);

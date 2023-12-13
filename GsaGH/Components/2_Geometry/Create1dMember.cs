@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -93,7 +94,18 @@ namespace GsaGH.Components {
       _xx2 = reader.GetBoolean("xx2");
       _yy2 = reader.GetBoolean("yy2");
       _zz2 = reader.GetBoolean("zz2");
-      return base.Read(reader);
+      bool flag = base.Read(reader);
+      if (Params.Input[1].Name == new GsaSectionParameter().Name) {
+        var sources = Params.Input[1].Sources.ToList();
+        Params.UnregisterInputParameter(Params.Input[1], false);
+        Params.RegisterInputParam(new GsaPropertyParameter(), 1);
+        Params.Input[1].Optional = true;
+        foreach (IGH_Param source in sources) {
+          Params.Input[1].AddSource(source);
+        }
+      }
+
+      return flag;
     }
 
     public void SetReleases(List<List<bool>> restraints) {
