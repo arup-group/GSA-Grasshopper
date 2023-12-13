@@ -146,29 +146,29 @@ namespace GsaGH.Components {
 
       pManager.AddTextParameter("Name", "Na", "Spring Property Name", GH_ParamAccess.item);
 
-      pManager.AddTextParameter("Spring Curve x", "SCx", "Spring Curve x", GH_ParamAccess.item);
+      pManager.AddTextParameter("Spring Curve x", "SCx", "Spring Curve in x direction", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Stiffness x [" + stiffnessAbr + "]", "Sx", "Stiffness x", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness x [" + stiffnessAbr + "]", "Sx", "Stiffness in x direction", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Spring Curve y", "SCy", "Spring Curve y", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Stiffness y [" + stiffnessAbr + "]", "Sy", "Stiffness y", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness y [" + stiffnessAbr + "]", "Sy", "Stiffness in y direction", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Spring Curve z", "SCz", "Spring Curve z", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Stiffness z [" + stiffnessAbr + "]", "Sz", "Stiffness z", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness z [" + stiffnessAbr + "]", "Sz", "Stiffness in z direction", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Spring Curve xx", "SCxx", "Spring Curve xx", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "Stiffness xx", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "Stiffness in xx direction", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Spring Curve yy", "SCyy", "Spring Curve yy", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Stiffness yy [" + rotationalStiffnessAbr + "]", "Syy", "Stiffness yy", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness yy [" + rotationalStiffnessAbr + "]", "Syy", "Stiffness in yy direction", GH_ParamAccess.item);
 
       pManager.AddTextParameter("Spring Curve zz", "SCzz", "Spring Curve zz", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Stiffness zz [" + rotationalStiffnessAbr + "]", "Szz", "Stiffness zz", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness zz [" + rotationalStiffnessAbr + "]", "Szz", "Stiffness in zz direction", GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Spring Matrix", "SM", "Spring Matrix", GH_ParamAccess.item);
 
