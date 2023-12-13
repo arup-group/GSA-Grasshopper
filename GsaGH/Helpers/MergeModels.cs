@@ -36,7 +36,8 @@ namespace GsaGH.Helpers {
       GsaModel mainModel, GsaModel appendModel, GH_Component owner, Length tolerance) {
       appendModel.ModelUnit = mainModel.ModelUnit;
       ConcurrentBag<GsaNodeGoo> goonodes =
-        Import.Nodes.GetNodes(appendModel.ApiNodes, mainModel.ModelUnit);
+        Import.Nodes.GetNodes(
+          appendModel.ApiNodes, mainModel.ModelUnit, appendModel.ApiAxis, appendModel.SpringProps);
       var nodes = goonodes.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       nodes.Select(c => {
         c.Id = 0; // set node Id of incoming to 0 to append to end and use CollapseCoincidingNodes

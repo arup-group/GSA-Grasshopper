@@ -318,7 +318,7 @@ namespace GsaGHTests.Components.Geometry {
 
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
     }
 
     [Fact]
@@ -340,7 +340,7 @@ namespace GsaGHTests.Components.Geometry {
 
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
     }
   }
 }

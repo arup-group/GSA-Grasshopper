@@ -17,6 +17,7 @@ namespace GsaGH.Parameters {
     public Node ApiNode { get; internal set; }
     public int Id { get; set; } = 0;
     public Plane LocalAxis { get; set; } = Plane.WorldXY;
+    public GsaSpringProperty SpringProperty { get; set; }
     public SupportPreview SupportPreview { get; private set; }
     public bool IsSupport => IsRestrained();
     public bool IsGlobalAxis => CheckGlobalAxis();
@@ -54,6 +55,7 @@ namespace GsaGH.Parameters {
       ApiNode = other.DuplicateApiObject();
       LocalAxis = other.LocalAxis;
       SupportPreview = other.SupportPreview;
+      SpringProperty = other.SpringProperty;
     }
 
     /// <summary>

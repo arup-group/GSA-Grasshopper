@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using OasysUnits;
 using Rhino.Geometry;
@@ -61,9 +62,10 @@ namespace GsaGH.Helpers.Assembly {
         apiNode.AxisProperty = TryGetExistingAxisId(ax);
       }
 
-      if (
-        // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
-        node.Id > 0) {
+      apiNode.SpringProperty = ConvertSpringProp(node.SpringProperty);
+
+      // if the ID is larger than 0 than means the ID has been set and we sent it to the known list
+      if (node.Id > 0) {
         _nodes.SetValue(node.Id, apiNode);
       } else {
         AddNode(apiNode);

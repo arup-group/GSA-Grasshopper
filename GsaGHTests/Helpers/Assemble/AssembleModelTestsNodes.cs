@@ -42,7 +42,7 @@ namespace GsaGHTests.Helpers.Export {
       node.Value.LocalAxis = new Plane(new Point3d(1, 2, 3), new Vector3d(4, 3, 1));
       node.Value.ApiNode.DamperProperty = 4;
       node.Value.ApiNode.MassProperty = 3;
-      node.Value.ApiNode.SpringProperty = 2;
+      node.Value.SpringProperty = new GsaSpringProperty(2);
       node.Value.Id = 42;
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(

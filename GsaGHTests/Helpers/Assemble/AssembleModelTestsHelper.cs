@@ -276,7 +276,9 @@ namespace GsaGHTests.Helpers.Export {
       Assert.Equal(apiNode.Colour, expected.ApiNode.Colour);
       Assert.Equal(apiNode.DamperProperty, expected.ApiNode.DamperProperty);
       Assert.Equal(apiNode.MassProperty, expected.ApiNode.MassProperty);
-      Assert.Equal(apiNode.SpringProperty, expected.ApiNode.SpringProperty);
+      if (expected.SpringProperty != null) {
+        Assert.Equal(apiNode.SpringProperty, expected.SpringProperty.Id);
+      }
     }
 
     internal void TestProp2d(GsaProperty2d expected, int expectedId, GsaModel actualModel) {

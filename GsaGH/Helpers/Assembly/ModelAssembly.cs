@@ -76,8 +76,8 @@ namespace GsaGH.Helpers.Assembly {
 
       SetupModel(model, modelUnit);
 
-      ConvertNodes(nodes);
       ConvertProperties(mats, sections, prop2Ds, prop3Ds, springProps);
+      ConvertNodes(nodes);
       ConvertElements(elem1ds, elem2ds, elem3ds);
       ConvertMembers(mem1ds, mem2ds, mem3ds);
       ConvertNodeList(lists);
@@ -512,9 +512,7 @@ namespace GsaGH.Helpers.Assembly {
       _model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_unit);
       UiUnits units = _model.UiUnits();
 
-
       _springProperties = new GsaGuidDictionary<SpringProperty>(_model.SpringProperties());
-
 
       _nodes = new GsaIntDictionary<Node>(model.ApiNodes);
       _axes = new GsaIntDictionary<Axis>(model.ApiAxis);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
@@ -52,6 +53,16 @@ namespace GsaGH.Components {
     }
 
     public void VariableParameterMaintenance() { }
+
+    public override bool Read(GH_IReader reader) {
+      bool flag = base.Read(reader);
+      if (Params.Input[3].Name == new GsaSectionParameter().Name) {
+        Params.ReplaceInputParameter(new GsaPropertyParameter(), 3, true);
+        Params.ReplaceOutputParameter(new GsaPropertyParameter(), 3);
+      }
+
+      return flag;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaMember1dParameter(), GsaMember1dGoo.Name,
@@ -188,26 +199,27 @@ namespace GsaGH.Components {
       if (da.GetData(3, ref sectionGoo)) {
         switch (sectionGoo.Value) {
           case GsaSection section:
-            if (mem.ApiMember.Type1D == ElementType.SPRING) {
-              this.AddRuntimeError("Input PB has to be a Spring Property");
-              return;
+            if (section.IsReferencedById && mem.ApiMember.Type1D == ElementType.SPRING) {
+              mem.Section = null;
+              mem.SpringProperty = new GsaSpringProperty(section.Id);
+            } else {
+              if (mem.ApiMember.Type1D == ElementType.SPRING) {
+                this.AddRuntimeError("PB input must be a SpringProperty");
+                return;
+              }
+              mem.Section = section;
+              mem.SpringProperty = null;
             }
-            mem.Section = section;
-            mem.SpringProperty = null;
+
             break;
 
           case GsaSpringProperty springProperty:
-            if (mem.ApiMember.Type1D != ElementType.SPRING) {
-              this.AddRuntimeError("1D Element Type is not Spring");
-              return;
-            }
+            mem.ApiMember.Type1D = ElementType.SPRING;
+            this.AddRuntimeRemark("ElementType changed to Spring");
             mem.Section = null;
             mem.SpringProperty = springProperty;
             break;
         }
-      } else if (mem.ApiMember.Type1D == ElementType.SPRING) {
-        this.AddRuntimeError("Input PB has to be a Spring Property");
-        return;
       }
 
       int id = 0;

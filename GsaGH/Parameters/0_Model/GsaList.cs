@@ -424,7 +424,8 @@ namespace GsaGH.Parameters {
 
       switch (EntityType) {
         case EntityType.Node:
-          _nodes = Nodes.GetNodes(_model.Model.Nodes(Definition), unit, _model.Model.Axes());
+          _nodes = Nodes.GetNodes(
+            _model.Model.Nodes(Definition), unit, _model.Model.Axes(), _model.SpringProps);
           break;
 
         case EntityType.Element:
