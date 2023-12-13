@@ -58,7 +58,7 @@ namespace GsaGH.Parameters.Results {
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Tensor3>>> cCaseResults
-              = combinationCase.Element2dStress(elementList, (GsaAPI.Layer2d)fLayer);
+              = combinationCase.Element2dStress(elementList, fLayer);
             Parallel.ForEach(cCaseResults.Keys, elementId => cache.TryAdd(
               elementId, Entity2dResultsFactory.CreateStresses(cCaseResults[elementId])));
             break;
