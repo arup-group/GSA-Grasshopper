@@ -807,14 +807,25 @@ namespace GsaGH.Components {
           -flangeThk / 2, -width / 2);
         mem2ds.Add(CreateMember2d(flange, flangeThk, section));
       } else if (profile.StartsWith("CAT")) {
+        string cat = " " + profile.Split(' ')[1] + " ";
         string prof = profile.Split(' ')[2];
+
+        if(!cat.Contains("UC ")) {
+          foreach (string value in new List<string>() { "UPE", "PFC", "UPN", "-U ", "-CH", "C ", " MC ", " WT ", " MT ", " ST ", "-EA", "-UA", "-RHS", "-SHS", "-FLATS", "-ROUNDS", "-SQUARES", " ISJC", "T ", "-CPF", "-IA", "-L", "-2L", "UE-AM", "C-AM", "EA-AM"}) {
+            if (cat.Contains(value)) {
+              this.AddRuntimeError("Unable to expand none-I Catalogue profile");
+              return;
+            }
+          }
+        }
+
         List<double> sqlValues = SqlReader.Instance.GetCatalogueProfileValues(prof,
           Path.Combine(AddReferencePriority.InstallPath, "sectlib.db3"));
         unit = LengthUnit.Meter;
         sqlValues.ForEach(x => new Length(x, unit).As(_lengthUnit));
 
         if (sqlValues.Count == 2) {
-          this.AddRuntimeError("Unable to expand none-I Cat profile");
+          this.AddRuntimeError("Unable to expand none-I Catalogue profile");
           return;
         } else {
           double height = sqlValues[0];
