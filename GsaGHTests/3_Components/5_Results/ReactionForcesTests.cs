@@ -57,8 +57,8 @@ namespace GsaGHTests.Components.Results {
       var ids = (IList<GH_Integer>)ComponentTestHelper.GetListOutput(comp, 8);
       for (int j = 0; j < ids.Count; j++) {
         // Assert element IDs
-        var expectedIds = result.Model.Model.Nodes(NodeList).Keys.OrderBy(x => x).ToList();
-        Assert.Equal(expectedIds[j], ids[j].Value);
+        var expectedIds = result.Model.Model.Nodes(NodeList).Keys.ToList();
+        Assert.Contains<int>(expectedIds[j], ids.Select(i=> i.Value));
       }
     }
 

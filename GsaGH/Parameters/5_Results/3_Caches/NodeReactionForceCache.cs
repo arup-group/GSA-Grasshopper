@@ -35,7 +35,7 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeReactionForce(nodelist);
             Parallel.ForEach(aCaseResults, resultKvp => {
-              if (!IsSupport(resultKvp)) {
+              if (!SupportNodeIds.Contains(resultKvp.Key) || IsNaN(resultKvp.Value)) {
                 return;
               }
 
@@ -51,7 +51,7 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults
               = combinationCase.NodeReactionForce(nodelist);
             Parallel.ForEach(cCaseResults, resultKvp => {
-              if (!IsSupport(resultKvp)) {
+              if (!SupportNodeIds.Contains(resultKvp.Key) || resultKvp.Value.Any(IsNaN)) {
                 return;
               }
 
@@ -70,21 +70,13 @@ namespace GsaGH.Parameters.Results {
       return new NodeForceSubset(Cache.GetSubset(nodeIds));
     }
 
-    private bool IsSupport(KeyValuePair<int, Double6> kvp) {
-      return SupportNodeIds.Contains(kvp.Key) || IsNotNaN(kvp.Value);
-    }
-
-    private bool IsSupport(KeyValuePair<int, ReadOnlyCollection<Double6>> kvp) {
-      return SupportNodeIds.Contains(kvp.Key) || kvp.Value.Any(res => IsNotNaN(res));
-    }
-
     private bool IsRestrained(NodalRestraint rest) {
       return rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ;
     }
 
-    private bool IsNotNaN(Double6 values) {
-      return !double.IsNaN(values.X) || !double.IsNaN(values.Y) || !double.IsNaN(values.Z)
-        || !double.IsNaN(values.XX) || !double.IsNaN(values.YY) || !double.IsNaN(values.ZZ);
+    private bool IsNaN(Double6 values) {
+      return double.IsNaN(values.X) || double.IsNaN(values.Y) || double.IsNaN(values.Z)
+        || double.IsNaN(values.XX) || double.IsNaN(values.YY) || double.IsNaN(values.ZZ);
     }
 
     private void SetSupportNodeIds(Model model) {

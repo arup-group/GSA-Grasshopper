@@ -183,7 +183,8 @@ namespace GsaGH.Components {
         } else {
           NodeExtremaKey key = ExtremaHelper.ReactionForceExtremaKey(resultSet, _selectedItems[0]);
           IInternalForce extrema = resultSet.GetExtrema(key);
-          var path = new GH_Path(result.CaseId, key.Permutation);
+          int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
+          var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
           outTransX.Add(new GH_UnitNumber(extrema.X.ToUnit(_forceUnit)), path);
           outTransY.Add(new GH_UnitNumber(extrema.Y.ToUnit(_forceUnit)), path);
           outTransZ.Add(new GH_UnitNumber(extrema.Z.ToUnit(_forceUnit)), path);
