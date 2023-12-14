@@ -35,11 +35,11 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeReactionForce(nodelist);
             Parallel.ForEach(aCaseResults, resultKvp => {
-              if (!SupportNodeIds.Contains(resultKvp.Key) || IsNaN(resultKvp.Value)) {
+              if (!SupportNodeIds.Contains(resultKvp.Key) || IsForceNaN(resultKvp.Value)) {
                 return;
               }
 
-              var res = new ReactionForce(resultKvp.Value);
+              var res = new ReactionForce(GetNewResult(resultKvp.Value));
               ((ConcurrentDictionary<int, IList<IInternalForce>>)Cache).TryAdd(
                 resultKvp.Key, new Collection<IInternalForce>() {
                 res,
@@ -51,13 +51,13 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults
               = combinationCase.NodeReactionForce(nodelist);
             Parallel.ForEach(cCaseResults, resultKvp => {
-              if (!SupportNodeIds.Contains(resultKvp.Key) || resultKvp.Value.Any(IsNaN)) {
+              if (!SupportNodeIds.Contains(resultKvp.Key) || resultKvp.Value.Any(IsForceNaN)) {
                 return;
               }
 
               var permutationResults = new Collection<IInternalForce>();
               foreach (Double6 permutation in resultKvp.Value) {
-                permutationResults.Add(new ReactionForce(permutation));
+                permutationResults.Add(new ReactionForce(GetNewResult(permutation)));
               }
 
               ((ConcurrentDictionary<int, IList<IInternalForce>>)Cache).TryAdd(
@@ -74,9 +74,15 @@ namespace GsaGH.Parameters.Results {
       return rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ;
     }
 
-    private bool IsNaN(Double6 values) {
-      return double.IsNaN(values.X) || double.IsNaN(values.Y) || double.IsNaN(values.Z)
-        || double.IsNaN(values.XX) || double.IsNaN(values.YY) || double.IsNaN(values.ZZ);
+    private bool IsForceNaN(Double6 values) {
+      return double.IsNaN(values.X) || double.IsNaN(values.Y) || double.IsNaN(values.Z);
+    }
+    private Double6 GetNewResult(Double6 values) {
+      double xx = double.IsNaN(values.XX) ? 0d : values.XX;
+      double yy = double.IsNaN(values.YY) ? 0d : values.YY;
+      double zz = double.IsNaN(values.ZZ) ? 0d : values.ZZ;
+      var newValue = new Double6(values.X, values.Y, values.Z, xx, yy, zz);
+      return newValue;
     }
 
     private void SetSupportNodeIds(Model model) {
