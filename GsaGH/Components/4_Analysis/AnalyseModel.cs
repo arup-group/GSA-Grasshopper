@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
@@ -247,7 +248,7 @@ namespace GsaGH.Components {
           }
 
           foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks) {
-            if (model.Model.Analyse(task.Key)) {
+            if (model.Model.Analyse(task.Key, out TaskReport report)) {
               OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
                 model.Model.Elements().Count);
             } else {
@@ -256,23 +257,23 @@ namespace GsaGH.Components {
               this.AddRuntimeError($" {message}");
             }
 
-            string report = model.Model.AnalysisTaskReport(task.Key);
-            string[] split = report.Split('\n');
-            report = split[0].Replace(": ", "\n") + "\n" + string.Join("\n", split.Skip(1));
-            report = report.Replace("Checking", "\nChecks:");
-            report = report.Replace("Solving", "\nSolver:");
-            report += "\n \n";
-            reports.Add(report);
+            string rep = report.Notes[task.Key];
+            string[] split = rep.Split('\n');
+            rep = split[0].Replace(": ", "\n") + "\n" + string.Join("\n", split.Skip(1));
+            rep = rep.Replace("Checking", "\nChecks:");
+            rep = rep.Replace("Solving", "\nSolver:");
+            rep += "\n \n";
+            reports.Add(rep);
 
-            if (report.Contains("Error ")) {
+            if (report.Errors.Count > 0) {
               string message = "Analysis Task " + task.Key +
                 " has one or more errors. Check report output for details";
               this.AddRuntimeError($" {message}");
-            } else if (report.Contains("Severe warning ")) {
+            } else if (report.SevereWarnings.Count > 0) {
               string message = "Analysis Task " + task.Key +
                 " has one or more severe warnings. Check report output for details";
               this.AddRuntimeWarning($" {message}");
-            } else if (report.Contains("Warning ")) {
+            } else if (report.Warnings.Count > 0) {
               string message = "Analysis Task " + task.Key +
                 " has one or more warnings. Check report output for details";
               this.AddRuntimeRemark($" {message}");
