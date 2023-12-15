@@ -1,4 +1,4 @@
 ﻿namespace GsaGH.Parameters.Results {
-  public interface IEntity1dDisplacement : IEntity1dQuantity<IDisplacement> {
+  public interface IEntity1dInternalForce : IEntity1dQuantity<IInternalForce> {
   }
 }

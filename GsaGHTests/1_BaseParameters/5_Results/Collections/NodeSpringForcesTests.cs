@@ -19,7 +19,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
+      INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeSpringForces.ResultSubset(nodeIds);
 
       // Assert node IDs
@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
+      INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeSpringForces.ResultSubset(nodeIds);
 
       // Assert node IDs
@@ -58,7 +58,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
+      INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeSpringForces.ResultSubset(nodeIds);
 
       // Assert Max in set
@@ -82,7 +82,7 @@ namespace GsaGHTests.Parameters.Results {
         ExpectedCombinationCaseC2p2Values(component).Max());
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
+      INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeSpringForces.ResultSubset(nodeIds);
 
       // Assert Max in set
@@ -105,7 +105,7 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component).Min();
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
+      INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeSpringForces.ResultSubset(nodeIds);
 
       // Assert Max in set
@@ -130,7 +130,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
+      INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeSpringForces.ResultSubset(nodeIds);
 
       // Assert Max in set
@@ -154,13 +154,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
+      INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeSpringForces.ResultSubset(nodeIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        IList<IInternalForce> reactionForceQuantity = resultSet.Subset[id];
+        IList<IReactionForce> reactionForceQuantity = resultSet.Subset[id];
 
         // for analysis case results we expect only one value in the collection
         Assert.Single(reactionForceQuantity);
@@ -187,13 +187,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
-      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
+      INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeSpringForces.ResultSubset(nodeIds);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        IList<IInternalForce> reactionForceQuantity = resultSet.Subset[id];
+        IList<IReactionForce> reactionForceQuantity = resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, reactionForceQuantity.Count);

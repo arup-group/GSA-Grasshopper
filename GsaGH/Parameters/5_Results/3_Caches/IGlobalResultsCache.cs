@@ -12,7 +12,7 @@ namespace GsaGH.Parameters.Results {
     Mass ModalMass { get; }
     ForcePerLength ModalStiffness { get; }
     int? Mode { get; }
-    IInternalForce TotalLoad { get; }
-    IInternalForce TotalReaction { get; }
+    IReactionForce TotalLoad { get; }
+    IReactionForce TotalReaction { get; }
   }
 }

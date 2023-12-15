@@ -86,11 +86,11 @@ namespace GsaGH.Parameters.Results {
       get;
       private set;
     }
-    public INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> NodeReactionForces {
+    public INodeResultCache<IReactionForce, ResultVector6<NodeExtremaKey>> NodeReactionForces {
       get;
       private set;
     }
-    public INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> NodeSpringForces {
+    public INodeResultCache<IReactionForce, ResultVector6<NodeExtremaKey>> NodeSpringForces {
       get;
       private set;
     }
