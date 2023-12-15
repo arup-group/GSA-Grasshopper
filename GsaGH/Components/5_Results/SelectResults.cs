@@ -381,9 +381,9 @@ namespace GsaGH.Components {
         _selectedItems[1] = $"C{_caseId}";
       }
 
-      IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult
+      ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> tempNodeCombResult
         = _combinationCaseResults[_caseId]
-         .NodeResults(_gsaModel.Model.Nodes().Keys.First().ToString());
+         .NodeDisplacement(_gsaModel.Model.Nodes().Keys.First().ToString());
       int nP = tempNodeCombResult[tempNodeCombResult.Keys.First()].Count;
       var permutationsInCase = Enumerable.Range(1, nP).ToList();
       if (_dropDownItems.Count < 3) {
