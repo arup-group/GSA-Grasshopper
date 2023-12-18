@@ -6,8 +6,8 @@ namespace GsaGH.Parameters.Results {
     public static (ResultVector6<NodeExtremaKey> Max, ResultVector6<NodeExtremaKey> Min) GetResultVector6NodeExtremaKeys<T>(
       this IDictionary<int, IList<T>> subset) {
 
-     var maxValue = new ResultVector6<double?>(double.MinValue);
-    var minValue = new ResultVector6<double?>(double.MaxValue);
+      var maxValue = new ResultVector6<double?>(double.MinValue);
+      var minValue = new ResultVector6<double?>(double.MaxValue);
 
       var maxKey = new ResultVector6<NodeExtremaKey>();
       var minKey = new ResultVector6<NodeExtremaKey>();
@@ -27,8 +27,7 @@ namespace GsaGH.Parameters.Results {
               break;
 
             case IReactionForce reactionForce:
-              UpdateExtremaa(reactionForce, nodeId, permutation,
-                ref maxValue, ref minValue, ref maxKey, ref minKey);
+              UpdateExtrema(reactionForce, nodeId, permutation, ref maxValue, ref minValue, ref maxKey, ref minKey);
               break;
           }
         }
@@ -123,7 +122,7 @@ namespace GsaGH.Parameters.Results {
       }
     }
 
-    private static void UpdateExtremaa(IReactionForce item, int nodeId, int permutation,
+    private static void UpdateExtrema(IReactionForce item, int nodeId, int permutation,
       ref ResultVector6<double?> maxValue, ref ResultVector6<double?> minValue,
       ref ResultVector6<NodeExtremaKey> maxKey, ref ResultVector6<NodeExtremaKey> minKey) {
 
@@ -205,7 +204,7 @@ namespace GsaGH.Parameters.Results {
       if (item.Xxyyzz != null && ((Moment)item.Xxyyzz).Value < minValue.Xxyyzz) {
         minValue.Xxyyzz = ((Moment)item.Xxyyzz).Value;
         minKey.Xxyyzz = new NodeExtremaKey(nodeId, permutation);
-      } 
+      }
     }
   }
 }
