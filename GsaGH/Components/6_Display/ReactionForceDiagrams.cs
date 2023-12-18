@@ -172,7 +172,7 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", "Vectors of the GSA Result Diagram",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaAnnotationParameter(), "Annotations", 
+      pManager.AddParameter(new GsaAnnotationParameter(), "Annotations",
         "An", "Annotations for the diagram", GH_ParamAccess.list);
       pManager.HideParameter(1);
     }
@@ -187,7 +187,7 @@ namespace GsaGH.Components {
       string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
       ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-      INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> forceValues 
+      INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> forceValues
         = result.NodeReactionForces.ResultSubset(nodeIds);
       nodeList = string.Join(" ", forceValues.Ids);
       LengthUnit lengthUnit = GetLengthUnit(result);
@@ -216,7 +216,7 @@ namespace GsaGH.Components {
       var reactionForceVectors = new ConcurrentDictionary<int, GsaVectorDiagram>();
       var annotations = new ConcurrentDictionary<int, GsaAnnotationGoo>();
       Parallel.ForEach(nodes, node => {
-        (GsaVectorDiagram reactionForceVector, GsaAnnotationGoo annotation) 
+        (GsaVectorDiagram reactionForceVector, GsaAnnotationGoo annotation)
           = CreateReactionForceVectorWithAnnotations(
               node, forceValues.Subset, permutation, scale, significantDigits, color);
         if (reactionForceVector == null) {
@@ -238,7 +238,7 @@ namespace GsaGH.Components {
       double? min = 0;
       switch (_selectedDisplayValue) {
         case DisplayValue.X:
-          max = forceValues.GetExtrema(forceValues.Max.X).XAs(_forceUnit); 
+          max = forceValues.GetExtrema(forceValues.Max.X).XAs(_forceUnit);
           min = forceValues.GetExtrema(forceValues.Min.X).XAs(_forceUnit);
           break;
         case DisplayValue.Y:
@@ -271,6 +271,9 @@ namespace GsaGH.Components {
           min = forceValues.GetExtrema(forceValues.Min.Xxyyzz).XxyyzzAs(_momentUnit);
           break;
       }
+
+      max ??= 0;
+      min ??= 0;
 
       double maxValue = Math.Max((double)max, Math.Abs((double)min));
       double factor = 0.1; // maxVector = 10% of bbox diagonal
@@ -387,13 +390,20 @@ namespace GsaGH.Components {
           break;
       }
 
+      if (direction == null) {
+        direction = Vector3d.Zero;
+      }
 
       bool isForce = (int)_selectedDisplayValue < 4;
       var vectorResult = new GsaVectorDiagram(node.Value.Value.Point, (Vector3d)direction, !isForce, color);
 
+      string text = string.Empty;
+      if (forceValue != null) {
+        text = $"{Math.Round(forceValue.Value, significantDigits)} {Message}";
+      }
+
       var annotation = new GsaAnnotationGoo(new GsaAnnotationDot(
-        GenerateAnnotationPosition(vectorResult), vectorResult.Color, 
-        $"{Math.Round(forceValue.Value, significantDigits)} {Message}"));
+        GenerateAnnotationPosition(vectorResult), vectorResult.Color, text));
 
       return (vectorResult, annotation);
     }

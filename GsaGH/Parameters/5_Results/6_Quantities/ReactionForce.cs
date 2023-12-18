@@ -42,112 +42,112 @@ namespace GsaGH.Parameters.Results {
     public Moment? Xxyyzz { get; internal set; } = null;
 
     public Force? XToUnit(ForceUnit unit) {
-      if (X == null) {
+      if (X != null) {
         return ((Force)X).ToUnit(unit);
       }
       return null;
     }
 
     public Force? YToUnit(ForceUnit unit) {
-      if (Y == null) {
+      if (Y != null) {
         return ((Force)Y).ToUnit(unit);
       }
       return null;
     }
 
     public Force? ZToUnit(ForceUnit unit) {
-      if (Z == null) {
+      if (Z != null) {
         return ((Force)Z).ToUnit(unit);
       }
       return null;
     }
 
     public Force? XyzToUnit(ForceUnit unit) {
-      if (Xyz == null) {
+      if (Xyz != null) {
         return ((Force)Xyz).ToUnit(unit);
       }
       return null;
     }
 
     public Moment? XxToUnit(MomentUnit unit) {
-      if (Xx == null) {
+      if (Xx != null) {
         return ((Moment)Xx).ToUnit(unit);
       }
       return null;
     }
 
     public Moment? YyToUnit(MomentUnit unit) {
-      if (Yy == null) {
+      if (Yy != null) {
         return ((Moment)Yy).ToUnit(unit);
       }
       return null;
     }
 
     public Moment? ZzToUnit(MomentUnit unit) {
-      if (Zz == null) {
+      if (Zz != null) {
         return ((Moment)Zz).ToUnit(unit);
       }
       return null;
     }
 
     public Moment? XxyyzzToUnit(MomentUnit unit) {
-      if (Xxyyzz == null) {
+      if (Xxyyzz != null) {
         return ((Moment)Xxyyzz).ToUnit(unit);
       }
       return null;
     }
 
     public double? XAs(ForceUnit unit) {
-      if (X == null) {
+      if (X != null) {
         return ((Force)X).As(unit);
       }
       return null;
     }
 
     public double? YAs(ForceUnit unit) {
-      if (Y == null) {
+      if (Y != null) {
         return ((Force)Y).As(unit);
       }
       return null;
     }
 
     public double? ZAs(ForceUnit unit) {
-      if (Z == null) {
+      if (Z != null) {
         return ((Force)Z).As(unit);
       }
       return null;
     }
 
     public double? XyzAs(ForceUnit unit) {
-      if (Xyz == null) {
+      if (Xyz != null) {
         return ((Force)Xyz).As(unit);
       }
       return null;
     }
 
     public double? XxAs(MomentUnit unit) {
-      if (Xx == null) {
+      if (Xx != null) {
         return ((Moment)Xx).As(unit);
       }
       return null;
     }
 
     public double? YyAs(MomentUnit unit) {
-      if (Yy == null) {
+      if (Yy != null) {
         return ((Moment)Yy).As(unit);
       }
       return null;
     }
 
     public double? ZzAs(MomentUnit unit) {
-      if (Zz == null) {
+      if (Zz != null) {
         return ((Moment)Zz).As(unit);
       }
       return null;
     }
 
     public double? XxyyzzAs(MomentUnit unit) {
-      if (Xxyyzz == null) {
+      if (Xxyyzz != null) {
         return ((Moment)Xxyyzz).As(unit);
       }
       return null;
