@@ -28,8 +28,8 @@ namespace GsaGH.Helpers.GsaApi {
       foreach (int caseId in combinationCaseResults.Keys.OrderBy(x => x)) {
         type.Add("Combination");
         caseIds.Add(caseId);
-        IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult
-          = combinationCaseResults[caseId].NodeResults(tempNodeId.ToString());
+        ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> tempNodeCombResult
+          = combinationCaseResults[caseId].NodeDisplacement(tempNodeId.ToString());
         int nP = tempNodeCombResult[tempNodeCombResult.Keys.First()].Count;
         var permutationsInCase = Enumerable.Range(1, nP).ToList();
         var path = new GH_Path(caseId);
