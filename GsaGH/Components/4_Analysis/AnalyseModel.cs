@@ -274,12 +274,12 @@ namespace GsaGH.Components {
             notes.AddRange(report.Notes);
             remarks.AddRange(report.Warnings);
             foreach (string message in report.SevereWarnings) {
-              this.AddRuntimeWarning(message);
+              this.AddRuntimeWarning($"Task {task.Key}: {message}");
               warnings.Add($"Task {task.Key}: {message}");
             }
 
             foreach (string message in report.Errors) {
-              this.AddRuntimeError(message);
+              this.AddRuntimeError($"Task {task.Key}: {message}");
               errors.Add($"Task {task.Key}: {message}");
             }
           }
