@@ -5,6 +5,15 @@ using ForceUnit = OasysUnits.Units.ForceUnit;
 
 namespace GsaGH.Parameters.Results {
   public class ReactionForce : IReactionForce {
+    public Force? X { get; internal set; } = null;
+    public Force? Y { get; internal set; } = null;
+    public Force? Z { get; internal set; } = null;
+    public Force? Xyz { get; internal set; } = null;
+    public Moment? Xx { get; internal set; } = null;
+    public Moment? Yy { get; internal set; } = null;
+    public Moment? Zz { get; internal set; } = null;
+    public Moment? Xxyyzz { get; internal set; } = null;
+
     internal ReactionForce(Double6 values) {
       if (!double.IsNaN(values.X)) {
         X = new Force(values.X, ForceUnit.Newton);
@@ -59,15 +68,6 @@ namespace GsaGH.Parameters.Results {
         Xxyyzz = QuantityUtility.PythagoreanQuadruple(xx, yy, zz);
       }
     }
-
-    public Force? X { get; internal set; } = null;
-    public Force? Y { get; internal set; } = null;
-    public Force? Z { get; internal set; } = null;
-    public Force? Xyz { get; internal set; } = null;
-    public Moment? Xx { get; internal set; } = null;
-    public Moment? Yy { get; internal set; } = null;
-    public Moment? Zz { get; internal set; } = null;
-    public Moment? Xxyyzz { get; internal set; } = null;
 
     public Force? XToUnit(ForceUnit unit) {
       if (X != null) {
