@@ -113,15 +113,23 @@ namespace GsaGH.Helpers.Import {
     /// </summary>
     /// <param name="nDict">Dictionary of GSA Nodes pre-filtered for nodes to import</param>
     /// <param name="axDict"></param>
+    /// <param name="springProps"></param>
     /// <param name="unit"></param>
     /// <returns></returns>
     internal static ConcurrentBag<GsaNodeGoo> GetNodes(
       ReadOnlyDictionary<int, Node> nDict, LengthUnit unit,
-      ReadOnlyDictionary<int, Axis> axDict = null) {
+      ReadOnlyDictionary<int, Axis> axDict = null,
+      ReadOnlyDictionary<int, GsaSpringPropertyGoo> springProps = null) {
       var outNodes = new ConcurrentBag<GsaNodeGoo>();
-      Parallel.ForEach(nDict, node => 
-          outNodes.Add(new GsaNodeGoo(GetNode(node.Value, unit, node.Key, axDict)))
-        );
+      Parallel.ForEach(nDict, node => {
+        GsaNode n = GetNode(node.Value, unit, node.Key, axDict);
+        if (springProps != null && node.Value.SpringProperty != 0 
+          && springProps.ContainsKey(node.Value.SpringProperty)) {
+          n.SpringProperty = springProps[node.Value.SpringProperty].Value;
+        }
+
+        outNodes.Add(new GsaNodeGoo(n));
+      });
       return outNodes;
     }
 

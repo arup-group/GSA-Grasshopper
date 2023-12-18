@@ -26,6 +26,15 @@ namespace GsaGH.Parameters {
       string mes = string.Empty;
       string defaultText = $"{data.GetTypeName()} does not contain a Spring Property";
 
+      if (data is GsaPropertyGoo prop) {
+        if (prop.Value is GsaSpringProperty spring) {
+          return new GsaSpringPropertyGoo(spring);
+        } else {
+          this.AddRuntimeError($"Data conversion failed from Section to Spring" + mes);
+          return new GsaSpringPropertyGoo(null);
+        }
+      }
+
       if (GH_Convert.ToInt32(data, out int id, GH_Conversion.Both)) {
         GH_Convert.ToString(data, out string val, GH_Conversion.Both);
         if (!val.Contains(".")) {

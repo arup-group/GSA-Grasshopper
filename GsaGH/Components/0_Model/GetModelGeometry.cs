@@ -697,7 +697,8 @@ namespace GsaGH.Components {
               _results.Nodes = Nodes.GetNodes(
                 nodeList.ToLower() == "all" ? model.ApiNodes : model.Model.Nodes(nodeList),
                 model.ModelUnit,
-                model.ApiAxis);
+                model.ApiAxis,
+                model.SpringProps);
               _results.DisplaySupports
                 = new ConcurrentBag<GsaNodeGoo>(_results.Nodes.Where(n => n.Value.IsSupport));
               break;

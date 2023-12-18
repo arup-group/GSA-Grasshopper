@@ -41,6 +41,14 @@ namespace GsaGH.Parameters {
           }
 
           return new GsaSectionGoo(mem1d.Value.Section);
+
+        case GsaPropertyGoo prop:
+          if (prop.Value is GsaSection section) {
+            return new GsaSectionGoo(section);
+          } else {
+            this.AddRuntimeError($"Data conversion failed from Spring to Section" + mes);
+            return new GsaSectionGoo(null);
+          }
       }
 
       if (!string.IsNullOrEmpty(mes)) {

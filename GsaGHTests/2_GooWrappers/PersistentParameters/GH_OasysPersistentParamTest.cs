@@ -19,6 +19,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaBool6Parameter))]
     [InlineData(typeof(GsaMaterialParameter))]
     [InlineData(typeof(GsaOffsetParameter))]
+    [InlineData(typeof(GsaPropertyParameter), true)]
     [InlineData(typeof(GsaProperty2dParameter))]
     [InlineData(typeof(GsaProperty3dParameter))]
     [InlineData(typeof(GsaSectionModifierParameter))]

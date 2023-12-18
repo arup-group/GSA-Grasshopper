@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
@@ -49,7 +50,13 @@ namespace GsaGH.Components {
 
     public override bool Read(GH_IReader reader) {
       _mode = (FoldMode)reader.GetInt32("Mode");
-      return base.Read(reader);
+      bool flag = base.Read(reader);
+      if (Params.Input[7].Description == "Set Spring Property by reference") {
+        Params.ReplaceInputParameter(new GsaSpringPropertyParameter(), 7, true);
+        Params.ReplaceOutputParameter(new GsaSpringPropertyParameter(), 7);
+      }
+
+      return flag;
     }
 
     public void VariableParameterMaintenance() {
@@ -95,8 +102,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Mass Property", "MP", "Set Mass Property by reference",
         GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Spring Property", "SP", "Set Spring Property by reference",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaSpringPropertyParameter());
       pManager.AddTextParameter("Node Name", "Na", "Set Name of Node", GH_ParamAccess.item);
       pManager.AddColourParameter("Node Colour", "Co", "Set colour of node", GH_ParamAccess.item);
 
@@ -127,8 +133,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Mass Property", "MP", "Get Mass Property reference",
         GH_ParamAccess.item);
-      pManager.AddIntegerParameter("Spring Property", "SP", "Get Spring Property reference",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaSpringPropertyParameter());
       pManager.AddTextParameter("Node Name", "Na", "Name of Node", GH_ParamAccess.item);
       pManager.AddColourParameter("Node Colour", "Co", "Get colour of node", GH_ParamAccess.item);
       if (_mode != FoldMode.GetConnected) {
@@ -185,9 +190,9 @@ namespace GsaGH.Components {
         node.ApiNode.MassProperty = massId;
       }
 
-      int springId = 0;
-      if (da.GetData(7, ref springId)) {
-        node.ApiNode.SpringProperty = springId;
+      GsaSpringPropertyGoo springGoo = null;
+      if (da.GetData(7, ref springGoo)) {
+        node.SpringProperty = springGoo.Value;
       }
 
       string name = string.Empty;
@@ -207,7 +212,7 @@ namespace GsaGH.Components {
       da.SetData(4, new GsaBool6Goo(node.Restraint));
       da.SetData(5, node.ApiNode.DamperProperty);
       da.SetData(6, node.ApiNode.MassProperty);
-      da.SetData(7, node.ApiNode.SpringProperty);
+      da.SetData(7, new GsaSpringPropertyGoo(node.SpringProperty));
       da.SetData(8, node.ApiNode?.Name);
       da.SetData(9, node.ApiNode.Colour);
 

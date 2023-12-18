@@ -31,7 +31,7 @@ namespace GsaGHTests.Components.Geometry {
       var elem = (GsaElement1dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var line = (GH_Line)ComponentTestHelper.GetOutput(comp, 2);
-      var section = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 3);
+      var section = (GsaPropertyGoo)ComponentTestHelper.GetOutput(comp, 3);
       var group = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
       var type = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
       var offset = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 6);
@@ -58,7 +58,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(7, line.Value.To.X, 6);
       Assert.Equal(3, line.Value.To.Y, 6);
       Assert.Equal(1, line.Value.To.Z, 6);
-      Assert.Equal("STD CH(ft) 1 2 3 4", section.Value.ApiSection.Profile);
+      Assert.Equal("STD CH(ft) 1 2 3 4", ((GsaSection)section.Value).ApiSection.Profile);
       Assert.Equal(0, group.Value);
       Assert.Equal("Beam", type.Value);
       Assert.Equal(0, offset.Value.X1.Value, 6);
@@ -113,7 +113,7 @@ namespace GsaGHTests.Components.Geometry {
       var elem = (GsaElement1dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var line = (GH_Line)ComponentTestHelper.GetOutput(comp, 2);
-      var section = (GsaSectionGoo)ComponentTestHelper.GetOutput(comp, 3);
+      var section = (GsaPropertyGoo)ComponentTestHelper.GetOutput(comp, 3);
       var group = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
       var type = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
       var offset = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 6);
@@ -140,7 +140,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(1, line.Value.To.X);
       Assert.Equal(2, line.Value.To.Y);
       Assert.Equal(3, line.Value.To.Z);
-      Assert.Equal("STD CH 10 20 30 40", section.Value.ApiSection.Profile);
+      Assert.Equal("STD CH 10 20 30 40", ((GsaSection)section.Value).ApiSection.Profile);
       Assert.Equal(7, group.Value);
       Assert.Equal("Beam", type.Value);
       Assert.Equal(1, offset.Value.X1.Value);
@@ -192,7 +192,7 @@ namespace GsaGHTests.Components.Geometry {
       var elem = (GsaElement1dGoo)ComponentTestHelper.GetOutput(comp, 0);
       var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var line = (GH_Line)ComponentTestHelper.GetOutput(comp, 2);
-      var springProperty = (GsaSpringPropertyGoo)ComponentTestHelper.GetOutput(comp, 3);
+      var springProperty = (GsaPropertyGoo)ComponentTestHelper.GetOutput(comp, 3);
       var group = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
       var type = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
       var offset = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 6);
@@ -219,7 +219,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(7, line.Value.To.X, 6);
       Assert.Equal(3, line.Value.To.Y, 6);
       Assert.Equal(1, line.Value.To.Z, 6);
-      Assert.NotNull(springProperty.Value.ApiProperty);
+      Assert.NotNull(((GsaSpringProperty)springProperty.Value).ApiProperty);
       Assert.Equal(0, group.Value);
       Assert.Equal("Spring", type.Value);
       Assert.Equal(0, offset.Value.X1.Value, 6);
@@ -254,12 +254,12 @@ namespace GsaGHTests.Components.Geometry {
       var property = new AxialSpringProperty {
         Stiffness = 3.0
       };
-      ComponentTestHelper.SetInput(comp, new GsaPropertyGoo(new GsaSpringProperty(property)), 3);
+      ComponentTestHelper.SetInput(comp, new GsaSpringPropertyGoo(new GsaSpringProperty(property)), 3);
       ComponentTestHelper.SetInput(comp, "Beam", 5);
 
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -281,7 +281,7 @@ namespace GsaGHTests.Components.Geometry {
 
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
     }
   }
 }

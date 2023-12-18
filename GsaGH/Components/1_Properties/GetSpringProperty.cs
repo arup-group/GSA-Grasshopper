@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
@@ -25,7 +24,6 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.GetSpringProperty;
     private RotationalStiffnessUnit _rotationalStiffnessUnit = RotationalStiffnessUnit.NewtonMeterPerRadian;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
-    private List<string> _rotationalStiffnessUnitAbbreviations = new List<string>();
     private ForcePerLengthUnit _stiffnessUnit = DefaultUnits.ForcePerLengthUnit;
 
     public GetSpringProperty() : base("Get Spring Property", "GetPS",
@@ -148,29 +146,29 @@ namespace GsaGH.Components {
 
       pManager.AddTextParameter("Name", "Na", "Spring Property Name", GH_ParamAccess.item);
 
-      pManager.AddTextParameter("Spring Curve x", "SCx", "Spring Curve x", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Spring Curve x", "SCx", "Spring Curve in x direction", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Stiffness x [" + stiffnessAbr + "]", "Sx", "Stiffness x", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness x [" + stiffnessAbr + "]", "Sx", "Stiffness in x direction", GH_ParamAccess.item);
 
-      pManager.AddTextParameter("Spring Curve y", "SCy", "Spring Curve y", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Spring Curve y", "SCy", "Spring Curve y", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Stiffness y [" + stiffnessAbr + "]", "Sy", "Stiffness y", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness y [" + stiffnessAbr + "]", "Sy", "Stiffness in y direction", GH_ParamAccess.item);
 
-      pManager.AddTextParameter("Spring Curve z", "SCz", "Spring Curve z", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Spring Curve z", "SCz", "Spring Curve z", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Stiffness z [" + stiffnessAbr + "]", "Sz", "Stiffness z", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness z [" + stiffnessAbr + "]", "Sz", "Stiffness in z direction", GH_ParamAccess.item);
 
-      pManager.AddTextParameter("Spring Curve xx", "SCxx", "Spring Curve xx", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Spring Curve xx", "SCxx", "Spring Curve xx", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "Stiffness xx", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness xx [" + rotationalStiffnessAbr + "]", "Sxx", "Stiffness in xx direction", GH_ParamAccess.item);
 
-      pManager.AddTextParameter("Spring Curve yy", "SCyy", "Spring Curve yy", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Spring Curve yy", "SCyy", "Spring Curve yy", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Stiffness yy [" + rotationalStiffnessAbr + "]", "Syy", "Stiffness yy", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness yy [" + rotationalStiffnessAbr + "]", "Syy", "Stiffness in yy direction", GH_ParamAccess.item);
 
-      pManager.AddTextParameter("Spring Curve zz", "SCzz", "Spring Curve zz", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Spring Curve zz", "SCzz", "Spring Curve zz", GH_ParamAccess.item);
 
-      pManager.AddGenericParameter("Stiffness zz [" + rotationalStiffnessAbr + "]", "Szz", "Stiffness zz", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Stiffness zz [" + rotationalStiffnessAbr + "]", "Szz", "Stiffness in zz direction", GH_ParamAccess.item);
 
       pManager.AddGenericParameter("Spring Matrix", "SM", "Spring Matrix", GH_ParamAccess.item);
 
@@ -186,7 +184,7 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       GsaSpringPropertyGoo springPropertyGoo = null;
       if (!da.GetData(0, ref springPropertyGoo)) {
-        this.AddRuntimeWarning("Input PB failed to collect data");
+        this.AddRuntimeWarning("Input PS failed to collect data");
         return;
       }
       GsaSpringProperty springProperty = springPropertyGoo.Value;
@@ -249,12 +247,12 @@ namespace GsaGH.Components {
         case LockupSpringProperty lockup:
           da.SetData(14, new GH_UnitNumber(new Length((double)lockup.NegativeLockup, LengthUnit.Meter).ToUnit(_lengthUnit)));
           da.SetData(15, new GH_UnitNumber(new Length((double)lockup.PositiveLockup, LengthUnit.Meter).ToUnit(_lengthUnit)));
-          return;
+          break;
 
         case FrictionSpringProperty friction:
-            da.SetData(2, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessX, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
-            da.SetData(4, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessY, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
-            da.SetData(6, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessZ, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          da.SetData(2, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessX, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          da.SetData(4, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessY, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
+          da.SetData(6, new GH_UnitNumber(new ForcePerLength((double)friction.StiffnessZ, ForcePerLengthUnit.NewtonPerMeter).ToUnit(_stiffnessUnit)));
           da.SetData(16, friction.FrictionCoefficient);
           break;
 
@@ -262,6 +260,7 @@ namespace GsaGH.Components {
         default:
           break;
       }
+
       da.SetData(17, new GH_UnitNumber(new Ratio(springProperty.ApiProperty.DampingRatio, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent)));
     }
 
