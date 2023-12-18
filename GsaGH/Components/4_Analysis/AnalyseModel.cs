@@ -261,7 +261,7 @@ namespace GsaGH.Components {
           var errors = new List<string>();
 
           foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks) {
-            if (model.Model.Analyse(task.Key)) {
+            if (model.Model.Analyse(task.Key, out TaskReport report)) {
               OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
                 model.Model.Elements().Count);
             } else {
