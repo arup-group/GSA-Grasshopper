@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
@@ -11,6 +12,26 @@ namespace GsaGH.Parameters.Results {
 
       var maxKey = new ResultVector6<NodeExtremaKey>();
       var minKey = new ResultVector6<NodeExtremaKey>();
+
+      if (subset.Keys.Count > 0) {
+        int nodeId = subset.Keys.First();
+        maxKey.X = new NodeExtremaKey(nodeId, 0);
+        maxKey.Y = new NodeExtremaKey(nodeId, 0);
+        maxKey.Z = new NodeExtremaKey(nodeId, 0);
+        maxKey.Xyz = new NodeExtremaKey(nodeId, 0);
+        maxKey.Xx = new NodeExtremaKey(nodeId, 0);
+        maxKey.Yy = new NodeExtremaKey(nodeId, 0);
+        maxKey.Zz = new NodeExtremaKey(nodeId, 0);
+        maxKey.Xxyyzz = new NodeExtremaKey(nodeId, 0);
+        minKey.X = new NodeExtremaKey(nodeId, 0);
+        minKey.Y = new NodeExtremaKey(nodeId, 0);
+        minKey.Z = new NodeExtremaKey(nodeId, 0);
+        minKey.Xyz = new NodeExtremaKey(nodeId, 0);
+        minKey.Xx = new NodeExtremaKey(nodeId, 0);
+        minKey.Yy = new NodeExtremaKey(nodeId, 0);
+        minKey.Zz = new NodeExtremaKey(nodeId, 0);
+        minKey.Xxyyzz = new NodeExtremaKey(nodeId, 0);
+      }
 
       foreach (int nodeId in subset.Keys) {
         IList<T> values = subset[nodeId];
