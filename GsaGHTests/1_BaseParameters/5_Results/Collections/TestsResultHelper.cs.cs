@@ -4,9 +4,8 @@ using OasysUnits;
 
 namespace GsaGHTests.Parameters.Results {
   public static class TestsResultHelper {
-    public static double ResultsHelper(
-INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> result,
-ResultVector6HelperEnum component, bool max) {
+    public static double ResultsHelper(INodeResultSubset<IInternalForce,
+      ResultVector6<NodeExtremaKey>> result, ResultVector6HelperEnum component, bool max) {
       double d = 0;
       ResultVector6<NodeExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
@@ -85,10 +84,9 @@ ResultVector6HelperEnum component, bool max) {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(
-          INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> result,
-          ResultVector6HelperEnum component, bool max) {
-      double d = 0;
+    public static double? ResultsHelper(INodeResultSubset<IReactionForce,
+      ResultVector6<NodeExtremaKey>> result, ResultVector6HelperEnum component, bool max) {
+      double? d = 0;
       ResultVector6<NodeExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
         case ResultVector6HelperEnum.X:
@@ -124,46 +122,86 @@ ResultVector6HelperEnum component, bool max) {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      if (d == null) {
+        return null;
+      }
+
+      return ResultHelper.RoundToSignificantDigits((double)d, 4);
     }
 
-    public static double ResultsHelper(IReactionForce result, ResultVector6HelperEnum component) {
-      double d = 0;
+    public static double? ResultsHelper(IReactionForce result, ResultVector6HelperEnum component) {
+      double? d = 0;
       switch (component) {
         case ResultVector6HelperEnum.X:
-          d = ((Force)result.X).Kilonewtons;
+          if (result.X == null) {
+            d = null;
+          } else {
+            d = ((Force)result.X).Kilonewtons;
+          }
           break;
 
         case ResultVector6HelperEnum.Y:
-          d = ((Force)result.Y).Kilonewtons;
+          if (result.Y == null) {
+            d = null;
+          } else {
+            d = ((Force)result.Y).Kilonewtons;
+          }
           break;
 
         case ResultVector6HelperEnum.Z:
-          d = ((Force)result.Z).Kilonewtons;
+          if (result.Z == null) {
+            d = null;
+          } else {
+            d = ((Force)result.Z).Kilonewtons;
+          }
           break;
 
         case ResultVector6HelperEnum.Xyz:
-          d = ((Force)result.Xyz).Kilonewtons;
+          if (result.Xyz == null) {
+            d = null;
+          } else {
+            d = ((Force)result.Xyz).Kilonewtons;
+          }
           break;
 
         case ResultVector6HelperEnum.Xx:
-          d = ((Moment)result.Xx).KilonewtonMeters;
+          if (result.Xx == null) {
+            d = null;
+          } else {
+            d = ((Moment)result.Xx).KilonewtonMeters;
+          }
           break;
 
         case ResultVector6HelperEnum.Yy:
-          d = ((Moment)result.Yy).KilonewtonMeters;
+          if (result.Yy == null) {
+            d = null;
+          } else {
+            d = ((Moment)result.Yy).KilonewtonMeters;
+          }
           break;
 
         case ResultVector6HelperEnum.Zz:
-          d = ((Moment)result.Zz).KilonewtonMeters;
+          if (result.Zz == null) {
+            d = null;
+          } else {
+            d = ((Moment)result.Zz).KilonewtonMeters;
+          }
           break;
 
         case ResultVector6HelperEnum.Xxyyzz:
-          d = ((Moment)result.Xxyyzz).KilonewtonMeters;
+          if (result.Xxyyzz == null) {
+            d = null;
+          } else {
+            d = ((Moment)result.Xxyyzz).KilonewtonMeters;
+          }
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      if (d == null) {
+        return null;
+      }
+
+      return ResultHelper.RoundToSignificantDigits((double)d, 4);
     }
 
     public static double ResultsHelper(

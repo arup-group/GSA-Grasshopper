@@ -6,25 +6,25 @@ using ForceUnit = OasysUnits.Units.ForceUnit;
 namespace GsaGH.Parameters.Results {
   public class ReactionForce : IReactionForce {
     internal ReactionForce(Double6 values) {
-      if (double.IsNaN(values.X)) {
+      if (!double.IsNaN(values.X)) {
         X = new Force(values.X, ForceUnit.Newton);
       }
-      if (double.IsNaN(values.Y)) {
+      if (!double.IsNaN(values.Y)) {
         Y = new Force(values.Y, ForceUnit.Newton);
       }
-      if (double.IsNaN(values.X)) {
+      if (!double.IsNaN(values.Z)) {
         Z = new Force(values.Z, ForceUnit.Newton);
       }
       if (X != null && Y != null && Z != null) {
         Xyz = QuantityUtility.PythagoreanQuadruple((Force)X, (Force)Y, (Force)Z);
       }
-      if (double.IsNaN(values.XX)) {
+      if (!double.IsNaN(values.XX)) {
         Xx = new Moment(values.XX, MomentUnit.NewtonMeter);
       }
-      if (double.IsNaN(values.YY)) {
+      if (!double.IsNaN(values.YY)) {
         Yy = new Moment(values.YY, MomentUnit.NewtonMeter);
       }
-      if (double.IsNaN(values.ZZ)) {
+      if (!double.IsNaN(values.ZZ)) {
         Zz = new Moment(values.ZZ, MomentUnit.NewtonMeter);
       }
       if (Xx != null && Yy != null && Zz != null) {
