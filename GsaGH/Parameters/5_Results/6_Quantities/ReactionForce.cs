@@ -15,9 +15,19 @@ namespace GsaGH.Parameters.Results {
       if (!double.IsNaN(values.Z)) {
         Z = new Force(values.Z, ForceUnit.Newton);
       }
-      if (X != null && Y != null && Z != null) {
-        Xyz = QuantityUtility.PythagoreanQuadruple((Force)X, (Force)Y, (Force)Z);
+      Force x = Force.Zero;
+      Force y = Force.Zero;
+      Force z = Force.Zero;
+      if (X != null) {
+        x = (Force)X;
       }
+      if (Y != null) {
+        y = (Force)Y;
+      }
+      if (Z != null) {
+        z = (Force)Z;
+      }
+      Xyz = QuantityUtility.PythagoreanQuadruple(x, y, z);
       if (!double.IsNaN(values.XX)) {
         Xx = new Moment(values.XX, MomentUnit.NewtonMeter);
       }
@@ -27,9 +37,19 @@ namespace GsaGH.Parameters.Results {
       if (!double.IsNaN(values.ZZ)) {
         Zz = new Moment(values.ZZ, MomentUnit.NewtonMeter);
       }
-      if (Xx != null && Yy != null && Zz != null) {
-        Xxyyzz = QuantityUtility.PythagoreanQuadruple((Moment)Xx, (Moment)Yy, (Moment)Zz);
+      Moment xx = Moment.Zero;
+      Moment yy = Moment.Zero;
+      Moment zz = Moment.Zero;
+      if (Xx != null) {
+        xx = (Moment)Xx;
       }
+      if (Yy != null) {
+        yy = (Moment)Yy;
+      }
+      if (Zz != null) {
+        zz = (Moment)Zz;
+      }
+      Xxyyzz = QuantityUtility.PythagoreanQuadruple(xx, yy, zz);
     }
 
     public Force? X { get; internal set; } = null;
