@@ -164,7 +164,7 @@ namespace GsaGH.Components {
           Params.Input[5].NickName = "Ae";
           Params.Input[5].Name = "Equation Axis";
           Params.Input[5].Description = "The Axis ID for which the equation is specified. " +
-            "By defualt global is used.";
+            "By default global is used.";
           Params.Input[5].Access = GH_ParamAccess.item;
           Params.Input[5].Optional = true;
 

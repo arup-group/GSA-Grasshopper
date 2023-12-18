@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
-using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;

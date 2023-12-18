@@ -108,7 +108,7 @@ namespace GsaGHTests.Components.Results {
     public void NodeReactionForceMaxFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SpringForces, 1);
-      double expected = ExpectedAnalysisCaseValues(component).Max();
+      double? expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
       var comp = new SpringReactionForces();
@@ -134,8 +134,10 @@ namespace GsaGHTests.Components.Results {
     public void NodeReactionForceMaxFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SpringForces, 2);
-      double expected = Math.Max(ExpectedCombinationCaseC2p1Values(component).Max(),
-        ExpectedCombinationCaseC2p2Values(component).Max());
+      var values = new List<double?>();
+      values.AddRange(ExpectedCombinationCaseC2p1Values(component));
+      values.AddRange(ExpectedCombinationCaseC2p2Values(component));
+      double? expected = NodeReactionForcesTests.Max(values);
 
       // Act
       var comp = new SpringReactionForces();
@@ -161,7 +163,7 @@ namespace GsaGHTests.Components.Results {
     public void NodeReactionForceMinFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SpringForces, 1);
-      double expected = ExpectedAnalysisCaseValues(component).Min();
+      double? expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
       var comp = new SpringReactionForces();
@@ -187,8 +189,10 @@ namespace GsaGHTests.Components.Results {
     public void NodeReactionForceMinFromcombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SpringForces, 2);
-      double expected = Math.Min(ExpectedCombinationCaseC2p1Values(component).Min(),
-        ExpectedCombinationCaseC2p2Values(component).Min());
+      var values = new List<double?>();
+      values.AddRange(ExpectedCombinationCaseC2p1Values(component));
+      values.AddRange(ExpectedCombinationCaseC2p2Values(component));
+      double? expected = NodeReactionForcesTests.Min(values);
 
       // Act
       var comp = new SpringReactionForces();
@@ -215,7 +219,7 @@ namespace GsaGHTests.Components.Results {
     public void NodeReactionForceValuesFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SpringForces, 1);
-      List<double> expected = ExpectedAnalysisCaseValues(component);
+      List<double?> expected = ExpectedAnalysisCaseValues(component);
 
       // Act
       var comp = new SpringReactionForces();
@@ -243,8 +247,8 @@ namespace GsaGHTests.Components.Results {
     public void NodeReactionForceValuesFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SpringForces, 2);
-      List<double> expectedP1 = ExpectedCombinationCaseC2p1Values(component);
-      List<double> expectedP2 = ExpectedCombinationCaseC2p2Values(component);
+      List<double?> expectedP1 = ExpectedCombinationCaseC2p1Values(component);
+      List<double?> expectedP2 = ExpectedCombinationCaseC2p2Values(component);
 
       // Act
       var comp = new SpringReactionForces();
@@ -269,7 +273,7 @@ namespace GsaGHTests.Components.Results {
       }
     }
 
-    private List<double> ExpectedAnalysisCaseValues(ResultVector6HelperEnum component) {
+    private List<double?> ExpectedAnalysisCaseValues(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return NodeSpringForcesA1.XInKiloNewtons();
 
@@ -292,7 +296,7 @@ namespace GsaGHTests.Components.Results {
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC2p1Values(ResultVector6HelperEnum component) {
+    private List<double?> ExpectedCombinationCaseC2p1Values(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return NodeSpringForcesC2p1.XInKiloNewtons();
 
@@ -315,7 +319,7 @@ namespace GsaGHTests.Components.Results {
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC2p2Values(ResultVector6HelperEnum component) {
+    private List<double?> ExpectedCombinationCaseC2p2Values(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return NodeSpringForcesC2p2.XInKiloNewtons();
 

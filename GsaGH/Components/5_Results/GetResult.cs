@@ -164,8 +164,8 @@ namespace GsaGH.Components {
             _tempNodeId = model.Model.Nodes().Keys.First();
           }
 
-          IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult
-            = _combinationCaseResults[caseId].NodeResults(_tempNodeId.ToString());
+          ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> tempNodeCombResult
+            = _combinationCaseResults[caseId].NodeDisplacement(_tempNodeId.ToString());
           int nP = tempNodeCombResult[tempNodeCombResult.Keys.First()].Count;
           if (permutationIDs.Count == 1 && permutationIDs[0] == -1) {
             permutationIDs = Enumerable.Range(1, nP).ToList();

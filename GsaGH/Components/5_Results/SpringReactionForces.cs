@@ -154,7 +154,7 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-        INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> resultSet
+        INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> resultSet
           = result.NodeSpringForces.ResultSubset(nodeIds);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -166,13 +166,13 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6ReactionForces[0]) {
-          foreach (KeyValuePair<int, IList<IInternalForce>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IReactionForce>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p);
-              outTransX.Add(new GH_UnitNumber(kvp.Value[p - 1].X.ToUnit(_forceUnit)), path);
-              outTransY.Add(new GH_UnitNumber(kvp.Value[p - 1].Y.ToUnit(_forceUnit)), path);
-              outTransZ.Add(new GH_UnitNumber(kvp.Value[p - 1].Z.ToUnit(_forceUnit)), path);
-              outTransXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].Xyz.ToUnit(_forceUnit)), path);
+              outTransX.Add(new GH_UnitNumber(kvp.Value[p - 1].XToUnit(_forceUnit)), path);
+              outTransY.Add(new GH_UnitNumber(kvp.Value[p - 1].YToUnit(_forceUnit)), path);
+              outTransZ.Add(new GH_UnitNumber(kvp.Value[p - 1].ZToUnit(_forceUnit)), path);
+              outTransXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].XyzToUnit(_forceUnit)), path);
               outRotX.Add(new GH_UnitNumber(kvp.Value[p - 1].Xx), path);
               outRotY.Add(new GH_UnitNumber(kvp.Value[p - 1].Yy), path);
               outRotZ.Add(new GH_UnitNumber(kvp.Value[p - 1].Zz), path);
@@ -182,13 +182,13 @@ namespace GsaGH.Components {
           }
         } else {
           NodeExtremaKey key = ExtremaHelper.ReactionForceExtremaKey(resultSet, _selectedItems[0]);
-          IInternalForce extrema = resultSet.GetExtrema(key);
+          IReactionForce extrema = resultSet.GetExtrema(key);
           int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
           var path = new GH_Path(result.CaseId, key.Permutation + perm);
-          outTransX.Add(new GH_UnitNumber(extrema.X.ToUnit(_forceUnit)), path);
-          outTransY.Add(new GH_UnitNumber(extrema.Y.ToUnit(_forceUnit)), path);
-          outTransZ.Add(new GH_UnitNumber(extrema.Z.ToUnit(_forceUnit)), path);
-          outTransXyz.Add(new GH_UnitNumber(extrema.Xyz.ToUnit(_forceUnit)), path);
+          outTransX.Add(new GH_UnitNumber(extrema.XToUnit(_forceUnit)), path);
+          outTransY.Add(new GH_UnitNumber(extrema.YToUnit(_forceUnit)), path);
+          outTransZ.Add(new GH_UnitNumber(extrema.ZToUnit(_forceUnit)), path);
+          outTransXyz.Add(new GH_UnitNumber(extrema.XyzToUnit(_forceUnit)), path);
           outRotX.Add(new GH_UnitNumber(extrema.Xx), path);
           outRotY.Add(new GH_UnitNumber(extrema.Yy), path);
           outRotZ.Add(new GH_UnitNumber(extrema.Zz), path);

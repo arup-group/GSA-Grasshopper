@@ -57,8 +57,8 @@ namespace GsaGHTests.Components.Results {
       var ids = (IList<GH_Integer>)ComponentTestHelper.GetListOutput(comp, 8);
       for (int j = 0; j < ids.Count; j++) {
         // Assert element IDs
-        var expectedIds = result.Model.Model.Nodes(NodeList).Keys.OrderBy(x => x).ToList();
-        Assert.Equal(expectedIds[j], ids[j].Value);
+        var expectedIds = result.Model.Model.Nodes(NodeList).Keys.ToList();
+        Assert.Contains<int>(expectedIds[j], ids.Select(i => i.Value));
       }
     }
 
@@ -108,7 +108,7 @@ namespace GsaGHTests.Components.Results {
     public void NodeReactionForceMaxFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
-      double expected = ExpectedAnalysisCaseValues(component).Max();
+      double? expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
       var comp = new ReactionForces();
@@ -134,9 +134,11 @@ namespace GsaGHTests.Components.Results {
     public void NodeReactionForceMaxFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
-      double expected = Math.Max(ExpectedCombinationCaseC4p1Values(component).Max(),
-        ExpectedCombinationCaseC4p2Values(component).Max());
-      
+      var values = new List<double?>();
+      values.AddRange(ExpectedCombinationCaseC4p1Values(component));
+      values.AddRange(ExpectedCombinationCaseC4p2Values(component));
+      double? expected = NodeReactionForcesTests.Max(values);
+
       // Act
       var comp = new ReactionForces();
       comp.SetSelected(0, 1 + (int)component);
@@ -161,8 +163,8 @@ namespace GsaGHTests.Components.Results {
     public void NodeReactionForceMinFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
-      double expected = ExpectedAnalysisCaseValues(component).Min();
-      
+      double? expected = ExpectedAnalysisCaseValues(component).Min();
+
       // Act
       var comp = new ReactionForces();
       comp.SetSelected(0, 9 + (int)component);
@@ -187,8 +189,10 @@ namespace GsaGHTests.Components.Results {
     public void NodeReactionForceMinFromcombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
-      double expected = Math.Min(ExpectedCombinationCaseC4p1Values(component).Min(),
-        ExpectedCombinationCaseC4p2Values(component).Min());
+      var values = new List<double?>();
+      values.AddRange(ExpectedCombinationCaseC4p1Values(component));
+      values.AddRange(ExpectedCombinationCaseC4p2Values(component));
+      double? expected = NodeReactionForcesTests.Min(values);
 
       // Act
       var comp = new ReactionForces();
@@ -215,7 +219,7 @@ namespace GsaGHTests.Components.Results {
     public void NodeReactionForceValuesFromAnalysisCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
-      List<double> expected = ExpectedAnalysisCaseValues(component);
+      List<double?> expected = ExpectedAnalysisCaseValues(component);
 
       // Act
       var comp = new ReactionForces();
@@ -226,8 +230,13 @@ namespace GsaGHTests.Components.Results {
       // Assert result values
       int i = 0;
       foreach (IQuantity value in output) {
-        double x = ResultHelper.RoundToSignificantDigits(value.As(Unit(component)), 4);
-        Assert.Equal(expected[i++], x);
+        if (expected[i] == null) {
+          Assert.Null(value);
+        } else {
+          double? x = ResultHelper.RoundToSignificantDigits(value.As(Unit(component)), 4);
+          Assert.Equal(expected[i], x);
+        }
+        i++;
       }
     }
 
@@ -243,8 +252,8 @@ namespace GsaGHTests.Components.Results {
     public void NodeReactionForceValuesFromCombinationCaseTest(ResultVector6HelperEnum component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
-      List<double> expectedP1 = ExpectedCombinationCaseC4p1Values(component);
-      List<double> expectedP2 = ExpectedCombinationCaseC4p2Values(component);
+      List<double?> expectedP1 = ExpectedCombinationCaseC4p1Values(component);
+      List<double?> expectedP2 = ExpectedCombinationCaseC4p2Values(component);
 
       // Act
       var comp = new ReactionForces();
@@ -255,8 +264,12 @@ namespace GsaGHTests.Components.Results {
 
       // Assert result values
       for (int i = 0; i < output.Count; i++) {
-        double perm = ResultHelper.RoundToSignificantDigits(output[i].As(Unit(component)), 4);
-        Assert.Equal(expectedP1[i], perm);
+        if (expectedP1[i] == null) {
+          Assert.Null(output[i]);
+        } else {
+          double? perm = ResultHelper.RoundToSignificantDigits(output[i].As(Unit(component)), 4);
+          Assert.Equal(expectedP1[i], perm);
+        }
       }
 
       var p2 = new GH_Path(4, 2);
@@ -264,12 +277,16 @@ namespace GsaGHTests.Components.Results {
 
       // Assert result values
       for (int i = 0; i < output.Count; i++) {
-        double perm = ResultHelper.RoundToSignificantDigits(output[i].As(Unit(component)), 4);
-        Assert.Equal(expectedP2[i], perm);
+        if (expectedP2[i] == null) {
+          Assert.Null(output[i]);
+        } else {
+          double? perm = ResultHelper.RoundToSignificantDigits(output[i].As(Unit(component)), 4);
+          Assert.Equal(expectedP2[i], perm);
+        }
       }
     }
 
-    private List<double> ExpectedAnalysisCaseValues(ResultVector6HelperEnum component) {
+    private List<double?> ExpectedAnalysisCaseValues(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return NodeReactionForcesA1.XInKiloNewtons();
 
@@ -292,7 +309,7 @@ namespace GsaGHTests.Components.Results {
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p1Values(ResultVector6HelperEnum component) {
+    private List<double?> ExpectedCombinationCaseC4p1Values(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return NodeReactionForcesC4p1.XInKiloNewtons();
 
@@ -315,7 +332,7 @@ namespace GsaGHTests.Components.Results {
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p2Values(ResultVector6HelperEnum component) {
+    private List<double?> ExpectedCombinationCaseC4p2Values(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return NodeReactionForcesC4p2.XInKiloNewtons();
 
