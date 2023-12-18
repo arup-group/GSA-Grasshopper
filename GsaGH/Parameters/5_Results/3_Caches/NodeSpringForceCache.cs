@@ -7,10 +7,10 @@ using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class
-    NodeSpringForceCache : INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> {
+    NodeSpringForceCache : INodeResultCache<IReactionForce, ResultVector6<NodeExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-    public IDictionary<int, IList<IInternalForce>> Cache { get; }
-      = new ConcurrentDictionary<int, IList<IInternalForce>>();
+    public IDictionary<int, IList<IReactionForce>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IReactionForce>>();
 
     internal NodeSpringForceCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -20,7 +20,7 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> ResultSubset(
+    public INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> ResultSubset(
       ICollection<int> nodeIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(nodeIds);
 
@@ -35,8 +35,8 @@ namespace GsaGH.Parameters.Results {
               }
 
               var res = new ReactionForce(resultKvp.Value);
-              ((ConcurrentDictionary<int, IList<IInternalForce>>)Cache).TryAdd(
-                resultKvp.Key, new Collection<IInternalForce>() {
+              ((ConcurrentDictionary<int, IList<IReactionForce>>)Cache).TryAdd(
+                resultKvp.Key, new Collection<IReactionForce>() {
                 res,
               });
             });
@@ -50,12 +50,12 @@ namespace GsaGH.Parameters.Results {
                 return;
               }
 
-              var permutationResults = new Collection<IInternalForce>();
+              var permutationResults = new Collection<IReactionForce>();
               foreach (Double6 permutation in resultKvp.Value) {
                 permutationResults.Add(new ReactionForce(permutation));
               }
 
-              ((ConcurrentDictionary<int, IList<IInternalForce>>)Cache).TryAdd(
+              ((ConcurrentDictionary<int, IList<IReactionForce>>)Cache).TryAdd(
                 resultKvp.Key, permutationResults);
             });
             break;

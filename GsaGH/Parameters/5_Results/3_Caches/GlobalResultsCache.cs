@@ -15,8 +15,8 @@ namespace GsaGH.Parameters.Results {
     private Mass _modalMass;
     private ForcePerLength _modalStiffness;
     private int? _mode;
-    private IInternalForce _totalLoad;
-    private IInternalForce _totalReaction;
+    private IReactionForce _totalLoad;
+    private IReactionForce _totalReaction;
 
     private bool _calculated = false;
 
@@ -81,13 +81,13 @@ namespace GsaGH.Parameters.Results {
         return _mode;
       }
     }
-    public IInternalForce TotalLoad {
+    public IReactionForce TotalLoad {
       get {
         Calculate();
         return _totalLoad;
       }
     }
-    public IInternalForce TotalReaction {
+    public IReactionForce TotalReaction {
       get {
         Calculate();
         return _totalReaction;

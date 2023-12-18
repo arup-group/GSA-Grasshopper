@@ -628,7 +628,7 @@ namespace GsaGH.Components {
       ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> valuesXyz = null;
       switch (_mode) {
         case FoldMode.Displacement:
-          IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> displacements = Quarterion.CoordinateTransformationTo(
+          IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> displacements = Quaternions.CoordinateTransformationTo(
             result.Element1dDisplacements.ResultSubset(elementIds, positionsCount).Subset, 
             Plane.WorldXY, result.Model.Model);
           Func<IDisplacement, IQuantity> displacementSelector = null;

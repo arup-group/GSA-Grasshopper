@@ -7,11 +7,11 @@ using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class
-    NodeReactionForceCache : INodeResultCache<IInternalForce, ResultVector6<NodeExtremaKey>> {
+    NodeReactionForceCache : INodeResultCache<IReactionForce, ResultVector6<NodeExtremaKey>> {
     internal ConcurrentBag<int> SupportNodeIds { get; private set; }
     public IApiResult ApiResult { get; set; }
-    public IDictionary<int, IList<IInternalForce>> Cache { get; }
-      = new ConcurrentDictionary<int, IList<IInternalForce>>();
+    public IDictionary<int, IList<IReactionForce>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IReactionForce>>();
 
     internal ReadOnlyDictionary<int, Node> Nodes { get; private set; }
 
@@ -24,8 +24,15 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
       SetSupportNodeIds(model);
     }
+    private static bool IsNaN(Double6 values) {
+      return double.IsNaN(values.X) && double.IsNaN(values.XX);
+    }
 
-    public INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> ResultSubset(
+    private static bool IsRestrained(NodalRestraint rest) {
+      return rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ;
+    }
+
+    public INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> ResultSubset(
       ICollection<int> nodeIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(nodeIds);
 
@@ -35,13 +42,13 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeReactionForce(nodelist);
             Parallel.ForEach(aCaseResults, resultKvp => {
-              if (!IsSupport(resultKvp)) {
+              if (!SupportNodeIds.Contains(resultKvp.Key) && IsNaN(resultKvp.Value)) {
                 return;
               }
 
               var res = new ReactionForce(resultKvp.Value);
-              ((ConcurrentDictionary<int, IList<IInternalForce>>)Cache).TryAdd(
-                resultKvp.Key, new Collection<IInternalForce>() {
+              ((ConcurrentDictionary<int, IList<IReactionForce>>)Cache).TryAdd(
+                resultKvp.Key, new Collection<IReactionForce>() {
                 res,
               });
             });
@@ -51,16 +58,16 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults
               = combinationCase.NodeReactionForce(nodelist);
             Parallel.ForEach(cCaseResults, resultKvp => {
-              if (!IsSupport(resultKvp)) {
+              if (!SupportNodeIds.Contains(resultKvp.Key) && resultKvp.Value.Any(IsNaN)) {
                 return;
               }
 
-              var permutationResults = new Collection<IInternalForce>();
+              var permutationResults = new Collection<IReactionForce>();
               foreach (Double6 permutation in resultKvp.Value) {
                 permutationResults.Add(new ReactionForce(permutation));
               }
 
-              ((ConcurrentDictionary<int, IList<IInternalForce>>)Cache).TryAdd(
+              ((ConcurrentDictionary<int, IList<IReactionForce>>)Cache).TryAdd(
                 resultKvp.Key, permutationResults);
             });
             break;
@@ -70,25 +77,10 @@ namespace GsaGH.Parameters.Results {
       return new NodeForceSubset(Cache.GetSubset(nodeIds));
     }
 
-    private bool IsSupport(KeyValuePair<int, Double6> kvp) {
-      return SupportNodeIds.Contains(kvp.Key) || IsNotNaN(kvp.Value);
-    }
-
-    private bool IsSupport(KeyValuePair<int, ReadOnlyCollection<Double6>> kvp) {
-      return SupportNodeIds.Contains(kvp.Key) || kvp.Value.Any(res => IsNotNaN(res));
-    }
-
-    private bool IsRestrained(NodalRestraint rest) {
-      return rest.X || rest.Y || rest.Z || rest.XX || rest.YY || rest.ZZ;
-    }
-
-    private bool IsNotNaN(Double6 values) {
-      return !double.IsNaN(values.X) || !double.IsNaN(values.Y) || !double.IsNaN(values.Z)
-        || !double.IsNaN(values.XX) || !double.IsNaN(values.YY) || !double.IsNaN(values.ZZ);
-    }
-
     private void SetSupportNodeIds(Model model) {
-      if (model == null) { return;}
+      if (model == null) {
+        return;
+      }
       ConcurrentBag<int> supportnodeIDs = null;
       supportnodeIDs = new ConcurrentBag<int>();
       ReadOnlyDictionary<int, Node> nodes = model.Nodes();

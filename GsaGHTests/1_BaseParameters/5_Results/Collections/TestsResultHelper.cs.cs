@@ -1,11 +1,11 @@
 ﻿using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
+using OasysUnits;
 
 namespace GsaGHTests.Parameters.Results {
   public static class TestsResultHelper {
-    public static double ResultsHelper(
-      INodeResultSubset<IInternalForce, ResultVector6<NodeExtremaKey>> result,
-      ResultVector6HelperEnum component, bool max) {
+    public static double ResultsHelper(INodeResultSubset<IInternalForce,
+      ResultVector6<NodeExtremaKey>> result, ResultVector6HelperEnum component, bool max) {
       double d = 0;
       ResultVector6<NodeExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
@@ -82,6 +82,126 @@ namespace GsaGHTests.Parameters.Results {
       }
 
       return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
+    public static double? ResultsHelper(INodeResultSubset<IReactionForce,
+      ResultVector6<NodeExtremaKey>> result, ResultVector6HelperEnum component, bool max) {
+      double? d = 0;
+      ResultVector6<NodeExtremaKey> extrema = max ? result.Max : result.Min;
+      switch (component) {
+        case ResultVector6HelperEnum.X:
+          d = ((Force)result.GetExtrema(extrema.X).X).Kilonewtons;
+          break;
+
+        case ResultVector6HelperEnum.Y:
+          d = ((Force)result.GetExtrema(extrema.Y).Y).Kilonewtons;
+          break;
+
+        case ResultVector6HelperEnum.Z:
+          d = ((Force)result.GetExtrema(extrema.Z).Z).Kilonewtons;
+          break;
+
+        case ResultVector6HelperEnum.Xyz:
+          d = ((Force)result.GetExtrema(extrema.Xyz).Xyz).Kilonewtons;
+          break;
+
+        case ResultVector6HelperEnum.Xx:
+          d = ((Moment)result.GetExtrema(extrema.Xx).Xx).KilonewtonMeters;
+          break;
+
+        case ResultVector6HelperEnum.Yy:
+          d = ((Moment)result.GetExtrema(extrema.Yy).Yy).KilonewtonMeters;
+          break;
+
+        case ResultVector6HelperEnum.Zz:
+          d = ((Moment)result.GetExtrema(extrema.Zz).Zz).KilonewtonMeters;
+          break;
+
+        case ResultVector6HelperEnum.Xxyyzz:
+          d = ((Moment)result.GetExtrema(extrema.Xxyyzz).Xxyyzz).KilonewtonMeters;
+          break;
+      }
+
+      if (d == null) {
+        return null;
+      }
+
+      return ResultHelper.RoundToSignificantDigits((double)d, 4);
+    }
+
+    public static double? ResultsHelper(IReactionForce result, ResultVector6HelperEnum component) {
+      double? d = 0;
+      switch (component) {
+        case ResultVector6HelperEnum.X:
+          if (result.X == null) {
+            d = null;
+          } else {
+            d = ((Force)result.X).Kilonewtons;
+          }
+          break;
+
+        case ResultVector6HelperEnum.Y:
+          if (result.Y == null) {
+            d = null;
+          } else {
+            d = ((Force)result.Y).Kilonewtons;
+          }
+          break;
+
+        case ResultVector6HelperEnum.Z:
+          if (result.Z == null) {
+            d = null;
+          } else {
+            d = ((Force)result.Z).Kilonewtons;
+          }
+          break;
+
+        case ResultVector6HelperEnum.Xyz:
+          if (result.Xyz == null) {
+            d = null;
+          } else {
+            d = ((Force)result.Xyz).Kilonewtons;
+          }
+          break;
+
+        case ResultVector6HelperEnum.Xx:
+          if (result.Xx == null) {
+            d = null;
+          } else {
+            d = ((Moment)result.Xx).KilonewtonMeters;
+          }
+          break;
+
+        case ResultVector6HelperEnum.Yy:
+          if (result.Yy == null) {
+            d = null;
+          } else {
+            d = ((Moment)result.Yy).KilonewtonMeters;
+          }
+          break;
+
+        case ResultVector6HelperEnum.Zz:
+          if (result.Zz == null) {
+            d = null;
+          } else {
+            d = ((Moment)result.Zz).KilonewtonMeters;
+          }
+          break;
+
+        case ResultVector6HelperEnum.Xxyyzz:
+          if (result.Xxyyzz == null) {
+            d = null;
+          } else {
+            d = ((Moment)result.Xxyyzz).KilonewtonMeters;
+          }
+          break;
+      }
+
+      if (d == null) {
+        return null;
+      }
+
+      return ResultHelper.RoundToSignificantDigits((double)d, 4);
     }
 
     public static double ResultsHelper(

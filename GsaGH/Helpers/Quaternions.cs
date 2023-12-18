@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace GsaGH.Helpers {
-  public static class Quarterion {
+  public static class Quaternions {
     internal static Entity1dDisplacements CoordinateTransformationTo(IDictionary<int, IList<IEntity1dDisplacement>> displacementSubset, Plane plane, Model model) {
       var values = new ConcurrentDictionary<int, IList<IEntity1dDisplacement>>();
       Parallel.ForEach(displacementSubset, kvp => {
