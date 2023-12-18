@@ -110,12 +110,27 @@ namespace GsaGH.Components {
       ToleranceMenu.UpdateMessage(this, _lengthUnit);
 
       // add report output to old components
-      if (Params.Output.Count == 1) {
+      if (Params.Output.Count < 5) {
         Params.RegisterOutputParam(new Param_String());
-        Params.Output[1].Name = "Report";
-        Params.Output[1].NickName = "R";
-        Params.Output[1].Description = "Analysis Task Report(s)";
+        Params.Output[1].Name = "Errors";
+        Params.Output[1].NickName = "E";
+        Params.Output[1].Description = "Analysis Task Errors";
         Params.Output[1].Access = GH_ParamAccess.list;
+        Params.RegisterOutputParam(new Param_String());
+        Params.Output[2].Name = "Warnings";
+        Params.Output[2].NickName = "W";
+        Params.Output[2].Description = "Analysis Task Warnings";
+        Params.Output[2].Access = GH_ParamAccess.list;
+        Params.RegisterOutputParam(new Param_String());
+        Params.Output[3].Name = "Remarks";
+        Params.Output[3].NickName = "R";
+        Params.Output[3].Description = "Analysis Task Notes and Remarks";
+        Params.Output[3].Access = GH_ParamAccess.list;
+        Params.RegisterOutputParam(new Param_String());
+        Params.Output[4].Name = "Log";
+        Params.Output[4].NickName = "L";
+        Params.Output[4].Description = "Analysis Task logs";
+        Params.Output[4].Access = GH_ParamAccess.list;
         VariableParameterMaintenance();
       }
     }
@@ -161,7 +176,10 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter());
-      pManager.AddTextParameter("Report", "R", "Analysis Task Report(s)", GH_ParamAccess.list);
+      pManager.AddTextParameter("Errors", "E", "Analysis Task Errors", GH_ParamAccess.list);
+      pManager.AddTextParameter("Warnings", "W", "Analysis Task Warnings", GH_ParamAccess.list);
+      pManager.AddTextParameter("Remarks", "R", "Analysis Task Notes and Remarks", GH_ParamAccess.list);
+      pManager.AddTextParameter("Logs", "L", "Analysis Task logs", GH_ParamAccess.list);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
@@ -236,16 +254,12 @@ namespace GsaGH.Components {
           this.AddRuntimeError(message);
         }
 
-
         if (tryAnalyse) {
-          var reports = new List<string>();
-          string syncWarn = CatchElemFromMemSyncWarning();
-          if (!string.IsNullOrEmpty(syncWarn)) {
-            string warning = "Member and element synchronisation check has one or more warnings. " +
-              "Check report output for details";
-            this.AddRuntimeWarning($" {warning}");
-            reports.Add(syncWarn);
-          }
+          var logs = new List<string>();
+          var notes = new List<string>();
+          var remarks = new List<string>();
+          var warnings = new List<string>();
+          var errors = new List<string>();
 
           foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks) {
             if (model.Model.Analyse(task.Key, out TaskReport report)) {
@@ -253,34 +267,51 @@ namespace GsaGH.Components {
                 model.Model.Elements().Count);
             } else {
               string message = "Analysis Task " + task.Key +
-                " has one or more errors. Check report output for details";
+                " failed with one or more errors. Check report output for details";
               this.AddRuntimeError($" {message}");
             }
 
-            string rep = report.Notes[task.Key];
-            string[] split = rep.Split('\n');
-            rep = split[0].Replace(": ", "\n") + "\n" + string.Join("\n", split.Skip(1));
-            rep = rep.Replace("Checking", "\nChecks:");
-            rep = rep.Replace("Solving", "\nSolver:");
-            rep += "\n \n";
-            reports.Add(rep);
+            logs.Add(report.Log);
+            notes.AddRange(report.Notes);
+            remarks.AddRange(report.Warnings);
+            foreach (string message in report.SevereWarnings) {
+              this.AddRuntimeWarning(message);
+              warnings.Add($"Task {task.Key}: {message}");
+            }
 
-            if (report.Errors.Count > 0) {
-              string message = "Analysis Task " + task.Key +
-                " has one or more errors. Check report output for details";
-              this.AddRuntimeError($" {message}");
-            } else if (report.SevereWarnings.Count > 0) {
-              string message = "Analysis Task " + task.Key +
-                " has one or more severe warnings. Check report output for details";
-              this.AddRuntimeWarning($" {message}");
-            } else if (report.Warnings.Count > 0) {
-              string message = "Analysis Task " + task.Key +
-                " has one or more warnings. Check report output for details";
-              this.AddRuntimeRemark($" {message}");
+            foreach (string message in report.Errors) {
+              this.AddRuntimeError(message);
+              errors.Add($"Task {task.Key}: {message}");
             }
           }
+
+          var notesAndRemarks = new List<string>();
+          foreach (string message in remarks) {
+            if (!RuntimeMessages(GH_RuntimeMessageLevel.Remark).Contains(message)) {
+              this.AddRuntimeRemark(message);
+              notesAndRemarks.Add($"Warning: {message}");
+            }
+          }
+
+          foreach (string message in notes) {
+            if (!notesAndRemarks.Contains($"Note: {message}")) {
+              notesAndRemarks.Add($"Note: {message}");
+            }
+          }
+
+          string syncWarn = CatchElemFromMemSyncWarning();
+          if (!string.IsNullOrEmpty(syncWarn)) {
+            string warning = "Member and element synchronisation check has one or more warnings. " +
+            "Check report output for details";
+            this.AddRuntimeWarning(warning);
+            notesAndRemarks.Add(syncWarn);
+          }
+
           model.Guid = Guid.NewGuid();
-          da.SetDataList(1, reports);
+          da.SetDataList(1, errors);
+          da.SetDataList(2, warnings);
+          da.SetDataList(3, notesAndRemarks);
+          da.SetDataList(4, logs);
         }
       }
 
