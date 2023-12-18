@@ -42,7 +42,7 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeReactionForce(nodelist);
             Parallel.ForEach(aCaseResults, resultKvp => {
-              if (!SupportNodeIds.Contains(resultKvp.Key) || IsNaN(resultKvp.Value)) {
+              if (!SupportNodeIds.Contains(resultKvp.Key) && IsNaN(resultKvp.Value)) {
                 return;
               }
 
@@ -58,7 +58,7 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults
               = combinationCase.NodeReactionForce(nodelist);
             Parallel.ForEach(cCaseResults, resultKvp => {
-              if (!SupportNodeIds.Contains(resultKvp.Key) || resultKvp.Value.Any(IsNaN)) {
+              if (!SupportNodeIds.Contains(resultKvp.Key) && resultKvp.Value.Any(IsNaN)) {
                 return;
               }
 
