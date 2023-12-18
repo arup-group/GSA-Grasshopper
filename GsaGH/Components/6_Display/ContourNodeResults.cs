@@ -24,7 +24,6 @@ using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGH.Properties;
-using Oasys.Taxonomy.Profiles;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
@@ -500,7 +499,7 @@ namespace GsaGH.Components {
       ConcurrentDictionary<int, (double x, double y, double z)> valuesXyz = null;
       switch (_mode) {
         case FoldMode.Displacement:
-          INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> displacements 
+          INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> displacements
             = result.NodeDisplacements.ResultSubset(nodeIds);
 
           if (displacements.Ids.Count == 0) {
@@ -757,7 +756,7 @@ namespace GsaGH.Components {
           dmax = footfall.GetExtrema(footfall.Max.MaximumResponseFactor).MaximumResponseFactor;
           dmin = footfall.GetExtrema(footfall.Min.MaximumResponseFactor).MaximumResponseFactor;
           Parallel.ForEach(footfall.Subset, kvp =>
-            values.TryAdd(kvp.Key, 
+            values.TryAdd(kvp.Key,
             new Ratio(kvp.Value[permutation].MaximumResponseFactor, RatioUnit.DecimalFraction)));
           break;
       }
@@ -814,10 +813,14 @@ namespace GsaGH.Components {
           pt.Transform(Transform.Translation(translation));
         }
 
-        double tnorm = (2 * (t.Value - (double)dmin) / ((double)dmax - (double)dmin)) - 1;
+        double tnorm = 0;
+        float size = 0;
+        if (t != null) {
+          tnorm = (2 * (t.Value - (double)dmin) / ((double)dmax - (double)dmin)) - 1;
+          size = t.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t.Value / dmax * scale)) :
+            Math.Max(2, (float)(Math.Abs(t.Value) / Math.Abs((double)dmin) * scale));
+        }
         Color valcol = ghGradient.ColourAt(tnorm);
-        float size = t.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t.Value / dmax * scale)) :
-          Math.Max(2, (float)(Math.Abs(t.Value) / Math.Abs((double)dmin) * scale));
 
         pts[kvp.Key] = new PointResultGoo(pt, t, valcol, size, kvp.Key);
       });
@@ -853,40 +856,40 @@ namespace GsaGH.Components {
         }
 
         switch (_mode) {
-          case FoldMode.Displacement when (int)_disp < 4: 
-              var displacement = new Length(t, _lengthResultUnit);
-              _legendValues.Add(displacement.ToString("f" + significantDigits));
-              ts.Add(new GH_UnitNumber(displacement));
-              break;
-            
-          case FoldMode.Displacement: 
-              var rotation = new Angle(t, AngleUnit.Radian);
-              _legendValues.Add(rotation.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(rotation));
-              break;
-            
-          case FoldMode.Reaction when (int)_disp < 4: 
-          case FoldMode.SpringForce when (int)_disp < 4: 
-              var reactionForce = new Force(t, _forceUnit);
-              _legendValues.Add(reactionForce.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(reactionForce));
-              Message = Force.GetAbbreviation(_forceUnit);
-              break;
-            
-          case FoldMode.Reaction: 
-          case FoldMode.SpringForce: 
-              var reactionMoment = new Moment(t, _momentUnit);
-              _legendValues.Add(reactionMoment.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(reactionMoment));
-              Message = Moment.GetAbbreviation(_momentUnit);
-              break;
-            
-          case FoldMode.Footfall: 
-              var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-              _legendValues.Add(responseFactor.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(responseFactor));
-              Message = string.Empty;
-              break;
+          case FoldMode.Displacement when (int)_disp < 4:
+            var displacement = new Length(t, _lengthResultUnit);
+            _legendValues.Add(displacement.ToString("f" + significantDigits));
+            ts.Add(new GH_UnitNumber(displacement));
+            break;
+
+          case FoldMode.Displacement:
+            var rotation = new Angle(t, AngleUnit.Radian);
+            _legendValues.Add(rotation.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(rotation));
+            break;
+
+          case FoldMode.Reaction when (int)_disp < 4:
+          case FoldMode.SpringForce when (int)_disp < 4:
+            var reactionForce = new Force(t, _forceUnit);
+            _legendValues.Add(reactionForce.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(reactionForce));
+            Message = Force.GetAbbreviation(_forceUnit);
+            break;
+
+          case FoldMode.Reaction:
+          case FoldMode.SpringForce:
+            var reactionMoment = new Moment(t, _momentUnit);
+            _legendValues.Add(reactionMoment.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(reactionMoment));
+            Message = Moment.GetAbbreviation(_momentUnit);
+            break;
+
+          case FoldMode.Footfall:
+            var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
+            _legendValues.Add(responseFactor.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(responseFactor));
+            Message = string.Empty;
+            break;
         }
 
         if (Math.Abs(t) > 1) {
@@ -900,7 +903,7 @@ namespace GsaGH.Components {
       da.SetDataList(0, pts.OrderBy(x => x.Key).Select(y => y.Value).ToList());
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
-      
+
       PostHog.Result(result.CaseType, 0, _mode.ToString(), _disp.ToString());
     }
 
