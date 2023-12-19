@@ -33,7 +33,13 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      return (Id > 0 ? $"ID:{Id} " : string.Empty) + $"'{TaskName}' SteelDesign".Replace("_", " ")
+      string caseId = $"Case:C{ApiTask.CombinationCaseId}";
+      string list = "Def:" + (List == null ? ApiTask.ListDefinition : $"\"{List.Name}\"");
+      string target = $"Target:{ApiTask.UpperTargetUtilisationLimit}";
+      string objective = $"Obj:{ApiTask.PrimaryObjective}";
+      string grp = ApiTask.GroupSectionsByPool ? "Grouped" : string.Empty;
+      string id = Id > 0 ? $"ID:{Id} " : string.Empty;
+      return string.Join(" ", "(Steel)", id, TaskName, caseId, list, target, objective, grp)
         .TrimSpaces();
     }
   }

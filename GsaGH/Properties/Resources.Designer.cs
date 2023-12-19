@@ -433,16 +433,6 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap CreateDesignTask {
-            get {
-                object obj = ResourceManager.GetObject("CreateDesignTask", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap CreateEffectiveLengthOptions {
             get {
                 object obj = ResourceManager.GetObject("CreateEffectiveLengthOptions", resourceCulture);
@@ -676,6 +666,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap CreateSpringProperty {
             get {
                 object obj = ResourceManager.GetObject("CreateSpringProperty", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CreateSteelDesignTask {
+            get {
+                object obj = ResourceManager.GetObject("CreateSteelDesignTask", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

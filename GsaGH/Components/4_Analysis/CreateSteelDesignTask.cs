@@ -18,7 +18,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("17012fb0-9a62-49fe-98d0-1cac1f47bcde");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateDesignTask;
+    protected override Bitmap Icon => Resources.CreateSteelDesignTask;
 
     private readonly List<string> _designObjectives = new List<string>(new[] {
         "Sustainable",
