@@ -260,8 +260,22 @@ namespace GsaGH.Helpers.Assembly {
         return;
       }
 
-      var existingSteel = _model.SteelDesignTasks()
-        .ToDictionary(k => k.Key, k => k.Value);
+      if (_model.CombinationCases().Count == 0) {
+        owner.AddRuntimeWarning("Model contains no Combination Cases and " +
+          "DesignTasks can therefore not be added to the model");
+        return;
+      }
+
+      var dummyTask = new SteelDesignTask("dummyTaskToBeRemoved") {
+        CombinationCaseId = _model.CombinationCases().Keys.FirstOrDefault()
+      };
+
+      var apiTasks = new GsaIntDictionary<SteelDesignTask>(_model.SteelDesignTasks());
+      foreach (int id in _model.SteelDesignTasks().Keys) {
+        _model.DeleteDesignTask(id);
+      }
+
+      var idsToBeDeleted = new List<int>();
       foreach (IGsaDesignTask dt in designTasks) {
         switch (dt) {
           case GsaSteelDesignTask steelDesignTask:
@@ -269,22 +283,34 @@ namespace GsaGH.Helpers.Assembly {
               steelDesignTask.ApiTask.ListDefinition = GetElementOrMemberList(dt.List, owner);
             }
 
-            // temp
-            try {
-              _model.AddDesignTask(steelDesignTask.ApiTask);
-            } catch (Exception e) {
-              owner.AddRuntimeWarning(e.Message);
-            }
-
-            if (dt.Id > 0 && existingSteel.ContainsKey(dt.Id)) {
-              existingSteel[dt.Id] = steelDesignTask.ApiTask;
+            if (dt.Id > 0) {
+              apiTasks.SetValue(dt.Id, steelDesignTask.ApiTask);
             } else {
-              existingSteel.Add(dt.Id, steelDesignTask.ApiTask);
+              apiTasks.AddValue(steelDesignTask.ApiTask);
             }
             break;
         }
       }
-      //_model.SetDesignTasks(new ReadOnlyDictionary<int, DesignTask>(existingSteel));
+
+      ReadOnlyDictionary<int, SteelDesignTask> tasks = apiTasks.ReadOnlyDictionary;
+      for (int i = 1; i <= tasks.Keys.Max(); i++) {
+        if (tasks.ContainsKey(i)) {
+          try {
+            _model.AddDesignTask(tasks[i]);
+          } catch (Exception e) {
+            owner.AddRuntimeWarning(e.Message);
+            _model.AddDesignTask(dummyTask);
+            idsToBeDeleted.Add(i);
+          }
+        } else {
+          _model.AddDesignTask(dummyTask);
+          idsToBeDeleted.Add(i);
+        }
+      }
+      
+      foreach (int id in idsToBeDeleted) {
+        _model.DeleteDesignTask(id);
+      }
     }
 
     private void ConvertAndAssembleGridLines(List<GsaGridLine> gridLines) {

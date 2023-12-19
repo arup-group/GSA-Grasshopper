@@ -23,7 +23,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("Primary1", "MinWeight")]
     [InlineData("Secondary1", "MinDepth")]
     [InlineData("Name2", "Steel design task main beams")]
-    [InlineData("Id2", 2)] //TO-DO should be 4
+    [InlineData("Id2", 4)] 
     [InlineData("ListDefinition2", "2 1")]
     [InlineData("Case2", 1)] 
     [InlineData("eta2", 0.85)]
