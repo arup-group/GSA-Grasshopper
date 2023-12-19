@@ -157,7 +157,7 @@ namespace GsaGH.Components {
       }
 
       var assembly = new ModelAssembly(null, null, null, nodes, null, null, null, member1ds,
-        member2ds, member3ds, null, null, null, null, null, null, null, null, null, null,
+        member2ds, member3ds, null, null, null, null, null, null, null, null, null, null, null,
         _lengthUnit, ToleranceMenu.Tolerance, true, this);
       Model gsa = assembly.GetModel();
 

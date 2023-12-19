@@ -71,7 +71,8 @@ namespace GsaGH.Helpers.Assembly {
       List<GsaMaterial> mats, List<GsaSection> sections, List<GsaProperty2d> prop2Ds,
       List<GsaProperty3d> prop3Ds, List<GsaSpringProperty> springProps, List<IGsaLoad> loads,
       List<GsaGridPlaneSurface> gridPlaneSurfaces, List<GsaLoadCase> loadCases,
-      List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations, LengthUnit modelUnit,
+      List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations,
+      List<IGsaDesignTask> designTasks, LengthUnit modelUnit,
       Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner) {
 
       SetupModel(model, modelUnit);
@@ -85,7 +86,7 @@ namespace GsaGH.Helpers.Assembly {
       AssembleNodesElementsMembersAndLists();
       ElementsFromMembers(createElementsFromMembers, toleranceCoincidentNodes, owner);
 
-      ConvertList(lists, loads, owner);
+      ConvertList(lists, loads, designTasks, owner);
       ConvertGridPlaneSurface(gridPlaneSurfaces, owner);
       ConvertLoad(loads, owner);
       ConvertLoadCases(loadCases, owner);
@@ -94,6 +95,7 @@ namespace GsaGH.Helpers.Assembly {
       ConvertAndAssembleGridLines(gridLines);
       ConvertAndAssembleAnalysisTasks(analysisTasks);
       ConvertAndAssembleCombinations(combinations);
+      ConvertAndAssembleDesignTasks(designTasks, owner);
 
       DeleteExistingResults();
     }
@@ -250,6 +252,39 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
       _model.SetCombinationCases(new ReadOnlyDictionary<int, CombinationCase>(existing));
+    }
+
+    private void ConvertAndAssembleDesignTasks(
+      List<IGsaDesignTask> designTasks, GH_Component owner) {
+      if (designTasks.IsNullOrEmpty()) {
+        return;
+      }
+
+      var existingSteel = _model.SteelDesignTasks()
+        .ToDictionary(k => k.Key, k => k.Value);
+      foreach (IGsaDesignTask dt in designTasks) {
+        switch (dt) {
+          case GsaSteelDesignTask steelDesignTask:
+            if (dt.List != null) {
+              steelDesignTask.ApiTask.ListDefinition = GetElementOrMemberList(dt.List, owner);
+            }
+
+            // temp
+            try {
+              _model.AddDesignTask(steelDesignTask.ApiTask);
+            } catch (Exception e) {
+              owner.AddRuntimeWarning(e.Message);
+            }
+
+            if (dt.Id > 0 && existingSteel.ContainsKey(dt.Id)) {
+              existingSteel[dt.Id] = steelDesignTask.ApiTask;
+            } else {
+              existingSteel.Add(dt.Id, steelDesignTask.ApiTask);
+            }
+            break;
+        }
+      }
+      //_model.SetDesignTasks(new ReadOnlyDictionary<int, DesignTask>(existingSteel));
     }
 
     private void ConvertAndAssembleGridLines(List<GsaGridLine> gridLines) {
