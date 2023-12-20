@@ -873,16 +873,6 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap GetEffectiveLengthOptions {
-            get {
-                object obj = ResourceManager.GetObject("GetEffectiveLengthOptions", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap EffectiveLengthOptionsParam {
             get {
                 object obj = ResourceManager.GetObject("EffectiveLengthOptionsParam", resourceCulture);
@@ -1026,6 +1016,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap Get2dPropertyModifier {
             get {
                 object obj = ResourceManager.GetObject("Get2dPropertyModifier", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GetEffectiveLengthOptions {
+            get {
+                object obj = ResourceManager.GetObject("GetEffectiveLengthOptions", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1716,6 +1716,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap SpringReactionForces {
             get {
                 object obj = ResourceManager.GetObject("SpringReactionForces", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SteelSectionPoolNames {
+            get {
+                object obj = ResourceManager.GetObject("SteelSectionPoolNames", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

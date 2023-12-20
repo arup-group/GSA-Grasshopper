@@ -8,6 +8,7 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 
@@ -16,7 +17,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("6df7c85e-f629-47fd-ab38-7431407777e3");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => null;
+    protected override Bitmap Icon => Resources.SteelSectionPoolNames;
 
     public SteelSectionPoolNames() : base("Steel Section Pool Names", "Pool Names",
       "Get or set the Steel Section Pool Names of a GSA Model", CategoryName.Name(),
