@@ -13,6 +13,6 @@ namespace GsaGH.Parameters {
   public interface IGsaDesignTask {
     GsaList List { get; }
     int Id { get; }
-    string TaskName { get; }
+    string Name { get; }
   }
 }

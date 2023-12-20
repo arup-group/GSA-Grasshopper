@@ -12,7 +12,7 @@ namespace GsaGHTests.Parameters {
       Assert.NotNull(designTask);
       Assert.Equal(0, designTask.Id);
       Assert.Null(designTask.List);
-      Assert.Equal("myTask", designTask.TaskName);
+      Assert.Equal("myTask", designTask.Name);
     }
 
     [Fact]
@@ -29,7 +29,7 @@ namespace GsaGHTests.Parameters {
         model.SteelDesignTasks().First(), new GsaModel(model));
       Assert.NotNull(designTask);
       Assert.Equal(1, designTask.Id);
-      Assert.Equal("myTask", designTask.TaskName);
+      Assert.Equal("myTask", designTask.Name);
       Assert.NotNull(designTask.List);
       Assert.Equal("all", designTask.List.Definition);
     }
@@ -54,7 +54,7 @@ namespace GsaGHTests.Parameters {
         model.SteelDesignTasks().First(), new GsaModel(model));
       Assert.NotNull(designTask);
       Assert.Equal(1, designTask.Id);
-      Assert.Equal("myTask", designTask.TaskName);
+      Assert.Equal("myTask", designTask.Name);
       Assert.NotNull(designTask.List);
       Assert.Equal("my list", designTask.List.Name);
       Assert.Equal("\"my list\"", designTask.ApiTask.ListDefinition);

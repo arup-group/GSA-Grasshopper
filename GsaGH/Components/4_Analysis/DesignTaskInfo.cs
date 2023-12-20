@@ -52,12 +52,12 @@ namespace GsaGH.Components {
       GsaDesignTaskGoo taskGoo = null;
       da.GetData(0, ref taskGoo);
       dt = (GsaSteelDesignTask)taskGoo.Value;
-      da.SetData(0, dt.TaskName);
+      da.SetData(0, dt.Name);
       da.SetData(1, dt.Id);
       if (dt.List != null) {
         da.SetData(2, new GsaListGoo(dt.List));
       } else {
-        var list = new GsaList(dt.TaskName, dt.ApiTask.ListDefinition, GsaAPI.EntityType.Member);
+        var list = new GsaList(dt.Name, dt.ApiTask.ListDefinition, GsaAPI.EntityType.Member);
         da.SetData(2, new GsaListGoo(list));
       }
 

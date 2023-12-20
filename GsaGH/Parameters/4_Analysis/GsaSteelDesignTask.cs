@@ -14,7 +14,7 @@ namespace GsaGH.Parameters {
     public SteelDesignTask ApiTask { get; internal set; }
     public GsaList List { get; internal set; }
     public int Id { get; set; } = 0;
-    public string TaskName => ApiTask.TaskName;
+    public string Name => ApiTask.TaskName;
 
     public GsaSteelDesignTask(string taskName) {
       ApiTask = new SteelDesignTask(taskName);
@@ -29,7 +29,7 @@ namespace GsaGH.Parameters {
         }
       }
         
-      List = new GsaList(TaskName, kvp.Value.ListDefinition, GsaAPI.EntityType.Member);
+      List = new GsaList(Name, kvp.Value.ListDefinition, GsaAPI.EntityType.Member);
     }
 
     public override string ToString() {
@@ -39,7 +39,7 @@ namespace GsaGH.Parameters {
       string objective = $"Obj:{ApiTask.PrimaryObjective}";
       string grp = ApiTask.GroupSectionsByPool ? "Grouped" : string.Empty;
       string id = Id > 0 ? $"ID:{Id} " : string.Empty;
-      return string.Join(" ", "(Steel)", id, TaskName, caseId, list, target, objective, grp)
+      return string.Join(" ", "(Steel)", id, Name, caseId, list, target, objective, grp)
         .TrimSpaces();
     }
   }
