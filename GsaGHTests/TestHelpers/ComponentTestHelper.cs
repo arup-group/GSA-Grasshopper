@@ -117,17 +117,6 @@ namespace GsaGHTests.Helpers {
       component.Params.Input[index].AddSource(input);
     }
 
-    public static void SetInput(GH_Component component, List<object> objs, int index = 0) {
-      var input = new Param_GenericObject();
-      input.CreateAttributes();
-      input.Access = GH_ParamAccess.list;
-      foreach (object obj in objs) {
-        input.PersistentData.Append(new GH_ObjectWrapper(obj));
-      }
-
-      component.Params.Input[index].AddSource(input);
-    }
-
     public static void SetInput(GH_Component component, Point3d pt, int index = 0) {
       var input = new Param_Point();
       input.CreateAttributes();
@@ -153,6 +142,17 @@ namespace GsaGHTests.Helpers {
       var input = new Param_Mesh();
       input.CreateAttributes();
       input.PersistentData.Append(new GH_Mesh(mesh));
+      component.Params.Input[index].AddSource(input);
+    }
+
+    public static void SetListInput(GH_Component component, List<object> objs, int index = 0) {
+      var input = new Param_GenericObject();
+      input.CreateAttributes();
+      input.Access = GH_ParamAccess.list;
+      foreach (object obj in objs) {
+        input.PersistentData.Append(new GH_ObjectWrapper(obj));
+      }
+
       component.Params.Input[index].AddSource(input);
     }
 
