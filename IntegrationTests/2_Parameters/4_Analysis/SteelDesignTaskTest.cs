@@ -12,6 +12,16 @@ namespace IntegrationTests.Parameters {
     public static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
 
+    [Fact]
+    public void NoRuntimeWarningTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning, "Warning");
+    }
+
+    [Fact]
+    public void NoRuntimeErrorTest() {
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+    }
+
     [Theory]
     [InlineData("Name1", "Steel design task")]
     [InlineData("Id1", 1)]
@@ -31,6 +41,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("Group2", true)]
     [InlineData("Primary2", "MinCost")]
     [InlineData("Secondary2", "MaxSustainability")]
+    [InlineData("ListDefinition3", "all")]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);
