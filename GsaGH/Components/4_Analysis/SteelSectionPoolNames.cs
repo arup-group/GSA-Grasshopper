@@ -15,7 +15,7 @@ using OasysGH.Components;
 namespace GsaGH.Components {
   public class SteelSectionPoolNames : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("6df7c85e-f629-47fd-ab38-7431407777e3");
-    public override GH_Exposure Exposure => GH_Exposure.primary;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.SteelSectionPoolNames;
 
