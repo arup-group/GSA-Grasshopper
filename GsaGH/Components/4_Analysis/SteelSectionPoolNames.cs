@@ -42,6 +42,7 @@ namespace GsaGH.Components {
       pManager.AddTextParameter("Names", "Na", "List of Names for each section pool name ID)",
         GH_ParamAccess.list);
       pManager.AddParameter(new GsaSectionParameter());
+      pManager[3].Access = GH_ParamAccess.tree;
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {

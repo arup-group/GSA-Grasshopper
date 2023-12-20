@@ -95,6 +95,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateAnalysisTask))]
     [InlineData(typeof(CreateCombinationCase))]
     [InlineData(typeof(EditAnalysisTask))]
+    [InlineData(typeof(CreateSteelSectionPool))]
     [InlineData(typeof(SteelSectionPoolNames))]
     // 5_Results
     [InlineData(typeof(BeamDerivedStresses))]
