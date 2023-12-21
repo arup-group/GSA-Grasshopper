@@ -5,6 +5,7 @@ using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
+using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.Model {
@@ -56,6 +57,32 @@ namespace GsaGHTests.Model {
       Assert.Equal("Steel pool 4", names[2].Value);
       Assert.Single(sections);
       Assert.Equal("PB1 CAT UB UB457x191x89 19990407 Custom", sections[0].Value.ToString());
+    }
+
+    [Fact]
+    public void ListSizeErrorTest() {
+      GH_OasysComponent comp = ComponentMother();
+
+      ComponentTestHelper.SetListInput(comp, new List<object>() { 1 }, 1);
+      ComponentTestHelper.SetListInput(comp, new List<object>() { "Steel pool 1", "Steel pool 2" }, 2);
+
+      var output = (List<GsaModelGoo>)ComponentTestHelper.GetListOutput(comp, 0);
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void ListSizeWarningTest() {
+      GH_OasysComponent comp = ComponentMother();
+
+      ComponentTestHelper.SetListInput(comp, new List<object>() { 1, 2 }, 1);
+      ComponentTestHelper.SetListInput(comp, new List<object>() { "Steel pool 1" }, 2);
+
+      var output = (List<GsaModelGoo>)ComponentTestHelper.GetListOutput(comp, 0);
+      comp.Params.Output[0].ExpireSolution(true);
+      comp.Params.Output[0].CollectData();
+      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
     }
   }
 }

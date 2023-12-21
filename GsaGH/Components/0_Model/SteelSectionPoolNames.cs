@@ -56,13 +56,9 @@ namespace GsaGH.Components {
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(1, ghTypes)) {
         foreach (GH_ObjectWrapper wrapper in ghTypes) {
-          if (GH_Convert.ToInt32(wrapper.Value, out int id, GH_Conversion.Both)) {
+          if (GH_Convert.ToInt32(wrapper?.Value, out int id, GH_Conversion.Both)) {
             ids.Add(id);
-          } else {
-            string type = wrapper.Value.GetType().ToString();
-            this.AddRuntimeError("Unable to convert input parameter of type " + type + " to ID");
-            return;
-          }
+          } 
         }
       }
 
@@ -81,11 +77,7 @@ namespace GsaGH.Components {
         foreach (GH_ObjectWrapper wrapper in ghTypes) {
           if (GH_Convert.ToString(wrapper, out string name, GH_Conversion.Both)) {
             sectionPools.Add(ids[i], name);
-          } else {
-            string type = wrapper.Value.GetType().ToString();
-            this.AddRuntimeError("Unable to convert input parameter of type " + type + " to Name");
-            return;
-          }
+          } 
           i++;
         }
       }
