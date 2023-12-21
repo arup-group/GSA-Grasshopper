@@ -44,6 +44,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(GridPlaneSurfaceProperties))]
     // Analysis
     [InlineData(typeof(AnalyseModel))]
+    [InlineData(typeof(CreateSteelDesignTask))]
     // Results
     [InlineData(typeof(BeamDerivedStresses))]
     [InlineData(typeof(BeamDisplacements))]
