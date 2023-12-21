@@ -683,6 +683,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CreateSteelSectionPool {
+            get {
+                object obj = ResourceManager.GetObject("CreateSteelSectionPool", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CreateSupport {
             get {
                 object obj = ResourceManager.GetObject("CreateSupport", resourceCulture);
@@ -1746,6 +1756,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap SpringReactionForces {
             get {
                 object obj = ResourceManager.GetObject("SpringReactionForces", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SteelSectionPoolNames {
+            get {
+                object obj = ResourceManager.GetObject("SteelSectionPoolNames", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

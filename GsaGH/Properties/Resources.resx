@@ -625,13 +625,19 @@
   <data name="GetSpringProperty" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\GetSpringProperty.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="DesignTaskParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\DesignTaskParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="SteelSectionPoolNames" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\SteelSectionPoolNames.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateSteelSectionPool" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateSteelSectionPool.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateSteelDesignTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\CreateSteelDesignTask.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DesignTaskInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\DesignTaskInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CreateSteelDesignTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Icons\CreateSteelDesignTask.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="DesignTaskParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\DesignTaskParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
