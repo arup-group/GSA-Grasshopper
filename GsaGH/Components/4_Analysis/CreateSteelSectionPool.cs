@@ -33,15 +33,11 @@ namespace GsaGH.Components {
       int pid = 0;
       da.GetData(0, ref pid);
 
-
       GsaSectionGoo sectionGoo = null;
-      if (da.GetData(1, ref sectionGoo)) {
-        if (sectionGoo is GsaSectionGoo) {
-          var section = (GsaSectionGoo)sectionGoo.Duplicate();
-          section.Value.ApiSection.Pool = pid;
-          da.SetData(0, section);
-        }
-      }
+      da.GetData(1, ref sectionGoo) ;
+      var section = (GsaSectionGoo)sectionGoo.Duplicate();
+      section.Value.ApiSection.Pool = pid;
+      da.SetData(0, section);
     }
   }
 }
