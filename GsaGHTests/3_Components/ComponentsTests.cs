@@ -42,6 +42,7 @@ namespace GsaGHTests.Components {
     //Analysis
     [InlineData(typeof(AnalyseModel), 1)]
     [InlineData(typeof(CreateAnalysisTask), 1)]
+    [InlineData(typeof(CreateSteelDesignTask), 2)]
     //Results
     [InlineData(typeof(BeamDerivedStresses), 2)]
     [InlineData(typeof(BeamDisplacements), 2)]

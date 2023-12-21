@@ -673,6 +673,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CreateSteelDesignTask {
+            get {
+                object obj = ResourceManager.GetObject("CreateSteelDesignTask", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CreateSteelSectionPool {
             get {
                 object obj = ResourceManager.GetObject("CreateSteelSectionPool", resourceCulture);
@@ -686,6 +696,26 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap CreateSupport {
             get {
                 object obj = ResourceManager.GetObject("CreateSupport", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DesignTaskInfo {
+            get {
+                object obj = ResourceManager.GetObject("DesignTaskInfo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DesignTaskParam {
+            get {
+                object obj = ResourceManager.GetObject("DesignTaskParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

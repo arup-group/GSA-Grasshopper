@@ -157,10 +157,15 @@ namespace GsaGH.Helpers {
       List<GsaGridLine> gridLines = appendModel.GetGridLines();
       var gsaLoadCases =
         GsaLoadFactory.CreateLoadCasesFromApi(loadCases).Select(n => n.Value).ToList();
+      var designTasks = new List<IGsaDesignTask>();
+      foreach (SteelDesignTask designTask in appendModel.Model.SteelDesignTasks().Values) {
+        var kvp = new KeyValuePair<int, SteelDesignTask>(0, designTask);
+        designTasks.Add(new GsaSteelDesignTask(kvp, appendModel));
+      }
 
       var assembly = new ModelAssembly(mainModel, lists, gridLines, nodes, elem1ds, elem2ds,
         elem3ds, mem1ds, mem2ds, mem3ds, null, sections, prop2Ds, prop3Ds, springProps, loads, gps,
-        gsaLoadCases, null, null, mainModel.ModelUnit, tolerance, false, owner);
+        gsaLoadCases, null, null, designTasks, mainModel.ModelUnit, tolerance, false, owner);
       mainModel.Model = assembly.GetModel();
 
       return mainModel;

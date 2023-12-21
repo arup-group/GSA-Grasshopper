@@ -6,12 +6,13 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.GH {
   internal class InputsForModelAssembly {
-    internal static Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>> GetAnalysis(
+    internal static Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>, List<IGsaDesignTask>> GetAnalysis(
       GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(inputid, ghTypes)) {
-        var inTasks = new List<GsaAnalysisTask>();
+        var inAnalysisTasks = new List<GsaAnalysisTask>();
         var inComb = new List<GsaCombinationCase>();
+        var inDesignTasks = new List<IGsaDesignTask>();
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -22,11 +23,15 @@ namespace GsaGH.Helpers.GH {
 
           switch (ghTyp.Value) {
             case GsaAnalysisTaskGoo goo:
-              inTasks.Add(goo.Value);
+              inAnalysisTasks.Add(goo.Value);
               break;
 
             case GsaCombinationCaseGoo caseGoo:
               inComb.Add(caseGoo.Value);
+              break;
+
+            case GsaDesignTaskGoo designTaskGoo:
+              inDesignTasks.Add(designTaskGoo.Value);
               break;
 
             default: {
@@ -40,21 +45,26 @@ namespace GsaGH.Helpers.GH {
                     "cannot be added directly in a model";
                 }
                 owner.AddRuntimeError("Unable to convert Analysis input parameter of type " + type
-                  + " to Analysis Task or Combination Case");
+                  + " to Analysis Task, Design Task or Combination Case");
                 break;
               }
           }
         }
 
-        if (!(inTasks.Count > 0)) {
-          inTasks = null;
+        if (!(inAnalysisTasks.Count > 0)) {
+          inAnalysisTasks = null;
         }
 
         if (!(inComb.Count > 0)) {
           inComb = null;
         }
 
-        return new Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>>(inTasks, inComb);
+        if (!(inDesignTasks.Count > 0)) {
+          inDesignTasks = null;
+        }
+
+        return new Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>, List<IGsaDesignTask>>(
+          inAnalysisTasks, inComb, inDesignTasks);
       }
 
       if (!isOptional) {
@@ -62,7 +72,8 @@ namespace GsaGH.Helpers.GH {
           + " failed to collect data!");
       }
 
-      return new Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>>(null, null);
+      return new Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>, List<IGsaDesignTask>>(
+        null, null, null);
     }
 
     internal static
