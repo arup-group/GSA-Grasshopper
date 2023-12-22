@@ -123,7 +123,7 @@ namespace GsaGH.Components {
             break;
           }
 
-          // syncronise analysis layer after design task has updated sections
+          // synchronise analysis layer after design task has updated sections
           newModel.CreateElementsFromMembers();
           // re-run analysis, but only for tasks required for the combination case definition
           foreach (int analysisTaskId in analysisTaskIds) {
