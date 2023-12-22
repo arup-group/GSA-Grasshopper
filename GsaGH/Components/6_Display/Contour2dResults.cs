@@ -806,7 +806,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Footfall when result.CaseType == CaseType.AnalysisCase:
           _resType = "Response Factor [-]";
-          INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfallCache
+          IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> nodeFootfallCache
           = _selectedItems[1] == "Resonant"
             ? result.NodeResonantFootfalls
             : result.NodeTransientFootfalls;
@@ -815,7 +815,7 @@ namespace GsaGH.Components {
           ICollection<int> nodeIds;
           (values, nodeIds) = ResultsUtility.MapNodeResultToElements(
             elems, nodeFootfallCache, footfallSelector, permutation);
-          INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfall
+          IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> nodeFootfall
             = nodeFootfallCache.ResultSubset(nodeIds);
           dmax = nodeFootfall.GetExtrema(nodeFootfall.Max.MaximumResponseFactor).MaximumResponseFactor;
           dmin = nodeFootfall.GetExtrema(nodeFootfall.Min.MaximumResponseFactor).MaximumResponseFactor;

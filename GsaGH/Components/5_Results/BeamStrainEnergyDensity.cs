@@ -177,7 +177,7 @@ namespace GsaGH.Components {
 
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
         if (_average) {
-          INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet =
+          IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> resultSet =
             result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
           List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -197,7 +197,7 @@ namespace GsaGH.Components {
               }
             }
           } else {
-            NodeExtremaKey key = _selectedItems[0] == "Max" ? resultSet.Max : resultSet.Min;
+            Entity0dExtremaKey key = _selectedItems[0] == "Max" ? resultSet.Max : resultSet.Min;
             IEnergyDensity extrema = resultSet.GetExtrema(key);
             int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
             var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);

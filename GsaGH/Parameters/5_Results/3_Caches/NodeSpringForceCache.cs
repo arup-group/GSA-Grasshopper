@@ -7,7 +7,7 @@ using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class
-    NodeSpringForceCache : INodeResultCache<IReactionForce, ResultVector6<NodeExtremaKey>> {
+    NodeSpringForceCache : IEntity0dResultCache<IReactionForce, ResultVector6<Entity0dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
     public IDictionary<int, IList<IReactionForce>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IReactionForce>>();
@@ -20,7 +20,7 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> ResultSubset(
+    public IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> ResultSubset(
       ICollection<int> nodeIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(nodeIds);
 

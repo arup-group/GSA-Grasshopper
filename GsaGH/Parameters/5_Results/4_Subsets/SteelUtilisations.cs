@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace GsaGH.Parameters.Results {
-  public class Entity1dAverageStrainEnergyDensity : IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> {
+  public class SteelUtilisations : IEntity0dResultSubset<ISteelUtilisation, Entity0dExtremaKey> {
     public Entity0dExtremaKey Max { get; private set; }
     public Entity0dExtremaKey Min { get; private set; }
     public IList<int> Ids { get; private set; }
 
-    public IDictionary<int, IList<IEnergyDensity>> Subset { get; }
-      = new ConcurrentDictionary<int, IList<IEnergyDensity>>();
+    public IDictionary<int, IList<ISteelUtilisation>> Subset { get; }
+      = new ConcurrentDictionary<int, IList<ISteelUtilisation>>();
 
-    public Entity1dAverageStrainEnergyDensity(IDictionary<int, IList<IEnergyDensity>> results) {
+    public SteelUtilisations(IDictionary<int, IList<ISteelUtilisation>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
       (Max, Min) = results.GetEntity0dExtremaKeys();
     }
 
-    public IEnergyDensity GetExtrema(IExtremaKey key) {
+    public ISteelUtilisation GetExtrema(IExtremaKey key) {
       return Subset[key.Id][key.Permutation];
     }
   }

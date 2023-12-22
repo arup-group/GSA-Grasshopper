@@ -4,10 +4,10 @@ using OasysUnits;
 
 namespace GsaGHTests.Parameters.Results {
   public static class TestsResultHelper {
-    public static double ResultsHelper(INodeResultSubset<IInternalForce,
-      ResultVector6<NodeExtremaKey>> result, ResultVector6HelperEnum component, bool max) {
+    public static double ResultsHelper(IEntity0dResultSubset<IInternalForce,
+      ResultVector6<Entity0dExtremaKey>> result, ResultVector6HelperEnum component, bool max) {
       double d = 0;
-      ResultVector6<NodeExtremaKey> extrema = max ? result.Max : result.Min;
+      ResultVector6<Entity0dExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
         case ResultVector6HelperEnum.X:
           d = result.GetExtrema(extrema.X).X.Kilonewtons;
@@ -84,10 +84,10 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double? ResultsHelper(INodeResultSubset<IReactionForce,
-      ResultVector6<NodeExtremaKey>> result, ResultVector6HelperEnum component, bool max) {
+    public static double? ResultsHelper(IEntity0dResultSubset<IReactionForce,
+      ResultVector6<Entity0dExtremaKey>> result, ResultVector6HelperEnum component, bool max) {
       double? d = 0;
-      ResultVector6<NodeExtremaKey> extrema = max ? result.Max : result.Min;
+      ResultVector6<Entity0dExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
         case ResultVector6HelperEnum.X:
           d = ((Force)result.GetExtrema(extrema.X).X).Kilonewtons;
@@ -205,10 +205,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> result,
+      IEntity0dResultSubset<IDisplacement, ResultVector6<Entity0dExtremaKey>> result,
       ResultVector6HelperEnum component, bool max) {
       double d = 0;
-      ResultVector6<NodeExtremaKey> extrema = max ? result.Max : result.Min;
+      ResultVector6<Entity0dExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
         case ResultVector6HelperEnum.X:
           d = result.GetExtrema(extrema.X).X.Millimeters;
