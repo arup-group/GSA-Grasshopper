@@ -44,7 +44,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // if this test will fail, that means, you need to remember of adding new tests for stuff you added/removed
       Assert.Equal(27, propertiesCount);
-      Assert.Equal(58, methodsCount);
+      Assert.Equal(60, methodsCount);
       Assert.Equal(2, constructorsCount);
       Assert.Equal(0, eventCount);
       Assert.Equal(propertiesCount, fieldCount);
