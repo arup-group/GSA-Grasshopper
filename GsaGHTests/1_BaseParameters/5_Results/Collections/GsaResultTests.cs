@@ -33,7 +33,7 @@ namespace GsaGHTests.Parameters.Results {
     public void ClassHasValidNumberOfDeclaredElements() {
       TypeInfo t = typeof(GsaResult).GetTypeInfo();
       int propertiesCount = t.DeclaredProperties.Count();
-      int methodsCount = t.DeclaredMethods.Count(); // decalredProperties x 2 (get and set) + others 
+      int methodsCount = t.DeclaredMethods.Count(); // declaredProperties x 2 (get and set) + others 
       int constructorsCount = t.DeclaredConstructors.Count();
       int eventCount = t.DeclaredEvents.Count();
       int fieldCount = t.DeclaredFields.Count();
@@ -42,8 +42,8 @@ namespace GsaGHTests.Parameters.Results {
       int interfacesCount = t.ImplementedInterfaces.Count();
       int genericTypesCount = t.GenericTypeParameters.Count();
 
-      //if this test will fail, that means, you need to remember of adding new tests for stuff you added/removed
-      Assert.Equal(26, propertiesCount);
+      // if this test will fail, that means, you need to remember of adding new tests for stuff you added/removed
+      Assert.Equal(27, propertiesCount);
       Assert.Equal(58, methodsCount);
       Assert.Equal(2, constructorsCount);
       Assert.Equal(0, eventCount);
