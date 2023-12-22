@@ -8,7 +8,7 @@ using Xunit;
 
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class SteelDesignTaskTest {
+  public class SteelDesignAndTaskTest {
     public static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
 
@@ -19,7 +19,7 @@ namespace IntegrationTests.Parameters {
 
     [Fact]
     public void NoRuntimeErrorTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Error, "Error");
     }
 
     [Theory]
@@ -42,9 +42,29 @@ namespace IntegrationTests.Parameters {
     [InlineData("Primary2", "MinCost")]
     [InlineData("Secondary2", "MaxSustainability")]
     [InlineData("ListDefinition3", "all")]
-    public void Test(string groupIdentifier, object expected) {
+    public void SteelDesignTaskTest(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);
+    }
+
+    [Theory]
+    [InlineData("NoIterations", "Design Task succeeded with 2 changed section(s) and leaving 1 section(s) unchanged\nRemember to syncronise the changes to the Analysis layer!")]
+    [InlineData("Converged1", "Optimisation converged after 1 iteration(s) with 2 changed section(s) and leaving 1 section(s) unchanged")]
+    [InlineData("Converged2", "Optimisation converged after 2 iteration(s) with 3 changed section(s)")]
+    [InlineData("NotConverged", "Optimisation did not converge within 1 iterations with 3 changed section(s)")]
+    [InlineData("AnalysisError", "Section Library 2: material grade is undefined.")]
+    [InlineData("InefficiencyWarning", "\tMember 1 is inefficient. (Section utilisation is less than 0.5)")]
+    [InlineData("DesignTaskIdError", true)]
+    public void SteelDesignTest(string groupIdentifier, object expected) {
+      IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
+      Helper.TestGhPrimitives(param, expected);
+    }
+
+    [Fact]
+    public void CheckOptionTest() {
+      IGH_Param param = Helper.FindParameter(Document, "CheckOption");
+      var valOut = (GH_String)param.VolatileData.get_Branch(0)[0];
+      Assert.Contains("Option: Check", valOut.Value);
     }
 
     private static GH_Document OpenDocument() {
