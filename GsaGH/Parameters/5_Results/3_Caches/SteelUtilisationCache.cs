@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class SteelUtilisationCache : IEntity0dResultCache<ISteelUtilisation, Entity0dExtremaKey> {
+  public class SteelUtilisationCache : IEntity0dResultCache<ISteelUtilisation, SteelUtilisationExtremaKeys> {
     public IApiResult ApiResult { get; set; }
 
     public IDictionary<int, IList<ISteelUtilisation>> Cache { get; }
@@ -19,7 +19,7 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public IEntity0dResultSubset<ISteelUtilisation, Entity0dExtremaKey> ResultSubset(ICollection<int> elementIds) {
+    public IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> ResultSubset(ICollection<int> elementIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(elementIds);
       if (missingIds.Count > 0) {
         string elementList = string.Join(" ", missingIds);

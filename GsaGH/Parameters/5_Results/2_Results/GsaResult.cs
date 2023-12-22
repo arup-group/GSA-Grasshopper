@@ -115,7 +115,7 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
-    public IEntity0dResultCache<ISteelUtilisation, Entity0dExtremaKey> SteelUtilisations {
+    public IEntity0dResultCache<ISteelUtilisation, SteelUtilisationExtremaKeys> SteelUtilisations {
       get;
       private set;
     }

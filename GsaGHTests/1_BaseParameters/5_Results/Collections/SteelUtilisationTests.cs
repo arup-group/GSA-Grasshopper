@@ -20,7 +20,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(MemberList, 1);
-      IEntity0dResultSubset<ISteelUtilisation, Entity0dExtremaKey> resultSet
+      IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> resultSet
         = result.SteelUtilisations.ResultSubset(elementIds);
 
       // Assert 
@@ -35,7 +35,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(MemberList, 1);
-      IEntity0dResultSubset<ISteelUtilisation, Entity0dExtremaKey> resultSet
+      IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> resultSet
         = result.SteelUtilisations.ResultSubset(elementIds);
 
       // Assert 
@@ -44,61 +44,203 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Fact]
-    public void SteelUtilsationMaxFromCombinationCaseTest() {
+    public void SteelUtilsationMaxFromAnalysisCaseTest() {
       // Assemble
-      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
-      double expected = 1;
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(MemberList, 1);
-      IEntity0dResultSubset<ISteelUtilisation, Entity0dExtremaKey> resultSet
+      IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> resultSet
         = result.SteelUtilisations.ResultSubset(elementIds);
 
       // Assert
-      double max = ((Ratio)resultSet.GetExtrema(resultSet.Max).Overall).DecimalFractions;
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      double overall = ((Ratio)resultSet.GetExtrema(resultSet.Max.Overall).Overall).DecimalFractions;
+      double localCombined = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalCombined).LocalCombined).DecimalFractions;
+      double bucklingCombined = ((Ratio)resultSet.GetExtrema(resultSet.Max.BucklingCombined).BucklingCombined).DecimalFractions;
+      double localAxial = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalAxial).LocalAxial).DecimalFractions;
+      double localShearU = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalShearU).LocalShearU).DecimalFractions;
+      double localShearV = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalShearV).LocalShearV).DecimalFractions;
+      double localTorsion = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalTorsion).LocalTorsion).DecimalFractions;
+      double localMajorMoment = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalMajorMoment).LocalMajorMoment).DecimalFractions;
+      double localMinorMoment = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalMinorMoment).LocalMinorMoment).DecimalFractions;
+      double majorBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Max.MajorBuckling).MajorBuckling).DecimalFractions;
+      double minorBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Max.MinorBuckling).MinorBuckling).DecimalFractions;
+      double lateralTorsionalBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Max.LateralTorsionalBuckling).LateralTorsionalBuckling).DecimalFractions;
+      Assert.Equal(0.1499, ResultHelper.RoundToSignificantDigits(overall, 4));
+      Assert.Equal(0.1499, ResultHelper.RoundToSignificantDigits(localCombined, 4));
+      Assert.Equal(0.1421, ResultHelper.RoundToSignificantDigits(bucklingCombined, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localAxial, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localShearU, 4));
+      Assert.Equal(0.04847, ResultHelper.RoundToSignificantDigits(localShearV, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localTorsion, 4));
+      Assert.Equal(0.1499, ResultHelper.RoundToSignificantDigits(localMajorMoment, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localMinorMoment, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(majorBuckling, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(minorBuckling, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(lateralTorsionalBuckling, 4));
+      Assert.Null(resultSet.GetExtrema(resultSet.Max.TorsionalBuckling).TorsionalBuckling);
+      Assert.Null(resultSet.GetExtrema(resultSet.Max.FlexuralBuckling).FlexuralBuckling);
     }
 
     [Fact]
-    public void SteelUtilsationMinFromcombinationCaseTest() {
+    public void SteelUtilsationMaxFromCombinationCaseTest() {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
-      double expected = 1;
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(MemberList, 1);
-      IEntity0dResultSubset<ISteelUtilisation, Entity0dExtremaKey> resultSet
+      IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> resultSet
         = result.SteelUtilisations.ResultSubset(elementIds);
 
       // Assert
-      double min = ((Ratio)resultSet.GetExtrema(resultSet.Min).Overall).DecimalFractions;
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      double overall = ((Ratio)resultSet.GetExtrema(resultSet.Max.Overall).Overall).DecimalFractions;
+      double localCombined = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalCombined).LocalCombined).DecimalFractions;
+      double bucklingCombined = ((Ratio)resultSet.GetExtrema(resultSet.Max.BucklingCombined).BucklingCombined).DecimalFractions;
+      double localAxial = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalAxial).LocalAxial).DecimalFractions;
+      double localShearU = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalShearU).LocalShearU).DecimalFractions;
+      double localShearV = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalShearV).LocalShearV).DecimalFractions;
+      double localTorsion = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalTorsion).LocalTorsion).DecimalFractions;
+      double localMajorMoment = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalMajorMoment).LocalMajorMoment).DecimalFractions;
+      double localMinorMoment = ((Ratio)resultSet.GetExtrema(resultSet.Max.LocalMinorMoment).LocalMinorMoment).DecimalFractions;
+      double majorBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Max.MajorBuckling).MajorBuckling).DecimalFractions;
+      double minorBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Max.MinorBuckling).MinorBuckling).DecimalFractions;
+      double lateralTorsionalBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Max.LateralTorsionalBuckling).LateralTorsionalBuckling).DecimalFractions;
+      Assert.Equal(0.4017, ResultHelper.RoundToSignificantDigits(overall, 4));
+      Assert.Equal(0.4017, ResultHelper.RoundToSignificantDigits(localCombined, 4));
+      Assert.Equal(0.3716, ResultHelper.RoundToSignificantDigits(bucklingCombined, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localAxial, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localShearU, 4));
+      Assert.Equal(0.09888, ResultHelper.RoundToSignificantDigits(localShearV, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localTorsion, 4));
+      Assert.Equal(0.4017, ResultHelper.RoundToSignificantDigits(localMajorMoment, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localMinorMoment, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(majorBuckling, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(minorBuckling, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(lateralTorsionalBuckling, 4));
+      Assert.Null(resultSet.GetExtrema(resultSet.Max.TorsionalBuckling).TorsionalBuckling);
+      Assert.Null(resultSet.GetExtrema(resultSet.Max.FlexuralBuckling).FlexuralBuckling);
     }
+
+    [Fact]
+    public void SteelUtilsationMinFromAnalysisCaseTest() {
+      // Assemble
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 2);
+
+      // Act
+      ReadOnlyCollection<int> elementIds = result.ElementIds(MemberList, 1);
+      IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> resultSet
+        = result.SteelUtilisations.ResultSubset(elementIds);
+
+      // Assert
+      double overall = ((Ratio)resultSet.GetExtrema(resultSet.Min.Overall).Overall).DecimalFractions;
+      double localCombined = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalCombined).LocalCombined).DecimalFractions;
+      double bucklingCombined = ((Ratio)resultSet.GetExtrema(resultSet.Min.BucklingCombined).BucklingCombined).DecimalFractions;
+      double localAxial = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalAxial).LocalAxial).DecimalFractions;
+      double localShearU = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalShearU).LocalShearU).DecimalFractions;
+      double localShearV = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalShearV).LocalShearV).DecimalFractions;
+      double localTorsion = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalTorsion).LocalTorsion).DecimalFractions;
+      double localMajorMoment = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalMajorMoment).LocalMajorMoment).DecimalFractions;
+      double localMinorMoment = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalMinorMoment).LocalMinorMoment).DecimalFractions;
+      double majorBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Min.MajorBuckling).MajorBuckling).DecimalFractions;
+      double minorBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Min.MinorBuckling).MinorBuckling).DecimalFractions;
+      double lateralTorsionalBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Min.LateralTorsionalBuckling).LateralTorsionalBuckling).DecimalFractions;
+      Assert.Equal(0.1199, ResultHelper.RoundToSignificantDigits(overall, 4));
+      Assert.Equal(0.1199, ResultHelper.RoundToSignificantDigits(localCombined, 4));
+      Assert.Equal(0.1079, ResultHelper.RoundToSignificantDigits(bucklingCombined, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localAxial, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localShearU, 4));
+      Assert.Equal(0.01939, ResultHelper.RoundToSignificantDigits(localShearV, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localTorsion, 4));
+      Assert.Equal(0.1199, ResultHelper.RoundToSignificantDigits(localMajorMoment, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localMinorMoment, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(majorBuckling, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(minorBuckling, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(lateralTorsionalBuckling, 4));
+      Assert.Null(resultSet.GetExtrema(resultSet.Min.TorsionalBuckling).TorsionalBuckling);
+      Assert.Null(resultSet.GetExtrema(resultSet.Min.FlexuralBuckling).FlexuralBuckling);
+    }
+
+    [Fact]
+    public void SteelUtilsationMinFromCombinationCaseTest() {
+      // Assemble
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
+
+      // Act
+      ReadOnlyCollection<int> elementIds = result.ElementIds(MemberList, 1);
+      IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> resultSet
+        = result.SteelUtilisations.ResultSubset(elementIds);
+
+      // Assert
+      double overall = ((Ratio)resultSet.GetExtrema(resultSet.Min.Overall).Overall).DecimalFractions;
+      double localCombined = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalCombined).LocalCombined).DecimalFractions;
+      double bucklingCombined = ((Ratio)resultSet.GetExtrema(resultSet.Min.BucklingCombined).BucklingCombined).DecimalFractions;
+      double localAxial = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalAxial).LocalAxial).DecimalFractions;
+      double localShearU = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalShearU).LocalShearU).DecimalFractions;
+      double localShearV = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalShearV).LocalShearV).DecimalFractions;
+      double localTorsion = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalTorsion).LocalTorsion).DecimalFractions;
+      double localMajorMoment = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalMajorMoment).LocalMajorMoment).DecimalFractions;
+      double localMinorMoment = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalMinorMoment).LocalMinorMoment).DecimalFractions;
+      double majorBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Min.MajorBuckling).MajorBuckling).DecimalFractions;
+      double minorBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Min.MinorBuckling).MinorBuckling).DecimalFractions;
+      double lateralTorsionalBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Min.LateralTorsionalBuckling).LateralTorsionalBuckling).DecimalFractions;
+      Assert.Equal(0.4017, ResultHelper.RoundToSignificantDigits(overall, 4));
+      Assert.Equal(0.4017, ResultHelper.RoundToSignificantDigits(localCombined, 4));
+      Assert.Equal(0.3716, ResultHelper.RoundToSignificantDigits(bucklingCombined, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localAxial, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localShearU, 4));
+      Assert.Equal(0.09888, ResultHelper.RoundToSignificantDigits(localShearV, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localTorsion, 4));
+      Assert.Equal(0.4017, ResultHelper.RoundToSignificantDigits(localMajorMoment, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localMinorMoment, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(majorBuckling, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(minorBuckling, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(lateralTorsionalBuckling, 4));
+      Assert.Null(resultSet.GetExtrema(resultSet.Max.TorsionalBuckling).TorsionalBuckling);
+      Assert.Null(resultSet.GetExtrema(resultSet.Max.FlexuralBuckling).FlexuralBuckling);
+    }
+
+
+
+
 
     [Fact]
     public void SteelUtilsationValuesFromCombinationCaseTest() {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
-      List<double> expectedP1 = Element1dAverageStrainEnergyDensity.C4p1EnergyInkJ();
-      List<double> expectedP2 = Element1dAverageStrainEnergyDensity.C4p2EnergyInkJ();
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(MemberList, 1);
-      IEntity0dResultSubset<ISteelUtilisation, Entity0dExtremaKey> resultSet
+      IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> resultSet
         = result.SteelUtilisations.ResultSubset(elementIds);
 
       // Assert 
-      int i = 0;
-      foreach (int id in resultSet.Ids) {
-        IList<ISteelUtilisation> utilisations = resultSet.Subset[id];
-
-        Assert.Equal(2, utilisations.Count);
-
-        double perm1 = ((Ratio)utilisations[0].Overall).DecimalFractions;
-        Assert.Equal(expectedP1[i], ResultHelper.RoundToSignificantDigits(perm1, 4));
-        double perm2 = ((Ratio)utilisations[1].Overall).DecimalFractions;
-        Assert.Equal(expectedP2[i++], ResultHelper.RoundToSignificantDigits(perm2, 4));
-      }
+      IList<ISteelUtilisation> utilisations = resultSet.Subset[1];
+      double overall = ((Ratio)resultSet.GetExtrema(resultSet.Min.Overall).Overall).DecimalFractions;
+      double localCombined = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalCombined).LocalCombined).DecimalFractions;
+      double bucklingCombined = ((Ratio)resultSet.GetExtrema(resultSet.Min.BucklingCombined).BucklingCombined).DecimalFractions;
+      double localAxial = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalAxial).LocalAxial).DecimalFractions;
+      double localShearU = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalShearU).LocalShearU).DecimalFractions;
+      double localShearV = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalShearV).LocalShearV).DecimalFractions;
+      double localTorsion = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalTorsion).LocalTorsion).DecimalFractions;
+      double localMajorMoment = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalMajorMoment).LocalMajorMoment).DecimalFractions;
+      double localMinorMoment = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalMinorMoment).LocalMinorMoment).DecimalFractions;
+      double majorBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Min.MajorBuckling).MajorBuckling).DecimalFractions;
+      double minorBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Min.MinorBuckling).MinorBuckling).DecimalFractions;
+      double lateralTorsionalBuckling = ((Ratio)resultSet.GetExtrema(resultSet.Min.LateralTorsionalBuckling).LateralTorsionalBuckling).DecimalFractions;
+      Assert.Equal(0.4017, ResultHelper.RoundToSignificantDigits(overall, 4));
+      Assert.Equal(0.4017, ResultHelper.RoundToSignificantDigits(localCombined, 4));
+      Assert.Equal(0.3716, ResultHelper.RoundToSignificantDigits(bucklingCombined, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localAxial, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localShearU, 4));
+      Assert.Equal(0.09888, ResultHelper.RoundToSignificantDigits(localShearV, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localTorsion, 4));
+      Assert.Equal(0.4017, ResultHelper.RoundToSignificantDigits(localMajorMoment, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(localMinorMoment, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(majorBuckling, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(minorBuckling, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(lateralTorsionalBuckling, 4));
+      Assert.Null(resultSet.GetExtrema(resultSet.Max.TorsionalBuckling).TorsionalBuckling);
+      Assert.Null(resultSet.GetExtrema(resultSet.Max.FlexuralBuckling).FlexuralBuckling);
     }
   }
 }

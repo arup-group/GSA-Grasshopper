@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace GsaGH.Parameters.Results {
-  public class SteelUtilisations : IEntity0dResultSubset<ISteelUtilisation, Entity0dExtremaKey> {
-    public Entity0dExtremaKey Max { get; private set; }
-    public Entity0dExtremaKey Min { get; private set; }
+  public class SteelUtilisations : IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> {
+    public SteelUtilisationExtremaKeys Max { get; private set; }
+    public SteelUtilisationExtremaKeys Min { get; private set; }
     public IList<int> Ids { get; private set; }
 
     public IDictionary<int, IList<ISteelUtilisation>> Subset { get; }

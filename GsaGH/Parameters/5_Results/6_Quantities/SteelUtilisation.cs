@@ -1,5 +1,4 @@
 ﻿using GsaAPI;
-using Newtonsoft.Json.Linq;
 using OasysUnits;
 using OasysUnits.Units;
 

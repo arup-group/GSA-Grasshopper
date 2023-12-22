@@ -42,11 +42,11 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultDerivedStress1dHelperEnum.ShearY)]
-    [InlineData(ResultDerivedStress1dHelperEnum.ShearZ)]
-    [InlineData(ResultDerivedStress1dHelperEnum.Torsion)]
-    [InlineData(ResultDerivedStress1dHelperEnum.VonMises)]
-    public void Element1dStresssMaxFromAnalysisCaseTest(ResultDerivedStress1dHelperEnum component) {
+    [InlineData(ResultDerivedStress1d.ShearY)]
+    [InlineData(ResultDerivedStress1d.ShearZ)]
+    [InlineData(ResultDerivedStress1d.Torsion)]
+    [InlineData(ResultDerivedStress1d.VonMises)]
+    public void Element1dStresssMaxFromAnalysisCaseTest(ResultDerivedStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
@@ -62,11 +62,11 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultDerivedStress1dHelperEnum.ShearY)]
-    [InlineData(ResultDerivedStress1dHelperEnum.ShearZ)]
-    [InlineData(ResultDerivedStress1dHelperEnum.Torsion)]
-    [InlineData(ResultDerivedStress1dHelperEnum.VonMises)]
-    public void Element1dStresssMaxFromCombinationCaseTest(ResultDerivedStress1dHelperEnum component) {
+    [InlineData(ResultDerivedStress1d.ShearY)]
+    [InlineData(ResultDerivedStress1d.ShearZ)]
+    [InlineData(ResultDerivedStress1d.Torsion)]
+    [InlineData(ResultDerivedStress1d.VonMises)]
+    public void Element1dStresssMaxFromCombinationCaseTest(ResultDerivedStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Max(ExpectedCombinationCaseC4p1Values(component).Max(),
@@ -83,11 +83,11 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultDerivedStress1dHelperEnum.ShearY)]
-    [InlineData(ResultDerivedStress1dHelperEnum.ShearZ)]
-    [InlineData(ResultDerivedStress1dHelperEnum.Torsion)]
-    [InlineData(ResultDerivedStress1dHelperEnum.VonMises)]
-    public void Element1dStresssMinFromAnalysisCaseTest(ResultDerivedStress1dHelperEnum component) {
+    [InlineData(ResultDerivedStress1d.ShearY)]
+    [InlineData(ResultDerivedStress1d.ShearZ)]
+    [InlineData(ResultDerivedStress1d.Torsion)]
+    [InlineData(ResultDerivedStress1d.VonMises)]
+    public void Element1dStresssMinFromAnalysisCaseTest(ResultDerivedStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
@@ -103,11 +103,11 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultDerivedStress1dHelperEnum.ShearY)]
-    [InlineData(ResultDerivedStress1dHelperEnum.ShearZ)]
-    [InlineData(ResultDerivedStress1dHelperEnum.Torsion)]
-    [InlineData(ResultDerivedStress1dHelperEnum.VonMises)]
-    public void Element1dStresssMinFromcombinationCaseTest(ResultDerivedStress1dHelperEnum component) {
+    [InlineData(ResultDerivedStress1d.ShearY)]
+    [InlineData(ResultDerivedStress1d.ShearZ)]
+    [InlineData(ResultDerivedStress1d.Torsion)]
+    [InlineData(ResultDerivedStress1d.VonMises)]
+    public void Element1dStresssMinFromcombinationCaseTest(ResultDerivedStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Min(ExpectedCombinationCaseC4p1Values(component).Min(),
@@ -124,11 +124,11 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultDerivedStress1dHelperEnum.ShearY)]
-    [InlineData(ResultDerivedStress1dHelperEnum.ShearZ)]
-    [InlineData(ResultDerivedStress1dHelperEnum.Torsion)]
-    [InlineData(ResultDerivedStress1dHelperEnum.VonMises)]
-    public void Element1dStresssValuesFromAnalysisCaseTest(ResultDerivedStress1dHelperEnum component) {
+    [InlineData(ResultDerivedStress1d.ShearY)]
+    [InlineData(ResultDerivedStress1d.ShearZ)]
+    [InlineData(ResultDerivedStress1d.Torsion)]
+    [InlineData(ResultDerivedStress1d.VonMises)]
+    public void Element1dStresssValuesFromAnalysisCaseTest(ResultDerivedStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
@@ -156,11 +156,11 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultDerivedStress1dHelperEnum.ShearY)]
-    [InlineData(ResultDerivedStress1dHelperEnum.ShearZ)]
-    [InlineData(ResultDerivedStress1dHelperEnum.Torsion)]
-    [InlineData(ResultDerivedStress1dHelperEnum.VonMises)]
-    public void Element1dStresssValuesFromCombinationCaseTest(ResultDerivedStress1dHelperEnum component) {
+    [InlineData(ResultDerivedStress1d.ShearY)]
+    [InlineData(ResultDerivedStress1d.ShearZ)]
+    [InlineData(ResultDerivedStress1d.Torsion)]
+    [InlineData(ResultDerivedStress1d.VonMises)]
+    public void Element1dStresssValuesFromCombinationCaseTest(ResultDerivedStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       List<double> expectedP1 = ExpectedCombinationCaseC4p1Values(component);
@@ -191,43 +191,43 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
-    private List<double> ExpectedAnalysisCaseValues(ResultDerivedStress1dHelperEnum component) {
+    private List<double> ExpectedAnalysisCaseValues(ResultDerivedStress1d component) {
       switch (component) {
-        case ResultDerivedStress1dHelperEnum.ShearY: return Element1dDerivedStressA1.SEyInMPa();
+        case ResultDerivedStress1d.ShearY: return Element1dDerivedStressA1.SEyInMPa();
 
-        case ResultDerivedStress1dHelperEnum.ShearZ: return Element1dDerivedStressA1.SEzInMPa();
+        case ResultDerivedStress1d.ShearZ: return Element1dDerivedStressA1.SEzInMPa();
 
-        case ResultDerivedStress1dHelperEnum.Torsion: return Element1dDerivedStressA1.StInMPa();
+        case ResultDerivedStress1d.Torsion: return Element1dDerivedStressA1.StInMPa();
 
-        case ResultDerivedStress1dHelperEnum.VonMises: return Element1dDerivedStressA1.VonMisesInMPa();
+        case ResultDerivedStress1d.VonMises: return Element1dDerivedStressA1.VonMisesInMPa();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p1Values(ResultDerivedStress1dHelperEnum component) {
+    private List<double> ExpectedCombinationCaseC4p1Values(ResultDerivedStress1d component) {
       switch (component) {
-        case ResultDerivedStress1dHelperEnum.ShearY: return Element1dDerivedStressC4p1.SEyInMPa();
+        case ResultDerivedStress1d.ShearY: return Element1dDerivedStressC4p1.SEyInMPa();
 
-        case ResultDerivedStress1dHelperEnum.ShearZ: return Element1dDerivedStressC4p1.SEzInMPa();
+        case ResultDerivedStress1d.ShearZ: return Element1dDerivedStressC4p1.SEzInMPa();
 
-        case ResultDerivedStress1dHelperEnum.Torsion: return Element1dDerivedStressC4p1.StInMPa();
+        case ResultDerivedStress1d.Torsion: return Element1dDerivedStressC4p1.StInMPa();
 
-        case ResultDerivedStress1dHelperEnum.VonMises: return Element1dDerivedStressC4p1.VonMisesInMPa();
+        case ResultDerivedStress1d.VonMises: return Element1dDerivedStressC4p1.VonMisesInMPa();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p2Values(ResultDerivedStress1dHelperEnum component) {
+    private List<double> ExpectedCombinationCaseC4p2Values(ResultDerivedStress1d component) {
       switch (component) {
-        case ResultDerivedStress1dHelperEnum.ShearY: return Element1dDerivedStressC4p2.SEyInMPa();
+        case ResultDerivedStress1d.ShearY: return Element1dDerivedStressC4p2.SEyInMPa();
 
-        case ResultDerivedStress1dHelperEnum.ShearZ: return Element1dDerivedStressC4p2.SEzInMPa();
+        case ResultDerivedStress1d.ShearZ: return Element1dDerivedStressC4p2.SEzInMPa();
 
-        case ResultDerivedStress1dHelperEnum.Torsion: return Element1dDerivedStressC4p2.StInMPa();
+        case ResultDerivedStress1d.Torsion: return Element1dDerivedStressC4p2.StInMPa();
 
-        case ResultDerivedStress1dHelperEnum.VonMises: return Element1dDerivedStressC4p2.VonMisesInMPa();
+        case ResultDerivedStress1d.VonMises: return Element1dDerivedStressC4p2.VonMisesInMPa();
       }
 
       throw new NotImplementedException();

@@ -1,10 +1,12 @@
 ﻿namespace GsaGHTests.Parameters.Results {
-  public enum ResultTensor3HelperEnum {
+  public enum ResultVector6 {
+    X,
+    Y,
+    Z,
+    Xyz,
     Xx,
     Yy,
     Zz,
-    Xy,
-    Yz,
-    Zx
+    Xxyyzz,
   }
 }
