@@ -162,7 +162,7 @@ namespace GsaGH.Components {
           }
 
           string sync = (iterations == 0 && changedSections > 0)
-            ? "\nRemember to syncronise the changes to the Analysis layer!"
+            ? "\nRemember to synchronise the changes to the Analysis layer!"
             : string.Empty;
           string noChanges = notChangedSections == 0
             ? string.Empty
