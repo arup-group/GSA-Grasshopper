@@ -14,7 +14,7 @@ namespace GsaGH.Parameters.Results {
     public SteelUtilisations(IDictionary<int, IList<ISteelUtilisation>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
-      (Max, Min) = results.GetEntity0dExtremaKeys();
+      (Max, Min) = results.GetSteelUtilisationExtremaKeys();
     }
 
     public ISteelUtilisation GetExtrema(IExtremaKey key) {

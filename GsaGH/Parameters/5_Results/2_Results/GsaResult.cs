@@ -225,7 +225,9 @@ namespace GsaGH.Parameters.Results {
       
       Member1dInternalForces = new Member1dInternalForceCache(result);
       Member1dDisplacements = new Member1dDisplacementCache(result);
-      
+
+      SteelUtilisations = new SteelUtilisationCache(result);
+
       GlobalResults = new GlobalResultsCache(result);
 
       Model = model;
@@ -262,6 +264,8 @@ namespace GsaGH.Parameters.Results {
 
       Member1dDisplacements = new Member1dDisplacementCache(result);
       Member1dInternalForces = new Member1dInternalForceCache(result);
+
+      SteelUtilisations = new SteelUtilisationCache(result);
 
       Model = model;
       CaseType = CaseType.CombinationCase;
