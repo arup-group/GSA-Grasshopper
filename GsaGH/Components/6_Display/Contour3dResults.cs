@@ -382,6 +382,7 @@ namespace GsaGH.Components {
       string elementlist = "All";
       var ghTyp = new GH_ObjectWrapper();
       da.GetData(0, ref ghTyp);
+      bool enveloped = false;
       switch (ghTyp?.Value) {
         case GsaResultGoo goo:
           result = (GsaResult)goo.Value;
@@ -396,6 +397,7 @@ namespace GsaGH.Components {
               Message = _envelopeType.ToString();
               _case = $"Case C{result.CaseId} ({result.SelectedPermutationIds.Count} perm.)" +
                 "\n" + ResultsUtility.EnvelopeMethodAbbreviated(_envelopeType);
+              enveloped = true;
               break;
 
             case CaseType.CombinationCase:
@@ -543,6 +545,11 @@ namespace GsaGH.Components {
         List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
         significantDigits = (int)rounded[2];
       } else {
+        if (enveloped) {
+          dmax = values.Values.ToList().Max().Max().Value;
+          dmin = values.Values.ToList().Min().Min().Value;
+        }
+
         List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
         dmax = rounded[0];
         dmin = rounded[1];
