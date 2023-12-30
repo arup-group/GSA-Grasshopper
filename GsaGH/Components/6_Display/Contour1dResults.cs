@@ -571,15 +571,14 @@ namespace GsaGH.Components {
         case GsaResultGoo goo:
           result = (GsaResult)goo.Value;
           elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
-          Message = string.Empty;
           switch (result.CaseType) {
             case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
               this.AddRuntimeRemark("Combination Case " + result.CaseId + " contains "
                 + result.SelectedPermutationIds.Count
                 + $" permutations which have been enveloped using {_envelopeType} method."
                 + Environment.NewLine
-                + "Change the envelope method by right-clicking the component");
-              Message = _envelopeType.ToString();
+                + "Change the enveloping method by right-clicking the component.");
+              Message = $"{Message} \n{_envelopeType}";
               _case = $"Case C{result.CaseId} ({result.SelectedPermutationIds.Count} perm.)" +
                 "\n" + ResultsUtility.EnvelopeMethodAbbreviated(_envelopeType);
               enveloped = true;

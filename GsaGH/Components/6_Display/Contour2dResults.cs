@@ -567,16 +567,14 @@ namespace GsaGH.Components {
         case GsaResultGoo goo:
           result = (GsaResult)goo.Value;
           elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
-          Message = string.Empty;
           switch (result.CaseType) {
             case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
               this.AddRuntimeRemark("Combination Case " + result.CaseId + " contains "
                 + result.SelectedPermutationIds.Count
                 + $" permutations which have been enveloped using {_envelopeType} method."
                 + Environment.NewLine
-                + "Change the envelope method by right-clicking the component");
-              Message = _envelopeType.ToString();
-              Message = _envelopeType.ToString();
+                + "Change the enveloping method by right-clicking the component.");
+              Message = $"{Message} \n{_envelopeType}";
               _case = $"Case C{result.CaseId} ({result.SelectedPermutationIds.Count} perm.)" +
                 "\n" + ResultsUtility.EnvelopeMethodAbbreviated(_envelopeType);
               enveloped = true;
@@ -987,21 +985,18 @@ namespace GsaGH.Components {
                 var displacement = new Length(t, _lengthResultUnit);
                 _legendValues.Add(displacement.ToString("f" + significantDigits));
                 ts.Add(new GH_UnitNumber(displacement));
-                Message = Length.GetAbbreviation(_lengthResultUnit);
                 break;
               }
               case FoldMode.Displacement: {
                 var rotation = new Angle(t, AngleUnit.Radian);
                 _legendValues.Add(rotation.ToString("s" + significantDigits));
                 ts.Add(new GH_UnitNumber(rotation));
-                Message = Angle.GetAbbreviation(AngleUnit.Radian);
                 break;
               }
               case FoldMode.Force when ((int)_disp < 3) | _isShear: {
                 var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
                 _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
                 ts.Add(new GH_UnitNumber(forcePerLength));
-                Message = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
                 break;
               }
               case FoldMode.Force: {
@@ -1010,8 +1005,6 @@ namespace GsaGH.Components {
                     "s" + significantDigits) + "/" + Length.GetAbbreviation(lengthUnit));
                 var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
                 ts.Add(new GH_UnitNumber(moment));
-                Message = Moment.GetAbbreviation(UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit))
-                  + "/" + Length.GetAbbreviation(lengthUnit);
                 break;
               }
               case FoldMode.Stress: {
@@ -1025,7 +1018,6 @@ namespace GsaGH.Components {
                 var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
                 _legendValues.Add(responseFactor.ToString("s" + significantDigits));
                 ts.Add(new GH_UnitNumber(responseFactor));
-                Message = string.Empty;
                 break;
               }
             }

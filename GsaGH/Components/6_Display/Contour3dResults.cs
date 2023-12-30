@@ -393,8 +393,8 @@ namespace GsaGH.Components {
                 + result.SelectedPermutationIds.Count
                 + $" permutations which have been enveloped using {_envelopeType} method."
                 + Environment.NewLine
-                + "Change the envelope method by right-clicking the component");
-              Message = _envelopeType.ToString();
+                + "Change the enveloping method by right-clicking the component.");
+              Message = $"{Message} \n{_envelopeType}";
               _case = $"Case C{result.CaseId} ({result.SelectedPermutationIds.Count} perm.)" +
                 "\n" + ResultsUtility.EnvelopeMethodAbbreviated(_envelopeType);
               enveloped = true;
@@ -675,21 +675,18 @@ namespace GsaGH.Components {
               var displacement = new Length(t, _lengthResultUnit);
               _legendValues.Add(displacement.ToString("f" + significantDigits));
               ts.Add(new GH_UnitNumber(displacement));
-              Message = Length.GetAbbreviation(_lengthResultUnit);
               break;
             }
           case FoldMode.Displacement: {
               var rotation = new Angle(t, AngleUnit.Radian);
               _legendValues.Add(rotation.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(rotation));
-              Message = Angle.GetAbbreviation(AngleUnit.Radian);
               break;
             }
           case FoldMode.Stress: {
               var stress = new Pressure(t, _stressUnitResult);
               _legendValues.Add(stress.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(stress));
-              Message = Pressure.GetAbbreviation(_stressUnitResult);
               break;
             }
         }

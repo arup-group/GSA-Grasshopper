@@ -455,8 +455,8 @@ namespace GsaGH.Components {
                 + result.SelectedPermutationIds.Count
                 + $" permutations which have been enveloped using {_envelopeType} method."
                 + Environment.NewLine
-                + "Change the envelope method by right-clicking the component");
-              Message = _envelopeType.ToString();
+                + "Change the enveloping method by right-clicking the component.");
+              Message = $"{Message} \n{_envelopeType}";
               _case = $"Case C{result.CaseId} ({result.SelectedPermutationIds.Count} perm.)" +
                 "\n" + ResultsUtility.EnvelopeMethodAbbreviated(_envelopeType);
               enveloped = true;
@@ -870,7 +870,6 @@ namespace GsaGH.Components {
             var reactionForce = new Force(t, _forceUnit);
             _legendValues.Add(reactionForce.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(reactionForce));
-            Message = Force.GetAbbreviation(_forceUnit);
             break;
 
           case FoldMode.Reaction:
@@ -878,14 +877,12 @@ namespace GsaGH.Components {
             var reactionMoment = new Moment(t, _momentUnit);
             _legendValues.Add(reactionMoment.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(reactionMoment));
-            Message = Moment.GetAbbreviation(_momentUnit);
             break;
 
           case FoldMode.Footfall:
             var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
             _legendValues.Add(responseFactor.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(responseFactor));
-            Message = string.Empty;
             break;
         }
 

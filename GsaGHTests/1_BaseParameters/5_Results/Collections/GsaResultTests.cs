@@ -143,7 +143,7 @@ namespace GsaGHTests.Parameters.Results {
       GsaResult result = isAnalysisCase ? (GsaResult)AnalysisCaseResult(GsaFile.SteelDesignSimple, 1) :
         (GsaResult)CombinationCaseResult(GsaFile.SteelDesignSimple, 1, new List<int>(){1,2,3,});
 
-      string expectedString = isAnalysisCase ? "A1": "C1 P:3";
+      string expectedString = isAnalysisCase ? "A1 'DL'": "C1 (3 permutations) 'ULS'";
 
       Assert.Equal(expectedString, result.ToString());
     }
