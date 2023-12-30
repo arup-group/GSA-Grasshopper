@@ -97,6 +97,7 @@ namespace GsaGH.Components {
     private bool _showLegend = true;
     private bool _slider = true;
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
+    private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
 
     public Contour3dResults() : base("Contour 3D Results", "Contour3D",
       "Displays GSA 3D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -145,6 +146,11 @@ namespace GsaGH.Components {
       _showLegend = reader.GetBoolean("legend");
       if (reader.ItemExists("legendScale")) {
         _legendScale = reader.GetDouble("legendScale");
+      }
+
+      if (reader.ItemExists("envelope")) {
+        _envelopeType = (EnvelopeMethod)Enum.Parse(
+          typeof(EnvelopeMethod), reader.GetString("envelope"));
       }
 
       _lengthResultUnit
@@ -260,6 +266,7 @@ namespace GsaGH.Components {
       writer.SetBoolean("legend", _showLegend);
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("stress", Pressure.GetAbbreviation(_stressUnitResult));
+      writer.SetString("envelope", _envelopeType.ToString());
       return base.Write(writer);
     }
 
@@ -269,6 +276,10 @@ namespace GsaGH.Components {
       }
 
       Menu_AppendSeparator(menu);
+
+      ToolStripMenuItem envelopeMenu = GenerateToolStripMenuItem.GetEnvelopeSubMenuItem(_envelopeType, UpdateEnvelope);
+      menu.Items.Add(envelopeMenu);
+
       Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
 
       var gradient = new GH_GradientControl();
@@ -377,12 +388,14 @@ namespace GsaGH.Components {
           elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
           switch (result.CaseType) {
             case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
-              this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
+              this.AddRuntimeRemark("Combination Case " + result.CaseId + " contains "
                 + result.SelectedPermutationIds.Count
-                + " permutations - only one permutation can be displayed at a time."
+                + $" permutations which have been enveloped using {_envelopeType} method."
                 + Environment.NewLine
-                + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
-              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+                + "Change the envelope method by right-clicking the component");
+              Message = _envelopeType.ToString();
+              _case = $"Case C{result.CaseId} ({result.SelectedPermutationIds.Count} perm.)" +
+                "\n" + ResultsUtility.EnvelopeMethodAbbreviated(_envelopeType);
               break;
 
             case CaseType.CombinationCase:
@@ -425,8 +438,6 @@ namespace GsaGH.Components {
       }
 
       ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 3);
-      int permutation = result.SelectedPermutationIds == null
-        ? 0 : result.SelectedPermutationIds[0] - 1;
       double dmax = 0;
       double dmin = 0;
       ConcurrentDictionary<int, IList<IQuantity>> values = null;
@@ -464,12 +475,12 @@ namespace GsaGH.Components {
               dmax = displacements.GetExtrema(displacements.Max.Xyz).Xyz.As(_lengthResultUnit);
               dmin = displacements.GetExtrema(displacements.Min.Xyz).Xyz.As(_lengthResultUnit);
               translationSelector = (r) => r.Xyz.ToUnit(_lengthResultUnit);
-              valuesXyz = ResultsUtility.GetResultResultanTranslation(
-                displacements.Subset, lengthUnit, permutation);
+              valuesXyz = ResultsUtility.GetResultResultantTranslation(
+                displacements.Subset, lengthUnit, _envelopeType);
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(displacements.Subset, translationSelector, permutation);
+          values = ResultsUtility.GetResultComponent(displacements.Subset, translationSelector, _envelopeType);
           break;
 
         case FoldMode.Stress:
@@ -521,7 +532,7 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(stresses.Subset, stressSelector, permutation);
+          values = ResultsUtility.GetResultComponent(stresses.Subset, stressSelector, _envelopeType);
           break;
       }
 
@@ -741,6 +752,12 @@ namespace GsaGH.Components {
     internal void ShowLegend(object sender, EventArgs e) {
       _showLegend = !_showLegend;
       ExpirePreview(true);
+    }
+
+    internal void UpdateEnvelope(string type) {
+      _envelopeType = (EnvelopeMethod)Enum.Parse(typeof(EnvelopeMethod), type);
+      ExpirePreview(true);
+      base.UpdateUI();
     }
 
     private void StressModeClicked() {

@@ -141,11 +141,16 @@ namespace GsaGH.Parameters.Results {
         case CaseType.CombinationCase:
           txt = "C" + CaseId;
           if (SelectedPermutationIds.Count > 0) {
-            txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count :
+            txt = SelectedPermutationIds.Count > 1 
+              ? $"{txt} ({SelectedPermutationIds.Count} permutations)" :
               txt + " p" + SelectedPermutationIds[0];
           }
 
           break;
+      }
+
+      if (!string.IsNullOrEmpty(CaseName)) {
+        txt = $"{txt} '{CaseName}'";
       }
 
       return txt.TrimSpaces();
