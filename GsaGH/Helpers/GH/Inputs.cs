@@ -418,10 +418,10 @@ namespace GsaGH.Helpers.GH {
               IGH_Param newInput = Instances.ActiveCanvas.Document.FindParameter(connect);
               owner.Params.Input[0].AddSource(newInput);
               return null;
+            } else {
+              owner.AddRuntimeError("Error converting input to GSA Result");
+              return null;
             }
-          } else {
-            owner.AddRuntimeError("Error converting input to GSA Result");
-            return null;
           }
 
           return result;
