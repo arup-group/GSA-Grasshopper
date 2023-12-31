@@ -915,8 +915,8 @@ namespace GsaGH.Components {
         significantDigits = (int)rounded[2];
       } else {
         if (enveloped) {
-          dmax = values.Values.ToList().Max().Max().Value;
-          dmin = values.Values.ToList().Min().Min().Value;
+          dmax = values.Values.Select(x => x.Max()).Max().Value;
+          dmin = values.Values.Select(x => x.Min()).Min().Value;
         }
 
         List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
