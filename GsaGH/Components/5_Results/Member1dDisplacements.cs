@@ -123,17 +123,12 @@ namespace GsaGH.Components {
       var outRotXyz = new DataTree<GH_UnitNumber>();
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
-        switch (ghTyp?.Value) {
-          case GsaResultGoo goo:
-            result = (GsaResult)goo.Value;
-            memberList = Inputs.GetMemberListDefinition(this, da, 1, result.Model);
-            break;
-
-          default:
-            this.AddRuntimeError("Error converting input to GSA Result");
-            return;
+        result = Inputs.GetResultInput(this, ghTyp);
+        if (result == null) {
+          return;
         }
 
+        memberList = Inputs.GetMemberListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> memberIds = result.MemberIds(memberList);
         IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
           = result.Member1dDisplacements.ResultSubset(memberIds, positionsCount);

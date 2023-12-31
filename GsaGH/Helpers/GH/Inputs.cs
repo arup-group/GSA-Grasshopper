@@ -3,11 +3,16 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Forms;
+using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel.Types.Transforms;
 using GsaAPI;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
+using Rhino.Commands;
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Helpers.GH {
@@ -397,6 +402,58 @@ namespace GsaGH.Helpers.GH {
       }
 
       return memberList;
+    }
+
+    internal static GsaResult GetResultInput(GH_Component owner, GH_ObjectWrapper ghTyp) {
+      GsaResult result;
+      switch (ghTyp?.Value) {
+        case GsaResultGoo goo:
+          result = (GsaResult)goo.Value;
+          if (result == null) {
+            string errMsg = owner.RuntimeMessages(GH_RuntimeMessageLevel.Error)[0];
+            if (errMsg.StartsWith("Use 'SelectResults'")) {
+              var connect = new Guid(
+                errMsg.Split(new string[] { "Connect" }, StringSplitOptions.None).Last());
+              owner.Params.Input[0].RemoveAllSources();
+              IGH_Param newInput = Instances.ActiveCanvas.Document.FindParameter(connect);
+              owner.Params.Input[0].AddSource(newInput);
+              return null;
+            }
+          } else {
+            owner.AddRuntimeError("Error converting input to GSA Result");
+            return null;
+          }
+
+          return result;
+
+        default:
+          owner.AddRuntimeError("Error converting input to GSA Result");
+          return null;
+      }
+    }
+
+    internal static bool IsResultCaseEnveloped(
+      GH_Component owner, GsaResult result, ref string caseTxt, EnvelopeMethod envelope) {
+      switch (result.CaseType) {
+        case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
+          owner.AddRuntimeRemark("Combination Case " + result.CaseId + " contains "
+            + result.SelectedPermutationIds.Count
+            + $" permutations which have been enveloped using {envelope} method."
+            + Environment.NewLine
+            + "Change the enveloping method by right-clicking the component.");
+          owner.Message = $"{owner.Message} \n{envelope}";
+          caseTxt = $"Case C{result.CaseId} ({result.SelectedPermutationIds.Count} perm.)" +
+            "\n" + ResultsUtility.EnvelopeMethodAbbreviated(envelope);
+          return true;
+        case CaseType.CombinationCase:
+          caseTxt = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+          return false;
+
+        case CaseType.AnalysisCase:
+        default:
+          caseTxt = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
+          return false;
+      }
     }
   }
 }

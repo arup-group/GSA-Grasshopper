@@ -441,49 +441,22 @@ namespace GsaGH.Components {
       string nodeList = "All";
       _case = string.Empty;
       _resType = string.Empty;
-
       var ghTyp = new GH_ObjectWrapper();
       da.GetData(0, ref ghTyp);
-      bool enveloped = false;
-      switch (ghTyp?.Value) {
-        case GsaResultGoo goo:
-          result = (GsaResult)goo.Value;
-          nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
-          switch (result.CaseType) {
-            case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
-              this.AddRuntimeRemark("Combination Case " + result.CaseId + " contains "
-                + result.SelectedPermutationIds.Count
-                + $" permutations which have been enveloped using {_envelopeType} method."
-                + Environment.NewLine
-                + "Change the enveloping method by right-clicking the component.");
-              Message = $"{Message} \n{_envelopeType}";
-              _case = $"Case C{result.CaseId} ({result.SelectedPermutationIds.Count} perm.)" +
-                "\n" + ResultsUtility.EnvelopeMethodAbbreviated(_envelopeType);
-              enveloped = true;
-              break;
-
-            case CaseType.CombinationCase:
-              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-              break;
-
-            case CaseType.AnalysisCase:
-              _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
-              break;
-          }
-          break;
-
-        default:
-          this.AddRuntimeError("Error converting input to GSA Result");
-          return;
+      result = Inputs.GetResultInput(this, ghTyp);
+      if (result == null) {
+        return;
       }
 
+      bool enveloped = Inputs.IsResultCaseEnveloped(this, result, ref _case, _envelopeType);
+      nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes(nodeList);
       if (nodes.Count == 0) {
         this.AddRuntimeError($"Model contains no results for nodes in list '{nodeList}'");
         return;
       }
-      LengthUnit lengthUnit = result.Model.ModelUnit;
 
+      LengthUnit lengthUnit = result.Model.ModelUnit;
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();
       if (da.GetDataList(2, ghColours)) {

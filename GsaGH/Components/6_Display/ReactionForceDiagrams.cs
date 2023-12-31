@@ -23,6 +23,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Commands;
 using Rhino.Geometry;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -178,12 +179,13 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var ghObject = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghObject) || !IsGhObjectValid(ghObject)) {
+      var ghTyp = new GH_ObjectWrapper();
+      da.GetData(0, ref ghTyp);
+      GsaResult result = Inputs.GetResultInput(this, ghTyp);
+      if (result == null) {
         return;
       }
 
-      var result = (GsaResult)(ghObject.Value as GsaResultGoo).Value;
       string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
       ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);

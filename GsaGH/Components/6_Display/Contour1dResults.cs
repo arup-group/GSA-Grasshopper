@@ -560,45 +560,15 @@ namespace GsaGH.Components {
       string elementlist = "All";
       _case = string.Empty;
       _resType = string.Empty;
-
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp)) {
+      da.GetData(0, ref ghTyp);
+      result = Inputs.GetResultInput(this, ghTyp);
+      if (result == null) {
         return;
       }
 
-      bool enveloped = false;
-      switch (ghTyp?.Value) {
-        case GsaResultGoo goo:
-          result = (GsaResult)goo.Value;
-          elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
-          switch (result.CaseType) {
-            case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
-              this.AddRuntimeRemark("Combination Case " + result.CaseId + " contains "
-                + result.SelectedPermutationIds.Count
-                + $" permutations which have been enveloped using {_envelopeType} method."
-                + Environment.NewLine
-                + "Change the enveloping method by right-clicking the component.");
-              Message = $"{Message} \n{_envelopeType}";
-              _case = $"Case C{result.CaseId} ({result.SelectedPermutationIds.Count} perm.)" +
-                "\n" + ResultsUtility.EnvelopeMethodAbbreviated(_envelopeType);
-              enveloped = true;
-              break;
-
-            case CaseType.CombinationCase:
-              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-              break;
-
-            case CaseType.AnalysisCase:
-              _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
-              break;
-          }
-          break;
-
-        default:
-          this.AddRuntimeError("Error converting input to GSA Result");
-          return;
-      }
-
+      bool enveloped = Inputs.IsResultCaseEnveloped(this, result, ref _case, _envelopeType);
+      elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
       ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
       if (elems.Count == 0) {
