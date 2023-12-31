@@ -25,7 +25,8 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaResultGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaModelGoo)) {
+      if (data.GetType() == typeof(GsaModelGoo) &&
+        Attributes.Parent != null) { // if persistent parameter (this class) parent is null
         IGH_Param modelParam = Sources[0];
         var comp = new SelectResult();
         comp.Attributes.Pivot = new PointF(
