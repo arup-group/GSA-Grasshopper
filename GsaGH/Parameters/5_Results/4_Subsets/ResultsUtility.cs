@@ -49,8 +49,12 @@ namespace GsaGH.Parameters.Results {
       }
 
       Parallel.ForEach(subset, kvp => {
-        IList<IQuantity> values = kvp.Value.Select(selector).ToList();
-        vals.TryAdd(kvp.Key, values.Envelope(envelopeType));
+        try {
+          IList<IQuantity> values = kvp.Value.Select(selector).ToList();
+          vals.TryAdd(kvp.Key, values.Envelope(envelopeType));
+        } catch (NullReferenceException) {
+          throw new ArgumentException("Result does not contain values for selected component/direction");
+        }
       });
       return vals;
     }

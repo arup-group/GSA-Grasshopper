@@ -1,9 +1,40 @@
 ﻿using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
 using OasysUnits;
+using System;
 
 namespace GsaGHTests.Parameters.Results {
   public static class TestsResultHelper {
+    public static double Envelope(double? x, double? y, EnvelopeMethod envelope) {
+      return Envelope((double)x, (double)y, envelope);
+    }
+
+    public static double Envelope(double x, double y, EnvelopeMethod envelope) {
+      double value = 0;
+      switch (envelope) {
+        case EnvelopeMethod.Maximum:
+          value = Math.Max(x, y);
+          break;
+
+        case EnvelopeMethod.Minimum:
+          value = Math.Min(x, y);
+          break;
+
+        case EnvelopeMethod.Absolute:
+          value = Math.Max(Math.Abs(x), Math.Abs(y));
+          break;
+
+        case EnvelopeMethod.SignedAbsolute:
+          if (Math.Abs(x) > Math.Abs(y)) {
+            value = x;
+          } else {
+            value = y;
+          }
+
+          break;
+      }
+      return ResultHelper.RoundToSignificantDigits(value, 4);
+    }
     public static double ResultsHelper(INodeResultSubset<IInternalForce,
       ResultVector6<NodeExtremaKey>> result, ResultVector6HelperEnum component, bool max) {
       double d = 0;
