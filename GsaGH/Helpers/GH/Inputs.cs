@@ -415,7 +415,7 @@ namespace GsaGH.Helpers.GH {
               var connect = new Guid(
                 errMsg.Split(new string[] { "Connect" }, StringSplitOptions.None).Last());
               owner.Params.Input[0].RemoveAllSources();
-              IGH_Param newInput = Instances.ActiveCanvas.Document.FindParameter(connect);
+              IGH_Param newInput = owner.OnPingDocument().FindParameter(connect);
               owner.Params.Input[0].AddSource(newInput);
               return null;
             } else {

@@ -1099,7 +1099,7 @@ namespace GsaGH.Components {
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {
-      doc ??= Instances.ActiveCanvas.Document;
+      doc ??= OnPingDocument();
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
 

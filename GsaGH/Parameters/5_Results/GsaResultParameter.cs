@@ -32,7 +32,7 @@ namespace GsaGH.Parameters {
         comp.Attributes.Pivot = new PointF(
           (modelParam.Attributes.Pivot.X + Attributes.Pivot.X) / 2,
           (modelParam.Attributes.Pivot.Y + Attributes.Pivot.Y) / 2);
-        Instances.ActiveCanvas.Document.AddObject(comp, false);
+        OnPingDocument().AddObject(comp, false);
         comp.Params.Input[0].AddSource(modelParam);
         comp.Params.Output[0].CollectData();
         this.AddRuntimeError($"Use 'SelectResults' component to pick results case." +
