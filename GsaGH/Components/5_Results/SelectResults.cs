@@ -367,20 +367,13 @@ namespace GsaGH.Components {
             "All",
           });
           _selectedItems.Add("All");
-          UpdatePermutations();
-        } else {
-          _dropDownItems[2] = new List<string>() {
-            "All",
-          };
-          _selectedItems[2] = "All";
+        } else if (
+          _dropDownItems[2].Count - 1 == modelResults.Item3.Branch(new GH_Path(_caseId)).Count) {
+          return;
         }
+        
+        UpdatePermutations();
 
-        List<int?> ints = modelResults.Item3.Branch(new GH_Path(_caseId));
-        if (ints != null) {
-          _dropDownItems[2].AddRange(ints.Select(x => "P" + x.ToString()).ToList());
-        } else {
-          _dropDownItems[2].Add("-");
-        }
       } else if (_dropDownItems.Count > 2) {
         _dropDownItems.RemoveAt(2);
         _selectedItems.RemoveAt(2);
@@ -420,7 +413,7 @@ namespace GsaGH.Components {
       }
 
       _selectedItems[2] = "All";
-      _dropDownItems[2].AddRange(permutationsInCase.Select(x => "P" + x.ToString()).ToList());
+      _dropDownItems[2].AddRange(permutationsInCase.Select(x => $"P{x}").ToList());
       _permutationIDs = new List<int>() {
         -1,
       };
