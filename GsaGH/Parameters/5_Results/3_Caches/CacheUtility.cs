@@ -1,6 +1,8 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace GsaGH.Parameters.Results {
@@ -42,6 +44,26 @@ namespace GsaGH.Parameters.Results {
       var subset = new ConcurrentDictionary<int, T>();
       Parallel.ForEach(keys, key => {
         if (dictionary.ContainsKey(key)) {
+          subset.TryAdd(key, dictionary[key]);
+        }
+      });
+      return subset;
+    }
+
+    internal static IDictionary<int, IList<T1>> GetSubset<T1, T2>(
+      this IDictionary<int, IList<T1>> dictionary, ICollection<int> keys, ICollection<double> positions) 
+      where T1 : IEntity1dQuantity<T2> where T2 : IResultItem {
+      var subset = new ConcurrentDictionary<int, IList<T1>>();
+      
+      IList<double> differences =
+        dictionary.Values.FirstOrDefault().FirstOrDefault().Results.Keys.Except(positions).ToList();
+      Parallel.ForEach(keys, key => {
+        if (dictionary.ContainsKey(key)) {
+          foreach (T1 item in dictionary[key]) {
+            foreach (double position in differences) {
+              item.Results.Remove(position);
+            }
+          }
           subset.TryAdd(key, dictionary[key]);
         }
       });

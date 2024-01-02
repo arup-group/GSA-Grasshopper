@@ -38,7 +38,7 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
               = analysisCase.Member1dForce(memberList, positions);
-            Parallel.ForEach(aCaseResults.Keys, memberId => 
+            Parallel.ForEach(aCaseResults.Keys, memberId =>
              ((ConcurrentDictionary<int, IList<IEntity1dInternalForce>>)Cache).AddOrUpdate(
               memberId, Entity1dResultsFactory.CreateForces(aCaseResults[memberId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[memberId], positions)));
@@ -47,7 +47,7 @@ namespace GsaGH.Parameters.Results {
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
               = combinationCase.Member1dForce(memberList, positions);
-            Parallel.ForEach(cCaseResults.Keys, memberId => 
+            Parallel.ForEach(cCaseResults.Keys, memberId =>
              ((ConcurrentDictionary<int, IList<IEntity1dInternalForce>>)Cache).AddOrUpdate(
               memberId, Entity1dResultsFactory.CreateForces(cCaseResults[memberId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[memberId], positions)));
@@ -55,7 +55,8 @@ namespace GsaGH.Parameters.Results {
         }
       }
 
-      return new Entity1dInternalForces(Cache.GetSubset(memberIds));
+      return new Entity1dInternalForces(
+        Cache.GetSubset<IEntity1dInternalForce, IInternalForce>(memberIds, positions));
     }
   }
 }

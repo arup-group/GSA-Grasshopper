@@ -12,7 +12,7 @@ namespace GsaGH.Parameters.Results {
 
     public IDictionary<int, IList<IEntity1dDisplacement>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IEntity1dDisplacement>>();
-    
+
     internal Member1dDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
     }
@@ -39,7 +39,7 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
               = analysisCase.Member1dDisplacement(memberList, positions);
             Parallel.ForEach(aCaseResults.Keys,
-              memberId => 
+              memberId =>
                 ((ConcurrentDictionary<int, IList<IEntity1dDisplacement>>)Cache).AddOrUpdate(memberId,
                 Entity1dResultsFactory.CreateDisplacements(aCaseResults[memberId], positions),
                 (key, oldValue)
@@ -50,7 +50,7 @@ namespace GsaGH.Parameters.Results {
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
               = combinationCase.Member1dDisplacement(memberList, positions);
             Parallel.ForEach(cCaseResults.Keys,
-              memberId => 
+              memberId =>
               ((ConcurrentDictionary<int, IList<IEntity1dDisplacement>>)Cache).AddOrUpdate(memberId,
                 Entity1dResultsFactory.CreateDisplacements(cCaseResults[memberId], positions),
                 (key, oldValue)
@@ -59,7 +59,8 @@ namespace GsaGH.Parameters.Results {
         }
       }
 
-      return new Entity1dDisplacements(Cache.GetSubset(memberIds));
+      return new Entity1dDisplacements(
+        Cache.GetSubset<IEntity1dDisplacement, IDisplacement>(memberIds, positions));
     }
   }
 }

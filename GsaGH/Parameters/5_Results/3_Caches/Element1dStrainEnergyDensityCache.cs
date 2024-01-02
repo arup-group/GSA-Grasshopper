@@ -38,9 +38,9 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<double>> aCaseResults
               = analysisCase.Element1dStrainEnergyDensity(elementList, positions);
-            Parallel.ForEach(aCaseResults.Keys, elementId => 
+            Parallel.ForEach(aCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IEntity1dStrainEnergyDensity>>)Cache).AddOrUpdate(
-              elementId, 
+              elementId,
               Entity1dResultsFactory.CreateStrainEnergyDensities(aCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
             break;
@@ -48,16 +48,17 @@ namespace GsaGH.Parameters.Results {
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<double>>> cCaseResults
               = combinationCase.Element1dStrainEnergyDensity(elementList, positions);
-            Parallel.ForEach(cCaseResults.Keys, elementId => 
+            Parallel.ForEach(cCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IEntity1dStrainEnergyDensity>>)Cache).AddOrUpdate(
-              elementId, 
+              elementId,
               Entity1dResultsFactory.CreateStrainEnergyDensities(cCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));
             break;
         }
       }
 
-      return new Entity1dStrainEnergyDensities(Cache.GetSubset(elementIds));
+      return new Entity1dStrainEnergyDensities(
+        Cache.GetSubset<IEntity1dStrainEnergyDensity, IEnergyDensity>(elementIds, positions));
     }
   }
 }

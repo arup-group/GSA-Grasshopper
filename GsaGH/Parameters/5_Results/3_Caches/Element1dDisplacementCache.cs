@@ -55,7 +55,8 @@ namespace GsaGH.Parameters.Results {
         }
       }
 
-      return new Entity1dDisplacements(Cache.GetSubset(elementIds));
+      return new Entity1dDisplacements(
+        Cache.GetSubset<IEntity1dDisplacement, IDisplacement>(elementIds, positions));
     }
   }
 }

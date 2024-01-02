@@ -38,7 +38,7 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<DerivedStressResult1d>> aCaseResults
               = analysisCase.Element1dDerivedStress(elementList, positions);
-            Parallel.ForEach(aCaseResults.Keys, elementId => 
+            Parallel.ForEach(aCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IEntity1dDerivedStress>>)Cache).AddOrUpdate(
               elementId, Entity1dResultsFactory.CreateDerivedStresses(aCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
@@ -47,7 +47,7 @@ namespace GsaGH.Parameters.Results {
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<DerivedStressResult1d>>> cCaseResults
               = combinationCase.Element1dDerivedStress(elementList, positions);
-            Parallel.ForEach(cCaseResults.Keys, elementId => 
+            Parallel.ForEach(cCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IEntity1dDerivedStress>>)Cache).AddOrUpdate(
               elementId, Entity1dResultsFactory.CreateDerivedStresses(cCaseResults[elementId], positions),
               (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));
@@ -55,7 +55,8 @@ namespace GsaGH.Parameters.Results {
         }
       }
 
-      return new Entity1dDerivedStresses(Cache.GetSubset(elementIds));
+      return new Entity1dDerivedStresses(
+        Cache.GetSubset<IEntity1dDerivedStress, IStress1dDerived>(elementIds, positions));
     }
   }
 }
