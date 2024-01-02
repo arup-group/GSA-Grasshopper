@@ -3,27 +3,15 @@ using System.Collections.ObjectModel;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class Entity1dStress : IEntity1dStress {
-    public IDictionary<double, IStress1d> Results { get; private set; }
+  public class Entity1dStress : Entity1dResult<StressResult1d, IStress1d> {
+    internal Entity1dStress(
+      ReadOnlyCollection<StressResult1d> result, ReadOnlyCollection<double> positions)
+      : base(result, positions, (x) => new Stress1d(x)) { }
 
-    internal Entity1dStress(IDictionary<double, IStress1d> results) {
-      Results = results;
-    }
+    private Entity1dStress(IDictionary<double, IStress1d> results) : base(results) { }
 
-    internal Entity1dStress(ReadOnlyCollection<StressResult1d> result, ReadOnlyCollection<double> positions) {
-      Results = new SortedDictionary<double, IStress1d>();
-      for (int i = 0; i < result.Count; i++) {
-        Results.Add(positions[i], new Stress1d(result[i]));
-      }
-    }
-
-    public IEntity1dQuantity<IStress1d> TakePositions(ICollection<double> positions) {
-      var results = new SortedDictionary<double, IStress1d>();
-      foreach (double position in positions) {
-        results.Add(position, Results[position]);
-      }
-
-      return new Entity1dStress(results);
+    public override IEntity1dQuantity<IStress1d> TakePositions(ICollection<double> positions) {
+      return new Entity1dStress(TakePositions(this, positions));
     }
   }
 }

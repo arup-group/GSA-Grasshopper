@@ -3,27 +3,15 @@ using System.Collections.ObjectModel;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class Entity1dInternalForce : IEntity1dInternalForce {
-    public IDictionary<double, IInternalForce> Results { get; private set; }
+  public class Entity1dInternalForce : Entity1dResult<Double6, IInternalForce> {
+    internal Entity1dInternalForce(
+      ReadOnlyCollection<Double6> result, ReadOnlyCollection<double> positions)
+      : base(result, positions, (x) => new InternalForce(x)) { }
 
-    internal Entity1dInternalForce(IDictionary<double, IInternalForce> results) {
-      Results = results;
-    }
+    private Entity1dInternalForce(IDictionary<double, IInternalForce> results) : base(results) { }
 
-    internal Entity1dInternalForce(ReadOnlyCollection<Double6> result, ReadOnlyCollection<double> positions) {
-      Results = new SortedDictionary<double, IInternalForce>();
-      for (int i = 0; i < result.Count; i++) {
-        Results.Add(positions[i], new InternalForce(result[i]));
-      }
-    }
-
-    public IEntity1dQuantity<IInternalForce> TakePositions(ICollection<double> positions) {
-      var results = new SortedDictionary<double, IInternalForce>();
-      foreach (double position in positions) {
-        results.Add(position, Results[position]);
-      }
-
-      return new Entity1dInternalForce(results);
+    public override IEntity1dQuantity<IInternalForce> TakePositions(ICollection<double> positions) {
+      return new Entity1dInternalForce(TakePositions(this, positions));
     }
   }
 }
