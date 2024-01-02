@@ -388,6 +388,7 @@ namespace GsaGH.Components {
       }
 
       bool enveloped = Inputs.IsResultCaseEnveloped(this, result, ref _case, _envelopeType);
+      List<int> permutations = result.SelectedPermutationIds;
       elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
       ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
@@ -452,11 +453,12 @@ namespace GsaGH.Components {
               dmin = displacements.GetExtrema(displacements.Min.Xyz).Xyz.As(_lengthResultUnit);
               translationSelector = (r) => r.Xyz.ToUnit(_lengthResultUnit);
               valuesXyz = ResultsUtility.GetResultResultantTranslation(
-                displacements.Subset, lengthUnit, _envelopeType);
+                displacements.Subset, lengthUnit, permutations, _envelopeType);
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(displacements.Subset, translationSelector, _envelopeType);
+          values = ResultsUtility.GetResultComponent(
+            displacements.Subset, translationSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.Stress:
@@ -508,7 +510,8 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(stresses.Subset, stressSelector, _envelopeType);
+          values = ResultsUtility.GetResultComponent(
+            stresses.Subset, stressSelector, permutations, _envelopeType);
           break;
       }
 

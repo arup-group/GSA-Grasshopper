@@ -568,6 +568,7 @@ namespace GsaGH.Components {
       }
 
       bool enveloped = Inputs.IsResultCaseEnveloped(this, result, ref _case, _envelopeType);
+      List<int> permutations = result.SelectedPermutationIds;
       elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
       ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
@@ -643,7 +644,7 @@ namespace GsaGH.Components {
               dmin = displacements.GetExtrema(displacements.Min.Xyz).Xyz.As(_lengthResultUnit);
               displacementSelector = (r) => r.Xyz.ToUnit(_lengthResultUnit);
               valuesXyz = ResultsUtility.GetResultResultantTranslation(
-                displacements.Subset, lengthUnit, _envelopeType);
+                displacements.Subset, lengthUnit, permutations, _envelopeType);
               break;
 
             case DisplayValue.Xx:
@@ -675,7 +676,8 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(displacements.Subset, displacementSelector, _envelopeType);
+          values = ResultsUtility.GetResultComponent(
+            displacements.Subset, displacementSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.Force:
@@ -740,7 +742,8 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(forces.Subset, forceSelector, _envelopeType);
+          values = ResultsUtility.GetResultComponent(
+            forces.Subset, forceSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.ProjectedStress:
@@ -812,7 +815,8 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(stresses.Subset, stressSelector, _envelopeType);
+          values = ResultsUtility.GetResultComponent(
+            stresses.Subset, stressSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.DerivedStress:
@@ -849,7 +853,8 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(derivedStresses.Subset, derivedStressSelector, _envelopeType);
+          values = ResultsUtility.GetResultComponent(
+            derivedStresses.Subset, derivedStressSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.StrainEnergy:
@@ -861,7 +866,8 @@ namespace GsaGH.Components {
               dmax = strainEnergies.GetExtrema(strainEnergies.Max).EnergyDensity.As(_energyResultUnit);
               dmin = strainEnergies.GetExtrema(strainEnergies.Min).EnergyDensity.As(_energyResultUnit);
               Func<IEnergyDensity, IQuantity> strainEnergySelector = (r) => r.EnergyDensity.ToUnit(_energyResultUnit);
-              values = ResultsUtility.GetResultComponent(strainEnergies.Subset, strainEnergySelector, _envelopeType);
+              values = ResultsUtility.GetResultComponent(
+                strainEnergies.Subset, strainEnergySelector, permutations, _envelopeType);
               break;
 
             default:

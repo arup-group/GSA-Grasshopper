@@ -449,6 +449,7 @@ namespace GsaGH.Components {
       }
 
       bool enveloped = Inputs.IsResultCaseEnveloped(this, result, ref _case, _envelopeType);
+      List<int> permutations = result.SelectedPermutationIds;
       nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes(nodeList);
       if (nodes.Count == 0) {
@@ -521,7 +522,7 @@ namespace GsaGH.Components {
               dmin = displacements.GetExtrema(displacements.Min.Xyz).Xyz.As(_lengthResultUnit);
               displacementSelector = (r) => r.Xyz.ToUnit(_lengthResultUnit);
               valuesXyz = ResultsUtility.GetResultResultantTranslation(
-                displacements.Subset, lengthUnit, _envelopeType);
+                displacements.Subset, lengthUnit, permutations, _envelopeType);
               break;
 
             case DisplayValue.Xx:
@@ -554,7 +555,7 @@ namespace GsaGH.Components {
           }
 
           values = ResultsUtility.GetResultComponent(
-            displacements.Subset, displacementSelector, _envelopeType);
+            displacements.Subset, displacementSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.Reaction:
@@ -625,7 +626,8 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(reactions.Subset, forceSelector, _envelopeType);
+          values = ResultsUtility.GetResultComponent(
+            reactions.Subset, forceSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.SpringForce:
@@ -696,7 +698,8 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(springForces.Subset, springSelector, _envelopeType);
+          values = ResultsUtility.GetResultComponent(
+            springForces.Subset, springSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.Footfall:
