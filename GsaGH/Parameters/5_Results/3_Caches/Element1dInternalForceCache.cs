@@ -7,11 +7,11 @@ using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class Element1dInternalForceCache
-    : IEntity1dResultCache<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> {
+    : IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public IDictionary<int, IList<IEntity1dInternalForce>> Cache { get; }
-      = new ConcurrentDictionary<int, IList<IEntity1dInternalForce>>();
+    public IDictionary<int, IList<IEntity1dQuantity<IInternalForce>>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IEntity1dQuantity<IInternalForce>>>();
 
     internal Element1dInternalForceCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -21,42 +21,51 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>>
+    public IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>>
       ResultSubset(ICollection<int> elementIds, int positionCount) {
       var positions = Enumerable.Range(0, positionCount).Select(
         i => (double)i / (positionCount - 1)).ToList();
       return ResultSubset(elementIds, new ReadOnlyCollection<double>(positions));
     }
 
-    public IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>>
+    public IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>>
       ResultSubset(ICollection<int> elementIds, ReadOnlyCollection<double> positions) {
-      ConcurrentBag<int> missingIds
-        = Cache.GetMissingKeysAndPositions<IEntity1dInternalForce, IInternalForce>(elementIds, positions);
+      ConcurrentBag<int> missingIds = Cache.GetMissingKeysAndPositions(elementIds, positions);
       if (missingIds.Count > 0) {
         string elementList = string.Join(" ", missingIds);
+        var concurrent = Cache as ConcurrentDictionary<int, IList<IEntity1dQuantity<IInternalForce>>>;
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
               = analysisCase.Element1dForce(elementList, positions);
             Parallel.ForEach(aCaseResults.Keys, elementId =>
-             ((ConcurrentDictionary<int, IList<IEntity1dInternalForce>>)Cache).AddOrUpdate(
-              elementId, Entity1dResultsFactory.CreateForces(aCaseResults[elementId], positions),
-              (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
+             concurrent.AddOrUpdate(
+              elementId,
+              // Add
+              Entity1dResultsFactory.CreateResults(
+                aCaseResults[elementId], positions, (a, b) => new Entity1dInternalForce(a, b)),
+              // Update
+              (key, oldValue) => oldValue.AddMissingPositions(
+                aCaseResults[elementId], positions, (a) => new InternalForce(a))));
             break;
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
               = combinationCase.Element1dForce(elementList, positions);
             Parallel.ForEach(cCaseResults.Keys, elementId =>
-             ((ConcurrentDictionary<int, IList<IEntity1dInternalForce>>)Cache).AddOrUpdate(
-              elementId, Entity1dResultsFactory.CreateForces(cCaseResults[elementId], positions),
-              (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));
+             concurrent.AddOrUpdate(
+              elementId,
+              // Add
+              Entity1dResultsFactory.CreateResults(
+                cCaseResults[elementId], positions, (a, b) => new Entity1dInternalForce(a, b)),
+              // Update
+              (key, oldValue) => oldValue.AddMissingPositions(
+                cCaseResults[elementId], positions, (a) => new InternalForce(a))));
             break;
         }
       }
 
-      return new Entity1dInternalForces(
-        Cache.GetSubset<IEntity1dInternalForce, IInternalForce>(elementIds, positions));
+      return new Entity1dInternalForces(Cache.GetSubset(elementIds, positions));
     }
   }
 }
