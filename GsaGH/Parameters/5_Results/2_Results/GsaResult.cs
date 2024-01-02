@@ -116,11 +116,19 @@ namespace GsaGH.Parameters.Results {
     }
 
     internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseId) {
+      if (model == null || result == null) {
+        return;
+      }
+
       InitialiseAnalysisCaseResults(model, result, caseId);
     }
 
     internal GsaResult(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
+      if (model == null || result == null) {
+        return;
+      }
+
       InitialiseCombinationsCaseResults(model, result, caseId, permutations?.OrderBy(x => x));
     }
 
@@ -240,7 +248,6 @@ namespace GsaGH.Parameters.Results {
 
     private void InitialiseCombinationsCaseResults(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
-
       ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> temp = result.NodeDisplacement(model.Model.Nodes().Keys.First().ToString());
       Permutations = temp[temp.Keys.First()].Count;
 
@@ -271,10 +278,9 @@ namespace GsaGH.Parameters.Results {
       CaseType = CaseType.CombinationCase;
       CaseId = caseId;
       SelectedPermutationIds = permutations?.ToList();
-      if (model?.Model?.CombinationCases()?.ContainsKey(caseId) != true) {
-        return;
+      if (model?.Model?.CombinationCases()?.ContainsKey(caseId) == true) {
+        CaseName = model.Model.CombinationCases()[CaseId].Name;
       }
-      CaseName = model.Model.CombinationCases()[CaseId].Name;
     }
   }
 }

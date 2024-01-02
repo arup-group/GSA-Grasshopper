@@ -29,7 +29,8 @@ namespace GsaGHTests.Parameters.Results {
       IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> resultSet
         = result.Element2dForces.ResultSubset(elementIds);
 
-      ConcurrentDictionary<int, IList<IQuantity>> values = ResultsUtility.GetResultComponent(resultSet.Subset, Selector(component), envelope);
+      ConcurrentDictionary<int, IList<IQuantity>> values = ResultsUtility.GetResultComponent(
+        resultSet.Subset, Selector(component), result.SelectedPermutationIds, envelope);
 
       int i = 0;
       foreach (int elementId in elementIds) {

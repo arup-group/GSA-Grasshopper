@@ -28,7 +28,8 @@ namespace GsaGHTests.Parameters.Results {
       INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> resultSet
         = result.NodeDisplacements.ResultSubset(nodeIds);
 
-      ConcurrentDictionary<int, IQuantity> values = ResultsUtility.GetResultComponent(resultSet.Subset, DisplacementSelector(component), envelope);
+      ConcurrentDictionary<int, IQuantity> values = ResultsUtility.GetResultComponent(
+        resultSet.Subset, DisplacementSelector(component), result.SelectedPermutationIds, envelope);
 
       int i = 0;
       foreach (int nodeId in nodeIds) {
@@ -55,11 +56,13 @@ namespace GsaGHTests.Parameters.Results {
 
       if (isInvalid) {
         Assert.Throws<AggregateException>(() =>
-        ResultsUtility.GetResultComponent(resultSet.Subset, ReactionForceSelector(component), envelope));
+        ResultsUtility.GetResultComponent(
+          resultSet.Subset, ReactionForceSelector(component), result.SelectedPermutationIds, envelope));
         return;
       }
 
-      ConcurrentDictionary<int, IQuantity> values = ResultsUtility.GetResultComponent(resultSet.Subset, ReactionForceSelector(component), envelope);
+      ConcurrentDictionary<int, IQuantity> values = ResultsUtility.GetResultComponent(
+        resultSet.Subset, ReactionForceSelector(component), result.SelectedPermutationIds, envelope);
 
       int i = 0;
       foreach (int nodeId in nodeIds) {
