@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Geometry;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
@@ -167,12 +169,14 @@ namespace GsaGH.Components {
           ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> tempNodeCombResult
             = _combinationCaseResults[caseId].NodeDisplacement(_tempNodeId.ToString());
           int nP = tempNodeCombResult[tempNodeCombResult.Keys.First()].Count;
+          var allPermutations = Enumerable.Range(1, nP).ToList();
           if (permutationIDs.Count == 1 && permutationIDs[0] == -1) {
-            permutationIDs = Enumerable.Range(1, nP).ToList();
+            permutationIDs = allPermutations;
           } else {
-            if (permutationIDs.Max() > nP) {
-              this.AddRuntimeError("Combination Case C" + caseId + " only contains " + nP
-                + " permutations but the highest permutation in input is " + permutationIDs.Max());
+            if (permutationIDs.Intersect(allPermutations).Count() != permutationIDs.Count()) {
+              IEnumerable<int> missing = permutationIDs.Except(allPermutations);
+              this.AddRuntimeError($"Combination Case C{caseId} does not contain permutation(s) " + 
+                string.Join(", ", missing));
               return;
             }
           }
