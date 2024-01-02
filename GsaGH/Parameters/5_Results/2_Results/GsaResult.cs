@@ -126,6 +126,7 @@ namespace GsaGH.Parameters.Results {
 
     // Other members
     public int CaseId { get; set; }
+    public int Permutations { get; set; } = 0;
     public string CaseName { get; set; }
     public GsaModel Model { get; set; }
     public List<int> SelectedPermutationIds { get; set; }
@@ -239,7 +240,10 @@ namespace GsaGH.Parameters.Results {
 
     private void InitialiseCombinationsCaseResults(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
-      
+
+      ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> temp = result.NodeDisplacement(model.Model.Nodes().Keys.First().ToString());
+      Permutations = temp[temp.Keys.First()].Count;
+
       Element1dAverageStrainEnergyDensities = new Element1dAverageStrainEnergyDensityCache(result);
       Element1dDisplacements = new Element1dDisplacementCache(result);
       Element1dInternalForces = new Element1dInternalForceCache(result);

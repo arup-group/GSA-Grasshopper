@@ -447,7 +447,7 @@ namespace GsaGH.Helpers.GH {
           return true;
         case CaseType.CombinationCase:
           caseTxt = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-          return false;
+          return result.Permutations != 1;
 
         case CaseType.AnalysisCase:
         default:
