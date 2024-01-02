@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using Grasshopper;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using GsaGH.Components;
 using GsaGH.Parameters;
-using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
-using Rhino.Geometry;
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
@@ -42,6 +39,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(ContourNodeResults))]
     [InlineData(typeof(ReactionForceDiagrams))]
     [InlineData(typeof(ResultDiagrams))]
+    [InlineData(typeof(PreviewDeformed3dSections))]
     public void GsaResultParameterPreferredCastFromModelParameterTest(Type componentType) {
       var doc = new GH_Document();
       var open = new OpenModel();
@@ -62,6 +60,40 @@ namespace GsaGHTests.GooWrappers {
       ComponentTestHelper.SetInput(comp, ModelParam.VolatileData.AllData(false).First());
       comp.Params.Output[0].CollectData();
       Assert.Equal(3, doc.ObjectCount);
+    }
+
+    [Theory]
+    [InlineData(typeof(BeamDerivedStresses))]
+    [InlineData(typeof(BeamDisplacements))]
+    [InlineData(typeof(BeamForcesAndMoments))]
+    [InlineData(typeof(BeamStrainEnergyDensity))]
+    [InlineData(typeof(BeamStresses))]
+    [InlineData(typeof(Element2dDisplacements))]
+    [InlineData(typeof(Element2dForcesAndMoments))]
+    [InlineData(typeof(Element2dStresses))]
+    [InlineData(typeof(Element3dDisplacements))]
+    [InlineData(typeof(Element3dStresses))]
+    [InlineData(typeof(FootfallResults))]
+    [InlineData(typeof(GlobalPerformanceResults))]
+    [InlineData(typeof(Member1dDisplacements))]
+    [InlineData(typeof(Member1dForcesAndMoments))]
+    [InlineData(typeof(NodeDisplacements))]
+    [InlineData(typeof(ReactionForces))]
+    [InlineData(typeof(SpringReactionForces))]
+    [InlineData(typeof(TotalLoadsAndReactions))]
+    [InlineData(typeof(Contour1dResults))]
+    [InlineData(typeof(Contour2dResults))]
+    [InlineData(typeof(Contour3dResults))]
+    [InlineData(typeof(ContourNodeResults))]
+    [InlineData(typeof(ReactionForceDiagrams))]
+    [InlineData(typeof(ResultDiagrams))]
+    [InlineData(typeof(PreviewDeformed3dSections))]
+    public void GsaResultParameterNullTest(Type componentType) {
+      var comp = (GH_Component)Activator.CreateInstance(componentType);
+      comp.CreateAttributes();
+      ComponentTestHelper.SetInput(comp, false);
+      comp.Params.Output[0].CollectData();
+      Assert.Equal(GH_RuntimeMessageLevel.Error, comp.RuntimeMessageLevel);
     }
 
     [Fact]

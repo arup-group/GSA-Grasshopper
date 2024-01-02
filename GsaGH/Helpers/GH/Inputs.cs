@@ -405,31 +405,22 @@ namespace GsaGH.Helpers.GH {
     }
 
     internal static GsaResult GetResultInput(GH_Component owner, GH_ObjectWrapper ghTyp) {
-      GsaResult result;
-      switch (ghTyp?.Value) {
-        case GsaResultGoo goo:
-          result = (GsaResult)goo.Value;
-          if (result == null) {
-            string errMsg = owner.RuntimeMessages(GH_RuntimeMessageLevel.Error)[0];
-            if (errMsg.StartsWith("Use 'SelectResults'")) {
-              var connect = new Guid(
-                errMsg.Split(new string[] { "Connect" }, StringSplitOptions.None).Last());
-              owner.Params.Input[0].RemoveAllSources();
-              IGH_Param newInput = owner.OnPingDocument().FindParameter(connect);
-              owner.Params.Input[0].AddSource(newInput);
-              return null;
-            } else {
-              owner.AddRuntimeError("Error converting input to GSA Result");
-              return null;
-            }
-          }
+      var goo = (GsaResultGoo)ghTyp.Value;
+      var result = (GsaResult)goo.Value;
+      if (result == null) {
+        string errMsg = owner.RuntimeMessages(GH_RuntimeMessageLevel.Error)[0];
+        if (errMsg.StartsWith("Use 'SelectResults'")) {
+          var connect = new Guid(
+            errMsg.Split(new string[] { "Connect" }, StringSplitOptions.None).Last());
+          owner.Params.Input[0].RemoveAllSources();
+          IGH_Param newInput = owner.OnPingDocument().FindParameter(connect);
+          owner.Params.Input[0].AddSource(newInput);
+        }
 
-          return result;
-
-        default:
-          owner.AddRuntimeError("Error converting input to GSA Result");
-          return null;
+        return null;
       }
+
+      return result;
     }
 
     internal static bool IsResultCaseEnveloped(
