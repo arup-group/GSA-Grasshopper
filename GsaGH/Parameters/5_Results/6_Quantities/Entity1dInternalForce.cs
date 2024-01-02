@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class Entity1dInternalForce : Entity1dResult<Double6, IInternalForce> {
+  internal class Entity1dInternalForce : Entity1dResult<Double6, IInternalForce> {
     internal Entity1dInternalForce(
       ReadOnlyCollection<Double6> result, ReadOnlyCollection<double> positions)
       : base(result, positions, (x) => new InternalForce(x)) { }

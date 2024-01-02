@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class Entity1dStress : Entity1dResult<StressResult1d, IStress1d> {
+  internal class Entity1dStress : Entity1dResult<StressResult1d, IStress1d> {
     internal Entity1dStress(
       ReadOnlyCollection<StressResult1d> result, ReadOnlyCollection<double> positions)
       : base(result, positions, (x) => new Stress1d(x)) { }
