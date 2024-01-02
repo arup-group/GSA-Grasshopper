@@ -217,19 +217,12 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedAnalysisCaseValues(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return Element1dDisplacementsA1.XInMillimeter();
-
         case ResultVector6HelperEnum.Y: return Element1dDisplacementsA1.YInMillimeter();
-
         case ResultVector6HelperEnum.Z: return Element1dDisplacementsA1.ZInMillimeter();
-
         case ResultVector6HelperEnum.Xyz: return Element1dDisplacementsA1.XyzInMillimeter();
-
         case ResultVector6HelperEnum.Xx: return Element1dDisplacementsA1.XxInRadian();
-
         case ResultVector6HelperEnum.Yy: return Element1dDisplacementsA1.YyInRadian();
-
         case ResultVector6HelperEnum.Zz: return Element1dDisplacementsA1.ZzInRadian();
-
         case ResultVector6HelperEnum.Xxyyzz: return Element1dDisplacementsA1.XxyyzzInRadian();
       }
 
@@ -239,19 +232,12 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedCombinationCaseC4p1Values(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return Element1dDisplacementsC4p1.XInMillimeter();
-
         case ResultVector6HelperEnum.Y: return Element1dDisplacementsC4p1.YInMillimeter();
-
         case ResultVector6HelperEnum.Z: return Element1dDisplacementsC4p1.ZInMillimeter();
-
         case ResultVector6HelperEnum.Xyz: return Element1dDisplacementsC4p1.XyzInMillimeter();
-
         case ResultVector6HelperEnum.Xx: return Element1dDisplacementsC4p1.XxInRadian();
-
         case ResultVector6HelperEnum.Yy: return Element1dDisplacementsC4p1.YyInRadian();
-
         case ResultVector6HelperEnum.Zz: return Element1dDisplacementsC4p1.ZzInRadian();
-
         case ResultVector6HelperEnum.Xxyyzz: return Element1dDisplacementsC4p1.XxyyzzInRadian();
       }
 
@@ -261,19 +247,12 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedCombinationCaseC4p2Values(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return Element1dDisplacementsC4p2.XInMillimeter();
-
         case ResultVector6HelperEnum.Y: return Element1dDisplacementsC4p2.YInMillimeter();
-
         case ResultVector6HelperEnum.Z: return Element1dDisplacementsC4p2.ZInMillimeter();
-
         case ResultVector6HelperEnum.Xyz: return Element1dDisplacementsC4p2.XyzInMillimeter();
-
         case ResultVector6HelperEnum.Xx: return Element1dDisplacementsC4p2.XxInRadian();
-
         case ResultVector6HelperEnum.Yy: return Element1dDisplacementsC4p2.YyInRadian();
-
         case ResultVector6HelperEnum.Zz: return Element1dDisplacementsC4p2.ZzInRadian();
-
         case ResultVector6HelperEnum.Xxyyzz: return Element1dDisplacementsC4p2.XxyyzzInRadian();
       }
 

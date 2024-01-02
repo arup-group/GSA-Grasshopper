@@ -24,27 +24,26 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dDisplacement, IDisplacement,
-      ResultVector6<Entity1dExtremaKey>> Element1dDisplacements {
+    public IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>> Element1dDisplacements {
       get;
       private set;
     }
-    public IEntity1dResultCache<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> Element1dInternalForces {
-      get;
-      private set;
-    }
-
-    public IEntity1dResultCache<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> Element1dStrainEnergyDensities {
+    public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>> Element1dInternalForces {
       get;
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> Element1dDerivedStresses {
+    public IEntity1dResultCache<IEnergyDensity, Entity1dExtremaKey> Element1dStrainEnergyDensities {
       get;
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> Element1dStresses {
+    public IEntity1dResultCache<IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> Element1dDerivedStresses {
+      get;
+      private set;
+    }
+
+    public IEntity1dResultCache<IStress1d, ResultStress1d<Entity1dExtremaKey>> Element1dStresses {
       get;
       private set;
     }
@@ -103,13 +102,13 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>>
+    public IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>>
       Member1dDisplacements {
       get;
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>>
+    public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>>
       Member1dInternalForces {
       get;
       private set;

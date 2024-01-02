@@ -26,7 +26,7 @@ namespace GsaGH.Parameters.Results {
       int invalidDimension = 666;
       int validDimension = 1;
       ReadOnlyCollection<int> elementIds = result.ElementIds(elementList, string.IsNullOrEmpty(elementList) ? invalidDimension : validDimension);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>>
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>>
         resultSet = result.Element1dDisplacements.ResultSubset(elementIds, 1);
 
       if (cacheCount == 0) {
@@ -63,7 +63,7 @@ namespace GsaGH.Parameters.Results {
       int validDimension = 1;
 
       ReadOnlyCollection<int> elementIds = result.ElementIds(elementList, string.IsNullOrEmpty(elementList) ? invalidDimension : validDimension);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 2);
 
       if (cacheCount == 0) {
@@ -77,7 +77,7 @@ namespace GsaGH.Parameters.Results {
       var newKeys = new Collection<int>() { newKeyId };
 
       ConcurrentBag<int> missingIds = result.Element1dDisplacements.Cache.
-        GetMissingKeysAndPositions<IEntity1dDisplacement, IDisplacement>(newKeys, positions);
+        GetMissingKeysAndPositions<IDisplacement>(newKeys, positions);
 
       if (newKeyIsMissing) {
         Assert.Single(missingIds);
@@ -97,7 +97,7 @@ namespace GsaGH.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds("2 3 4 5", 1);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>>
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>>
         resultSet = result.Element1dDisplacements.ResultSubset(elementIds, 2);
 
       Assert.Equal(3, result.Element1dDisplacements.Cache.Count);
@@ -107,7 +107,7 @@ namespace GsaGH.Parameters.Results {
         newKey
       };
 
-      IDictionary<int, IList<IEntity1dDisplacement>> subset
+      IDictionary<int, IList<IEntity1dQuantity<IDisplacement>>> subset
         = result.Element1dDisplacements.Cache.GetSubset(newKeys);
 
       if (newKeyIsValid) {

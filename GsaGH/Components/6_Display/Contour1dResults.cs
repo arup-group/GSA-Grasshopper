@@ -612,7 +612,7 @@ namespace GsaGH.Components {
       ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> valuesXyz = null;
       switch (_mode) {
         case FoldMode.Displacement:
-          IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> displacements = Quaternions.CoordinateTransformationTo(
+          IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> displacements = Quaternions.CoordinateTransformationTo(
             result.Element1dDisplacements.ResultSubset(elementIds, positionsCount).Subset,
             Plane.WorldXY, result.Model.Model);
           Func<IDisplacement, IQuantity> displacementSelector = null;
@@ -681,7 +681,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Force:
-          IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> forces =
+          IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> forces =
           result.Element1dInternalForces.ResultSubset(elementIds, positionsCount);
           Func<IInternalForce, IQuantity> forceSelector = null;
           switch (_disp) {
@@ -747,7 +747,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.ProjectedStress:
-          IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> stresses =
+          IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> stresses =
           result.Element1dStresses.ResultSubset(elementIds, positionsCount);
           Func<IStress1d, IQuantity> stressSelector = null;
           switch (_disp) {
@@ -820,7 +820,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.DerivedStress:
-          IEntity1dResultSubset<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> derivedStresses =
+          IEntity1dResultSubset<IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> derivedStresses =
           result.Element1dDerivedStresses.ResultSubset(elementIds, positionsCount);
           Func<IStress1dDerived, IQuantity> derivedStressSelector = null;
           switch (_disp) {
@@ -860,7 +860,7 @@ namespace GsaGH.Components {
         case FoldMode.StrainEnergy:
           switch (_disp) {
             case DisplayValue.X:
-              IEntity1dResultSubset<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> strainEnergies =
+              IEntity1dResultSubset<IEnergyDensity, Entity1dExtremaKey> strainEnergies =
                 result.Element1dStrainEnergyDensities.ResultSubset(elementIds, positionsCount);
               _resType = "Strain Energy Density";
               dmax = strainEnergies.GetExtrema(strainEnergies.Max).EnergyDensity.As(_energyResultUnit);

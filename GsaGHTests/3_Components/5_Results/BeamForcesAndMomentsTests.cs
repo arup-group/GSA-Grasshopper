@@ -217,19 +217,12 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedAnalysisCaseValues(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return Element1dForcesAndMomentsA1.XInKiloNewton();
-
         case ResultVector6HelperEnum.Y: return Element1dForcesAndMomentsA1.YInKiloNewton();
-
         case ResultVector6HelperEnum.Z: return Element1dForcesAndMomentsA1.ZInKiloNewton();
-
         case ResultVector6HelperEnum.Xyz: return Element1dForcesAndMomentsA1.XyzInKiloNewton();
-
         case ResultVector6HelperEnum.Xx: return Element1dForcesAndMomentsA1.XxInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Yy: return Element1dForcesAndMomentsA1.YyInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Zz: return Element1dForcesAndMomentsA1.ZzInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Xxyyzz: return Element1dForcesAndMomentsA1.XxyyzzInKiloNewtonMeter();
       }
 
@@ -239,19 +232,12 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedCombinationCaseC4p1Values(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return Element1dForcesAndMomentsC4p1.XInKiloNewton();
-
         case ResultVector6HelperEnum.Y: return Element1dForcesAndMomentsC4p1.YInKiloNewton();
-
         case ResultVector6HelperEnum.Z: return Element1dForcesAndMomentsC4p1.ZInKiloNewton();
-
         case ResultVector6HelperEnum.Xyz: return Element1dForcesAndMomentsC4p1.XyzInKiloNewton();
-
         case ResultVector6HelperEnum.Xx: return Element1dForcesAndMomentsC4p1.XxInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Yy: return Element1dForcesAndMomentsC4p1.YyInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Zz: return Element1dForcesAndMomentsC4p1.ZzInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Xxyyzz: return Element1dForcesAndMomentsC4p1.XxyyzzInKiloNewtonMeter();
       }
 
@@ -261,19 +247,12 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedCombinationCaseC4p2Values(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return Element1dForcesAndMomentsC4p2.XInKiloNewton();
-
         case ResultVector6HelperEnum.Y: return Element1dForcesAndMomentsC4p2.YInKiloNewton();
-
         case ResultVector6HelperEnum.Z: return Element1dForcesAndMomentsC4p2.ZInKiloNewton();
-
         case ResultVector6HelperEnum.Xyz: return Element1dForcesAndMomentsC4p2.XyzInKiloNewton();
-
         case ResultVector6HelperEnum.Xx: return Element1dForcesAndMomentsC4p2.XxInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Yy: return Element1dForcesAndMomentsC4p2.YyInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Zz: return Element1dForcesAndMomentsC4p2.ZzInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Xxyyzz: return Element1dForcesAndMomentsC4p2.XxyyzzInKiloNewtonMeter();
       }
 

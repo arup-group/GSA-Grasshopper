@@ -437,7 +437,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> result,
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> result,
       ResultVector6HelperEnum component, bool max) {
       double d = 0;
       ResultVector6<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
@@ -479,7 +479,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> result,
+      IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> result,
       ResultVector6HelperEnum component, bool max) {
       double d = 0;
       ResultVector6<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
@@ -521,7 +521,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity1dResultSubset<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> result,
+      IEntity1dResultSubset<IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> result,
       ResultDerivedStress1dHelperEnum component, bool max) {
       double d = 0;
       ResultDerivedStress1d<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
@@ -547,7 +547,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> result,
+      IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> result,
       ResultStress1dHelperEnum component, bool max) {
       double d = 0;
       ResultStress1d<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;

@@ -130,7 +130,7 @@ namespace GsaGH.Components {
 
         memberList = Inputs.GetMemberListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> memberIds = result.MemberIds(memberList);
-        IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+        IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
           = result.Member1dDisplacements.ResultSubset(memberIds, positionsCount);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -141,7 +141,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, IList<IEntity1dDisplacement>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IEntity1dQuantity<IDisplacement>>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p,
                 kvp.Key);

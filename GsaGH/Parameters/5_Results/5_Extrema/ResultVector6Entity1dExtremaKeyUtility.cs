@@ -18,13 +18,13 @@ namespace GsaGH.Parameters.Results {
         for (int permutation = 0; permutation < values.Count; permutation++) {
           foreach (double position in values[permutation].Results.Keys) {
             switch (values[permutation]) {
-              case IEntity1dDisplacement displacement:
+              case IEntity1dQuantity<IDisplacement> displacement:
                 UpdateExtrema<IDisplacement, Length, Angle>(displacement.Results[position],
                   elementId, permutation, position,
                   ref maxValue, ref minValue, ref maxKey, ref minKey);
                 break;
 
-              case IEntity1dInternalForce force:
+              case IEntity1dQuantity<IInternalForce> force:
                 UpdateExtrema<IInternalForce, Force, Moment>(force.Results[position],
                   elementId, permutation, position,
                   ref maxValue, ref minValue, ref maxKey, ref minKey);

@@ -19,7 +19,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert member IDs
@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert member IDs
@@ -58,7 +58,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert Max in set
@@ -82,7 +82,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert Max in set
@@ -106,7 +106,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert Max in set
@@ -130,7 +130,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert Max in set
@@ -155,13 +155,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        IList<IEntity1dDisplacement> displacementQuantity = resultSet.Subset[id];
+        IList<IEntity1dQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
 
         // for analysis case results we expect 4 positions
         Assert.Single(displacementQuantity);
@@ -193,13 +193,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        IList<IEntity1dDisplacement> displacementQuantity = resultSet.Subset[id];
+        IList<IEntity1dQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
 
         // for C1 case results we expect 1 permutation in the collection
         Assert.Single(displacementQuantity);
@@ -217,19 +217,12 @@ namespace GsaGHTests.Parameters.Results {
     private List<double> ExpectedAnalysisCaseValues(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return Member1dDisplacementsA1.XInMillimeter();
-
         case ResultVector6HelperEnum.Y: return Member1dDisplacementsA1.YInMillimeter();
-
         case ResultVector6HelperEnum.Z: return Member1dDisplacementsA1.ZInMillimeter();
-
         case ResultVector6HelperEnum.Xyz: return Member1dDisplacementsA1.XyzInMillimeter();
-
         case ResultVector6HelperEnum.Xx: return Member1dDisplacementsA1.XxInRadian();
-
         case ResultVector6HelperEnum.Yy: return Member1dDisplacementsA1.YyInRadian();
-
         case ResultVector6HelperEnum.Zz: return Member1dDisplacementsA1.ZzInRadian();
-
         case ResultVector6HelperEnum.Xxyyzz: return Member1dDisplacementsA1.XxyyzzInRadian();
       }
 
@@ -239,19 +232,12 @@ namespace GsaGHTests.Parameters.Results {
     private List<double> ExpectedCombinationCaseC1Values(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return Member1dDisplacementsC1.XInMillimeter();
-
         case ResultVector6HelperEnum.Y: return Member1dDisplacementsC1.YInMillimeter();
-
         case ResultVector6HelperEnum.Z: return Member1dDisplacementsC1.ZInMillimeter();
-
         case ResultVector6HelperEnum.Xyz: return Member1dDisplacementsC1.XyzInMillimeter();
-
         case ResultVector6HelperEnum.Xx: return Member1dDisplacementsC1.XxInRadian();
-
         case ResultVector6HelperEnum.Yy: return Member1dDisplacementsC1.YyInRadian();
-
         case ResultVector6HelperEnum.Zz: return Member1dDisplacementsC1.ZzInRadian();
-
         case ResultVector6HelperEnum.Xxyyzz: return Member1dDisplacementsC1.XxyyzzInRadian();
       }
 

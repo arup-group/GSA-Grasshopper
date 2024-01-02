@@ -81,7 +81,7 @@ namespace GsaGH.Parameters.Results {
     }
 
     internal static ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> GetResultResultantTranslation(
-      IDictionary<int, IList<IEntity1dDisplacement>> subset, LengthUnit unit, List<int> permutations, 
+      IDictionary<int, IList<IEntity1dQuantity<IDisplacement>>> subset, LengthUnit unit, List<int> permutations, 
       EnvelopeMethod envelopeType) {
       var vals = new ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)>();
       if (permutations.IsNullOrEmpty()) {

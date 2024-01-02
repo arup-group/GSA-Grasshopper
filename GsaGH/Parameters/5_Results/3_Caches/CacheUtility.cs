@@ -19,9 +19,9 @@ namespace GsaGH.Parameters.Results {
       return missingIds;
     }
 
-    internal static ConcurrentBag<int> GetMissingKeysAndPositions<T1, T2>(
-      this IDictionary<int, IList<T1>> existing, ICollection<int> newKeys, ReadOnlyCollection<double> positions)
-      where T1 : IEntity1dQuantity<T2> where T2 : IResultItem {
+    internal static ConcurrentBag<int> GetMissingKeysAndPositions<T>(
+      this IDictionary<int, IList<IEntity1dQuantity<T>>> existing, ICollection<int> newKeys, ReadOnlyCollection<double> positions)
+      where T : IResultItem {
       var missingIds = new ConcurrentBag<int>();
       Parallel.ForEach(newKeys, key => {
         if (!existing.ContainsKey(key)) {
@@ -50,9 +50,9 @@ namespace GsaGH.Parameters.Results {
       return subset;
     }
 
-    internal static IDictionary<int, IList<T1>> GetSubset<T1, T2>(
-      this IDictionary<int, IList<T1>> dictionary, ICollection<int> keys, ICollection<double> positions) 
-      where T1 : IEntity1dQuantity<T2> where T2 : IResultItem {
+    internal static IDictionary<int, IList<IEntity1dQuantity<T>>> GetSubset<T>(
+      this IDictionary<int, IList<IEntity1dQuantity<T>>> dictionary, ICollection<int> keys, ICollection<double> positions) 
+      where T : IResultItem {
       if (dictionary.IsNullOrEmpty() || dictionary.Values.IsNullOrEmpty()) {
         return dictionary;
       }
@@ -63,13 +63,13 @@ namespace GsaGH.Parameters.Results {
         return GetSubset(dictionary, keys);
       }
 
-      var subset = new ConcurrentDictionary<int, IList<T1>>();
+      var subset = new ConcurrentDictionary<int, IList<IEntity1dQuantity<T>>>();
       Parallel.ForEach(keys, key => {
         if (dictionary.ContainsKey(key)) {
           var results = dictionary[key].ToList();
           for (int i = 0; i < results.Count; i++) { 
             foreach (double position in differences) {
-              results[i] = (T1)results[i].TakePositions(positions);
+              results[i] = results[i].TakePositions(positions);
             }
           }
           subset.TryAdd(key, results);

@@ -27,7 +27,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds("24 to 30", 1);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, positionsCount);
 
       ConcurrentDictionary<int, IList<IQuantity>> values = ResultsUtility.GetResultComponent(resultSet.Subset, DisplacementSelector(component), result.SelectedPermutationIds, envelope);
@@ -55,7 +55,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds("2 to 6", 1);
-      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Element1dInternalForces.ResultSubset(elementIds, positionsCount);
 
       ConcurrentDictionary<int, IList<IQuantity>> values = ResultsUtility.GetResultComponent(resultSet.Subset, ForceSelector(component), result.SelectedPermutationIds, envelope);
