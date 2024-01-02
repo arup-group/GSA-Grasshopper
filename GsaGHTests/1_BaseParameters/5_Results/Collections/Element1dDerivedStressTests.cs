@@ -191,14 +191,39 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
+    [Fact]
+    public void Element1dDerivedStresssCacheChangePositionsTest() {
+      // Assemble
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
+      int positionsCount = 5;
+
+      // Act
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
+      IEntity1dResultSubset<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> resultSet
+        = result.Element1dDerivedStresses.ResultSubset(elementIds, positionsCount);
+
+      // Assert
+      Assert.Equal(positionsCount,
+        result.Element1dDerivedStresses.Cache.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+      Assert.Equal(positionsCount, 
+        resultSet.Subset.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+
+      // Act again
+      int newPositionsCount = 4;
+      resultSet = result.Element1dDerivedStresses.ResultSubset(elementIds, newPositionsCount);
+
+      // Assert again
+      Assert.NotEqual(newPositionsCount,
+        result.Element1dDerivedStresses.Cache.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+      Assert.Equal(newPositionsCount,
+        resultSet.Subset.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+    }
+
     private List<double> ExpectedAnalysisCaseValues(ResultDerivedStress1dHelperEnum component) {
       switch (component) {
         case ResultDerivedStress1dHelperEnum.ShearY: return Element1dDerivedStressA1.SEyInMPa();
-
         case ResultDerivedStress1dHelperEnum.ShearZ: return Element1dDerivedStressA1.SEzInMPa();
-
         case ResultDerivedStress1dHelperEnum.Torsion: return Element1dDerivedStressA1.StInMPa();
-
         case ResultDerivedStress1dHelperEnum.VonMises: return Element1dDerivedStressA1.VonMisesInMPa();
       }
 
@@ -208,11 +233,8 @@ namespace GsaGHTests.Parameters.Results {
     private List<double> ExpectedCombinationCaseC4p1Values(ResultDerivedStress1dHelperEnum component) {
       switch (component) {
         case ResultDerivedStress1dHelperEnum.ShearY: return Element1dDerivedStressC4p1.SEyInMPa();
-
         case ResultDerivedStress1dHelperEnum.ShearZ: return Element1dDerivedStressC4p1.SEzInMPa();
-
         case ResultDerivedStress1dHelperEnum.Torsion: return Element1dDerivedStressC4p1.StInMPa();
-
         case ResultDerivedStress1dHelperEnum.VonMises: return Element1dDerivedStressC4p1.VonMisesInMPa();
       }
 
@@ -222,11 +244,8 @@ namespace GsaGHTests.Parameters.Results {
     private List<double> ExpectedCombinationCaseC4p2Values(ResultDerivedStress1dHelperEnum component) {
       switch (component) {
         case ResultDerivedStress1dHelperEnum.ShearY: return Element1dDerivedStressC4p2.SEyInMPa();
-
         case ResultDerivedStress1dHelperEnum.ShearZ: return Element1dDerivedStressC4p2.SEzInMPa();
-
         case ResultDerivedStress1dHelperEnum.Torsion: return Element1dDerivedStressC4p2.StInMPa();
-
         case ResultDerivedStress1dHelperEnum.VonMises: return Element1dDerivedStressC4p2.VonMisesInMPa();
       }
 

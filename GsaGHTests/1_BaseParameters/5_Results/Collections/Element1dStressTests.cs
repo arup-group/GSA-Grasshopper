@@ -221,24 +221,44 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
+    [Fact]
+    public void Element1dStresssCacheChangePositionsTest() {
+      // Assemble
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
+      int positionsCount = 5;
+
+      // Act
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
+      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
+        = result.Element1dStresses.ResultSubset(elementIds, positionsCount);
+
+      // Assert
+      Assert.Equal(positionsCount,
+        result.Element1dStresses.Cache.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+      Assert.Equal(positionsCount,
+        resultSet.Subset.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+
+      // Act again
+      int newPositionsCount = 4;
+      resultSet = result.Element1dStresses.ResultSubset(elementIds, newPositionsCount);
+
+      // Assert again
+      Assert.NotEqual(newPositionsCount,
+        result.Element1dStresses.Cache.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+      Assert.Equal(newPositionsCount,
+        resultSet.Subset.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+    }
+
     private List<double> ExpectedAnalysisCaseValues(ResultStress1dHelperEnum component) {
       switch (component) {
         case ResultStress1dHelperEnum.Axial: return Element1dStressA1.AxialInMPa();
-
         case ResultStress1dHelperEnum.ShearY: return Element1dStressA1.SyInMPa();
-
         case ResultStress1dHelperEnum.ShearZ: return Element1dStressA1.SzInMPa();
-
         case ResultStress1dHelperEnum.ByPos: return Element1dStressA1.ByPosInMPa();
-
         case ResultStress1dHelperEnum.ByNeg: return Element1dStressA1.ByNegInMPa();
-
         case ResultStress1dHelperEnum.BzPos: return Element1dStressA1.BzPosInMPa();
-
         case ResultStress1dHelperEnum.BzNeg: return Element1dStressA1.BzNegInMPa();
-
         case ResultStress1dHelperEnum.C1: return Element1dStressA1.C1InMPa();
-
         case ResultStress1dHelperEnum.C2: return Element1dStressA1.C2InMPa();
       }
 
@@ -248,21 +268,13 @@ namespace GsaGHTests.Parameters.Results {
     private List<double> ExpectedCombinationCaseC4p1Values(ResultStress1dHelperEnum component) {
       switch (component) {
         case ResultStress1dHelperEnum.Axial: return Element1dStressC4p1.AxialInMPa();
-
         case ResultStress1dHelperEnum.ShearY: return Element1dStressC4p1.SyInMPa();
-
         case ResultStress1dHelperEnum.ShearZ: return Element1dStressC4p1.SzInMPa();
-
         case ResultStress1dHelperEnum.ByPos: return Element1dStressC4p1.ByPosInMPa();
-
         case ResultStress1dHelperEnum.ByNeg: return Element1dStressC4p1.ByNegInMPa();
-
         case ResultStress1dHelperEnum.BzPos: return Element1dStressC4p1.BzPosInMPa();
-
         case ResultStress1dHelperEnum.BzNeg: return Element1dStressC4p1.BzNegInMPa();
-
         case ResultStress1dHelperEnum.C1: return Element1dStressC4p1.C1InMPa();
-
         case ResultStress1dHelperEnum.C2: return Element1dStressC4p1.C2InMPa();
       }
 
@@ -272,21 +284,13 @@ namespace GsaGHTests.Parameters.Results {
     private List<double> ExpectedCombinationCaseC4p2Values(ResultStress1dHelperEnum component) {
       switch (component) {
         case ResultStress1dHelperEnum.Axial: return Element1dStressC4p2.AxialInMPa();
-
         case ResultStress1dHelperEnum.ShearY: return Element1dStressC4p2.SyInMPa();
-
         case ResultStress1dHelperEnum.ShearZ: return Element1dStressC4p2.SzInMPa();
-
         case ResultStress1dHelperEnum.ByPos: return Element1dStressC4p2.ByPosInMPa();
-
         case ResultStress1dHelperEnum.ByNeg: return Element1dStressC4p2.ByNegInMPa();
-
         case ResultStress1dHelperEnum.BzPos: return Element1dStressC4p2.BzPosInMPa();
-
         case ResultStress1dHelperEnum.BzNeg: return Element1dStressC4p2.BzNegInMPa();
-
         case ResultStress1dHelperEnum.C1: return Element1dStressC4p2.C1InMPa();
-
         case ResultStress1dHelperEnum.C2: return Element1dStressC4p2.C2InMPa();
       }
 

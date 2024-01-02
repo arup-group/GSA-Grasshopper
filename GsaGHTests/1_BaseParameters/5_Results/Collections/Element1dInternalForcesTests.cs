@@ -216,22 +216,43 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
+    [Fact]
+    public void Element1dInternalForcesCacheChangePositionsTest() {
+      // Assemble
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
+      int positionsCount = 5;
+
+      // Act
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
+      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+        = result.Element1dInternalForces.ResultSubset(elementIds, positionsCount);
+
+      // Assert
+      Assert.Equal(positionsCount,
+        result.Element1dInternalForces.Cache.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+      Assert.Equal(positionsCount,
+        resultSet.Subset.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+
+      // Act again
+      int newPositionsCount = 4;
+      resultSet = result.Element1dInternalForces.ResultSubset(elementIds, newPositionsCount);
+
+      // Assert again
+      Assert.NotEqual(newPositionsCount,
+        result.Element1dInternalForces.Cache.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+      Assert.Equal(newPositionsCount,
+        resultSet.Subset.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+    }
+
     private List<double> ExpectedAnalysisCaseValues(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return Element1dForcesAndMomentsA1.XInKiloNewton();
-
         case ResultVector6HelperEnum.Y: return Element1dForcesAndMomentsA1.YInKiloNewton();
-
         case ResultVector6HelperEnum.Z: return Element1dForcesAndMomentsA1.ZInKiloNewton();
-
         case ResultVector6HelperEnum.Xyz: return Element1dForcesAndMomentsA1.XyzInKiloNewton();
-
         case ResultVector6HelperEnum.Xx: return Element1dForcesAndMomentsA1.XxInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Yy: return Element1dForcesAndMomentsA1.YyInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Zz: return Element1dForcesAndMomentsA1.ZzInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Xxyyzz: return Element1dForcesAndMomentsA1.XxyyzzInKiloNewtonMeter();
       }
 
@@ -241,19 +262,12 @@ namespace GsaGHTests.Parameters.Results {
     private List<double> ExpectedCombinationCaseC4p1Values(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return Element1dForcesAndMomentsC4p1.XInKiloNewton();
-
         case ResultVector6HelperEnum.Y: return Element1dForcesAndMomentsC4p1.YInKiloNewton();
-
         case ResultVector6HelperEnum.Z: return Element1dForcesAndMomentsC4p1.ZInKiloNewton();
-
         case ResultVector6HelperEnum.Xyz: return Element1dForcesAndMomentsC4p1.XyzInKiloNewton();
-
         case ResultVector6HelperEnum.Xx: return Element1dForcesAndMomentsC4p1.XxInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Yy: return Element1dForcesAndMomentsC4p1.YyInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Zz: return Element1dForcesAndMomentsC4p1.ZzInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Xxyyzz: return Element1dForcesAndMomentsC4p1.XxyyzzInKiloNewtonMeter();
       }
 
@@ -263,19 +277,12 @@ namespace GsaGHTests.Parameters.Results {
     private List<double> ExpectedCombinationCaseC4p2Values(ResultVector6HelperEnum component) {
       switch (component) {
         case ResultVector6HelperEnum.X: return Element1dForcesAndMomentsC4p2.XInKiloNewton();
-
         case ResultVector6HelperEnum.Y: return Element1dForcesAndMomentsC4p2.YInKiloNewton();
-
         case ResultVector6HelperEnum.Z: return Element1dForcesAndMomentsC4p2.ZInKiloNewton();
-
         case ResultVector6HelperEnum.Xyz: return Element1dForcesAndMomentsC4p2.XyzInKiloNewton();
-
         case ResultVector6HelperEnum.Xx: return Element1dForcesAndMomentsC4p2.XxInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Yy: return Element1dForcesAndMomentsC4p2.YyInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Zz: return Element1dForcesAndMomentsC4p2.ZzInKiloNewtonMeter();
-
         case ResultVector6HelperEnum.Xxyyzz: return Element1dForcesAndMomentsC4p2.XxyyzzInKiloNewtonMeter();
       }
 

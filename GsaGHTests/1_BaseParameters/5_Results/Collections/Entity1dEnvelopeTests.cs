@@ -30,7 +30,7 @@ namespace GsaGHTests.Parameters.Results {
       IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, positionsCount);
 
-      ConcurrentDictionary<int, IList<IQuantity>> values = ResultsUtility.GetResultComponent(resultSet.Subset, DisplacementSelector(component), envelope);
+      ConcurrentDictionary<int, IList<IQuantity>> values = ResultsUtility.GetResultComponent(resultSet.Subset, DisplacementSelector(component), result.SelectedPermutationIds, envelope);
 
       int i = 0;
       foreach (int elementId in elementIds) {
@@ -58,7 +58,7 @@ namespace GsaGHTests.Parameters.Results {
       IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Element1dInternalForces.ResultSubset(elementIds, positionsCount);
 
-      ConcurrentDictionary<int, IList<IQuantity>> values = ResultsUtility.GetResultComponent(resultSet.Subset, ForceSelector(component), envelope);
+      ConcurrentDictionary<int, IList<IQuantity>> values = ResultsUtility.GetResultComponent(resultSet.Subset, ForceSelector(component), result.SelectedPermutationIds, envelope);
 
       int i = 0;
       foreach (int elementId in elementIds) {

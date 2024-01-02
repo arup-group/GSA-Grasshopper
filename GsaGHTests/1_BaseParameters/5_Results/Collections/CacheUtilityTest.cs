@@ -20,8 +20,7 @@ namespace GsaGH.Parameters.Results {
     public void GetMissingKeysTests(
       string elementList, int cacheCount, int newKeyId, bool newKeyIsMissing) {
       // Assemble
-      GsaResult result
-        = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
       int invalidDimension = 666;
@@ -57,7 +56,7 @@ namespace GsaGH.Parameters.Results {
     [InlineData(null, 0, -3, true)]
     public void GetMissingKeysAndPositionsTests(string elementList, int cacheCount, int newKeyId, bool newKeyIsMissing) {
       // Assemble
-      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
       int invalidDimension = 666;
@@ -94,7 +93,7 @@ namespace GsaGH.Parameters.Results {
     [InlineData(-4, false)]
     public void GetSubsetIsValidWhenKeyIsValid(int newKey, bool newKeyIsValid) {
       // Assemble
-      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds("2 3 4 5", 1);

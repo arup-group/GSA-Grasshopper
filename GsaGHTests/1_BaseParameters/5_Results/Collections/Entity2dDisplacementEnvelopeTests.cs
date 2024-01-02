@@ -29,7 +29,7 @@ namespace GsaGHTests.Parameters.Results {
       IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> resultSet
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
-      ConcurrentDictionary<int, IList<IQuantity>> values = ResultsUtility.GetResultComponent(resultSet.Subset, Selector(component), envelope);
+      ConcurrentDictionary<int, IList<IQuantity>> values = ResultsUtility.GetResultComponent(resultSet.Subset, Selector(component), result.SelectedPermutationIds, envelope);
 
       int i = 0;
       foreach (int elementId in elementIds) {
