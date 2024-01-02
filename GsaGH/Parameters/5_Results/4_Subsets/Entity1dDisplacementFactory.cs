@@ -23,7 +23,7 @@ namespace GsaGH.Parameters.Results {
     internal static IList<IEntity1dDisplacement> AddMissingPositions(
       this IList<IEntity1dDisplacement> existing,
       ReadOnlyCollection<Double6> results, ReadOnlyCollection<double> positions) {
-      for (int i = 0; i < results.Count; i++) {
+      for (int i = 0; i < positions.Count; i++) {
         if (!existing[0].Results.ContainsKey(positions[i])) {
           existing[0].Results.Add(positions[i], new Displacement(results[i]));
         }
@@ -36,7 +36,7 @@ namespace GsaGH.Parameters.Results {
       this IList<IEntity1dDisplacement> existing,
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < existing.Count; i++) {
-        for (int j = 0; j < results[i].Count; j++) {
+        for (int j = 0; j < positions.Count; j++) {
           if (!existing[i].Results.ContainsKey(positions[j])) {
             existing[i].Results.Add(positions[j], new Displacement(results[i][j]));
           }

@@ -22,7 +22,7 @@ namespace GsaGH.Parameters.Results {
     internal static IList<IEntity1dStrainEnergyDensity> AddMissingPositions(
       this IList<IEntity1dStrainEnergyDensity> existing,
       ReadOnlyCollection<double> results, ReadOnlyCollection<double> positions) {
-      for (int i = 0; i < results.Count; i++) {
+      for (int i = 0; i < positions.Count; i++) {
         if (!existing[0].Results.ContainsKey(positions[i])) {
           existing[0].Results.Add(positions[i], new StrainEnergyDensity(results[i]));
         }
@@ -35,7 +35,7 @@ namespace GsaGH.Parameters.Results {
       this IList<IEntity1dStrainEnergyDensity> existing,
       ReadOnlyCollection<ReadOnlyCollection<double>> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < existing.Count; i++) {
-        for (int j = 0; j < results[i].Count; j++) {
+        for (int j = 0; j < positions.Count; j++) {
           if (!existing[i].Results.ContainsKey(positions[j])) {
             existing[i].Results.Add(positions[j], new StrainEnergyDensity(results[i][j]));
           }

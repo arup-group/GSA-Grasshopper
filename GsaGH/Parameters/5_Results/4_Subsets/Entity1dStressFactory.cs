@@ -36,7 +36,7 @@ namespace GsaGH.Parameters.Results {
       this IList<IEntity1dStress> existing,
       ReadOnlyCollection<ReadOnlyCollection<StressResult1d>> results, ReadOnlyCollection<double> positions) {
       for (int i = 0; i < existing.Count; i++) {
-        for (int j = 0; j < results.Count; j++) {
+        for (int j = 0; j < positions.Count; j++) {
           if (!existing[i].Results.ContainsKey(positions[j])) {
             existing[i].Results.Add(positions[j], new Stress1d(results[i][j]));
           }
