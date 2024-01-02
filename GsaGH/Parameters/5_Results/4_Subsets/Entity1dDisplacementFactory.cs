@@ -12,7 +12,7 @@ namespace GsaGH.Parameters.Results {
     }
 
     internal static IList<IEntity1dDisplacement> CreateDisplacements(
-      ReadOnlyCollection<ReadOnlyCollection<Double6>> results,  ReadOnlyCollection<double> positions) {
+      ReadOnlyCollection<ReadOnlyCollection<Double6>> results, ReadOnlyCollection<double> positions) {
       var permutations = new List<IEntity1dDisplacement>();
       foreach (ReadOnlyCollection<Double6> permutation in results) {
         permutations.Add(new Entity1dDisplacement(permutation, positions));
