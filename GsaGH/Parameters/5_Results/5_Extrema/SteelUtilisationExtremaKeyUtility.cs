@@ -59,7 +59,7 @@ namespace GsaGH.Parameters.Results {
       return (maxKeys, minKeys);
     }
 
-    private static void UpdateExtrema(ISteelUtilisation item, int nodeId, int permutation,
+    internal static void UpdateExtrema(ISteelUtilisation item, int nodeId, int permutation,
       ref SteelUtilisation maxValue, ref SteelUtilisation minValue,
       ref SteelUtilisationExtremaKeys maxKeys, ref SteelUtilisationExtremaKeys minKeys) {
 
@@ -133,72 +133,72 @@ namespace GsaGH.Parameters.Results {
         maxKeys.FlexuralBuckling = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Overall > maxValue.Overall) {
+      if (item.Overall < minValue.Overall) {
         minValue.Overall = item.Overall;
         minKeys.Overall = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.LocalCombined > minValue.LocalCombined) {
+      if (item.LocalCombined < minValue.LocalCombined) {
         minValue.LocalCombined = item.LocalCombined;
         minKeys.LocalCombined = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.BucklingCombined > minValue.BucklingCombined) {
+      if (item.BucklingCombined < minValue.BucklingCombined) {
         minValue.BucklingCombined = item.BucklingCombined;
         minKeys.BucklingCombined = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.LocalAxial > minValue.LocalAxial) {
+      if (item.LocalAxial < minValue.LocalAxial) {
         minValue.LocalAxial = item.LocalAxial;
         minKeys.LocalAxial = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.LocalShearU > minValue.LocalShearU) {
+      if (item.LocalShearU < minValue.LocalShearU) {
         minValue.LocalShearU = item.LocalShearU;
         minKeys.LocalShearU = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.LocalShearV > minValue.LocalShearV) {
+      if (item.LocalShearV < minValue.LocalShearV) {
         minValue.LocalShearV = item.LocalShearV;
         minKeys.LocalShearV = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.LocalTorsion > minValue.LocalTorsion) {
+      if (item.LocalTorsion < minValue.LocalTorsion) {
         minValue.LocalTorsion = item.LocalTorsion;
         minKeys.LocalTorsion = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.LocalMajorMoment > minValue.LocalMajorMoment) {
+      if (item.LocalMajorMoment < minValue.LocalMajorMoment) {
         minValue.LocalMajorMoment = item.LocalMajorMoment;
         minKeys.LocalMajorMoment = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.LocalMinorMoment > minValue.LocalMinorMoment) {
+      if (item.LocalMinorMoment < minValue.LocalMinorMoment) {
         minValue.LocalMinorMoment = item.LocalMinorMoment;
         minKeys.LocalMinorMoment = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.MajorBuckling > minValue.MajorBuckling) {
+      if (item.MajorBuckling < minValue.MajorBuckling) {
         minValue.MajorBuckling = item.MajorBuckling;
         minKeys.MajorBuckling = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.MinorBuckling > minValue.MinorBuckling) {
+      if (item.MinorBuckling < minValue.MinorBuckling) {
         minValue.MinorBuckling = item.MinorBuckling;
         minKeys.MinorBuckling = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.LateralTorsionalBuckling > minValue.LateralTorsionalBuckling) {
+      if (item.LateralTorsionalBuckling < minValue.LateralTorsionalBuckling) {
         minValue.LateralTorsionalBuckling = item.LateralTorsionalBuckling;
         minKeys.LateralTorsionalBuckling = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.TorsionalBuckling > minValue.TorsionalBuckling) {
+      if (item.TorsionalBuckling < minValue.TorsionalBuckling) {
         minValue.TorsionalBuckling = item.TorsionalBuckling;
         minKeys.TorsionalBuckling = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.FlexuralBuckling > minValue.FlexuralBuckling) {
+      if (item.FlexuralBuckling < minValue.FlexuralBuckling) {
         minValue.FlexuralBuckling = item.FlexuralBuckling;
         minKeys.FlexuralBuckling = new Entity0dExtremaKey(nodeId, permutation);
       }

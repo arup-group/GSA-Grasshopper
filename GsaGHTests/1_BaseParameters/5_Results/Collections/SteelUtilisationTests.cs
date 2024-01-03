@@ -199,10 +199,6 @@ namespace GsaGHTests.Parameters.Results {
       Assert.Null(resultSet.GetExtrema(resultSet.Max.FlexuralBuckling).FlexuralBuckling);
     }
 
-
-
-
-
     [Fact]
     public void SteelUtilsationValuesFromCombinationCaseTest() {
       // Assemble
@@ -241,6 +237,56 @@ namespace GsaGHTests.Parameters.Results {
       Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(lateralTorsionalBuckling, 4));
       Assert.Null(resultSet.GetExtrema(resultSet.Max.TorsionalBuckling).TorsionalBuckling);
       Assert.Null(resultSet.GetExtrema(resultSet.Max.FlexuralBuckling).FlexuralBuckling);
+    }
+
+    [Fact]
+    public void UpdateExtremaTest() {
+      // Assemble
+      var minUtilsation = new SteelUtilisation(-1.0);
+      var maxUtilsation = new SteelUtilisation(1.0);
+      var maxValue = new SteelUtilisation(0.0);
+      var minValue = new SteelUtilisation(0.0);
+      var maxKeys = new SteelUtilisationExtremaKeys();
+      var minKeys = new SteelUtilisationExtremaKeys();
+
+      // Act
+      ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(0.0), 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys); 
+      ExtremaKeyUtility.UpdateExtrema(maxUtilsation, 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys); 
+      ExtremaKeyUtility.UpdateExtrema(minUtilsation, 2, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys);
+
+      // Assert 
+      Assert.Equal(1.0, maxValue.Overall.Value.DecimalFractions);
+      Assert.Equal(1.0, maxValue.LocalCombined.Value.DecimalFractions);
+      Assert.Equal(1.0, maxValue.BucklingCombined.Value.DecimalFractions);
+      Assert.Equal(1.0, maxValue.LocalAxial.Value.DecimalFractions);
+      Assert.Equal(1.0, maxValue.LocalShearU.Value.DecimalFractions);
+      Assert.Equal(1.0, maxValue.LocalShearV.Value.DecimalFractions);
+      Assert.Equal(1.0, maxValue.LocalTorsion.Value.DecimalFractions);
+      Assert.Equal(1.0, maxValue.LocalMajorMoment.Value.DecimalFractions);
+      Assert.Equal(1.0, maxValue.LocalMinorMoment.Value.DecimalFractions);
+      Assert.Equal(1.0, maxValue.MajorBuckling.Value.DecimalFractions);
+      Assert.Equal(1.0, maxValue.MinorBuckling.Value.DecimalFractions);
+      Assert.Equal(1.0, maxValue.LateralTorsionalBuckling.Value.DecimalFractions);
+      Assert.Equal(1.0, maxValue.TorsionalBuckling.Value.DecimalFractions);
+      Assert.Equal(1.0, maxValue.FlexuralBuckling.Value.DecimalFractions);
+      Assert.Equal(1, maxKeys.Overall.Id);
+      Assert.Equal(0, maxKeys.Overall.Permutation);
+      Assert.Equal(-1.0, minValue.Overall.Value.DecimalFractions);
+      Assert.Equal(-1.0, minValue.LocalCombined.Value.DecimalFractions);
+      Assert.Equal(-1.0, minValue.BucklingCombined.Value.DecimalFractions);
+      Assert.Equal(-1.0, minValue.LocalAxial.Value.DecimalFractions);
+      Assert.Equal(-1.0, minValue.LocalShearU.Value.DecimalFractions);
+      Assert.Equal(-1.0, minValue.LocalShearV.Value.DecimalFractions);
+      Assert.Equal(-1.0, minValue.LocalTorsion.Value.DecimalFractions);
+      Assert.Equal(-1.0, minValue.LocalMajorMoment.Value.DecimalFractions);
+      Assert.Equal(-1.0, minValue.LocalMinorMoment.Value.DecimalFractions);
+      Assert.Equal(-1.0, minValue.MajorBuckling.Value.DecimalFractions);
+      Assert.Equal(-1.0, minValue.MinorBuckling.Value.DecimalFractions);
+      Assert.Equal(-1.0, minValue.LateralTorsionalBuckling.Value.DecimalFractions);
+      Assert.Equal(-1.0, minValue.TorsionalBuckling.Value.DecimalFractions);
+      Assert.Equal(-1.0, minValue.FlexuralBuckling.Value.DecimalFractions);
+      Assert.Equal(2, minKeys.Overall.Id);
+      Assert.Equal(0, minKeys.Overall.Permutation);
     }
   }
 }
