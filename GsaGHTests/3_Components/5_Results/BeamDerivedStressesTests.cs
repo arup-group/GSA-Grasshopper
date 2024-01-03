@@ -201,11 +201,8 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedAnalysisCaseValues(ResultDerivedStress1d component) {
       switch (component) {
         case ResultDerivedStress1d.ShearY: return Element1dDerivedStressA1.SEyInMPa();
-
         case ResultDerivedStress1d.ShearZ: return Element1dDerivedStressA1.SEzInMPa();
-
         case ResultDerivedStress1d.Torsion: return Element1dDerivedStressA1.StInMPa();
-
         case ResultDerivedStress1d.VonMises: return Element1dDerivedStressA1.VonMisesInMPa();
       }
 
@@ -215,11 +212,8 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedCombinationCaseC4p1Values(ResultDerivedStress1d component) {
       switch (component) {
         case ResultDerivedStress1d.ShearY: return Element1dDerivedStressC4p1.SEyInMPa();
-
         case ResultDerivedStress1d.ShearZ: return Element1dDerivedStressC4p1.SEzInMPa();
-
         case ResultDerivedStress1d.Torsion: return Element1dDerivedStressC4p1.StInMPa();
-
         case ResultDerivedStress1d.VonMises: return Element1dDerivedStressC4p1.VonMisesInMPa();
       }
 
@@ -229,11 +223,8 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedCombinationCaseC4p2Values(ResultDerivedStress1d component) {
       switch (component) {
         case ResultDerivedStress1d.ShearY: return Element1dDerivedStressC4p2.SEyInMPa();
-
         case ResultDerivedStress1d.ShearZ: return Element1dDerivedStressC4p2.SEzInMPa();
-
         case ResultDerivedStress1d.Torsion: return Element1dDerivedStressC4p2.StInMPa();
-
         case ResultDerivedStress1d.VonMises: return Element1dDerivedStressC4p2.VonMisesInMPa();
       }
 

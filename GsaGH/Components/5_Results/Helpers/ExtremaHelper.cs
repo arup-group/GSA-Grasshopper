@@ -195,7 +195,7 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U Stress1dExtremaKey<U>(
-      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<U>> resultSet, string key) {
+      IEntity1dResultSubset<IStress1d, ResultStress1d<U>> resultSet, string key) {
       return key switch {
         "Max Axial" => resultSet.Max.Axial,
         "Max Shear Y" => resultSet.Max.ShearY,
@@ -220,7 +220,7 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U Stress1dDerivedExtremaKey<U>(
-      IEntity1dResultSubset<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<U>> resultSet, string key) {
+      IEntity1dResultSubset<IStress1dDerived, ResultDerivedStress1d<U>> resultSet, string key) {
       return key switch {
         "Max Shear Y" => resultSet.Max.ElasticShearY,
         "Max Shear Z" => resultSet.Max.ElasticShearZ,
@@ -297,9 +297,9 @@ namespace GsaGH.Components.Helpers {
       };
     }
 
-    internal static U DisplacementExtremaKey<T1, T2, U>(
-      IEntity1dResultSubset<T1, T2, ResultVector6<U>> resultSet, string key)
-      where T1 : IEntity1dQuantity<T2> where T2 : IResultItem {
+    internal static U DisplacementExtremaKey<T, U>(
+      IEntity1dResultSubset<T, ResultVector6<U>> resultSet, string key)
+      where T : IResultItem {
       return key switch {
         "Max Ux" => resultSet.Max.X,
         "Max Uy" => resultSet.Max.Y,
@@ -344,9 +344,9 @@ namespace GsaGH.Components.Helpers {
       };
     }
 
-    internal static U InternalForceExtremaKey<T1, T2, U>(
-      IEntity1dResultSubset<T1, T2, ResultVector6<U>> resultSet, string key)
-      where T1 : IEntity1dQuantity<T2> where T2 : IResultItem {
+    internal static U InternalForceExtremaKey<T, U>(
+      IEntity1dResultSubset<T, ResultVector6<U>> resultSet, string key)
+      where T : IResultItem {
       return key switch {
         "Max Fx" => resultSet.Max.X,
         "Max Fy" => resultSet.Max.Y,

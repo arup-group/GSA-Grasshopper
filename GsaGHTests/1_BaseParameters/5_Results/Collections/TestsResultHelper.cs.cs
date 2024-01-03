@@ -1,9 +1,41 @@
 ﻿using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
 using OasysUnits;
+using System;
 
 namespace GsaGHTests.Parameters.Results {
   public static class TestsResultHelper {
+    public static double Envelope(double? x, double? y, EnvelopeMethod envelope) {
+      return Envelope((double)x, (double)y, envelope);
+    }
+
+    public static double Envelope(double x, double y, EnvelopeMethod envelope) {
+      double value = 0;
+      switch (envelope) {
+        case EnvelopeMethod.Maximum:
+          value = Math.Max(x, y);
+          break;
+
+        case EnvelopeMethod.Minimum:
+          value = Math.Min(x, y);
+          break;
+
+        case EnvelopeMethod.Absolute:
+          value = Math.Max(Math.Abs(x), Math.Abs(y));
+          break;
+
+        case EnvelopeMethod.SignedAbsolute:
+          if (Math.Abs(x) > Math.Abs(y)) {
+            value = x;
+          } else {
+            value = y;
+          }
+
+          break;
+      }
+      return ResultHelper.RoundToSignificantDigits(value, 4);
+    }
+
     public static double ResultsHelper(IEntity0dResultSubset<IInternalForce,
       ResultVector6<Entity0dExtremaKey>> result, ResultVector6 component, bool max) {
       double d = 0;
@@ -406,7 +438,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> result,
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> result,
       ResultVector6 component, bool max) {
       double d = 0;
       ResultVector6<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
@@ -448,7 +480,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> result,
+      IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> result,
       ResultVector6 component, bool max) {
       double d = 0;
       ResultVector6<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
@@ -490,7 +522,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity1dResultSubset<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> result,
+      IEntity1dResultSubset<IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> result,
       ResultDerivedStress1d component, bool max) {
       double d = 0;
       ResultDerivedStress1d<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
@@ -516,7 +548,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double ResultsHelper(
-      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> result,
+      IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> result,
       ResultStress1d component, bool max) {
       double d = 0;
       ResultStress1d<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;

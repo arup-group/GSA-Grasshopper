@@ -18,7 +18,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, 1);
 
       // Assert element IDs
@@ -33,7 +33,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, 1);
 
       // Assert element IDs
@@ -58,7 +58,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, 4);
 
       // Assert Max in set
@@ -84,7 +84,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, 4);
 
       // Assert Max in set
@@ -109,7 +109,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, 4);
 
       // Assert Max in set
@@ -135,7 +135,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, 4);
 
       // Assert Max in set
@@ -161,13 +161,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        IList<IEntity1dStress> stressQuantity = resultSet.Subset[id];
+        IList<IEntity1dQuantity<IStress1d>> stressQuantity = resultSet.Subset[id];
 
         // for analysis case results we expect 4 positions
         Assert.Single(stressQuantity);
@@ -199,13 +199,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
         = result.Element1dStresses.ResultSubset(elementIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        IList<IEntity1dStress> displacementQuantity = resultSet.Subset[id];
+        IList<IEntity1dQuantity<IStress1d>> displacementQuantity = resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, displacementQuantity.Count);
@@ -221,24 +221,44 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
+    [Fact]
+    public void Element1dStresssCacheChangePositionsTest() {
+      // Assemble
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
+      int positionsCount = 5;
+
+      // Act
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
+      IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> resultSet
+        = result.Element1dStresses.ResultSubset(elementIds, positionsCount);
+
+      // Assert
+      Assert.Equal(positionsCount,
+        result.Element1dStresses.Cache.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+      Assert.Equal(positionsCount,
+        resultSet.Subset.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+
+      // Act again
+      int newPositionsCount = 4;
+      resultSet = result.Element1dStresses.ResultSubset(elementIds, newPositionsCount);
+
+      // Assert again
+      Assert.NotEqual(newPositionsCount,
+        result.Element1dStresses.Cache.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+      Assert.Equal(newPositionsCount,
+        resultSet.Subset.FirstOrDefault().Value.FirstOrDefault().Results.Count);
+    }
+
     private List<double> ExpectedAnalysisCaseValues(ResultStress1d component) {
       switch (component) {
         case ResultStress1d.Axial: return Element1dStressA1.AxialInMPa();
-
         case ResultStress1d.ShearY: return Element1dStressA1.SyInMPa();
-
         case ResultStress1d.ShearZ: return Element1dStressA1.SzInMPa();
-
         case ResultStress1d.ByPos: return Element1dStressA1.ByPosInMPa();
-
         case ResultStress1d.ByNeg: return Element1dStressA1.ByNegInMPa();
-
         case ResultStress1d.BzPos: return Element1dStressA1.BzPosInMPa();
-
         case ResultStress1d.BzNeg: return Element1dStressA1.BzNegInMPa();
-
         case ResultStress1d.C1: return Element1dStressA1.C1InMPa();
-
         case ResultStress1d.C2: return Element1dStressA1.C2InMPa();
       }
 
@@ -248,21 +268,13 @@ namespace GsaGHTests.Parameters.Results {
     private List<double> ExpectedCombinationCaseC4p1Values(ResultStress1d component) {
       switch (component) {
         case ResultStress1d.Axial: return Element1dStressC4p1.AxialInMPa();
-
         case ResultStress1d.ShearY: return Element1dStressC4p1.SyInMPa();
-
         case ResultStress1d.ShearZ: return Element1dStressC4p1.SzInMPa();
-
         case ResultStress1d.ByPos: return Element1dStressC4p1.ByPosInMPa();
-
         case ResultStress1d.ByNeg: return Element1dStressC4p1.ByNegInMPa();
-
         case ResultStress1d.BzPos: return Element1dStressC4p1.BzPosInMPa();
-
         case ResultStress1d.BzNeg: return Element1dStressC4p1.BzNegInMPa();
-
         case ResultStress1d.C1: return Element1dStressC4p1.C1InMPa();
-
         case ResultStress1d.C2: return Element1dStressC4p1.C2InMPa();
       }
 
@@ -272,21 +284,13 @@ namespace GsaGHTests.Parameters.Results {
     private List<double> ExpectedCombinationCaseC4p2Values(ResultStress1d component) {
       switch (component) {
         case ResultStress1d.Axial: return Element1dStressC4p2.AxialInMPa();
-
         case ResultStress1d.ShearY: return Element1dStressC4p2.SyInMPa();
-
         case ResultStress1d.ShearZ: return Element1dStressC4p2.SzInMPa();
-
         case ResultStress1d.ByPos: return Element1dStressC4p2.ByPosInMPa();
-
         case ResultStress1d.ByNeg: return Element1dStressC4p2.ByNegInMPa();
-
         case ResultStress1d.BzPos: return Element1dStressC4p2.BzPosInMPa();
-
         case ResultStress1d.BzNeg: return Element1dStressC4p2.BzNegInMPa();
-
         case ResultStress1d.C1: return Element1dStressC4p2.C1InMPa();
-
         case ResultStress1d.C2: return Element1dStressC4p2.C2InMPa();
       }
 

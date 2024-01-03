@@ -129,19 +129,14 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       da.GetData(0, ref ghTyp);
 
-      switch (ghTyp?.Value) {
-        case GsaResultGoo goo: 
-          result = (GsaResult)goo.Value;
-          if (result.CaseType == CaseType.CombinationCase) {
-            this.AddRuntimeError("Global Result only available for Analysis Cases");
-            return;
-          }
+      result = Inputs.GetResultInput(this, ghTyp);
+      if (result == null) {
+        return;
+      }
 
-          break;
-        
-        default:
-          this.AddRuntimeError("Error converting input to GSA Result");
-          return;
+      if (result.CaseType == CaseType.CombinationCase) {
+        this.AddRuntimeError("Global Result only available for Analysis Cases");
+        return;
       }
 
       IGlobalResultsCache globalResultsCache = result.GlobalResults;

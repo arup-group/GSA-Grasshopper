@@ -19,7 +19,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dInternalForces.ResultSubset(memberIds, 5);
 
       // Assert member IDs
@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dInternalForces.ResultSubset(memberIds, 5);
 
       // Assert member IDs
@@ -58,7 +58,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dInternalForces.ResultSubset(memberIds, 5);
 
       // Assert Max in set
@@ -82,7 +82,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dInternalForces.ResultSubset(memberIds, 5);
 
       // Assert Max in set
@@ -106,7 +106,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dInternalForces.ResultSubset(memberIds, 5);
 
       // Assert Max in set
@@ -130,7 +130,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dInternalForces.ResultSubset(memberIds, 5);
 
       // Assert Max in set
@@ -155,13 +155,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dInternalForces.ResultSubset(memberIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        IList<IEntity1dInternalForce> forcesQuantity = resultSet.Subset[id];
+        IList<IEntity1dQuantity<IInternalForce>> forcesQuantity = resultSet.Subset[id];
 
         // for analysis case results we expect 4 positions
         Assert.Single(forcesQuantity);
@@ -193,13 +193,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dInternalForces.ResultSubset(memberIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        IList<IEntity1dInternalForce> forcesQuantity = resultSet.Subset[id];
+        IList<IEntity1dQuantity<IInternalForce>> forcesQuantity = resultSet.Subset[id];
 
         // for C1 case results we expect 1 permutation in the collection
         Assert.Single(forcesQuantity);
@@ -217,19 +217,12 @@ namespace GsaGHTests.Parameters.Results {
     private List<double> ExpectedAnalysisCaseValues(ResultVector6 component) {
       switch (component) {
         case ResultVector6.X: return Member1dForcesA1.XInKiloNewton();
-
         case ResultVector6.Y: return Member1dForcesA1.YInKiloNewton();
-
         case ResultVector6.Z: return Member1dForcesA1.ZInKiloNewton();
-
         case ResultVector6.Xyz: return Member1dForcesA1.XyzInKiloNewton();
-
         case ResultVector6.Xx: return Member1dForcesA1.XxInKiloNewtonMeter();
-
         case ResultVector6.Yy: return Member1dForcesA1.YyInKiloNewtonMeter();
-
         case ResultVector6.Zz: return Member1dForcesA1.ZzInKiloNewtonMeter();
-
         case ResultVector6.Xxyyzz: return Member1dForcesA1.XxyyzzInKiloNewtonMeter();
       }
 
@@ -239,19 +232,12 @@ namespace GsaGHTests.Parameters.Results {
     private List<double> ExpectedCombinationCaseC1Values(ResultVector6 component) {
       switch (component) {
         case ResultVector6.X: return Member1dForcesC1.XInKiloNewton();
-
         case ResultVector6.Y: return Member1dForcesC1.YInKiloNewton();
-
         case ResultVector6.Z: return Member1dForcesC1.ZInKiloNewton();
-
         case ResultVector6.Xyz: return Member1dForcesC1.XyzInKiloNewton();
-
         case ResultVector6.Xx: return Member1dForcesC1.XxInKiloNewtonMeter();
-
         case ResultVector6.Yy: return Member1dForcesC1.YyInKiloNewtonMeter();
-
         case ResultVector6.Zz: return Member1dForcesC1.ZzInKiloNewtonMeter();
-
         case ResultVector6.Xxyyzz: return Member1dForcesC1.XxyyzzInKiloNewtonMeter();
       }
 

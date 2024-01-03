@@ -217,19 +217,12 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedAnalysisCaseValues(ResultVector6 component) {
       switch (component) {
         case ResultVector6.X: return Element1dDisplacementsA1.XInMillimeter();
-
         case ResultVector6.Y: return Element1dDisplacementsA1.YInMillimeter();
-
         case ResultVector6.Z: return Element1dDisplacementsA1.ZInMillimeter();
-
         case ResultVector6.Xyz: return Element1dDisplacementsA1.XyzInMillimeter();
-
         case ResultVector6.Xx: return Element1dDisplacementsA1.XxInRadian();
-
         case ResultVector6.Yy: return Element1dDisplacementsA1.YyInRadian();
-
         case ResultVector6.Zz: return Element1dDisplacementsA1.ZzInRadian();
-
         case ResultVector6.Xxyyzz: return Element1dDisplacementsA1.XxyyzzInRadian();
       }
 
@@ -239,19 +232,12 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedCombinationCaseC4p1Values(ResultVector6 component) {
       switch (component) {
         case ResultVector6.X: return Element1dDisplacementsC4p1.XInMillimeter();
-
         case ResultVector6.Y: return Element1dDisplacementsC4p1.YInMillimeter();
-
         case ResultVector6.Z: return Element1dDisplacementsC4p1.ZInMillimeter();
-
         case ResultVector6.Xyz: return Element1dDisplacementsC4p1.XyzInMillimeter();
-
         case ResultVector6.Xx: return Element1dDisplacementsC4p1.XxInRadian();
-
         case ResultVector6.Yy: return Element1dDisplacementsC4p1.YyInRadian();
-
         case ResultVector6.Zz: return Element1dDisplacementsC4p1.ZzInRadian();
-
         case ResultVector6.Xxyyzz: return Element1dDisplacementsC4p1.XxyyzzInRadian();
       }
 
@@ -261,19 +247,12 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedCombinationCaseC4p2Values(ResultVector6 component) {
       switch (component) {
         case ResultVector6.X: return Element1dDisplacementsC4p2.XInMillimeter();
-
         case ResultVector6.Y: return Element1dDisplacementsC4p2.YInMillimeter();
-
         case ResultVector6.Z: return Element1dDisplacementsC4p2.ZInMillimeter();
-
         case ResultVector6.Xyz: return Element1dDisplacementsC4p2.XyzInMillimeter();
-
         case ResultVector6.Xx: return Element1dDisplacementsC4p2.XxInRadian();
-
         case ResultVector6.Yy: return Element1dDisplacementsC4p2.YyInRadian();
-
         case ResultVector6.Zz: return Element1dDisplacementsC4p2.ZzInRadian();
-
         case ResultVector6.Xxyyzz: return Element1dDisplacementsC4p2.XxyyzzInRadian();
       }
 

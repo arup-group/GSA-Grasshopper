@@ -242,17 +242,16 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void UpdateExtremaTest() {
       // Assemble
-      var minUtilsation = new SteelUtilisation(-1.0);
-      var maxUtilsation = new SteelUtilisation(1.0);
       var maxValue = new SteelUtilisation(0.0);
       var minValue = new SteelUtilisation(0.0);
       var maxKeys = new SteelUtilisationExtremaKeys();
       var minKeys = new SteelUtilisationExtremaKeys();
 
       // Act
-      ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(0.0), 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys); 
-      ExtremaKeyUtility.UpdateExtrema(maxUtilsation, 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys); 
-      ExtremaKeyUtility.UpdateExtrema(minUtilsation, 2, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys);
+      ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(0.5), 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys); 
+      ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(-0.5), 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys); 
+      ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(1.0), 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys); 
+      ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(-1.0), 2, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys);
 
       // Assert 
       Assert.Equal(1.0, maxValue.Overall.Value.DecimalFractions);

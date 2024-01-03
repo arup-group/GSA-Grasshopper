@@ -24,27 +24,26 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dDisplacement, IDisplacement,
-      ResultVector6<Entity1dExtremaKey>> Element1dDisplacements {
+    public IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>> Element1dDisplacements {
       get;
       private set;
     }
-    public IEntity1dResultCache<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> Element1dInternalForces {
-      get;
-      private set;
-    }
-
-    public IEntity1dResultCache<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> Element1dStrainEnergyDensities {
+    public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>> Element1dInternalForces {
       get;
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> Element1dDerivedStresses {
+    public IEntity1dResultCache<IEnergyDensity, Entity1dExtremaKey> Element1dStrainEnergyDensities {
       get;
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> Element1dStresses {
+    public IEntity1dResultCache<IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> Element1dDerivedStresses {
+      get;
+      private set;
+    }
+
+    public IEntity1dResultCache<IStress1d, ResultStress1d<Entity1dExtremaKey>> Element1dStresses {
       get;
       private set;
     }
@@ -103,13 +102,13 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>>
+    public IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>>
       Member1dDisplacements {
       get;
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>>
+    public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>>
       Member1dInternalForces {
       get;
       private set;
@@ -121,16 +120,25 @@ namespace GsaGH.Parameters.Results {
     }
 
     internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseId) {
+      if (model == null || result == null) {
+        return;
+      }
+
       InitialiseAnalysisCaseResults(model, result, caseId);
     }
 
     internal GsaResult(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
+      if (model == null || result == null) {
+        return;
+      }
+
       InitialiseCombinationsCaseResults(model, result, caseId, permutations?.OrderBy(x => x));
     }
 
     // Other members
     public int CaseId { get; set; }
+    public int Permutations { get; set; } = 0;
     public string CaseName { get; set; }
     public GsaModel Model { get; set; }
     public List<int> SelectedPermutationIds { get; set; }
@@ -146,11 +154,16 @@ namespace GsaGH.Parameters.Results {
         case CaseType.CombinationCase:
           txt = "C" + CaseId;
           if (SelectedPermutationIds.Count > 0) {
-            txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count :
+            txt = SelectedPermutationIds.Count > 1 
+              ? $"{txt} ({SelectedPermutationIds.Count} permutations)" :
               txt + " p" + SelectedPermutationIds[0];
           }
 
           break;
+      }
+
+      if (!string.IsNullOrEmpty(CaseName)) {
+        txt = $"{txt} '{CaseName}'";
       }
 
       return txt.TrimSpaces();
@@ -241,7 +254,9 @@ namespace GsaGH.Parameters.Results {
 
     private void InitialiseCombinationsCaseResults(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
-      
+      ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> temp = result.NodeDisplacement(model.Model.Nodes().Keys.First().ToString());
+      Permutations = temp[temp.Keys.First()].Count;
+
       Element1dAverageStrainEnergyDensities = new Element1dAverageStrainEnergyDensityCache(result);
       Element1dDisplacements = new Element1dDisplacementCache(result);
       Element1dInternalForces = new Element1dInternalForceCache(result);
@@ -271,10 +286,9 @@ namespace GsaGH.Parameters.Results {
       CaseType = CaseType.CombinationCase;
       CaseId = caseId;
       SelectedPermutationIds = permutations?.ToList();
-      if (model?.Model?.CombinationCases()?.ContainsKey(caseId) != true) {
-        return;
+      if (model?.Model?.CombinationCases()?.ContainsKey(caseId) == true) {
+        CaseName = model.Model.CombinationCases()[CaseId].Name;
       }
-      CaseName = model.Model.CombinationCases()[CaseId].Name;
     }
   }
 }

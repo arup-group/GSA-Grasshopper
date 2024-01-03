@@ -219,13 +219,13 @@ namespace GsaGHTests.Components.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        IList<IEntity1dDisplacement> displacementQuantity = resultSet.Subset[id];
+        IList<IEntity1dQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
 
         // for analysis case results we expect 4 positions
         Assert.Single(displacementQuantity);
@@ -257,13 +257,13 @@ namespace GsaGHTests.Components.Results {
 
       // Act
       ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Member1dDisplacements.ResultSubset(memberIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        IList<IEntity1dDisplacement> displacementQuantity = resultSet.Subset[id];
+        IList<IEntity1dQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[id];
 
         // for C1 case results we expect 1 permutation in the collection
         Assert.Single(displacementQuantity);
@@ -281,19 +281,12 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedAnalysisCaseValues(ResultVector6 component) {
       switch (component) {
         case ResultVector6.X: return Member1dDisplacementsA1.XInMillimeter();
-
         case ResultVector6.Y: return Member1dDisplacementsA1.YInMillimeter();
-
         case ResultVector6.Z: return Member1dDisplacementsA1.ZInMillimeter();
-
         case ResultVector6.Xyz: return Member1dDisplacementsA1.XyzInMillimeter();
-
         case ResultVector6.Xx: return Member1dDisplacementsA1.XxInRadian();
-
         case ResultVector6.Yy: return Member1dDisplacementsA1.YyInRadian();
-
         case ResultVector6.Zz: return Member1dDisplacementsA1.ZzInRadian();
-
         case ResultVector6.Xxyyzz: return Member1dDisplacementsA1.XxyyzzInRadian();
       }
 
@@ -303,19 +296,12 @@ namespace GsaGHTests.Components.Results {
     private List<double> ExpectedCombinationCaseC1Values(ResultVector6 component) {
       switch (component) {
         case ResultVector6.X: return Member1dDisplacementsC1.XInMillimeter();
-
         case ResultVector6.Y: return Member1dDisplacementsC1.YInMillimeter();
-
         case ResultVector6.Z: return Member1dDisplacementsC1.ZInMillimeter();
-
         case ResultVector6.Xyz: return Member1dDisplacementsC1.XyzInMillimeter();
-
         case ResultVector6.Xx: return Member1dDisplacementsC1.XxInRadian();
-
         case ResultVector6.Yy: return Member1dDisplacementsC1.YyInRadian();
-
         case ResultVector6.Zz: return Member1dDisplacementsC1.ZzInRadian();
-
         case ResultVector6.Xxyyzz: return Member1dDisplacementsC1.XxyyzzInRadian();
       }
 

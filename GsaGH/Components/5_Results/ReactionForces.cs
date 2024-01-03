@@ -141,17 +141,12 @@ namespace GsaGH.Components {
       da.GetDataList(0, ghTypes);
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
-        switch (ghTyp?.Value) {
-          case GsaResultGoo goo:
-            result = (GsaResult)goo.Value;
-            nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
-            break;
-
-          default:
-            this.AddRuntimeError("Error converting input to GSA Result");
-            return;
+        result = Inputs.GetResultInput(this, ghTyp);
+        if (result == null) {
+          return;
         }
 
+        nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
         IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> resultSet
           = result.NodeReactionForces.ResultSubset(nodeIds);
