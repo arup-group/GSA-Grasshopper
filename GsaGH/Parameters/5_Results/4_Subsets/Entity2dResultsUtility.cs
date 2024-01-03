@@ -110,11 +110,10 @@ namespace GsaGH.Parameters.Results {
                     GetXyz(kvp.Value[permutation - 1].Results(), unit, vertex);
                   xyz[vertex] = res[vertex];
                 } else if (res[vertex] == xyz[vertex]) {
-                  double zt = kvp.Value[permutation - 1].Results()
-                  .Select(r => r.Z.As(unit)).ElementAt(vertex);
-                  if (zt > z[vertex]) {
-                    (x[vertex], y[vertex], z[vertex]) =
+                  (double xt, double yt, double zt) =
                     GetXyz(kvp.Value[permutation - 1].Results(), unit, vertex);
+                  if (xt + yt + zt > x[vertex] + y[vertex] + z[vertex]) {
+                    (x[vertex], y[vertex], z[vertex]) = (xt, yt, zt);
                     xyz[vertex] = res[vertex];
                   }
                 }
@@ -127,11 +126,10 @@ namespace GsaGH.Parameters.Results {
                     GetXyz(kvp.Value[permutation - 1].Results(), unit, vertex);
                   xyz[vertex] = res[vertex];
                 } else if (res[vertex] == xyz[vertex]) {
-                  double zt = kvp.Value[permutation - 1].Results()
-                  .Select(r => r.Z.As(unit)).ElementAt(vertex);
-                  if (zt < z[vertex]) {
-                    (x[vertex], y[vertex], z[vertex]) =
+                  (double xt, double yt, double zt) = 
                     GetXyz(kvp.Value[permutation - 1].Results(), unit, vertex);
+                  if (xt + yt + zt < x[vertex] + y[vertex] + z[vertex]) {
+                    (x[vertex], y[vertex], z[vertex]) = (xt, yt, zt);
                     xyz[vertex] = res[vertex];
                   }
                 }
