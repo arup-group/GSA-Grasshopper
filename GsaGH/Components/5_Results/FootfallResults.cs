@@ -122,7 +122,7 @@ namespace GsaGH.Components {
         }
 
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-        INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> resultSet
+        IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> resultSet
           = _selectedItems[0] == _dropDownItems[0][0]
           ? result.NodeResonantFootfalls.ResultSubset(nodeIds)
           : result.NodeTransientFootfalls.ResultSubset(nodeIds);
@@ -155,7 +155,7 @@ namespace GsaGH.Components {
             }
           }
         } else {
-          NodeExtremaKey key = ExtremaHelper.FootfallExtremaKey(resultSet, _selectedItems[1]);
+          Entity0dExtremaKey key = ExtremaHelper.FootfallExtremaKey(resultSet, _selectedItems[1]);
           IFootfall extrema = resultSet.GetExtrema(key);
           int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
           var path = new GH_Path(result.CaseId, key.Permutation + perm);

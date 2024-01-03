@@ -882,7 +882,7 @@ namespace GsaGH.Components {
               break;
 
             default:
-              INodeResultSubset<IEnergyDensity, NodeExtremaKey> averageStrainEnergies =
+              IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> averageStrainEnergies =
                 result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
               _resType = "Average Strain E Dens.";
               dmax = averageStrainEnergies.GetExtrema(averageStrainEnergies.Max).EnergyDensity.As(_energyResultUnit);
@@ -900,7 +900,7 @@ namespace GsaGH.Components {
         case FoldMode.Footfall when result.CaseType == CaseType.AnalysisCase:
           positionsCount = 2;
           _resType = "Response Factor [-]";
-          INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfallCache
+          IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> nodeFootfallCache
           = _selectedItems[1] == "Resonant" 
             ? result.NodeResonantFootfalls
             : result.NodeTransientFootfalls;
@@ -909,7 +909,7 @@ namespace GsaGH.Components {
           ICollection<int> nodeIds;
           (values, nodeIds) = ResultsUtility.MapNodeResultToElements(
             elems, nodeFootfallCache, footfallSelector, permutation);
-          INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfall 
+          IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> nodeFootfall 
             = nodeFootfallCache.ResultSubset(nodeIds);
           dmax = nodeFootfall.GetExtrema(nodeFootfall.Max.MaximumResponseFactor).MaximumResponseFactor;
           dmin = nodeFootfall.GetExtrema(nodeFootfall.Min.MaximumResponseFactor).MaximumResponseFactor;

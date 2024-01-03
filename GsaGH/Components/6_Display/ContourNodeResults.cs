@@ -499,7 +499,7 @@ namespace GsaGH.Components {
       ConcurrentDictionary<int, (double x, double y, double z)> valuesXyz = null;
       switch (_mode) {
         case FoldMode.Displacement:
-          INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> displacements
+          IEntity0dResultSubset<IDisplacement, ResultVector6<Entity0dExtremaKey>> displacements
             = result.NodeDisplacements.ResultSubset(nodeIds);
 
           if (displacements.Ids.Count == 0) {
@@ -582,7 +582,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Reaction:
-          INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> reactions
+          IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> reactions
             = result.NodeReactionForces.ResultSubset(nodeIds);
 
           if (reactions.Ids.Count == 0) {
@@ -659,7 +659,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.SpringForce:
-          INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> springForces
+          IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> springForces
             = result.NodeSpringForces.ResultSubset(nodeIds);
 
           if (springForces.Ids.Count == 0) {
@@ -737,7 +737,7 @@ namespace GsaGH.Components {
 
         case FoldMode.Footfall:
           _resType = "Response Factor [-]";
-          INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> footfall = null;
+          IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> footfall = null;
           switch (_selectedItems[1]) {
             case "Resonant":
               footfall = result.NodeResonantFootfalls.ResultSubset(nodeIds);

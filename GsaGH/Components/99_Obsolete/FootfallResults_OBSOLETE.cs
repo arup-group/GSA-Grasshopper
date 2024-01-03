@@ -72,9 +72,9 @@ namespace GsaGH.Components {
       string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
       ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-      INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> resonant
+      IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> resonant
         = result.NodeResonantFootfalls.ResultSubset(nodeIds);
-      INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> transient
+      IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> transient
         = result.NodeTransientFootfalls.ResultSubset(nodeIds);
 
       da.SetData(0, resonant.GetExtrema(resonant.Max.MaximumResponseFactor).MaximumResponseFactor);

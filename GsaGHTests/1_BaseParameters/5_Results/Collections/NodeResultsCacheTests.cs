@@ -29,7 +29,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds("442");
-      INodeResultSubset<IDisplacement, ResultVector6<NodeExtremaKey>> resultSet
+      IEntity0dResultSubset<IDisplacement, ResultVector6<Entity0dExtremaKey>> resultSet
         = result.NodeDisplacements.ResultSubset(nodeIds);
       nodeIds = result.NodeIds("444");
       ConcurrentBag<int> missingIds

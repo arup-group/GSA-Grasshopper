@@ -43,9 +43,9 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector2HelperEnum.Qx)]
-    [InlineData(ResultVector2HelperEnum.Qy)]
-    public void Element2dShearForcesMaxFromAnalysisCaseTest(ResultVector2HelperEnum component) {
+    [InlineData(ResultVector2.Qx)]
+    [InlineData(ResultVector2.Qy)]
+    public void Element2dShearForcesMaxFromAnalysisCaseTest(ResultVector2 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
@@ -61,9 +61,9 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector2HelperEnum.Qx)]
-    [InlineData(ResultVector2HelperEnum.Qy)]
-    public void Element2dShearForcesMaxFromCombinationCaseTest(ResultVector2HelperEnum component) {
+    [InlineData(ResultVector2.Qx)]
+    [InlineData(ResultVector2.Qy)]
+    public void Element2dShearForcesMaxFromCombinationCaseTest(ResultVector2 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Max(ExpectedCombinationCaseC2p1Values(component).Max(),
@@ -79,9 +79,9 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector2HelperEnum.Qx)]
-    [InlineData(ResultVector2HelperEnum.Qy)]
-    public void Element2dShearForcesMinFromAnalysisCaseTest(ResultVector2HelperEnum component) {
+    [InlineData(ResultVector2.Qx)]
+    [InlineData(ResultVector2.Qy)]
+    public void Element2dShearForcesMinFromAnalysisCaseTest(ResultVector2 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
@@ -96,9 +96,9 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector2HelperEnum.Qx)]
-    [InlineData(ResultVector2HelperEnum.Qy)]
-    public void Element2dShearForcessMinFromcombinationCaseTest(ResultVector2HelperEnum component) {
+    [InlineData(ResultVector2.Qx)]
+    [InlineData(ResultVector2.Qy)]
+    public void Element2dShearForcessMinFromcombinationCaseTest(ResultVector2 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Min(ExpectedCombinationCaseC2p1Values(component).Min(),
@@ -115,9 +115,9 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector2HelperEnum.Qx)]
-    [InlineData(ResultVector2HelperEnum.Qy)]
-    public void Element2dShearForcesValuesFromAnalysisCaseTest(ResultVector2HelperEnum component) {
+    [InlineData(ResultVector2.Qx)]
+    [InlineData(ResultVector2.Qy)]
+    public void Element2dShearForcesValuesFromAnalysisCaseTest(ResultVector2 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
@@ -140,9 +140,9 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector2HelperEnum.Qx)]
-    [InlineData(ResultVector2HelperEnum.Qy)]
-    public void Element2dShearForcesValuesFromCombinationCaseTest(ResultVector2HelperEnum component) {
+    [InlineData(ResultVector2.Qx)]
+    [InlineData(ResultVector2.Qy)]
+    public void Element2dShearForcesValuesFromCombinationCaseTest(ResultVector2 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       List<double> expectedP1 = ExpectedCombinationCaseC2p1Values(component);
@@ -177,28 +177,28 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
-    private List<double> ExpectedAnalysisCaseValues(ResultVector2HelperEnum component) {
+    private List<double> ExpectedAnalysisCaseValues(ResultVector2 component) {
       switch (component) {
-        case ResultVector2HelperEnum.Qx: return Element2dShearForcesA1.QxInKiloNewtonPerMeter();
-        case ResultVector2HelperEnum.Qy: return Element2dShearForcesA1.QyInKiloNewtonPerMeter();
+        case ResultVector2.Qx: return Element2dShearForcesA1.QxInKiloNewtonPerMeter();
+        case ResultVector2.Qy: return Element2dShearForcesA1.QyInKiloNewtonPerMeter();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC2p1Values(ResultVector2HelperEnum component) {
+    private List<double> ExpectedCombinationCaseC2p1Values(ResultVector2 component) {
       switch (component) {
-        case ResultVector2HelperEnum.Qx: return Element2dShearForcesC2p1.QxInKiloNewtonPerMeter();
-        case ResultVector2HelperEnum.Qy: return Element2dShearForcesC2p1.QyInKiloNewtonPerMeter();
+        case ResultVector2.Qx: return Element2dShearForcesC2p1.QxInKiloNewtonPerMeter();
+        case ResultVector2.Qy: return Element2dShearForcesC2p1.QyInKiloNewtonPerMeter();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC2p2Values(ResultVector2HelperEnum component) {
+    private List<double> ExpectedCombinationCaseC2p2Values(ResultVector2 component) {
       switch (component) {
-        case ResultVector2HelperEnum.Qx: return Element2dShearForcesC2p2.QxInKiloNewtonPerMeter();
-        case ResultVector2HelperEnum.Qy: return Element2dShearForcesC2p2.QyInKiloNewtonPerMeter();
+        case ResultVector2.Qx: return Element2dShearForcesC2p2.QxInKiloNewtonPerMeter();
+        case ResultVector2.Qy: return Element2dShearForcesC2p2.QyInKiloNewtonPerMeter();
       }
 
       throw new NotImplementedException();

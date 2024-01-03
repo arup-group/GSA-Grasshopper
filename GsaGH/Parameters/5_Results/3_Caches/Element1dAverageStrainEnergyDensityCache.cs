@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class Element1dAverageStrainEnergyDensityCache : INodeResultCache<IEnergyDensity, NodeExtremaKey> {
+  public class Element1dAverageStrainEnergyDensityCache : IEntity0dResultCache<IEnergyDensity, Entity0dExtremaKey> {
     public IApiResult ApiResult { get; set; }
 
     public IDictionary<int, IList<IEnergyDensity>> Cache { get; }
@@ -19,7 +19,7 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public INodeResultSubset<IEnergyDensity, NodeExtremaKey> ResultSubset(ICollection<int> elementIds) {
+    public IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> ResultSubset(ICollection<int> elementIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(elementIds);
       if (missingIds.Count > 0) {
         string elementList = string.Join(" ", missingIds);

@@ -1,5 +1,5 @@
 ﻿namespace GsaGHTests.Parameters.Results {
-  public enum ResultStress1dHelperEnum {
+  public enum ResultStress1d {
     Axial,
     ShearY,
     ShearZ,

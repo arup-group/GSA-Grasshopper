@@ -123,7 +123,7 @@ namespace GsaGH.Components {
             break;
           }
 
-          // syncronise analysis layer after design task has updated sections
+          // synchronise analysis layer after design task has updated sections
           newModel.CreateElementsFromMembers();
           // re-run analysis, but only for tasks required for the combination case definition
           foreach (int analysisTaskId in analysisTaskIds) {
@@ -162,7 +162,7 @@ namespace GsaGH.Components {
           }
 
           string sync = (iterations == 0 && changedSections > 0)
-            ? "\nRemember to syncronise the changes to the Analysis layer!"
+            ? "\nRemember to synchronise the changes to the Analysis layer!"
             : string.Empty;
           string noChanges = notChangedSections == 0
             ? string.Empty
