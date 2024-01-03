@@ -38,8 +38,8 @@ namespace GsaGH.Components {
 
     public void OpenFile() {
       var fdi = new OpenFileDialog {
-        Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*",
-      }; //"GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*"
+        Filter = "GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*",
+      };
       bool res = fdi.ShowOpenDialog();
 
       if (!res) {
@@ -96,8 +96,8 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       string fileName = string.Empty;
       da.GetData(0, ref fileName);
-      if (!fileName.EndsWith(".gwb")) {
-        fileName += ".gwb";
+      if (!fileName.EndsWith(".gwa") && !fileName.EndsWith(".gwb")) {
+        fileName += ".gwa";
       }
 
       model.Open(fileName);
@@ -113,7 +113,7 @@ namespace GsaGH.Components {
       }
 
       da.SetData(0, new GsaModelGoo(gsaModel));
-      PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB",
+      PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWA",
         (int)(new FileInfo(fileName).Length / 1024));
     }
 

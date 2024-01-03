@@ -105,8 +105,8 @@ namespace GsaGH.Components {
     }
 
     internal void Save(ref GsaModel model, string fileNameAndPath) {
-      if (!fileNameAndPath.EndsWith(".gwb")) {
-        fileNameAndPath += ".gwb";
+      if (!fileNameAndPath.EndsWith(".gwa") && !fileNameAndPath.EndsWith(".gwa")) {
+        fileNameAndPath += ".gwa";
       }
 
       Directory.CreateDirectory(Path.GetDirectoryName(fileNameAndPath) ?? string.Empty);
@@ -114,7 +114,7 @@ namespace GsaGH.Components {
       string mes = model.Model.SaveAs(fileNameAndPath).ToString();
       if (mes == ReturnValue.GS_OK.ToString()) {
         _fileNameLastSaved = fileNameAndPath;
-        PostHog.ModelIO(GsaGH.PluginInfo.Instance, "saveGWB",
+        PostHog.ModelIO(GsaGH.PluginInfo.Instance, "saveGWA",
           (int)(new FileInfo(fileNameAndPath).Length / 1024));
         model.FileNameAndPath = fileNameAndPath;
       } else {
@@ -133,7 +133,7 @@ namespace GsaGH.Components {
 
     internal void SaveAsButtonClick() {
       var fdi = new SaveFileDialog {
-        Filter = "GSA File (*.gwb)|*.gwb|All files (*.*)|*.*",
+        Filter = "GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*",
       };
       bool res = fdi.ShowSaveDialog();
       if (!res) {
@@ -163,7 +163,7 @@ namespace GsaGH.Components {
       if (string.IsNullOrEmpty(_fileNameLastSaved)) {
         Params.Input[0].CollectData();
         var tempModel = (GsaModelGoo)Params.Input[0].VolatileData.AllData(true).First();
-        string tempPath = Path.GetTempPath() + tempModel.Value.Guid.ToString() + ".gwb";
+        string tempPath = Path.GetTempPath() + tempModel.Value.Guid.ToString() + ".gwa";
         GsaModel gsaModel = tempModel.Value;
         Save(ref gsaModel, tempPath);
       }
