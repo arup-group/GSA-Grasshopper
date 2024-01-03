@@ -15,7 +15,7 @@ namespace GsaGH.Parameters.Results {
   internal static partial class ResultsUtility {
     internal static (ConcurrentDictionary<int, IList<IQuantity>> values, ICollection<int> nodeIds)
       MapNodeResultToElements<T1, T2>(
-      ReadOnlyDictionary<int, Element> elements, INodeResultCache<T1, T2> nodeResultsCache,
+      ReadOnlyDictionary<int, Element> elements, IEntity0dResultCache<T1, T2> nodeResultsCache, 
       Func<T1, IQuantity> selector, EnvelopeMethod envelopeType) where T1 : IResultItem {
       var vals = new ConcurrentDictionary<int, IList<IQuantity>>();
       var topology = new ConcurrentBag<int>();

@@ -189,7 +189,7 @@ namespace GsaGH.Components {
       string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
       ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-      INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> forceValues
+      IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> forceValues
         = result.NodeReactionForces.ResultSubset(nodeIds);
       nodeList = string.Join(" ", forceValues.Ids);
       LengthUnit lengthUnit = GetLengthUnit(result);
@@ -235,7 +235,7 @@ namespace GsaGH.Components {
       PostHog.Diagram("Result", result.CaseType, "ReactionForce", _selectedDisplayValue.ToString(), Parameters.EntityType.Node);
     }
 
-    private double ComputeAutoScale(INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> forceValues, BoundingBox bbox) {
+    private double ComputeAutoScale(IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> forceValues, BoundingBox bbox) {
       double? max = 0;
       double? min = 0;
       switch (_selectedDisplayValue) {

@@ -20,7 +20,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
+      IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -35,7 +35,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
+      IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
       // Assert element IDs
@@ -51,7 +51,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
+      IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -69,7 +69,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
+      IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -85,7 +85,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
+      IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -103,7 +103,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
+      IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
       // Assert Max in set
@@ -119,7 +119,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
+      IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
       // Assert result values
@@ -143,7 +143,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet
+      IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> resultSet
         = result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
       // Assert result values

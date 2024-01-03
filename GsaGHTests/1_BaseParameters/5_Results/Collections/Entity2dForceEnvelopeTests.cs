@@ -18,7 +18,7 @@ namespace GsaGHTests.Parameters.Results {
     [Theory]
     [ClassData(typeof(TestDataGenerator))]
     public void Element2dForceEnvelopeTest(
-      ResultTensor2InAxisHelperEnum component, EnvelopeMethod envelope) {
+      ResultTensor2InAxis component, EnvelopeMethod envelope) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       List<double> expectedP1 = ExpectedForcesC2p1Values(component);
@@ -55,9 +55,9 @@ namespace GsaGHTests.Parameters.Results {
 
       private static List<object[]> GetAllComponents() {
         var data = new List<object[]>();
-        Array components = Enum.GetValues(typeof(ResultTensor2InAxisHelperEnum));
+        Array components = Enum.GetValues(typeof(ResultTensor2InAxis));
         Array envelopes = Enum.GetValues(typeof(EnvelopeMethod));
-        foreach (ResultVector6HelperEnum component in components) {
+        foreach (ResultVector6 component in components) {
           foreach (EnvelopeMethod envelope in envelopes) {
             data.Add(new object[] {
               component, envelope
@@ -69,34 +69,34 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
-    private Func<IForce2d, IQuantity> Selector(ResultTensor2InAxisHelperEnum component) {
+    private Func<IForce2d, IQuantity> Selector(ResultTensor2InAxis component) {
       switch (component) {
-        case ResultTensor2InAxisHelperEnum.Nx: 
+        case ResultTensor2InAxis.Nx: 
           return (r) => r.Nx.ToUnit(ForcePerLengthUnit.KilonewtonPerMeter);
-        case ResultTensor2InAxisHelperEnum.Ny:
+        case ResultTensor2InAxis.Ny:
           return (r) => r.Ny.ToUnit(ForcePerLengthUnit.KilonewtonPerMeter);
-        case ResultTensor2InAxisHelperEnum.Nxy:
+        case ResultTensor2InAxis.Nxy:
           return (r) => r.Nxy.ToUnit(ForcePerLengthUnit.KilonewtonPerMeter);
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedForcesC2p1Values(ResultTensor2InAxisHelperEnum component) {
+    private List<double> ExpectedForcesC2p1Values(ResultTensor2InAxis component) {
       switch (component) {
-        case ResultTensor2InAxisHelperEnum.Nx: return Element2dForcesC2p1.NxInKiloNewtonPerMeter();
-        case ResultTensor2InAxisHelperEnum.Ny: return Element2dForcesC2p1.NyInKiloNewtonPerMeter();
-        case ResultTensor2InAxisHelperEnum.Nxy: return Element2dForcesC2p1.NxyInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Nx: return Element2dForcesC2p1.NxInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Ny: return Element2dForcesC2p1.NyInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Nxy: return Element2dForcesC2p1.NxyInKiloNewtonPerMeter();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedForcesC2p2Values(ResultTensor2InAxisHelperEnum component) {
+    private List<double> ExpectedForcesC2p2Values(ResultTensor2InAxis component) {
       switch (component) {
-        case ResultTensor2InAxisHelperEnum.Nx: return Element2dForcesC2p2.NxInKiloNewtonPerMeter();
-        case ResultTensor2InAxisHelperEnum.Ny: return Element2dForcesC2p2.NyInKiloNewtonPerMeter();
-        case ResultTensor2InAxisHelperEnum.Nxy: return Element2dForcesC2p2.NxyInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Nx: return Element2dForcesC2p2.NxInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Ny: return Element2dForcesC2p2.NyInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Nxy: return Element2dForcesC2p2.NxyInKiloNewtonPerMeter();
       }
 
       throw new NotImplementedException();

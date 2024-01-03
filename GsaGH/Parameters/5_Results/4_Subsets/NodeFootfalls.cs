@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace GsaGH.Parameters.Results {
-  public class NodeFootfalls : INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> {
-    public ResultFootfall<NodeExtremaKey> Max { get; private set; }
-    public ResultFootfall<NodeExtremaKey> Min { get; private set; }
+  public class NodeFootfalls : IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> {
+    public ResultFootfall<Entity0dExtremaKey> Max { get; private set; }
+    public ResultFootfall<Entity0dExtremaKey> Min { get; private set; }
     public IList<int> Ids { get; private set; }
 
     public IDictionary<int, IList<IFootfall>> Subset { get; }

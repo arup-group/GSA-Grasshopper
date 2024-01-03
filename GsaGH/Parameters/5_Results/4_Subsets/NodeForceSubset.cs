@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace GsaGH.Parameters.Results {
-  public class NodeForceSubset : INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> {
-    public ResultVector6<NodeExtremaKey> Max { get; private set; }
-    public ResultVector6<NodeExtremaKey> Min { get; private set; }
+  public class NodeForceSubset : IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> {
+    public ResultVector6<Entity0dExtremaKey> Max { get; private set; }
+    public ResultVector6<Entity0dExtremaKey> Min { get; private set; }
     public IList<int> Ids { get; private set; }
 
     public IDictionary<int, IList<IReactionForce>> Subset { get; }

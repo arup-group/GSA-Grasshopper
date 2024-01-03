@@ -176,7 +176,7 @@ namespace GsaGH.Components.Helpers {
       });
 
     internal static U FootfallExtremaKey<U>(
-      INodeResultSubset<IFootfall, ResultFootfall<U>> resultSet, string key) {
+      IEntity0dResultSubset<IFootfall, ResultFootfall<U>> resultSet, string key) {
       return key switch {
         "Max Response Factor" => resultSet.Max.MaximumResponseFactor,
         "Max Peak Velocity" => resultSet.Max.PeakVelocity,
@@ -235,7 +235,7 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U DisplacementExtremaKey<T, U>(
-      INodeResultSubset<T, ResultVector6<U>> resultSet, string key) where T : IResultItem {
+      IEntity0dResultSubset<T, ResultVector6<U>> resultSet, string key) where T : IResultItem {
       return key switch {
         "Max Ux" => resultSet.Max.X,
         "Max Uy" => resultSet.Max.Y,
@@ -322,7 +322,7 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U ReactionForceExtremaKey<T, U>(
-      INodeResultSubset<T, ResultVector6<U>> resultSet, string key) where T : IResultItem {
+      IEntity0dResultSubset<T, ResultVector6<U>> resultSet, string key) where T : IResultItem {
       return key switch {
         "Max Fx" => resultSet.Max.X,
         "Max Fy" => resultSet.Max.Y,

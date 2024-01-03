@@ -102,15 +102,15 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector6HelperEnum.X)]
-    [InlineData(ResultVector6HelperEnum.Y)]
-    [InlineData(ResultVector6HelperEnum.Z)]
-    [InlineData(ResultVector6HelperEnum.Xyz)]
-    [InlineData(ResultVector6HelperEnum.Xx)]
-    [InlineData(ResultVector6HelperEnum.Yy)]
-    [InlineData(ResultVector6HelperEnum.Zz)]
-    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
-    public void Element1dInternalForcesMaxFromAnalysisCaseTest(ResultVector6HelperEnum component) {
+    [InlineData(ResultVector6.X)]
+    [InlineData(ResultVector6.Y)]
+    [InlineData(ResultVector6.Z)]
+    [InlineData(ResultVector6.Xyz)]
+    [InlineData(ResultVector6.Xx)]
+    [InlineData(ResultVector6.Yy)]
+    [InlineData(ResultVector6.Zz)]
+    [InlineData(ResultVector6.Xxyyzz)]
+    public void Element1dInternalForcesMaxFromAnalysisCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
@@ -130,15 +130,15 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector6HelperEnum.X)]
-    [InlineData(ResultVector6HelperEnum.Y)]
-    [InlineData(ResultVector6HelperEnum.Z)]
-    [InlineData(ResultVector6HelperEnum.Xyz)]
-    [InlineData(ResultVector6HelperEnum.Xx)]
-    [InlineData(ResultVector6HelperEnum.Yy)]
-    [InlineData(ResultVector6HelperEnum.Zz)]
-    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
-    public void Element1dInternalForcesMaxFromCombinationCaseTest(ResultVector6HelperEnum component) {
+    [InlineData(ResultVector6.X)]
+    [InlineData(ResultVector6.Y)]
+    [InlineData(ResultVector6.Z)]
+    [InlineData(ResultVector6.Xyz)]
+    [InlineData(ResultVector6.Xx)]
+    [InlineData(ResultVector6.Yy)]
+    [InlineData(ResultVector6.Zz)]
+    [InlineData(ResultVector6.Xxyyzz)]
+    public void Element1dInternalForcesMaxFromCombinationCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
       result.SelectedPermutationIds = new List<int>() { 1 };
@@ -159,15 +159,15 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector6HelperEnum.X)]
-    [InlineData(ResultVector6HelperEnum.Y)]
-    [InlineData(ResultVector6HelperEnum.Z)]
-    [InlineData(ResultVector6HelperEnum.Xyz)]
-    [InlineData(ResultVector6HelperEnum.Xx)]
-    [InlineData(ResultVector6HelperEnum.Yy)]
-    [InlineData(ResultVector6HelperEnum.Zz)]
-    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
-    public void Element1dInternalForcesMinFromAnalysisCaseTest(ResultVector6HelperEnum component) {
+    [InlineData(ResultVector6.X)]
+    [InlineData(ResultVector6.Y)]
+    [InlineData(ResultVector6.Z)]
+    [InlineData(ResultVector6.Xyz)]
+    [InlineData(ResultVector6.Xx)]
+    [InlineData(ResultVector6.Yy)]
+    [InlineData(ResultVector6.Zz)]
+    [InlineData(ResultVector6.Xxyyzz)]
+    public void Element1dInternalForcesMinFromAnalysisCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
@@ -187,15 +187,15 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector6HelperEnum.X)]
-    [InlineData(ResultVector6HelperEnum.Y)]
-    [InlineData(ResultVector6HelperEnum.Z)]
-    [InlineData(ResultVector6HelperEnum.Xyz)]
-    [InlineData(ResultVector6HelperEnum.Xx)]
-    [InlineData(ResultVector6HelperEnum.Yy)]
-    [InlineData(ResultVector6HelperEnum.Zz)]
-    [InlineData(ResultVector6HelperEnum.Xxyyzz)]
-    public void Element1dInternalForcesMinFromcombinationCaseTest(ResultVector6HelperEnum component) {
+    [InlineData(ResultVector6.X)]
+    [InlineData(ResultVector6.Y)]
+    [InlineData(ResultVector6.Z)]
+    [InlineData(ResultVector6.Xyz)]
+    [InlineData(ResultVector6.Xx)]
+    [InlineData(ResultVector6.Yy)]
+    [InlineData(ResultVector6.Zz)]
+    [InlineData(ResultVector6.Xxyyzz)]
+    public void Element1dInternalForcesMinFromcombinationCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, 1);
       result.SelectedPermutationIds = new List<int>() { 1 };
@@ -215,37 +215,37 @@ namespace GsaGHTests.Components.Results {
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
 
-    private List<double> ExpectedAnalysisCaseValues(ResultVector6HelperEnum component) {
+    private List<double> ExpectedAnalysisCaseValues(ResultVector6 component) {
       switch (component) {
-        case ResultVector6HelperEnum.X: return Member1dForcesA1.XInKiloNewton();
-        case ResultVector6HelperEnum.Y: return Member1dForcesA1.YInKiloNewton();
-        case ResultVector6HelperEnum.Z: return Member1dForcesA1.ZInKiloNewton();
-        case ResultVector6HelperEnum.Xyz: return Member1dForcesA1.XyzInKiloNewton();
-        case ResultVector6HelperEnum.Xx: return Member1dForcesA1.XxInKiloNewtonMeter();
-        case ResultVector6HelperEnum.Yy: return Member1dForcesA1.YyInKiloNewtonMeter();
-        case ResultVector6HelperEnum.Zz: return Member1dForcesA1.ZzInKiloNewtonMeter();
-        case ResultVector6HelperEnum.Xxyyzz: return Member1dForcesA1.XxyyzzInKiloNewtonMeter();
+        case ResultVector6.X: return Member1dForcesA1.XInKiloNewton();
+        case ResultVector6.Y: return Member1dForcesA1.YInKiloNewton();
+        case ResultVector6.Z: return Member1dForcesA1.ZInKiloNewton();
+        case ResultVector6.Xyz: return Member1dForcesA1.XyzInKiloNewton();
+        case ResultVector6.Xx: return Member1dForcesA1.XxInKiloNewtonMeter();
+        case ResultVector6.Yy: return Member1dForcesA1.YyInKiloNewtonMeter();
+        case ResultVector6.Zz: return Member1dForcesA1.ZzInKiloNewtonMeter();
+        case ResultVector6.Xxyyzz: return Member1dForcesA1.XxyyzzInKiloNewtonMeter();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC1Values(ResultVector6HelperEnum component) {
+    private List<double> ExpectedCombinationCaseC1Values(ResultVector6 component) {
       switch (component) {
-        case ResultVector6HelperEnum.X: return Member1dForcesC1.XInKiloNewton();
-        case ResultVector6HelperEnum.Y: return Member1dForcesC1.YInKiloNewton();
-        case ResultVector6HelperEnum.Z: return Member1dForcesC1.ZInKiloNewton();
-        case ResultVector6HelperEnum.Xyz: return Member1dForcesC1.XyzInKiloNewton();
-        case ResultVector6HelperEnum.Xx: return Member1dForcesC1.XxInKiloNewtonMeter();
-        case ResultVector6HelperEnum.Yy: return Member1dForcesC1.YyInKiloNewtonMeter();
-        case ResultVector6HelperEnum.Zz: return Member1dForcesC1.ZzInKiloNewtonMeter();
-        case ResultVector6HelperEnum.Xxyyzz: return Member1dForcesC1.XxyyzzInKiloNewtonMeter();
+        case ResultVector6.X: return Member1dForcesC1.XInKiloNewton();
+        case ResultVector6.Y: return Member1dForcesC1.YInKiloNewton();
+        case ResultVector6.Z: return Member1dForcesC1.ZInKiloNewton();
+        case ResultVector6.Xyz: return Member1dForcesC1.XyzInKiloNewton();
+        case ResultVector6.Xx: return Member1dForcesC1.XxInKiloNewtonMeter();
+        case ResultVector6.Yy: return Member1dForcesC1.YyInKiloNewtonMeter();
+        case ResultVector6.Zz: return Member1dForcesC1.ZzInKiloNewtonMeter();
+        case ResultVector6.Xxyyzz: return Member1dForcesC1.XxyyzzInKiloNewtonMeter();
       }
 
       throw new NotImplementedException();
     }
 
-    private Enum Unit(ResultVector6HelperEnum component) {
+    private Enum Unit(ResultVector6 component) {
       Enum unit = ForceUnit.Kilonewton;
       if ((int)component > 3) {
         unit = MomentUnit.KilonewtonMeter;

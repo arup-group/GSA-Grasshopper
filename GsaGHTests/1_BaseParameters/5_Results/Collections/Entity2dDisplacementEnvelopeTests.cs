@@ -18,7 +18,7 @@ namespace GsaGHTests.Parameters.Results {
     [Theory]
     [ClassData(typeof(TestDataGenerator))]
     public void Element2dDisplacementsEnvelopeTest(
-      ResultVector6HelperEnum component, EnvelopeMethod envelope) {
+      ResultVector6 component, EnvelopeMethod envelope) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       List<double> expectedP1 = ExpectedDisplacementC2p1Values(component);
@@ -54,14 +54,14 @@ namespace GsaGHTests.Parameters.Results {
 
       private static List<object[]> GetAllComponents() {
         var data = new List<object[]>();
-        var components = new List<ResultVector6HelperEnum> {
-          ResultVector6HelperEnum.X,
-          ResultVector6HelperEnum.Y,
-          ResultVector6HelperEnum.Z,
-          ResultVector6HelperEnum.Xyz
+        var components = new List<ResultVector6> {
+          ResultVector6.X,
+          ResultVector6.Y,
+          ResultVector6.Z,
+          ResultVector6.Xyz
         };
         Array envelopes = Enum.GetValues(typeof(EnvelopeMethod));
-        foreach (ResultVector6HelperEnum component in components) {
+        foreach (ResultVector6 component in components) {
           foreach (EnvelopeMethod envelope in envelopes) {
             data.Add(new object[] {
               component, envelope
@@ -73,34 +73,34 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
-    private Func<IDisplacement, IQuantity> Selector(ResultVector6HelperEnum component) {
+    private Func<IDisplacement, IQuantity> Selector(ResultVector6 component) {
       switch (component) {
-        case ResultVector6HelperEnum.X: return (r) => r.X.ToUnit(LengthUnit.Millimeter);
-        case ResultVector6HelperEnum.Y: return (r) => r.Y.ToUnit(LengthUnit.Millimeter);
-        case ResultVector6HelperEnum.Z: return (r) => r.Z.ToUnit(LengthUnit.Millimeter);
-        case ResultVector6HelperEnum.Xyz: return (r) => r.Xyz.ToUnit(LengthUnit.Millimeter);
+        case ResultVector6.X: return (r) => r.X.ToUnit(LengthUnit.Millimeter);
+        case ResultVector6.Y: return (r) => r.Y.ToUnit(LengthUnit.Millimeter);
+        case ResultVector6.Z: return (r) => r.Z.ToUnit(LengthUnit.Millimeter);
+        case ResultVector6.Xyz: return (r) => r.Xyz.ToUnit(LengthUnit.Millimeter);
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedDisplacementC2p1Values(ResultVector6HelperEnum component) {
+    private List<double> ExpectedDisplacementC2p1Values(ResultVector6 component) {
       switch (component) {
-        case ResultVector6HelperEnum.X: return Element2dDisplacementsC2p1.XInMillimeter();
-        case ResultVector6HelperEnum.Y: return Element2dDisplacementsC2p1.YInMillimeter();
-        case ResultVector6HelperEnum.Z: return Element2dDisplacementsC2p1.ZInMillimeter();
-        case ResultVector6HelperEnum.Xyz: return Element2dDisplacementsC2p1.XyzInMillimeter();
+        case ResultVector6.X: return Element2dDisplacementsC2p1.XInMillimeter();
+        case ResultVector6.Y: return Element2dDisplacementsC2p1.YInMillimeter();
+        case ResultVector6.Z: return Element2dDisplacementsC2p1.ZInMillimeter();
+        case ResultVector6.Xyz: return Element2dDisplacementsC2p1.XyzInMillimeter();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedDisplacementC2p2Values(ResultVector6HelperEnum component) {
+    private List<double> ExpectedDisplacementC2p2Values(ResultVector6 component) {
       switch (component) {
-        case ResultVector6HelperEnum.X: return Element2dDisplacementsC2p2.XInMillimeter();
-        case ResultVector6HelperEnum.Y: return Element2dDisplacementsC2p2.YInMillimeter();
-        case ResultVector6HelperEnum.Z: return Element2dDisplacementsC2p2.ZInMillimeter();
-        case ResultVector6HelperEnum.Xyz: return Element2dDisplacementsC2p2.XyzInMillimeter();
+        case ResultVector6.X: return Element2dDisplacementsC2p2.XInMillimeter();
+        case ResultVector6.Y: return Element2dDisplacementsC2p2.YInMillimeter();
+        case ResultVector6.Z: return Element2dDisplacementsC2p2.ZInMillimeter();
+        case ResultVector6.Xyz: return Element2dDisplacementsC2p2.XyzInMillimeter();
       }
 
       throw new NotImplementedException();

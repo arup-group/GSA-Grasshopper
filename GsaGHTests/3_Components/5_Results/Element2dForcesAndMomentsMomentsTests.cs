@@ -93,12 +93,12 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.Mx)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.My)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.Mxy)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerX)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerY)]
-    public void Element2dMomentsMaxFromAnalysisCaseTest(ResultTensor2AroundAxisHelperEnum component) {
+    [InlineData(ResultTensor2AroundAxis.Mx)]
+    [InlineData(ResultTensor2AroundAxis.My)]
+    [InlineData(ResultTensor2AroundAxis.Mxy)]
+    [InlineData(ResultTensor2AroundAxis.WoodArmerX)]
+    [InlineData(ResultTensor2AroundAxis.WoodArmerY)]
+    public void Element2dMomentsMaxFromAnalysisCaseTest(ResultTensor2AroundAxis component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
@@ -117,12 +117,12 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.Mx)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.My)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.Mxy)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerX)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerY)]
-    public void Element2dMomentMaxFromCombinationCaseTest(ResultTensor2AroundAxisHelperEnum component) {
+    [InlineData(ResultTensor2AroundAxis.Mx)]
+    [InlineData(ResultTensor2AroundAxis.My)]
+    [InlineData(ResultTensor2AroundAxis.Mxy)]
+    [InlineData(ResultTensor2AroundAxis.WoodArmerX)]
+    [InlineData(ResultTensor2AroundAxis.WoodArmerY)]
+    public void Element2dMomentMaxFromCombinationCaseTest(ResultTensor2AroundAxis component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Max(ExpectedCombinationCaseC2p1Values(component).Max(),
@@ -142,12 +142,12 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.Mx)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.My)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.Mxy)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerX)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerY)]
-    public void Element2dMomentsMinFromAnalysisCaseTest(ResultTensor2AroundAxisHelperEnum component) {
+    [InlineData(ResultTensor2AroundAxis.Mx)]
+    [InlineData(ResultTensor2AroundAxis.My)]
+    [InlineData(ResultTensor2AroundAxis.Mxy)]
+    [InlineData(ResultTensor2AroundAxis.WoodArmerX)]
+    [InlineData(ResultTensor2AroundAxis.WoodArmerY)]
+    public void Element2dMomentsMinFromAnalysisCaseTest(ResultTensor2AroundAxis component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
@@ -166,12 +166,12 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.Mx)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.My)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.Mxy)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerX)]
-    [InlineData(ResultTensor2AroundAxisHelperEnum.WoodArmerY)]
-    public void Element2dMomentsMinFromcombinationCaseTest(ResultTensor2AroundAxisHelperEnum component) {
+    [InlineData(ResultTensor2AroundAxis.Mx)]
+    [InlineData(ResultTensor2AroundAxis.My)]
+    [InlineData(ResultTensor2AroundAxis.Mxy)]
+    [InlineData(ResultTensor2AroundAxis.WoodArmerX)]
+    [InlineData(ResultTensor2AroundAxis.WoodArmerY)]
+    public void Element2dMomentsMinFromcombinationCaseTest(ResultTensor2AroundAxis component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Min(ExpectedCombinationCaseC2p1Values(component).Min(),
@@ -190,37 +190,37 @@ namespace GsaGHTests.Components.Results {
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
 
-    private List<double> ExpectedAnalysisCaseValues(ResultTensor2AroundAxisHelperEnum component) {
+    private List<double> ExpectedAnalysisCaseValues(ResultTensor2AroundAxis component) {
       switch (component) {
-        case ResultTensor2AroundAxisHelperEnum.Mx: return Element2dMomentsA1.MxInKiloNewton();
-        case ResultTensor2AroundAxisHelperEnum.My: return Element2dMomentsA1.MyInKiloNewton();
-        case ResultTensor2AroundAxisHelperEnum.Mxy: return Element2dMomentsA1.MxyInKiloNewton();
-        case ResultTensor2AroundAxisHelperEnum.WoodArmerX: return Element2dMomentsA1.WoodArmerXInKiloNewton();
-        case ResultTensor2AroundAxisHelperEnum.WoodArmerY: return Element2dMomentsA1.WoodArmerYInKiloNewton();
+        case ResultTensor2AroundAxis.Mx: return Element2dMomentsA1.MxInKiloNewton();
+        case ResultTensor2AroundAxis.My: return Element2dMomentsA1.MyInKiloNewton();
+        case ResultTensor2AroundAxis.Mxy: return Element2dMomentsA1.MxyInKiloNewton();
+        case ResultTensor2AroundAxis.WoodArmerX: return Element2dMomentsA1.WoodArmerXInKiloNewton();
+        case ResultTensor2AroundAxis.WoodArmerY: return Element2dMomentsA1.WoodArmerYInKiloNewton();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC2p1Values(ResultTensor2AroundAxisHelperEnum component) {
+    private List<double> ExpectedCombinationCaseC2p1Values(ResultTensor2AroundAxis component) {
       switch (component) {
-        case ResultTensor2AroundAxisHelperEnum.Mx: return Element2dMomentsC2p1.MxInKiloNewton();
-        case ResultTensor2AroundAxisHelperEnum.My: return Element2dMomentsC2p1.MyInKiloNewton();
-        case ResultTensor2AroundAxisHelperEnum.Mxy: return Element2dMomentsC2p1.MxyInKiloNewton();
-        case ResultTensor2AroundAxisHelperEnum.WoodArmerX: return Element2dMomentsC2p1.WoodArmerXInKiloNewton();
-        case ResultTensor2AroundAxisHelperEnum.WoodArmerY: return Element2dMomentsC2p1.WoodArmerYInKiloNewton();
+        case ResultTensor2AroundAxis.Mx: return Element2dMomentsC2p1.MxInKiloNewton();
+        case ResultTensor2AroundAxis.My: return Element2dMomentsC2p1.MyInKiloNewton();
+        case ResultTensor2AroundAxis.Mxy: return Element2dMomentsC2p1.MxyInKiloNewton();
+        case ResultTensor2AroundAxis.WoodArmerX: return Element2dMomentsC2p1.WoodArmerXInKiloNewton();
+        case ResultTensor2AroundAxis.WoodArmerY: return Element2dMomentsC2p1.WoodArmerYInKiloNewton();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC2p2Values(ResultTensor2AroundAxisHelperEnum component) {
+    private List<double> ExpectedCombinationCaseC2p2Values(ResultTensor2AroundAxis component) {
       switch (component) {
-        case ResultTensor2AroundAxisHelperEnum.Mx: return Element2dMomentsC2p2.MxInKiloNewton();
-        case ResultTensor2AroundAxisHelperEnum.My: return Element2dMomentsC2p2.MyInKiloNewton();
-        case ResultTensor2AroundAxisHelperEnum.Mxy: return Element2dMomentsC2p2.MxyInKiloNewton();
-        case ResultTensor2AroundAxisHelperEnum.WoodArmerX: return Element2dMomentsC2p2.WoodArmerXInKiloNewton();
-        case ResultTensor2AroundAxisHelperEnum.WoodArmerY: return Element2dMomentsC2p2.WoodArmerYInKiloNewton();
+        case ResultTensor2AroundAxis.Mx: return Element2dMomentsC2p2.MxInKiloNewton();
+        case ResultTensor2AroundAxis.My: return Element2dMomentsC2p2.MyInKiloNewton();
+        case ResultTensor2AroundAxis.Mxy: return Element2dMomentsC2p2.MxyInKiloNewton();
+        case ResultTensor2AroundAxis.WoodArmerX: return Element2dMomentsC2p2.WoodArmerXInKiloNewton();
+        case ResultTensor2AroundAxis.WoodArmerY: return Element2dMomentsC2p2.WoodArmerYInKiloNewton();
       }
 
       throw new NotImplementedException();

@@ -42,16 +42,16 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultStress1dHelperEnum.Axial)]
-    [InlineData(ResultStress1dHelperEnum.ShearY)]
-    [InlineData(ResultStress1dHelperEnum.ShearZ)]
-    [InlineData(ResultStress1dHelperEnum.ByPos)]
-    [InlineData(ResultStress1dHelperEnum.ByNeg)]
-    [InlineData(ResultStress1dHelperEnum.BzPos)]
-    [InlineData(ResultStress1dHelperEnum.BzNeg)]
-    [InlineData(ResultStress1dHelperEnum.C1)]
-    [InlineData(ResultStress1dHelperEnum.C2)]
-    public void Element1dStresssMaxFromAnalysisCaseTest(ResultStress1dHelperEnum component) {
+    [InlineData(ResultStress1d.Axial)]
+    [InlineData(ResultStress1d.ShearY)]
+    [InlineData(ResultStress1d.ShearZ)]
+    [InlineData(ResultStress1d.ByPos)]
+    [InlineData(ResultStress1d.ByNeg)]
+    [InlineData(ResultStress1d.BzPos)]
+    [InlineData(ResultStress1d.BzNeg)]
+    [InlineData(ResultStress1d.C1)]
+    [InlineData(ResultStress1d.C2)]
+    public void Element1dStresssMaxFromAnalysisCaseTest(ResultStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
@@ -67,16 +67,16 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultStress1dHelperEnum.Axial)]
-    [InlineData(ResultStress1dHelperEnum.ShearY)]
-    [InlineData(ResultStress1dHelperEnum.ShearZ)]
-    [InlineData(ResultStress1dHelperEnum.ByPos)]
-    [InlineData(ResultStress1dHelperEnum.ByNeg)]
-    [InlineData(ResultStress1dHelperEnum.BzPos)]
-    [InlineData(ResultStress1dHelperEnum.BzNeg)]
-    [InlineData(ResultStress1dHelperEnum.C1)]
-    [InlineData(ResultStress1dHelperEnum.C2)]
-    public void Element1dStresssMaxFromCombinationCaseTest(ResultStress1dHelperEnum component) {
+    [InlineData(ResultStress1d.Axial)]
+    [InlineData(ResultStress1d.ShearY)]
+    [InlineData(ResultStress1d.ShearZ)]
+    [InlineData(ResultStress1d.ByPos)]
+    [InlineData(ResultStress1d.ByNeg)]
+    [InlineData(ResultStress1d.BzPos)]
+    [InlineData(ResultStress1d.BzNeg)]
+    [InlineData(ResultStress1d.C1)]
+    [InlineData(ResultStress1d.C2)]
+    public void Element1dStresssMaxFromCombinationCaseTest(ResultStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Max(ExpectedCombinationCaseC4p1Values(component).Max(),
@@ -93,16 +93,16 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultStress1dHelperEnum.Axial)]
-    [InlineData(ResultStress1dHelperEnum.ShearY)]
-    [InlineData(ResultStress1dHelperEnum.ShearZ)]
-    [InlineData(ResultStress1dHelperEnum.ByPos)]
-    [InlineData(ResultStress1dHelperEnum.ByNeg)]
-    [InlineData(ResultStress1dHelperEnum.BzPos)]
-    [InlineData(ResultStress1dHelperEnum.BzNeg)]
-    [InlineData(ResultStress1dHelperEnum.C1)]
-    [InlineData(ResultStress1dHelperEnum.C2)]
-    public void Element1dStresssMinFromAnalysisCaseTest(ResultStress1dHelperEnum component) {
+    [InlineData(ResultStress1d.Axial)]
+    [InlineData(ResultStress1d.ShearY)]
+    [InlineData(ResultStress1d.ShearZ)]
+    [InlineData(ResultStress1d.ByPos)]
+    [InlineData(ResultStress1d.ByNeg)]
+    [InlineData(ResultStress1d.BzPos)]
+    [InlineData(ResultStress1d.BzNeg)]
+    [InlineData(ResultStress1d.C1)]
+    [InlineData(ResultStress1d.C2)]
+    public void Element1dStresssMinFromAnalysisCaseTest(ResultStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
@@ -118,16 +118,16 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultStress1dHelperEnum.Axial)]
-    [InlineData(ResultStress1dHelperEnum.ShearY)]
-    [InlineData(ResultStress1dHelperEnum.ShearZ)]
-    [InlineData(ResultStress1dHelperEnum.ByPos)]
-    [InlineData(ResultStress1dHelperEnum.ByNeg)]
-    [InlineData(ResultStress1dHelperEnum.BzPos)]
-    [InlineData(ResultStress1dHelperEnum.BzNeg)]
-    [InlineData(ResultStress1dHelperEnum.C1)]
-    [InlineData(ResultStress1dHelperEnum.C2)]
-    public void Element1dStresssMinFromcombinationCaseTest(ResultStress1dHelperEnum component) {
+    [InlineData(ResultStress1d.Axial)]
+    [InlineData(ResultStress1d.ShearY)]
+    [InlineData(ResultStress1d.ShearZ)]
+    [InlineData(ResultStress1d.ByPos)]
+    [InlineData(ResultStress1d.ByNeg)]
+    [InlineData(ResultStress1d.BzPos)]
+    [InlineData(ResultStress1d.BzNeg)]
+    [InlineData(ResultStress1d.C1)]
+    [InlineData(ResultStress1d.C2)]
+    public void Element1dStresssMinFromcombinationCaseTest(ResultStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Min(ExpectedCombinationCaseC4p1Values(component).Min(),
@@ -144,16 +144,16 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultStress1dHelperEnum.Axial)]
-    [InlineData(ResultStress1dHelperEnum.ShearY)]
-    [InlineData(ResultStress1dHelperEnum.ShearZ)]
-    [InlineData(ResultStress1dHelperEnum.ByPos)]
-    [InlineData(ResultStress1dHelperEnum.ByNeg)]
-    [InlineData(ResultStress1dHelperEnum.BzPos)]
-    [InlineData(ResultStress1dHelperEnum.BzNeg)]
-    [InlineData(ResultStress1dHelperEnum.C1)]
-    [InlineData(ResultStress1dHelperEnum.C2)]
-    public void Element1dStresssValuesFromAnalysisCaseTest(ResultStress1dHelperEnum component) {
+    [InlineData(ResultStress1d.Axial)]
+    [InlineData(ResultStress1d.ShearY)]
+    [InlineData(ResultStress1d.ShearZ)]
+    [InlineData(ResultStress1d.ByPos)]
+    [InlineData(ResultStress1d.ByNeg)]
+    [InlineData(ResultStress1d.BzPos)]
+    [InlineData(ResultStress1d.BzNeg)]
+    [InlineData(ResultStress1d.C1)]
+    [InlineData(ResultStress1d.C2)]
+    public void Element1dStresssValuesFromAnalysisCaseTest(ResultStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
@@ -181,16 +181,16 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultStress1dHelperEnum.Axial)]
-    [InlineData(ResultStress1dHelperEnum.ShearY)]
-    [InlineData(ResultStress1dHelperEnum.ShearZ)]
-    [InlineData(ResultStress1dHelperEnum.ByPos)]
-    [InlineData(ResultStress1dHelperEnum.ByNeg)]
-    [InlineData(ResultStress1dHelperEnum.BzPos)]
-    [InlineData(ResultStress1dHelperEnum.BzNeg)]
-    [InlineData(ResultStress1dHelperEnum.C1)]
-    [InlineData(ResultStress1dHelperEnum.C2)]
-    public void Element1dStresssValuesFromCombinationCaseTest(ResultStress1dHelperEnum component) {
+    [InlineData(ResultStress1d.Axial)]
+    [InlineData(ResultStress1d.ShearY)]
+    [InlineData(ResultStress1d.ShearZ)]
+    [InlineData(ResultStress1d.ByPos)]
+    [InlineData(ResultStress1d.ByNeg)]
+    [InlineData(ResultStress1d.BzPos)]
+    [InlineData(ResultStress1d.BzNeg)]
+    [InlineData(ResultStress1d.C1)]
+    [InlineData(ResultStress1d.C2)]
+    public void Element1dStresssValuesFromCombinationCaseTest(ResultStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       List<double> expectedP1 = ExpectedCombinationCaseC4p1Values(component);
@@ -249,49 +249,49 @@ namespace GsaGHTests.Parameters.Results {
         resultSet.Subset.FirstOrDefault().Value.FirstOrDefault().Results.Count);
     }
 
-    private List<double> ExpectedAnalysisCaseValues(ResultStress1dHelperEnum component) {
+    private List<double> ExpectedAnalysisCaseValues(ResultStress1d component) {
       switch (component) {
-        case ResultStress1dHelperEnum.Axial: return Element1dStressA1.AxialInMPa();
-        case ResultStress1dHelperEnum.ShearY: return Element1dStressA1.SyInMPa();
-        case ResultStress1dHelperEnum.ShearZ: return Element1dStressA1.SzInMPa();
-        case ResultStress1dHelperEnum.ByPos: return Element1dStressA1.ByPosInMPa();
-        case ResultStress1dHelperEnum.ByNeg: return Element1dStressA1.ByNegInMPa();
-        case ResultStress1dHelperEnum.BzPos: return Element1dStressA1.BzPosInMPa();
-        case ResultStress1dHelperEnum.BzNeg: return Element1dStressA1.BzNegInMPa();
-        case ResultStress1dHelperEnum.C1: return Element1dStressA1.C1InMPa();
-        case ResultStress1dHelperEnum.C2: return Element1dStressA1.C2InMPa();
+        case ResultStress1d.Axial: return Element1dStressA1.AxialInMPa();
+        case ResultStress1d.ShearY: return Element1dStressA1.SyInMPa();
+        case ResultStress1d.ShearZ: return Element1dStressA1.SzInMPa();
+        case ResultStress1d.ByPos: return Element1dStressA1.ByPosInMPa();
+        case ResultStress1d.ByNeg: return Element1dStressA1.ByNegInMPa();
+        case ResultStress1d.BzPos: return Element1dStressA1.BzPosInMPa();
+        case ResultStress1d.BzNeg: return Element1dStressA1.BzNegInMPa();
+        case ResultStress1d.C1: return Element1dStressA1.C1InMPa();
+        case ResultStress1d.C2: return Element1dStressA1.C2InMPa();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p1Values(ResultStress1dHelperEnum component) {
+    private List<double> ExpectedCombinationCaseC4p1Values(ResultStress1d component) {
       switch (component) {
-        case ResultStress1dHelperEnum.Axial: return Element1dStressC4p1.AxialInMPa();
-        case ResultStress1dHelperEnum.ShearY: return Element1dStressC4p1.SyInMPa();
-        case ResultStress1dHelperEnum.ShearZ: return Element1dStressC4p1.SzInMPa();
-        case ResultStress1dHelperEnum.ByPos: return Element1dStressC4p1.ByPosInMPa();
-        case ResultStress1dHelperEnum.ByNeg: return Element1dStressC4p1.ByNegInMPa();
-        case ResultStress1dHelperEnum.BzPos: return Element1dStressC4p1.BzPosInMPa();
-        case ResultStress1dHelperEnum.BzNeg: return Element1dStressC4p1.BzNegInMPa();
-        case ResultStress1dHelperEnum.C1: return Element1dStressC4p1.C1InMPa();
-        case ResultStress1dHelperEnum.C2: return Element1dStressC4p1.C2InMPa();
+        case ResultStress1d.Axial: return Element1dStressC4p1.AxialInMPa();
+        case ResultStress1d.ShearY: return Element1dStressC4p1.SyInMPa();
+        case ResultStress1d.ShearZ: return Element1dStressC4p1.SzInMPa();
+        case ResultStress1d.ByPos: return Element1dStressC4p1.ByPosInMPa();
+        case ResultStress1d.ByNeg: return Element1dStressC4p1.ByNegInMPa();
+        case ResultStress1d.BzPos: return Element1dStressC4p1.BzPosInMPa();
+        case ResultStress1d.BzNeg: return Element1dStressC4p1.BzNegInMPa();
+        case ResultStress1d.C1: return Element1dStressC4p1.C1InMPa();
+        case ResultStress1d.C2: return Element1dStressC4p1.C2InMPa();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p2Values(ResultStress1dHelperEnum component) {
+    private List<double> ExpectedCombinationCaseC4p2Values(ResultStress1d component) {
       switch (component) {
-        case ResultStress1dHelperEnum.Axial: return Element1dStressC4p2.AxialInMPa();
-        case ResultStress1dHelperEnum.ShearY: return Element1dStressC4p2.SyInMPa();
-        case ResultStress1dHelperEnum.ShearZ: return Element1dStressC4p2.SzInMPa();
-        case ResultStress1dHelperEnum.ByPos: return Element1dStressC4p2.ByPosInMPa();
-        case ResultStress1dHelperEnum.ByNeg: return Element1dStressC4p2.ByNegInMPa();
-        case ResultStress1dHelperEnum.BzPos: return Element1dStressC4p2.BzPosInMPa();
-        case ResultStress1dHelperEnum.BzNeg: return Element1dStressC4p2.BzNegInMPa();
-        case ResultStress1dHelperEnum.C1: return Element1dStressC4p2.C1InMPa();
-        case ResultStress1dHelperEnum.C2: return Element1dStressC4p2.C2InMPa();
+        case ResultStress1d.Axial: return Element1dStressC4p2.AxialInMPa();
+        case ResultStress1d.ShearY: return Element1dStressC4p2.SyInMPa();
+        case ResultStress1d.ShearZ: return Element1dStressC4p2.SzInMPa();
+        case ResultStress1d.ByPos: return Element1dStressC4p2.ByPosInMPa();
+        case ResultStress1d.ByNeg: return Element1dStressC4p2.ByNegInMPa();
+        case ResultStress1d.BzPos: return Element1dStressC4p2.BzPosInMPa();
+        case ResultStress1d.BzNeg: return Element1dStressC4p2.BzNegInMPa();
+        case ResultStress1d.C1: return Element1dStressC4p2.C1InMPa();
+        case ResultStress1d.C2: return Element1dStressC4p2.C2InMPa();
       }
 
       throw new NotImplementedException();

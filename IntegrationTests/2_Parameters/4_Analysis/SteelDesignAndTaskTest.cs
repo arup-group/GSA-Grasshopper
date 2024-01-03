@@ -48,7 +48,7 @@ namespace IntegrationTests.Parameters {
     }
 
     [Theory]
-    [InlineData("NoIterations", "Design Task succeeded with 2 changed section(s) and leaving 1 section(s) unchanged\nRemember to syncronise the changes to the Analysis layer!")]
+    [InlineData("NoIterations", "Design Task succeeded with 2 changed section(s) and leaving 1 section(s) unchanged\nRemember to synchronise the changes to the Analysis layer!")]
     [InlineData("Converged1", "Optimisation converged after 1 iteration(s) with 2 changed section(s) and leaving 1 section(s) unchanged")]
     [InlineData("Converged2", "Optimisation converged after 2 iteration(s) with 3 changed section(s)")]
     [InlineData("NotConverged", "Optimisation did not converge within 1 iterations with 3 changed section(s)")]

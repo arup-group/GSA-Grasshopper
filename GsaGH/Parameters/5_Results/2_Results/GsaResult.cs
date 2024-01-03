@@ -19,7 +19,7 @@ namespace GsaGH.Parameters.Results {
   /// </summary>
   public class GsaResult : IGsaResult {
     // Caches
-    public INodeResultCache<IEnergyDensity, NodeExtremaKey> Element1dAverageStrainEnergyDensities {
+    public IEntity0dResultCache<IEnergyDensity, Entity0dExtremaKey> Element1dAverageStrainEnergyDensities {
       get;
       private set;
     }
@@ -77,23 +77,23 @@ namespace GsaGH.Parameters.Results {
       get;
       private set;
     }
-    public INodeResultCache<IDisplacement, ResultVector6<NodeExtremaKey>> NodeDisplacements {
+    public IEntity0dResultCache<IDisplacement, ResultVector6<Entity0dExtremaKey>> NodeDisplacements {
       get;
       private set;
     }
-    public INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> NodeResonantFootfalls {
+    public IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> NodeResonantFootfalls {
       get;
       private set;
     }
-    public INodeResultCache<IReactionForce, ResultVector6<NodeExtremaKey>> NodeReactionForces {
+    public IEntity0dResultCache<IReactionForce, ResultVector6<Entity0dExtremaKey>> NodeReactionForces {
       get;
       private set;
     }
-    public INodeResultCache<IReactionForce, ResultVector6<NodeExtremaKey>> NodeSpringForces {
+    public IEntity0dResultCache<IReactionForce, ResultVector6<Entity0dExtremaKey>> NodeSpringForces {
       get;
       private set;
     }
-    public INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> NodeTransientFootfalls {
+    public IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> NodeTransientFootfalls {
       get;
       private set;
     }
@@ -110,6 +110,11 @@ namespace GsaGH.Parameters.Results {
 
     public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>>
       Member1dInternalForces {
+      get;
+      private set;
+    }
+
+    public IEntity0dResultCache<ISteelUtilisation, SteelUtilisationExtremaKeys> SteelUtilisations {
       get;
       private set;
     }
@@ -233,7 +238,9 @@ namespace GsaGH.Parameters.Results {
       
       Member1dInternalForces = new Member1dInternalForceCache(result);
       Member1dDisplacements = new Member1dDisplacementCache(result);
-      
+
+      SteelUtilisations = new SteelUtilisationCache(result);
+
       GlobalResults = new GlobalResultsCache(result);
 
       Model = model;
@@ -272,6 +279,8 @@ namespace GsaGH.Parameters.Results {
 
       Member1dDisplacements = new Member1dDisplacementCache(result);
       Member1dInternalForces = new Member1dInternalForceCache(result);
+
+      SteelUtilisations = new SteelUtilisationCache(result);
 
       Model = model;
       CaseType = CaseType.CombinationCase;

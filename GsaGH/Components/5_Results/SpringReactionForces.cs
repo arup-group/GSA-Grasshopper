@@ -149,7 +149,7 @@ namespace GsaGH.Components {
 
         nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-        INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> resultSet
+        IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> resultSet
           = result.NodeSpringForces.ResultSubset(nodeIds);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -176,7 +176,7 @@ namespace GsaGH.Components {
             }
           }
         } else {
-          NodeExtremaKey key = ExtremaHelper.ReactionForceExtremaKey(resultSet, _selectedItems[0]);
+          Entity0dExtremaKey key = ExtremaHelper.ReactionForceExtremaKey(resultSet, _selectedItems[0]);
           IReactionForce extrema = resultSet.GetExtrema(key);
           int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
           var path = new GH_Path(result.CaseId, key.Permutation + perm);
