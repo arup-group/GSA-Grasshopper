@@ -2,14 +2,15 @@
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public class Entity1dStrainEnergyDensity : IEntity1dStrainEnergyDensity {
-    public IDictionary<double, IEnergyDensity> Results { get; private set; }
+  internal class Entity1dStrainEnergyDensity : Entity1dResult<double, IEnergyDensity> {
+    internal Entity1dStrainEnergyDensity(
+      ReadOnlyCollection<double> result, ReadOnlyCollection<double> positions)
+      : base(result, positions, (x) => new StrainEnergyDensity(x)) { }
 
-    internal Entity1dStrainEnergyDensity(ReadOnlyCollection<double> result, ReadOnlyCollection<double> positions) {
-      Results = new Dictionary<double, IEnergyDensity>();
-      for (int i = 0; i < result.Count; i++) {
-        Results.Add(positions[i], new StrainEnergyDensity(result[i]));
-      }
+    private Entity1dStrainEnergyDensity(IDictionary<double, IEnergyDensity> results) : base(results) { }
+
+    public override IEntity1dQuantity<IEnergyDensity> TakePositions(ICollection<double> positions) {
+      return new Entity1dStrainEnergyDensity(TakePositions(this, positions));
     }
   }
 }

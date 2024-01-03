@@ -43,11 +43,11 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector6HelperEnum.X)]
-    [InlineData(ResultVector6HelperEnum.Y)]
-    [InlineData(ResultVector6HelperEnum.Z)]
-    [InlineData(ResultVector6HelperEnum.Xyz)]
-    public void Element2dDisplacementsMaxFromAnalysisCaseTest(ResultVector6HelperEnum component) {
+    [InlineData(ResultVector6.X)]
+    [InlineData(ResultVector6.Y)]
+    [InlineData(ResultVector6.Z)]
+    [InlineData(ResultVector6.Xyz)]
+    public void Element2dDisplacementsMaxFromAnalysisCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
@@ -63,11 +63,11 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector6HelperEnum.X)]
-    [InlineData(ResultVector6HelperEnum.Y)]
-    [InlineData(ResultVector6HelperEnum.Z)]
-    [InlineData(ResultVector6HelperEnum.Xyz)]
-    public void Element2dDisplacementsMaxFromCombinationCaseTest(ResultVector6HelperEnum component) {
+    [InlineData(ResultVector6.X)]
+    [InlineData(ResultVector6.Y)]
+    [InlineData(ResultVector6.Z)]
+    [InlineData(ResultVector6.Xyz)]
+    public void Element2dDisplacementsMaxFromCombinationCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Max(ExpectedCombinationCaseC2p1Values(component).Max(),
@@ -84,11 +84,11 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector6HelperEnum.X)]
-    [InlineData(ResultVector6HelperEnum.Y)]
-    [InlineData(ResultVector6HelperEnum.Z)]
-    [InlineData(ResultVector6HelperEnum.Xyz)]
-    public void Element2dDisplacementsMinFromAnalysisCaseTest(ResultVector6HelperEnum component) {
+    [InlineData(ResultVector6.X)]
+    [InlineData(ResultVector6.Y)]
+    [InlineData(ResultVector6.Z)]
+    [InlineData(ResultVector6.Xyz)]
+    public void Element2dDisplacementsMinFromAnalysisCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
@@ -104,11 +104,11 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector6HelperEnum.X)]
-    [InlineData(ResultVector6HelperEnum.Y)]
-    [InlineData(ResultVector6HelperEnum.Z)]
-    [InlineData(ResultVector6HelperEnum.Xyz)]
-    public void Element2dDisplacementsMinFromcombinationCaseTest(ResultVector6HelperEnum component) {
+    [InlineData(ResultVector6.X)]
+    [InlineData(ResultVector6.Y)]
+    [InlineData(ResultVector6.Z)]
+    [InlineData(ResultVector6.Xyz)]
+    public void Element2dDisplacementsMinFromcombinationCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Min(ExpectedCombinationCaseC2p1Values(component).Min(),
@@ -125,11 +125,11 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector6HelperEnum.X)]
-    [InlineData(ResultVector6HelperEnum.Y)]
-    [InlineData(ResultVector6HelperEnum.Z)]
-    [InlineData(ResultVector6HelperEnum.Xyz)]
-    public void Element2dDisplacementsValuesFromAnalysisCaseTest(ResultVector6HelperEnum component) {
+    [InlineData(ResultVector6.X)]
+    [InlineData(ResultVector6.Y)]
+    [InlineData(ResultVector6.Z)]
+    [InlineData(ResultVector6.Xyz)]
+    public void Element2dDisplacementsValuesFromAnalysisCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
@@ -153,11 +153,11 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultVector6HelperEnum.X)]
-    [InlineData(ResultVector6HelperEnum.Y)]
-    [InlineData(ResultVector6HelperEnum.Z)]
-    [InlineData(ResultVector6HelperEnum.Xyz)]
-    public void Element2dDisplacementsValuesFromCombinationCaseTest(ResultVector6HelperEnum component) {
+    [InlineData(ResultVector6.X)]
+    [InlineData(ResultVector6.Y)]
+    [InlineData(ResultVector6.Z)]
+    [InlineData(ResultVector6.Xyz)]
+    public void Element2dDisplacementsValuesFromCombinationCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       List<double> expectedP1 = ExpectedCombinationCaseC2p1Values(component);
@@ -194,34 +194,34 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
-    private List<double> ExpectedAnalysisCaseValues(ResultVector6HelperEnum component) {
+    private List<double> ExpectedAnalysisCaseValues(ResultVector6 component) {
       switch (component) {
-        case ResultVector6HelperEnum.X: return Element2dDisplacementsA1.XInMillimeter();
-        case ResultVector6HelperEnum.Y: return Element2dDisplacementsA1.YInMillimeter();
-        case ResultVector6HelperEnum.Z: return Element2dDisplacementsA1.ZInMillimeter();
-        case ResultVector6HelperEnum.Xyz: return Element2dDisplacementsA1.XyzInMillimeter();
+        case ResultVector6.X: return Element2dDisplacementsA1.XInMillimeter();
+        case ResultVector6.Y: return Element2dDisplacementsA1.YInMillimeter();
+        case ResultVector6.Z: return Element2dDisplacementsA1.ZInMillimeter();
+        case ResultVector6.Xyz: return Element2dDisplacementsA1.XyzInMillimeter();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC2p1Values(ResultVector6HelperEnum component) {
+    private List<double> ExpectedCombinationCaseC2p1Values(ResultVector6 component) {
       switch (component) {
-        case ResultVector6HelperEnum.X: return Element2dDisplacementsC2p1.XInMillimeter();
-        case ResultVector6HelperEnum.Y: return Element2dDisplacementsC2p1.YInMillimeter();
-        case ResultVector6HelperEnum.Z: return Element2dDisplacementsC2p1.ZInMillimeter();
-        case ResultVector6HelperEnum.Xyz: return Element2dDisplacementsC2p1.XyzInMillimeter();
+        case ResultVector6.X: return Element2dDisplacementsC2p1.XInMillimeter();
+        case ResultVector6.Y: return Element2dDisplacementsC2p1.YInMillimeter();
+        case ResultVector6.Z: return Element2dDisplacementsC2p1.ZInMillimeter();
+        case ResultVector6.Xyz: return Element2dDisplacementsC2p1.XyzInMillimeter();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC2p2Values(ResultVector6HelperEnum component) {
+    private List<double> ExpectedCombinationCaseC2p2Values(ResultVector6 component) {
       switch (component) {
-        case ResultVector6HelperEnum.X: return Element2dDisplacementsC2p2.XInMillimeter();
-        case ResultVector6HelperEnum.Y: return Element2dDisplacementsC2p2.YInMillimeter();
-        case ResultVector6HelperEnum.Z: return Element2dDisplacementsC2p2.ZInMillimeter();
-        case ResultVector6HelperEnum.Xyz: return Element2dDisplacementsC2p2.XyzInMillimeter();
+        case ResultVector6.X: return Element2dDisplacementsC2p2.XInMillimeter();
+        case ResultVector6.Y: return Element2dDisplacementsC2p2.YInMillimeter();
+        case ResultVector6.Z: return Element2dDisplacementsC2p2.ZInMillimeter();
+        case ResultVector6.Xyz: return Element2dDisplacementsC2p2.XyzInMillimeter();
       }
 
       throw new NotImplementedException();

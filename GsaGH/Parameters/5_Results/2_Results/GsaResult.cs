@@ -19,32 +19,31 @@ namespace GsaGH.Parameters.Results {
   /// </summary>
   public class GsaResult : IGsaResult {
     // Caches
-    public INodeResultCache<IEnergyDensity, NodeExtremaKey> Element1dAverageStrainEnergyDensities {
+    public IEntity0dResultCache<IEnergyDensity, Entity0dExtremaKey> Element1dAverageStrainEnergyDensities {
       get;
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dDisplacement, IDisplacement,
-      ResultVector6<Entity1dExtremaKey>> Element1dDisplacements {
+    public IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>> Element1dDisplacements {
       get;
       private set;
     }
-    public IEntity1dResultCache<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> Element1dInternalForces {
-      get;
-      private set;
-    }
-
-    public IEntity1dResultCache<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> Element1dStrainEnergyDensities {
+    public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>> Element1dInternalForces {
       get;
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> Element1dDerivedStresses {
+    public IEntity1dResultCache<IEnergyDensity, Entity1dExtremaKey> Element1dStrainEnergyDensities {
       get;
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> Element1dStresses {
+    public IEntity1dResultCache<IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> Element1dDerivedStresses {
+      get;
+      private set;
+    }
+
+    public IEntity1dResultCache<IStress1d, ResultStress1d<Entity1dExtremaKey>> Element1dStresses {
       get;
       private set;
     }
@@ -78,23 +77,23 @@ namespace GsaGH.Parameters.Results {
       get;
       private set;
     }
-    public INodeResultCache<IDisplacement, ResultVector6<NodeExtremaKey>> NodeDisplacements {
+    public IEntity0dResultCache<IDisplacement, ResultVector6<Entity0dExtremaKey>> NodeDisplacements {
       get;
       private set;
     }
-    public INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> NodeResonantFootfalls {
+    public IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> NodeResonantFootfalls {
       get;
       private set;
     }
-    public INodeResultCache<IReactionForce, ResultVector6<NodeExtremaKey>> NodeReactionForces {
+    public IEntity0dResultCache<IReactionForce, ResultVector6<Entity0dExtremaKey>> NodeReactionForces {
       get;
       private set;
     }
-    public INodeResultCache<IReactionForce, ResultVector6<NodeExtremaKey>> NodeSpringForces {
+    public IEntity0dResultCache<IReactionForce, ResultVector6<Entity0dExtremaKey>> NodeSpringForces {
       get;
       private set;
     }
-    public INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> NodeTransientFootfalls {
+    public IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> NodeTransientFootfalls {
       get;
       private set;
     }
@@ -103,29 +102,43 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>>
+    public IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>>
       Member1dDisplacements {
       get;
       private set;
     }
 
-    public IEntity1dResultCache<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>>
+    public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>>
       Member1dInternalForces {
       get;
       private set;
     }
 
+    public IEntity0dResultCache<ISteelUtilisation, SteelUtilisationExtremaKeys> SteelUtilisations {
+      get;
+      private set;
+    }
+
     internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseId) {
+      if (model == null || result == null) {
+        return;
+      }
+
       InitialiseAnalysisCaseResults(model, result, caseId);
     }
 
     internal GsaResult(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
+      if (model == null || result == null) {
+        return;
+      }
+
       InitialiseCombinationsCaseResults(model, result, caseId, permutations?.OrderBy(x => x));
     }
 
     // Other members
     public int CaseId { get; set; }
+    public int Permutations { get; set; } = 0;
     public string CaseName { get; set; }
     public GsaModel Model { get; set; }
     public List<int> SelectedPermutationIds { get; set; }
@@ -141,11 +154,16 @@ namespace GsaGH.Parameters.Results {
         case CaseType.CombinationCase:
           txt = "C" + CaseId;
           if (SelectedPermutationIds.Count > 0) {
-            txt = SelectedPermutationIds.Count > 1 ? txt + " P:" + SelectedPermutationIds.Count :
+            txt = SelectedPermutationIds.Count > 1 
+              ? $"{txt} ({SelectedPermutationIds.Count} permutations)" :
               txt + " p" + SelectedPermutationIds[0];
           }
 
           break;
+      }
+
+      if (!string.IsNullOrEmpty(CaseName)) {
+        txt = $"{txt} '{CaseName}'";
       }
 
       return txt.TrimSpaces();
@@ -220,7 +238,9 @@ namespace GsaGH.Parameters.Results {
       
       Member1dInternalForces = new Member1dInternalForceCache(result);
       Member1dDisplacements = new Member1dDisplacementCache(result);
-      
+
+      SteelUtilisations = new SteelUtilisationCache(result);
+
       GlobalResults = new GlobalResultsCache(result);
 
       Model = model;
@@ -234,7 +254,9 @@ namespace GsaGH.Parameters.Results {
 
     private void InitialiseCombinationsCaseResults(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
-      
+      ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> temp = result.NodeDisplacement(model.Model.Nodes().Keys.First().ToString());
+      Permutations = temp[temp.Keys.First()].Count;
+
       Element1dAverageStrainEnergyDensities = new Element1dAverageStrainEnergyDensityCache(result);
       Element1dDisplacements = new Element1dDisplacementCache(result);
       Element1dInternalForces = new Element1dInternalForceCache(result);
@@ -258,14 +280,15 @@ namespace GsaGH.Parameters.Results {
       Member1dDisplacements = new Member1dDisplacementCache(result);
       Member1dInternalForces = new Member1dInternalForceCache(result);
 
+      SteelUtilisations = new SteelUtilisationCache(result);
+
       Model = model;
       CaseType = CaseType.CombinationCase;
       CaseId = caseId;
       SelectedPermutationIds = permutations?.ToList();
-      if (model?.Model?.CombinationCases()?.ContainsKey(caseId) != true) {
-        return;
+      if (model?.Model?.CombinationCases()?.ContainsKey(caseId) == true) {
+        CaseName = model.Model.CombinationCases()[CaseId].Name;
       }
-      CaseName = model.Model.CombinationCases()[CaseId].Name;
     }
   }
 }

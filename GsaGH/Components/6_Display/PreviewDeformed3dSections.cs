@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
@@ -79,11 +80,14 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResultGoo resultGoo = null;
-      da.GetData(0, ref resultGoo);
-      var result = (GsaResult)resultGoo.Value;
+      var ghTyp = new GH_ObjectWrapper();
+      da.GetData(0, ref ghTyp);
+      GsaResult result = Inputs.GetResultInput(this, ghTyp);
+      if (result == null) {
+        return;
+      }
 
-      string elementlist = Inputs.GetElementListDefinition(this, da, 1, resultGoo.Value.Model);
+      string elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
       _section3dPreview = new Section3dPreview(result, elementlist, _defScale);
 
       da.SetData(0, _section3dPreview.Mesh);

@@ -1,5 +1,5 @@
 ﻿namespace GsaGHTests.Parameters.Results {
-  public enum ResultVector2HelperEnum {
+  public enum ResultVector2 {
     Qx,
     Qy,
   }

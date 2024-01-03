@@ -20,7 +20,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> resultSet
+      IEntity1dResultSubset<IEnergyDensity, Entity1dExtremaKey> resultSet
         = result.Element1dStrainEnergyDensities.ResultSubset(elementIds, 1);
 
       // Assert element IDs
@@ -35,7 +35,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> resultSet
+      IEntity1dResultSubset<IEnergyDensity, Entity1dExtremaKey> resultSet
         = result.Element1dStrainEnergyDensities.ResultSubset(elementIds, 1);
 
       // Assert element IDs
@@ -51,7 +51,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> resultSet
+      IEntity1dResultSubset<IEnergyDensity, Entity1dExtremaKey> resultSet
         = result.Element1dStrainEnergyDensities.ResultSubset(elementIds, 5);
 
       // Assert Max in set
@@ -68,7 +68,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> resultSet
+      IEntity1dResultSubset<IEnergyDensity, Entity1dExtremaKey> resultSet
         = result.Element1dStrainEnergyDensities.ResultSubset(elementIds, 5);
 
       // Assert Max in set
@@ -84,7 +84,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> resultSet
+      IEntity1dResultSubset<IEnergyDensity, Entity1dExtremaKey> resultSet
         = result.Element1dStrainEnergyDensities.ResultSubset(elementIds, 5);
 
       // Assert Max in set
@@ -101,7 +101,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> resultSet
+      IEntity1dResultSubset<IEnergyDensity, Entity1dExtremaKey> resultSet
         = result.Element1dStrainEnergyDensities.ResultSubset(elementIds, 5);
 
       // Assert Max in set
@@ -118,13 +118,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> resultSet
+      IEntity1dResultSubset<IEnergyDensity, Entity1dExtremaKey> resultSet
         = result.Element1dStrainEnergyDensities.ResultSubset(elementIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        IList<IEntity1dStrainEnergyDensity> strainEnergy = resultSet.Subset[id];
+        IList<IEntity1dQuantity<IEnergyDensity>> strainEnergy = resultSet.Subset[id];
 
         // for analysis case results we expect 4 positions
         Assert.Single(strainEnergy);
@@ -147,13 +147,13 @@ namespace GsaGHTests.Parameters.Results {
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
-      IEntity1dResultSubset<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> resultSet
+      IEntity1dResultSubset<IEnergyDensity, Entity1dExtremaKey> resultSet
         = result.Element1dStrainEnergyDensities.ResultSubset(elementIds, positionsCount);
 
       // Assert result values
       int i = 0;
       foreach (int id in resultSet.Ids) {
-        IList<IEntity1dStrainEnergyDensity> strainEnergy = resultSet.Subset[id];
+        IList<IEntity1dQuantity<IEnergyDensity>> strainEnergy = resultSet.Subset[id];
 
         // for C4 case results we expect two permutations in the collection
         Assert.Equal(2, strainEnergy.Count);
