@@ -137,9 +137,9 @@ namespace GsaGH.Parameters.Results {
                 (x, y, z) = GetXyz(kvp.Value, unit, permutation - 1);
                 xyz = res[permutation - 1];
               } else if (res[permutation - 1] == xyz) {
-                double zt = kvp.Value.Select(r => r.Z.As(unit)).ElementAt(permutation - 1);
-                if (zt > z) {
-                  (x, y, z) = GetXyz(kvp.Value, unit, permutation - 1);
+                (double xt, double yt, double zt) = GetXyz(kvp.Value, unit, permutation - 1);
+                if (xt + yt + zt > x + y + z) {
+                  (x, y, z) = (xt, yt, zt);
                   xyz = res[permutation - 1];
                 }
               }
@@ -151,9 +151,9 @@ namespace GsaGH.Parameters.Results {
                 (x, y, z) = GetXyz(kvp.Value, unit, permutation - 1);
                 xyz = res[permutation - 1];
               } else if (res[permutation - 1] == xyz) {
-                double zt = kvp.Value.Select(r => r.Z.As(unit)).ElementAt(permutation - 1);
-                if (zt < z) {
-                  (x, y, z) = GetXyz(kvp.Value, unit, permutation - 1);
+                (double xt, double yt, double zt) = GetXyz(kvp.Value, unit, permutation - 1);
+                if (xt + yt + zt < x + y + z) {
+                  (x, y, z) = (xt, yt, zt);
                   xyz = res[permutation - 1];
                 }
               }

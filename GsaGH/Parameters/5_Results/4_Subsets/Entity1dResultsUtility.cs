@@ -109,11 +109,10 @@ namespace GsaGH.Parameters.Results {
                     GetXyz(kvp.Value[permutation - 1].Results.Values, unit, position);
                   xyz[position] = res[position];
                 } else if (res[position] == xyz[position]) {
-                  double zt = kvp.Value[permutation - 1].Results.Values
-                  .Select(r => r.Z.As(unit)).ElementAt(position);
-                  if (zt > z[position]) {
-                    (x[position], y[position], z[position]) =
+                  (double xt, double yt, double zt) =
                     GetXyz(kvp.Value[permutation - 1].Results.Values, unit, position);
+                  if (xt + yt + zt > x[position] + y[position] + z[position]) {
+                    (x[position], y[position], z[position]) = (xt, yt, zt);
                     xyz[position] = res[position];
                   }
                 }
@@ -126,11 +125,10 @@ namespace GsaGH.Parameters.Results {
                     GetXyz(kvp.Value[permutation - 1].Results.Values, unit, position);
                   xyz[position] = res[position];
                 } else if (res[position] == xyz[position]) {
-                  double zt = kvp.Value[permutation - 1].Results.Values
-                  .Select(r => r.Z.As(unit)).ElementAt(position);
-                  if (zt < z[position]) {
-                    (x[position], y[position], z[position]) =
+                  (double xt, double yt, double zt) =
                     GetXyz(kvp.Value[permutation - 1].Results.Values, unit, position);
+                  if (xt + yt + zt < x[position] + y[position] + z[position]) {
+                    (x[position], y[position], z[position]) = (xt, yt, zt);
                     xyz[position] = res[position];
                   }
                 }
