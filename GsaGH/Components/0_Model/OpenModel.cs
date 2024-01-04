@@ -67,7 +67,7 @@ namespace GsaGH.Components {
 
       panel.UserText = fileName;
       _panelGuid = panel.InstanceGuid;
-      Instances.ActiveCanvas.Document.AddObject(panel, false);
+      OnPingDocument().AddObject(panel, false);
       Params.Input[0].AddSource(panel);
 
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();

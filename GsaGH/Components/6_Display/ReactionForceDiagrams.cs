@@ -23,6 +23,7 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Commands;
 using Rhino.Geometry;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -178,16 +179,17 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var ghObject = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghObject) || !IsGhObjectValid(ghObject)) {
+      var ghTyp = new GH_ObjectWrapper();
+      da.GetData(0, ref ghTyp);
+      GsaResult result = Inputs.GetResultInput(this, ghTyp);
+      if (result == null) {
         return;
       }
 
-      var result = (GsaResult)(ghObject.Value as GsaResultGoo).Value;
       string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
       ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-      INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> forceValues
+      IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> forceValues
         = result.NodeReactionForces.ResultSubset(nodeIds);
       nodeList = string.Join(" ", forceValues.Ids);
       LengthUnit lengthUnit = GetLengthUnit(result);
@@ -233,7 +235,7 @@ namespace GsaGH.Components {
       PostHog.Diagram("Result", result.CaseType, "ReactionForce", _selectedDisplayValue.ToString(), Parameters.EntityType.Node);
     }
 
-    private double ComputeAutoScale(INodeResultSubset<IReactionForce, ResultVector6<NodeExtremaKey>> forceValues, BoundingBox bbox) {
+    private double ComputeAutoScale(IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> forceValues, BoundingBox bbox) {
       double? max = 0;
       double? min = 0;
       switch (_selectedDisplayValue) {

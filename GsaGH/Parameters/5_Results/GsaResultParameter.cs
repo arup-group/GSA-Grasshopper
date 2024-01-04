@@ -1,4 +1,6 @@
-﻿using Grasshopper.Kernel;
+﻿using Grasshopper;
+using Grasshopper.Kernel;
+using GsaGH.Components;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
@@ -23,9 +25,19 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaResultGoo PreferredCast(object data) {
-      if (data.GetType() == typeof(GsaModelGoo)) {
+      if (data.GetType() == typeof(GsaModelGoo) &&
+        Attributes.Parent != null) { // if persistent parameter (this class) parent is null
+        IGH_Param modelParam = Sources[0];
+        var comp = new SelectResult();
+        comp.Attributes.Pivot = new PointF(
+          (modelParam.Attributes.Pivot.X + Attributes.Pivot.X) / 2,
+          (modelParam.Attributes.Pivot.Y + Attributes.Pivot.Y) / 2);
+        OnPingDocument().AddObject(comp, false);
+        comp.Params.Input[0].AddSource(modelParam);
+        comp.Params.Output[0].CollectData();
         this.AddRuntimeError($"Use 'SelectResults' component to pick results case." +
-          $"{Environment.NewLine}Data conversion failed from {data.GetTypeName()} to Result");
+          $"{Environment.NewLine}Data conversion failed from {data.GetTypeName()} to Result" +
+          $"Connect{comp.Params.Output[0].InstanceGuid}");
       } else {
         this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Result");
       }

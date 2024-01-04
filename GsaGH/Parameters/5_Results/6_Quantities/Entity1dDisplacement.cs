@@ -3,14 +3,15 @@ using System.Collections.ObjectModel;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class Entity1dDisplacement : IEntity1dDisplacement {
-    public IDictionary<double, IDisplacement> Results { get; private set; }
+  internal class Entity1dDisplacement : Entity1dResult<Double6, IDisplacement> {
+    internal Entity1dDisplacement(
+      ReadOnlyCollection<Double6> result, ReadOnlyCollection<double> positions)
+      : base(result, positions, (x) => new Displacement(x)) { }
 
-    internal Entity1dDisplacement(ReadOnlyCollection<Double6> result, ReadOnlyCollection<double> positions) {
-      Results = new Dictionary<double, IDisplacement>();
-      for (int i = 0; i < result.Count; i++) {
-        Results.Add(positions[i], new Displacement(result[i]));
-      }
+    private Entity1dDisplacement(IDictionary<double, IDisplacement> results) : base(results) { }
+
+    public override IEntity1dQuantity<IDisplacement> TakePositions(ICollection<double> positions) {
+      return new Entity1dDisplacement(TakePositions(this, positions));
     }
   }
 }

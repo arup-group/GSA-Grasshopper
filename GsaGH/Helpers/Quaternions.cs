@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 
 namespace GsaGH.Helpers {
   public static class Quaternions {
-    internal static Entity1dDisplacements CoordinateTransformationTo(IDictionary<int, IList<IEntity1dDisplacement>> displacementSubset, Plane plane, Model model) {
-      var values = new ConcurrentDictionary<int, IList<IEntity1dDisplacement>>();
+    internal static Entity1dDisplacements CoordinateTransformationTo(IDictionary<int, IList<IEntity1dQuantity<IDisplacement>>> displacementSubset, Plane plane, Model model) {
+      var values = new ConcurrentDictionary<int, IList<IEntity1dQuantity<IDisplacement>>>();
       Parallel.ForEach(displacementSubset, kvp => {
         var localAxes = new LocalAxes(model.ElementDirectionCosine(kvp.Key));
         var local = new Plane(Point3d.Origin, localAxes.X, localAxes.Y);
@@ -22,8 +22,8 @@ namespace GsaGH.Helpers {
           angle -= 2 * Math.PI;
         }
 
-        var permutationResults = new Collection<IEntity1dDisplacement>();
-        foreach (IEntity1dDisplacement permutation in kvp.Value) {
+        var permutationResults = new Collection<IEntity1dQuantity<IDisplacement>>();
+        foreach (IEntity1dQuantity<IDisplacement> permutation in kvp.Value) {
           var results = new Collection<Double6>();
           foreach (IDisplacement result in permutation.Results.Values) {
             var d = new Point3d(result.X.Meters, result.Y.Meters, result.Z.Meters);

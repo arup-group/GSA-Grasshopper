@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using GsaGH.Parameters.Results;
 using OasysGH.Units.Helpers;
 
 namespace GsaGH.Helpers.GH {
@@ -19,6 +20,22 @@ namespace GsaGH.Helpers.GH {
           Checked = unit == unitString,
           Enabled = true,
         })) {
+        menu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      return menu;
+    }
+
+    public static ToolStripMenuItem GetEnvelopeSubMenuItem(
+      EnvelopeMethod current, Action<string> action) {
+      var menu = new ToolStripMenuItem("Envelope Method") {
+        Enabled = true,
+      };
+      foreach (ToolStripMenuItem toolStripMenuItem in Enum.GetNames(typeof(EnvelopeMethod))
+       .Select(type => new ToolStripMenuItem(type, null, (s, e) => action(type)) {
+         Checked = type == current.ToString(),
+         Enabled = true,
+       })) {
         menu.DropDownItems.Add(toolStripMenuItem);
       }
 

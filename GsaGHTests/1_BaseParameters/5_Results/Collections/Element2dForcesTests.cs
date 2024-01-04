@@ -43,10 +43,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor2InAxisHelperEnum.Nx)]
-    [InlineData(ResultTensor2InAxisHelperEnum.Ny)]
-    [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
-    public void Element2dForcesMaxFromAnalysisCaseTest(ResultTensor2InAxisHelperEnum component) {
+    [InlineData(ResultTensor2InAxis.Nx)]
+    [InlineData(ResultTensor2InAxis.Ny)]
+    [InlineData(ResultTensor2InAxis.Nxy)]
+    public void Element2dForcesMaxFromAnalysisCaseTest(ResultTensor2InAxis component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
@@ -62,10 +62,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor2InAxisHelperEnum.Nx)]
-    [InlineData(ResultTensor2InAxisHelperEnum.Ny)]
-    [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
-    public void Element2dForcesMaxFromCombinationCaseTest(ResultTensor2InAxisHelperEnum component) {
+    [InlineData(ResultTensor2InAxis.Nx)]
+    [InlineData(ResultTensor2InAxis.Ny)]
+    [InlineData(ResultTensor2InAxis.Nxy)]
+    public void Element2dForcesMaxFromCombinationCaseTest(ResultTensor2InAxis component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Max(ExpectedCombinationCaseC2p1Values(component).Max(),
@@ -82,10 +82,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor2InAxisHelperEnum.Nx)]
-    [InlineData(ResultTensor2InAxisHelperEnum.Ny)]
-    [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
-    public void Element2dForcesMinFromAnalysisCaseTest(ResultTensor2InAxisHelperEnum component) {
+    [InlineData(ResultTensor2InAxis.Nx)]
+    [InlineData(ResultTensor2InAxis.Ny)]
+    [InlineData(ResultTensor2InAxis.Nxy)]
+    public void Element2dForcesMinFromAnalysisCaseTest(ResultTensor2InAxis component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
@@ -101,10 +101,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor2InAxisHelperEnum.Nx)]
-    [InlineData(ResultTensor2InAxisHelperEnum.Ny)]
-    [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
-    public void Element2dForcesMinFromcombinationCaseTest(ResultTensor2InAxisHelperEnum component) {
+    [InlineData(ResultTensor2InAxis.Nx)]
+    [InlineData(ResultTensor2InAxis.Ny)]
+    [InlineData(ResultTensor2InAxis.Nxy)]
+    public void Element2dForcesMinFromcombinationCaseTest(ResultTensor2InAxis component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Min(ExpectedCombinationCaseC2p1Values(component).Min(),
@@ -121,10 +121,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor2InAxisHelperEnum.Nx)]
-    [InlineData(ResultTensor2InAxisHelperEnum.Ny)]
-    [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
-    public void Element2dForcesValuesFromAnalysisCaseTest(ResultTensor2InAxisHelperEnum component) {
+    [InlineData(ResultTensor2InAxis.Nx)]
+    [InlineData(ResultTensor2InAxis.Ny)]
+    [InlineData(ResultTensor2InAxis.Nxy)]
+    public void Element2dForcesValuesFromAnalysisCaseTest(ResultTensor2InAxis component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
@@ -148,10 +148,10 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor2InAxisHelperEnum.Nx)]
-    [InlineData(ResultTensor2InAxisHelperEnum.Ny)]
-    [InlineData(ResultTensor2InAxisHelperEnum.Nxy)]
-    public void Element2dForcesValuesFromCombinationCaseTest(ResultTensor2InAxisHelperEnum component) {
+    [InlineData(ResultTensor2InAxis.Nx)]
+    [InlineData(ResultTensor2InAxis.Ny)]
+    [InlineData(ResultTensor2InAxis.Nxy)]
+    public void Element2dForcesValuesFromCombinationCaseTest(ResultTensor2InAxis component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       List<double> expectedP1 = ExpectedCombinationCaseC2p1Values(component);
@@ -187,31 +187,31 @@ namespace GsaGHTests.Parameters.Results {
       }
     }
 
-    private List<double> ExpectedAnalysisCaseValues(ResultTensor2InAxisHelperEnum component) {
+    private List<double> ExpectedAnalysisCaseValues(ResultTensor2InAxis component) {
       switch (component) {
-        case ResultTensor2InAxisHelperEnum.Nx: return Element2dForcesA1.NxInKiloNewtonPerMeter();
-        case ResultTensor2InAxisHelperEnum.Ny: return Element2dForcesA1.NyInKiloNewtonPerMeter();
-        case ResultTensor2InAxisHelperEnum.Nxy: return Element2dForcesA1.NxyInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Nx: return Element2dForcesA1.NxInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Ny: return Element2dForcesA1.NyInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Nxy: return Element2dForcesA1.NxyInKiloNewtonPerMeter();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC2p1Values(ResultTensor2InAxisHelperEnum component) {
+    private List<double> ExpectedCombinationCaseC2p1Values(ResultTensor2InAxis component) {
       switch (component) {
-        case ResultTensor2InAxisHelperEnum.Nx: return Element2dForcesC2p1.NxInKiloNewtonPerMeter();
-        case ResultTensor2InAxisHelperEnum.Ny: return Element2dForcesC2p1.NyInKiloNewtonPerMeter();
-        case ResultTensor2InAxisHelperEnum.Nxy: return Element2dForcesC2p1.NxyInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Nx: return Element2dForcesC2p1.NxInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Ny: return Element2dForcesC2p1.NyInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Nxy: return Element2dForcesC2p1.NxyInKiloNewtonPerMeter();
       }
 
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC2p2Values(ResultTensor2InAxisHelperEnum component) {
+    private List<double> ExpectedCombinationCaseC2p2Values(ResultTensor2InAxis component) {
       switch (component) {
-        case ResultTensor2InAxisHelperEnum.Nx: return Element2dForcesC2p2.NxInKiloNewtonPerMeter();
-        case ResultTensor2InAxisHelperEnum.Ny: return Element2dForcesC2p2.NyInKiloNewtonPerMeter();
-        case ResultTensor2InAxisHelperEnum.Nxy: return Element2dForcesC2p2.NxyInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Nx: return Element2dForcesC2p2.NxInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Ny: return Element2dForcesC2p2.NyInKiloNewtonPerMeter();
+        case ResultTensor2InAxis.Nxy: return Element2dForcesC2p2.NxyInKiloNewtonPerMeter();
       }
 
       throw new NotImplementedException();

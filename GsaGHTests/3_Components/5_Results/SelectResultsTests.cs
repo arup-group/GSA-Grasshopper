@@ -128,7 +128,10 @@ namespace GsaGHTests.Components.Results {
       Assert.Equal(3, comp._dropDownItems.Count);
       Assert.Equal(2, comp._dropDownItems[0].Count);
       Assert.Equal(4, comp._dropDownItems[1].Count);
-      Assert.Equal(3, comp._dropDownItems[2].Count);
+      Assert.Equal(2, comp._dropDownItems[2].Count); // All, P1
+      comp.SetSelected(1, 3); // C4 (contains 2 permutations)
+      comp.Params.Output[0].CollectData();
+      Assert.Equal(3, comp._dropDownItems[2].Count); // All, P1, P2
     }
 
     [Fact]

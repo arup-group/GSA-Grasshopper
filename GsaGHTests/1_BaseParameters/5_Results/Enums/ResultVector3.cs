@@ -1,12 +1,8 @@
 ﻿namespace GsaGHTests.Parameters.Results {
-  public enum ResultVector6HelperEnum {
+  public enum ResultVector3 {
     X,
     Y,
     Z,
     Xyz,
-    Xx,
-    Yy,
-    Zz,
-    Xxyyzz,
   }
 }

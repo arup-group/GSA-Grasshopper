@@ -2,14 +2,14 @@
 
 namespace GsaGH.Parameters.Results {
   public static partial class ExtremaKeyUtility {
-    public static (NodeExtremaKey Max, NodeExtremaKey Min) GetNodeExtremaKeys<T>(
+    public static (Entity0dExtremaKey Max, Entity0dExtremaKey Min) GetEntity0dExtremaKeys<T>(
       this IDictionary<int, IList<T>> subset) {
 
       double maxValue = double.MinValue;
       double minValue = double.MaxValue;
 
-      NodeExtremaKey maxKey = null;
-      NodeExtremaKey minKey = null;
+      Entity0dExtremaKey maxKey = null;
+      Entity0dExtremaKey minKey = null;
 
       foreach (int nodeId in subset.Keys) {
         IList<T> values = subset[nodeId];
@@ -28,16 +28,16 @@ namespace GsaGH.Parameters.Results {
 
     private static void UpdateExtrema(IEnergyDensity item, int nodeId, int permutation,
       ref double maxValue, ref double minValue,
-      ref NodeExtremaKey maxKey, ref NodeExtremaKey minKey) {
+      ref Entity0dExtremaKey maxKey, ref Entity0dExtremaKey minKey) {
 
       if (item.EnergyDensity.Value > maxValue) {
         maxValue = item.EnergyDensity.Value;
-        maxKey = new NodeExtremaKey(nodeId, permutation);
+        maxKey = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.EnergyDensity.Value < minValue) {
         minValue = item.EnergyDensity.Value;
-        minKey = new NodeExtremaKey(nodeId, permutation);
+        minKey = new Entity0dExtremaKey(nodeId, permutation);
       }
     }
   }

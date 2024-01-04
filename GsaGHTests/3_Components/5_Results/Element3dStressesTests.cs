@@ -101,13 +101,13 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor3HelperEnum.Xx)]
-    [InlineData(ResultTensor3HelperEnum.Yy)]
-    [InlineData(ResultTensor3HelperEnum.Zz)]
-    [InlineData(ResultTensor3HelperEnum.Xy)]
-    [InlineData(ResultTensor3HelperEnum.Yz)]
-    [InlineData(ResultTensor3HelperEnum.Zx)]
-    public void Element3dStressesMaxFromAnalysisCaseTest(ResultTensor3HelperEnum component) {
+    [InlineData(ResultTensor3.Xx)]
+    [InlineData(ResultTensor3.Yy)]
+    [InlineData(ResultTensor3.Zz)]
+    [InlineData(ResultTensor3.Xy)]
+    [InlineData(ResultTensor3.Yz)]
+    [InlineData(ResultTensor3.Zx)]
+    public void Element3dStressesMaxFromAnalysisCaseTest(ResultTensor3 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element3dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
@@ -126,13 +126,13 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor3HelperEnum.Xx)]
-    [InlineData(ResultTensor3HelperEnum.Yy)]
-    [InlineData(ResultTensor3HelperEnum.Zz)]
-    [InlineData(ResultTensor3HelperEnum.Xy)]
-    [InlineData(ResultTensor3HelperEnum.Yz)]
-    [InlineData(ResultTensor3HelperEnum.Zx)]
-    public void Element3dStressesMaxFromCombinationCaseTest(ResultTensor3HelperEnum component) {
+    [InlineData(ResultTensor3.Xx)]
+    [InlineData(ResultTensor3.Yy)]
+    [InlineData(ResultTensor3.Zz)]
+    [InlineData(ResultTensor3.Xy)]
+    [InlineData(ResultTensor3.Yz)]
+    [InlineData(ResultTensor3.Zx)]
+    public void Element3dStressesMaxFromCombinationCaseTest(ResultTensor3 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element3dSimple, 2);
       double expected = Math.Max(
@@ -153,13 +153,13 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor3HelperEnum.Xx)]
-    [InlineData(ResultTensor3HelperEnum.Yy)]
-    [InlineData(ResultTensor3HelperEnum.Zz)]
-    [InlineData(ResultTensor3HelperEnum.Xy)]
-    [InlineData(ResultTensor3HelperEnum.Yz)]
-    [InlineData(ResultTensor3HelperEnum.Zx)]
-    public void Element3dStressesMinFromAnalysisCaseTest(ResultTensor3HelperEnum component) {
+    [InlineData(ResultTensor3.Xx)]
+    [InlineData(ResultTensor3.Yy)]
+    [InlineData(ResultTensor3.Zz)]
+    [InlineData(ResultTensor3.Xy)]
+    [InlineData(ResultTensor3.Yz)]
+    [InlineData(ResultTensor3.Zx)]
+    public void Element3dStressesMinFromAnalysisCaseTest(ResultTensor3 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element3dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
@@ -178,13 +178,13 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor3HelperEnum.Xx)]
-    [InlineData(ResultTensor3HelperEnum.Yy)]
-    [InlineData(ResultTensor3HelperEnum.Zz)]
-    [InlineData(ResultTensor3HelperEnum.Xy)]
-    [InlineData(ResultTensor3HelperEnum.Yz)]
-    [InlineData(ResultTensor3HelperEnum.Zx)]
-    public void Element3dStressesMinFromcombinationCaseTest(ResultTensor3HelperEnum component) {
+    [InlineData(ResultTensor3.Xx)]
+    [InlineData(ResultTensor3.Yy)]
+    [InlineData(ResultTensor3.Zz)]
+    [InlineData(ResultTensor3.Xy)]
+    [InlineData(ResultTensor3.Yz)]
+    [InlineData(ResultTensor3.Zx)]
+    public void Element3dStressesMinFromcombinationCaseTest(ResultTensor3 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element3dSimple, 2);
       double expected = Math.Min(
@@ -204,42 +204,42 @@ namespace GsaGHTests.Components.Results {
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
 
-    private List<double> ExpectedAnalysisCaseValues(ResultTensor3HelperEnum component) {
+    private List<double> ExpectedAnalysisCaseValues(ResultTensor3 component) {
       switch (component) {
-        case ResultTensor3HelperEnum.Xx: return Element3dStressesA1.XxInMPa();
-        case ResultTensor3HelperEnum.Yy: return Element3dStressesA1.YyInMPa();
-        case ResultTensor3HelperEnum.Zz: return Element3dStressesA1.ZzInMPa();
-        case ResultTensor3HelperEnum.Xy: return Element3dStressesA1.XyInMPa();
-        case ResultTensor3HelperEnum.Yz: return Element3dStressesA1.YzInMPa();
-        case ResultTensor3HelperEnum.Zx: return Element3dStressesA1.ZxInMPa();
+        case ResultTensor3.Xx: return Element3dStressesA1.XxInMPa();
+        case ResultTensor3.Yy: return Element3dStressesA1.YyInMPa();
+        case ResultTensor3.Zz: return Element3dStressesA1.ZzInMPa();
+        case ResultTensor3.Xy: return Element3dStressesA1.XyInMPa();
+        case ResultTensor3.Yz: return Element3dStressesA1.YzInMPa();
+        case ResultTensor3.Zx: return Element3dStressesA1.ZxInMPa();
       }
 
       throw new NotImplementedException();
     }
 
     private List<double> ExpectedCombinationCaseC2p1Values(
-      ResultTensor3HelperEnum component) {
+      ResultTensor3 component) {
       switch (component) {
-        case ResultTensor3HelperEnum.Xx: return Element3dStressesC2p1.XxInMPa();
-        case ResultTensor3HelperEnum.Yy: return Element3dStressesC2p1.YyInMPa();
-        case ResultTensor3HelperEnum.Zz: return Element3dStressesC2p1.ZzInMPa();
-        case ResultTensor3HelperEnum.Xy: return Element3dStressesC2p1.XyInMPa();
-        case ResultTensor3HelperEnum.Yz: return Element3dStressesC2p1.YzInMPa();
-        case ResultTensor3HelperEnum.Zx: return Element3dStressesC2p1.ZxInMPa();
+        case ResultTensor3.Xx: return Element3dStressesC2p1.XxInMPa();
+        case ResultTensor3.Yy: return Element3dStressesC2p1.YyInMPa();
+        case ResultTensor3.Zz: return Element3dStressesC2p1.ZzInMPa();
+        case ResultTensor3.Xy: return Element3dStressesC2p1.XyInMPa();
+        case ResultTensor3.Yz: return Element3dStressesC2p1.YzInMPa();
+        case ResultTensor3.Zx: return Element3dStressesC2p1.ZxInMPa();
       }
 
       throw new NotImplementedException();
     }
 
     private List<double> ExpectedCombinationCaseC2p2Values(
-      ResultTensor3HelperEnum component) {
+      ResultTensor3 component) {
       switch (component) {
-        case ResultTensor3HelperEnum.Xx: return Element3dStressesC2p2.XxInMPa();
-        case ResultTensor3HelperEnum.Yy: return Element3dStressesC2p2.YyInMPa();
-        case ResultTensor3HelperEnum.Zz: return Element3dStressesC2p2.ZzInMPa();
-        case ResultTensor3HelperEnum.Xy: return Element3dStressesC2p2.XyInMPa();
-        case ResultTensor3HelperEnum.Yz: return Element3dStressesC2p2.YzInMPa();
-        case ResultTensor3HelperEnum.Zx: return Element3dStressesC2p2.ZxInMPa();
+        case ResultTensor3.Xx: return Element3dStressesC2p2.XxInMPa();
+        case ResultTensor3.Yy: return Element3dStressesC2p2.YyInMPa();
+        case ResultTensor3.Zz: return Element3dStressesC2p2.ZzInMPa();
+        case ResultTensor3.Xy: return Element3dStressesC2p2.XyInMPa();
+        case ResultTensor3.Yz: return Element3dStressesC2p2.YzInMPa();
+        case ResultTensor3.Zx: return Element3dStressesC2p2.ZxInMPa();
       }
 
       throw new NotImplementedException();

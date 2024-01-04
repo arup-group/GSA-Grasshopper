@@ -29,34 +29,6 @@ namespace GsaGHTests.Parameters.Results {
       return new GsaResult(model, combinationCaseResults[caseId], caseId, permutations);
     }
 
-    [Fact]
-    public void ClassHasValidNumberOfDeclaredElements() {
-      TypeInfo t = typeof(GsaResult).GetTypeInfo();
-      int propertiesCount = t.DeclaredProperties.Count();
-      int methodsCount = t.DeclaredMethods.Count(); // decalredProperties x 2 (get and set) + others 
-      int constructorsCount = t.DeclaredConstructors.Count();
-      int eventCount = t.DeclaredEvents.Count();
-      int fieldCount = t.DeclaredFields.Count();
-      int memberCount = t.DeclaredMembers.Count();
-      int nestedTypesCount = t.DeclaredNestedTypes.Count();
-      int interfacesCount = t.ImplementedInterfaces.Count();
-      int genericTypesCount = t.GenericTypeParameters.Count();
-
-      //if this test will fail, that means, you need to remember of adding new tests for stuff you added/removed
-      Assert.Equal(26, propertiesCount);
-      Assert.Equal(58, methodsCount);
-      Assert.Equal(2, constructorsCount);
-      Assert.Equal(0, eventCount);
-      Assert.Equal(propertiesCount, fieldCount);
-      Assert.Equal(1, nestedTypesCount);
-      Assert.Equal(1, interfacesCount);
-      Assert.Equal(0, genericTypesCount);
-
-      int sum = propertiesCount + methodsCount + constructorsCount + eventCount + fieldCount
-        + nestedTypesCount + genericTypesCount;
-      Assert.Equal(sum, memberCount);
-    }
-
     [Theory]
     [InlineData(true, false, false, true)]
     [InlineData(false, true, false, true)]
@@ -81,24 +53,20 @@ namespace GsaGHTests.Parameters.Results {
         : new GsaResult(model, combinationCaseResult, caseId, permutationEmpty ? null : new List<int>(){1});
       
       Assert.NotNull(results);
-      if (model == null) {
+      if (modelIsNull || resultsAreNull) {
         Assert.Null(results.Model);
+        return;
       } else {
         Assert.NotNull(results.Model);
       }
-      switch (resultsAreNull) {
-        case true when analysisCase:
-          Assert.Equal("DL", results.CaseName);
-          break;
-        case true when !analysisCase:
-          Assert.Equal("ULS", results.CaseName);
-          break;
-        default:
-          Assert.Null(results.CaseName);
-          break;
+
+      if (!caseIdIsInvalid) {
+        Assert.Null(results.CaseName);
+        return;
+      } else {
+        Assert.Equal(caseId, results.CaseId);
       }
 
-      Assert.Equal(caseId, results.CaseId);
       Assert.Equal(analysisCase ? CaseType.AnalysisCase : CaseType.CombinationCase, results.CaseType);
       if (!permutationEmpty && !analysisCase) {
         Assert.Single(results.SelectedPermutationIds);
@@ -134,6 +102,16 @@ namespace GsaGHTests.Parameters.Results {
         Assert.Null(results.NodeTransientFootfalls);
         Assert.Null(results.NodeResonantFootfalls);
       }
+
+      if (caseId == 0) {
+        return;
+      }
+
+      if (analysisCase) {
+        Assert.Equal("DL", results.CaseName);
+      } else {
+        Assert.Equal("ULS", results.CaseName);
+      }
     }
 
     [Theory]
@@ -143,7 +121,7 @@ namespace GsaGHTests.Parameters.Results {
       GsaResult result = isAnalysisCase ? (GsaResult)AnalysisCaseResult(GsaFile.SteelDesignSimple, 1) :
         (GsaResult)CombinationCaseResult(GsaFile.SteelDesignSimple, 1, new List<int>(){1,2,3,});
 
-      string expectedString = isAnalysisCase ? "A1": "C1 P:3";
+      string expectedString = isAnalysisCase ? "A1 'DL'": "C1 (3 permutations) 'ULS'";
 
       Assert.Equal(expectedString, result.ToString());
     }

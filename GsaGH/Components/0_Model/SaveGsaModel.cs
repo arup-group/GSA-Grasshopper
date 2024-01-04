@@ -141,7 +141,7 @@ namespace GsaGH.Components {
       }
 
       while (Params.Input[2].Sources.Count > 0) {
-        Instances.ActiveCanvas.Document.RemoveObject(Params.Input[2].Sources[0], false);
+        OnPingDocument().RemoveObject(Params.Input[2].Sources[0], false);
       }
 
       var panel = new GH_Panel();
@@ -152,7 +152,7 @@ namespace GsaGH.Components {
           Attributes.DocObject.Attributes.Bounds.Left - panel.Attributes.Bounds.Width - 40,
           Attributes.DocObject.Attributes.Bounds.Bottom - panel.Attributes.Bounds.Height);
       panel.UserText = fdi.FileName;
-      Instances.ActiveCanvas.Document.AddObject(panel, false);
+      OnPingDocument().AddObject(panel, false);
 
       Params.Input[2].AddSource(panel);
       Params.OnParametersChanged();

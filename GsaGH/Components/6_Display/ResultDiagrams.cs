@@ -184,9 +184,11 @@ namespace GsaGH.Components {
         result = (GsaResult)goo.Value;
         switch (result.CaseType) {
           case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
-            string warningText
-              = $"Combination Case {result.CaseId} contains {result.SelectedPermutationIds.Count} permutations - only one permutation can be displayed at a time.{Environment.NewLine}Displaying first permutation; please use the 'Select Results' to select other single permutations";
-            this.AddRuntimeWarning(warningText);
+            this.AddRuntimeRemark(
+              $"Combination Case {result.CaseId} contains {result.SelectedPermutationIds.Count}"
+              + $" permutations and diagrams will show on top of eachother for each permutaion."
+              + Environment.NewLine
+              + $"To select a single permutation use the 'Select Results' component.");
             _case = $"C{result.CaseId}";
             break;
 

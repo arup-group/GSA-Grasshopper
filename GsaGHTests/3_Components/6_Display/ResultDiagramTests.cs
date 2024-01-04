@@ -22,10 +22,10 @@ namespace GsaGHTests.Components.Display {
       var comp = new ResultDiagrams();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(caseResult));
       comp.Params.Output[0].CollectData();
-      IList<string> messages = comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning);
+      IList<string> messages = comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark);
 
       Assert.Single(messages);
-      Assert.Equal("Combination Case 2 contains 3 permutations - only one permutation can be displayed at a time.\r\nDisplaying first permutation; please use the 'Select Results' to select other single permutations", messages[0]);
+      Assert.Equal("Combination Case 2 contains 3 permutations and diagrams will show on top of eachother for each permutaion.\r\nTo select a single permutation use the 'Select Results' component.", messages[0]);
     }
 
     [Fact]
