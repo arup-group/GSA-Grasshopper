@@ -38,7 +38,7 @@ namespace GsaGH.Components {
 
     public void OpenFile() {
       var fdi = new OpenFileDialog {
-        Filter = "GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*",
+        Filter = "GSA Files(*.gwa;*.gwb)|*.gwa;*.gwb|All files (*.*)|*.*",
       };
       bool res = fdi.ShowOpenDialog();
 
@@ -97,7 +97,7 @@ namespace GsaGH.Components {
       string fileName = string.Empty;
       da.GetData(0, ref fileName);
       if (!fileName.EndsWith(".gwa") && !fileName.EndsWith(".gwb")) {
-        fileName += ".gwa";
+        fileName += ".gwb";
       }
 
       model.Open(fileName);

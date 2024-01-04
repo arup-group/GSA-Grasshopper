@@ -105,8 +105,8 @@ namespace GsaGH.Components {
     }
 
     internal void Save(ref GsaModel model, string fileNameAndPath) {
-      if (!fileNameAndPath.EndsWith(".gwa") && !fileNameAndPath.EndsWith(".gwa")) {
-        fileNameAndPath += ".gwa";
+      if (!fileNameAndPath.EndsWith(".gwa") && !fileNameAndPath.EndsWith(".gwb")) {
+        fileNameAndPath += ".gwb";
       }
 
       Directory.CreateDirectory(Path.GetDirectoryName(fileNameAndPath) ?? string.Empty);
@@ -133,7 +133,7 @@ namespace GsaGH.Components {
 
     internal void SaveAsButtonClick() {
       var fdi = new SaveFileDialog {
-        Filter = "GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*",
+        Filter = "GSA Files(*.gwa;*.gwb)|*.gwa;*.gwb|All files (*.*)|*.*",
       };
       bool res = fdi.ShowSaveDialog();
       if (!res) {
