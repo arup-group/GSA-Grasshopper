@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi.EnumMappings;
@@ -93,7 +91,6 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       var model = new Model();
-      var ghTyp = new GH_ObjectWrapper();
       string fileName = string.Empty;
       da.GetData(0, ref fileName);
       if (!fileName.EndsWith(".gwa") && !fileName.EndsWith(".gwb")) {
@@ -101,7 +98,7 @@ namespace GsaGH.Components {
       }
 
       model.Open(fileName);
-
+      
       var gsaModel = new GsaModel(model) {
         FileNameAndPath = fileName,
         ModelUnit = UnitMapping.GetUnit(model)
@@ -113,7 +110,7 @@ namespace GsaGH.Components {
       }
 
       da.SetData(0, new GsaModelGoo(gsaModel));
-      PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWA",
+      PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"open{fileName.Substring(fileName.LastIndexOf('.') + 1).ToUpper()}",
         (int)(new FileInfo(fileName).Length / 1024));
     }
 
