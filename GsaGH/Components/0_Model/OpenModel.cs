@@ -95,14 +95,14 @@ namespace GsaGH.Components {
       da.GetData(0, ref fileName);
 
       model.Open(fileName);
-      
+
       var gsaModel = new GsaModel(model) {
         FileNameAndPath = fileName,
         ModelUnit = UnitMapping.GetUnit(model)
       };
       UpdateMessage(fileName);
 
-      if(gsaModel.Materials.SanitizeGenericCodeNames()) {
+      if (gsaModel.Materials.SanitizeGenericCodeNames()) {
         this.AddRuntimeRemark("The opened model contains generic materials with no design code");
       }
 

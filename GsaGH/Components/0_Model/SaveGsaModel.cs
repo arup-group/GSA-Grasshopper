@@ -4,7 +4,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using GH_IO.Serialization;
-using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Special;
@@ -18,8 +17,6 @@ using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.UI;
 using Rhino.UI;
-
-#pragma warning disable IDE0059
 
 namespace GsaGH.Components {
   /// <summary>
@@ -133,7 +130,7 @@ namespace GsaGH.Components {
 
     internal void SaveAsButtonClick() {
       var fdi = new SaveFileDialog {
-        Filter = "GSA Files(*.gwa;*.gwb)|*.gwa;*.gwb|All files (*.*)|*.*",
+        Filter = "GSA Files(*.gwb;*.gwa)|*.gwb;*.gwa|All files (*.*)|*.*",
       };
       bool res = fdi.ShowSaveDialog();
       if (!res) {
