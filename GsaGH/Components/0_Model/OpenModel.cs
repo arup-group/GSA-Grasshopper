@@ -93,9 +93,6 @@ namespace GsaGH.Components {
       var model = new Model();
       string fileName = string.Empty;
       da.GetData(0, ref fileName);
-      if (!fileName.EndsWith(".gwa") && !fileName.EndsWith(".gwb")) {
-        fileName += ".gwb";
-      }
 
       model.Open(fileName);
       
