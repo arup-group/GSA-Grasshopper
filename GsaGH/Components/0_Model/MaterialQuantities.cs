@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -19,7 +17,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("dcf67a4b-6443-429f-8d68-95af69493809");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GetModelMaterials;
+    protected override Bitmap Icon => Resources.MaterialQuantities;
 
     public MaterialQuantities() : base("Materials Quantities", "MatBoQ",
       "Get Quantities for Standard and Custom Materials from a GSA model", CategoryName.Name(),
@@ -29,7 +27,7 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-    }
+    } 
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new string[] {
@@ -71,9 +69,6 @@ namespace GsaGH.Components {
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Glass Quantities", "GQ",
         "Total weight of Glass Materials from GSA Model\nGrafted by Material ID.",
-        GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Fabric Quantities", "FaQ",
-        "Total weight of Fabric Materials from GSA Model\nGrafted by Material ID.",
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Custom Quantities", "CsQ",
         "Total weight of Custom Analysis Materials from GSA Model\nGrafted by Material ID.",
@@ -125,12 +120,6 @@ namespace GsaGH.Components {
         glass.Add(new GH_UnitNumber(kvp.Value), path);
       }
 
-      var fabric = new DataTree<GH_UnitNumber>();
-      foreach (KeyValuePair<int, Mass> kvp in quantities.FabricQuantities) {
-        var path = new GH_Path(kvp.Key);
-        fabric.Add(new GH_UnitNumber(kvp.Value), path);
-      }
-
       var custom = new DataTree<GH_UnitNumber>();
       foreach (KeyValuePair<int, Mass> kvp in quantities.CustomMaterialQuantities) {
         var path = new GH_Path(kvp.Key);
@@ -143,8 +132,7 @@ namespace GsaGH.Components {
       da.SetDataTree(3, aluminium);
       da.SetDataTree(4, timber);
       da.SetDataTree(5, glass);
-      da.SetDataTree(6, fabric);
-      da.SetDataTree(7, custom);
+      da.SetDataTree(6, custom);
     }
   }
 }

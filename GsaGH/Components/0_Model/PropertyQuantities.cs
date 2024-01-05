@@ -5,7 +5,6 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -18,10 +17,10 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("fad210a6-8982-49fe-a026-b5f32df2a71d");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.GetModelProperties;
+    protected override Bitmap Icon => Resources.PropertyQuantities;
 
     public PropertyQuantities() : base("Property Quantities", "PropBoQ",
-      "Get Quantities for Sections, 2D, 3D and Spring Properties from a GSA model",
+      "Get Quantities for Sections, and 2D Properties from a GSA model",
       CategoryName.Name(), SubCategoryName.Cat0()) {
       Hidden = true;
     }

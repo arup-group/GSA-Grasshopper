@@ -21,8 +21,6 @@ namespace GsaGH.Helpers.Import {
       = new ConcurrentDictionary<int, Mass>();
     internal IDictionary<int, Mass> GlassQuantities { get; private set; } 
       = new ConcurrentDictionary<int, Mass>();
-    internal IDictionary<int, Mass> FabricQuantities { get; private set; } 
-      = new ConcurrentDictionary<int, Mass>();
     internal IDictionary<int, Mass> CustomMaterialQuantities { get; private set; } 
       = new ConcurrentDictionary<int, Mass>();
 
@@ -34,7 +32,6 @@ namespace GsaGH.Helpers.Import {
       var aluminium = AluminiumQuantities as ConcurrentDictionary<int, Mass>;
       var timber = TimberQuantities as ConcurrentDictionary<int, Mass>;
       var glass = GlassQuantities as ConcurrentDictionary<int, Mass>;
-      var fabric = FabricQuantities as ConcurrentDictionary<int, Mass>;
       var custom = CustomMaterialQuantities as ConcurrentDictionary<int, Mass>;
       ReadOnlyDictionary<int, GsaSectionGoo> sections = model.Sections;
       Parallel.ForEach(propertyQuantities.SectionQuantities, sectionKvp => {
@@ -64,7 +61,6 @@ namespace GsaGH.Helpers.Import {
             glass.AddOrUpdate(section.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
           case MaterialType.FABRIC:
-            fabric.AddOrUpdate(section.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
           default:
             custom.AddOrUpdate(section.Material.Id, mass, (key, oldValue) => oldValue + mass);
@@ -100,7 +96,6 @@ namespace GsaGH.Helpers.Import {
             glass.AddOrUpdate(prop2d.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
           case MaterialType.FABRIC:
-            fabric.AddOrUpdate(prop2d.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
           default:
             custom.AddOrUpdate(prop2d.Material.Id, mass, (key, oldValue) => oldValue + mass);
