@@ -6,6 +6,7 @@ using GsaAPI;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
+using static System.Collections.Specialized.BitVector32;
 
 namespace GsaGH.Helpers.Import {
   internal class MaterialQuantities {
@@ -41,28 +42,26 @@ namespace GsaGH.Helpers.Import {
         var density = new Density(section.Material.AnalysisMaterial.Density,
         DensityUnit.KilogramPerCubicMeter);
         Mass mass = volume * density;
-        switch (materialType) {
-          case MaterialType.STEEL:
+        switch (section.Material.MaterialType) {
+          case MatType.Steel:
             steel.AddOrUpdate(section.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
-          case MaterialType.CONCRETE:
+          case MatType.Concrete:
             concrete.AddOrUpdate(section.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
-          case MaterialType.FRP:
+          case MatType.Frp:
             frp.AddOrUpdate(section.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
-          case MaterialType.ALUMINIUM:
+          case MatType.Aluminium:
             aluminium.AddOrUpdate(section.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
-          case MaterialType.TIMBER:
+          case MatType.Timber:
             timber.AddOrUpdate(section.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
-          case MaterialType.GLASS:
+          case MatType.Glass:
             glass.AddOrUpdate(section.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
-          case MaterialType.FABRIC:
-            return;
-          default:
+          case MatType.Custom:
             custom.AddOrUpdate(section.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
         }
@@ -76,28 +75,26 @@ namespace GsaGH.Helpers.Import {
         var density = new Density(prop2d.Material.AnalysisMaterial.Density,
         DensityUnit.KilogramPerCubicMeter);
         Mass mass = volume * density;
-        switch (materialType) {
-          case MaterialType.STEEL:
+        switch (prop2d.Material.MaterialType) {
+          case MatType.Steel:
             steel.AddOrUpdate(prop2d.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
-          case MaterialType.CONCRETE:
+          case MatType.Concrete:
             concrete.AddOrUpdate(prop2d.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
-          case MaterialType.FRP:
+          case MatType.Frp:
             frp.AddOrUpdate(prop2d.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
-          case MaterialType.ALUMINIUM:
+          case MatType.Aluminium:
             aluminium.AddOrUpdate(prop2d.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
-          case MaterialType.TIMBER:
+          case MatType.Timber:
             timber.AddOrUpdate(prop2d.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
-          case MaterialType.GLASS:
+          case MatType.Glass:
             glass.AddOrUpdate(prop2d.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
-          case MaterialType.FABRIC:
-            return;
-          default:
+          case MatType.Custom:
             custom.AddOrUpdate(prop2d.Material.Id, mass, (key, oldValue) => oldValue + mass);
             return;
         }

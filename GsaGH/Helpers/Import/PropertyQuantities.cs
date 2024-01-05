@@ -68,6 +68,7 @@ namespace GsaGH.Helpers.Import {
         if (member.Value.Section == null || member.Value.Section.IsReferencedById) {
           return;
         }
+
         double length = member.Value.PolyCurve.GetLength();
         double offset1 = new Length(
           member.Value.ApiMember.AutomaticOffset.X1 + member.Value.ApiMember.Offset.X1,
