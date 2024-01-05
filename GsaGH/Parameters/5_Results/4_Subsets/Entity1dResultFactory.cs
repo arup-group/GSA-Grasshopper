@@ -1,14 +1,13 @@
-﻿using GsaAPI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
   internal static partial class Entity1dResultsFactory {
     internal static IList<IEntity1dQuantity<QuantityResult>> CreateResults<ApiResultType, QuantityResult>(
-      ReadOnlyCollection<ApiResultType> results, ReadOnlyCollection<double> positions, 
-        Func<ReadOnlyCollection<ApiResultType>, ReadOnlyCollection<double>, 
-        IEntity1dQuantity<QuantityResult>> constructor) 
+      ReadOnlyCollection<ApiResultType> results, ReadOnlyCollection<double> positions,
+        Func<ReadOnlyCollection<ApiResultType>, ReadOnlyCollection<double>,
+        IEntity1dQuantity<QuantityResult>> constructor)
       where QuantityResult : IResultItem {
       return new List<IEntity1dQuantity<QuantityResult>> {
               constructor(results, positions)

@@ -22,7 +22,7 @@ namespace GsaGHTests.Model {
       Assert.NotNull(output);
       Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
       Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
-      string expectedPath =Path.GetTempPath() + (path.EndsWith("gwc") ? "GSA-Grasshopper_temp2.gwa" : path);
+      string expectedPath = Path.GetTempPath() + (path.EndsWith("gwc") ? "GSA-Grasshopper_temp2.gwa" : path);
 
       Assert.True(File.Exists(expectedPath));
     }

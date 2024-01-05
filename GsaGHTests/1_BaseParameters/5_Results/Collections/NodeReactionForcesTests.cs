@@ -39,7 +39,7 @@ namespace GsaGHTests.Parameters.Results {
           continue;
         }
 
-        if(min == null) {
+        if (min == null) {
           min = value;
         }
 

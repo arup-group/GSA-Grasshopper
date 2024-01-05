@@ -46,10 +46,10 @@ namespace IntegrationTests.Parameters {
         Assert.True(data.IsValid);
         Assert.True(data.ToString().Length > 5);
       }
-      
+
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
       Assert.Empty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
-      
+
       if (checkError) {
         TestCastError(groupIdentifier + "Error");
       }
@@ -65,7 +65,7 @@ namespace IntegrationTests.Parameters {
           Assert.False(data.IsValid);
         }
       }
-      
+
       Assert.NotEmpty(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 

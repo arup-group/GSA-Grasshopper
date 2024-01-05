@@ -44,7 +44,7 @@ namespace GsaGH.Parameters {
         GridPlaneSurface = GridPlaneSurface.Duplicate(),
         Points = Points,
       };
-      
+
       if (LoadCase != null) {
         dup.LoadCase = LoadCase;
       }

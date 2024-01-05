@@ -12,7 +12,7 @@ namespace GsaGHTests.Components.Geometry {
     public void ChangeCalculationTypeDropdownTest() {
       var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
-      
+
       var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       GsaEffectiveLengthOptions leff = output.Value;
       Assert.True(leff.EffectiveLength is EffectiveLengthFromEndRestraintAndGeometry);
@@ -146,7 +146,7 @@ namespace GsaGHTests.Components.Geometry {
     [InlineData("top", "bot", "TopFlangeLateral", "BottomFlangeLateral")]
     [InlineData("top", "2", "TopFlangeLateral", "BottomFlangeLateral")]
     public void IntermediateRestraintStringInputTest(
-        string contin, string interm, string expectedContin, string expectedInterm) { 
+        string contin, string interm, string expectedContin, string expectedInterm) {
       var comp = new CreateEffectiveLengthOptions();
       comp.CreateAttributes();
       comp.SetSelected(0, 1);

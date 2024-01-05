@@ -214,9 +214,9 @@ namespace GsaGH.Components {
 
       LengthUnit lengthUnit = result.Model.ModelUnit;
 
-      DiagramType type = _selectedItems[0] == "Force" 
+      DiagramType type = _selectedItems[0] == "Force"
         ? Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
-          .Select(item => item.GsaApiEnum).FirstOrDefault() 
+          .Select(item => item.GsaApiEnum).FirstOrDefault()
         : Mappings.diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1])
           .Select(item => item.GsaApiEnum).FirstOrDefault();
 

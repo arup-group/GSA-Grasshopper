@@ -237,7 +237,7 @@ namespace GsaGH.Components {
       int i = _selectedItems.Count == 1 ? 0 : 1;
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
 
-      if (_selectedItems.Count == 1 ) {
+      if (_selectedItems.Count == 1) {
         _dropDownItems.Insert(0, _meshMode);
         _selectedItems.Insert(0, _meshMode[1]);
 

@@ -1,7 +1,7 @@
 ﻿using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
-  public interface IGlobalResultsCache : IResultItem  {
+  public interface IGlobalResultsCache : IResultItem {
     IApiResult ApiResult { get; }
     IEffectiveInertia EffectiveInertia { get; }
     IEffectiveMass EffectiveMass { get; }

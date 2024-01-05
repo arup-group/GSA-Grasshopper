@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GH_IO.Serialization;
-using Grasshopper;
 using Grasshopper.GUI;
 using Grasshopper.GUI.Gradient;
 using Grasshopper.Kernel;
@@ -206,9 +205,9 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
       switch (i) {
-        case 0: { 
-          switch (j) {
-              case 0: 
+        case 0: {
+            switch (j) {
+              case 0:
                 if (_dropDownItems[1] != _displacement) {
                   while (
                     _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
@@ -228,8 +227,8 @@ namespace GsaGH.Components {
                 }
 
                 break;
-                
-              case 1: 
+
+              case 1:
                 if (_dropDownItems[1] != _force) {
                   while (
                     _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
@@ -249,8 +248,8 @@ namespace GsaGH.Components {
                 }
 
                 break;
-                
-              case 2: 
+
+              case 2:
                 if (_dropDownItems[1] != _stress) {
                   if (_dropDownItems.Count < 3) {
                     _dropDownItems.Insert(2, _layer); //insert layer dropdown as third dd list
@@ -272,8 +271,8 @@ namespace GsaGH.Components {
                 }
 
                 break;
-                
-              case 3: 
+
+              case 3:
                 if (_dropDownItems[1] != _footfall) {
                   while (
                     _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
@@ -295,67 +294,67 @@ namespace GsaGH.Components {
                 break;
             }
 
-          break;
-        }
+            break;
+          }
         case 1: {
-          bool redraw = false;
-          _selectedItems[1] = _dropDownItems[1][j];
-          if (_mode == FoldMode.Displacement) {
-            if (((int)_disp > 3) & (j < 4)) {
-              redraw = true;
-              _slider = true;
-            }
-
-            if (((int)_disp < 4) & (j > 3)) {
-              redraw = true;
-              _slider = false;
-            }
-          }
-
-          _disp = (DisplayValue)j;
-          if (_dropDownItems[1] != _displacement) {
-            _isShear = false;
-            if (_mode == FoldMode.Force) {
-              if ((j == 3) | (j == 4)) {
-                _disp = (DisplayValue)j - 3;
-                _isShear = true;
-              } else if (j > 4) {
-                _disp = j switch {
-                  8 => DisplayValue.ResXyz,
-                  9 => DisplayValue.ResXxyyzz,
-                  _ => (DisplayValue)j - 1,
-                };
+            bool redraw = false;
+            _selectedItems[1] = _dropDownItems[1][j];
+            if (_mode == FoldMode.Displacement) {
+              if (((int)_disp > 3) & (j < 4)) {
+                redraw = true;
+                _slider = true;
               }
-            } else if (_mode == FoldMode.Force || _mode == FoldMode.Stress) {
-              if (j > 2) {
-                _disp = (DisplayValue)j + 1;
+
+              if (((int)_disp < 4) & (j > 3)) {
+                redraw = true;
+                _slider = false;
               }
             }
-          }
 
-          if (redraw) {
-            ReDrawComponent();
-          }
+            _disp = (DisplayValue)j;
+            if (_dropDownItems[1] != _displacement) {
+              _isShear = false;
+              if (_mode == FoldMode.Force) {
+                if ((j == 3) | (j == 4)) {
+                  _disp = (DisplayValue)j - 3;
+                  _isShear = true;
+                } else if (j > 4) {
+                  _disp = j switch {
+                    8 => DisplayValue.ResXyz,
+                    9 => DisplayValue.ResXxyyzz,
+                    _ => (DisplayValue)j - 1,
+                  };
+                }
+              } else if (_mode == FoldMode.Force || _mode == FoldMode.Stress) {
+                if (j > 2) {
+                  _disp = (DisplayValue)j + 1;
+                }
+              }
+            }
 
-          break;
-        }
+            if (redraw) {
+              ReDrawComponent();
+            }
+
+            break;
+          }
         case 2 when _mode == FoldMode.Stress: {
-          switch (j) {
-            case 0:
-              _flayer = Layer2d.Top;
-              break;
+            switch (j) {
+              case 0:
+                _flayer = Layer2d.Top;
+                break;
 
-            case 1:
-              _flayer = Layer2d.Middle;
-              break;
+              case 1:
+                _flayer = Layer2d.Middle;
+                break;
 
-            case 2:
-              _flayer = Layer2d.Bottom;
-              break;
+              case 2:
+                _flayer = Layer2d.Bottom;
+                break;
+            }
+
+            break;
           }
-
-          break;
-        }
       }
 
       base.UpdateUI();
@@ -638,14 +637,14 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Force:
-          IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, 
+          IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d,
             ResultTensor2InAxis<Entity2dExtremaKey>> forces
               = result.Element2dForces.ResultSubset(elementIds);
-          IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, 
-            ResultVector2<Entity2dExtremaKey>> shears 
+          IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d,
+            ResultVector2<Entity2dExtremaKey>> shears
               = result.Element2dShearForces.ResultSubset(elementIds);
-          IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, 
-            ResultTensor2AroundAxis<Entity2dExtremaKey>> moments 
+          IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d,
+            ResultTensor2AroundAxis<Entity2dExtremaKey>> moments
               = result.Element2dMoments.ResultSubset(elementIds);
           Func<IForce2d, IQuantity> forceSelector = null;
           Func<IShear2d, IQuantity> shearSelector = null;
@@ -950,46 +949,46 @@ namespace GsaGH.Components {
         }
 
         switch (_mode) {
-              case FoldMode.Displacement when (int)_disp < 4: {
-                var displacement = new Length(t, _lengthResultUnit);
-                _legendValues.Add(displacement.ToString("f" + significantDigits));
-                ts.Add(new GH_UnitNumber(displacement));
-                break;
-              }
-              case FoldMode.Displacement: {
-                var rotation = new Angle(t, AngleUnit.Radian);
-                _legendValues.Add(rotation.ToString("s" + significantDigits));
-                ts.Add(new GH_UnitNumber(rotation));
-                break;
-              }
-              case FoldMode.Force when ((int)_disp < 3) | _isShear: {
-                var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
-                _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
-                ts.Add(new GH_UnitNumber(forcePerLength));
-                break;
-              }
-              case FoldMode.Force: {
-                _legendValues.Add(
-                  new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)).ToString(
-                    "s" + significantDigits) + "/" + Length.GetAbbreviation(lengthUnit));
-                var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
-                ts.Add(new GH_UnitNumber(moment));
-                break;
-              }
-              case FoldMode.Stress: {
-                var stress = new Pressure(t, _stressUnitResult);
-                _legendValues.Add(stress.ToString("s" + significantDigits));
-                ts.Add(new GH_UnitNumber(stress));
-                Message = Pressure.GetAbbreviation(_stressUnitResult);
-                break;
-              }
-              case FoldMode.Footfall: {
-                var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-                _legendValues.Add(responseFactor.ToString("s" + significantDigits));
-                ts.Add(new GH_UnitNumber(responseFactor));
-                break;
-              }
+          case FoldMode.Displacement when (int)_disp < 4: {
+              var displacement = new Length(t, _lengthResultUnit);
+              _legendValues.Add(displacement.ToString("f" + significantDigits));
+              ts.Add(new GH_UnitNumber(displacement));
+              break;
             }
+          case FoldMode.Displacement: {
+              var rotation = new Angle(t, AngleUnit.Radian);
+              _legendValues.Add(rotation.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(rotation));
+              break;
+            }
+          case FoldMode.Force when ((int)_disp < 3) | _isShear: {
+              var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
+              _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(forcePerLength));
+              break;
+            }
+          case FoldMode.Force: {
+              _legendValues.Add(
+                new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)).ToString(
+                  "s" + significantDigits) + "/" + Length.GetAbbreviation(lengthUnit));
+              var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
+              ts.Add(new GH_UnitNumber(moment));
+              break;
+            }
+          case FoldMode.Stress: {
+              var stress = new Pressure(t, _stressUnitResult);
+              _legendValues.Add(stress.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(stress));
+              Message = Pressure.GetAbbreviation(_stressUnitResult);
+              break;
+            }
+          case FoldMode.Footfall: {
+              var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
+              _legendValues.Add(responseFactor.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(responseFactor));
+              break;
+            }
+        }
 
         if (Math.Abs(t) > 1) {
           // remove thousand separator

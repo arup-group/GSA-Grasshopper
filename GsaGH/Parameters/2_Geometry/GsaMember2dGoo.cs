@@ -59,7 +59,7 @@ namespace GsaGH.Parameters {
       }
 
       if (Value.ApiMember.Type == MemberType.VOID_CUTTER_2D) {
-          // this is a workaround to change colour between selected and not
+        // this is a workaround to change colour between selected and not
         if (args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)) {
           args.Pipeline.DrawBrepShaded(Value.Brep,
             Colours.Member2dVoidCutterFace);
@@ -67,7 +67,7 @@ namespace GsaGH.Parameters {
       } else {
         args.Pipeline.DrawBrepShaded(Value.Brep,
           // this is a workaround to change colour between selected and not
-          args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0) 
+          args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)
             ? Colours.Member2dFace : Colours.Member2dFaceSelected);
         Value?.Section3dPreview?.DrawViewportMeshes(args);
       }
@@ -235,7 +235,7 @@ namespace GsaGH.Parameters {
       mem.Topology?.Transform(xform);
       for (int i = 0; i < mem.VoidCurves.Count; i++) {
         mem.VoidCurves[i]?.Transform(xform);
-        mem.VoidTopology[i]?.Transform(xform);;
+        mem.VoidTopology[i]?.Transform(xform); ;
       }
 
       for (int i = 0; i < mem.InclusionLines.Count; i++) {

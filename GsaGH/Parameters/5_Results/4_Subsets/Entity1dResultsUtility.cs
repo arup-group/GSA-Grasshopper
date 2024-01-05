@@ -1,11 +1,11 @@
-﻿using GsaGH.Helpers;
-using OasysUnits;
-using OasysUnits.Units;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GsaGH.Helpers;
+using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Parameters.Results {
   internal static partial class ResultsUtility {
@@ -81,7 +81,7 @@ namespace GsaGH.Parameters.Results {
     }
 
     internal static ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> GetResultResultantTranslation(
-      IDictionary<int, IList<IEntity1dQuantity<IDisplacement>>> subset, LengthUnit unit, List<int> permutations, 
+      IDictionary<int, IList<IEntity1dQuantity<IDisplacement>>> subset, LengthUnit unit, List<int> permutations,
       EnvelopeMethod envelopeType) {
       var vals = new ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)>();
       if (permutations.IsNullOrEmpty()) {

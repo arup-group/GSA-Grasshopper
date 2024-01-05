@@ -1,9 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using GsaGH.Parameters;
 using Xunit;
 
 namespace IntegrationTests.Parameters {
@@ -33,9 +31,9 @@ namespace IntegrationTests.Parameters {
     [InlineData("Primary1", "MinWeight")]
     [InlineData("Secondary1", "MinDepth")]
     [InlineData("Name2", "Steel design task main beams")]
-    [InlineData("Id2", 4)] 
+    [InlineData("Id2", 4)]
     [InlineData("ListDefinition2", "2 1")]
-    [InlineData("Case2", 1)] 
+    [InlineData("Case2", 1)]
     [InlineData("eta2", 0.85)]
     [InlineData("etamin2", 0.65)]
     [InlineData("Group2", true)]

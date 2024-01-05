@@ -20,7 +20,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.GetEffectiveLengthOptions;
 
     public GetEffectiveLengthOptions() : base("Get Effective Length Options", "EffectiveLengthOptions", "Get information of a 1D Member's Design Options for Effective Length, Restraints and Buckling Factors", CategoryName.Name(),
-      SubCategoryName.Cat2()) { 
+      SubCategoryName.Cat2()) {
       Hidden = true;
     }
 
@@ -69,7 +69,7 @@ namespace GsaGH.Components {
           da.SetData(3, internalRes.RestraintAlongMember.ToString());
           da.SetData(4, internalRes.RestraintAtBracedPoints.ToString());
           break;
-        
+
         case EffectiveLengthFromEndRestraintAndGeometry auto:
           da.SetData(0, "Automatic");
           da.SetData(1, MemberEndRestraintFactory.MemberEndRestraintToString(auto.End1));

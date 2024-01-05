@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using GsaAPI;
-using GsaGH.Helpers;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
-using OasysUnits;
 using Xunit;
-using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]

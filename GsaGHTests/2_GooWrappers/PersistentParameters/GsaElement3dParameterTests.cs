@@ -16,7 +16,7 @@ namespace GsaGHTests.GooWrappers {
     [Fact]
     public void GsaElement3dParameterBakeTest() {
       GsaElement3dGoo output = GsaElement3dTest.CreateFromElementsFromMembers();
-      
+
       var param = new GsaElement3dParameter();
       param.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, output);
 

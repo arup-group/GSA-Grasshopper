@@ -122,7 +122,7 @@ namespace GsaGHTests.Parameters.Results {
         case ResultVector6.Xyz: return (r) => r.XyzToUnit(ForceUnit.Kilonewton);
         case ResultVector6.Xx: return (r) => r.XxToUnit(MomentUnit.KilonewtonMeter);
         case ResultVector6.Yy: return (r) => r.YyToUnit(MomentUnit.KilonewtonMeter);
-        case ResultVector6.Zz: return (r) => r.ZzToUnit(MomentUnit.KilonewtonMeter); 
+        case ResultVector6.Zz: return (r) => r.ZzToUnit(MomentUnit.KilonewtonMeter);
         case ResultVector6.Xxyyzz: return (r) => r.XxyyzzToUnit(MomentUnit.KilonewtonMeter);
       }
 

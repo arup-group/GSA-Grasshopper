@@ -1,4 +1,5 @@
-﻿using Grasshopper.Kernel.Types;
+﻿using System.Linq;
+using Grasshopper.Kernel.Types;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Components.Properties;
@@ -7,7 +8,6 @@ using OasysGH.Components;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
-using System.Linq;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {

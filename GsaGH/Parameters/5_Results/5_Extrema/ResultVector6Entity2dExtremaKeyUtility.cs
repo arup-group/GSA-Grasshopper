@@ -16,11 +16,11 @@ namespace GsaGH.Parameters.Results {
       foreach (int elementId in subset.Keys) {
         IList<IMeshQuantity<T>> values = subset[elementId];
         for (int permutation = 0; permutation < values.Count; permutation++) {
-            switch (values[permutation]) {
-              case IMeshQuantity<IDisplacement> displacement:
-                UpdateExtrema<IDisplacement, Length, Angle>(displacement.Results(),
-                  elementId, permutation, ref maxValue, ref minValue, ref maxKey, ref minKey);
-                break;
+          switch (values[permutation]) {
+            case IMeshQuantity<IDisplacement> displacement:
+              UpdateExtrema<IDisplacement, Length, Angle>(displacement.Results(),
+                elementId, permutation, ref maxValue, ref minValue, ref maxKey, ref minKey);
+              break;
 
           }
         }

@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
-using GsaGH.Helpers.Import;
 
 namespace GsaGH.Parameters.Results {
   public class Member1dInternalForceCache : IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>> {

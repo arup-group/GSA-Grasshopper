@@ -1,13 +1,13 @@
-﻿using GsaAPI;
-using GsaGH.Parameters;
-using OasysUnits;
-using Rhino.Collections;
-using Rhino.Geometry;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using GsaAPI;
+using GsaGH.Parameters;
+using OasysUnits;
+using Rhino.Collections;
+using Rhino.Geometry;
 
 namespace GsaGH.Helpers {
   public static class ListExtension {
@@ -29,7 +29,7 @@ namespace GsaGH.Helpers {
 
     public static void Morph(this Point3dList value, SpaceMorph xmorph) {
       var morphed = new Point3dList();
-      for (int i  = 0; i < value.Count; i++) {
+      for (int i = 0; i < value.Count; i++) {
         morphed.Add(xmorph.MorphPoint(value[i]));
       }
 

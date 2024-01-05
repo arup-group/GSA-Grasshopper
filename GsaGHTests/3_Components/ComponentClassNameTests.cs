@@ -28,10 +28,10 @@ namespace GsaGHTests.Components {
         .Replace(" to", " To")
         .Replace("GWA", "Gwa")
         .Replace("GSA", "Gsa");
-      
+
       // Test component name is equal to class name
       Assert.Equal(componentName, classNameSplit);
-      
+
       // Test component icon is equal to class name
       ResourceManager rm = Resources.ResourceManager;
       // Find icon with expected name in resources

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaGH.Helpers.GsaApi;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using OasysUnits;
@@ -121,7 +120,7 @@ namespace GsaGHTests.Parameters.Results {
         case ResultVector6.Xyz: return (r) => r.Xyz.ToUnit(ForceUnit.Kilonewton);
         case ResultVector6.Xx: return (r) => r.Xx.ToUnit(MomentUnit.KilonewtonMeter);
         case ResultVector6.Yy: return (r) => r.Yy.ToUnit(MomentUnit.KilonewtonMeter);
-        case ResultVector6.Zz: return (r) => r.Zz.ToUnit(MomentUnit.KilonewtonMeter); 
+        case ResultVector6.Zz: return (r) => r.Zz.ToUnit(MomentUnit.KilonewtonMeter);
         case ResultVector6.Xxyyzz: return (r) => r.Xxyyzz.ToUnit(MomentUnit.KilonewtonMeter);
       }
 

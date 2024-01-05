@@ -21,7 +21,7 @@ namespace GsaGH.Parameters {
     public Plane LocalAxis { get; internal set; }
 
     public Length AdditionalOffsetZ {
-      get => ApiProp2d == null ? Length.Zero 
+      get => ApiProp2d == null ? Length.Zero
         : new Length(ApiProp2d.AdditionalOffsetZ, LengthUnit.Meter);
       set => ApiProp2d.AdditionalOffsetZ = value.As(LengthUnit.Meter);
     }

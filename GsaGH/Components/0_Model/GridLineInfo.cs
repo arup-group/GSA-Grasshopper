@@ -32,7 +32,7 @@ namespace GsaGH.Components {
       pManager.AddNumberParameter("Length", "L", "The length of a straight line or the radius of a circular arc",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Shape", "S", "Specifies whether the grid line is a straight line or circular arc", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Orientation", "θ1", "The angle of inclination of a straight line or the start angle of a circular arc", 
+      pManager.AddNumberParameter("Orientation", "θ1", "The angle of inclination of a straight line or the start angle of a circular arc",
         GH_ParamAccess.item);
       pManager.AddNumberParameter("Angle", "θ2", "The end angle of a circular arc (not required for straight grid lines)",
         GH_ParamAccess.item);

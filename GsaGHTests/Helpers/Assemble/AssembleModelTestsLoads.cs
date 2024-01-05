@@ -14,8 +14,8 @@ namespace GsaGHTests.Helpers.Export {
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromLoads(
-          new List<IGsaLoad>() { 
-            load }, 
+          new List<IGsaLoad>() {
+            load },
           null));
 
       Assert.Empty(modelGoo.Value.Model.LoadCases());

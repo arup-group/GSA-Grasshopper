@@ -379,7 +379,7 @@ namespace GsaGH.Helpers.GH {
       }
 
       return new Tuple<List<GsaMaterial>, List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>,
-        List<GsaSpringProperty>> (null, null, null, null, null);
+        List<GsaSpringProperty>>(null, null, null, null, null);
     }
   }
 }

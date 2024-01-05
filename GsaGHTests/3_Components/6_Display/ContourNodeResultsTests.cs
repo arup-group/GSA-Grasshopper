@@ -15,7 +15,7 @@ namespace GsaGHTests.Components.Display {
   public class ContourNodeResultsTests {
     [Fact]
     public void CombinationCaseWithMultiplePermutationsMessageTests() {
-      var caseResult = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 2, new List<int>(){1, 2, 3,});
+      var caseResult = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 2, new List<int>() { 1, 2, 3, });
 
       var comp = new ContourNodeResults();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(caseResult));

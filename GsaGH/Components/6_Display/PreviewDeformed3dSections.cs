@@ -31,7 +31,7 @@ namespace GsaGH.Components {
     private int _noDigits;
     private Section3dPreview _section3dPreview;
     public PreviewDeformed3dSections() : base("Preview Deformed 3D Sections", "DeformedPreview3d",
-      "Show the deformed 3D cross-section of 1D/2D GSA Elements and Members from a GSA Result.", 
+      "Show the deformed 3D cross-section of 1D/2D GSA Elements and Members from a GSA Result.",
       CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     public override void CreateAttributes() {
@@ -119,7 +119,7 @@ namespace GsaGH.Components {
       if (_section3dPreview == null) {
         return;
       }
-      
+
       var gH_BakeUtility = new GH_BakeUtility(OnPingDocument());
       _section3dPreview.BakeGeometry(ref gH_BakeUtility, doc, att);
     }

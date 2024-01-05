@@ -125,7 +125,7 @@ namespace GsaGH.Components {
           loadcase = loadCaseGoo.Value;
         }
       }
-      
+
       beamThermalLoad.LoadCase = loadcase;
 
       var ghTyp = new GH_ObjectWrapper();

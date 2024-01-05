@@ -24,8 +24,8 @@ namespace GsaGH.Parameters {
       ValidateDefinition(name, definition);
     }
 
-    internal GsaCombinationCase(int id, string name, string definition) 
-      : this (name, definition) {
+    internal GsaCombinationCase(int id, string name, string definition)
+      : this(name, definition) {
       Id = id;
     }
 

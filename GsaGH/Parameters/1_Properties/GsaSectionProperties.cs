@@ -78,7 +78,7 @@ namespace GsaGH.Parameters {
     public double Kvv => _sectionProperties.Kvv;
     public double Kyy => _sectionProperties.Kyy;
     public double Kzz => _sectionProperties.Kzz;
-    
+
     public Length Ry {
       get {
         var ry = new Length(_sectionProperties.Ry, UnitSystem.SI);

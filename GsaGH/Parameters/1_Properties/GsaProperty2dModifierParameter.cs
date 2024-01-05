@@ -21,7 +21,7 @@ namespace GsaGH.Parameters {
     protected override Bitmap Icon => Resources.Property2dModifierParam;
 
     public GsaProperty2dModifierParameter() : base(new GH_InstanceDescription(
-      GsaProperty2dModifierGoo.Name,  GsaProperty2dModifierGoo.NickName,
+      GsaProperty2dModifierGoo.Name, GsaProperty2dModifierGoo.NickName,
       GsaProperty2dModifierGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 

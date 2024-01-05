@@ -1,6 +1,6 @@
-﻿using GsaAPI;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   internal static partial class Entity3dResultsFactory {

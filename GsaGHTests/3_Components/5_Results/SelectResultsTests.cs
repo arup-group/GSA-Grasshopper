@@ -3,7 +3,6 @@ using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using Rhino.Commands;
 using Xunit;
 
 namespace GsaGHTests.Components.Results {

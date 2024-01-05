@@ -57,7 +57,7 @@ namespace GsaGH.Parameters {
 
       if (GH_Convert.ToDouble(data, out double val1, GH_Conversion.Both)) {
         if (Quantity.TryFrom(val1, DefaultUnits.LengthUnitSection, out IQuantity length1)) {
-         this.AddRuntimeWarning($"Number converted to thickness in {DefaultUnits.LengthUnitSection}");
+          this.AddRuntimeWarning($"Number converted to thickness in {DefaultUnits.LengthUnitSection}");
           return new GsaProperty2dGoo(new GsaProperty2d((Length)length1));
         }
       }

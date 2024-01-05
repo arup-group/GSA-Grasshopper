@@ -31,7 +31,7 @@ namespace DocsGeneration.MarkDowns {
       sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-parameters'}},");
       sb += AddLine(ind, "items: [");
       ind += 2;
-      foreach(string key in parameters.Keys) {
+      foreach (string key in parameters.Keys) {
         foreach (Parameter parameter in parameters[key]) {
           string file = FileHelper.CreateSideBarFileName(parameter);
           sb += AddLine(ind, $"'{page}{file}',");
@@ -42,7 +42,7 @@ namespace DocsGeneration.MarkDowns {
       sb += AddLine(ind, "]");
       ind -= 2;
       sb += AddLine(ind, "},");
-      
+
       // Components sidebar
       sb += AddLine(ind, "{");
       ind += 2;
@@ -50,7 +50,7 @@ namespace DocsGeneration.MarkDowns {
       sb += AddLine(ind, "label: 'Components',");
       sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-components'}},");
       sb += AddLine(ind, "items: [");
-      
+
       // Per category sidebar
       ind += 2;
       foreach (string key in components.Keys) {

@@ -1,14 +1,14 @@
-﻿using Grasshopper.GUI;
+﻿using System;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
-using System;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace GsaGH.Components {
   internal class ToleranceContextMenu {
@@ -60,8 +60,7 @@ namespace GsaGH.Components {
       if (Text != string.Empty) {
         try {
           Tolerance = Length.Parse(Text);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
           MessageBox.Show(e.Message);
           return;
         }
@@ -72,12 +71,10 @@ namespace GsaGH.Components {
       if (Tolerance.Meters < 0.001) {
         owner.AddRuntimeRemark(
           "Set tolerance is quite small, you can change this by right-clicking the component.");
-      }
-      else if (Tolerance.Meters > 0.25) {
+      } else if (Tolerance.Meters > 0.25) {
         owner.AddRuntimeRemark(
           "Set tolerance is quite large, you can change this by right-clicking the component.");
-      }
-      else {
+      } else {
         ClearToleranceRuntimeRemarkMessages(owner);
       }
     }

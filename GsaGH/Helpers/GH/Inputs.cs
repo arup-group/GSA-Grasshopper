@@ -3,16 +3,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Forms;
-using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-using Grasshopper.Kernel.Types.Transforms;
 using GsaAPI;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
-using Rhino.Commands;
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Helpers.GH {

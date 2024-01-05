@@ -39,7 +39,7 @@ namespace GsaGHTests.Model {
     [Fact]
     public void TestSetTitles() {
       GH_OasysComponent comp = ComponentMother();
-      
+
       ComponentTestHelper.SetInput(comp, "123456-78", 1);
       ComponentTestHelper.SetInput(comp, "KPN", 2);
       ComponentTestHelper.SetInput(comp, "Test this Title", 3);

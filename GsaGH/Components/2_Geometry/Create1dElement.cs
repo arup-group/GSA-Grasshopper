@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using GH_IO.Serialization;
-using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;

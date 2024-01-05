@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
@@ -42,7 +41,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
-        "GSA model containing some Analysis Cases, Combinations and Tasks", 
+        "GSA model containing some Analysis Cases, Combinations and Tasks",
         GH_ParamAccess.item);
     }
 

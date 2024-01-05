@@ -1,8 +1,8 @@
-﻿using Grasshopper.Kernel;
+﻿using System.Drawing;
+using System.Windows.Forms;
+using Grasshopper.Kernel;
 using GsaGH.Components;
 using OasysUnits.Units;
-using System.Drawing;
-using System.Windows.Forms;
 using Xunit;
 
 namespace GsaGHTests.Model {

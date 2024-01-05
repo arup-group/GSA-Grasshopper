@@ -13,7 +13,7 @@ namespace GsaGH.Components {
       if (!(menu is ContextMenuStrip)) {
         return; // this method is also called when clicking EWR balloon
       }
-      
+
       Menu_AppendSeparator(menu);
       Menu_AppendItem(menu, "Preview 3D Sections", (s, a) => TogglePreview(), true, Preview3dSection);
     }

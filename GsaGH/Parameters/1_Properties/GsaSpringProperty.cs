@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms.VisualStyles;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
-using OasysGH.Parameters;
-using OasysUnits.Units;
-using OasysUnits;
 using OasysGH.Units;
+using OasysUnits;
+using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
-using Newtonsoft.Json.Linq;
-using static Rhino.Render.TextureGraphInfo;
-using Grasshopper.Kernel.Types.Transforms;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -218,7 +212,7 @@ namespace GsaGH.Parameters {
           string fx = GeneralSpringToString("X", null, friction.StiffnessX);
           string fy = GeneralSpringToString("Y", null, friction.StiffnessY);
           string fz = GeneralSpringToString("Z", null, friction.StiffnessZ);
-          string coeff = friction.FrictionCoefficient == 0 ? string.Empty 
+          string coeff = friction.FrictionCoefficient == 0 ? string.Empty
             : $"Coeff.:{friction.FrictionCoefficient}";
           value = string.Join(" ", fx, fy, fz, coeff);
           break;
@@ -227,7 +221,7 @@ namespace GsaGH.Parameters {
           break;
       }
 
-      string damping = ApiProperty.DampingRatio == 0 ? string.Empty 
+      string damping = ApiProperty.DampingRatio == 0 ? string.Empty
         : new Ratio(ApiProperty.DampingRatio, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent).ToString().Replace(" ", string.Empty);
 
       return string.Join(" ", value, damping).Replace(",", string.Empty).TrimSpaces();
@@ -238,7 +232,7 @@ namespace GsaGH.Parameters {
         return string.Empty;
       }
 
-      string val = curve != null ? $"CurveID:{curve}" 
+      string val = curve != null ? $"CurveID:{curve}"
         : new ForcePerLength((double)stiffness, ForcePerLengthUnit.NewtonPerMeter)
           .ToUnit(DefaultUnits.ForcePerLengthUnit).ToString().Replace(" ", string.Empty);
       return $"{prefix}:{val}";

@@ -1,5 +1,5 @@
-﻿using GsaGH.Helpers.GsaApi;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using GsaGH.Helpers.GsaApi;
 using Xunit;
 
 namespace GsaGHTests.Helpers.GsaApi {

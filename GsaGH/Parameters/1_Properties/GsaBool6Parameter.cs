@@ -99,7 +99,7 @@ namespace GsaGH.Parameters {
         case 'f':
           return true;
 
-        default: 
+        default:
           throw new ArgumentException(
             $"Unable to convert string to Bool6, character {rel} not recognised");
       }

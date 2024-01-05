@@ -1,4 +1,8 @@
-﻿using Grasshopper.Kernel.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Grasshopper.Kernel.Data;
 using GsaGH.Components;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
@@ -8,10 +12,6 @@ using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
 using OasysUnits;
 using OasysUnits.Units;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Xunit;
 
 namespace GsaGHTests.Components.Results {

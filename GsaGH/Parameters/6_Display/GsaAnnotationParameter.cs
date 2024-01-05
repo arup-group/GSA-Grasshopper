@@ -6,8 +6,8 @@ using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
-using Rhino.DocObjects;
 using Rhino;
+using Rhino.DocObjects;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -25,7 +25,7 @@ namespace GsaGH.Parameters {
     protected override Bitmap Icon => Resources.AnnotationParam;
 
     public GsaAnnotationParameter() : base(new GH_InstanceDescription(
-      GsaAnnotationGoo.Name + " parameter", GsaAnnotationGoo.NickName, 
+      GsaAnnotationGoo.Name + " parameter", GsaAnnotationGoo.NickName,
       GsaAnnotationGoo.Description, CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 

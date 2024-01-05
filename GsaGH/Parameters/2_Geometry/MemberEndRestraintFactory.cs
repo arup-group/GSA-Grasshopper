@@ -1,11 +1,11 @@
-﻿using GsaAPI;
-using GsaGH.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using GsaAPI;
+using GsaGH.Helpers;
 
 namespace GsaGH.Parameters {
   public class MemberEndRestraintFactory {
-    internal static MemberEndRestraint CreateFromStrings(string f1, string f2, string t, 
+    internal static MemberEndRestraint CreateFromStrings(string f1, string f2, string t,
       string maj, string min) {
       RotationalRestraint topRot = RotationalRestraint(f1);
       RotationalRestraint botRot = RotationalRestraint(f2);
@@ -181,7 +181,7 @@ namespace GsaGH.Parameters {
         return GsaAPI.RotationalRestraint.Partial;
       }
 
-      if (s.StartsWith("w") || s.StartsWith("f") || s.StartsWith("r") || 
+      if (s.StartsWith("w") || s.StartsWith("f") || s.StartsWith("r") ||
         s.StartsWith("2") || s.Contains("true") || s.Contains("full")) {
         return GsaAPI.RotationalRestraint.Full;
       }
@@ -201,7 +201,7 @@ namespace GsaGH.Parameters {
         return GsaAPI.TranslationalRestraint.None;
       }
 
-      if (s.StartsWith("l") || s.StartsWith("v") || s.StartsWith("r") 
+      if (s.StartsWith("l") || s.StartsWith("v") || s.StartsWith("r")
         || s.StartsWith("1") || s.Contains("true") || s.Contains("full")) {
         return GsaAPI.TranslationalRestraint.Full;
       }

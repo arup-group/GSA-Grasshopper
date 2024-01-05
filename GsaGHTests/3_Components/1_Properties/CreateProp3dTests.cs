@@ -12,7 +12,7 @@ namespace GsaGHTests.Components.Properties {
       var comp = new Create3dProperty();
       comp.CreateAttributes();
 
-      ComponentTestHelper.SetInput(comp, 
+      ComponentTestHelper.SetInput(comp,
         (GsaMaterialGoo)ComponentTestHelper.GetOutput(CreateMaterialTests.ComponentMother()));
 
       return comp;

@@ -1,4 +1,5 @@
-﻿using Grasshopper.Kernel.Types;
+﻿using System.Linq;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
@@ -7,7 +8,6 @@ using GsaGHTests.Helpers;
 using OasysGH.Components;
 using OasysUnits;
 using Rhino.Geometry;
-using System.Linq;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 

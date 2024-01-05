@@ -3,9 +3,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using GsaGH.Helpers.GsaApi;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using OasysUnits;
@@ -71,7 +69,7 @@ namespace GsaGHTests.Parameters.Results {
 
     private Func<IForce2d, IQuantity> Selector(ResultTensor2InAxis component) {
       switch (component) {
-        case ResultTensor2InAxis.Nx: 
+        case ResultTensor2InAxis.Nx:
           return (r) => r.Nx.ToUnit(ForcePerLengthUnit.KilonewtonPerMeter);
         case ResultTensor2InAxis.Ny:
           return (r) => r.Ny.ToUnit(ForcePerLengthUnit.KilonewtonPerMeter);

@@ -146,7 +146,7 @@ namespace GsaGHTests.Parameters {
 
       var dup = new GsaElement1d(orig);
       dup.Section.ApiSection.Profile = "STD I 1000 500 10 5";
-      
+
       Assert.Equal("STD I 1000 500 10 5", orig.Section.ApiSection.Profile);
       Assert.Equal("STD I 1000 500 10 5", dup.Section.ApiSection.Profile);
     }

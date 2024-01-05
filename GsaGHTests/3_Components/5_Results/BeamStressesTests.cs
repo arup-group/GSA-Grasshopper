@@ -1,4 +1,8 @@
-﻿using Grasshopper.Kernel.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Grasshopper.Kernel.Data;
 using GsaGH.Components;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
@@ -8,17 +12,13 @@ using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
 using OasysUnits;
 using OasysUnits.Units;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Xunit;
 
 namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class BeamStressesTests {
     private static readonly string ElementList = "2 to 3";
-    
+
     [Fact]
     public void InvalidInputErrorTests() {
       var comp = new BeamStresses();

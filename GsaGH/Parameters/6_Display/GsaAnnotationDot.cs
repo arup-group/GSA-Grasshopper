@@ -69,13 +69,13 @@ namespace GsaGH.Parameters {
       };
     }
 
-    public override string ToString() { 
+    public override string ToString() {
       if (Value == null) {
         return "Null";
       }
 
       var pt = new GH_Point(Value.Point);
-      return $"{pt}, Value: {Value.Text}"; 
+      return $"{pt}, Value: {Value.Text}";
     }
 
     public GeometryBase GetGeometry() {

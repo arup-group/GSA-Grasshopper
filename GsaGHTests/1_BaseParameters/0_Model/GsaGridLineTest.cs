@@ -1,8 +1,8 @@
-﻿using GsaAPI;
+﻿using System;
+using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using Rhino.Geometry;
-using System;
 using Xunit;
 using Line = Rhino.Geometry.Line;
 
