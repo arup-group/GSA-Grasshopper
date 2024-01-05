@@ -27,7 +27,7 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-    } 
+    }
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new string[] {

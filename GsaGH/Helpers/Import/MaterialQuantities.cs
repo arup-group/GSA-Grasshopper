@@ -9,19 +9,19 @@ using OasysUnits.Units;
 
 namespace GsaGH.Helpers.Import {
   internal class MaterialQuantities {
-    internal IDictionary<int, Mass> SteelQuantities { get; private set; } 
+    internal IDictionary<int, Mass> SteelQuantities { get; private set; }
       = new ConcurrentDictionary<int, Mass>();
-    internal IDictionary<int, Mass> ConcreteQuantities { get; private set; } 
+    internal IDictionary<int, Mass> ConcreteQuantities { get; private set; }
       = new ConcurrentDictionary<int, Mass>();
     internal IDictionary<int, Mass> FrpQuantities { get; private set; }
       = new ConcurrentDictionary<int, Mass>();
-    internal IDictionary<int, Mass> AluminiumQuantities { get; private set; } 
+    internal IDictionary<int, Mass> AluminiumQuantities { get; private set; }
       = new ConcurrentDictionary<int, Mass>();
-    internal IDictionary<int, Mass> TimberQuantities { get; private set; } 
+    internal IDictionary<int, Mass> TimberQuantities { get; private set; }
       = new ConcurrentDictionary<int, Mass>();
-    internal IDictionary<int, Mass> GlassQuantities { get; private set; } 
+    internal IDictionary<int, Mass> GlassQuantities { get; private set; }
       = new ConcurrentDictionary<int, Mass>();
-    internal IDictionary<int, Mass> CustomMaterialQuantities { get; private set; } 
+    internal IDictionary<int, Mass> CustomMaterialQuantities { get; private set; }
       = new ConcurrentDictionary<int, Mass>();
 
     internal MaterialQuantities(GsaModel model, Layer layer, string list) {
