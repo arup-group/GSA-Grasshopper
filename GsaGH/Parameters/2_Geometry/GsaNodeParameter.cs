@@ -7,15 +7,15 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
-using Rhino.DocObjects;
 using Rhino;
+using Rhino.DocObjects;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
   ///   This class provides a parameter interface for the <see cref="GsaNodeGoo" /> type.
   /// </summary>
-  public class GsaNodeParameter : GH_OasysPersistentGeometryParam<GsaNodeGoo>, 
+  public class GsaNodeParameter : GH_OasysPersistentGeometryParam<GsaNodeGoo>,
     IGH_BakeAwareObject {
     public override Guid ComponentGuid => new Guid("8ebdc693-e882-494d-8177-b0bd9c3d84a3");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;

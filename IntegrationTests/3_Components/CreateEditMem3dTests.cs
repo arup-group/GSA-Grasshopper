@@ -29,7 +29,7 @@ namespace IntegrationTests.Components {
       var output1 = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp, 0, 0, 0);
       var output2 = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp, 0, 0, 1);
       var output3 = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp, 0, 0, 2);
-      
+
       Assert.Null(output1);
       Assert.NotNull(output2.Value);
       Assert.NotNull(output3.Value);

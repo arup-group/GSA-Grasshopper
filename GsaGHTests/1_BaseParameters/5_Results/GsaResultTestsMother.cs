@@ -57,7 +57,7 @@ namespace GsaGHTests.Parameters {
       var model = (GsaModelGoo)ComponentTestHelper.GetOutput(open);
       var getResults = new GetResult();
       getResults.CreateAttributes();
-      
+
       ComponentTestHelper.SetInput(getResults, model);
       ComponentTestHelper.SetInput(getResults, "C", 1);
 

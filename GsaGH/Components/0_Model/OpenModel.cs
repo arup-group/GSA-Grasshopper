@@ -107,7 +107,7 @@ namespace GsaGH.Components {
       };
       UpdateMessage(fileName);
 
-      if(gsaModel.Materials.SanitizeGenericCodeNames()) {
+      if (gsaModel.Materials.SanitizeGenericCodeNames()) {
         this.AddRuntimeRemark("The opened model contains generic materials with no design code");
       }
 

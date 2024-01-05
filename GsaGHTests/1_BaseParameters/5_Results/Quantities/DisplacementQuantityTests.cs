@@ -30,7 +30,7 @@ namespace GsaGHTests.Parameters.Results {
     public void DisplacementQuantityAngleNanTest() {
       var apiResult = new Double6(1.1, 2.2, 3.3, double.NaN, double.NaN, double.NaN);
       var displacementQuantity = new Displacement(apiResult);
-      
+
       Assert.Equal(Angle.Zero, displacementQuantity.Xx);
       Assert.Equal(Angle.Zero, displacementQuantity.Yy);
       Assert.Equal(Angle.Zero, displacementQuantity.Zz);

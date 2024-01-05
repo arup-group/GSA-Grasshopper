@@ -7,8 +7,8 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
-using Rhino.DocObjects;
 using Rhino;
+using Rhino.DocObjects;
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
@@ -26,7 +26,7 @@ namespace GsaGH.Parameters {
     public override string TypeName => SourceCount == 0 ? GsaElement3dGoo.Name : base.TypeName;
     protected override Bitmap Icon => Resources.Element3dParam;
 
-    public GsaElement3dParameter() : base(new GH_InstanceDescription(GsaElement3dGoo.Name, 
+    public GsaElement3dParameter() : base(new GH_InstanceDescription(GsaElement3dGoo.Name,
       GsaElement3dGoo.NickName, GsaElement3dGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 

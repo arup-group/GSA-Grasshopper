@@ -126,7 +126,7 @@ namespace GsaGHTests.Helpers.Import {
         Assert.True(kvp.Value.IsUserDefined);
       }
     }
-    
+
     internal static GsaAPI.Model ImportMaterialsMotherModel() {
       string steelCodeName = "EN 1993-1-1:2005";
       string concreteCodeName = "EC2-1-1";

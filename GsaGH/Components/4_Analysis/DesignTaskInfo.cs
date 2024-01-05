@@ -33,17 +33,17 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMemberListParameter(), "Definition", "Def",
         "Members List definition", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("CombinationCase", "CC", "Combination Case ID", 
+      pManager.AddIntegerParameter("CombinationCase", "CC", "Combination Case ID",
         GH_ParamAccess.item);
-      pManager.AddNumberParameter("Target Utilisation", "η", 
+      pManager.AddNumberParameter("Target Utilisation", "η",
         "Target overall utilisation (upper)", GH_ParamAccess.item);
-      pManager.AddNumberParameter("Lower limit", "ηₘᵢₙ", 
+      pManager.AddNumberParameter("Lower limit", "ηₘᵢₙ",
         "Lower utilisation limit (inefficiency warning)", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Grouped Design", "Grp", 
+      pManager.AddBooleanParameter("Grouped Design", "Grp",
         "If true, Members with the same pool are assigned the same section", GH_ParamAccess.item);
-      pManager.AddTextParameter("Primary Objective", "1st", 
+      pManager.AddTextParameter("Primary Objective", "1st",
         "Primary design optimisation objective", GH_ParamAccess.item);
-      pManager.AddTextParameter("Secondary Objective", "2nd", 
+      pManager.AddTextParameter("Secondary Objective", "2nd",
         "Secondary design optimisation objective", GH_ParamAccess.item);
     }
 

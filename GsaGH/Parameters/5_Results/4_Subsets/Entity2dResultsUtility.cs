@@ -1,16 +1,16 @@
-﻿using GsaGH.Helpers;
-using OasysUnits;
-using OasysUnits.Units;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GsaGH.Helpers;
+using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Parameters.Results {
   internal static partial class ResultsUtility {
     internal static ConcurrentDictionary<int, IList<IQuantity>> GetResultComponent<T>(
-      IDictionary<int, IList<IMeshQuantity<T>>> subset, Func<T, IQuantity> selector, 
+      IDictionary<int, IList<IMeshQuantity<T>>> subset, Func<T, IQuantity> selector,
       List<int> permutations, EnvelopeMethod envelopeType)
       where T : IResultItem {
       var vals = new ConcurrentDictionary<int, IList<IQuantity>>();
@@ -81,7 +81,7 @@ namespace GsaGH.Parameters.Results {
     }
 
     internal static ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> GetResultResultantTranslation<T1>(
-      IDictionary<int, IList<IMeshQuantity<T1>>> subset, LengthUnit unit, List<int> permutations, 
+      IDictionary<int, IList<IMeshQuantity<T1>>> subset, LengthUnit unit, List<int> permutations,
       EnvelopeMethod envelopeType)
       where T1 : IResultVector3InAxis<Length>, IResultItem {
       var vals = new ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)>();
@@ -126,7 +126,7 @@ namespace GsaGH.Parameters.Results {
                     GetXyz(kvp.Value[permutation - 1].Results(), unit, vertex);
                   xyz[vertex] = res[vertex];
                 } else if (res[vertex] == xyz[vertex]) {
-                  (double xt, double yt, double zt) = 
+                  (double xt, double yt, double zt) =
                     GetXyz(kvp.Value[permutation - 1].Results(), unit, vertex);
                   if (xt + yt + zt < x[vertex] + y[vertex] + z[vertex]) {
                     (x[vertex], y[vertex], z[vertex]) = (xt, yt, zt);

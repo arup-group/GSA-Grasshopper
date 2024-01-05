@@ -154,7 +154,7 @@ namespace GsaGH.Parameters.Results {
         case CaseType.CombinationCase:
           txt = "C" + CaseId;
           if (SelectedPermutationIds.Count > 0) {
-            txt = SelectedPermutationIds.Count > 1 
+            txt = SelectedPermutationIds.Count > 1
               ? $"{txt} ({SelectedPermutationIds.Count} permutations)" :
               txt + " p" + SelectedPermutationIds[0];
           }
@@ -213,7 +213,7 @@ namespace GsaGH.Parameters.Results {
 
     private void InitialiseAnalysisCaseResults(
       GsaModel model, AnalysisCaseResult result, int caseId) {
-      
+
       Element1dAverageStrainEnergyDensities = new Element1dAverageStrainEnergyDensityCache(result);
       Element1dDisplacements = new Element1dDisplacementCache(result);
       Element1dInternalForces = new Element1dInternalForceCache(result);
@@ -235,7 +235,7 @@ namespace GsaGH.Parameters.Results {
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
-      
+
       Member1dInternalForces = new Member1dInternalForceCache(result);
       Member1dDisplacements = new Member1dDisplacementCache(result);
 
@@ -266,7 +266,7 @@ namespace GsaGH.Parameters.Results {
 
       Element2dDisplacements = new Element2dDisplacementCache(result);
       Element2dForces = new Element2dForceCache(result);
-      Element2dMoments= new Element2dMomentCache(result);
+      Element2dMoments = new Element2dMomentCache(result);
       Element2dShearForces = new Element2dShearForceCache(result);
       Element2dStresses = new Element2dStressCache(result);
 

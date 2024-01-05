@@ -61,7 +61,7 @@ namespace GsaGHTests.Helpers.Export {
       node1.Value.Restraint = new GsaBool6(true, true, true, false, false, true);
       node1.Value.Point = new Point3d(1, 1, 1);
 
-      OasysGH.Components.GH_OasysDropDownComponent comp1 = 
+      OasysGH.Components.GH_OasysDropDownComponent comp1 =
         CreateModelTest.CreateModelFromGeometry(new List<GsaNodeGoo>() {
           node1,
         }, null, null, null, null, null, ModelUnit.M);

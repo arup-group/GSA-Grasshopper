@@ -202,11 +202,11 @@ namespace GsaGH.Components {
             }
 
             if (node.Value.SupportPreview.Xaxis != null) {
-              args.Display.DrawLine(node.Value.SupportPreview.Xaxis, 
+              args.Display.DrawLine(node.Value.SupportPreview.Xaxis,
                 Color.FromArgb(255, 244, 96, 96), 1);
-              args.Display.DrawLine(node.Value.SupportPreview.Yaxis, 
+              args.Display.DrawLine(node.Value.SupportPreview.Yaxis,
                 Color.FromArgb(255, 96, 244, 96), 1);
-              args.Display.DrawLine(node.Value.SupportPreview.Zaxis, 
+              args.Display.DrawLine(node.Value.SupportPreview.Zaxis,
                 Color.FromArgb(255, 96, 96, 234), 1);
             }
           }
@@ -382,8 +382,8 @@ namespace GsaGH.Components {
         "El", $"Filter the Elements by list. (by default 'all'){Environment.NewLine}" +
         $"Element/Member list should take the form:{Environment.NewLine}" +
         $" 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" +
-        $"{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary." 
-        + $"{Environment.NewLine}You can input a member list to get child elements.", 
+        $"{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary."
+        + $"{Environment.NewLine}You can input a member list to get child elements.",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMemberListParameter());
       pManager[1].Optional = true;
@@ -468,7 +468,7 @@ namespace GsaGH.Components {
       if (!GetSolveResults(data, out SolveResults results)) {
         GsaModelGoo modelGoo = null;
         data.GetData(0, ref modelGoo);
-        
+
         GsaListGoo nodeListGoo = null;
         string nodeList = "all";
         if (data.GetData(1, ref nodeListGoo)) {

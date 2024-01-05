@@ -1,10 +1,10 @@
-﻿using Grasshopper.Kernel;
+﻿using System.Collections.Generic;
+using Grasshopper.Kernel;
 using GsaGH.Components;
-using GsaGH.Parameters.Results;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
-using System.Collections.Generic;
 using GsaGHTests.Parameters;
 using Xunit;
 

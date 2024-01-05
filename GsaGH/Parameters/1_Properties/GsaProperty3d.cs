@@ -14,7 +14,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Empty constructor instantiating a new API object
     /// </summary>
-    public GsaProperty3d() { 
+    public GsaProperty3d() {
       ApiProp3d = new Prop3D();
     }
 

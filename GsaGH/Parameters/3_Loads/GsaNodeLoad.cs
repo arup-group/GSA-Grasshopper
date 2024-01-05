@@ -13,9 +13,9 @@ namespace GsaGH.Parameters {
 
     public Guid RefObjectGuid => throw new NotImplementedException();
 
-    public int CaseId { 
-      get => ApiLoad.Case; 
-      set => ApiLoad.Case = value; 
+    public int CaseId {
+      get => ApiLoad.Case;
+      set => ApiLoad.Case = value;
     }
     public string Name {
       get => ApiLoad.Name;

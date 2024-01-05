@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DocsGeneration.Data;
 using DocsGeneration.MarkDowns.Helpers;
@@ -111,7 +111,7 @@ namespace DocsGeneration.MarkDowns {
         foreach (Parameter property in component.Outputs) {
           string description = property.Description;
           note = CheckForResultNote(ref description);
-          
+
           table.AddRow(new List<string>() {
             FileHelper.CreateIconLink(property),
             FileHelper.CreateParameterLink(property, parmeterNames),

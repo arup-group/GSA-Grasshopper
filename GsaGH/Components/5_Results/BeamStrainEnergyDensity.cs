@@ -185,7 +185,7 @@ namespace GsaGH.Components {
           if (_selectedItems[0] == "All") {
             foreach (KeyValuePair<int, IList<IEnergyDensity>> kvp in resultSet.Subset) {
               foreach (int p in permutations) {
-                var path = new GH_Path(result.CaseId, 
+                var path = new GH_Path(result.CaseId,
                   result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
                 outResults.Add(new GH_UnitNumber(kvp.Value[p - 1].EnergyDensity
                   .ToUnit(_energyUnit)), path);

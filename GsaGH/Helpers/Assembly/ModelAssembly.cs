@@ -307,7 +307,7 @@ namespace GsaGH.Helpers.Assembly {
           idsToBeDeleted.Add(i);
         }
       }
-      
+
       foreach (int id in idsToBeDeleted) {
         _model.DeleteDesignTask(id);
       }
@@ -430,7 +430,7 @@ namespace GsaGH.Helpers.Assembly {
     private void ConvertProperties(List<GsaMaterial> materials, List<GsaSection> sections,
       List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds, List<GsaSpringProperty> springProps) {
       // in case existing model has not been modified continue, otherwise delete results 
-      if (!materials.IsNullOrEmpty() || !sections.IsNullOrEmpty() || !prop2Ds.IsNullOrEmpty()    || 
+      if (!materials.IsNullOrEmpty() || !sections.IsNullOrEmpty() || !prop2Ds.IsNullOrEmpty() ||
         !prop3Ds.IsNullOrEmpty() || !springProps.IsNullOrEmpty()) {
         _deleteResults = true;
       }

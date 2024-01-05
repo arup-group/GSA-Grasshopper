@@ -1,9 +1,9 @@
-﻿using GsaGH.Helpers;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using GsaGH.Helpers;
 
 namespace GsaGH.Parameters.Results {
   internal static class CacheUtility {
@@ -51,7 +51,7 @@ namespace GsaGH.Parameters.Results {
     }
 
     internal static IDictionary<int, IList<IEntity1dQuantity<T>>> GetSubset<T>(
-      this IDictionary<int, IList<IEntity1dQuantity<T>>> dictionary, ICollection<int> keys, ICollection<double> positions) 
+      this IDictionary<int, IList<IEntity1dQuantity<T>>> dictionary, ICollection<int> keys, ICollection<double> positions)
       where T : IResultItem {
       if (dictionary.IsNullOrEmpty() || dictionary.Values.IsNullOrEmpty()) {
         return dictionary;
@@ -67,7 +67,7 @@ namespace GsaGH.Parameters.Results {
       Parallel.ForEach(keys, key => {
         if (dictionary.ContainsKey(key)) {
           var results = dictionary[key].ToList();
-          for (int i = 0; i < results.Count; i++) { 
+          for (int i = 0; i < results.Count; i++) {
             foreach (double position in differences) {
               results[i] = results[i].TakePositions(positions);
             }

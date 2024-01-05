@@ -69,7 +69,7 @@ namespace GsaGHTests.Parameters.Results {
 
     private Func<IForce2d, IQuantity> Selector(ResultTensor2InAxis component) {
       switch (component) {
-        case ResultTensor2InAxis.Nx: 
+        case ResultTensor2InAxis.Nx:
           return (r) => r.Nx.ToUnit(ForcePerLengthUnit.KilonewtonPerMeter);
         case ResultTensor2InAxis.Ny:
           return (r) => r.Ny.ToUnit(ForcePerLengthUnit.KilonewtonPerMeter);

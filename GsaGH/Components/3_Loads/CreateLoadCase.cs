@@ -51,7 +51,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var type = 
+      var type =
         (LoadCaseType)Enum.Parse(typeof(LoadCaseType), _selectedItems[0]);
 
       int id = 0;

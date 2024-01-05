@@ -27,7 +27,7 @@ namespace GsaGH.Parameters {
       string mes = string.Empty;
       string defaultText = $"{data.GetTypeName()} does not contain a Material";
       switch (data) {
-        case GsaSectionGoo section: 
+        case GsaSectionGoo section:
           if (section.Value.Material == null) {
             mes = defaultText;
             break;
@@ -106,7 +106,7 @@ namespace GsaGH.Parameters {
       }
 
       if (!string.IsNullOrEmpty(mes)) {
-        mes = "." + Environment.NewLine + mes;      
+        mes = "." + Environment.NewLine + mes;
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Material" + mes);

@@ -26,7 +26,7 @@ namespace GsaGH.Parameters {
           return;
         }
       }
-        
+
       List = new GsaList(Name, kvp.Value.ListDefinition, GsaAPI.EntityType.Member);
     }
 

@@ -41,7 +41,7 @@ namespace GsaGH.Components {
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
-        "GSA model containing some Analysis Cases, Combinations and Tasks", 
+        "GSA model containing some Analysis Cases, Combinations and Tasks",
         GH_ParamAccess.item);
     }
 

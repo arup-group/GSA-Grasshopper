@@ -23,7 +23,7 @@ namespace GsaGH.Parameters {
       $"Filter the Elements or Members by list. (by default 'all'){Environment.NewLine}" +
       $"Element/Member list should take the form:{Environment.NewLine}" +
       $" 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" +
-      $"{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.", 
+      $"{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 

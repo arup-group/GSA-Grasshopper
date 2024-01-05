@@ -58,7 +58,7 @@ namespace GsaGH.Components {
         foreach (GH_ObjectWrapper wrapper in ghTypes) {
           if (GH_Convert.ToInt32(wrapper?.Value, out int id, GH_Conversion.Both)) {
             ids.Add(id);
-          } 
+          }
         }
       }
 
@@ -77,7 +77,7 @@ namespace GsaGH.Components {
         foreach (GH_ObjectWrapper wrapper in ghTypes) {
           if (GH_Convert.ToString(wrapper, out string name, GH_Conversion.Both)) {
             sectionPools.Add(ids[i], name);
-          } 
+          }
           i++;
         }
       }

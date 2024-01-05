@@ -15,7 +15,7 @@
     public T Zz { get; set; }
 
     public T Xxyyzz { get; set; }
-    
+
     public ResultVector6() {
     }
 

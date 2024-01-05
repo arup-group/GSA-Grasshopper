@@ -1,5 +1,5 @@
-﻿using GsaGH.Parameters.Results;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using GsaGH.Parameters.Results;
 
 namespace GsaGHTests.Parameters.Results {
   public class Element2dStressesC2p1 {

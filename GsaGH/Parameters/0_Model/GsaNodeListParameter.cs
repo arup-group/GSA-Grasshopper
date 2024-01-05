@@ -23,7 +23,7 @@ namespace GsaGH.Parameters {
       $"Filter the Nodes by list. (by default 'all'){Environment.NewLine}" +
       $"Node list should take the form:{Environment.NewLine}" +
       $" 1 11 to 72 step 2 not (XY3 31 to 45){Environment.NewLine}" +
-      "Refer to GSA help file for definition of lists and full vocabulary.", 
+      "Refer to GSA help file for definition of lists and full vocabulary.",
       CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 

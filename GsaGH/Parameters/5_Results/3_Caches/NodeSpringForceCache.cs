@@ -59,7 +59,7 @@ namespace GsaGH.Parameters.Results {
                 resultKvp.Key, permutationResults);
             });
             break;
-            
+
         }
       }
 

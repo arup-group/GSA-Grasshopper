@@ -1,19 +1,19 @@
-﻿using GsaAPI;
-using GsaGH.Helpers;
-using OasysUnits;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using GsaAPI;
+using GsaGH.Helpers;
+using OasysUnits;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters.Results {
   internal static partial class ResultsUtility {
     internal static (ConcurrentDictionary<int, IList<IQuantity>> values, ICollection<int> nodeIds)
       MapNodeResultToElements<T1, T2>(
-      ReadOnlyDictionary<int, Element> elements, IEntity0dResultCache<T1, T2> nodeResultsCache, 
+      ReadOnlyDictionary<int, Element> elements, IEntity0dResultCache<T1, T2> nodeResultsCache,
       Func<T1, IQuantity> selector, EnvelopeMethod envelopeType) where T1 : IResultItem {
       var vals = new ConcurrentDictionary<int, IList<IQuantity>>();
       var topology = new ConcurrentBag<int>();
@@ -49,7 +49,7 @@ namespace GsaGH.Parameters.Results {
           1
         };
       }
-      
+
       if (permutations.Count == 1) {
         Parallel.ForEach(subset, kvp =>
           vals.TryAdd(kvp.Key, kvp.Value.Select(selector).ElementAt(permutations[0] - 1)));

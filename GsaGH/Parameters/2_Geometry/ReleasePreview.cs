@@ -198,7 +198,7 @@ namespace GsaGH.Parameters {
         vec.Reverse();
         PreviewGreenLines.Add(new Line(pt1, vec));
         PreviewGreenLines.Add(new Line(pt2, vec));
-      } 
+      }
 
       if (end.Y) {
         Point3d pt;
@@ -249,7 +249,7 @@ namespace GsaGH.Parameters {
         PreviewGreenLines.Add(new Line(pt3B, vecRev));
         PreviewGreenLines.Add(new Line(pt4A, vec));
         PreviewGreenLines.Add(new Line(pt4B, vecRev));
-      } 
+      }
 
       if (end.Z) {
         Point3d pt;
@@ -300,7 +300,7 @@ namespace GsaGH.Parameters {
         PreviewGreenLines.Add(new Line(pt3B, vecRev));
         PreviewGreenLines.Add(new Line(pt4A, vec));
         PreviewGreenLines.Add(new Line(pt4B, vecRev));
-      } 
+      }
 
       #endregion
 
@@ -320,7 +320,7 @@ namespace GsaGH.Parameters {
         vec.Unitize();
         vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
         PreviewXXLines.Add(new Line(pt, vec));
-      } 
+      }
 
       if (start.YY) {
         Point3d pt;
@@ -353,7 +353,7 @@ namespace GsaGH.Parameters {
         vecRev.Reverse();
         PreviewRedLines.Add(new Line(pt1, vec));
         PreviewRedLines.Add(new Line(pt2, vecRev));
-      } 
+      }
 
       if (start.ZZ) {
         Point3d pt;
@@ -386,7 +386,7 @@ namespace GsaGH.Parameters {
         vecRev.Reverse();
         PreviewRedLines.Add(new Line(pt1, vec));
         PreviewRedLines.Add(new Line(pt2, vecRev));
-      } 
+      }
 
       #endregion
 
@@ -408,7 +408,7 @@ namespace GsaGH.Parameters {
         vec.Reverse();
         vec = new Vector3d(vec.X * 0.25 * scale, vec.Y * 0.25 * scale, vec.Z * 0.25 * scale);
         PreviewXXLines.Add(new Line(pt, vec));
-      } 
+      }
 
       if (end.YY) {
         Point3d pt;
@@ -442,7 +442,7 @@ namespace GsaGH.Parameters {
         vecRev.Reverse();
         PreviewRedLines.Add(new Line(pt1, vec));
         PreviewRedLines.Add(new Line(pt2, vecRev));
-      } 
+      }
 
       if (end.ZZ) {
         Point3d pt;
@@ -476,7 +476,7 @@ namespace GsaGH.Parameters {
         vecRev.Reverse();
         PreviewRedLines.Add(new Line(pt1, vec));
         PreviewRedLines.Add(new Line(pt2, vecRev));
-      } 
+      }
 
       #endregion
     }

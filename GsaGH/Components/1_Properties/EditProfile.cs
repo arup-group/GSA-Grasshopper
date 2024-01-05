@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Drawing;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
-using Grasshopper.Kernel.Parameters;
 using Rhino;
 
 namespace GsaGH.Components {

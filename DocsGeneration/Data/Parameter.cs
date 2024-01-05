@@ -1,12 +1,12 @@
-﻿using Grasshopper.Kernel;
-using DocsGeneration.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
 using DocsGeneration.Data.Helpers;
+using DocsGeneration.Helpers;
+using Grasshopper.Kernel;
 using OasysUnits;
 
 namespace DocsGeneration.Data {
@@ -55,7 +55,7 @@ namespace DocsGeneration.Data {
       }
 
       string un = "UnitNumber";
-      
+
       if (s.Contains("[")) {
         string measure = s.Split('[')[1];
         measure = "1 " + measure.Split(']')[0];
@@ -87,7 +87,7 @@ namespace DocsGeneration.Data {
           }
         }
       }
-      
+
       if (s.Contains("[MJ/m³]")) {
         return un + " `EnergyDensity`";
       }
@@ -104,7 +104,7 @@ namespace DocsGeneration.Data {
         return un + " `ThermalExpansion`";
       }
 
-      if (s.Contains("[{ forceUnitAbbreviation = kN, forcePerLengthUnit = kN/m, forcePerAreaUnit = kN/m² }]")){
+      if (s.Contains("[{ forceUnitAbbreviation = kN, forcePerLengthUnit = kN/m, forcePerAreaUnit = kN/m² }]")) {
         return un;
       }
 
@@ -156,8 +156,7 @@ namespace DocsGeneration.Data {
             parameters.Add(param);
             Console.WriteLine($"Added {param.Name} parameter");
           }
-        }
-        catch (Exception) {
+        } catch (Exception) {
           continue;
         }
       }

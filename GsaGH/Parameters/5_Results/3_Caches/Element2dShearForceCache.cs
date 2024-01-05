@@ -29,7 +29,7 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Vector2>> aCaseResults
               = analysisCase.Element2dShear(elementList);
-            Parallel.ForEach(aCaseResults.Keys, elementId => 
+            Parallel.ForEach(aCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IMeshQuantity<IShear2d>>>)Cache).TryAdd(
               elementId, Entity2dResultsFactory.CreateShearForce(aCaseResults[elementId])));
             break;
@@ -37,7 +37,7 @@ namespace GsaGH.Parameters.Results {
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Vector2>>> cCaseResults
               = combinationCase.Element2dShear(elementList);
-            Parallel.ForEach(cCaseResults.Keys, elementId => 
+            Parallel.ForEach(cCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IMeshQuantity<IShear2d>>>)Cache).TryAdd(
               elementId, Entity2dResultsFactory.CreateShearForce(cCaseResults[elementId])));
             break;

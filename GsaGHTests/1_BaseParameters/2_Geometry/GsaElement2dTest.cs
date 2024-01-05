@@ -264,11 +264,11 @@ namespace GsaGHTests.Parameters {
 
       Assert.NotNull(list);
       Assert.Equal(2, list.Count);
-      for (int i=0; i <list.Count; i++) {
+      for (int i = 0; i < list.Count; i++) {
         Assert.Equal(ele.ApiElements[i].Type, list[i].Type);
         Assert.Equal(ele.ApiElements[i].Topology, list[i].Topology);
         Assert.Equal((Color)ele.ApiElements[i].Colour, (Color)list[i].Colour);
-        Assert.Equal(ele.ApiElements[i].Group, list[i].Group); 
+        Assert.Equal(ele.ApiElements[i].Group, list[i].Group);
         Assert.Equal(ele.ApiElements[i].IsDummy, list[i].IsDummy);
         Assert.Equal(ele.ApiElements[i].Name, list[i].Name);
         Assert.Equal(ele.ApiElements[i].Offset.ToString(), list[i].Offset.ToString());
@@ -286,8 +286,8 @@ namespace GsaGHTests.Parameters {
 
       Point3dList points = ele.GetCenterPoints();
 
-      Assert.NotNull( points  );
-      Assert.Equal( 2, points.Count);
+      Assert.NotNull(points);
+      Assert.Equal(2, points.Count);
 
       ele.ApiElements[0].Type = ElementType.QUAD8;
       ele.ApiElements[1].Type = ElementType.QUAD8;
@@ -306,7 +306,7 @@ namespace GsaGHTests.Parameters {
       GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
 
       DataTree<int> topology = ele.GetTopologyIDs();
-      Assert.NotNull( topology );
+      Assert.NotNull(topology);
       Assert.Equal(2, topology.BranchCount);
       Assert.Equal(8, topology.DataCount);
       Assert.Equal("Tree (Branches = 2)\r\n{14} (N = 4)\r\n{15} (N = 4)", topology.TopologyDescription);
@@ -333,48 +333,48 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(Color.DarkCyan.ToArgb(), ele.Mesh.VertexColors[0].ToArgb());
       Assert.Equal(Color.DarkBlue.ToArgb(), ele.Mesh.VertexColors[1].ToArgb());
     }
-    private GsaElement2d CreateSampleElement2dWithQuad4Type() { 
-     var pts = new Point3dList {
+    private GsaElement2d CreateSampleElement2dWithQuad4Type() {
+      var pts = new Point3dList {
        new Point3d(-3, -4, 0),
        new Point3d(5, -2, 0),
        new Point3d(6, 7, 0),
        new Point3d(-1, 2, 0),
      };
-     pts.Add(pts[0]);
-     var pol = new Polyline(pts);
+      pts.Add(pts[0]);
+      var pol = new Polyline(pts);
 
-     var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
-       MeshingParameters.DefaultAnalysisMesh, 0.001);
+      var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
+        MeshingParameters.DefaultAnalysisMesh, 0.001);
 
-     var elem = new GsaElement2d(mesh);
-     int elid = 14;
-     int secid = 3;
-     var grps = new List<int>();
-     var dum = new List<bool>();
-     var nms = new List<string>();
-     var off = new List<GsaOffset>();
-     elem.Prop2ds = new List<GsaProperty2d>();
-     for (int i = 0; i < elem.ApiElements.Count; i++) {
-       elem.Ids[i] = elid++;
-       grps.Add(22);
-       dum.Add(true);
-       nms.Add("Shahin");
-       off.Add(new GsaOffset(0, 0, 0, 0.1, LengthUnit.Meter));
-       elem.Prop2ds.Add(new GsaProperty2d(secid) {
-         ApiProp2d = new Prop2D(),
-       });
-     }
+      var elem = new GsaElement2d(mesh);
+      int elid = 14;
+      int secid = 3;
+      var grps = new List<int>();
+      var dum = new List<bool>();
+      var nms = new List<string>();
+      var off = new List<GsaOffset>();
+      elem.Prop2ds = new List<GsaProperty2d>();
+      for (int i = 0; i < elem.ApiElements.Count; i++) {
+        elem.Ids[i] = elid++;
+        grps.Add(22);
+        dum.Add(true);
+        nms.Add("Shahin");
+        off.Add(new GsaOffset(0, 0, 0, 0.1, LengthUnit.Meter));
+        elem.Prop2ds.Add(new GsaProperty2d(secid) {
+          ApiProp2d = new Prop2D(),
+        });
+      }
 
-     elem.ApiElements.SetMembers(grps);
-     elem.ApiElements.SetMembers(dum);
-     elem.ApiElements.SetMembers(nms);
-     elem.ApiElements.SetMembers(off);
+      elem.ApiElements.SetMembers(grps);
+      elem.ApiElements.SetMembers(dum);
+      elem.ApiElements.SetMembers(nms);
+      elem.ApiElements.SetMembers(off);
 
-     elem.ApiElements[0].Type = ElementType.QUAD4;
-     elem.ApiElements[0].Topology = new ReadOnlyCollection<int>(new List<int>(4) { 1, 2, 3, 4 });
-     elem.ApiElements[1].Type = ElementType.QUAD4;
-     elem.ApiElements[1].Topology = new ReadOnlyCollection<int>(new List<int>(4) { 4, 3, 2, 1 });
-     elem.ApiElements.RemoveRange(2, 20);
+      elem.ApiElements[0].Type = ElementType.QUAD4;
+      elem.ApiElements[0].Topology = new ReadOnlyCollection<int>(new List<int>(4) { 1, 2, 3, 4 });
+      elem.ApiElements[1].Type = ElementType.QUAD4;
+      elem.ApiElements[1].Topology = new ReadOnlyCollection<int>(new List<int>(4) { 4, 3, 2, 1 });
+      elem.ApiElements.RemoveRange(2, 20);
 
       return elem;
     }

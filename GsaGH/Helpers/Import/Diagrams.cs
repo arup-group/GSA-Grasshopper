@@ -13,7 +13,7 @@ namespace GsaGH.Helpers.Import {
   internal static class Diagrams {
     internal static Line ConvertLine(GsaAPI.Line line, double scaleFactor) {
       return new Line(
-        ConvertPoint(line.Start, scaleFactor), 
+        ConvertPoint(line.Start, scaleFactor),
         ConvertPoint(line.End, scaleFactor));
     }
 
@@ -43,7 +43,7 @@ namespace GsaGH.Helpers.Import {
 
     private static Point3d ConvertPoint(Vector3 vector3, double scaleFactor) {
       return new Point3d(
-        vector3.X * scaleFactor, 
+        vector3.X * scaleFactor,
         vector3.Y * scaleFactor,
         vector3.Z * scaleFactor);
     }

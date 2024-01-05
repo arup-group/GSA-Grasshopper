@@ -369,7 +369,7 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U StressExtremaKey<T1, T2, U>(
-      IMeshResultSubset<T1, T2, ResultTensor3<U>> resultSet, string key) 
+      IMeshResultSubset<T1, T2, ResultTensor3<U>> resultSet, string key)
       where T1 : IMeshQuantity<T2> where T2 : IResultItem {
       return key switch {
         "Max xx" => resultSet.Max.Xx,
@@ -390,7 +390,7 @@ namespace GsaGH.Components.Helpers {
 
     internal static U Elem2dForcesAndMomentsExtremaKey<T1, T2, T3, U>(
       IMeshResultSubset<IMeshQuantity<T1>, T1, ResultTensor2InAxis<U>> resultSetForces,
-      IMeshResultSubset<IMeshQuantity<T2>, T2, ResultTensor2AroundAxis<U>> resultSetMoment, 
+      IMeshResultSubset<IMeshQuantity<T2>, T2, ResultTensor2AroundAxis<U>> resultSetMoment,
       IMeshResultSubset<IMeshQuantity<T3>, T3, ResultVector2<U>> resultSetShear,
       string key) where T1 : IResultItem where T2 : IResultItem where T3 : IResultItem {
       return key switch {

@@ -39,17 +39,17 @@ namespace GsaGH.Parameters {
     public GsaBool6(bool x, bool y, bool z, bool xx, bool yy, bool zz) {
       ApiBool6 = new Bool6(x, y, z, xx, yy, zz);
     }
-    
+
     public GsaBool6(GsaBool6 other) {
       ApiBool6 = new Bool6(false, false, false, false, false, false);
-      X = other.X; 
-      Y = other.Y; 
+      X = other.X;
+      Y = other.Y;
       Z = other.Z;
       Xx = other.Xx;
       Yy = other.Yy;
-      Zz = other.Zz; 
+      Zz = other.Zz;
     }
-    
+
     internal GsaBool6(Bool6 bool6) {
       ApiBool6 = bool6;
     }

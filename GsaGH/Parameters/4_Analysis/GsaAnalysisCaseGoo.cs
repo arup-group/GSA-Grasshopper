@@ -7,7 +7,7 @@ namespace GsaGH.Parameters {
   ///   Goo wrapper class, makes sure <see cref="GsaAnalysisCase" /> can be used in Grasshopper.
   /// </summary>
   public class GsaAnalysisCaseGoo : GH_OasysGoo<GsaAnalysisCase> {
-    public static string Description => "GSA Analysis Case";      
+    public static string Description => "GSA Analysis Case";
     public static string Name => "Analysis Case";
     public static string NickName => "ΣA";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

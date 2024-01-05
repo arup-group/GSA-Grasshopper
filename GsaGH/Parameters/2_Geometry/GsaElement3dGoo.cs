@@ -38,7 +38,7 @@ namespace GsaGH.Parameters {
       }
       args.Pipeline.DrawMeshShaded(Value.DisplayMesh,
         // this is a workaround to change colour between selected and not
-        args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0) 
+        args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)
           ? Colours.Element3dFace : Colours.Element2dFaceSelected);
     }
 

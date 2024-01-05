@@ -173,7 +173,7 @@ namespace GsaGH.Components {
           } else {
             if (permutationIDs.Intersect(allPermutations).Count() != permutationIDs.Count()) {
               IEnumerable<int> missing = permutationIDs.Except(allPermutations);
-              this.AddRuntimeError($"Combination Case C{caseId} does not contain permutation(s) " + 
+              this.AddRuntimeError($"Combination Case C{caseId} does not contain permutation(s) " +
                 string.Join(", ", missing));
               return;
             }

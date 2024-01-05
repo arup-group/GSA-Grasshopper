@@ -1,5 +1,5 @@
 ﻿namespace GsaGH.Parameters {
-  public interface IGsaStandardMaterial  {
+  public interface IGsaStandardMaterial {
     object StandardMaterial { get; }
   }
 }
