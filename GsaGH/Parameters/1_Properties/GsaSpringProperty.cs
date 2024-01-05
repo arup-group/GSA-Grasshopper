@@ -5,7 +5,6 @@ using System.Linq;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
-using OasysGH.Units;
 using OasysUnits;
 using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
