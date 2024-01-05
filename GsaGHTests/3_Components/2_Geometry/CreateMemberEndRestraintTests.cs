@@ -17,7 +17,7 @@ namespace GsaGHTests.Components.Geometry {
     public void ChangeShortcutDropdownTest(int index, string expected) {
       var comp = new CreateMemberEndRestraint();
       comp.CreateAttributes();
-      
+
       comp.SetSelected(0, index);
       var output = (GH_String)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(expected, output.Value);

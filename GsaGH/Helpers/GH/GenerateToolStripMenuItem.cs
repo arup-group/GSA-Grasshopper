@@ -17,9 +17,9 @@ namespace GsaGH.Helpers.GH {
       };
       foreach (ToolStripMenuItem toolStripMenuItem in UnitsHelper.GetFilteredAbbreviations(units)
        .Select(unit => new ToolStripMenuItem(unit, null, (s, e) => action(unit)) {
-          Checked = unit == unitString,
-          Enabled = true,
-        })) {
+         Checked = unit == unitString,
+         Enabled = true,
+       })) {
         menu.DropDownItems.Add(toolStripMenuItem);
       }
 

@@ -21,7 +21,7 @@ namespace GsaGH.Parameters {
     protected override Bitmap Icon => Resources.GridPlaneSurfaceParam;
 
     public GsaGridPlaneSurfaceParameter() : base(new GH_InstanceDescription(
-      GsaGridPlaneSurfaceGoo.Name, GsaGridPlaneSurfaceGoo.NickName, 
+      GsaGridPlaneSurfaceGoo.Name, GsaGridPlaneSurfaceGoo.NickName,
       GsaGridPlaneSurfaceGoo.Description + " parameter",
       CategoryName.Name(), SubCategoryName.Cat9())) { }
 

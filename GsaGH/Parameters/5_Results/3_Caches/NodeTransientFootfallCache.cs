@@ -9,7 +9,7 @@ namespace GsaGH.Parameters.Results {
     public IApiResult ApiResult { get; set; }
     public IDictionary<int, IList<IFootfall>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IFootfall>>();
-    
+
     internal NodeTransientFootfallCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
     }

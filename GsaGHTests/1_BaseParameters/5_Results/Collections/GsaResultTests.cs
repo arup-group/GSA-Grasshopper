@@ -40,16 +40,16 @@ namespace GsaGHTests.Parameters.Results {
     public void CreatingResultsIsInvalid(bool modelIsNull, bool resultsAreNull, bool caseIdIsInvalid, bool analysisCase, bool permutationEmpty = false) {
 
       GsaModel model = modelIsNull ? null : new GsaModel(new GsaAPI.Model(GsaFile.SteelDesignSimple));
-      AnalysisCaseResult analysisCaseResult 
+      AnalysisCaseResult analysisCaseResult
         = resultsAreNull ? null : new GsaAPI.Model(GsaFile.SteelDesignSimple).Results()[1];
       CombinationCaseResult combinationCaseResult
         = resultsAreNull ? null : new GsaAPI.Model(GsaFile.SteelDesignSimple).CombinationCaseResults()[1];
       int caseId = caseIdIsInvalid ? 0 : 1;
 
-      GsaResult results = analysisCase 
-        ? new GsaResult(model, analysisCaseResult, caseId) 
-        : new GsaResult(model, combinationCaseResult, caseId, permutationEmpty ? null : new List<int>(){1});
-      
+      GsaResult results = analysisCase
+        ? new GsaResult(model, analysisCaseResult, caseId)
+        : new GsaResult(model, combinationCaseResult, caseId, permutationEmpty ? null : new List<int>() { 1 });
+
       Assert.NotNull(results);
       if (modelIsNull || resultsAreNull) {
         Assert.Null(results.Model);
@@ -70,7 +70,7 @@ namespace GsaGHTests.Parameters.Results {
         Assert.Single(results.SelectedPermutationIds);
       } else {
         Assert.Null(results.SelectedPermutationIds);
-      } 
+      }
       //fields
       Assert.NotNull(results.Element1dAverageStrainEnergyDensities);
       Assert.NotNull(results.Element1dDisplacements);
@@ -91,7 +91,7 @@ namespace GsaGHTests.Parameters.Results {
       Assert.NotNull(results.Member1dInternalForces);
       Assert.NotNull(results.Member1dDisplacements);
 
-      if(analysisCase) {
+      if (analysisCase) {
         Assert.NotNull(results.GlobalResults);
         Assert.NotNull(results.NodeTransientFootfalls);
         Assert.NotNull(results.NodeResonantFootfalls);
@@ -117,9 +117,9 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(false)]
     public void ToStringReturnsValidString(bool isAnalysisCase) {
       GsaResult result = isAnalysisCase ? (GsaResult)AnalysisCaseResult(GsaFile.SteelDesignSimple, 1) :
-        (GsaResult)CombinationCaseResult(GsaFile.SteelDesignSimple, 1, new List<int>(){1,2,3,});
+        (GsaResult)CombinationCaseResult(GsaFile.SteelDesignSimple, 1, new List<int>() { 1, 2, 3, });
 
-      string expectedString = isAnalysisCase ? "A1 'DL'": "C1 (3 permutations) 'ULS'";
+      string expectedString = isAnalysisCase ? "A1 'DL'" : "C1 (3 permutations) 'ULS'";
 
       Assert.Equal(expectedString, result.ToString());
     }
@@ -127,29 +127,29 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void NodeIdsReturnsValidNumbers() {
       var result = (GsaResult)AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1, 2}) ,result.NodeIds("all"));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1}) ,result.NodeIds("1"));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1, 2}), result.NodeIds("1 2"));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){}), result.NodeIds("10 20"));
+
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, 2 }), result.NodeIds("all"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1 }), result.NodeIds("1"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, 2 }), result.NodeIds("1 2"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { }), result.NodeIds("10 20"));
     }
     [Fact]
     public void ElementIdsReturnsValidNumbers() {
       var result = (GsaResult)AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}) ,result.ElementIds("all",1));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}) ,result.ElementIds("1",1));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}), result.ElementIds("1 2",1));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){}), result.ElementIds("10 20",1));
+
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, }), result.ElementIds("all", 1));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, }), result.ElementIds("1", 1));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, }), result.ElementIds("1 2", 1));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { }), result.ElementIds("10 20", 1));
     }
     [Fact]
     public void MemberIdsReturnsValidNumbers() {
       var result = (GsaResult)AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}) ,result.MemberIds("all"));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}) ,result.MemberIds("1"));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}), result.MemberIds("1 2"));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){}), result.MemberIds("10 20"));
+
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, }), result.MemberIds("all"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, }), result.MemberIds("1"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, }), result.MemberIds("1 2"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { }), result.MemberIds("10 20"));
     }
   }
 }

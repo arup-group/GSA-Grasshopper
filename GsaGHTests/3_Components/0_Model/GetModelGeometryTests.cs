@@ -1,7 +1,7 @@
-﻿using System.IO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using Grasshopper.Kernel;
 using GsaGH.Components;
 using GsaGH.Parameters;
@@ -98,7 +98,7 @@ namespace GsaGHTests.Model {
     [Fact]
     public void GetModelGeometryMember3dDrawViewportMeshesAndWiresTest() {
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
-        CreateModelTest.CreateModelFromGeometry(null, null, null, null, null, 
+        CreateModelTest.CreateModelFromGeometry(null, null, null, null, null,
         new List<GsaMember3dGoo>() {
           (GsaMember3dGoo)ComponentTestHelper.GetOutput(CreateMember3dTests.ComponentMother()),
         }, ModelUnit.M));

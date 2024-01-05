@@ -177,7 +177,7 @@ namespace GsaGH.Components {
         if (material is GsaCustomMaterial) {
           material.MaterialType = type;
         }
-        
+
         customMaterial = new GsaCustomMaterial(customMaterial.AnalysisMaterial, id, type);
         if (type != material.MaterialType) {
           customMaterial.Name = $"Created from {material.MaterialType} {material.Name}";

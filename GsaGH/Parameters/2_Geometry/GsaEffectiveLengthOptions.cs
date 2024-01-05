@@ -1,8 +1,8 @@
-﻿using GsaAPI;
+﻿using Grasshopper.Kernel.Types;
+using GsaAPI;
 using OasysGH.Parameters;
-using OasysUnits.Units;
 using OasysUnits;
-using Grasshopper.Kernel.Types;
+using OasysUnits.Units;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -36,7 +36,7 @@ namespace GsaGH.Parameters {
       }
 
       string destabilisingLoad = string.Empty;
-      if (EffectiveLength.DestablisingLoad != 0 && 
+      if (EffectiveLength.DestablisingLoad != 0 &&
         EffectiveLength.DestablisingLoadPositionRelativeTo != LoadReference.ShearCentre) {
         destabilisingLoad = $", Load position {EffectiveLength.DestablisingLoad}(m) " +
           $"{EffectiveLength.DestablisingLoadPositionRelativeTo}";
@@ -66,7 +66,7 @@ namespace GsaGH.Parameters {
           e2 = MemberEndRestraintFactory.MemberEndRestraintToString(automatic.End2);
           string auto = $"End1: {e1}, End2: {e2}";
           return "Automatically calculated " + auto + destabilisingLoad + bucklingFacts;
-        
+
         default:
           throw new System.Exception("EffectiveLengthType not implemented");
       }

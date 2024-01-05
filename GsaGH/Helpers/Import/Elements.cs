@@ -10,13 +10,13 @@ namespace GsaGH.Helpers.Import {
     internal ConcurrentBag<GsaElement1dGoo> Element1ds { get; private set; }
     internal ConcurrentBag<GsaElement2dGoo> Element2ds { get; private set; }
     internal ConcurrentBag<GsaElement3dGoo> Element3ds { get; private set; }
-    
+
     internal Elements(GsaModel model, string elementList = "All") {
       var elem1dDict = new ConcurrentDictionary<int, Element>();
       var elem2dDict = new ConcurrentDictionary<int, Element>();
       var elem3dDict = new ConcurrentDictionary<int, Element>();
       ReadOnlyDictionary<int, Element> eDict = model.Model.Elements(elementList);
-      
+
       Parallel.ForEach(eDict, item => {
         int elemDimension = 1; // default assume 1D element
         ElementType type = item.Value.Type;
@@ -43,7 +43,7 @@ namespace GsaGH.Helpers.Import {
         switch (elemDimension) {
           case 1:
             elem1dDict.TryAdd(item.Key, item.Value);
-            
+
             break;
 
           case 2:

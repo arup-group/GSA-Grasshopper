@@ -13,7 +13,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void ArrowheadCastToTest() {
-      GraphicDrawResult graphic = 
+      GraphicDrawResult graphic =
         GsaArrowheadDiagramTests.Element1dUniformLoadDiagramResults();
       var goo = new GsaDiagramGoo(new GsaArrowheadDiagram(graphic.Triangles, 1, Color.Empty));
 

@@ -121,7 +121,7 @@ namespace GsaGH.Parameters {
       var mem = new GsaMember3d(Value) {
         Id = 0
       };
-      
+
       xmorph.Morph(mem.SolidMesh);
       mem.UpdatePreview();
       return new GsaMember3dGoo(mem);

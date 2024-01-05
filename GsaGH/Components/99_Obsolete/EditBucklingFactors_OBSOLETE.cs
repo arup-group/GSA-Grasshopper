@@ -18,7 +18,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.EditBucklingFactors;
 
     public EditBucklingFactors_OBSOLETE() : base("Edit " + GsaEffectiveLengthOptionsGoo.Name,
-      "EditBucklingFactors", "Modify " + GsaEffectiveLengthOptionsGoo.Description, 
+      "EditBucklingFactors", "Modify " + GsaEffectiveLengthOptionsGoo.Description,
       CategoryName.Name(), SubCategoryName.Cat2()) {
       Hidden = true;
     }

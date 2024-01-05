@@ -215,7 +215,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", 
+      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm",
         "Lines and arrowheads of the GSA Load Diagram", GH_ParamAccess.list);
       pManager.AddParameter(new GsaAnnotationParameter(), "Annotations",
         "An", "Annotations for the diagram", GH_ParamAccess.list);
@@ -281,7 +281,7 @@ namespace GsaGH.Components {
       var diagramLines = new ConcurrentBag<GsaDiagramGoo>();
       var diagramAnnotations = new ConcurrentBag<GsaAnnotationGoo>();
 
-      double arrowScale = _gsaModel.BoundingBox.Diagonal.Length * 
+      double arrowScale = _gsaModel.BoundingBox.Diagonal.Length *
       (autoScale ? 0.00025 : computedScale);
 
       List<DiagramType> types = GetSelectedDiagramTypes();
@@ -450,7 +450,7 @@ namespace GsaGH.Components {
       if (!_dropDownItems[0].Contains(_selectedItems[0])) {
         _selectedItems[0] = _dropDownItems[0][0];
       }
-      
+
       _caseId = _selectedItems[0];
     }
   }

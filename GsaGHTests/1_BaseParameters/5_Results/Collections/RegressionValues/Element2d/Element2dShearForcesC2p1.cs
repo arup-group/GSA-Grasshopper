@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters.Results {
       };
     }
 
-    internal static List<double> QyInKiloNewtonPerMeter(){
+    internal static List<double> QyInKiloNewtonPerMeter() {
       return new List<double>(){
         -64.79,
         -64.80,

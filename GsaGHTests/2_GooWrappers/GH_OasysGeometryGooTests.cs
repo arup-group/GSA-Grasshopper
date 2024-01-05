@@ -34,14 +34,14 @@ namespace GsaGHTests.GooWrappers {
         rhinoViewPort, displayPipeline, Color.FromArgb(255, 150, 0, 0), 3);
       var selectedWireArgs = new GH_PreviewWireArgs(
         rhinoViewPort, displayPipeline, Color.FromArgb(255, 150, 0, 1), 3);
-      
+
       geometryGoo.DrawViewportMeshes(notSelectedMeshArgs);
       geometryGoo.DrawViewportMeshes(selectedMeshArgs);
       geometryGoo.DrawViewportWires(notSelectedWireArgs);
       geometryGoo.DrawViewportWires(selectedWireArgs);
 
       Assert.True(true);
-      
+
       rhinoDocument.Dispose();
       grasshopperDocument.Dispose();
     }

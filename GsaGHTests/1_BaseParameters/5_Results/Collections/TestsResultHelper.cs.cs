@@ -1,7 +1,7 @@
-﻿using GsaGH.Helpers.GsaApi;
+﻿using System;
+using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
 using OasysUnits;
-using System;
 
 namespace GsaGHTests.Parameters.Results {
   public static class TestsResultHelper {

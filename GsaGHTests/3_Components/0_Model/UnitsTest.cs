@@ -148,7 +148,7 @@ namespace GsaGHTests.Model {
 
       // test that items have been set into API model
       var output = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      
+
       Assert.Equal(GH_RuntimeMessageLevel.Error, comp.RuntimeMessageLevel);
       Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
       Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));

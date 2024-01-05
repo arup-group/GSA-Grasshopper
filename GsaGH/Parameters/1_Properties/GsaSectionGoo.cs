@@ -21,7 +21,7 @@ namespace GsaGH.Parameters {
           return true;
         }
       }
-      
+
       target = default;
       return false;
     }

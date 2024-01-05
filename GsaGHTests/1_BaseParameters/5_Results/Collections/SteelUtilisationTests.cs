@@ -248,9 +248,9 @@ namespace GsaGHTests.Parameters.Results {
       var minKeys = new SteelUtilisationExtremaKeys();
 
       // Act
-      ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(0.5), 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys); 
-      ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(-0.5), 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys); 
-      ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(1.0), 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys); 
+      ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(0.5), 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys);
+      ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(-0.5), 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys);
+      ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(1.0), 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys);
       ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(-1.0), 2, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys);
 
       // Assert 

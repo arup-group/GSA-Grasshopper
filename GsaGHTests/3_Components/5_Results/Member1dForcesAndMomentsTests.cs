@@ -1,4 +1,8 @@
-﻿using Grasshopper.Kernel.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Grasshopper.Kernel.Data;
 using GsaGH.Components;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
@@ -8,10 +12,6 @@ using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
 using OasysUnits;
 using OasysUnits.Units;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Xunit;
 
 namespace GsaGHTests.Components.Results {
@@ -75,7 +75,7 @@ namespace GsaGHTests.Components.Results {
 
       for (int i = 0; i < comp.Params.Output.Count; i++) { // loop through each output
         IList<GH_Path> paths = ComponentTestHelper.GetPathOutput(comp, i);
-        Assert.Single(paths); 
+        Assert.Single(paths);
 
         var cases = paths.Select(x => x.Indices[0]).ToList();
         foreach (int caseid in cases) {

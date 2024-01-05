@@ -11,8 +11,8 @@ namespace DocsGeneration.MarkDowns.Helpers {
       string autogen = "<!--- This file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration --->";
       string[] split = text.Split('\n');
       text = split[0] + '\n';
-      text += autogen+ '\n';
-      for (int i = 1;  i < split.Length; i++) {
+      text += autogen + '\n';
+      for (int i = 1; i < split.Length; i++) {
         text += split[i] + '\n';
       }
 

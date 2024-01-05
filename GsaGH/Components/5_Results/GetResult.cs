@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Geometry;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
@@ -175,7 +173,7 @@ namespace GsaGH.Components {
           } else {
             if (permutationIDs.Intersect(allPermutations).Count() != permutationIDs.Count()) {
               IEnumerable<int> missing = permutationIDs.Except(allPermutations);
-              this.AddRuntimeError($"Combination Case C{caseId} does not contain permutation(s) " + 
+              this.AddRuntimeError($"Combination Case C{caseId} does not contain permutation(s) " +
                 string.Join(", ", missing));
               return;
             }

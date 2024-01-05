@@ -123,7 +123,7 @@ namespace GsaGH.Components {
         if (result == null) {
           return;
         }
-            
+
         nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
         IEntity0dResultSubset<IDisplacement, ResultVector6<Entity0dExtremaKey>> resultSet

@@ -52,25 +52,25 @@ namespace GsaGH.Components {
 
       switch (i) {
         case 0 when j == 0: {
-          if (_toMode) {
-            _dropDownItems.RemoveAt(1);
-            _selectedItems.RemoveAt(1);
-            _spacerDescriptions.RemoveAt(1);
-          }
+            if (_toMode) {
+              _dropDownItems.RemoveAt(1);
+              _selectedItems.RemoveAt(1);
+              _spacerDescriptions.RemoveAt(1);
+            }
 
-          _toMode = false;
-          break;
-        }
+            _toMode = false;
+            break;
+          }
         case 0: {
-          if (!_toMode) {
-            _dropDownItems.Insert(1, FilteredUnits.FilteredLengthUnits);
-            _selectedItems.Insert(1, _lengthUnit.ToString());
-            _spacerDescriptions.Insert(1, "Length unit");
-          }
+            if (!_toMode) {
+              _dropDownItems.Insert(1, FilteredUnits.FilteredLengthUnits);
+              _selectedItems.Insert(1, _lengthUnit.ToString());
+              _spacerDescriptions.Insert(1, "Length unit");
+            }
 
-          _toMode = true;
-          break;
-        }
+            _toMode = true;
+            break;
+          }
         case 1 when !_toMode:
           _densityUnit
             = (LinearDensityUnit)UnitsHelper.Parse(typeof(LinearDensityUnit), _selectedItems[i]);

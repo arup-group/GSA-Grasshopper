@@ -893,7 +893,7 @@ namespace GsaGH.Components {
           positionsCount = 2;
           _resType = "Response Factor [-]";
           IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> nodeFootfallCache
-          = _selectedItems[1] == "Resonant" 
+          = _selectedItems[1] == "Resonant"
             ? result.NodeResonantFootfalls
             : result.NodeTransientFootfalls;
           Func<IFootfall, IQuantity> footfallSelector =
@@ -901,7 +901,7 @@ namespace GsaGH.Components {
           ICollection<int> nodeIds;
           (values, nodeIds) = ResultsUtility.MapNodeResultToElements(
             elems, nodeFootfallCache, footfallSelector, _envelopeType);
-          IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> nodeFootfall 
+          IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> nodeFootfall
             = nodeFootfallCache.ResultSubset(nodeIds);
           dmax = nodeFootfall.GetExtrema(nodeFootfall.Max.MaximumResponseFactor).MaximumResponseFactor;
           dmin = nodeFootfall.GetExtrema(nodeFootfall.Min.MaximumResponseFactor).MaximumResponseFactor;

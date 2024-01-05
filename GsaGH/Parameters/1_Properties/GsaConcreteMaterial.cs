@@ -25,7 +25,7 @@ namespace GsaGH.Parameters {
       _concreteMaterial = concreteMaterial;
     }
 
-    internal GsaConcreteMaterial(ConcreteMaterial concreteMaterial, bool fromApi = false, 
+    internal GsaConcreteMaterial(ConcreteMaterial concreteMaterial, bool fromApi = false,
       string concreteDesignCodeName = "", string steelDesignCodeName = "") {
       ConcreteDesignCodeName = concreteDesignCodeName;
       IsFromApi = fromApi;

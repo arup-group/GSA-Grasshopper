@@ -23,7 +23,7 @@ namespace GsaGH.Parameters {
       if (source == null) {
         return false;
       }
-      
+
       if (GH_Convert.ToString(source, out string text, GH_Conversion.Both)) {
         Value = new GsaList() {
           EntityType = EntityType.Undefined,

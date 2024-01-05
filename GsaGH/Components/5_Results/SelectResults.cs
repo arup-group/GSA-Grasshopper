@@ -371,7 +371,7 @@ namespace GsaGH.Components {
           _dropDownItems[2].Count - 1 == modelResults.Item3.Branch(new GH_Path(_caseId)).Count) {
           return;
         }
-        
+
         UpdatePermutations();
 
       } else if (_dropDownItems.Count > 2) {

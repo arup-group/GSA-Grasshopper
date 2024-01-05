@@ -1,4 +1,7 @@
-﻿using Grasshopper.Kernel.Data;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GsaGH.Components;
 using GsaGH.Helpers.GsaApi;
@@ -9,9 +12,6 @@ using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
 using OasysUnits;
 using OasysUnits.Units;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Xunit;
 
 namespace GsaGHTests.Components.Results {
@@ -25,7 +25,7 @@ namespace GsaGHTests.Components.Results {
       ComponentTestHelper.SetInput(comp, "not a result");
       comp.Params.Output[0].CollectData();
       Assert.True((int)comp.RuntimeMessageLevel >= 10);
-      
+
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelFootfall, 1);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       comp.Params.Output[0].CollectData();
@@ -164,7 +164,7 @@ namespace GsaGHTests.Components.Results {
       comp.SetSelected(1, 2);
       resultSetPeak = ComponentTestHelper.GetResultOutput(comp, 1);
       Assert.Single(resultSetPeak);
-      Assert.Equal(expectedPeak.Max(), 
+      Assert.Equal(expectedPeak.Max(),
         ResultHelper.RoundToSignificantDigits(
           resultSetPeak[0].As(SpeedUnit.MeterPerSecond), 4));
 

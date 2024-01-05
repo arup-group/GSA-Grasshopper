@@ -7,10 +7,10 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
-using Rhino.DocObjects;
 using Rhino;
-using Rhino.Geometry;
 using Rhino.Collections;
+using Rhino.DocObjects;
+using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -28,7 +28,7 @@ namespace GsaGH.Parameters {
     protected override Bitmap Icon => Resources.Member2dParam;
 
     public GsaMember2dParameter() : base(new GH_InstanceDescription(
-      GsaMember2dGoo.Name, GsaMember2dGoo.NickName, 
+      GsaMember2dGoo.Name, GsaMember2dGoo.NickName,
       GsaMember2dGoo.Description + " parameter", CategoryName.Name(),
       SubCategoryName.Cat9())) { }
 
@@ -52,7 +52,7 @@ namespace GsaGH.Parameters {
         gH_BakeUtility.BakeObject(new GH_Brep(goo.Value.Brep), objAtt, doc);
         goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
       }
-      
+
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }
 

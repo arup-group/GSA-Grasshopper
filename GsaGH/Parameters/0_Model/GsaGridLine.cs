@@ -78,7 +78,7 @@ namespace GsaGH.Parameters {
     }
 
     internal static PolyCurve ToCurve(GridLine gridLine) {
-        var curve = new PolyCurve();
+      var curve = new PolyCurve();
       if (gridLine.Shape is GridLineShape.Line) {
         Line line = ToLine(gridLine);
         curve.Append(line);
@@ -90,7 +90,7 @@ namespace GsaGH.Parameters {
     }
 
     internal static Line ToLine(GridLine gridLine) {
-        var start = new Point3d(gridLine.X, gridLine.Y, 0);
+      var start = new Point3d(gridLine.X, gridLine.Y, 0);
       var end = new Point3d(gridLine.X + gridLine.Length, gridLine.Y, 0);
       var line = new Line(start, end);
       Transform.Rotation(gridLine.Theta1 * Math.PI / 180.0, start);
@@ -106,7 +106,7 @@ namespace GsaGH.Parameters {
         Y = other.GridLine.Y,
         Length = other.GridLine.Length,
       };
-      
+
       if (GridLine.Shape == GridLineShape.Arc) {
         GridLine.Theta2 = other.GridLine.Theta2;
       }

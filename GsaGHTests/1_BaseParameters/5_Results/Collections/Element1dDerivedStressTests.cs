@@ -205,7 +205,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert
       Assert.Equal(positionsCount,
         result.Element1dDerivedStresses.Cache.FirstOrDefault().Value.FirstOrDefault().Results.Count);
-      Assert.Equal(positionsCount, 
+      Assert.Equal(positionsCount,
         resultSet.Subset.FirstOrDefault().Value.FirstOrDefault().Results.Count);
 
       // Act again

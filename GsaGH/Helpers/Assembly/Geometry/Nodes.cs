@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GsaAPI;
-using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using OasysUnits;
 using Rhino.Geometry;

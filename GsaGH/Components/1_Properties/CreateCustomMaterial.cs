@@ -214,7 +214,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      
+
 
       da.SetData(0, new GsaMaterialGoo(material));
     }

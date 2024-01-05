@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace GsaGH.Parameters.Results {
-  public abstract class Entity1dResult<ApiResultType, QuantityResult> 
+  public abstract class Entity1dResult<ApiResultType, QuantityResult>
     : IEntity1dQuantity<QuantityResult> where QuantityResult : IResultItem {
     public IDictionary<double, QuantityResult> Results { get; private set; }
 

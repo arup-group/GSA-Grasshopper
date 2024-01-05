@@ -179,7 +179,7 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaElement2dGoo(elem));
       da.SetDataList(1, elem.Ids);
       da.SetData(2, elem.Mesh);
-      da.SetDataList(3, elem.Prop2ds == null ? null 
+      da.SetDataList(3, elem.Prop2ds == null ? null
         : new List<GsaProperty2dGoo>(elem.Prop2ds.Select(x => new GsaProperty2dGoo(x))));
       da.SetDataList(4, elem.ApiElements.Select(x => x.Group));
       da.SetDataList(5, elem.ApiElements.Select(x => x.Type));

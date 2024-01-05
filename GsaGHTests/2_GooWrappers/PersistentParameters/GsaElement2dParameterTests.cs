@@ -18,7 +18,7 @@ namespace GsaGHTests.GooWrappers {
       var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother();
       comp.Preview3dSection = true;
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
-      
+
       var param = new GsaElement2dParameter();
       param.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, output);
 

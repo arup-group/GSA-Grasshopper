@@ -131,7 +131,7 @@ namespace GsaGH.Components {
         elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
 
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
-        IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet = 
+        IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet =
           result.Element1dDisplacements.ResultSubset(elementIds, positionsCount);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {

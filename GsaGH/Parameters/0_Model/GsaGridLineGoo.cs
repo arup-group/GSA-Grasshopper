@@ -81,7 +81,7 @@ namespace GsaGH.Parameters {
         thickness = 3;
       }
 
-      
+
       if (Value.Points != null) {
         Color color = Color.Black;
         int pattern = 999999;

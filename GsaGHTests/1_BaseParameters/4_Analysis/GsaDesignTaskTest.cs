@@ -1,5 +1,5 @@
-﻿using GsaGH.Parameters;
-using System.Linq;
+﻿using System.Linq;
+using GsaGH.Parameters;
 using Xunit;
 
 namespace GsaGHTests.Parameters {
@@ -82,7 +82,7 @@ namespace GsaGHTests.Parameters {
       designTask.ApiTask.UpperTargetUtilisationLimit = 0.8;
       designTask.ApiTask.PrimaryObjective = GsaAPI.SteelDesignObjective.MinDepth;
       designTask.ApiTask.GroupSectionsByPool = true;
-      Assert.Equal("(Steel) myTask Case:C99 Def:\"myList\" Target:0.8 Obj:MinDepth Grouped", 
+      Assert.Equal("(Steel) myTask Case:C99 Def:\"myList\" Target:0.8 Obj:MinDepth Grouped",
         designTask.ToString());
     }
   }

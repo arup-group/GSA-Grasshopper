@@ -136,7 +136,7 @@ namespace GsaGHTests.Helpers.GH {
     [Fact]
     public void GetGeometryFromMember3dTest() {
       var goo = (GsaMember3dGoo)ComponentTestHelper.GetOutput(
-        CreateMember3dTests.ComponentMother()); 
+        CreateMember3dTests.ComponentMother());
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 2);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
@@ -445,7 +445,7 @@ namespace GsaGHTests.Helpers.GH {
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
-      Assert.Equal($"Element definition was derived from Children of '{listName}' List", 
+      Assert.Equal($"Element definition was derived from Children of '{listName}' List",
             comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark)[0]);
     }
 

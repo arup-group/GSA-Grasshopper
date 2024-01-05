@@ -40,7 +40,7 @@ namespace GsaGH.Parameters.Results {
               = analysisCase.Element1dDisplacement(elementList, positions);
             Parallel.ForEach(aCaseResults.Keys, elementId =>
              concurrent.AddOrUpdate(
-              elementId, 
+              elementId,
               // Add
               Entity1dResultsFactory.CreateResults(
                 aCaseResults[elementId], positions, (a, b) => new Entity1dDisplacement(a, b)),

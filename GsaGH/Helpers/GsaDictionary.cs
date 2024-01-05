@@ -66,8 +66,7 @@ namespace GsaGH.Helpers {
       if (_guidDictionary.ContainsKey(guid)) {
         _dictionary[_firstEmptyKey] = value;
         _guidDictionary[guid].Add(_firstEmptyKey);
-      }
-      else {
+      } else {
         _dictionary[_firstEmptyKey] = value;
         _guidDictionary[guid] = new Collection<int>() {
           _firstEmptyKey,
@@ -83,8 +82,7 @@ namespace GsaGH.Helpers {
         if (!_guidDictionary[guid].Contains(key)) {
           _guidDictionary[guid].Add(key);
         }
-      }
-      else {
+      } else {
         _guidDictionary[guid] = new Collection<int>() {
           key,
         };

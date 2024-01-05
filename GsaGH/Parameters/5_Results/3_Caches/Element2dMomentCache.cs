@@ -29,7 +29,7 @@ namespace GsaGH.Parameters.Results {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Tensor2>> aCaseResults
               = analysisCase.Element2dMoment(elementList);
-            Parallel.ForEach(aCaseResults.Keys, elementId => 
+            Parallel.ForEach(aCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IMeshQuantity<IMoment2d>>>)Cache).TryAdd(
               elementId, Entity2dResultsFactory.CreateMoment(aCaseResults[elementId])));
             break;
@@ -37,7 +37,7 @@ namespace GsaGH.Parameters.Results {
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Tensor2>>> cCaseResults
               = combinationCase.Element2dMoment(elementList);
-            Parallel.ForEach(cCaseResults.Keys, elementId => 
+            Parallel.ForEach(cCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IMeshQuantity<IMoment2d>>>)Cache).TryAdd(
               elementId, Entity2dResultsFactory.CreateMoment(cCaseResults[elementId])));
             break;

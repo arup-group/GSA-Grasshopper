@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Parameters;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helper;

@@ -12,7 +12,7 @@
 
     public T RmsVelocity { get; set; }
 
-    
+
     public ResultFootfall() {
     }
 

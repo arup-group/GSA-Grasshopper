@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using GsaGH.Parameters;
-using GsaGH.Helpers.Import;
-using Xunit;
 using GsaAPI;
+using GsaGH.Helpers.Import;
+using GsaGH.Parameters;
 using Rhino.Geometry;
+using Xunit;
 
 namespace GsaGHTests.Helpers.Import {
   [Collection("GrasshopperFixture collection")]
@@ -68,9 +68,10 @@ namespace GsaGHTests.Helpers.Import {
 
       model.AddNode(new Node() {
         Position = new Vector3() {
-          X = 0, 
-          Y = 0, 
-          Z = 0 }
+          X = 0,
+          Y = 0,
+          Z = 0
+        }
       });
 
       model.AddNode(new Node() {

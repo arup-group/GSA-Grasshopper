@@ -31,7 +31,7 @@ namespace GsaGH.Parameters {
           UniformTemperature = ApiLoad.UniformTemperature
         },
       };
-      
+
 
       if (LoadCase != null) {
         dup.LoadCase = LoadCase;

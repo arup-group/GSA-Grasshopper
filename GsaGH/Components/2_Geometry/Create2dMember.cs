@@ -33,7 +33,7 @@ namespace GsaGH.Components {
         new List<string>(){
           "Tri only",
           "Quad dominant",
-          "Quad only" } 
+          "Quad only" }
       };
       _selectedItems = new List<string> {
         _dropDownItems[0][1]
@@ -41,7 +41,7 @@ namespace GsaGH.Components {
 
       _isInitialised = true;
     }
-    
+
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddBrepParameter("Brep", "B",
@@ -92,7 +92,7 @@ namespace GsaGH.Components {
 
       GsaProperty2dGoo prop2dGoo = null;
       if (da.GetData(3, ref prop2dGoo)) {
-          mem.Prop2d = prop2dGoo.Value;
+        mem.Prop2d = prop2dGoo.Value;
         if (Preview3dSection) {
           mem.CreateSection3dPreview();
         }

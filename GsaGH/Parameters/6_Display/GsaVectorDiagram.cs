@@ -28,7 +28,7 @@ namespace GsaGH.Parameters {
     internal GsaVectorDiagram(Point3d anchor, Vector3d direction, bool doubleArrow, Color color) {
       AnchorPoint = anchor;
       Direction = direction;
-      
+
       DisplayLine = CreateReactionForceLine(anchor, direction);
       Value = direction;
 
@@ -36,7 +36,7 @@ namespace GsaGH.Parameters {
         Color = color;
         return;
       }
-      
+
       if (doubleArrow) {
         Color = Colours.GsaGold;
       } else {

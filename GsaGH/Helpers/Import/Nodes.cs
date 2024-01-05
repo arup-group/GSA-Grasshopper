@@ -123,7 +123,7 @@ namespace GsaGH.Helpers.Import {
       var outNodes = new ConcurrentBag<GsaNodeGoo>();
       Parallel.ForEach(nDict, node => {
         GsaNode n = GetNode(node.Value, unit, node.Key, axDict);
-        if (springProps != null && node.Value.SpringProperty != 0 
+        if (springProps != null && node.Value.SpringProperty != 0
           && springProps.ContainsKey(node.Value.SpringProperty)) {
           n.SpringProperty = springProps[node.Value.SpringProperty].Value;
         }
@@ -136,7 +136,7 @@ namespace GsaGH.Helpers.Import {
     internal static Point3d Point3dFromNode(Node node, LengthUnit unit) {
       return (unit == LengthUnit.Meter) ?
         // skip unitsnet conversion, gsa api node always in meters
-        new Point3d(node.Position.X, node.Position.Y, node.Position.Z) 
+        new Point3d(node.Position.X, node.Position.Y, node.Position.Z)
         : new Point3d(new Length(node.Position.X, LengthUnit.Meter).As(unit),
             new Length(node.Position.Y, LengthUnit.Meter).As(unit),
             new Length(node.Position.Z, LengthUnit.Meter).As(unit));

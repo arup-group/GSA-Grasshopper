@@ -1,9 +1,9 @@
-﻿using Grasshopper.Kernel;
+﻿using System;
+using System.Drawing;
+using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 using OasysGH.Parameters;
-using System;
-using System.Drawing;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -19,7 +19,7 @@ namespace GsaGH.Parameters {
     protected override Bitmap Icon => Resources.AnalysisCaseParam;
 
     public GsaAnalysisCaseParameter() : base(new GH_InstanceDescription(
-      GsaAnalysisCaseGoo.Name, GsaAnalysisCaseGoo.NickName, 
+      GsaAnalysisCaseGoo.Name, GsaAnalysisCaseGoo.NickName,
       GsaAnalysisCaseGoo.Description + " parameter",
       CategoryName.Name(), SubCategoryName.Cat9())) { }
 

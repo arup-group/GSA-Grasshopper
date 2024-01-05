@@ -56,14 +56,14 @@ namespace GsaGH.Components {
           return;
 
         case GsaResultGoo goo: {
-          result = (GsaResult)goo.Value;
-          if (result.CaseType == CaseType.CombinationCase) {
-            this.AddRuntimeError("Footfall Result only available for Analysis Cases");
-            return;
-          }
+            result = (GsaResult)goo.Value;
+            if (result.CaseType == CaseType.CombinationCase) {
+              this.AddRuntimeError("Footfall Result only available for Analysis Cases");
+              return;
+            }
 
-          break;
-        }
+            break;
+          }
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
