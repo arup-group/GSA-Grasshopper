@@ -26,6 +26,9 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(GridLineInfo))]
     [InlineData(typeof(SaveGsaModel))]
     [InlineData(typeof(ModelTitles))]
+    [InlineData(typeof(PropertyQuantities))]
+    [InlineData(typeof(MaterialQuantities))]
+    // 1_Properties
     [InlineData(typeof(CreateBool6))]
     [InlineData(typeof(CreateCustomMaterial))]
     [InlineData(typeof(CreateMaterial))]
