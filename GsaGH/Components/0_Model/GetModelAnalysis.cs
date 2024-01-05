@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;

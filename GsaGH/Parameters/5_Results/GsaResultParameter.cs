@@ -1,5 +1,4 @@
-﻿using Grasshopper;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using GsaGH.Components;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;

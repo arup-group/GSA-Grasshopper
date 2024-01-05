@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using GsaAPI;
+﻿using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Xunit;
 
 namespace GsaGHTests.Parameters.Results {

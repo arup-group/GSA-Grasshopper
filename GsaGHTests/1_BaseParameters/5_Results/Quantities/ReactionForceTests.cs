@@ -1,7 +1,6 @@
 ﻿using System;
 using GsaAPI;
 using GsaGH.Parameters.Results;
-using OasysUnits;
 using OasysUnits.Units;
 using Xunit;
 using ForceUnit = OasysUnits.Units.ForceUnit;

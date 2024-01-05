@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms.VisualStyles;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
-using OasysGH.Parameters;
 using OasysUnits.Units;
 using OasysUnits;
 using OasysGH.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
-using Newtonsoft.Json.Linq;
-using static Rhino.Render.TextureGraphInfo;
-using Grasshopper.Kernel.Types.Transforms;
 
 namespace GsaGH.Parameters {
   /// <summary>

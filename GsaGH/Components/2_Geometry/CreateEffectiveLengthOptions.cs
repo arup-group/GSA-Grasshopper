@@ -7,13 +7,11 @@ using Grasshopper.Kernel.Parameters;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
-using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysUnits;
-using Rhino.Runtime;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
