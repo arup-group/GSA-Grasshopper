@@ -19,7 +19,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.MaterialQuantities;
 
-    public MaterialQuantities() : base("Materials Quantities", "MatBoQ",
+    public MaterialQuantities() : base("Material Quantities", "MatBoQ",
       "Get Quantities for Standard and Custom Materials from a GSA model", CategoryName.Name(),
       SubCategoryName.Cat0()) {
       Hidden = true;
