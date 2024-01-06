@@ -48,7 +48,7 @@ namespace GsaGH.Helpers.Import {
         kvp => kvp.Key, kvp => new Length(kvp.Value, _unit));
 
       Parallel.ForEach(elements.Element2ds, element => {
-        if (element.Value.Prop2ds.IsNullOrEmpty()) {
+        if (element.Value.Prop2ds.IsNullOrEmpty() || element.Value.Prop2ds[0].IsReferencedById) {
           return;
         }
 
