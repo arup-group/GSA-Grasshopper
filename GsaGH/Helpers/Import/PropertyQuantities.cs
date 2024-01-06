@@ -12,9 +12,11 @@ namespace GsaGH.Helpers.Import {
     internal IDictionary<int, Length> SectionQuantities { get; private set; }
     internal IDictionary<int, Area> Property2dQuantities { get; private set; }
     private LengthUnit _unit = LengthUnit.Meter;
+    private GsaModel _model;
 
     internal PropertyQuantities(GsaModel model, Layer layer, string list) {
       _unit = model.ModelUnit;
+      _model = model;
       switch (layer) {
         case Layer.Analysis:
           CalculateFromElements(new Elements(model, list));
@@ -50,9 +52,21 @@ namespace GsaGH.Helpers.Import {
           return;
         }
 
-        double area = AreaMassProperties.Compute(element.Value.Mesh, true, false, false, false).Area;
-        property2dQuantities.AddOrUpdate(
-          element.Value.Prop2ds[0].Id, area, (key, oldValue) => oldValue + area);
+        var propIds = element.Value.Prop2ds.Select(x => x.Id).ToList();
+        IEnumerable<int> distinct = propIds.Distinct();
+        if (distinct.Count() == 1) {
+          double area = AreaMassProperties.Compute(element.Value.Mesh, true, false, false, false).Area;
+          property2dQuantities.AddOrUpdate(
+            element.Value.Prop2ds[0].Id, area, (key, oldValue) => oldValue + area);
+          return;
+        }
+
+        foreach (int propId in distinct) {
+          var elementsById = new Elements(_model, $"PA{propId}");
+          Mesh mesh = elementsById.Element2ds.FirstOrDefault().Value.Mesh;
+          double area = AreaMassProperties.Compute(mesh, true, false, false, false).Area;
+          property2dQuantities.AddOrUpdate(propId, area, (key, oldValue) => oldValue + area);
+        }
       });
 
       AreaUnit areaUnit = OasysGH.Units.Helpers.UnitsHelper.GetAreaUnit(_unit);
