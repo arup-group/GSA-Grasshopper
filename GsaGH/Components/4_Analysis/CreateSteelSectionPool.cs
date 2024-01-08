@@ -35,9 +35,9 @@ namespace GsaGH.Components {
 
       GsaSectionGoo sectionGoo = null;
       da.GetData(1, ref sectionGoo);
-      var section = (GsaSectionGoo)sectionGoo.Duplicate();
-      section.Value.ApiSection.Pool = pid;
-      da.SetData(0, section);
+      var section = new GsaSection(sectionGoo.Value);
+      section.ApiSection.Pool = pid;
+      da.SetData(0, new GsaSectionGoo(section));
     }
   }
 }
