@@ -8,6 +8,7 @@ namespace GsaGHTests.Helper {
     private static string element3dSimple = "";
     private static string springForces = "";
     private static string steelFootfall = "";
+    private static string element2dMultiPropsFromParentMember = "";
     internal static string SteelDesignComplex {
       get {
         if (steelDesignComplex == "") {
@@ -35,6 +36,16 @@ namespace GsaGHTests.Helper {
         }
 
         return element2dSimple;
+      }
+    }
+
+    internal static string Element2dMultiPropsParentMember {
+      get {
+        if (element2dMultiPropsFromParentMember == "") {
+          element2dMultiPropsFromParentMember = FilePath("Element2dMultiPropsFromParentMember.gwb");
+        }
+
+        return element2dMultiPropsFromParentMember;
       }
     }
 

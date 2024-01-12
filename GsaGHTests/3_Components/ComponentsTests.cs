@@ -13,6 +13,8 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateModel), 1)]
     [InlineData(typeof(GetModelLoads), 1)]
     [InlineData(typeof(ListInfo), 1)]
+    [InlineData(typeof(PropertyQuantities), 1)]
+    [InlineData(typeof(MaterialQuantities), 1)]
     //Properties
     [InlineData(typeof(CreateCustomMaterial), 4)]
     [InlineData(typeof(CreateMaterial), 3)]

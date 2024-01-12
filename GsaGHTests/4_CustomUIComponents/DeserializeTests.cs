@@ -13,6 +13,8 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(CreateModel))]
     [InlineData(typeof(OpenModel))]
     [InlineData(typeof(SaveGsaModel))]
+    [InlineData(typeof(PropertyQuantities))]
+    [InlineData(typeof(MaterialQuantities))]
     // Properties
     [InlineData(typeof(CreateBool6))]
     [InlineData(typeof(Create2dPropertyModifier))]
