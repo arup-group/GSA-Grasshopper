@@ -13,6 +13,8 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(CreateModel), true)]
     [InlineData(typeof(GetModelLoads))]
     [InlineData(typeof(ListInfo))]
+    [InlineData(typeof(PropertyQuantities))]
+    [InlineData(typeof(MaterialQuantities))]
     //prop
     [InlineData(typeof(CreateCustomMaterial))]
     [InlineData(typeof(CreateMaterial))]

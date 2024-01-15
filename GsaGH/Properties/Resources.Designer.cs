@@ -1413,6 +1413,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap MaterialQuantities {
+            get {
+                object obj = ResourceManager.GetObject("MaterialQuantities", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Member1dDisplacements {
             get {
                 object obj = ResourceManager.GetObject("Member1dDisplacements", resourceCulture);
@@ -1616,6 +1626,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap Property3dParam {
             get {
                 object obj = ResourceManager.GetObject("Property3dParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap PropertyQuantities {
+            get {
+                object obj = ResourceManager.GetObject("PropertyQuantities", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
