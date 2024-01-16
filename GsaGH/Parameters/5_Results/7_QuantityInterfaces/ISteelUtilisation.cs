@@ -1,4 +1,5 @@
 ﻿using OasysUnits;
+using OasysUnits.Units;
 
 namespace GsaGH.Parameters.Results {
   public interface ISteelUtilisation : IResultItem {
@@ -16,5 +17,8 @@ namespace GsaGH.Parameters.Results {
     Ratio? LateralTorsionalBuckling { get; }
     Ratio? TorsionalBuckling { get; }
     Ratio? FlexuralBuckling { get; }
+
+    double? OverallAs(RatioUnit unit);
+    Ratio? OverallToUnit(RatioUnit unit);
   }
 }

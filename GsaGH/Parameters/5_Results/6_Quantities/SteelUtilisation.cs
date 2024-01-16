@@ -80,5 +80,19 @@ namespace GsaGH.Parameters.Results {
       TorsionalBuckling = new Ratio(initialValue, RatioUnit.DecimalFraction);
       FlexuralBuckling = new Ratio(initialValue, RatioUnit.DecimalFraction);
     }
+
+    public double? OverallAs(RatioUnit unit) {
+      if (Overall != null) {
+        return ((Ratio)Overall).As(unit);
+      }
+      return null;
+    }
+
+    public Ratio? OverallToUnit(RatioUnit unit) {
+      if (Overall != null) {
+        return ((Ratio)Overall).ToUnit(unit);
+      }
+      return null;
+    }
   }
 }
