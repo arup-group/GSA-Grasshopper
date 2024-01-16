@@ -130,7 +130,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(BeamDisplacements), "All", "Min |R|")]
     [InlineData(typeof(BeamForcesAndMoments), "All", "Min |Myz|")]
     [InlineData(typeof(BeamStrainEnergyDensity), "All", "Min")]
-    [InlineData(typeof(Contour1dResults), "Displacement", "Footfall")]
+    [InlineData(typeof(Contour1dResults), "Displacement", "Steel Design")]
     [InlineData(typeof(ResultDiagrams), "Force", "Stress")]
     [InlineData(typeof(Contour2dResults), "Displacement", "Footfall")]
     [InlineData(typeof(Element2dDisplacements), "All", "Min |R|")]
