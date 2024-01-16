@@ -12,17 +12,23 @@ namespace GsaGHTests.Model {
     [InlineData("GSA-Grasshopper2.gwb")]
     [InlineData("GSA-Grasshopper3.gwc")]
     public void SaveGsaModelTest(string filename) {
+      string path = Path.GetTempPath() + filename;
+      string expectedPath = Path.GetTempPath() + (path.EndsWith("gwc") ? "GSA-Grasshopper3.gwb" : filename);
+      
+      // clean up existing files
+      if(File.Exists(expectedPath) ) {
+        File.Delete(expectedPath);
+      }
+
       var comp = new SaveGsaModel();
       comp.CreateAttributes();
       ComponentTestHelper.SetInput(comp, ModelTests.GsaModelGooMother);
       ComponentTestHelper.SetInput(comp, true, 1);
-      string path = Path.GetTempPath() + filename;
       ComponentTestHelper.SetInput(comp, path, 2);
       var output = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
       Assert.NotNull(output);
       Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
       Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
-      string expectedPath = Path.GetTempPath() + (path.EndsWith("gwc") ? "GSA-Grasshopper3.gwb" : filename);
 
       Assert.True(File.Exists(expectedPath));
     }
