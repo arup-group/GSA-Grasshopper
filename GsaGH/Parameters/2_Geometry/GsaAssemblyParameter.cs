@@ -2,6 +2,7 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
+using GsaGH.Properties;
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
@@ -15,7 +16,7 @@ namespace GsaGH.Parameters {
       => m_data.DataCount == 0 ? "Empty " + GsaAssemblyGoo.Name + " parameter" :
         base.InstanceDescription;
     public override string TypeName => SourceCount == 0 ? GsaAssemblyGoo.Name : base.TypeName;
-    protected override Bitmap Icon => null;
+    protected override Bitmap Icon => Resources.AssemblyParam;
 
     public GsaAssemblyParameter() : base(new GH_InstanceDescription(GsaAssemblyGoo.Name,
       GsaAssemblyGoo.NickName, GsaAssemblyGoo.Description + " parameter", CategoryName.Name(),
