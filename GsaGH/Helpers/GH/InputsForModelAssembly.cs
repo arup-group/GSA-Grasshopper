@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.GH {
@@ -76,18 +77,11 @@ namespace GsaGH.Helpers.GH {
         null, null, null);
     }
 
-    internal static
-      Tuple<List<GsaNode>, List<GsaElement1d>, List<GsaElement2d>, List<GsaElement3d>,
-        List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>> GetGeometry(
-        GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
+    internal static GsaGeometry GetGeometry(GH_Component owner, IGH_DataAccess da, int inputid,
+      bool isOptional = false) {
       var ghTypes = new List<GH_ObjectWrapper>();
-      var inNodes = new List<GsaNode>();
-      var inElem1ds = new List<GsaElement1d>();
-      var inElem2ds = new List<GsaElement2d>();
-      var inElem3ds = new List<GsaElement3d>();
-      var inMem1ds = new List<GsaMember1d>();
-      var inMem2ds = new List<GsaMember2d>();
-      var inMem3ds = new List<GsaMember3d>();
+      var geometry = new GsaGeometry();
+
       if (da.GetDataList(inputid, ghTypes)) {
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
@@ -98,78 +92,76 @@ namespace GsaGH.Helpers.GH {
           }
 
           switch (ghTyp.Value) {
-            case GsaNodeGoo nodeGoo: {
-                inNodes.Add(nodeGoo.Value);
-                break;
-              }
-            case GsaElement1dGoo element1dGoo: {
-                inElem1ds.Add(element1dGoo.Value);
-                break;
-              }
-            case GsaElement2dGoo element2dGoo: {
-                inElem2ds.Add(element2dGoo.Value);
-                break;
-              }
-            case GsaElement3dGoo element3dGoo: {
-                inElem3ds.Add(element3dGoo.Value);
-                break;
-              }
-            case GsaMember1dGoo member1dGoo: {
-                inMem1ds.Add(member1dGoo.Value);
-                break;
-              }
-            case GsaMember2dGoo member2dGoo: {
-                inMem2ds.Add(member2dGoo.Value);
-                break;
-              }
-            case GsaMember3dGoo member3dGoo: {
-                inMem3ds.Add(member3dGoo.Value);
-                break;
-              }
-            default: {
-                string type = ghTyp.Value.GetType().ToString();
-                type = type.Replace("GsaGH.Parameters.", string.Empty);
-                type = type.Replace("Goo", string.Empty);
-                owner.AddRuntimeError("Unable to convert Geometry input parameter of type " + type
-                  + Environment.NewLine
-                  + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D or Member3D");
-                break;
-              }
+            case GsaNodeGoo nodeGoo:
+              geometry.Nodes.Add(nodeGoo.Value);
+              break;
+
+            case GsaElement1dGoo element1dGoo:
+              geometry.Element1ds.Add(element1dGoo.Value);
+              break;
+
+            case GsaElement2dGoo element2dGoo:
+              geometry.Element2ds.Add(element2dGoo.Value);
+              break;
+
+            case GsaElement3dGoo element3dGoo:
+              geometry.Element3ds.Add(element3dGoo.Value);
+              break;
+
+            case GsaMember1dGoo member1dGoo:
+              geometry.Member1ds.Add(member1dGoo.Value);
+              break;
+
+            case GsaMember2dGoo member2dGoo:
+              geometry.Member2ds.Add(member2dGoo.Value);
+              break;
+
+            case GsaMember3dGoo member3dGoo:
+              geometry.Member3ds.Add(member3dGoo.Value);
+              break;
+
+            case GsaAssemblyGoo assemblyGoo:
+              geometry.Assemblies.Add(assemblyGoo.Value);
+              break;
+
+            default:
+              string type = ghTyp.Value.GetType().ToString();
+              type = type.Replace("GsaGH.Parameters.", string.Empty);
+              type = type.Replace("Goo", string.Empty);
+              owner.AddRuntimeError("Unable to convert Geometry input parameter of type " + type
+                + Environment.NewLine
+                + " to Node, Element1D, Element2D, Element3D, Member1D, Member2D, Member3D or Assembly");
+              break;
           }
         }
 
-        if (!(inNodes.Count > 0)) {
-          inNodes = null;
+        if (!(geometry.Nodes.Count > 0)) {
+          geometry.Nodes = null;
         }
 
-        if (!(inElem1ds.Count > 0)) {
-          inElem1ds = null;
+        if (!(geometry.Element1ds.Count > 0)) {
+          geometry.Element1ds = null;
         }
 
-        if (!(inElem2ds.Count > 0)) {
-          inElem2ds = null;
+        if (!(geometry.Element2ds.Count > 0)) {
+          geometry.Element2ds = null;
         }
 
-        if (!(inElem3ds.Count > 0)) {
-          inElem3ds = null;
+        if (!(geometry.Element3ds.Count > 0)) {
+          geometry.Element3ds = null;
         }
 
-        if (!(inMem1ds.Count > 0)) {
-          inMem1ds = null;
+        if (!(geometry.Member1ds.Count > 0)) {
+          geometry.Member1ds = null;
         }
 
-        if (!(inMem2ds.Count > 0)) {
-          inMem2ds = null;
+        if (!(geometry.Member2ds.Count > 0)) {
+          geometry.Member2ds = null;
         }
 
-        if (!(inMem3ds.Count > 0)) {
-          inMem3ds = null;
+        if (!(geometry.Member3ds.Count > 0)) {
+          geometry.Member3ds = null;
         }
-
-        return new
-          Tuple<List<GsaNode>, List<GsaElement1d>, List<GsaElement2d>, List<GsaElement3d>,
-            List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(inNodes, inElem1ds, inElem2ds,
-            inElem3ds, inMem1ds, inMem2ds, inMem3ds);
       }
 
       if (!isOptional) {
@@ -177,10 +169,7 @@ namespace GsaGH.Helpers.GH {
           + " failed to collect data!");
       }
 
-      return new
-        Tuple<List<GsaNode>, List<GsaElement1d>, List<GsaElement2d>, List<GsaElement3d>,
-          List<GsaMember1d>, List<GsaMember2d>, List<GsaMember3d>>(null, null, null, null, null,
-          null, null);
+      return geometry;
     }
 
     internal static Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>> GetLoading(

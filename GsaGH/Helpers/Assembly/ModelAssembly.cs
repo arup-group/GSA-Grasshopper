@@ -9,6 +9,7 @@ using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.EnumMappings;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -25,6 +26,7 @@ namespace GsaGH.Helpers.Assembly {
     private GsaGuidDictionary<EntityList> _lists;
     private ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship;
     private GsaGuidDictionary<Member> _members;
+    private GsaGuidDictionary<GsaAPI.Assembly> _assemblies;
     private Model _model;
     private GsaIntDictionary<Node> _nodes;
     private GsaGuidDictionary<SpringProperty> _springProperties;
@@ -65,9 +67,7 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     internal ModelAssembly(
-      GsaModel model, List<GsaList> lists, List<GsaGridLine> gridLines, List<GsaNode> nodes,
-      List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds,
-      List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
+      GsaModel model, List<GsaList> lists, List<GsaGridLine> gridLines, GsaGeometry geometry,
       List<GsaMaterial> mats, List<GsaSection> sections, List<GsaProperty2d> prop2Ds,
       List<GsaProperty3d> prop3Ds, List<GsaSpringProperty> springProps, List<IGsaLoad> loads,
       List<GsaGridPlaneSurface> gridPlaneSurfaces, List<GsaLoadCase> loadCases,
@@ -78,13 +78,14 @@ namespace GsaGH.Helpers.Assembly {
       SetupModel(model, modelUnit);
 
       ConvertProperties(mats, sections, prop2Ds, prop3Ds, springProps);
-      ConvertNodes(nodes);
-      ConvertElements(elem1ds, elem2ds, elem3ds);
-      ConvertMembers(mem1ds, mem2ds, mem3ds);
+      ConvertNodes(geometry.Nodes);
+      ConvertElements(geometry.Element1ds, geometry.Element2ds, geometry.Element3ds);
+      ConvertMembers(geometry.Member1ds, geometry.Member2ds, geometry.Member3ds);
       ConvertNodeList(lists);
       ConvertNodeLoads(loads);
       AssembleNodesElementsMembersAndLists();
       ElementsFromMembers(createElementsFromMembers, toleranceCoincidentNodes, owner);
+      ConvertAssemblies(geometry.Assemblies);
 
       ConvertList(lists, loads, designTasks, owner);
       ConvertGridPlaneSurface(gridPlaneSurfaces, owner);

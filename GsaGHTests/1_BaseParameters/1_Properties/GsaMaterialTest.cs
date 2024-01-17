@@ -187,8 +187,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(MatType.Timber, modelProp2d.Material.MaterialType);
       Assert.Equal(MatType.Custom, modelProp3d.Material.MaterialType);
 
-      var assembly = new ModelAssembly(null, null, null, null, null, null, null, null, null,
-        null, null,
+      var assembly = new ModelAssembly(null, null, null, null, null,
         new List<GsaSection> { modelSection },
         new List<GsaProperty2d> { modelProp2d },
         new List<GsaProperty3d> { modelProp3d },

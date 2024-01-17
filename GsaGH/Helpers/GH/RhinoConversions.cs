@@ -208,9 +208,14 @@ namespace GsaGH.Helpers.GH {
       mem.ApiMember.MeshSize = new Length(meshSize, unit).Meters;
       mem.ApiMember.MeshMode2d = meshMode;
 
-      var assembly = new ModelAssembly(null, null, null, nodes, elem1ds, null, null, mem1ds,
-        new List<GsaMember2d> { mem }, null, null, null, null, null, null, null, null, null, null,
-        null, null, unit, tolerance, true, null);
+      var geometry = new GsaGeometry {
+        Nodes = nodes,
+        Element1ds = elem1ds,
+        Member1ds = mem1ds,
+        Member2ds = new List<GsaMember2d> { mem }
+      };
+      var assembly = new ModelAssembly(null, null, null, geometry, null, null, null, null, null,
+        null, null, null, null, null, null, unit, tolerance, true, null);
       Model model = assembly.GetModel();
 
       var tempModel = new GsaModel(model);
