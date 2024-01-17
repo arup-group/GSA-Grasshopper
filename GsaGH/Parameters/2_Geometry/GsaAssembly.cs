@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using GsaAPI;
 
 namespace GsaGH.Parameters {
@@ -10,32 +11,72 @@ namespace GsaGH.Parameters {
   public class GsaAssembly {
     public Guid Guid { get; set; } = Guid.NewGuid();
     public int Id { get; set; } = 0;
-    public SpringProperty ApiAssembly { get; internal set; }
+    public Assembly ApiAssembly { get; internal set; }
 
     public GsaAssembly() {
-      //ApiAssembly = new AssemblyByNumberOfPoints();
+      ApiAssembly = new AssemblyByNumberOfPoints("", 0, 0, 0);
     }
 
     public GsaAssembly(GsaAssembly other) {
       Id = other.Id;
-      //ApiAssembly = other.DuplicateApiObject();
+      ApiAssembly = other.DuplicateApiObject();
     }
 
-    //internal GsaAssembly(Assembly assembly) {
-    //  ApiAssembly = assembly;
-    //}
+    internal GsaAssembly(Assembly assembly) {
+      ApiAssembly = assembly;
+    }
 
-    //internal GsaAssembly(KeyValuePair<int, Assembly> assembly) {
-    //  Id = assembly.Key;
-    //  ApiAssembly = assembly.Value;
-    //}
-
-    //public Assembly DuplicateApiObject() {
-
-    //}
+    internal GsaAssembly(KeyValuePair<int, Assembly> assembly) {
+      Id = assembly.Key;
+      ApiAssembly = assembly.Value;
+    }
 
     public override string ToString() {
       return "";
+    }
+
+    internal Assembly DuplicateApiObject() {
+      string name = ApiAssembly.Name;
+      int topology1 = ApiAssembly.Topology1;
+      int topology2 = ApiAssembly.Topology2;
+      int orientationNode = ApiAssembly.OrientationNode;
+
+      Assembly assembly;
+      switch (ApiAssembly) {
+        case AssemblyByExplicitPositions explicitPositions:
+          assembly = new AssemblyByExplicitPositions(name, topology1, topology2, orientationNode, explicitPositions.InternalTopology, explicitPositions.CurveFit) {
+            Positions = explicitPositions.Positions
+          };
+          break;
+
+        case AssemblyByNumberOfPoints numberOfPoints:
+          assembly = new AssemblyByNumberOfPoints(name, topology1, topology2, orientationNode, numberOfPoints.InternalTopology, numberOfPoints.CurveFit) {
+            NumberOfPoints = numberOfPoints.NumberOfPoints
+          };
+          break;
+
+        case AssemblyBySpacingOfPoints spacingOfPoints:
+          assembly = new AssemblyBySpacingOfPoints(name, topology1, topology2, orientationNode, spacingOfPoints.InternalTopology, spacingOfPoints.CurveFit) {
+            Spacing = spacingOfPoints.Spacing
+          };
+          break;
+
+        case AssemblyByStorey byStorey:
+          assembly = new AssemblyByStorey(name, topology1, topology2, orientationNode) {
+            StoreyList = byStorey.StoreyList
+          };
+          break;
+
+        default:
+          return null;
+      }
+
+      assembly.EntityList = ApiAssembly.EntityList;
+      assembly.EntityType = ApiAssembly.EntityType;
+      assembly.ExtentY = ApiAssembly.ExtentY;
+      assembly.ExtentZ = ApiAssembly.ExtentZ;
+
+      return assembly;
     }
   }
 }
