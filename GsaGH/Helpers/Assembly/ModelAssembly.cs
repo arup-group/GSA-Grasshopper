@@ -68,35 +68,49 @@ namespace GsaGH.Helpers.Assembly {
 
     internal ModelAssembly(
       GsaModel model, List<GsaList> lists, List<GsaGridLine> gridLines, GsaGeometry geometry,
-      List<GsaMaterial> mats, List<GsaSection> sections, List<GsaProperty2d> prop2Ds,
-      List<GsaProperty3d> prop3Ds, List<GsaSpringProperty> springProps, List<IGsaLoad> loads,
-      List<GsaGridPlaneSurface> gridPlaneSurfaces, List<GsaLoadCase> loadCases,
-      List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations,
-      List<IGsaDesignTask> designTasks, LengthUnit modelUnit,
+      GsaProperties properties, GsaLoading loading, GsaAnalysis analysis, LengthUnit modelUnit,
       Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner) {
 
       SetupModel(model, modelUnit);
 
-      ConvertProperties(mats, sections, prop2Ds, prop3Ds, springProps);
-      ConvertNodes(geometry.Nodes);
-      ConvertElements(geometry.Element1ds, geometry.Element2ds, geometry.Element3ds);
-      ConvertMembers(geometry.Member1ds, geometry.Member2ds, geometry.Member3ds);
+      if (properties != null) {
+        ConvertProperties(properties.Materials, properties.Sections, properties.Property2ds, properties.Property3ds, properties.SpringProperties);
+      }
+
+      if (geometry != null) {
+        ConvertNodes(geometry.Nodes);
+        ConvertElements(geometry.Element1ds, geometry.Element2ds, geometry.Element3ds);
+        ConvertMembers(geometry.Member1ds, geometry.Member2ds, geometry.Member3ds);
+        ConvertAssemblies(geometry.Assemblies);
+      }
+
       ConvertNodeList(lists);
-      ConvertNodeLoads(loads);
+
+      if (loading != null) {
+        ConvertNodeLoads(loading.Loads);
+      }
+
       AssembleNodesElementsMembersAndLists();
       ElementsFromMembers(createElementsFromMembers, toleranceCoincidentNodes, owner);
-      ConvertAssemblies(geometry.Assemblies);
 
-      ConvertList(lists, loads, designTasks, owner);
-      ConvertGridPlaneSurface(gridPlaneSurfaces, owner);
-      ConvertLoad(loads, owner);
-      ConvertLoadCases(loadCases, owner);
+      if (analysis != null && loading != null) {
+        ConvertList(lists, loading.Loads, analysis.DesignTasks, owner);
+      }
+
+      if (loading != null) {
+        ConvertGridPlaneSurface(loading.GridPlaneSurfaces, owner);
+        ConvertLoad(loading.Loads, owner);
+        ConvertLoadCases(loading.LoadCases, owner);
+      }
 
       AssembleLoadsCasesAxesGridPlaneSurfacesAndLists(owner);
       ConvertAndAssembleGridLines(gridLines);
-      ConvertAndAssembleAnalysisTasks(analysisTasks);
-      ConvertAndAssembleCombinations(combinations);
-      ConvertAndAssembleDesignTasks(designTasks, owner);
+
+      if (analysis != null) {
+        ConvertAndAssembleAnalysisTasks(analysis.AnalysisTasks);
+        ConvertAndAssembleCombinations(analysis.CombinationCases);
+        ConvertAndAssembleDesignTasks(analysis.DesignTasks, owner);
+      }
 
       DeleteExistingResults();
     }

@@ -214,8 +214,8 @@ namespace GsaGH.Helpers.GH {
         Member1ds = mem1ds,
         Member2ds = new List<GsaMember2d> { mem }
       };
-      var assembly = new ModelAssembly(null, null, null, geometry, null, null, null, null, null,
-        null, null, null, null, null, null, unit, tolerance, true, null);
+      var assembly = new ModelAssembly(null, null, null, geometry, null, null, null, unit,
+        tolerance, true, null);
       Model model = assembly.GetModel();
 
       var tempModel = new GsaModel(model);

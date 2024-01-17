@@ -7,13 +7,11 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.GH {
   internal class InputsForModelAssembly {
-    internal static Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>, List<IGsaDesignTask>> GetAnalysis(
-      GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
+    internal static GsaAnalysis GetAnalysis(GH_Component owner, IGH_DataAccess da, int inputid,
+      bool isOptional = false) {
+      var analysis = new GsaAnalysis();
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(inputid, ghTypes)) {
-        var inAnalysisTasks = new List<GsaAnalysisTask>();
-        var inComb = new List<GsaCombinationCase>();
-        var inDesignTasks = new List<IGsaDesignTask>();
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -24,48 +22,32 @@ namespace GsaGH.Helpers.GH {
 
           switch (ghTyp.Value) {
             case GsaAnalysisTaskGoo goo:
-              inAnalysisTasks.Add(goo.Value);
+              analysis.AnalysisTasks.Add(goo.Value);
               break;
 
             case GsaCombinationCaseGoo caseGoo:
-              inComb.Add(caseGoo.Value);
+              analysis.CombinationCases.Add(caseGoo.Value);
               break;
 
             case GsaDesignTaskGoo designTaskGoo:
-              inDesignTasks.Add(designTaskGoo.Value);
+              analysis.DesignTasks.Add(designTaskGoo.Value);
               break;
 
-            default: {
-                string type = ghTyp.Value.GetType().ToString();
-                type = type.Replace("GsaGH.Parameters.Gsa", string.Empty);
-                type = type.Replace("GsaGH.Parameters.", string.Empty);
-                type = type.Replace("Goo", string.Empty);
-                string analysisCase = string.Empty;
-                if (type == "AnalysisCase") {
-                  analysisCase = "\nAnalysisCase should be added through an Analysis Task and " +
-                    "cannot be added directly in a model";
-                }
-                owner.AddRuntimeError("Unable to convert Analysis input parameter of type " + type
-                  + " to Analysis Task, Design Task or Combination Case");
-                break;
+            default:
+              string type = ghTyp.Value.GetType().ToString();
+              type = type.Replace("GsaGH.Parameters.Gsa", string.Empty);
+              type = type.Replace("GsaGH.Parameters.", string.Empty);
+              type = type.Replace("Goo", string.Empty);
+              string analysisCase = string.Empty;
+              if (type == "AnalysisCase") {
+                analysisCase = "\nAnalysisCase should be added through an Analysis Task and " +
+                  "cannot be added directly in a model";
               }
+              owner.AddRuntimeError("Unable to convert Analysis input parameter of type " + type
+                + " to Analysis Task, Design Task or Combination Case");
+              break;
           }
         }
-
-        if (!(inAnalysisTasks.Count > 0)) {
-          inAnalysisTasks = null;
-        }
-
-        if (!(inComb.Count > 0)) {
-          inComb = null;
-        }
-
-        if (!(inDesignTasks.Count > 0)) {
-          inDesignTasks = null;
-        }
-
-        return new Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>, List<IGsaDesignTask>>(
-          inAnalysisTasks, inComb, inDesignTasks);
       }
 
       if (!isOptional) {
@@ -73,8 +55,7 @@ namespace GsaGH.Helpers.GH {
           + " failed to collect data!");
       }
 
-      return new Tuple<List<GsaAnalysisTask>, List<GsaCombinationCase>, List<IGsaDesignTask>>(
-        null, null, null);
+      return analysis;
     }
 
     internal static GsaGeometry GetGeometry(GH_Component owner, IGH_DataAccess da, int inputid,
@@ -134,34 +115,6 @@ namespace GsaGH.Helpers.GH {
               break;
           }
         }
-
-        if (!(geometry.Nodes.Count > 0)) {
-          geometry.Nodes = null;
-        }
-
-        if (!(geometry.Element1ds.Count > 0)) {
-          geometry.Element1ds = null;
-        }
-
-        if (!(geometry.Element2ds.Count > 0)) {
-          geometry.Element2ds = null;
-        }
-
-        if (!(geometry.Element3ds.Count > 0)) {
-          geometry.Element3ds = null;
-        }
-
-        if (!(geometry.Member1ds.Count > 0)) {
-          geometry.Member1ds = null;
-        }
-
-        if (!(geometry.Member2ds.Count > 0)) {
-          geometry.Member2ds = null;
-        }
-
-        if (!(geometry.Member3ds.Count > 0)) {
-          geometry.Member3ds = null;
-        }
       }
 
       if (!isOptional) {
@@ -172,13 +125,11 @@ namespace GsaGH.Helpers.GH {
       return geometry;
     }
 
-    internal static Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>> GetLoading(
-      GH_Component owner, IGH_DataAccess da, int inputid, bool isOptional = false) {
+    internal static GsaLoading GetLoading(GH_Component owner, IGH_DataAccess da, int inputid,
+      bool isOptional = false) {
+      var loads = new GsaLoading();
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(inputid, ghTypes)) {
-        var inLoads = new List<IGsaLoad>();
-        var inGps = new List<GsaGridPlaneSurface>();
-        var inCases = new List<GsaLoadCase>();
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -187,50 +138,34 @@ namespace GsaGH.Helpers.GH {
           }
 
           switch (ghTyp.Value) {
-            case GsaLoadGoo loadGoo: {
-                inLoads.Add(loadGoo.Value);
-                break;
-              }
-            case GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo: {
-                inGps.Add(gridPlaneSurfaceGoo.Value);
-                break;
-              }
-            case GsaLoadCaseGoo loadCaseGoo: {
-                inCases.Add(loadCaseGoo.Value);
-                break;
-              }
-            default: {
-                string type = ghTyp.Value.GetType().ToString();
-                type = type.Replace("GsaGH.Parameters.", string.Empty);
-                type = type.Replace("Goo", string.Empty);
-                owner.AddRuntimeError("Unable to convert Load input parameter of type " + type
-                  + " to Load, LoadCase or GridPlaneSurface");
-                break;
-              }
+            case GsaLoadGoo loadGoo:
+              loads.Loads.Add(loadGoo.Value);
+              break;
+
+            case GsaGridPlaneSurfaceGoo gridPlaneSurfaceGoo:
+              loads.GridPlaneSurfaces.Add(gridPlaneSurfaceGoo.Value);
+              break;
+
+            case GsaLoadCaseGoo loadCaseGoo:
+              loads.LoadCases.Add(loadCaseGoo.Value);
+              break;
+
+            default:
+              string type = ghTyp.Value.GetType().ToString();
+              type = type.Replace("GsaGH.Parameters.", string.Empty);
+              type = type.Replace("Goo", string.Empty);
+              owner.AddRuntimeError("Unable to convert Load input parameter of type " + type
+                + " to Load, LoadCase or GridPlaneSurface");
+              break;
           }
         }
 
-        if (!(inLoads.Count > 0)) {
-          inLoads = null;
-        }
-
-        if (!(inGps.Count > 0)) {
-          inGps = null;
-        }
-
-        if (!(inCases.Count > 0)) {
-          inCases = null;
-        }
-
-        return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>>
-          (inLoads, inGps, inCases);
       } else if (!isOptional) {
         owner.AddRuntimeWarning("Input parameter " + owner.Params.Input[inputid].NickName
           + " failed to collect data!");
       }
 
-      return new Tuple<List<IGsaLoad>, List<GsaGridPlaneSurface>, List<GsaLoadCase>>
-        (null, null, null);
+      return loads;
     }
 
     internal static (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) GetModelsAndLists(
@@ -270,18 +205,6 @@ namespace GsaGH.Helpers.GH {
           }
         }
 
-        if (!(inModels.Count > 0)) {
-          inModels = null;
-        }
-
-        if (!(inLists.Count > 0)) {
-          inLists = null;
-        }
-
-        if (!(inGridLines.Count > 0)) {
-          inGridLines = null;
-        }
-
         return (inModels, inLists, inGridLines);
       }
 
@@ -293,16 +216,12 @@ namespace GsaGH.Helpers.GH {
       return (null, null, null);
     }
 
-    internal static Tuple<List<GsaMaterial>, List<GsaSection>, List<GsaProperty2d>,
-      List<GsaProperty3d>, List<GsaSpringProperty>> GetProperties(GH_Component owner,
-      IGH_DataAccess da, int inputid, bool isOptional = false) {
+    internal static GsaProperties GetProperties(GH_Component owner, IGH_DataAccess da, int inputid,
+      bool isOptional = false) {
+      var properties = new GsaProperties();
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(inputid, ghTypes)) {
-        var inMat = new List<GsaMaterial>();
-        var inSect = new List<GsaSection>();
-        var inProp2d = new List<GsaProperty2d>();
-        var inProp3d = new List<GsaProperty3d>();
-        var inSpringProps = new List<GsaSpringProperty>();
+
         for (int i = 0; i < ghTypes.Count; i++) {
           GH_ObjectWrapper ghTyp = ghTypes[i];
           if (ghTyp == null) {
@@ -313,23 +232,23 @@ namespace GsaGH.Helpers.GH {
 
           switch (ghTyp.Value) {
             case GsaMaterialGoo materialGoo:
-              inMat.Add(materialGoo.Value);
+              properties.Materials.Add(materialGoo.Value);
               break;
 
             case GsaSectionGoo sectionGoo:
-              inSect.Add(sectionGoo.Value);
+              properties.Sections.Add(sectionGoo.Value);
               break;
 
             case GsaProperty2dGoo prop2dGoo:
-              inProp2d.Add(prop2dGoo.Value);
+              properties.Property2ds.Add(prop2dGoo.Value);
               break;
 
             case GsaProperty3dGoo prop3dGoo:
-              inProp3d.Add(prop3dGoo.Value);
+              properties.Property3ds.Add(prop3dGoo.Value);
               break;
 
             case GsaSpringPropertyGoo springPropGoo:
-              inSpringProps.Add(springPropGoo.Value);
+              properties.SpringProperties.Add(springPropGoo.Value);
               break;
 
             default:
@@ -341,25 +260,6 @@ namespace GsaGH.Helpers.GH {
               break;
           }
         }
-
-        if (inSect.IsNullOrEmpty()) {
-          inSect = null;
-        }
-
-        if (inProp2d.IsNullOrEmpty()) {
-          inProp2d = null;
-        }
-
-        if (inProp3d.IsNullOrEmpty()) {
-          inProp3d = null;
-        }
-
-        if (inSpringProps.IsNullOrEmpty()) {
-          inSpringProps = null;
-        }
-
-        return new Tuple<List<GsaMaterial>, List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>,
-          List<GsaSpringProperty>>(inMat, inSect, inProp2d, inProp3d, inSpringProps);
       }
 
       if (!isOptional) {
@@ -367,8 +267,7 @@ namespace GsaGH.Helpers.GH {
           + " failed to collect data!");
       }
 
-      return new Tuple<List<GsaMaterial>, List<GsaSection>, List<GsaProperty2d>, List<GsaProperty3d>,
-        List<GsaSpringProperty>>(null, null, null, null, null);
+      return properties;
     }
   }
 }

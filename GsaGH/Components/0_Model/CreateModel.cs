@@ -145,18 +145,14 @@ namespace GsaGH.Components {
       // Collect inputs
       (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) =
         InputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
-      (List<GsaMaterial> materials, List<GsaSection> sections, List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds,
-        List<GsaSpringProperty> springProps) = InputsForModelAssembly.GetProperties(this, da, 1, true);
+      GsaProperties properties = InputsForModelAssembly.GetProperties(this, da, 1, true);
       GsaGeometry geometry = InputsForModelAssembly.GetGeometry(this, da, 2, true);
-      (List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces, List<GsaLoadCase> loadCases)
-        = InputsForModelAssembly.GetLoading(this, da, 3, true);
-      (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases, List<IGsaDesignTask> designTasks)
-        = InputsForModelAssembly.GetAnalysis(this, da, 4, true);
+      GsaLoading loading = InputsForModelAssembly.GetLoading(this, da, 3, true);
+      GsaAnalysis analysis = InputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
-      if (models is null & lists is null & gridLines is null & geometry.IsNull() & materials is null
-        & sections is null & prop2Ds is null & prop3Ds is null & springProps is null & loads is null
-        & loadCases is null & gridPlaneSurfaces is null & analysisTasks is null 
-        & combinationCases is null & designTasks is null) {
+      if (models.IsNullOrEmpty() & lists.IsNullOrEmpty() & gridLines.IsNullOrEmpty()
+        & geometry.IsNullOrEmpty() & properties.IsNullOrEmpty()
+        & loading.IsNullOrEmpty() & analysis.IsNullOrEmpty()) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
@@ -171,9 +167,8 @@ namespace GsaGH.Components {
         }
       }
       // Assemble model
-      var assembly = new ModelAssembly(model, lists, gridLines, geometry, materials, sections,
-        prop2Ds, prop3Ds, springProps, loads, gridPlaneSurfaces, loadCases, analysisTasks,
-        combinationCases, designTasks, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
+      var assembly = new ModelAssembly(model, lists, gridLines, geometry, properties, loading,
+        analysis, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
       model.Model = assembly.GetModel();
 
       ToleranceMenu.UpdateMessage(this, _lengthUnit);

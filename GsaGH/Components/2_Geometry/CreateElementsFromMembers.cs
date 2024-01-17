@@ -163,8 +163,8 @@ namespace GsaGH.Components {
         Member2ds = member2ds,
         Member3ds = member3ds
       };
-      var assembly = new ModelAssembly(null, null, null, geometry, null, null, null, null, null,
-        null, null, null, null, null, null, _lengthUnit, ToleranceMenu.Tolerance, true, this);
+      var assembly = new ModelAssembly(null, null, null, geometry, null, null, null, _lengthUnit,
+        ToleranceMenu.Tolerance, true, this);
       Model gsa = assembly.GetModel();
 
       var outModel = new GsaModel {

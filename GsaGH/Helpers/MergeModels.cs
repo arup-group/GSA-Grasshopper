@@ -179,9 +179,23 @@ namespace GsaGH.Helpers {
         Member2ds = mem2ds,
         Member3ds = mem3ds
       };
-      var assembly = new ModelAssembly(mainModel, lists, gridLines, geometry, null, sections,
-        prop2Ds, prop3Ds, springProps, loads, gps, gsaLoadCases, null, null, designTasks, 
-        mainModel.ModelUnit, tolerance, false, owner);
+      var properties = new GsaProperties {
+        Property2ds = prop2Ds,
+        Property3ds = prop3Ds,
+        Sections = sections,
+        SpringProperties = springProps
+      };
+      var load = new GsaLoading {
+        Loads = loads,
+        GridPlaneSurfaces = gps,
+        LoadCases = gsaLoadCases
+      };
+      var analysis = new GsaAnalysis {
+        DesignTasks = designTasks
+      };
+
+      var assembly = new ModelAssembly(mainModel, lists, gridLines, geometry, properties, load,
+        analysis, mainModel.ModelUnit, tolerance, false, owner);
       mainModel.Model = assembly.GetModel();
 
       return mainModel;
