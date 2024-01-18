@@ -35,17 +35,29 @@ namespace IntegrationTests.Components {
       var perm3 = (GH_Integer)permutations.VolatileData.get_Branch(new GH_Path(1))[0];
       Assert.Equal(1, perm3.Value);
 
-      IGH_Param myy = Helper.FindParameter(doc, "Myy");
-      var myy1 = (GH_Number)myy.VolatileData.get_Branch(0)[0];
-      var myy2 = (GH_Number)myy.VolatileData.get_Branch(0)[1];
-      var myy3 = (GH_Number)myy.VolatileData.get_Branch(0)[2];
-      var myy4 = (GH_Number)myy.VolatileData.get_Branch(0)[3];
-      var myy5 = (GH_Number)myy.VolatileData.get_Branch(0)[4];
-      Assert.Equal(-0.001112, myy1.Value, 6);
-      Assert.Equal(-118828.126112, myy2.Value, 6);
-      Assert.Equal(-188437.501112, myy3.Value, 6);
-      Assert.Equal(-118828.126112, myy4.Value, 6);
-      Assert.Equal(-0.001112, myy5.Value, 6);
+      IGH_Param myy1 = Helper.FindParameter(doc, "Myy1");
+      var myy11 = (GH_Number)myy1.VolatileData.get_Branch(0)[0];
+      var myy12 = (GH_Number)myy1.VolatileData.get_Branch(0)[1];
+      var myy13 = (GH_Number)myy1.VolatileData.get_Branch(0)[2];
+      var myy14 = (GH_Number)myy1.VolatileData.get_Branch(0)[3];
+      var myy15 = (GH_Number)myy1.VolatileData.get_Branch(0)[4];
+      Assert.Equal(-0.001112, myy11.Value, 6);
+      Assert.Equal(-118828.126112, myy12.Value, 6);
+      Assert.Equal(-188437.501112, myy13.Value, 6);
+      Assert.Equal(-118828.126112, myy14.Value, 6);
+      Assert.Equal(-0.001112, myy15.Value, 6);
+
+      IGH_Param myy2 = Helper.FindParameter(doc, "Myy2");
+      var myy21 = (GH_Number)myy1.VolatileData.get_Branch(0)[0];
+      var myy22 = (GH_Number)myy1.VolatileData.get_Branch(0)[1];
+      var myy23 = (GH_Number)myy1.VolatileData.get_Branch(0)[2];
+      var myy24 = (GH_Number)myy1.VolatileData.get_Branch(0)[3];
+      var myy25 = (GH_Number)myy1.VolatileData.get_Branch(0)[4];
+      Assert.Equal(-0.001112, myy21.Value, 6);
+      Assert.Equal(-118828.126112, myy22.Value, 6);
+      Assert.Equal(-188437.501112, myy23.Value, 6);
+      Assert.Equal(-118828.126112, myy24.Value, 6);
+      Assert.Equal(-0.001112, myy25.Value, 6);
     }
 
     private static GH_Document OpenDocument() {
