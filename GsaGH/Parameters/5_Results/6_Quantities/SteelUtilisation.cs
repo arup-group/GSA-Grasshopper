@@ -87,12 +87,5 @@ namespace GsaGH.Parameters.Results {
       }
       return null;
     }
-
-    public Ratio? OverallToUnit(RatioUnit unit) {
-      if (Overall != null) {
-        return ((Ratio)Overall).ToUnit(unit);
-      }
-      return null;
-    }
   }
 }

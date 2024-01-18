@@ -19,6 +19,5 @@ namespace GsaGH.Parameters.Results {
     Ratio? FlexuralBuckling { get; }
 
     double? OverallAs(RatioUnit unit);
-    Ratio? OverallToUnit(RatioUnit unit);
   }
 }
