@@ -131,6 +131,10 @@ namespace GsaGH.Helpers.Assembly {
       _model.SetElements(_elements.ReadOnlyDictionary);
       _model.SetMembers(_members.ReadOnlyDictionary);
 
+      foreach (KeyValuePair<int, GsaAPI.Assembly> assembly in _assemblies.ReadOnlyDictionary) {
+        _model.SetAssembly(assembly.Key, assembly.Value);
+      }
+
       // Set API Sections and Materials in model
       _model.SetSections(_sections.ReadOnlyDictionary);
       _model.SetSectionModifiers(_secionModifiers.ReadOnlyDictionary);
@@ -221,6 +225,7 @@ namespace GsaGH.Helpers.Assembly {
         && PropertiesCount == 0
         && _elements.Count == 0
         && _members.Count == 0
+        && _assemblies.Count == 0
         && _model.ConcreteDesignCode() == string.Empty
         && _model.SteelDesignCode() == string.Empty) {
         _isSeedModel = false;
@@ -594,6 +599,7 @@ namespace GsaGH.Helpers.Assembly {
       _axes = new GsaIntDictionary<Axis>(model.ApiAxis);
       _elements = new GsaGuidIntListDictionary<Element>(_model.Elements());
       _members = new GsaGuidDictionary<Member>(_model.Members());
+      _assemblies = new GsaGuidDictionary<GsaAPI.Assembly>(_model.Assemblies());
       _lists = new GsaGuidDictionary<EntityList>(_model.Lists());
       _gridLines = new GsaIntDictionary<GridLine>(_model.GridLines());
 
