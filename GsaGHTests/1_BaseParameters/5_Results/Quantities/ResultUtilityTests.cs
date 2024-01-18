@@ -32,9 +32,11 @@ namespace GsaGHTests.Parameters.Results {
     public void RatioEnvelopeTest(double value1, double value2, double value3, EnvelopeMethod method) {
       // Assemble
       IList<Ratio?> subset = new List<Ratio?>() {
+        null,
         new Ratio(value1, RatioUnit.DecimalFraction),
         new Ratio(value2, RatioUnit.DecimalFraction),
-        new Ratio(value3, RatioUnit.DecimalFraction)
+        new Ratio(value3, RatioUnit.DecimalFraction),
+        null
       };
 
       // Act

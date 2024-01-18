@@ -127,6 +127,9 @@ namespace GsaGH.Parameters.Results {
       switch (envelopeType) {
         case EnvelopeMethod.Maximum:
           for (int i = 1; i < subset.Count(); i++) {
+            if(subset.ElementAt(i) == null) {
+              continue;
+            }
             if (((Ratio)subset.ElementAt(i)).As(unit) > val.As(unit)) {
               val = (Ratio)subset.ElementAt(i);
             }
@@ -135,6 +138,9 @@ namespace GsaGH.Parameters.Results {
 
         case EnvelopeMethod.Minimum:
           for (int i = 1; i < subset.Count(); i++) {
+            if (subset.ElementAt(i) == null) {
+              continue;
+            }
             if (((Ratio)subset.ElementAt(i)).As(unit) < val.As(unit)) {
               val = (Ratio)subset.ElementAt(i);
             }
@@ -145,6 +151,9 @@ namespace GsaGH.Parameters.Results {
         case EnvelopeMethod.Absolute:
           val = val.Abs();
           for (int i = 1; i < subset.Count(); i++) {
+            if (subset.ElementAt(i) == null) {
+              continue;
+            }
             if (Math.Abs(((Ratio)subset.ElementAt(i)).As(unit)) > val.As(unit)) {
               val = ((Ratio)subset.ElementAt(i)).Abs();
             }
@@ -154,6 +163,9 @@ namespace GsaGH.Parameters.Results {
 
         case EnvelopeMethod.SignedAbsolute:
           for (int i = 1; i < subset.Count(); i++) {
+            if (subset.ElementAt(i) == null) {
+              continue;
+            }
             if (Math.Abs(((Ratio)subset.ElementAt(i)).As(unit)) > Math.Abs(val.As(unit))) {
               val = (Ratio)subset.ElementAt(i);
             }
