@@ -301,8 +301,8 @@ namespace GsaGH.Components {
       da.SetDataList(4, mem.InclusionLines);
       da.SetData(5, new GsaProperty2dGoo(mem.Prop2d));
       da.SetData(6, mem.ApiMember.Group);
-      da.SetData(7, Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type).Key);
-      da.SetData(8, Mappings.analysisOrderMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type2D).Key);
+      da.SetData(7, Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type).Key);
+      da.SetData(8, Mappings.AnalysisOrderMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type2D).Key);
       da.SetData(9, new GsaOffsetGoo(mem.Offset));
       da.SetData(10, mem.ApiMember.AutomaticOffset.Internal);
       da.SetData(11, mem.ApiMember.MeshSize);

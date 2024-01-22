@@ -192,7 +192,7 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string type = Mappings.elementTypeMapping.FirstOrDefault(
+      string type = Mappings.ElementTypeMapping.FirstOrDefault(
         x => x.Value == ApiElements.First().Type).Key;
       string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
       return string.Join(" ", type, info).TrimSpaces();
