@@ -48,7 +48,7 @@ namespace GsaGH.Components {
     }
 
     public override BoundingBox ClippingBox => _boundingBox;
-    public override Guid ComponentGuid => new Guid("6c4cb686-a6d1-4a79-b01b-fadc5d6da520");
+    public override Guid ComponentGuid => new Guid("7a5b627e-067e-4f77-9bb3-d528e686238c");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     public List<List<string>> _dropDownItems;

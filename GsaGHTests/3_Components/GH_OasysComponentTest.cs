@@ -159,7 +159,7 @@ namespace GsaGHTests.Components {
     public void GH_OasysTaskCapableComponent_OBSOLETE() {
       var comp = new GetModelGeometry_OBSOLETE();
       Assert.NotNull(comp.Icon_24x24);
-      Assert.NotEqual(GH_Exposure.hidden, comp.Exposure);
+      Assert.Equal(GH_Exposure.hidden, comp.Exposure);
       Assert.NotEqual(new Guid(), comp.ComponentGuid);
       Assert.Equal(PluginInfo.Instance, comp.PluginInfo);
     }
