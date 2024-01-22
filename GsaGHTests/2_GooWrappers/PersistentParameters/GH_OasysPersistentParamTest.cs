@@ -34,6 +34,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaMember3dParameter))]
     [InlineData(typeof(GsaNodeParameter))]
     [InlineData(typeof(GsaEffectiveLengthOptionsParameter))]
+    [InlineData(typeof(GsaAssemblyParameter))]
     // 3_Loads
     [InlineData(typeof(GsaLoadParameter))]
     [InlineData(typeof(GsaLoadCaseParameter))]

@@ -71,7 +71,5 @@ namespace GsaGH.Components {
       da.SetDataList(2, combinationCaseGoos);
       da.SetDataList(3, designTaskGoos);
     }
-
-
   }
 }
