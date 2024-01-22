@@ -64,6 +64,7 @@ namespace GsaGH.Components {
       Footfall,
       ProjectedStress,
       DerivedStress,
+      SteelDesign
     }
 
     public override Guid ComponentGuid => new Guid("ce7a8f84-4c72-4fd4-a207-485e8bf7ac38");
@@ -98,6 +99,9 @@ namespace GsaGH.Components {
       "Intermediate Pts",
       "Average",
     });
+    private readonly List<string> _steelDesign = new List<string>(new[] {
+      "Utilisation"
+    });
     private readonly List<string> _projStress = new List<string>(new[] {
       "Axial, A",
       "Shear, Sy",
@@ -122,6 +126,7 @@ namespace GsaGH.Components {
       "Derived Stress",
       "Strain Energy",
       "Footfall",
+      "Steel Design"
     });
     private string _case = string.Empty;
     private double _defScale = 250;
@@ -303,6 +308,18 @@ namespace GsaGH.Components {
 
               break;
 
+            case 6:
+              if (_dropDownItems[1] != _steelDesign) {
+                _dropDownItems[1] = _steelDesign;
+
+                _selectedItems[0] = _dropDownItems[0][6];
+                _selectedItems[1] = _dropDownItems[1][0];
+
+                SteelDesignModeClicked();
+              }
+
+              break;
+
           }
 
           break;
@@ -388,6 +405,11 @@ namespace GsaGH.Components {
 
         case FoldMode.Footfall:
           Params.Output[2].Name = "Legend Values [-]";
+          break;
+
+        case FoldMode.SteelDesign:
+          Params.Output[2].Name
+            = "Legend Values [" + Ratio.GetAbbreviation(RatioUnit.DecimalFraction) + "]";
           break;
       }
     }
@@ -500,6 +522,10 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Footfall:
+          Message = string.Empty;
+          break;
+
+        case FoldMode.SteelDesign:
           Message = string.Empty;
           break;
       }
@@ -906,6 +932,33 @@ namespace GsaGH.Components {
           dmax = nodeFootfall.GetExtrema(nodeFootfall.Max.MaximumResponseFactor).MaximumResponseFactor;
           dmin = nodeFootfall.GetExtrema(nodeFootfall.Min.MaximumResponseFactor).MaximumResponseFactor;
           break;
+
+        case FoldMode.SteelDesign:
+          IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> utilisation =
+            result.SteelUtilisations.ResultSubset(elementIds);
+
+          _resType = "Utilisation";
+          IEntity0dResultCache<ISteelUtilisation, SteelUtilisationExtremaKeys> utilisationsCache
+          = result.SteelUtilisations;
+
+          if (utilisation.GetExtrema(utilisation.Max.Overall).OverallAs(RatioUnit.DecimalFraction) != null) {
+            dmax = (double)utilisation.GetExtrema(utilisation.Max.Overall).OverallAs(RatioUnit.DecimalFraction);
+          }
+          if (utilisation.GetExtrema(utilisation.Min.Overall).OverallAs(RatioUnit.DecimalFraction) != null) {
+            dmin = (double)utilisation.GetExtrema(utilisation.Min.Overall).OverallAs(RatioUnit.DecimalFraction);
+          }
+          positionsCount = 2;
+
+          values = new ConcurrentDictionary<int, IList<IQuantity>>();
+
+          Parallel.ForEach(elems, element => {
+            Ratio overall = utilisation.Subset[element.Value.ParentMember.Member].Select(x => x.Overall).Envelope(_envelopeType);
+            values.TryAdd(element.Key, new List<IQuantity>() {
+                  overall,
+                  overall
+            });
+          });
+          break;
       }
 
       if (values.IsNullOrEmpty()) {
@@ -1087,6 +1140,12 @@ namespace GsaGH.Components {
             _legendValues.Add(responseFactor.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(responseFactor));
             break;
+
+          case FoldMode.SteelDesign:
+            var utilisation = new Ratio(t, RatioUnit.DecimalFraction);
+            _legendValues.Add(utilisation.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(utilisation));
+            break;
         }
 
         if (Math.Abs(t) > 1) {
@@ -1178,6 +1237,14 @@ namespace GsaGH.Components {
     private void FootfallModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Footfall;
+      _slider = false;
+      _defScale = 0;
+      ReDrawComponent();
+    }
+
+    private void SteelDesignModeClicked() {
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.SteelDesign;
       _slider = false;
       _defScale = 0;
       ReDrawComponent();
