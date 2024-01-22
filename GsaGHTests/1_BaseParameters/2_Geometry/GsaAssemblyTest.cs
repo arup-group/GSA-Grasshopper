@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
@@ -10,8 +11,8 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void DuplicateByExplicitPositionsTest() {
       var original = new GsaAssembly {
-        ApiAssembly = new AssemblyByExplicitPositions("Explicit positions", 1, 2, 3, new List<int>() { 4, 5 }, CurveFit.LagrangeInterpolation) { 
-          Positions = "6, 7"
+        ApiAssembly = new AssemblyByExplicitPositions("Explicit positions", 1, 2, 3, new List<int>() { 4, 5 }, CurveFit.LagrangeInterpolation) {
+          Positions = new SortedSet<double>() { 6, 7 }
         }
       };
 
@@ -30,7 +31,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(4, ((AssemblyByExplicitPositions)original.ApiAssembly).InternalTopology[0]);
       Assert.Equal(5, ((AssemblyByExplicitPositions)original.ApiAssembly).InternalTopology[1]);
       Assert.Equal(CurveFit.LagrangeInterpolation, ((AssemblyByExplicitPositions)original.ApiAssembly).CurveFit);
-      Assert.Equal("6, 7", ((AssemblyByExplicitPositions)original.ApiAssembly).Positions);
+      Assert.Equal(2, ((AssemblyByExplicitPositions)original.ApiAssembly).Positions.Count);
+      Assert.Equal(6, ((AssemblyByExplicitPositions)original.ApiAssembly).Positions.First());
+      Assert.Equal(7, ((AssemblyByExplicitPositions)original.ApiAssembly).Positions.Last());
     }
 
     [Fact]
