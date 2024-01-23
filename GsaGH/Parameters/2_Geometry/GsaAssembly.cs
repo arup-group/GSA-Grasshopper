@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using GsaAPI;
+using GsaGH.Helpers.GsaApi;
+using GsaGH.Helpers;
+using System.Linq;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -32,7 +35,11 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      return "";
+      string id = Id > 0 ? $"ID:{Id}" : string.Empty;
+      string type = ApiAssembly.EntityType.ToString();
+      string entityList = $"Entity List:{ApiAssembly.EntityList}";
+
+      return string.Join(" ", id, type, entityList).TrimSpaces();
     }
 
     internal Assembly DuplicateApiObject() {
