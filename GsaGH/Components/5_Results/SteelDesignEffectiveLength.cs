@@ -1,29 +1,20 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Units;
+using OasysGH.Units.Helpers;
+using OasysUnits;
+using OasysUnits.Units;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using GsaGH.Parameters.Results;
-using Grasshopper.Kernel.Types;
-using System.Collections.ObjectModel;
-using Grasshopper;
-using Grasshopper.Documentation;
-using Grasshopper.Kernel.Data;
-using GsaGH.Components.Helpers;
-using OasysGH.Parameters;
-using OasysGH.Units;
-using OasysUnits.Units;
-using GsaAPI;
-using OasysGH.Units.Helpers;
-using OasysUnits;
 using LengthUnit = OasysUnits.Units.LengthUnit;
-using SubSpan = GsaGH.Parameters.Results.SubSpan;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -35,7 +26,7 @@ namespace GsaGH.Components {
       Minor,
       LT,
     }
-    public override Guid ComponentGuid => new Guid("7d09d701-edf1-4346-a50f-9e11e7855893");
+    public override Guid ComponentGuid => new Guid("ea6387f0-8314-4a7f-8ace-a59b480e5eb7");
     public override GH_Exposure Exposure => GH_Exposure.septenary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.ContourNodeResults;
@@ -74,6 +65,7 @@ namespace GsaGH.Components {
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Type",
+        "Unit",
       });
 
       _dropDownItems = new List<List<string>>();
@@ -140,11 +132,6 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       //GsaResult result = null;
-      ////string elementlist = "All";
-      ////var ghDivisions = new GH_Integer();
-      ////da.GetData(2, ref ghDivisions);
-      ////GH_Convert.ToInt32(ghDivisions, out int positionsCount, GH_Conversion.Both);
-      ////positionsCount = Math.Abs(positionsCount) + 2; // taken absolute value and add 2 end points.
 
       //var ghTypes = new List<GH_ObjectWrapper>();
       //da.GetDataList(0, ghTypes);
@@ -162,7 +149,7 @@ namespace GsaGH.Components {
       //var startPosition = new DataTree<GH_UnitNumber>();
       //var endPosition = new DataTree<GH_UnitNumber>();
       //var spanLength = new DataTree<GH_UnitNumber>();
-      //var effectiveLength= new DataTree<GH_UnitNumber>();
+      //var effectiveLength = new DataTree<GH_UnitNumber>();
       //var effectiveSpanRatio = new DataTree<GH_UnitNumber>();
       //var effectiveSpanRatio2 = new DataTree<GH_UnitNumber>();
       //var slendernessRatio = new DataTree<GH_UnitNumber>();
@@ -193,14 +180,14 @@ namespace GsaGH.Components {
       //        spanList = kvp.Value[p - 1].LateralTorsionalSubSpans;
       //        break;
       //    }
-          
+
 
       //    length.Add(new GH_UnitNumber(kvp.Value[p - 1].MemberLength), path);
       //    //.AddRange(new List<GH_Integer>().AddRange(spanList.Select(x=>x)), path);
       //    foreach (SubSpan items in spanList) {
       //      //IEnumerable<GH_String> elementsIds = items.ElementIds.Cast<GH_String>();
       //      var str = new GH_String(items.ElementIds.ToString());
-      //      spanElements.Add(str,path);
+      //      spanElements.Add(str, path);
       //    }
       //    //IEnumerable<string> a = spanList.Select(x => x.ElementIds.ToString());
       //    //spanElements.AddRange(new GH_String(a), path);
@@ -210,8 +197,8 @@ namespace GsaGH.Components {
       ////  PostHog.Result(result.CaseType, 1, "Displacement");
       ////}
 
-      //da.SetDataTree(0, length);
-      //da.SetDataTree(1, spanElements);
+      ////da.SetDataTree(0, length);
+      ////da.SetDataTree(1, spanElements);
       ////da.SetDataTree(2, outTorsional);
       ////da.SetDataTree(3, outVonMises);
     }
@@ -219,6 +206,8 @@ namespace GsaGH.Components {
     protected override void UpdateUIFromSelectedItems() {
       SteelDesignTypes mode = GetModeBy(_selectedItems[0]);
       UpdateParameters(mode);
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
+
       base.UpdateUIFromSelectedItems();
     }
 
