@@ -23,7 +23,16 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaListGoo PreferredCast(object data) {
-       if (data is GsaElement1dGoo element1d) {
+      if (data is GsaNodeGoo node) {
+        var list = new GsaList() {
+          EntityType = EntityType.Node,
+          Definition = node.Value.Id.ToString(),
+        };
+
+        return new GsaListGoo(list);
+      }
+      
+      if (data is GsaElement1dGoo element1d) {
         var list = new GsaList() {
           EntityType = EntityType.Element,
           Definition = element1d.Value.Id.ToString(),
