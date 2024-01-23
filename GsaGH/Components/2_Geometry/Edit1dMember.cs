@@ -347,9 +347,9 @@ namespace GsaGH.Components {
       }
       da.SetData(4, mem.ApiMember.Group);
       da.SetData(5,
-        Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type).Key);
+        Mappings._memberTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type).Key);
       da.SetData(6,
-        Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type1D).Key);
+        Mappings._elementTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type1D).Key);
       da.SetData(7, new GsaOffsetGoo(mem.Offset));
       da.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
       da.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));

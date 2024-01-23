@@ -54,7 +54,7 @@ namespace GsaGH.Parameters {
       }
 
       string name = ApiProperty.Name;
-      string type = Mappings.SpringPropertyTypeMapping.FirstOrDefault(x => x.Value == ApiProperty.GetType()).Key;
+      string type = Mappings._springPropertyTypeMapping.FirstOrDefault(x => x.Value == ApiProperty.GetType()).Key;
       string values = SpringValuesToString();
       return string.Join(" ", ps, type, name, values).TrimSpaces();
     }

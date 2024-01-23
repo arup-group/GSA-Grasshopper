@@ -246,7 +246,7 @@ namespace GsaGH.Components {
       }
       da.SetData(4, elem.ApiElement.Group);
       da.SetData(5,
-        Mappings.ElementTypeMapping.FirstOrDefault(x => x.Value == elem.ApiElement.Type).Key);
+        Mappings._elementTypeMapping.FirstOrDefault(x => x.Value == elem.ApiElement.Type).Key);
       da.SetData(6, new GsaOffsetGoo(elem.Offset));
       da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
       da.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));

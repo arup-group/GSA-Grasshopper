@@ -122,7 +122,7 @@ namespace GsaGH.Parameters {
         return (Id > 0) ? $"{pa} (referenced)" : string.Empty; ;
       }
 
-      string type = Mappings.Prop2dTypeMapping.FirstOrDefault(x => x.Value == ApiProp2d.Type).Key;
+      string type = Mappings._prop2dTypeMapping.FirstOrDefault(x => x.Value == ApiProp2d.Type).Key;
       string desc = ApiProp2d.Description.Replace("(", string.Empty).Replace(")", string.Empty);
       if (ApiProp2d.Type != Property2D_Type.LOAD) {
         string mat = Material != null ? MaterialType

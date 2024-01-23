@@ -118,7 +118,7 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string id = Id > 0 ? $"ID:{Id}" : string.Empty;
-      string type = Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
+      string type = Mappings._memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
       return string.Join(" ", id, type).TrimSpaces();
     }
 

@@ -117,7 +117,6 @@ namespace GsaGH.Components {
       string stiffnessAbr = ForcePerLength.GetAbbreviation(_stiffnessUnit);
 
       Params.Output[0].Name = "Name";
-
     }
 
     public override bool Write(GH_IWriter writer) {

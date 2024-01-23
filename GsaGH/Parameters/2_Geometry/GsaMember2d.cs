@@ -244,7 +244,7 @@ namespace GsaGH.Parameters {
       }
 
       string id = Id > 0 ? $"ID:{Id}" : string.Empty;
-      string type = Mappings.MemberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
+      string type = Mappings._memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
       return string.Join(" ", id, type, incl).TrimSpaces();
     }
 

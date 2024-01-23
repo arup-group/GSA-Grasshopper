@@ -317,7 +317,7 @@ namespace GsaGH.Components {
       } else {
         da.SetData(4, ax);
       }
-      da.SetData(5, Mappings.Prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.ApiProp2d.Type).Key);
+      da.SetData(5, Mappings._prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.ApiProp2d.Type).Key);
       da.SetData(6, new GsaMaterialGoo(prop.Material));
       da.SetData(7,
         prop.ApiProp2d.Description == string.Empty ? new GH_UnitNumber(Length.Zero) :

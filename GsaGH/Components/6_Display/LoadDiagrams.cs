@@ -368,15 +368,15 @@ namespace GsaGH.Components {
     private List<DiagramType> GetSelectedDiagramTypes() {
       var types = new List<DiagramType>();
       if (_selectedItems[1] == "All") {
-        types.AddRange(Mappings.DiagramTypeMappingLoads.Select(x => x.GsaApiEnum).ToList());
+        types.AddRange(Mappings._diagramTypeMappingLoads.Select(x => x.GsaApiEnum).ToList());
       } else {
         if (_selectedItems[2] == "All") {
-          types.AddRange(Mappings.DiagramTypeMappingLoads.Where(
+          types.AddRange(Mappings._diagramTypeMappingLoads.Where(
             item => item.Description.StartsWith(
               _selectedItems[1])).Select(item => item.GsaApiEnum).ToList());
         } else {
           string type = $"{_selectedItems[1]} {_selectedItems[2]}";
-          types.Add(Mappings.DiagramTypeMappingLoads.Where(
+          types.Add(Mappings._diagramTypeMappingLoads.Where(
             item => item.Description.Contains(type))
             .Select(item => item.GsaApiEnum).FirstOrDefault());
         }
@@ -393,7 +393,7 @@ namespace GsaGH.Components {
     }
 
     private void PopulateTypeNames(ref List<string> list, string typeIdentifier) {
-      list = Mappings.DiagramTypeMappingLoads
+      list = Mappings._diagramTypeMappingLoads
        .Where(item => item.Description.Contains(typeIdentifier))
        .Select(item => item.Description).ToList();
       list = list.Select(x => x.Replace(typeIdentifier + " ", string.Empty)).ToList();
