@@ -36,7 +36,7 @@ namespace GsaGH.Helpers.Assembly {
               + Environment.NewLine + "Element list has not been set");
           }
           objectElemList += " " + GetElementOrMemberList(load.ReferenceList, owner);
-          load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
+          load.ApiLoad.EntityType = GsaList.GetApiEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += " " + GetLoadReferenceDefinition(load);
         }
@@ -71,7 +71,7 @@ namespace GsaGH.Helpers.Assembly {
               + Environment.NewLine + "Element list has not been set");
           }
           objectElemList += " " + GetElementOrMemberList(load.ReferenceList, owner);
-          load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
+          load.ApiLoad.EntityType = GsaList.GetApiEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += " " + GetLoadReferenceDefinition(load);
         }
@@ -106,7 +106,7 @@ namespace GsaGH.Helpers.Assembly {
               + Environment.NewLine + "Element list has not been set");
           }
           objectElemList += " " + GetElementOrMemberList(load.ReferenceList, owner);
-          load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
+          load.ApiLoad.EntityType = GsaList.GetApiEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += " " + GetLoadReferenceDefinition(load);
         }
@@ -140,7 +140,7 @@ namespace GsaGH.Helpers.Assembly {
               + Environment.NewLine + "Element list has not been set");
           }
           objectElemList += " " + GetElementOrMemberList(load.ReferenceList, owner);
-          load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
+          load.ApiLoad.EntityType = GsaList.GetApiEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += " " + GetLoadReferenceDefinition(load);
         }
@@ -174,7 +174,7 @@ namespace GsaGH.Helpers.Assembly {
               + Environment.NewLine + "Element list has not been set");
           }
           objectElemList += " " + GetElementOrMemberList(load.ReferenceList, owner);
-          load.ApiLoad.EntityType = GsaList.GetAPIEntityType(load.ReferenceList.EntityType);
+          load.ApiLoad.EntityType = GsaList.GetApiEntityType(load.ReferenceList.EntityType);
         } else {
           objectElemList += " " + GetLoadReferenceDefinition(load);
           objectElemList = objectElemList.Trim();
