@@ -209,7 +209,6 @@ namespace GsaGH.Components {
       }
 
       PostHog.Result(result.CaseType, 1, "Displacement");
-      
 
       da.SetDataTree(0, length);
       da.SetDataTree(1, spans);
@@ -249,7 +248,7 @@ namespace GsaGH.Components {
     }
 
     private void RegisterOutputParams() {
-      Params.RegisterOutputParam(new Param_Integer());
+      Params.RegisterOutputParam(new Param_GenericObject());
       Params.RegisterOutputParam(new Param_String());
       Params.RegisterOutputParam(new Param_GenericObject());
       Params.RegisterOutputParam(new Param_GenericObject());
