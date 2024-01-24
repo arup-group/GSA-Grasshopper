@@ -1,6 +1,5 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
-using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -12,8 +11,15 @@ using OasysUnits;
 using OasysUnits.Units;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+using Grasshopper;
+using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Types;
+using GsaGH.Helpers;
+using GsaGH.Parameters.Results;
+using OasysGH.Parameters;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
@@ -131,76 +137,93 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      //GsaResult result = null;
+      GsaResult result = null;
 
-      //var ghTypes = new List<GH_ObjectWrapper>();
-      //da.GetDataList(0, ghTypes);
+      var ghTypes = new List<GH_ObjectWrapper>();
+      da.GetDataList(0, ghTypes);
 
-      //foreach (GH_ObjectWrapper ghTyp in ghTypes) {
-      //  result = Inputs.GetResultInput(this, ghTyp);
-      //  if (result == null) {
-      //    return;
-      //  }
-      //}
+      foreach (GH_ObjectWrapper ghTyp in ghTypes) {
+        result = Inputs.GetResultInput(this, ghTyp);
+        if (result == null) {
+          return;
+        }
+      }
 
-      //var length = new DataTree<GH_UnitNumber>();
-      //var span = new DataTree<GH_Integer>();
-      //var spanElements = new DataTree<GH_String>();
-      //var startPosition = new DataTree<GH_UnitNumber>();
-      //var endPosition = new DataTree<GH_UnitNumber>();
-      //var spanLength = new DataTree<GH_UnitNumber>();
-      //var effectiveLength = new DataTree<GH_UnitNumber>();
-      //var effectiveSpanRatio = new DataTree<GH_UnitNumber>();
-      //var effectiveSpanRatio2 = new DataTree<GH_UnitNumber>();
-      //var slendernessRatio = new DataTree<GH_UnitNumber>();
+      var length = new DataTree<GH_UnitNumber>();
+      var span = new DataTree<GH_Integer>();
+      var spanElements = new DataTree<GH_String>();
+      var startPosition = new DataTree<GH_UnitNumber>();
+      var endPosition = new DataTree<GH_UnitNumber>();
+      var spanLength = new DataTree<GH_UnitNumber>();
+      var effectiveLength = new DataTree<GH_UnitNumber>();
+      var effectiveSpanRatio = new DataTree<GH_Number>();
+      var effectiveSpanRatio2 = new DataTree<GH_Number>();
+      var slendernessRatio = new DataTree<GH_Number>();
 
-      //ReadOnlyCollection<int> memberIds = result.MemberIds("all");
-      //SteelDesignEffectiveLengths resultSet = result.SteelDesignEffectiveLengths.ResultSubset(memberIds);
+      ReadOnlyCollection<int> memberIds = result.MemberIds("all");
+      SteelDesignEffectiveLengths resultSet = result.SteelDesignEffectiveLengths.ResultSubset(memberIds);
 
-      //List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
-      //  1,
-      //};
-      //if (permutations.Count == 1 && permutations[0] == -1) {
-      //  permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
-      //}
+      List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
+        1,
+      };
+      if (permutations.Count == 1 && permutations[0] == -1) {
+        permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
+      }
 
-      //foreach (KeyValuePair<int, IList<ISteelDesignEffectiveLength>> kvp in resultSet.Subset) {
-      //  var spanList = new List<SubSpan>();
-      //  foreach (int p in permutations) {
-      //    var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
+      foreach (KeyValuePair<int, IList<ISteelDesignEffectiveLength>> kvp in resultSet.Subset) {
+        var spanList = new List<SubSpan>();
+        foreach (int p in permutations) {
+          var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
 
-      //    switch (_type) {
-      //      case SteelDesignTypes.Major:
-      //        spanList = kvp.Value[p - 1].MajorAxisSubSpans;
-      //        break;
-      //      case SteelDesignTypes.Minor:
-      //        spanList = kvp.Value[p - 1].MinorAxisSubSpans;
-      //        break;
-      //      case SteelDesignTypes.LT:
-      //        spanList = kvp.Value[p - 1].LateralTorsionalSubSpans;
-      //        break;
-      //    }
+          switch (_type) {
+            case SteelDesignTypes.Major:
+              spanList = kvp.Value[p - 1].MajorAxisSubSpans;
+              break;
+            case SteelDesignTypes.Minor:
+              spanList = kvp.Value[p - 1].MinorAxisSubSpans;
+              break;
+            case SteelDesignTypes.LT:
+              spanList = kvp.Value[p - 1].LateralTorsionalSubSpans;
+              break;
+          }
 
 
-      //    length.Add(new GH_UnitNumber(kvp.Value[p - 1].MemberLength), path);
-      //    //.AddRange(new List<GH_Integer>().AddRange(spanList.Select(x=>x)), path);
-      //    foreach (SubSpan items in spanList) {
-      //      //IEnumerable<GH_String> elementsIds = items.ElementIds.Cast<GH_String>();
-      //      var str = new GH_String(items.ElementIds.ToString());
-      //      spanElements.Add(str, path);
-      //    }
-      //    //IEnumerable<string> a = spanList.Select(x => x.ElementIds.ToString());
-      //    //spanElements.AddRange(new GH_String(a), path);
-      //  }
-      //}
+          length.Add(new GH_UnitNumber(kvp.Value[p - 1].MemberLength.ToUnit(_lengthUnit)), path);
 
-      ////  PostHog.Result(result.CaseType, 1, "Displacement");
-      ////}
+          int index = 0;
+          foreach (SubSpan subSpan in spanList) {
+            path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key, index);
+            
+            string elements = subSpan.ElementIds.Aggregate("", (current, id) => current + id + " ").Trim();
+            
+            //span.Add(new GH_Integer(kvp.Key), path);
+            spanElements.Add(new GH_String(elements), path);
+            startPosition.Add(new GH_UnitNumber(subSpan.StartPosition.ToUnit(_lengthUnit)), path);
+            endPosition.Add(new GH_UnitNumber(subSpan.EndPosition.ToUnit(_lengthUnit)), path);
+            spanLength.Add(new GH_UnitNumber(subSpan.EndPosition.ToUnit(_lengthUnit) - subSpan.StartPosition.ToUnit(_lengthUnit)), path);
+            effectiveLength.Add(new GH_UnitNumber(subSpan.EffectiveLength.ToUnit(_lengthUnit)), path);
+            //effectiveSpanRatio.Add(new GH_UnitNumber(subSpan.effectiveSpanRatio), path);
+            //effectiveSpanRatio2.Add(new GH_UnitNumber(subSpan.effectiveSpanRatio2), path);
+            slendernessRatio.Add(new GH_Number(subSpan.SlendernessRatio.Value), path);
+            
+            index++;
+          }
+        }
+      }
 
-      ////da.SetDataTree(0, length);
-      ////da.SetDataTree(1, spanElements);
-      ////da.SetDataTree(2, outTorsional);
-      ////da.SetDataTree(3, outVonMises);
+      PostHog.Result(result.CaseType, 1, "Displacement");
+      
+
+      da.SetDataTree(0, length);
+      da.SetDataTree(1, span);
+      da.SetDataTree(2, spanElements);
+      da.SetDataTree(3, startPosition);
+      da.SetDataTree(4, endPosition);
+      da.SetDataTree(5, spanLength);
+      da.SetDataTree(6, effectiveLength);
+      da.SetDataTree(7, effectiveSpanRatio);
+      da.SetDataTree(8, effectiveSpanRatio2);
+      da.SetDataTree(9, slendernessRatio);
     }
 
     protected override void UpdateUIFromSelectedItems() {
