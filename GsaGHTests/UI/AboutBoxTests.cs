@@ -8,7 +8,7 @@ namespace GsaGHTests.UI {
     public void AboutBoxTest() {
       var box = new AboutBox();
       Assert.Equal($"About GSA Grasshopper plugin", box.Text);
-      Assert.Equal("Copyright © Oasys 1985 - 2023", box.AssemblyCompany);
+      Assert.Equal("Copyright © Oasys 1985 - 2024", box.AssemblyCompany);
       Assert.NotNull(box.AssemblyDescription);
       Assert.NotNull(box.AssemblyTitle);
     }
