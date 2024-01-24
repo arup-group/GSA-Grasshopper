@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GsaAPI;
-using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers;
-using System.Linq;
-using GsaGH.Helpers.Import;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -41,21 +38,22 @@ namespace GsaGH.Parameters {
       string entityList = $"Entity List:{ApiAssembly.EntityList}";
       string topology = $"Topology:{ApiAssembly.Topology1} {ApiAssembly.Topology2}";
       string definition = string.Empty;
+
       switch (ApiAssembly) {
         case AssemblyByExplicitPositions byExplicitPositions:
-          definition += $"Explicit definition:{ byExplicitPositions.Positions }";
+          definition += $"Explicit definition:{byExplicitPositions.Positions}";
           break;
 
         case AssemblyByNumberOfPoints byNumberOfPoints:
-          definition += $"Definition by points:{ byNumberOfPoints.NumberOfPoints }";
+          definition += $"Definition by points:{byNumberOfPoints.NumberOfPoints}";
           break;
 
         case AssemblyBySpacingOfPoints bySpacingOfPoints:
-          definition += $"Definition by spacing:{ bySpacingOfPoints.Spacing }m";
+          definition += $"Definition by spacing:{bySpacingOfPoints.Spacing}m";
           break;
 
         case AssemblyByStorey byStorey:
-          definition += $"Definition by storey:'{ byStorey.StoreyList }'";
+          definition += $"Definition by storey:'{byStorey.StoreyList}'";
           break;
       }
 
