@@ -34,7 +34,8 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string id = Id > 0 ? $"ID:{Id}" : string.Empty;
-      string type = ApiAssembly.EntityType.ToString();
+      string name = ApiAssembly.Name != "" ? $"Name:{ApiAssembly.Name}" : string.Empty;
+      string type = $"Entity Type:{ApiAssembly.EntityType}";
       string entityList = $"Entity List:{ApiAssembly.EntityList}";
       string topology = $"Topology:{ApiAssembly.Topology1} {ApiAssembly.Topology2}";
       string definition = string.Empty;
@@ -57,7 +58,7 @@ namespace GsaGH.Parameters {
           break;
       }
 
-      return string.Join(" ", id, type, entityList, topology, definition).TrimSpaces();
+      return string.Join(" ", id, name, type, entityList, topology, definition).TrimSpaces();
     }
 
     internal Assembly DuplicateApiObject() {

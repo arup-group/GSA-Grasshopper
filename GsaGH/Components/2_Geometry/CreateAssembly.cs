@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -29,7 +30,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class CreateAssembly : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("00eabd44-12cc-4c27-b924-82542602749f");
-    public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateAssembly;
     private readonly IReadOnlyDictionary<AssemblyType, string> _assemblyTypes
@@ -109,12 +110,12 @@ namespace GsaGH.Components {
         $" 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" +
         $"{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
       pManager.AddParameter(new GsaNodeParameter(), "Topology 1", "To1", "Node at the start of the Assembly", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaNodeParameter(), "Topology 2", "To2", "Nodes at the end of the Assembly", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaNodeParameter(), "Topology 2", "To2", "Node at the end of the Assembly", GH_ParamAccess.item);
       pManager.AddParameter(new GsaNodeParameter(), "Orientation Node", "⭮N", "Assembly Orientation Node", GH_ParamAccess.item);
       pManager.AddGenericParameter("Extents y [" + lengthUnitAbr + "]", "Ey", "[Optional] Extents of the Assembly in y-direction", GH_ParamAccess.item);
       pManager.AddGenericParameter("Extents z [" + lengthUnitAbr + "]", "Ez", "[Optional] Extents of the Assembly in z-direction", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaNodeListParameter());
-      pManager.AddTextParameter("Curve Fit", "CF", "[Optional] Curve Fit for curved Elements", GH_ParamAccess.item);
+      pManager.AddParameter(new GsaNodeListParameter(), "Internal Topology", "IT", " List of nodes that define the curve of the Assembly", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Curve Fit", "CF", "[Optional] Curve Fit for curved elements (default: 2)" + $"{Environment.NewLine}Lagrange Interpolation (2) or Circular Arc (1)", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Number", "N", "Number of points (default: 10)", GH_ParamAccess.item, 10);
 
       pManager[0].Optional = true;
@@ -134,7 +135,8 @@ namespace GsaGH.Components {
       da.GetData(0, ref name);
 
       var list = new EntityList() {
-        Type = GsaAPI.EntityType.Element
+        Type = GsaAPI.EntityType.Element,
+        Definition = "all"
       };
       GsaListGoo elementListGoo = null;
       if (da.GetData(1, ref elementListGoo)) {
@@ -156,6 +158,25 @@ namespace GsaGH.Components {
       double extentsY = Input.UnitNumber(this, da, 5, _lengthUnit).As(LengthUnit.Meter);
       double extentsZ = Input.UnitNumber(this, da, 6, _lengthUnit).As(LengthUnit.Meter);
 
+      var internalTopology = new List<int>();
+      GsaListGoo internalTopologyList = null;
+      if (da.GetData(7, ref internalTopologyList)) {
+        if (!internalTopologyList.IsValid) {
+          return;
+        }
+
+        internalTopology = internalTopologyList.Value.ExpandListDefinition();
+      }
+
+      int curveFit = 2;
+      var curveFitWrapper = new GH_ObjectWrapper();
+      if (da.GetData(8, ref curveFitWrapper)) {
+        if (GH_Convert.ToInt32(curveFitWrapper.Value, out curveFit, GH_Conversion.Both)) {
+
+
+        }
+      }
+
       GsaAssembly assembly;
       switch (_mode) {
         case AssemblyType.ByExplicitPositions:
@@ -163,7 +184,9 @@ namespace GsaGH.Components {
           da.GetData(9, ref positions);
 
           var byExplicitPositions = new AssemblyByExplicitPositions(name, topology1.Value.Id, topology2.Value.Id, orientationNode.Value.Id) {
-            Positions = positions
+            Positions = positions,
+            //InternalTopology = internalTopology,
+            //CurveFit = curveFit
           };
           assembly = new GsaAssembly(byExplicitPositions);
           break;
@@ -173,7 +196,8 @@ namespace GsaGH.Components {
           da.GetData(9, ref number);
 
           var byNumberOfPoints = new AssemblyByNumberOfPoints(name, topology1.Value.Id, topology2.Value.Id, orientationNode.Value.Id) {
-            NumberOfPoints = number
+            NumberOfPoints = number,
+            //InternalTopology = internalTopology
           };
 
           assembly = new GsaAssembly(byNumberOfPoints);
