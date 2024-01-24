@@ -3,6 +3,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -20,6 +21,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using LengthUnit = OasysUnits.Units.LengthUnit;
+using SubSpan = GsaGH.Parameters.Results.SubSpan;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -110,8 +112,8 @@ namespace GsaGH.Components {
           SetOutputProperties(9, "Minor Slenderness Ratio","Srv","The ratio between effective and span length");
           break;
         case SteelDesignTypes.LT:
-          SetOutputProperties(1, "LT Span", "Spt", "Span number(s) for minor axis buckling mode");
-          SetOutputProperties(2, "LT Span Elements", "Elt", " Span Elements for minor axis buckling mode");
+          SetOutputProperties(1, "LT Span", "Spt", "Span number(s) for lateral torsional buckling mode");
+          SetOutputProperties(2, "LT Span Elements", "Elt", " Span Elements for lateral torsional buckling mode");
           SetOutputProperties(3, "LT Start Position", "SPt", " The start position of each span along the length of the member");
           SetOutputProperties(4, "LT End Position", "EPt", "The start position of each span along the length of the member");
           SetOutputProperties(5, "LT Span Length", "Slt", "The length of each span");
@@ -149,7 +151,7 @@ namespace GsaGH.Components {
       }
 
       var length = new DataTree<GH_UnitNumber>();
-      var span = new DataTree<GH_Integer>();
+      var spans= new DataTree<GH_Integer>();
       var spanElements = new DataTree<GH_String>();
       var startPosition = new DataTree<GH_UnitNumber>();
       var endPosition = new DataTree<GH_UnitNumber>();
@@ -157,7 +159,7 @@ namespace GsaGH.Components {
       var effectiveLength = new DataTree<GH_UnitNumber>();
       var effectiveSpanRatio = new DataTree<GH_Number>();
       var effectiveSpanRatio2 = new DataTree<GH_Number>();
-      var slendernessRatio = new DataTree<GH_Number>();
+      var slendernessRatio = new DataTree<GH_UnitNumber>();
 
       ReadOnlyCollection<int> memberIds = result.MemberIds("all");
       SteelDesignEffectiveLengths resultSet = result.SteelDesignEffectiveLengths.ResultSubset(memberIds);
@@ -180,23 +182,28 @@ namespace GsaGH.Components {
             SteelDesignTypes.LT => kvp.Value[p - 1].LateralTorsionalSubSpans,
             _ => spanList,
           };
-
-          length.Add(new GH_UnitNumber(kvp.Value[p - 1].MemberLength.ToUnit(_lengthUnit)), path);
+          Length len = kvp.Value[p - 1].MemberLength.ToUnit(_lengthUnit);
+          length.Add(new GH_UnitNumber(len), path);
 
           int index = 0;
           foreach (SubSpan subSpan in spanList) {
             string elements = subSpan.ElementIds.Aggregate("", (current, id) => current + id + " ").Trim();
-            
-            span.Add(new GH_Integer(++index), path);
+            Length startPos = subSpan.StartPosition.ToUnit(_lengthUnit);
+            Length endPos = subSpan.EndPosition.ToUnit(_lengthUnit);
+            Length spanLen = endPos - startPos;
+            Length effLength = subSpan.EffectiveLength.ToUnit(_lengthUnit);
+            double effSpanRatio = effLength / len;
+            double effSpanRatio2 = effLength / spanLen;
+
+            spans.Add(new GH_Integer(++index), path);
             spanElements.Add(new GH_String(elements), path);
-            startPosition.Add(new GH_UnitNumber(subSpan.StartPosition.ToUnit(_lengthUnit)), path);
-            endPosition.Add(new GH_UnitNumber(subSpan.EndPosition.ToUnit(_lengthUnit)), path);
-            spanLength.Add(new GH_UnitNumber(subSpan.EndPosition.ToUnit(_lengthUnit) - subSpan.StartPosition.ToUnit(_lengthUnit)), path);
-            effectiveLength.Add(new GH_UnitNumber(subSpan.EffectiveLength.ToUnit(_lengthUnit)), path);
-            //effectiveSpanRatio.Add(new GH_UnitNumber(subSpan.effectiveSpanRatio), path);
-            //effectiveSpanRatio2.Add(new GH_UnitNumber(subSpan.effectiveSpanRatio2), path);
-            slendernessRatio.Add(new GH_Number(subSpan.SlendernessRatio.Value), path);
-            
+            startPosition.Add(new GH_UnitNumber(startPos), path);
+            endPosition.Add(new GH_UnitNumber(endPos), path);
+            spanLength.Add(new GH_UnitNumber(spanLen), path);
+            effectiveLength.Add(new GH_UnitNumber(effLength), path);
+            effectiveSpanRatio.Add(new GH_Number(effSpanRatio), path);
+            effectiveSpanRatio2.Add(new GH_Number(effSpanRatio2), path);
+            slendernessRatio.Add(new GH_UnitNumber(subSpan.SlendernessRatio), path);
           }
         }
       }
@@ -205,7 +212,7 @@ namespace GsaGH.Components {
       
 
       da.SetDataTree(0, length);
-      da.SetDataTree(1, span);
+      da.SetDataTree(1, spans);
       da.SetDataTree(2, spanElements);
       da.SetDataTree(3, startPosition);
       da.SetDataTree(4, endPosition);
