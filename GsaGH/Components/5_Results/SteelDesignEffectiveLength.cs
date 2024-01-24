@@ -174,25 +174,17 @@ namespace GsaGH.Components {
         foreach (int p in permutations) {
           var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
 
-          switch (_type) {
-            case SteelDesignTypes.Major:
-              spanList = kvp.Value[p - 1].MajorAxisSubSpans;
-              break;
-            case SteelDesignTypes.Minor:
-              spanList = kvp.Value[p - 1].MinorAxisSubSpans;
-              break;
-            case SteelDesignTypes.LT:
-              spanList = kvp.Value[p - 1].LateralTorsionalSubSpans;
-              break;
-          }
-
+          spanList = _type switch {
+            SteelDesignTypes.Major => kvp.Value[p - 1].MajorAxisSubSpans,
+            SteelDesignTypes.Minor => kvp.Value[p - 1].MinorAxisSubSpans,
+            SteelDesignTypes.LT => kvp.Value[p - 1].LateralTorsionalSubSpans,
+            _ => spanList,
+          };
 
           length.Add(new GH_UnitNumber(kvp.Value[p - 1].MemberLength.ToUnit(_lengthUnit)), path);
 
           int index = 0;
           foreach (SubSpan subSpan in spanList) {
-            path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key, index);
-            
             string elements = subSpan.ElementIds.Aggregate("", (current, id) => current + id + " ").Trim();
             
             span.Add(new GH_Integer(++index), path);
