@@ -42,7 +42,11 @@ namespace GsaGH.Parameters {
 
       switch (ApiAssembly) {
         case AssemblyByExplicitPositions byExplicitPositions:
-          definition += $"Explicit definition:{byExplicitPositions.Positions}";
+          definition += "Explicit definition:";
+          foreach(double position in byExplicitPositions.Positions) {
+            definition += position + ", ";
+          }
+          definition = definition.Substring(0, definition.Length - 2); 
           break;
 
         case AssemblyByNumberOfPoints byNumberOfPoints:

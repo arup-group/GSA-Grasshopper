@@ -65,7 +65,7 @@ namespace GsaGH.Components {
 
       switch (_mode) {
         case AssemblyType.ByExplicitPositions:
-          SetInputProperties(9, "Explicit positions", "P", "List of explicit positions", GH_ParamAccess.list, false);
+          SetInputProperties(9, "Explicit positions [" + lengthUnitAbr + "]", "P", "List of explicit positions", GH_ParamAccess.list, false);
           break;
 
         case AssemblyType.ByNumberOfPoints:
@@ -73,7 +73,7 @@ namespace GsaGH.Components {
           break;
 
         case AssemblyType.BySpacingOfPoints:
-          SetInputProperties(9, "Spacing", "Sp", "Spacing of points (default: 1m)", GH_ParamAccess.item, true);
+          SetInputProperties(9, "Spacing", "Sp", "Spacing of points [" + lengthUnitAbr + "] (default: 1m)", GH_ParamAccess.item, true);
           break;
 
         case AssemblyType.ByStorey:
@@ -92,7 +92,7 @@ namespace GsaGH.Components {
       _selectedItems = new List<string>();
 
       _dropDownItems.Add(_assemblyTypes.Values.ToList());
-      _selectedItems.Add(_assemblyTypes.Values.ElementAt(0));
+      _selectedItems.Add(_assemblyTypes.Values.ElementAt(1));
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
       _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
@@ -109,13 +109,13 @@ namespace GsaGH.Components {
         $"Element/Member list should take the form:{Environment.NewLine}" +
         $" 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" +
         $"{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaNodeParameter(), "Topology 1", "To1", "Node at the start of the Assembly", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaNodeParameter(), "Topology 2", "To2", "Node at the end of the Assembly", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaNodeParameter(), "Orientation Node", "⭮N", "Assembly Orientation Node", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Topology 1", "To1", "Node at the start of the Assembly", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Topology 2", "To2", "Node at the end of the Assembly", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Orientation Node", "⭮N", "Assembly Orientation Node", GH_ParamAccess.item);
       pManager.AddGenericParameter("Extents y [" + lengthUnitAbr + "]", "Ey", "[Optional] Extents of the Assembly in y-direction", GH_ParamAccess.item);
       pManager.AddGenericParameter("Extents z [" + lengthUnitAbr + "]", "Ez", "[Optional] Extents of the Assembly in z-direction", GH_ParamAccess.item);
       pManager.AddParameter(new GsaNodeListParameter(), "Internal Topology", "IT", " List of nodes that define the curve of the Assembly", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Curve Fit", "CF", "[Optional] Curve Fit for curved elements (default: 2)" + $"{Environment.NewLine}Lagrange Interpolation (2) or Circular Arc (1)", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Curve Fit", "CF", "[Optional] Curve Fit for curved elements (default: 2)" + $"{Environment.NewLine}Lagrange Interpolation (2) or Circular Arc (1)", GH_ParamAccess.item, 2);
       pManager.AddIntegerParameter("Number", "N", "Number of points (default: 10)", GH_ParamAccess.item, 10);
 
       pManager[0].Optional = true;
@@ -146,19 +146,19 @@ namespace GsaGH.Components {
         list = Inputs.GetElementOrMemberList(this, da, 1);
       }
 
-      GsaNodeGoo topology1 = null;
+      GH_Integer topology1 = null;
       da.GetData(2, ref topology1);
 
-      GsaNodeGoo topology2 = null;
+      GH_Integer topology2 = null;
       da.GetData(3, ref topology2);
 
-      GsaNodeGoo orientationNode = null;
+      GH_Integer orientationNode = null;
       da.GetData(4, ref orientationNode);
 
       double extentsY = Input.UnitNumber(this, da, 5, _lengthUnit).As(LengthUnit.Meter);
       double extentsZ = Input.UnitNumber(this, da, 6, _lengthUnit).As(LengthUnit.Meter);
 
-      var internalTopology = new List<int>();
+      List<int> internalTopology = null;
       GsaListGoo internalTopologyList = null;
       if (da.GetData(7, ref internalTopologyList)) {
         if (!internalTopologyList.IsValid) {
@@ -169,25 +169,27 @@ namespace GsaGH.Components {
       }
 
       int curveFit = 2;
-      var curveFitWrapper = new GH_ObjectWrapper();
-      if (da.GetData(8, ref curveFitWrapper)) {
-        if (GH_Convert.ToInt32(curveFitWrapper.Value, out curveFit, GH_Conversion.Both)) {
-
-
-        }
-      }
+      da.GetData(8, ref curveFit);
 
       GsaAssembly assembly;
       switch (_mode) {
         case AssemblyType.ByExplicitPositions:
-          var positions = new SortedSet<double> { };
-          da.GetData(9, ref positions);
+          var positions = new SortedSet<double>();
+          var dataList = new List<double>();
+          if (da.GetDataList(9, dataList)) {
+            foreach(double position in dataList) {
+              positions.Add(position);
+            }
+          }
 
-          var byExplicitPositions = new AssemblyByExplicitPositions(name, topology1.Value.Id, topology2.Value.Id, orientationNode.Value.Id) {
-            Positions = positions,
-            //InternalTopology = internalTopology,
-            //CurveFit = curveFit
-          };
+          AssemblyByExplicitPositions byExplicitPositions;
+          if (internalTopology == null) {
+            byExplicitPositions = new AssemblyByExplicitPositions(name, topology1.Value, topology2.Value, orientationNode.Value);
+          } else {
+            byExplicitPositions = new AssemblyByExplicitPositions(name, topology1.Value, topology2.Value, orientationNode.Value, internalTopology, (CurveFit)curveFit);
+          }
+
+          byExplicitPositions.Positions = positions;
           assembly = new GsaAssembly(byExplicitPositions);
           break;
 
@@ -195,10 +197,14 @@ namespace GsaGH.Components {
           int number = 10;
           da.GetData(9, ref number);
 
-          var byNumberOfPoints = new AssemblyByNumberOfPoints(name, topology1.Value.Id, topology2.Value.Id, orientationNode.Value.Id) {
-            NumberOfPoints = number,
-            //InternalTopology = internalTopology
-          };
+          AssemblyByNumberOfPoints byNumberOfPoints;
+          if (internalTopology == null) {
+            byNumberOfPoints = new AssemblyByNumberOfPoints(name, topology1.Value, topology2.Value, orientationNode.Value);
+          } else {
+            byNumberOfPoints = new AssemblyByNumberOfPoints(name, topology1.Value, topology2.Value, orientationNode.Value, internalTopology, (CurveFit)curveFit);
+          }
+
+          byNumberOfPoints.NumberOfPoints = number;
 
           assembly = new GsaAssembly(byNumberOfPoints);
           break;
@@ -207,9 +213,14 @@ namespace GsaGH.Components {
           double spacing = 1.0;
           da.GetData(9, ref spacing);
 
-          var bySpacingOfPoints = new AssemblyBySpacingOfPoints(name, topology1.Value.Id, topology2.Value.Id, orientationNode.Value.Id) {
-            Spacing = spacing
-          };
+          AssemblyBySpacingOfPoints bySpacingOfPoints;
+          if (internalTopology == null) {
+            bySpacingOfPoints = new AssemblyBySpacingOfPoints(name, topology1.Value, topology2.Value, orientationNode.Value);
+          } else {
+            bySpacingOfPoints = new AssemblyBySpacingOfPoints(name, topology1.Value, topology2.Value, orientationNode.Value, internalTopology, (CurveFit)curveFit);
+          }
+
+          bySpacingOfPoints.Spacing = spacing;
 
           assembly = new GsaAssembly(bySpacingOfPoints);
           break;
@@ -218,9 +229,16 @@ namespace GsaGH.Components {
           string storeyList = "all";
           da.GetData(9, ref storeyList);
 
-          var byStorey = new AssemblyByStorey(name, topology1.Value.Id, topology2.Value.Id, orientationNode.Value.Id) {
+          AssemblyByStorey byStorey;
+          byStorey = new AssemblyByStorey(name, topology1.Value, topology2.Value, orientationNode.Value) {
             StoreyList = storeyList
           };
+
+          if (internalTopology == null) {
+          } else {
+          }
+
+          byStorey.StoreyList = storeyList;
 
           assembly = new GsaAssembly(byStorey);
           break;
