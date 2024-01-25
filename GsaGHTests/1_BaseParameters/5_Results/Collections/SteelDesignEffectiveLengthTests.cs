@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
-using OasysUnits;
 using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
@@ -53,8 +51,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert 
       ISteelDesignEffectiveLength effectiveLengths = resultSet.Subset[1][0];
 
-      // seems to not come through the API?!
-      //Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MemberLength.Value, 4));
+      Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MemberLength.Value, 4));
 
       Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(effectiveLengths.MajorAxisSubSpans[0].StartPosition.Value, 4));
       Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MajorAxisSubSpans[0].EndPosition.Value, 4));
