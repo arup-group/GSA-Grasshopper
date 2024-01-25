@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -54,51 +55,35 @@ namespace GsaGHTests.Components.Results {
           Assert.Equal(0, permutation);
         }
       }
-
-      var ids = (IList<IGH_Goo>)ComponentTestHelper.GetListOutput(comp, 0);
-      for (int j = 0; j < ids.Count; j++) {
-        // Assert element IDs
-        var expectedIds = result.Model.Model.Members(MemberList).Keys.OrderBy(x => x).ToList();
-        Assert.Equal(expectedIds[j], ((GH_UnitNumber)ids[j]).Value.As(LengthUnit.Meter));
-      }
     }
 
     [Fact]
-    public void SteelDesignEffectiveLengthIdsFromcombinationCaseTest() {
+    public void SteelDesignEffectiveLengthIdsFromCombinationCaseTest() {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.BasicFrame, 1);
 
       // Act
-      ReadOnlyCollection<int> nodeIds = result.MemberIds(MemberList);
       var comp = new SteelDesignEffectiveLength();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      ComponentTestHelper.SetInput(comp, MemberList, 1);
 
       for (int i = 0; i < comp.Params.Output.Count; i++) { // loop through each output
         IList<GH_Path> paths = ComponentTestHelper.GetPathOutput(comp, i);
-        Assert.Equal(2, paths.Count);
+        Assert.Equal(37, paths.Count);
 
         var cases = paths.Select(x => x.Indices[0]).ToList();
         foreach (int caseid in cases) {
-          Assert.Equal(2, caseid);
+          Assert.Equal(1, caseid);
         }
 
         var permutations = paths.Select(x => x.Indices[1]).ToList();
-        for (int j = 0; j < permutations.Count; j++) {
-          Assert.Equal(j + 1, permutations[j]);
+        foreach (int permutation in permutations) {
+          Assert.Equal(1, permutation);
         }
-      }
-
-      var ids = (IList<GH_Integer>)ComponentTestHelper.GetListOutput(comp, 8);
-      for (int j = 0; j < ids.Count; j++) {
-        // Assert element IDs
-        var expectedIds = result.Model.Model.Nodes(MemberList).Keys.OrderBy(x => x).ToList();
-        Assert.Equal(expectedIds[j], ids[j].Value);
       }
     }
 
     //[Theory]
-    //[InlineData(SteelDesignEffectiveLengthHelper.MemberLength)]
+    ////[InlineData(SteelDesignEffectiveLengthHelper.MemberLength)]
     //[InlineData(SteelDesignEffectiveLengthHelper.Span)]
     //[InlineData(SteelDesignEffectiveLengthHelper.SpanElements)]
     //[InlineData(SteelDesignEffectiveLengthHelper.StartPosition)]
@@ -108,21 +93,51 @@ namespace GsaGHTests.Components.Results {
     //[InlineData(SteelDesignEffectiveLengthHelper.EffectiveSpanRatio)]
     //[InlineData(SteelDesignEffectiveLengthHelper.EffectiveSpanRatio2)]
     //[InlineData(SteelDesignEffectiveLengthHelper.SlendernessRatio)]
-    //public void NodeReactionForceMaxFromAnalysisCaseTest(SteelDesignEffectiveLengthHelper component) {
+    //public void SteelDesignEffectiveLengthFromAnalysisCaseTest(SteelDesignEffectiveLengthHelper component) {
     //  // Assemble
     //  var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.BasicFrame, 1);
-    //  double? expected = ExpectedAnalysisCaseValues(component).Max();
+    //  List<double> expected = ExpectedAnalysisCaseValues(component);
 
     //  // Act
     //  var comp = new SteelDesignEffectiveLength();
-    //  comp.SetSelected(0, 1 + (int)component);
     //  ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-    //  ComponentTestHelper.SetInput(comp, NodeList, 1);
-    //  List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
+    //  List<IQuantity> resultOutput;
 
-    //  // Assert Max in set
-    //  double max = output.Max().As(Unit(component));
-    //  Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+    //  for (int i = 0; i<= expected.Count; i++)
+    //  {
+    //    switch (component) {
+    //      //case SteelDesignEffectiveLengthHelper.MemberLength:
+    //      case SteelDesignEffectiveLengthHelper.Span: //integer
+    //        var res = ((IList<IGH_Goo>)ComponentTestHelper.GetListOutput(comp, (int)component)).Select(x => ((GH_Integer)x).Value).ToList();
+
+    //        Assert.Equal(expected[i], res[i]);
+    //        break;
+    //      case SteelDesignEffectiveLengthHelper.SpanElements:
+    //        var a = (IList<GH_String>)ComponentTestHelper.GetListOutput(comp, (int)component);
+    //        var strResult = ((IList<GH_String>)ComponentTestHelper.GetListOutput(comp, (int)component)).Select(x => ((GH_String)x).Value).ToList();
+
+    //        Assert.Equal(expected[i], double.Parse(strResult[i]));
+    //        break;
+
+    //      case SteelDesignEffectiveLengthHelper.StartPosition:
+    //      case SteelDesignEffectiveLengthHelper.EndPosition:
+    //      case SteelDesignEffectiveLengthHelper.SpanLength:
+    //      case SteelDesignEffectiveLengthHelper.EffectiveLength:
+    //        resultOutput = ComponentTestHelper.GetResultOutput(comp, (int)component);
+    //        Assert.Equal(expected[i], ResultHelper.RoundToSignificantDigits(resultOutput[i].As(LengthUnit.Meter), 4));
+    //        break;
+    //      case SteelDesignEffectiveLengthHelper.EffectiveSpanRatio://ratio
+    //      case SteelDesignEffectiveLengthHelper.EffectiveSpanRatio2:
+    //      case SteelDesignEffectiveLengthHelper.SlendernessRatio:
+    //        resultOutput = ComponentTestHelper.GetResultOutput(comp, (int)component);
+    //        Assert.Equal(expected[i], ResultHelper.RoundToSignificantDigits(resultOutput[i].As(Ratio.BaseUnit), 4));
+    //        break;
+    //    }
+    //  }
+          
+
+      // Assert Max in set
+      //Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
     //}
 
     //[Theory]
@@ -318,6 +333,13 @@ namespace GsaGHTests.Components.Results {
       }
 
       throw new NotImplementedException();
+    }
+    private Enum Unit(SteelDesignEffectiveLengthHelper component) {
+      Enum unit = ForceUnit.Kilonewton;
+      if ((int)component > 3) {
+        unit = MomentUnit.KilonewtonMeter;
+      }
+      return unit;
     }
   }
 }

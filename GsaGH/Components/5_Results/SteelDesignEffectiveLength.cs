@@ -93,7 +93,7 @@ namespace GsaGH.Components {
           SetOutputProperties(1, "Major Span","Spu", "Span number(s) for major axis buckling mode");
           SetOutputProperties(2, "Major Span Elements","Elu"," Span Elements for major axis buckling mode");
           SetOutputProperties(3, "Major Start Position","SPu"," The start position of each span along the length of the member");
-          SetOutputProperties(4, "Major End Position","EPu","The start position of each span along the length of the member");
+          SetOutputProperties(4, "Major End Position","EPu","The end position of each span along the length of the member");
           SetOutputProperties(5, "Major Span Length","Slu","The length of each span");
           SetOutputProperties(6, "Major Effective Length","Leu","The start position of each span along the length of the member");
           SetOutputProperties(7, "Major Effective Span Ratio","Lru","The ratio between effective and total length of the member");
@@ -104,7 +104,7 @@ namespace GsaGH.Components {
           SetOutputProperties(1, "Minor Span","Spv", "Span number(s) for minor axis buckling mode");
           SetOutputProperties(2, "Minor Span Elements","Elv", " Span Elements for minor axis buckling mode");
           SetOutputProperties(3, "Minor Start Position","SPv"," The start position of each span along the length of the member");
-          SetOutputProperties(4, "Minor End Position","EPv","The start position of each span along the length of the member");
+          SetOutputProperties(4, "Minor End Position","EPv","The end position of each span along the length of the member");
           SetOutputProperties(5, "Minor Span Length","Slv","The length of each span");
           SetOutputProperties(6, "Minor Effective Length","Lev","The start position of each span along the length of the member");
           SetOutputProperties(7, "Minor Effective Span Ratio","Lrv","The ratio between effective and total length of the member");
@@ -115,7 +115,7 @@ namespace GsaGH.Components {
           SetOutputProperties(1, "LT Span", "Spt", "Span number(s) for lateral torsional buckling mode");
           SetOutputProperties(2, "LT Span Elements", "Elt", " Span Elements for lateral torsional buckling mode");
           SetOutputProperties(3, "LT Start Position", "SPt", " The start position of each span along the length of the member");
-          SetOutputProperties(4, "LT End Position", "EPt", "The start position of each span along the length of the member");
+          SetOutputProperties(4, "LT End Position", "EPt", "The end position of each span along the length of the member");
           SetOutputProperties(5, "LT Span Length", "Slt", "The length of each span");
           SetOutputProperties(6, "LT Effective Length", "Let", "The start position of each span along the length of the member");
           SetOutputProperties(7, "LT Effective Span Ratio", "Lrt", "The ratio between effective and total length of the member");
@@ -173,7 +173,7 @@ namespace GsaGH.Components {
 
       foreach (KeyValuePair<int, IList<ISteelDesignEffectiveLength>> kvp in resultSet.Subset) {
         var spanList = new List<SubSpan>();
-        var p = permutations[0];
+        int p = permutations[0];
         var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : permutations[0], kvp.Key);
 
         spanList = _type switch {
