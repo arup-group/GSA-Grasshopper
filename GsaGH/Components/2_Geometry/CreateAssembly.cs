@@ -111,7 +111,7 @@ namespace GsaGH.Components {
 
       pManager.AddTextParameter("Name", "Na", "[Optional] Assembly Name", GH_ParamAccess.item);
       pManager.AddParameter(new GsaElementMemberListParameter(), "List", "El",
-        $"List of Elements or Members (default: 'all'){Environment.NewLine}" +
+        $"List of Assembly Entities (default: 'all'){Environment.NewLine}" +
         $"Element/Member list should take the form:{Environment.NewLine}" +
         $" 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" +
         $"{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.", GH_ParamAccess.item);
@@ -140,7 +140,7 @@ namespace GsaGH.Components {
       string name = string.Empty;
       da.GetData(0, ref name);
 
-      var list = new EntityList() {
+      var entities = new EntityList() {
         Type = GsaAPI.EntityType.Element,
         Definition = "all"
       };
@@ -149,7 +149,7 @@ namespace GsaGH.Components {
         if (!elementListGoo.IsValid) {
           return;
         }
-        list = Inputs.GetElementOrMemberList(this, da, 1);
+        entities = Inputs.GetElementOrMemberList(this, da, 1);
       }
 
       GH_Integer topology1 = null;
@@ -255,8 +255,8 @@ namespace GsaGH.Components {
           return;
       }
 
-      assembly.ApiAssembly.EntityType = list.Type;
-      assembly.ApiAssembly.EntityList = list.Definition;
+      assembly.ApiAssembly.EntityType = entities.Type;
+      assembly.ApiAssembly.EntityList = entities.Definition;
       assembly.ApiAssembly.ExtentY = extentsY;
       assembly.ApiAssembly.ExtentZ = extentsZ;
 

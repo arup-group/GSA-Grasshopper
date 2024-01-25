@@ -40,7 +40,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, -1.0, 6);
       ComponentTestHelper.SetInput(comp, "4 5 6", 7);
       ComponentTestHelper.SetInput(comp, 1, 8);
-      ComponentTestHelper.SetListInput(comp, new List<object>() { 7, 8 }, 9);
+      ComponentTestHelper.SetListInput(comp, new List<object>() { 7.7, 8.8 }, 9);
 
       return comp;
     }
@@ -108,7 +108,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, -1.0, 6);
       ComponentTestHelper.SetInput(comp, "4 5 6", 7);
       ComponentTestHelper.SetInput(comp, 1, 8);
-      ComponentTestHelper.SetInput(comp, 7, 9);
+      ComponentTestHelper.SetInput(comp, 7.7, 9);
 
       return comp;
     }
@@ -185,8 +185,8 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(6, ((AssemblyByExplicitPositions)output.Value.ApiAssembly).InternalTopology[2]);
       Assert.Equal(CurveFit.CircularArc, ((AssemblyByExplicitPositions)output.Value.ApiAssembly).CurveFit);
       Assert.Equal(2, ((AssemblyByExplicitPositions)output.Value.ApiAssembly).Positions.Count);
-      Assert.Equal(7, ((AssemblyByExplicitPositions)output.Value.ApiAssembly).Positions.First());
-      Assert.Equal(8, ((AssemblyByExplicitPositions)output.Value.ApiAssembly).Positions.Last());
+      Assert.Equal(7.7, ((AssemblyByExplicitPositions)output.Value.ApiAssembly).Positions.First());
+      Assert.Equal(8.8, ((AssemblyByExplicitPositions)output.Value.ApiAssembly).Positions.Last());
     }
 
     [Fact]
@@ -264,7 +264,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(5, ((AssemblyBySpacingOfPoints)output.Value.ApiAssembly).InternalTopology[1]);
       Assert.Equal(6, ((AssemblyBySpacingOfPoints)output.Value.ApiAssembly).InternalTopology[2]);
       Assert.Equal(CurveFit.CircularArc, ((AssemblyBySpacingOfPoints)output.Value.ApiAssembly).CurveFit);
-      Assert.Equal(7, ((AssemblyBySpacingOfPoints)output.Value.ApiAssembly).Spacing);
+      Assert.Equal(7.7, ((AssemblyBySpacingOfPoints)output.Value.ApiAssembly).Spacing);
     }
 
     [Fact]

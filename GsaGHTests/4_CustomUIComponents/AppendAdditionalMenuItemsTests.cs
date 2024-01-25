@@ -21,6 +21,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(SectionProperties), 2)]
     [InlineData(typeof(Create2dElementsFromBrep), 2)]
     [InlineData(typeof(CreateElementsFromMembers), 2)]
+    [InlineData(typeof(GetAssembly), 1)]
     [InlineData(typeof(GridPlaneSurfaceProperties), 2)]
     [InlineData(typeof(AnalyseModel), 2)]
     // AppendAdditionalComponentMenuItems
