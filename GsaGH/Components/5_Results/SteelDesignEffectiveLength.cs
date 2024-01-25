@@ -36,7 +36,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("ea6387f0-8314-4a7f-8ace-a59b480e5eb7");
     public override GH_Exposure Exposure => GH_Exposure.septenary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.ContourNodeResults;
+    protected override Bitmap Icon => Resources.SteelDesignEffectiveLength;
     private SteelDesignTypes _type = SteelDesignTypes.Major;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
 
@@ -130,6 +130,8 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
+      pManager.AddParameter(new GsaMemberListParameter());
+      pManager[1].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -139,6 +141,7 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       GsaResult result = null;
+      string memberList = "All";
 
       var ghTypes = new List<GH_ObjectWrapper>();
       da.GetDataList(0, ghTypes);
@@ -161,7 +164,8 @@ namespace GsaGH.Components {
       var effectiveSpanRatio2 = new DataTree<GH_Number>();
       var slendernessRatio = new DataTree<GH_UnitNumber>();
 
-      ReadOnlyCollection<int> memberIds = result.MemberIds("all");
+      memberList = Inputs.GetMemberListDefinition(this, da, 1, result.Model);
+      ReadOnlyCollection<int> memberIds = result.MemberIds(memberList);
       SteelDesignEffectiveLengths resultSet = result.SteelDesignEffectiveLengths.ResultSubset(memberIds);
 
       List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
