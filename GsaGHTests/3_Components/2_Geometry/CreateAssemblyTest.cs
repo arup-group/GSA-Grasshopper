@@ -122,7 +122,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, 1, 2);
       ComponentTestHelper.SetInput(comp, 2, 3);
       ComponentTestHelper.SetInput(comp, 3, 4);
-      ComponentTestHelper.SetInput(comp, "7", 9);
+      ComponentTestHelper.SetInput(comp, "7", 7);
 
       return comp;
     }
@@ -141,9 +141,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, 3, 4);
       ComponentTestHelper.SetInput(comp, 1.0, 5);
       ComponentTestHelper.SetInput(comp, -1.0, 6);
-      ComponentTestHelper.SetInput(comp, "4 5 6", 7);
-      ComponentTestHelper.SetInput(comp, 1, 8);
-      ComponentTestHelper.SetInput(comp, "7", 9);
+      ComponentTestHelper.SetInput(comp, "7", 7);
 
       return comp;
     }

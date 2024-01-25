@@ -63,22 +63,28 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       string lengthUnitAbr = Length.GetAbbreviation(_lengthUnit);
 
+      int maxIndex = Params.Input.Count - 1;
       switch (_mode) {
         case AssemblyType.ByExplicitPositions:
-          SetInputProperties(9, "Explicit positions [" + lengthUnitAbr + "]", "P", "List of explicit positions", GH_ParamAccess.list, false);
+          SetInputProperties(maxIndex, "Explicit positions [" + lengthUnitAbr + "]", "P", "List of explicit positions", GH_ParamAccess.list, false);
           break;
 
         case AssemblyType.ByNumberOfPoints:
-          SetInputProperties(9, "Number", "N", "Number of points (default: 10)", GH_ParamAccess.item, true);
+          SetInputProperties(maxIndex, "Number", "N", "Number of points (default: 10)", GH_ParamAccess.item, true);
           break;
 
         case AssemblyType.BySpacingOfPoints:
-          SetInputProperties(9, "Spacing", "Sp", "Spacing of points [" + lengthUnitAbr + "] (default: 1m)", GH_ParamAccess.item, true);
+          SetInputProperties(maxIndex, "Spacing", "Sp", "Spacing of points [" + lengthUnitAbr + "] (default: 1m)", GH_ParamAccess.item, true);
           break;
 
         case AssemblyType.ByStorey:
-          SetInputProperties(9, "Storey List", "St", "List of storeys (default: 'all')", GH_ParamAccess.item, true);
+          SetInputProperties(maxIndex, "Storey List", "St", "List of storeys (default: 'all')", GH_ParamAccess.item, true);
           break;
+      }
+
+      if (_mode != AssemblyType.ByStorey) {
+        SetInputProperties(maxIndex - 2, "Internal Topology", "IT", " List of nodes that define the curve of the Assembly", GH_ParamAccess.item, true);
+        SetInputProperties(maxIndex - 1, "Curve Fit", "CF", "[Optional] Curve Fit for curved elements (default: 2)" + $"{Environment.NewLine}Lagrange Interpolation (2) or Circular Arc (1)", GH_ParamAccess.item, true);
       }
     }
 
@@ -159,17 +165,19 @@ namespace GsaGH.Components {
       double extentsZ = Input.UnitNumber(this, da, 6, _lengthUnit).As(LengthUnit.Meter);
 
       List<int> internalTopology = null;
-      GsaListGoo internalTopologyList = null;
-      if (da.GetData(7, ref internalTopologyList)) {
-        if (!internalTopologyList.IsValid) {
-          return;
+      int curveFit = 2;
+      if (_mode != AssemblyType.ByStorey) {
+        GsaListGoo internalTopologyList = null;
+        if (da.GetData(7, ref internalTopologyList)) {
+          if (!internalTopologyList.IsValid) {
+            return;
+          }
+
+          internalTopology = internalTopologyList.Value.ExpandListDefinition();
         }
 
-        internalTopology = internalTopologyList.Value.ExpandListDefinition();
+        da.GetData(8, ref curveFit);
       }
-
-      int curveFit = 2;
-      da.GetData(8, ref curveFit);
 
       GsaAssembly assembly;
       switch (_mode) {
@@ -177,7 +185,7 @@ namespace GsaGH.Components {
           var positions = new SortedSet<double>();
           var dataList = new List<double>();
           if (da.GetDataList(9, dataList)) {
-            foreach(double position in dataList) {
+            foreach (double position in dataList) {
               positions.Add(position);
             }
           }
@@ -227,7 +235,7 @@ namespace GsaGH.Components {
 
         case AssemblyType.ByStorey:
           string storeyList = "all";
-          da.GetData(9, ref storeyList);
+          da.GetData(7, ref storeyList);
 
           AssemblyByStorey byStorey;
           byStorey = new AssemblyByStorey(name, topology1.Value, topology2.Value, orientationNode.Value) {
@@ -290,7 +298,29 @@ namespace GsaGH.Components {
       _assemblyTypes.TryGetValue(mode, out string eventName);
       RecordUndoEvent($"{eventName} Parameters");
 
-      Params.UnregisterInputParameter(Params.Input[9], true);
+      int maxIndex = Params.Input.Count - 1;
+
+      switch (mode) {
+        case AssemblyType.ByExplicitPositions:
+        case AssemblyType.BySpacingOfPoints:
+          Params.UnregisterInputParameter(Params.Input[maxIndex], true);
+          break;
+
+        case AssemblyType.ByNumberOfPoints:
+          Params.UnregisterInputParameter(Params.Input[maxIndex], true);
+          break;
+
+        case AssemblyType.ByStorey:
+          Params.UnregisterInputParameter(Params.Input[maxIndex], true);
+          Params.UnregisterInputParameter(Params.Input[maxIndex - 1], true);
+          Params.UnregisterInputParameter(Params.Input[maxIndex - 2], true);
+          break;
+      }
+
+      if (maxIndex != 9) {
+        Params.RegisterInputParam(new Param_GenericObject());
+        Params.RegisterInputParam(new Param_Integer());
+      }
 
       switch (mode) {
         case AssemblyType.ByExplicitPositions:
@@ -306,6 +336,7 @@ namespace GsaGH.Components {
           Params.RegisterInputParam(new Param_String());
           break;
       }
+
 
       _mode = mode;
     }
