@@ -29,17 +29,18 @@ namespace GsaGH.Components {
   /// Component to create a new Assembly
   /// </summary>
   public class CreateAssembly : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("00eabd44-12cc-4c27-b924-82542602749f");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
-    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateAssembly;
-    private readonly IReadOnlyDictionary<AssemblyType, string> _assemblyTypes
+    private static readonly IReadOnlyDictionary<AssemblyType, string> _assemblyTypes
       = new Dictionary<AssemblyType, string> {
         { AssemblyType.ByExplicitPositions, "Explicit positions" },
         { AssemblyType.ByNumberOfPoints, "Number of points" },
         { AssemblyType.BySpacingOfPoints, "Spacing of points" },
         { AssemblyType.ByStorey, "Storey" }
       };
+
+    public override Guid ComponentGuid => new Guid("00eabd44-12cc-4c27-b924-82542602749f");
+    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+    public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
+    protected override Bitmap Icon => Resources.CreateAssembly;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private AssemblyType _mode = AssemblyType.ByNumberOfPoints;
 
@@ -84,7 +85,7 @@ namespace GsaGH.Components {
 
       if (_mode != AssemblyType.ByStorey) {
         SetInputProperties(maxIndex - 2, "Internal Topology", "IT", " List of nodes that define the curve of the Assembly", GH_ParamAccess.item, true);
-        SetInputProperties(maxIndex - 1, "Curve Fit", "CF", "[Optional] Curve Fit for curved elements (default: 2)" + $"{Environment.NewLine}Lagrange Interpolation (2) or Circular Arc (1)", GH_ParamAccess.item, true);
+      SetInputProperties(maxIndex - 1, "Curve Fit", "CF", "[Optional] Curve Fit for curved elements (default: 2)" + $"{Environment.NewLine}Lagrange Interpolation (2) or Circular Arc (1)", GH_ParamAccess.item, true);
       }
     }
 
@@ -282,7 +283,7 @@ namespace GsaGH.Components {
       throw new ArgumentException("Unable to convert " + name + " to Assembly Type");
     }
 
-    private void SetInputProperties(int index, string name, string nickname, string description, GH_ParamAccess access = GH_ParamAccess.item, bool optional = true) {
+    private void SetInputProperties(int index, string name, string nickname, string description, GH_ParamAccess access, bool optional = true) {
       Params.Input[index].Name = name;
       Params.Input[index].NickName = nickname;
       Params.Input[index].Description = description;
