@@ -23,7 +23,6 @@ namespace GsaGH.Parameters.Results {
       get;
       private set;
     }
-
     public IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>> Element1dDisplacements {
       get;
       private set;
@@ -32,27 +31,22 @@ namespace GsaGH.Parameters.Results {
       get;
       private set;
     }
-
     public IEntity1dResultCache<IEnergyDensity, Entity1dExtremaKey> Element1dStrainEnergyDensities {
       get;
       private set;
     }
-
     public IEntity1dResultCache<IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> Element1dDerivedStresses {
       get;
       private set;
     }
-
     public IEntity1dResultCache<IStress1d, ResultStress1d<Entity1dExtremaKey>> Element1dStresses {
       get;
       private set;
     }
-
     public IMeshResultCache<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> Element2dDisplacements {
       get;
       private set;
     }
-
     public IEntity2dLayeredResultCache<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element2dStresses {
       get;
       private set;
@@ -101,19 +95,16 @@ namespace GsaGH.Parameters.Results {
       get;
       private set;
     }
-
     public IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>>
       Member1dDisplacements {
       get;
       private set;
     }
-
     public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>>
       Member1dInternalForces {
       get;
       private set;
     }
-
     public IEntity0dResultCache<ISteelUtilisation, SteelUtilisationExtremaKeys> SteelUtilisations {
       get;
       private set;

@@ -23,6 +23,33 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaListGoo PreferredCast(object data) {
+      if (data is GsaNodeGoo node) {
+        var list = new GsaList() {
+          EntityType = EntityType.Node,
+          Definition = node.Value.Id.ToString(),
+        };
+
+        return new GsaListGoo(list);
+      }
+      
+      if (data is GsaElement1dGoo element1d) {
+        var list = new GsaList() {
+          EntityType = EntityType.Element,
+          Definition = element1d.Value.Id.ToString(),
+        };
+
+        return new GsaListGoo(list);
+      }
+
+      if (data is GsaMember1dGoo member1d) {
+        var list = new GsaList() {
+          EntityType = EntityType.Member,
+          Definition = member1d.Value.Id.ToString(),
+        };
+
+        return new GsaListGoo(list);
+      }
+
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Entity List");
       return new GsaListGoo(null);
     }

@@ -22,6 +22,10 @@ namespace IntegrationTests.Parameters {
     [InlineData("Test2Ys", new double[] { -9.0, -4.0, })]
     [InlineData("Test3X", -6.0)]
     [InlineData("Test3Y", 4.5)]
+    [InlineData("Test4X", -6.0)]
+    [InlineData("Test4Y", new double[] { 2.0, 10.0, 4.5 })]
+    [InlineData("Test5X", -6.0)]
+    [InlineData("Test5Y", new double[] { 2.0, 10.0, 4.5 })]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);

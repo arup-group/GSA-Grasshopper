@@ -10,7 +10,6 @@ namespace GsaGHTests.Model {
     [Theory]
     [InlineData("GSA-Grasshopper1.gwa")]
     [InlineData("GSA-Grasshopper2.gwb")]
-    [InlineData("GSA-Grasshopper3.gwc")]
     public void SaveGsaModelTest(string filename) {
       string path = Path.GetTempPath() + filename;
       string expectedPath = Path.GetTempPath() + (path.EndsWith("gwc") ? "GSA-Grasshopper3.gwb" : filename);

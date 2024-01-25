@@ -466,8 +466,8 @@ namespace GsaGHTests.Helpers.GH {
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
-      Assert.Equal($"Element definition was derived from Elements with Parent " +
-            $"Member included in '{listName}' List",
+      Assert.Equal($"Element definition was derived from Elements with parent " +
+            $"Members included in '{listName}' List",
             comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark)[0]);
     }
 
@@ -519,8 +519,8 @@ namespace GsaGHTests.Helpers.GH {
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
-      Assert.Equal($"Element definition was derived from Elements with Parent "
-          + $"Member included in 'Member list' List",
+      Assert.Equal($"Element definition was derived from Elements with parent "
+          + $"Members included in 'Member list' List",
             comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark)[0]);
     }
 

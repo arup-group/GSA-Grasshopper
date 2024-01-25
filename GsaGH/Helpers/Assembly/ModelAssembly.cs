@@ -9,6 +9,7 @@ using GsaAPI.Materials;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.EnumMappings;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -25,6 +26,7 @@ namespace GsaGH.Helpers.Assembly {
     private GsaGuidDictionary<EntityList> _lists;
     private ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship;
     private GsaGuidDictionary<Member> _members;
+    private GsaGuidDictionary<GsaAPI.Assembly> _assemblies;
     private Model _model;
     private GsaIntDictionary<Node> _nodes;
     private GsaGuidDictionary<SpringProperty> _springProperties;
@@ -65,37 +67,50 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     internal ModelAssembly(
-      GsaModel model, List<GsaList> lists, List<GsaGridLine> gridLines, List<GsaNode> nodes,
-      List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds, List<GsaElement3d> elem3ds,
-      List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds, List<GsaMember3d> mem3ds,
-      List<GsaMaterial> mats, List<GsaSection> sections, List<GsaProperty2d> prop2Ds,
-      List<GsaProperty3d> prop3Ds, List<GsaSpringProperty> springProps, List<IGsaLoad> loads,
-      List<GsaGridPlaneSurface> gridPlaneSurfaces, List<GsaLoadCase> loadCases,
-      List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinations,
-      List<IGsaDesignTask> designTasks, LengthUnit modelUnit,
+      GsaModel model, List<GsaList> lists, List<GsaGridLine> gridLines, GsaGeometry geometry,
+      GsaProperties properties, GsaLoading loading, GsaAnalysis analysis, LengthUnit modelUnit,
       Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner) {
 
       SetupModel(model, modelUnit);
 
-      ConvertProperties(mats, sections, prop2Ds, prop3Ds, springProps);
-      ConvertNodes(nodes);
-      ConvertElements(elem1ds, elem2ds, elem3ds);
-      ConvertMembers(mem1ds, mem2ds, mem3ds);
+      if (properties != null) {
+        ConvertProperties(properties.Materials, properties.Sections, properties.Property2ds, properties.Property3ds, properties.SpringProperties);
+      }
+
+      if (geometry != null) {
+        ConvertNodes(geometry.Nodes);
+        ConvertElements(geometry.Element1ds, geometry.Element2ds, geometry.Element3ds);
+        ConvertMembers(geometry.Member1ds, geometry.Member2ds, geometry.Member3ds);
+        ConvertAssemblies(geometry.Assemblies);
+      }
+
       ConvertNodeList(lists);
-      ConvertNodeLoads(loads);
+
+      if (loading != null) {
+        ConvertNodeLoads(loading.Loads);
+      }
+
       AssembleNodesElementsMembersAndLists();
       ElementsFromMembers(createElementsFromMembers, toleranceCoincidentNodes, owner);
 
-      ConvertList(lists, loads, designTasks, owner);
-      ConvertGridPlaneSurface(gridPlaneSurfaces, owner);
-      ConvertLoad(loads, owner);
-      ConvertLoadCases(loadCases, owner);
+      if (analysis != null && loading != null) {
+        ConvertList(lists, loading.Loads, analysis.DesignTasks, owner);
+      }
+
+      if (loading != null) {
+        ConvertGridPlaneSurface(loading.GridPlaneSurfaces, owner);
+        ConvertLoad(loading.Loads, owner);
+        ConvertLoadCases(loading.LoadCases, owner);
+      }
 
       AssembleLoadsCasesAxesGridPlaneSurfacesAndLists(owner);
       ConvertAndAssembleGridLines(gridLines);
-      ConvertAndAssembleAnalysisTasks(analysisTasks);
-      ConvertAndAssembleCombinations(combinations);
-      ConvertAndAssembleDesignTasks(designTasks, owner);
+
+      if (analysis != null) {
+        ConvertAndAssembleAnalysisTasks(analysis.AnalysisTasks);
+        ConvertAndAssembleCombinations(analysis.CombinationCases);
+        ConvertAndAssembleDesignTasks(analysis.DesignTasks, owner);
+      }
 
       DeleteExistingResults();
     }
@@ -115,6 +130,10 @@ namespace GsaGH.Helpers.Assembly {
       _model.SetNodes(_nodes.ReadOnlyDictionary);
       _model.SetElements(_elements.ReadOnlyDictionary);
       _model.SetMembers(_members.ReadOnlyDictionary);
+
+      foreach (KeyValuePair<int, GsaAPI.Assembly> assembly in _assemblies.ReadOnlyDictionary) {
+        _model.SetAssembly(assembly.Key, assembly.Value);
+      }
 
       // Set API Sections and Materials in model
       _model.SetSections(_sections.ReadOnlyDictionary);
@@ -206,6 +225,7 @@ namespace GsaGH.Helpers.Assembly {
         && PropertiesCount == 0
         && _elements.Count == 0
         && _members.Count == 0
+        && _assemblies.Count == 0
         && _model.ConcreteDesignCode() == string.Empty
         && _model.SteelDesignCode() == string.Empty) {
         _isSeedModel = false;
@@ -579,6 +599,7 @@ namespace GsaGH.Helpers.Assembly {
       _axes = new GsaIntDictionary<Axis>(model.ApiAxis);
       _elements = new GsaGuidIntListDictionary<Element>(_model.Elements());
       _members = new GsaGuidDictionary<Member>(_model.Members());
+      _assemblies = new GsaGuidDictionary<GsaAPI.Assembly>(_model.Assemblies());
       _lists = new GsaGuidDictionary<EntityList>(_model.Lists());
       _gridLines = new GsaIntDictionary<GridLine>(_model.GridLines());
 

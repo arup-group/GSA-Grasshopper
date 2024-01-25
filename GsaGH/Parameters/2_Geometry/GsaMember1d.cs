@@ -157,7 +157,7 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string id = Id > 0 ? $"ID:{Id}" : string.Empty;
-      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
+      string type = Mappings._memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
       string property = string.Empty;
       if (Section != null) {
         property = Section.Id > 0 ? $"PB{Section.Id}"

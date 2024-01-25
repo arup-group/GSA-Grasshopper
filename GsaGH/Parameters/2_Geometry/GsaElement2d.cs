@@ -74,26 +74,6 @@ namespace GsaGH.Parameters {
       Section3dPreview = other.Section3dPreview?.Duplicate();
     }
 
-    [ExcludeFromCodeCoverage]
-    [Obsolete("This method is only used by obsolete components and will be removed in GsaGH 1.0")]
-    public GsaElement2d(
-      Brep brep, List<Curve> curves, Point3dList points, double meshSize,
-      List<GsaMember1d> mem1ds, List<GsaNode> nodes, LengthUnit unit, Length tolerance,
-      int prop = 0) {
-      Mesh = RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, null, mem1ds,
-        meshSize, unit, tolerance, MeshMode2d.Mixed).Item1;
-      Tuple<List<Element>, Point3dList, List<List<int>>> convertMesh
-        = RhinoConversions.ConvertMeshToElem2d(Mesh, prop, true);
-      ApiElements = convertMesh.Item1;
-      Topology = convertMesh.Item2;
-      TopoInt = convertMesh.Item3;
-      Ids = new List<int>(new int[Mesh.Faces.Count]);
-      var singleProp = new GsaProperty2d(prop);
-      for (int i = 0; i < Mesh.Faces.Count; i++) {
-        Prop2ds.Add(singleProp);
-      }
-    }
-
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
@@ -192,7 +172,7 @@ namespace GsaGH.Parameters {
         return "Null";
       }
 
-      string type = Mappings.elementTypeMapping.FirstOrDefault(
+      string type = Mappings._elementTypeMapping.FirstOrDefault(
         x => x.Value == ApiElements.First().Type).Key;
       string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
       return string.Join(" ", type, info).TrimSpaces();

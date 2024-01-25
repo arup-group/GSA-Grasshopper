@@ -2,6 +2,7 @@
 using System.Drawing;
 using GsaGH.Parameters;
 using GsaGHTests.Model;
+using OasysGH.Components;
 using OasysUnits.Units;
 using Rhino.Geometry;
 using Xunit;
@@ -61,7 +62,7 @@ namespace GsaGHTests.Helpers.Export {
       node1.Value.Restraint = new GsaBool6(true, true, true, false, false, true);
       node1.Value.Point = new Point3d(1, 1, 1);
 
-      OasysGH.Components.GH_OasysDropDownComponent comp1 =
+      GH_OasysDropDownComponent comp1 =
         CreateModelTest.CreateModelFromGeometry(new List<GsaNodeGoo>() {
           node1,
         }, null, null, null, null, null, ModelUnit.M);
@@ -70,12 +71,12 @@ namespace GsaGHTests.Helpers.Export {
       node2.Value.Restraint = new GsaBool6(true, true, true, false, false, true);
       node2.Value.Point = new Point3d(-0.5, 1, -1);
 
-      OasysGH.Components.GH_OasysDropDownComponent comp2 =
-        CreateModelTest.CreateModelFromGeometry(new List<GsaNodeGoo>() {
+      GH_OasysDropDownComponent comp2 =
+         CreateModelTest.CreateModelFromGeometry(new List<GsaNodeGoo>() {
           node2,
-        }, null, null, null, null, null, ModelUnit.Cm);
+         }, null, null, null, null, null, ModelUnit.Cm);
 
-      OasysGH.Components.GH_OasysDropDownComponent comp =
+      GH_OasysDropDownComponent comp =
         CreateModelTest.CreateModelFromModels(new List<GsaModelGoo>() {
           (GsaModelGoo)ComponentTestHelper.GetOutput(comp1),
           (GsaModelGoo)ComponentTestHelper.GetOutput(comp2),

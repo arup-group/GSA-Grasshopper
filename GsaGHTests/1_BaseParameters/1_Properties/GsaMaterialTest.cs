@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GsaAPI;
 using GsaAPI.Materials;
 using GsaGH.Helpers.Assembly;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysUnits;
@@ -187,12 +188,13 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(MatType.Timber, modelProp2d.Material.MaterialType);
       Assert.Equal(MatType.Custom, modelProp3d.Material.MaterialType);
 
-      var assembly = new ModelAssembly(null, null, null, null, null, null, null, null, null,
-        null, null,
-        new List<GsaSection> { modelSection },
-        new List<GsaProperty2d> { modelProp2d },
-        new List<GsaProperty3d> { modelProp3d },
-        null, null, null, null, null, null, null, LengthUnit.Meter, Length.Zero, false, null);
+      var properties = new GsaProperties {
+        Property2ds = new List<GsaProperty2d> { modelProp2d },
+        Property3ds = new List<GsaProperty3d> { modelProp3d },
+        Sections = new List<GsaSection> { modelSection },
+      };
+      var assembly = new ModelAssembly(null, null, null, null, properties, null, null,
+        LengthUnit.Meter, Length.Zero, false, null);
       GsaAPI.Model assembled = assembly.GetModel();
       Assert.Equal(99, assembled.Sections()[1].MaterialGradeProperty);
       Assert.Equal(7, assembled.Prop2Ds()[1].MaterialGradeProperty);

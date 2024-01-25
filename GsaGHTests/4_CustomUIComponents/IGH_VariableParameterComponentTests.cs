@@ -8,6 +8,7 @@ namespace GsaGHTests.CustomComponent {
   public class IGH_VariableParameterComponentTests {
     [Theory]
     [InlineData(typeof(GetModelGeometry))]
+    [InlineData(typeof(GetModelGeometry_OBSOLETE))]
     [InlineData(typeof(OpenModel))]
     [InlineData(typeof(Edit2dProperty))]
     [InlineData(typeof(EditOffset))]
@@ -39,6 +40,7 @@ namespace GsaGHTests.CustomComponent {
 
     [Theory]
     [InlineData(typeof(GetModelGeometry))]
+    [InlineData(typeof(GetModelGeometry_OBSOLETE))]
     [InlineData(typeof(Edit2dProperty))]
     [InlineData(typeof(EditOffset))]
     [InlineData(typeof(EditSection))]

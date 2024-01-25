@@ -16,8 +16,6 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-pr-spring/">Spring Properties</see> to read more.</para>
   /// </summary>
   public class GsaSpringProperty : IGsaProperty {
-
-    // do we need a guid?
     public Guid Guid { get; set; } = Guid.NewGuid();
     public int Id { get; set; } = 0;
     public bool IsReferencedById { get; set; } = false;
@@ -49,7 +47,19 @@ namespace GsaGH.Parameters {
       ApiProperty = property.Value;
     }
 
-    public SpringProperty DuplicateApiObject() {
+    public override string ToString() {
+      string ps = (Id > 0) ? "PS" + Id : string.Empty;
+      if (IsReferencedById) {
+        return (Id > 0) ? $"{ps} (referenced)" : string.Empty; ;
+      }
+
+      string name = ApiProperty.Name;
+      string type = Mappings._springPropertyTypeMapping.FirstOrDefault(x => x.Value == ApiProperty.GetType()).Key;
+      string values = SpringValuesToString();
+      return string.Join(" ", ps, type, name, values).TrimSpaces();
+    }
+
+    internal SpringProperty DuplicateApiObject() {
       SpringProperty property;
       switch (ApiProperty) {
         case AxialSpringProperty axialSpringProperty:
@@ -139,18 +149,6 @@ namespace GsaGH.Parameters {
       property.Name = ApiProperty.Name;
 
       return property;
-    }
-
-    public override string ToString() {
-      string ps = (Id > 0) ? "PS" + Id : string.Empty;
-      if (IsReferencedById) {
-        return (Id > 0) ? $"{ps} (referenced)" : string.Empty; ;
-      }
-
-      string name = ApiProperty.Name;
-      string type = Mappings.SpringPropertyTypeMapping.FirstOrDefault(x => x.Value == ApiProperty.GetType()).Key;
-      string values = SpringValuesToString();
-      return string.Join(" ", ps, type, name, values).TrimSpaces();
     }
 
     private string SpringValuesToString() {
