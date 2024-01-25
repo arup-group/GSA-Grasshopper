@@ -173,38 +173,37 @@ namespace GsaGH.Components {
 
       foreach (KeyValuePair<int, IList<ISteelDesignEffectiveLength>> kvp in resultSet.Subset) {
         var spanList = new List<SubSpan>();
-        foreach (int p in permutations) {
-          var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
+        var p = permutations[0];
+        var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : permutations[0], kvp.Key);
 
-          spanList = _type switch {
-            SteelDesignTypes.Major => kvp.Value[p - 1].MajorAxisSubSpans,
-            SteelDesignTypes.Minor => kvp.Value[p - 1].MinorAxisSubSpans,
-            SteelDesignTypes.LT => kvp.Value[p - 1].LateralTorsionalSubSpans,
-            _ => spanList,
-          };
-          Length len = kvp.Value[p - 1].MemberLength.ToUnit(_lengthUnit);
-          length.Add(new GH_UnitNumber(len), path);
+        spanList = _type switch {
+          SteelDesignTypes.Major => kvp.Value[p - 1].MajorAxisSubSpans,
+          SteelDesignTypes.Minor => kvp.Value[p - 1].MinorAxisSubSpans,
+          SteelDesignTypes.LT => kvp.Value[p - 1].LateralTorsionalSubSpans,
+          _ => spanList,
+        };
+        Length len = kvp.Value[p - 1].MemberLength.ToUnit(_lengthUnit);
+        length.Add(new GH_UnitNumber(len), path);
 
-          int index = 0;
-          foreach (SubSpan subSpan in spanList) {
-            string elements = subSpan.ElementIds.Aggregate("", (current, id) => current + id + " ").Trim();
-            Length startPos = subSpan.StartPosition.ToUnit(_lengthUnit);
-            Length endPos = subSpan.EndPosition.ToUnit(_lengthUnit);
-            Length spanLen = endPos - startPos;
-            Length effLength = subSpan.EffectiveLength.ToUnit(_lengthUnit);
-            double effSpanRatio = effLength / len;
-            double effSpanRatio2 = effLength / spanLen;
+        int index = 0;
+        foreach (SubSpan subSpan in spanList) {
+          string elements = subSpan.ElementIds.Aggregate("", (current, id) => current + id + " ").Trim();
+          Length startPos = subSpan.StartPosition.ToUnit(_lengthUnit);
+          Length endPos = subSpan.EndPosition.ToUnit(_lengthUnit);
+          Length spanLen = endPos - startPos;
+          Length effLength = subSpan.EffectiveLength.ToUnit(_lengthUnit);
+          double effSpanRatio = effLength / len;
+          double effSpanRatio2 = effLength / spanLen;
 
-            spans.Add(new GH_Integer(++index), path);
-            spanElements.Add(new GH_String(elements), path);
-            startPosition.Add(new GH_UnitNumber(startPos), path);
-            endPosition.Add(new GH_UnitNumber(endPos), path);
-            spanLength.Add(new GH_UnitNumber(spanLen), path);
-            effectiveLength.Add(new GH_UnitNumber(effLength), path);
-            effectiveSpanRatio.Add(new GH_Number(effSpanRatio), path);
-            effectiveSpanRatio2.Add(new GH_Number(effSpanRatio2), path);
-            slendernessRatio.Add(new GH_UnitNumber(subSpan.SlendernessRatio), path);
-          }
+          spans.Add(new GH_Integer(++index), path);
+          spanElements.Add(new GH_String(elements), path);
+          startPosition.Add(new GH_UnitNumber(startPos), path);
+          endPosition.Add(new GH_UnitNumber(endPos), path);
+          spanLength.Add(new GH_UnitNumber(spanLen), path);
+          effectiveLength.Add(new GH_UnitNumber(effLength), path);
+          effectiveSpanRatio.Add(new GH_Number(effSpanRatio), path);
+          effectiveSpanRatio2.Add(new GH_Number(effSpanRatio2), path);
+          slendernessRatio.Add(new GH_UnitNumber(subSpan.SlendernessRatio), path);
         }
       }
 
