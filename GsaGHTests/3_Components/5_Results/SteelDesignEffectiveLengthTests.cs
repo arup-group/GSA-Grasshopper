@@ -22,7 +22,6 @@ using SteelDesignEffectiveLength = GsaGH.Components.SteelDesignEffectiveLength;
 namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class SteelDesignEffectiveLengthTests {
-    private static readonly string MemberList = "46 to 48";
 
     [Fact]
     public void InvalidInputErrorTests() {
