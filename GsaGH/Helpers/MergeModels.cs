@@ -5,6 +5,7 @@ using System.Linq;
 using Grasshopper.Kernel;
 using GsaAPI;
 using GsaGH.Helpers.Assembly;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using OasysUnits;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -67,6 +68,11 @@ namespace GsaGH.Helpers {
           return c;
         }).ToList();
       }
+      var assemblies = elements.Assemblies.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
+      assemblies.Select(c => {
+        c.Id = 0;
+        return c;
+      }).ToList();
 
       var members = new Import.Members(appendModel);
       var mem1ds = members.Member1ds.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
@@ -84,6 +90,7 @@ namespace GsaGH.Helpers {
         c.Id = 0;
         return c;
       }).ToList();
+
 
       var existingSectionIds = mainModel.Sections.Keys.ToList();
       var sections = appendModel.Sections.
@@ -163,9 +170,32 @@ namespace GsaGH.Helpers {
         designTasks.Add(new GsaSteelDesignTask(kvp, appendModel));
       }
 
-      var assembly = new ModelAssembly(mainModel, lists, gridLines, nodes, elem1ds, elem2ds,
-        elem3ds, mem1ds, mem2ds, mem3ds, null, sections, prop2Ds, prop3Ds, springProps, loads, gps,
-        gsaLoadCases, null, null, designTasks, mainModel.ModelUnit, tolerance, false, owner);
+      var geometry = new GsaGeometry {
+        Nodes = nodes,
+        Element1ds = elem1ds,
+        Element2ds = elem2ds,
+        Element3ds = elem3ds,
+        Member1ds = mem1ds,
+        Member2ds = mem2ds,
+        Member3ds = mem3ds
+      };
+      var properties = new GsaProperties {
+        Property2ds = prop2Ds,
+        Property3ds = prop3Ds,
+        Sections = sections,
+        SpringProperties = springProps
+      };
+      var load = new GsaLoading {
+        Loads = loads,
+        GridPlaneSurfaces = gps,
+        LoadCases = gsaLoadCases
+      };
+      var analysis = new GsaAnalysis {
+        DesignTasks = designTasks
+      };
+
+      var assembly = new ModelAssembly(mainModel, lists, gridLines, geometry, properties, load,
+        analysis, mainModel.ModelUnit, tolerance, false, owner);
       mainModel.Model = assembly.GetModel();
 
       return mainModel;

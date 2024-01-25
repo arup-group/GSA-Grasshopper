@@ -57,16 +57,16 @@ namespace GsaGH.Components {
       _selectedItems[i] = _dropDownItems[i][j];
       if (i == 0) {
         if (j == 0) {
-          if (_dropDownItems[1] != Mappings.diagramTypeMappingForce.Select(item => item.Description)
+          if (_dropDownItems[1] != Mappings._diagramTypeMappingForce.Select(item => item.Description)
            .ToList()) {
-            _dropDownItems[1] = Mappings.diagramTypeMappingForce.Select(item => item.Description)
+            _dropDownItems[1] = Mappings._diagramTypeMappingForce.Select(item => item.Description)
              .ToList();
             _selectedItems[1] = _dropDownItems[1][5]; // Myy
           }
         } else {
-          if (_dropDownItems[1] != Mappings.diagramTypeMappingStress
+          if (_dropDownItems[1] != Mappings._diagramTypeMappingStress
            .Select(item => item.Description).ToList()) {
-            _dropDownItems[1] = Mappings.diagramTypeMappingStress.Select(item => item.Description)
+            _dropDownItems[1] = Mappings._diagramTypeMappingStress.Select(item => item.Description)
              .ToList();
             _selectedItems[1] = _dropDownItems[1][7]; // Combined C1
           }
@@ -125,7 +125,7 @@ namespace GsaGH.Components {
       });
       _selectedItems.Add(_dropDownItems[0][0]);
 
-      _dropDownItems.Add(Mappings.diagramTypeMappingForce.Select(item => item.Description)
+      _dropDownItems.Add(Mappings._diagramTypeMappingForce.Select(item => item.Description)
        .ToList());
       _selectedItems.Add(_dropDownItems[1][5]); // Myy
 
@@ -215,9 +215,9 @@ namespace GsaGH.Components {
       LengthUnit lengthUnit = result.Model.ModelUnit;
 
       DiagramType type = _selectedItems[0] == "Force"
-        ? Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
+        ? Mappings._diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
           .Select(item => item.GsaApiEnum).FirstOrDefault()
-        : Mappings.diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1])
+        : Mappings._diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1])
           .Select(item => item.GsaApiEnum).FirstOrDefault();
 
       double unitScale = ComputeUnitScale(autoScale);
@@ -328,8 +328,8 @@ namespace GsaGH.Components {
     private bool IsForce() {
       bool isForce = false;
       DiagramType type = _selectedItems[0] == "Force" ?
-        Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
-         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings.diagramTypeMappingStress
+        Mappings._diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
+         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings._diagramTypeMappingStress
          .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
          .FirstOrDefault();
       switch (type) {
@@ -347,8 +347,8 @@ namespace GsaGH.Components {
     private bool IsMoment() {
       bool isMoment = false;
       DiagramType type = _selectedItems[0] == "Force" ?
-        Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
-         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings.diagramTypeMappingStress
+        Mappings._diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
+         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings._diagramTypeMappingStress
          .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
          .FirstOrDefault();
       switch (type) {
@@ -366,8 +366,8 @@ namespace GsaGH.Components {
     private bool IsStress() {
       bool isStress = false;
       DiagramType type = _selectedItems[0] == "Force" ?
-        Mappings.diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
-         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings.diagramTypeMappingStress
+        Mappings._diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
+         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings._diagramTypeMappingStress
          .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
          .FirstOrDefault();
       switch (type) {

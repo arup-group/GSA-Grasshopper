@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GsaAPI;
 using GsaGH.Helpers;
 using OasysUnits;
+using OasysUnits.Units;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters.Results {
@@ -104,6 +105,69 @@ namespace GsaGH.Parameters.Results {
           for (int i = 1; i < subset.Count(); i++) {
             if (Math.Abs(subset.ElementAt(i).As(unit)) > Math.Abs(val.As(unit))) {
               val = subset.ElementAt(i);
+            }
+          }
+
+          break;
+      }
+
+      return val;
+    }
+
+    internal static Ratio Envelope(this IEnumerable<Ratio?> subset, EnvelopeMethod envelopeType) {
+      var val = new Ratio(0, RatioUnit.DecimalFraction);
+      for (int i = 0; i < subset.Count(); i++) {
+        if (subset.ElementAt(i) != null) {
+          val = (Ratio)subset.ElementAt(i);
+          break;
+        }
+      }
+
+      RatioUnit unit = RatioUnit.DecimalFraction;
+      switch (envelopeType) {
+        case EnvelopeMethod.Maximum:
+          for (int i = 1; i < subset.Count(); i++) {
+            if(subset.ElementAt(i) == null) {
+              continue;
+            }
+            if (((Ratio)subset.ElementAt(i)).As(unit) > val.As(unit)) {
+              val = (Ratio)subset.ElementAt(i);
+            }
+          }
+          break;
+
+        case EnvelopeMethod.Minimum:
+          for (int i = 1; i < subset.Count(); i++) {
+            if (subset.ElementAt(i) == null) {
+              continue;
+            }
+            if (((Ratio)subset.ElementAt(i)).As(unit) < val.As(unit)) {
+              val = (Ratio)subset.ElementAt(i);
+            }
+          }
+
+          break;
+
+        case EnvelopeMethod.Absolute:
+          val = val.Abs();
+          for (int i = 1; i < subset.Count(); i++) {
+            if (subset.ElementAt(i) == null) {
+              continue;
+            }
+            if (Math.Abs(((Ratio)subset.ElementAt(i)).As(unit)) > val.As(unit)) {
+              val = ((Ratio)subset.ElementAt(i)).Abs();
+            }
+          }
+
+          break;
+
+        case EnvelopeMethod.SignedAbsolute:
+          for (int i = 1; i < subset.Count(); i++) {
+            if (subset.ElementAt(i) == null) {
+              continue;
+            }
+            if (Math.Abs(((Ratio)subset.ElementAt(i)).As(unit)) > Math.Abs(val.As(unit))) {
+              val = (Ratio)subset.ElementAt(i);
             }
           }
 

@@ -296,8 +296,12 @@ namespace GsaGH.Helpers.GH {
             owner.AddRuntimeWarning($"No child elements found for Members {warningIds}");
           }
 
-          owner.AddRuntimeRemark($"Element definition was derived from Elements with Parent " +
-            $"Member included in '{listGoo.Value.Name}' List");
+          string listName = string.Empty;
+          if (!string.IsNullOrEmpty(listGoo.Value.Name)) {
+            listName = $"'{listGoo.Value.Name}' ";
+          }
+          owner.AddRuntimeRemark($"Element definition was derived from Elements with parent " +
+            $"Members included in {listName}List");
           return GsaList.CreateListDefinition(elementIds);
         }
       }
@@ -321,8 +325,12 @@ namespace GsaGH.Helpers.GH {
       }
 
       if (elementIds2.Count > 0) {
-        owner.AddRuntimeRemark($"Element definition was derived from Elements with Parent "
-          + $"Member included in '{listGoo.Value.Name}' List");
+        string listName = string.Empty;
+        if (!string.IsNullOrEmpty(listGoo.Value.Name)) {
+          listName = $"'{listGoo.Value.Name}' ";
+        }
+        owner.AddRuntimeRemark($"Element definition was derived from Elements with parent "
+          + $"Members included in {listName}List");
         return GsaList.CreateListDefinition(elementIds2);
       }
 

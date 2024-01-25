@@ -143,6 +143,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AssemblyParam {
+            get {
+                object obj = ResourceManager.GetObject("AssemblyParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap BeamDerivedStresses {
             get {
                 object obj = ResourceManager.GetObject("BeamDerivedStresses", resourceCulture);
@@ -366,6 +376,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap CreateAnalysisTask {
             get {
                 object obj = ResourceManager.GetObject("CreateAnalysisTask", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CreateAssembly {
+            get {
+                object obj = ResourceManager.GetObject("CreateAssembly", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1056,6 +1076,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap Get2dPropertyModifier {
             get {
                 object obj = ResourceManager.GetObject("Get2dPropertyModifier", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap GetAssembly {
+            get {
+                object obj = ResourceManager.GetObject("GetAssembly", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
