@@ -60,10 +60,10 @@ namespace GsaGHTests._1_BaseParameters._5_Results.Collections.RegressionValues {
     };
     internal static List<double> MajorEffectiveLengthEffectiveSpanRatio= new List<double>() {
       1,
-      4375,
-      2625,
-      4375,
-      2625,
+      0.4375,
+      0.2625,
+      0.4375,
+      0.2625,
     };
     internal static List<double> MajorEffectiveLengthEffectiveSpanRatio2= new List<double>() {
       1,
