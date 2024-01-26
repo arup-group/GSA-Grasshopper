@@ -56,6 +56,7 @@ namespace GsaGHTests.Components {
     // 2_Geometry
     [InlineData(typeof(Create1dElement))]
     [InlineData(typeof(Create2dElement))]
+    [InlineData(typeof(CreateAssembly))]
     [InlineData(typeof(Create1dMember))]
     [InlineData(typeof(Create2dMember))]
     [InlineData(typeof(Create3dMember))]

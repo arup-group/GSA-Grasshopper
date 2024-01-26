@@ -14,11 +14,6 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertAssemblies(List<GsaAssembly> assemblies) {
-      if (!assemblies.IsNullOrEmpty()) {
-        _deleteResults = true;
-        return;
-      }
-
       assemblies = assemblies.OrderByDescending(x => x.Id).ToList();
       foreach (GsaAssembly assembly in assemblies) {
         ConvertAssembly(assembly);
