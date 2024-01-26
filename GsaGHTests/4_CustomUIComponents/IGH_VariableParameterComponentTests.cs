@@ -22,6 +22,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(Edit1dMember))]
     [InlineData(typeof(Edit2dMember))]
     [InlineData(typeof(Edit3dMember))]
+    [InlineData(typeof(GetAssembly))]
     [InlineData(typeof(EditNode))]
     [InlineData(typeof(ExpandBeamToShell))]
     [InlineData(typeof(BeamStrainEnergyDensity))]

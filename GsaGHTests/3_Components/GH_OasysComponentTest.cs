@@ -77,6 +77,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(ExpandBeamToShell))]
     [InlineData(typeof(LocalAxes))]
     [InlineData(typeof(SectionAlignment))]
+    [InlineData(typeof(GetAssembly))]
     // 3_Loads
     [InlineData(typeof(CreateBeamLoad))]
     [InlineData(typeof(CreateBeamThermalLoad))]
