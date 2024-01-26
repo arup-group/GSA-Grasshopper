@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Grasshopper.Kernel;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using OasysUnits;
 using OasysUnits.Units;
@@ -14,7 +16,7 @@ namespace GsaGH.Helpers.Import {
     private LengthUnit _unit = LengthUnit.Meter;
     private GsaModel _model;
 
-    internal PropertyQuantities(GsaModel model, Layer layer, string list) {
+    internal PropertyQuantities(GsaModel model, Layer layer, string list, GH_Component owner) {
       _unit = model.ModelUnit;
       _model = model;
       switch (layer) {
@@ -22,7 +24,7 @@ namespace GsaGH.Helpers.Import {
           CalculateFromElements(new Elements(model, list));
           return;
         case Layer.Design:
-          CalculateFromMember(new Members(model, list));
+          CalculateFromMember(new Members(model, owner, list), owner);
           return;
       }
     }
@@ -74,7 +76,7 @@ namespace GsaGH.Helpers.Import {
         kvp => kvp.Key, kvp => new Area(kvp.Value, areaUnit));
     }
 
-    private void CalculateFromMember(Members members) {
+    private void CalculateFromMember(Members members, GH_Component owner) {
       var sectionQuantities = new ConcurrentDictionary<int, double>();
       var property2dQuantities = new ConcurrentDictionary<int, double>();
 
@@ -104,6 +106,12 @@ namespace GsaGH.Helpers.Import {
         if (member.Value.Prop2d == null || member.Value.Prop2d.IsReferencedById) {
           return;
         }
+
+        if(member.Value.Brep == null) {
+          owner.AddRuntimeWarning("Invalid topology for member " + member.Value.Id);
+          return;
+        }
+
         double area = member.Value.Brep.GetArea();
         property2dQuantities.AddOrUpdate(
           member.Value.Prop2d.Id, area, (key, oldValue) => oldValue + area);

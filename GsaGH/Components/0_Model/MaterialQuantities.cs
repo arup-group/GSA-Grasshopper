@@ -83,7 +83,7 @@ namespace GsaGH.Components {
         : Inputs.GetMemberListDefinition(this, da, 1, modelGoo.Value);
       Layer layer = _selectedItems[0] == "Analysis"
         ? Layer.Analysis : Layer.Design;
-      var quantities = new GsaGH.Helpers.Import.MaterialQuantities(modelGoo.Value, layer, list);
+      var quantities = new GsaGH.Helpers.Import.MaterialQuantities(modelGoo.Value, layer, list, this);
       var steel = new DataTree<GH_UnitNumber>();
       foreach (KeyValuePair<int, Mass> kvp in quantities.SteelQuantities) {
         var path = new GH_Path(kvp.Key);

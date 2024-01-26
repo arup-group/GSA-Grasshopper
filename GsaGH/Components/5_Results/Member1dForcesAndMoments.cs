@@ -107,27 +107,27 @@ namespace GsaGH.Components {
       string note = ResultNotes.Note1dResults;
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx",
-        "Member Axial Forces in Local Member X-direction." + forcerule + note,
+        "Member Axial Force in Local Member X-direction." + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy",
-        "Member Shear Forces in Local Member Y-direction." + forcerule + note,
+        "Member Shear Force in Local Member Y-direction." + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz",
-        "Member Shear Forces in Local Member Z-direction." + forcerule + note,
+        "Member Shear Force in Local Member Z-direction." + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force |YZ| [" + forceunitAbbreviation + "]", "|Fyz|",
-        "Total |YZ| Member Shear Forces." + note, GH_ParamAccess.tree);
+        "Total |YZ| Member Shear Force." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx",
-        "Member Torsional Moments around Local Member X-axis." + momentrule + note,
+        "Member Torsional Moment around Local Member X-axis." + momentrule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy",
-        "Member Bending Moments around Local Member Y-axis." + momentrule + note,
+        "Member Bending Moment around Local Member Y-axis." + momentrule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz",
-        "Member Bending Moments around Local Member Z-axis." + momentrule + note,
+        "Member Bending Moment around Local Member Z-axis." + momentrule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |YZ| [" + momentunitAbbreviation + "]", "|Myz|",
-        "Total |YYZZ| Member Bending Moments." + note, GH_ParamAccess.tree);
+        "Total |YYZZ| Member Bending Moment." + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {

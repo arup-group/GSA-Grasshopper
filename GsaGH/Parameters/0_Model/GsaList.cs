@@ -477,7 +477,7 @@ namespace GsaGH.Parameters {
           _properties.prop2ds = new List<GsaProperty2dGoo>();
           _properties.prop3ds = new List<GsaProperty3dGoo>();
 
-          var members = new Members(_model, Definition);
+          var members = new Members(_model, null, Definition);
           _members.m1d = members.Member1ds;
           _members.m2d = members.Member2ds;
           _members.m3d = members.Member3ds;

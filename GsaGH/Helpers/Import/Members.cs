@@ -17,7 +17,7 @@ namespace GsaGH.Helpers.Import {
     internal ConcurrentBag<GsaMember2dGoo> Member2ds { get; private set; }
     internal ConcurrentBag<GsaMember3dGoo> Member3ds { get; private set; }
 
-    internal Members(GsaModel model, string memberList = "All", GH_Component owner = null) {
+    internal Members(GsaModel model, GH_Component owner, string memberList = "All") {
       Member1ds = new ConcurrentBag<GsaMember1dGoo>();
       Member2ds = new ConcurrentBag<GsaMember2dGoo>();
       Member3ds = new ConcurrentBag<GsaMember3dGoo>();

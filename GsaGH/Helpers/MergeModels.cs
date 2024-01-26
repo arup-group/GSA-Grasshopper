@@ -74,7 +74,7 @@ namespace GsaGH.Helpers {
         return c;
       }).ToList();
 
-      var members = new Import.Members(appendModel);
+      var members = new Import.Members(appendModel, owner);
       var mem1ds = members.Member1ds.Select(n => n.Value).OrderByDescending(x => x.Id).ToList();
       mem1ds.Select(c => {
         c.Id = 0;
