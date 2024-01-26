@@ -32,6 +32,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(SectionAlignment))]
     [InlineData(typeof(CreateEffectiveLengthOptions))]
     [InlineData(typeof(CreateMemberEndRestraint))]
+    [InlineData(typeof(CreateAssembly))]
     //loads
     [InlineData(typeof(CreateBeamLoad))]
     [InlineData(typeof(CreateBeamThermalLoad))]

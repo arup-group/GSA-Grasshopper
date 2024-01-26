@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GsaAPI;
-using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers;
-using System.Linq;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -36,10 +34,35 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string id = Id > 0 ? $"ID:{Id}" : string.Empty;
-      string type = ApiAssembly.EntityType.ToString();
+      string name = ApiAssembly.Name != "" ? $"Name:{ApiAssembly.Name}" : string.Empty;
+      string type = $"Entity Type:{ApiAssembly.EntityType}";
       string entityList = $"Entity List:{ApiAssembly.EntityList}";
+      string topology = $"Topology:{ApiAssembly.Topology1} {ApiAssembly.Topology2}";
+      string definition = string.Empty;
 
-      return string.Join(" ", id, type, entityList).TrimSpaces();
+      switch (ApiAssembly) {
+        case AssemblyByExplicitPositions byExplicitPositions:
+          definition += "Explicit definition:";
+          foreach(double position in byExplicitPositions.Positions) {
+            definition += position + ", ";
+          }
+          definition = definition.Substring(0, definition.Length - 2); 
+          break;
+
+        case AssemblyByNumberOfPoints byNumberOfPoints:
+          definition += $"Definition by points:{byNumberOfPoints.NumberOfPoints}";
+          break;
+
+        case AssemblyBySpacingOfPoints bySpacingOfPoints:
+          definition += $"Definition by spacing:{bySpacingOfPoints.Spacing}m";
+          break;
+
+        case AssemblyByStorey byStorey:
+          definition += $"Definition by storey:'{byStorey.StoreyList}'";
+          break;
+      }
+
+      return string.Join(" ", id, name, type, entityList, topology, definition).TrimSpaces();
     }
 
     internal Assembly DuplicateApiObject() {
