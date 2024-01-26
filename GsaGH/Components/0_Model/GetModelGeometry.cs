@@ -719,7 +719,7 @@ namespace GsaGH.Components {
               break;
 
             case 2:
-              var members = new Members(model, memList, this);
+              var members = new Members(model, this, memList);
               _results.Mem1ds = members.Member1ds;
               _results.Mem2ds = members.Member2ds;
               _results.Mem3ds = members.Member3ds;

@@ -68,7 +68,7 @@ namespace GsaGH.Components {
         : Inputs.GetMemberListDefinition(this, da, 1, modelGoo.Value);
       Layer layer = _selectedItems[0] == "Analysis"
         ? Layer.Analysis : Layer.Design;
-      var quantities = new GsaGH.Helpers.Import.PropertyQuantities(modelGoo.Value, layer, list);
+      var quantities = new GsaGH.Helpers.Import.PropertyQuantities(modelGoo.Value, layer, list, this);
       var sections = new DataTree<GH_UnitNumber>();
       foreach (KeyValuePair<int, Length> kvp in quantities.SectionQuantities) {
         var path = new GH_Path(kvp.Key);
