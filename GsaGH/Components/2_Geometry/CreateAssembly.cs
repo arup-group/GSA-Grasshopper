@@ -338,7 +338,6 @@ namespace GsaGH.Components {
           break;
       }
 
-
       _mode = mode;
     }
   }
