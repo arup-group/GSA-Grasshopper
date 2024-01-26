@@ -85,7 +85,7 @@ namespace GsaGH.Components {
 
       if (_mode != AssemblyType.ByStorey) {
         SetInputProperties(maxIndex - 2, "Internal Topology", "IT", " List of nodes that define the curve of the Assembly", GH_ParamAccess.item, true);
-      SetInputProperties(maxIndex - 1, "Curve Fit", "CF", "[Optional] Curve Fit for curved elements (default: 2)" + $"{Environment.NewLine}Lagrange Interpolation (2) or Circular Arc (1)", GH_ParamAccess.item, true);
+        SetInputProperties(maxIndex - 1, "Curve Fit", "CF", "[Optional] Curve Fit for curved elements (default: 2)" + $"{Environment.NewLine}Lagrange Interpolation (2) or Circular Arc (1)", GH_ParamAccess.item, true);
       }
     }
 
@@ -337,7 +337,6 @@ namespace GsaGH.Components {
           Params.RegisterInputParam(new Param_String());
           break;
       }
-
 
       _mode = mode;
     }
