@@ -58,8 +58,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create new instance by casting from a Brep with optional inclusion geometry
     /// </summary>
-    public GsaMember2d(
-      Brep brep, List<Curve> includeCurves = null, Point3dList includePoints = null) {
+    public GsaMember2d(Brep brep, List<Curve> includeCurves = null, Point3dList includePoints = null) {
       ApiMember = new Member {
         Type = MemberType.GENERIC_2D,
       };
