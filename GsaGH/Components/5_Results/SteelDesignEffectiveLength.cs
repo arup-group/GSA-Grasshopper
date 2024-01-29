@@ -1,9 +1,13 @@
-﻿using Grasshopper;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
+using System.Linq;
+using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -15,11 +19,6 @@ using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Drawing;
-using System.Linq;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using SubSpan = GsaGH.Parameters.Results.SubSpan;
 
@@ -28,7 +27,7 @@ namespace GsaGH.Components {
   ///   Component to get SteelDesignEffectiveLength
   /// </summary>
   public class SteelDesignEffectiveLength : GH_OasysDropDownComponent {
-    private enum SteelDesignTypes  {
+    private enum SteelDesignTypes {
       Major,
       Minor,
       LT,
@@ -55,7 +54,7 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-      
+
       switch (i) {
         case 0:
           SteelDesignTypes type = GetModeBy(_selectedItems[0]);
@@ -65,7 +64,7 @@ namespace GsaGH.Components {
           _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
           break;
       }
-      
+
       base.UpdateUI();
     }
 
@@ -90,26 +89,26 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       switch (_type) {
         case SteelDesignTypes.Major:
-          SetOutputProperties(1, "Major Span","Spu", "Span number(s) for major axis buckling mode");
-          SetOutputProperties(2, "Major Span Elements","Elu"," Span Elements for major axis buckling mode");
-          SetOutputProperties(3, "Major Start Position","SPu"," The start position of each span along the length of the member");
-          SetOutputProperties(4, "Major End Position","EPu","The end position of each span along the length of the member");
-          SetOutputProperties(5, "Major Span Length","Slu","The length of each span");
-          SetOutputProperties(6, "Major Effective Length","Leu","The start position of each span along the length of the member");
-          SetOutputProperties(7, "Major Effective Span Ratio","Lru","The ratio between effective and total length of the member");
-          SetOutputProperties(8, "Major Effective Span Ratio,","Lsu","The ratio between effective and span length");
-          SetOutputProperties(9, "Major Slenderness Ratio","Sru","The ratio between effective and span length");
+          SetOutputProperties(1, "Major Span", "Spu", "Span number(s) for major axis buckling mode");
+          SetOutputProperties(2, "Major Span Elements", "Elu", " Span Elements for major axis buckling mode");
+          SetOutputProperties(3, "Major Start Position", "SPu", " The start position of each span along the length of the member");
+          SetOutputProperties(4, "Major End Position", "EPu", "The end position of each span along the length of the member");
+          SetOutputProperties(5, "Major Span Length", "Slu", "The length of each span");
+          SetOutputProperties(6, "Major Effective Length", "Leu", "The start position of each span along the length of the member");
+          SetOutputProperties(7, "Major Effective Span Ratio", "Lru", "The ratio between effective and total length of the member");
+          SetOutputProperties(8, "Major Effective Span Ratio,", "Lsu", "The ratio between effective and span length");
+          SetOutputProperties(9, "Major Slenderness Ratio", "Sru", "The ratio between effective and span length");
           break;
         case SteelDesignTypes.Minor:
-          SetOutputProperties(1, "Minor Span","Spv", "Span number(s) for minor axis buckling mode");
-          SetOutputProperties(2, "Minor Span Elements","Elv", " Span Elements for minor axis buckling mode");
-          SetOutputProperties(3, "Minor Start Position","SPv"," The start position of each span along the length of the member");
-          SetOutputProperties(4, "Minor End Position","EPv","The end position of each span along the length of the member");
-          SetOutputProperties(5, "Minor Span Length","Slv","The length of each span");
-          SetOutputProperties(6, "Minor Effective Length","Lev","The start position of each span along the length of the member");
-          SetOutputProperties(7, "Minor Effective Span Ratio","Lrv","The ratio between effective and total length of the member");
-          SetOutputProperties(8, "Minor Effective Span Ratio,","Lsv","The ratio between effective and span length");
-          SetOutputProperties(9, "Minor Slenderness Ratio","Srv","The ratio between effective and span length");
+          SetOutputProperties(1, "Minor Span", "Spv", "Span number(s) for minor axis buckling mode");
+          SetOutputProperties(2, "Minor Span Elements", "Elv", " Span Elements for minor axis buckling mode");
+          SetOutputProperties(3, "Minor Start Position", "SPv", " The start position of each span along the length of the member");
+          SetOutputProperties(4, "Minor End Position", "EPv", "The end position of each span along the length of the member");
+          SetOutputProperties(5, "Minor Span Length", "Slv", "The length of each span");
+          SetOutputProperties(6, "Minor Effective Length", "Lev", "The start position of each span along the length of the member");
+          SetOutputProperties(7, "Minor Effective Span Ratio", "Lrv", "The ratio between effective and total length of the member");
+          SetOutputProperties(8, "Minor Effective Span Ratio,", "Lsv", "The ratio between effective and span length");
+          SetOutputProperties(9, "Minor Slenderness Ratio", "Srv", "The ratio between effective and span length");
           break;
         case SteelDesignTypes.LT:
           SetOutputProperties(1, "LT Span", "Spt", "Span number(s) for lateral torsional buckling mode");
@@ -122,7 +121,8 @@ namespace GsaGH.Components {
           SetOutputProperties(8, "LT Effective Span Ratio,", "Lst", "The ratio between effective and span length");
           SetOutputProperties(9, "LT Slenderness Ratio", "Srt", "The ratio between effective and span length");
           break;
-        default:this.AddRuntimeError("Incorrect type of steel design effective length");
+        default:
+          this.AddRuntimeError("Incorrect type of steel design effective length");
           break;
       }
     }
@@ -154,7 +154,7 @@ namespace GsaGH.Components {
       }
 
       var length = new DataTree<GH_UnitNumber>();
-      var spans= new DataTree<GH_Integer>();
+      var spans = new DataTree<GH_Integer>();
       var spanElements = new DataTree<GH_String>();
       var startPosition = new DataTree<GH_UnitNumber>();
       var endPosition = new DataTree<GH_UnitNumber>();
