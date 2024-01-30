@@ -30,14 +30,14 @@ namespace GsaGH.Parameters.Results {
         string nodelist = string.Join(" ", missingIds);
         ReadOnlyDictionary<int, Node> nodes = _model.Nodes();
         ReadOnlyDictionary<int, Element> elements = _model.Elements();
-        foreach (int nodeId in missingIds) {
+        Parallel.ForEach(missingIds, nodeId => {
           Node node = nodes[nodeId];
           string elementList = string.Join(" ", node.ConnectedElements);
 
           switch (ApiResult.Result) {
             case AnalysisCaseResult analysisCase:
               ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults = analysisCase.Element1dForce(elementList, 2);
-              Parallel.ForEach(aCaseResults, resultKvp => {
+              foreach (KeyValuePair<int, ReadOnlyCollection<Double6>> resultKvp in aCaseResults) {
                 Element element = elements[resultKvp.Key];
 
                 int position = resultKvp.Key == element.Topology[0] ? 0 : 1;
@@ -47,12 +47,12 @@ namespace GsaGH.Parameters.Results {
                 value.Add(resultKvp.Key, new Collection<IInternalForce>() { res });
 
                 ((ConcurrentDictionary<int, IDictionary<int, IList<IInternalForce>>>)Cache).TryAdd(nodeId, value);
-              });
+              }
               break;
 
             case CombinationCaseResult combinationCase:
               ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults = combinationCase.Element1dForce(elementList, 2);
-              Parallel.ForEach(cCaseResults, resultKvp => {
+              foreach (KeyValuePair<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> resultKvp in cCaseResults) {
                 Element element = elements[resultKvp.Key];
 
                 int position = resultKvp.Key == element.Topology[0] ? 0 : 1;
@@ -65,10 +65,10 @@ namespace GsaGH.Parameters.Results {
                 value.Add(resultKvp.Key, permutationResults);
 
                 ((ConcurrentDictionary<int, IDictionary<int, IList<IInternalForce>>>)Cache).TryAdd(nodeId, value);
-              });
+              }
               break;
           }
-        }
+        });
       }
 
       return new NodalForcesAndMomentsSubset(Cache.GetSubset(nodeIds));
