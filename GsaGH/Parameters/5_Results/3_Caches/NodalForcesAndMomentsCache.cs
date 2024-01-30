@@ -8,15 +8,19 @@ namespace GsaGH.Parameters.Results {
   public class NodalForcesAndMomentsCache {
     public IApiResult ApiResult { get; set; }
 
+    private readonly Model _model;
+
     public IDictionary<int, IDictionary<int, IList<IInternalForce>>> Cache { get; }
       = new ConcurrentDictionary<int, IDictionary<int, IList<IInternalForce>>>();
 
-    internal NodalForcesAndMomentsCache(AnalysisCaseResult result) {
+    internal NodalForcesAndMomentsCache(AnalysisCaseResult result, Model model) {
       ApiResult = new ApiResult(result);
+      _model = model;
     }
 
-    internal NodalForcesAndMomentsCache(CombinationCaseResult result) {
+    internal NodalForcesAndMomentsCache(CombinationCaseResult result, Model model) {
       ApiResult = new ApiResult(result);
+      _model = model;
     }
 
     public NodalForcesAndMomentsSubset ResultSubset(ICollection<int> nodeIds) {
@@ -24,31 +28,46 @@ namespace GsaGH.Parameters.Results {
 
       if (missingIds.Count > 0) {
         string nodelist = string.Join(" ", missingIds);
-        switch (ApiResult.Result) {
-          case AnalysisCaseResult analysisCase:
-            ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeReactionForce(nodelist);
-            Parallel.ForEach(aCaseResults, resultKvp => {
-              var res = new ReactionForce(resultKvp.Value);
-              ((ConcurrentDictionary<int, IList<IReactionForce>>)Cache).TryAdd(
-                resultKvp.Key, new Collection<IReactionForce>() {
-                res,
+        ReadOnlyDictionary<int, Node> nodes = _model.Nodes();
+        ReadOnlyDictionary<int, Element> elements = _model.Elements();
+        foreach (int nodeId in missingIds) {
+          Node node = nodes[nodeId];
+          string elementList = string.Join(" ", node.ConnectedElements);
+
+          switch (ApiResult.Result) {
+            case AnalysisCaseResult analysisCase:
+              ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults = analysisCase.Element1dForce(elementList, 2);
+              Parallel.ForEach(aCaseResults, resultKvp => {
+                Element element = elements[resultKvp.Key];
+
+                int position = resultKvp.Key == element.Topology[0] ? 0 : 1;
+                var res = new InternalForce(resultKvp.Value[position]);
+
+                IDictionary<int, IList<IInternalForce>> value = new ConcurrentDictionary<int, IList<IInternalForce>>();
+                value.Add(resultKvp.Key, new Collection<IInternalForce>() { res });
+
+                ((ConcurrentDictionary<int, IDictionary<int, IList<IInternalForce>>>)Cache).TryAdd(nodeId, value);
               });
-            });
-            break;
+              break;
 
-          case CombinationCaseResult combinationCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults
-              = combinationCase.NodeReactionForce(nodelist);
-            Parallel.ForEach(cCaseResults, resultKvp => {
-              var permutationResults = new Collection<IReactionForce>();
-              foreach (Double6 permutation in resultKvp.Value) {
-                permutationResults.Add(new ReactionForce(permutation));
-              }
+            case CombinationCaseResult combinationCase:
+              ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults = combinationCase.Element1dForce(elementList, 2);
+              Parallel.ForEach(cCaseResults, resultKvp => {
+                Element element = elements[resultKvp.Key];
 
-              ((ConcurrentDictionary<int, IList<IReactionForce>>)Cache).TryAdd(
-                resultKvp.Key, permutationResults);
-            });
-            break;
+                int position = resultKvp.Key == element.Topology[0] ? 0 : 1;
+                var permutationResults = new Collection<IInternalForce>();
+                foreach (ReadOnlyCollection<Double6> permutation in resultKvp.Value) {
+                  permutationResults.Add(new InternalForce(permutation[position]));
+                }
+
+                IDictionary<int, IList<IInternalForce>> value = new ConcurrentDictionary<int, IList<IInternalForce>>();
+                value.Add(resultKvp.Key, permutationResults);
+
+                ((ConcurrentDictionary<int, IDictionary<int, IList<IInternalForce>>>)Cache).TryAdd(nodeId, value);
+              });
+              break;
+          }
         }
       }
 

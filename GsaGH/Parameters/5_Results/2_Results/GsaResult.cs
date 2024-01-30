@@ -236,7 +236,7 @@ namespace GsaGH.Parameters.Results {
 
       SteelUtilisations = new SteelUtilisationCache(result);
 
-      NodalForcesAndMoments = new NodalForcesAndMomentsCache(result);
+      NodalForcesAndMoments = new NodalForcesAndMomentsCache(result, model?.Model);
 
       GlobalResults = new GlobalResultsCache(result);
 
@@ -279,7 +279,7 @@ namespace GsaGH.Parameters.Results {
 
       SteelUtilisations = new SteelUtilisationCache(result);
 
-      NodalForcesAndMoments = new NodalForcesAndMomentsCache(result);
+      NodalForcesAndMoments = new NodalForcesAndMomentsCache(result, model?.Model);
 
       Model = model;
       CaseType = CaseType.CombinationCase;
