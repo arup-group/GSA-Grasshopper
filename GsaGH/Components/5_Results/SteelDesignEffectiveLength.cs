@@ -27,7 +27,7 @@ namespace GsaGH.Components {
   ///   Component to get SteelDesignEffectiveLength
   /// </summary>
   public class SteelDesignEffectiveLength : GH_OasysDropDownComponent {
-    private enum SteelDesignTypes {
+    private enum SteelDesignType {
       Major,
       Minor,
       LT,
@@ -36,18 +36,18 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.septenary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.SteelDesignEffectiveLength;
-    private SteelDesignTypes _type = SteelDesignTypes.Major;
+    private SteelDesignType _type = SteelDesignType.Major;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
 
-    private readonly IReadOnlyDictionary<SteelDesignTypes, string> _steelDesignTypes
-      = new Dictionary<SteelDesignTypes, string> {
-        { SteelDesignTypes.Major, "Major" },
-        { SteelDesignTypes.Minor, "Minor" },
-        { SteelDesignTypes.LT, "LT" },
+    private readonly IReadOnlyDictionary<SteelDesignType, string> _steelDesignTypes
+      = new Dictionary<SteelDesignType, string> {
+        { SteelDesignType.Major, "Major" },
+        { SteelDesignType.Minor, "Minor" },
+        { SteelDesignType.LT, "LT" },
       };
 
-    public SteelDesignEffectiveLength() : base("Steel Design Effective Length", "SDEL",
-      "Steel Design Effective Length", CategoryName.Name(),
+    public SteelDesignEffectiveLength() : base("Steel Design Effective Length", "Effective Length",
+      "Steel Design Effective Length result values", CategoryName.Name(),
       SubCategoryName.Cat5()) {
       Hidden = true;
     }
@@ -57,7 +57,7 @@ namespace GsaGH.Components {
 
       switch (i) {
         case 0:
-          SteelDesignTypes type = GetModeBy(_selectedItems[0]);
+          SteelDesignType type = GetModeBy(_selectedItems[0]);
           UpdateParameters(type);
           break;
         case 1:
@@ -88,7 +88,7 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       switch (_type) {
-        case SteelDesignTypes.Major:
+        case SteelDesignType.Major:
           SetOutputProperties(1, "Major Span", "Spu", "Span number(s) for major axis buckling mode");
           SetOutputProperties(2, "Major Span Elements", "Elu", " Span Elements for major axis buckling mode");
           SetOutputProperties(3, "Major Start Position", "SPu", " The start position of each span along the length of the member");
@@ -99,7 +99,7 @@ namespace GsaGH.Components {
           SetOutputProperties(8, "Major Effective Span Ratio,", "Lsu", "The ratio between effective and span length");
           SetOutputProperties(9, "Major Slenderness Ratio", "Sru", "The ratio between effective and span length");
           break;
-        case SteelDesignTypes.Minor:
+        case SteelDesignType.Minor:
           SetOutputProperties(1, "Minor Span", "Spv", "Span number(s) for minor axis buckling mode");
           SetOutputProperties(2, "Minor Span Elements", "Elv", " Span Elements for minor axis buckling mode");
           SetOutputProperties(3, "Minor Start Position", "SPv", " The start position of each span along the length of the member");
@@ -110,7 +110,7 @@ namespace GsaGH.Components {
           SetOutputProperties(8, "Minor Effective Span Ratio,", "Lsv", "The ratio between effective and span length");
           SetOutputProperties(9, "Minor Slenderness Ratio", "Srv", "The ratio between effective and span length");
           break;
-        case SteelDesignTypes.LT:
+        case SteelDesignType.LT:
           SetOutputProperties(1, "LT Span", "Spt", "Span number(s) for lateral torsional buckling mode");
           SetOutputProperties(2, "LT Span Elements", "Elt", " Span Elements for lateral torsional buckling mode");
           SetOutputProperties(3, "LT Start Position", "SPt", " The start position of each span along the length of the member");
@@ -181,9 +181,9 @@ namespace GsaGH.Components {
         var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : permutations[0], kvp.Key);
 
         spanList = _type switch {
-          SteelDesignTypes.Major => kvp.Value[p - 1].MajorAxisSubSpans,
-          SteelDesignTypes.Minor => kvp.Value[p - 1].MinorAxisSubSpans,
-          SteelDesignTypes.LT => kvp.Value[p - 1].LateralTorsionalSubSpans,
+          SteelDesignType.Major => kvp.Value[p - 1].MajorAxisSubSpans,
+          SteelDesignType.Minor => kvp.Value[p - 1].MinorAxisSubSpans,
+          SteelDesignType.LT => kvp.Value[p - 1].LateralTorsionalSubSpans,
           _ => spanList,
         };
         Length len = kvp.Value[p - 1].MemberLength.ToUnit(_lengthUnit);
@@ -226,7 +226,7 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      SteelDesignTypes mode = GetModeBy(_selectedItems[0]);
+      SteelDesignType mode = GetModeBy(_selectedItems[0]);
       UpdateParameters(mode);
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
 
@@ -234,7 +234,7 @@ namespace GsaGH.Components {
     }
 
 
-    private void UpdateParameters(SteelDesignTypes type) {
+    private void UpdateParameters(SteelDesignType type) {
       if (type == _type) {
         return;
       }
@@ -269,8 +269,8 @@ namespace GsaGH.Components {
       Params.Output[index].Access = GH_ParamAccess.tree;
     }
 
-    private SteelDesignTypes GetModeBy(string name) {
-      foreach (KeyValuePair<SteelDesignTypes, string> item in _steelDesignTypes) {
+    private SteelDesignType GetModeBy(string name) {
+      foreach (KeyValuePair<SteelDesignType, string> item in _steelDesignTypes) {
         if (item.Value.Equals(name)) {
           return item.Key;
         }
