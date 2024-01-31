@@ -62,6 +62,17 @@ namespace GsaGHTests.Helpers {
         : (IList<IGH_Goo>)component.Params.Output[index].VolatileData.get_Branch(path);
       return output.Select(x => ((GH_UnitNumber)x).Value).ToList();
     }
+    public static List<IGH_Goo> GetResultOutputAllData(
+      GH_Component component, int index, GH_Path path = null) {
+      if (path == null) {
+        component.Params.Output[index].DataMapping = GH_DataMapping.Flatten;
+      }
+      component.ExpireSolution(true);
+      component.Params.Output[index].ExpireSolution(true);
+      component.Params.Output[index].CollectData();
+
+      return component.Params.Output[index].VolatileData.AllData(false).ToList();
+    }
 
     public static IList<GH_Path> GetPathOutput(GH_Component component, int index) {
       component.ExpireSolution(true);
