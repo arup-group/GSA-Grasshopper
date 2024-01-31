@@ -1,7 +1,7 @@
-﻿using Grasshopper.Kernel;
-using DocsGeneration.Data.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using DocsGeneration.Data.Helpers;
+using Grasshopper.Kernel;
 
 namespace DocsGeneration.Data {
   public class Component {
@@ -48,8 +48,7 @@ namespace DocsGeneration.Data {
             var comp = new Component(type);
             components.Add(comp);
             Console.WriteLine($"Added {comp.Name} component");
-          }
-          catch (Exception) {
+          } catch (Exception) {
             continue;
           }
         }

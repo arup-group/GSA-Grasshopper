@@ -3,7 +3,7 @@
 namespace GsaGH.Parameters.Results {
   public static partial class ExtremaKeyUtility {
     public static (ResultDerivedStress1d<Entity1dExtremaKey> Max, ResultDerivedStress1d<Entity1dExtremaKey> Min) GetResultDerivedStress1dExtremaKeys(
-      this IDictionary<int, IList<IEntity1dDerivedStress>> subset) {
+      this IDictionary<int, IList<IEntity1dQuantity<IStress1dDerived>>> subset) {
 
       var maxValue = new ResultDerivedStress1d<double>(double.MinValue);
       var minValue = new ResultDerivedStress1d<double>(double.MaxValue);
@@ -12,7 +12,7 @@ namespace GsaGH.Parameters.Results {
       var minKey = new ResultDerivedStress1d<Entity1dExtremaKey>();
 
       foreach (int elementId in subset.Keys) {
-        IList<IEntity1dDerivedStress> values = subset[elementId];
+        IList<IEntity1dQuantity<IStress1dDerived>> values = subset[elementId];
         for (int permutation = 0; permutation < values.Count; permutation++) {
           foreach (double position in values[permutation].Results.Keys) {
             UpdateExtrema(values[permutation].Results[position],

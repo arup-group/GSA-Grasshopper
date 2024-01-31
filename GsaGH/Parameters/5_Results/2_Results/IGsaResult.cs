@@ -7,5 +7,5 @@ namespace GsaGH.Parameters.Results {
     public GsaModel Model { get; }
     public List<int> SelectedPermutationIds { get; }
     public CaseType CaseType { get; }
-  } 
+  }
 }

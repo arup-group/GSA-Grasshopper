@@ -27,21 +27,21 @@ namespace GsaGH.Parameters.Results {
     public IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>>
       ResultSubset(ICollection<int> elementIds, Layer2d layer) {
       ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>> cache = null;
-      double fLayer = 0;
+      GsaAPI.Layer2d fLayer = GsaAPI.Layer2d.Middle;
       switch (layer) {
         case Layer2d.Top:
           cache = (ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>)CacheTopLayer;
-          fLayer = 1;
+          fLayer = GsaAPI.Layer2d.Top;
           break;
 
         case Layer2d.Middle:
           cache = (ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>)CacheMiddleLayer;
-          fLayer = 0;
+          fLayer = GsaAPI.Layer2d.Middle;
           break;
 
         case Layer2d.Bottom:
           cache = (ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>)CacheBottomLayer;
-          fLayer = -1;
+          fLayer = GsaAPI.Layer2d.Bottom;
           break;
       }
 

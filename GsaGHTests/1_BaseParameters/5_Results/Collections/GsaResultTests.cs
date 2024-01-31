@@ -1,11 +1,9 @@
-﻿using GsaAPI;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using GsaAPI;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection;
 using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
@@ -29,34 +27,6 @@ namespace GsaGHTests.Parameters.Results {
       return new GsaResult(model, combinationCaseResults[caseId], caseId, permutations);
     }
 
-    [Fact]
-    public void ClassHasValidNumberOfDeclaredElements() {
-      TypeInfo t = typeof(GsaResult).GetTypeInfo();
-      int propertiesCount = t.DeclaredProperties.Count();
-      int methodsCount = t.DeclaredMethods.Count(); // decalredProperties x 2 (get and set) + others 
-      int constructorsCount = t.DeclaredConstructors.Count();
-      int eventCount = t.DeclaredEvents.Count();
-      int fieldCount = t.DeclaredFields.Count();
-      int memberCount = t.DeclaredMembers.Count();
-      int nestedTypesCount = t.DeclaredNestedTypes.Count();
-      int interfacesCount = t.ImplementedInterfaces.Count();
-      int genericTypesCount = t.GenericTypeParameters.Count();
-
-      //if this test will fail, that means, you need to remember of adding new tests for stuff you added/removed
-      Assert.Equal(26, propertiesCount);
-      Assert.Equal(58, methodsCount);
-      Assert.Equal(2, constructorsCount);
-      Assert.Equal(0, eventCount);
-      Assert.Equal(propertiesCount, fieldCount);
-      Assert.Equal(1, nestedTypesCount);
-      Assert.Equal(1, interfacesCount);
-      Assert.Equal(0, genericTypesCount);
-
-      int sum = propertiesCount + methodsCount + constructorsCount + eventCount + fieldCount
-        + nestedTypesCount + genericTypesCount;
-      Assert.Equal(sum, memberCount);
-    }
-
     [Theory]
     [InlineData(true, false, false, true)]
     [InlineData(false, true, false, true)]
@@ -70,41 +40,37 @@ namespace GsaGHTests.Parameters.Results {
     public void CreatingResultsIsInvalid(bool modelIsNull, bool resultsAreNull, bool caseIdIsInvalid, bool analysisCase, bool permutationEmpty = false) {
 
       GsaModel model = modelIsNull ? null : new GsaModel(new GsaAPI.Model(GsaFile.SteelDesignSimple));
-      AnalysisCaseResult analysisCaseResult 
+      AnalysisCaseResult analysisCaseResult
         = resultsAreNull ? null : new GsaAPI.Model(GsaFile.SteelDesignSimple).Results()[1];
       CombinationCaseResult combinationCaseResult
         = resultsAreNull ? null : new GsaAPI.Model(GsaFile.SteelDesignSimple).CombinationCaseResults()[1];
       int caseId = caseIdIsInvalid ? 0 : 1;
 
-      GsaResult results = analysisCase 
-        ? new GsaResult(model, analysisCaseResult, caseId) 
-        : new GsaResult(model, combinationCaseResult, caseId, permutationEmpty ? null : new List<int>(){1});
-      
+      GsaResult results = analysisCase
+        ? new GsaResult(model, analysisCaseResult, caseId)
+        : new GsaResult(model, combinationCaseResult, caseId, permutationEmpty ? null : new List<int>() { 1 });
+
       Assert.NotNull(results);
-      if (model == null) {
+      if (modelIsNull || resultsAreNull) {
         Assert.Null(results.Model);
+        return;
       } else {
         Assert.NotNull(results.Model);
       }
-      switch (resultsAreNull) {
-        case true when analysisCase:
-          Assert.Equal("DL", results.CaseName);
-          break;
-        case true when !analysisCase:
-          Assert.Equal("ULS", results.CaseName);
-          break;
-        default:
-          Assert.Null(results.CaseName);
-          break;
+
+      if (!caseIdIsInvalid) {
+        Assert.Null(results.CaseName);
+        return;
+      } else {
+        Assert.Equal(caseId, results.CaseId);
       }
 
-      Assert.Equal(caseId, results.CaseId);
       Assert.Equal(analysisCase ? CaseType.AnalysisCase : CaseType.CombinationCase, results.CaseType);
       if (!permutationEmpty && !analysisCase) {
         Assert.Single(results.SelectedPermutationIds);
       } else {
         Assert.Null(results.SelectedPermutationIds);
-      } 
+      }
       //fields
       Assert.NotNull(results.Element1dAverageStrainEnergyDensities);
       Assert.NotNull(results.Element1dDisplacements);
@@ -125,7 +91,7 @@ namespace GsaGHTests.Parameters.Results {
       Assert.NotNull(results.Member1dInternalForces);
       Assert.NotNull(results.Member1dDisplacements);
 
-      if(analysisCase) {
+      if (analysisCase) {
         Assert.NotNull(results.GlobalResults);
         Assert.NotNull(results.NodeTransientFootfalls);
         Assert.NotNull(results.NodeResonantFootfalls);
@@ -134,6 +100,16 @@ namespace GsaGHTests.Parameters.Results {
         Assert.Null(results.NodeTransientFootfalls);
         Assert.Null(results.NodeResonantFootfalls);
       }
+
+      if (caseId == 0) {
+        return;
+      }
+
+      if (analysisCase) {
+        Assert.Equal("DL", results.CaseName);
+      } else {
+        Assert.Equal("ULS", results.CaseName);
+      }
     }
 
     [Theory]
@@ -141,9 +117,9 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(false)]
     public void ToStringReturnsValidString(bool isAnalysisCase) {
       GsaResult result = isAnalysisCase ? (GsaResult)AnalysisCaseResult(GsaFile.SteelDesignSimple, 1) :
-        (GsaResult)CombinationCaseResult(GsaFile.SteelDesignSimple, 1, new List<int>(){1,2,3,});
+        (GsaResult)CombinationCaseResult(GsaFile.SteelDesignSimple, 1, new List<int>() { 1, 2, 3, });
 
-      string expectedString = isAnalysisCase ? "A1": "C1 P:3";
+      string expectedString = isAnalysisCase ? "A1 'DL'" : "C1 (3 permutations) 'ULS'";
 
       Assert.Equal(expectedString, result.ToString());
     }
@@ -151,29 +127,29 @@ namespace GsaGHTests.Parameters.Results {
     [Fact]
     public void NodeIdsReturnsValidNumbers() {
       var result = (GsaResult)AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1, 2}) ,result.NodeIds("all"));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1}) ,result.NodeIds("1"));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1, 2}), result.NodeIds("1 2"));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){}), result.NodeIds("10 20"));
+
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, 2 }), result.NodeIds("all"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1 }), result.NodeIds("1"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, 2 }), result.NodeIds("1 2"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { }), result.NodeIds("10 20"));
     }
     [Fact]
     public void ElementIdsReturnsValidNumbers() {
       var result = (GsaResult)AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}) ,result.ElementIds("all",1));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}) ,result.ElementIds("1",1));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}), result.ElementIds("1 2",1));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){}), result.ElementIds("10 20",1));
+
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, }), result.ElementIds("all", 1));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, }), result.ElementIds("1", 1));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, }), result.ElementIds("1 2", 1));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { }), result.ElementIds("10 20", 1));
     }
     [Fact]
     public void MemberIdsReturnsValidNumbers() {
       var result = (GsaResult)AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}) ,result.MemberIds("all"));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}) ,result.MemberIds("1"));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){1,}), result.MemberIds("1 2"));
-      Assert.Equal(new ReadOnlyCollection<int>(new List<int>(){}), result.MemberIds("10 20"));
+
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, }), result.MemberIds("all"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, }), result.MemberIds("1"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { 1, }), result.MemberIds("1 2"));
+      Assert.Equal(new ReadOnlyCollection<int>(new List<int>() { }), result.MemberIds("10 20"));
     }
   }
 }

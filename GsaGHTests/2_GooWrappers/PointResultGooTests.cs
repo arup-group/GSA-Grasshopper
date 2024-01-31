@@ -1,7 +1,7 @@
-﻿using GsaGH.Parameters;
+﻿using System.Drawing;
+using GsaGH.Parameters;
 using OasysUnits;
 using Rhino.Geometry;
-using System.Drawing;
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
@@ -13,7 +13,7 @@ namespace GsaGHTests.GooWrappers {
       var res = new Force(10, OasysUnits.Units.ForceUnit.Kilonewton);
       Color col = Color.AliceBlue;
       var goo = new PointResultGoo(pt, res, col, 1, 1);
-      
+
       Assert.Equal(3.46, goo.Boundingbox.Diagonal.Length, 2);
       Assert.Equal(3.46, goo.ClippingBox.Diagonal.Length, 2);
       Assert.Equal("A GSA result point type.", goo.TypeDescription);

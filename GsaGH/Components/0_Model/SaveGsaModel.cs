@@ -4,7 +4,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using GH_IO.Serialization;
-using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Special;
@@ -19,11 +18,9 @@ using OasysGH.Helpers;
 using OasysGH.UI;
 using Rhino.UI;
 
-#pragma warning disable IDE0059
-
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to open an existing GSA model
+  ///   Component to save a GSA model
   /// </summary>
   public class SaveGsaModel : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("e9989dce-717e-47ea-992c-e22d718e9ebb");
@@ -105,7 +102,7 @@ namespace GsaGH.Components {
     }
 
     internal void Save(ref GsaModel model, string fileNameAndPath) {
-      if (!fileNameAndPath.EndsWith(".gwb")) {
+      if (!fileNameAndPath.EndsWith(".gwa") && !fileNameAndPath.EndsWith(".gwb")) {
         fileNameAndPath += ".gwb";
       }
 
@@ -114,7 +111,7 @@ namespace GsaGH.Components {
       string mes = model.Model.SaveAs(fileNameAndPath).ToString();
       if (mes == ReturnValue.GS_OK.ToString()) {
         _fileNameLastSaved = fileNameAndPath;
-        PostHog.ModelIO(GsaGH.PluginInfo.Instance, "saveGWB",
+        PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"save{fileNameAndPath.Substring(fileNameAndPath.LastIndexOf('.') + 1).ToUpper()}",
           (int)(new FileInfo(fileNameAndPath).Length / 1024));
         model.FileNameAndPath = fileNameAndPath;
       } else {
@@ -133,7 +130,7 @@ namespace GsaGH.Components {
 
     internal void SaveAsButtonClick() {
       var fdi = new SaveFileDialog {
-        Filter = "GSA File (*.gwb)|*.gwb|All files (*.*)|*.*",
+        Filter = "GSA Files (*.gwb)|*.gwb|GSA Text Files (*.gwa)|*.gwa",
       };
       bool res = fdi.ShowSaveDialog();
       if (!res) {
@@ -141,7 +138,7 @@ namespace GsaGH.Components {
       }
 
       while (Params.Input[2].Sources.Count > 0) {
-        Instances.ActiveCanvas.Document.RemoveObject(Params.Input[2].Sources[0], false);
+        OnPingDocument().RemoveObject(Params.Input[2].Sources[0], false);
       }
 
       var panel = new GH_Panel();
@@ -152,7 +149,7 @@ namespace GsaGH.Components {
           Attributes.DocObject.Attributes.Bounds.Left - panel.Attributes.Bounds.Width - 40,
           Attributes.DocObject.Attributes.Bounds.Bottom - panel.Attributes.Bounds.Height);
       panel.UserText = fdi.FileName;
-      Instances.ActiveCanvas.Document.AddObject(panel, false);
+      OnPingDocument().AddObject(panel, false);
 
       Params.Input[2].AddSource(panel);
       Params.OnParametersChanged();
@@ -163,7 +160,7 @@ namespace GsaGH.Components {
       if (string.IsNullOrEmpty(_fileNameLastSaved)) {
         Params.Input[0].CollectData();
         var tempModel = (GsaModelGoo)Params.Input[0].VolatileData.AllData(true).First();
-        string tempPath = Path.GetTempPath() + tempModel.Value.Guid.ToString() + ".gwb";
+        string tempPath = Path.GetTempPath() + tempModel.Value.Guid.ToString() + ".gwa";
         GsaModel gsaModel = tempModel.Value;
         Save(ref gsaModel, tempPath);
       }

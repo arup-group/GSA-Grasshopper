@@ -23,8 +23,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(1, anno3d.Location.Z);
       Assert.Equal("Annotation3D", anno3d.TypeName);
       Assert.Equal("A GSA 3D Annotation.", anno3d.TypeDescription);
-      Assert.Equal(Rhino.DocObjects.TextHorizontalAlignment.Center,                       anno3d.Value.HorizontalAlignment);
-      Assert.Equal(Rhino.DocObjects.TextVerticalAlignment.Top,                            anno3d.Value.VerticalAlignment);
+      Assert.Equal(Rhino.DocObjects.TextHorizontalAlignment.Center, anno3d.Value.HorizontalAlignment);
+      Assert.Equal(Rhino.DocObjects.TextVerticalAlignment.Top, anno3d.Value.VerticalAlignment);
       Assert.Equal(8.0, anno3d.Value.Height);
       Assert.Equal("32.1mm", anno3d.Value.Text);
       Assert.Equal(Color.Teal, anno3d.Color);

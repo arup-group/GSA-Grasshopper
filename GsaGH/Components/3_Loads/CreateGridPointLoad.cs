@@ -154,13 +154,13 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       if (da.GetData(2, ref ghTyp)) {
         switch (ghTyp.Value) {
-          case GsaGridPlaneSurfaceGoo gridplanesurfacegoo: 
-              gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
-              gridPointLoad.GridPlaneSurface = gridPlaneSurface;
-              _expansionType = ExpansionType.UseGpsSettings;
-              UpdateMessage(gridPlaneSurface.GridSurface.ElementType
-                == GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
-              break;
+          case GsaGridPlaneSurfaceGoo gridplanesurfacegoo:
+            gridPlaneSurface = gridplanesurfacegoo.Value.Duplicate();
+            gridPointLoad.GridPlaneSurface = gridPlaneSurface;
+            _expansionType = ExpansionType.UseGpsSettings;
+            UpdateMessage(gridPlaneSurface.GridSurface.ElementType
+              == GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
+            break;
 
           case GH_Plane pln:
             plane = pln.Value;
@@ -170,19 +170,19 @@ namespace GsaGH.Components {
                 == GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL ? "1D" : "2D");
             break;
 
-          default: 
-              if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
-                gridPointLoad.ApiLoad.GridSurface = id;
-                gridPointLoad.GridPlaneSurface = null;
-              } else {
-                this.AddRuntimeError(
-                  "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
-                  + Environment.NewLine
-                  + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
-                return;
-              }
+          default:
+            if (GH_Convert.ToInt32(ghTyp.Value, out int id, GH_Conversion.Both)) {
+              gridPointLoad.ApiLoad.GridSurface = id;
+              gridPointLoad.GridPlaneSurface = null;
+            } else {
+              this.AddRuntimeError(
+                "Error in GPS input. Accepted inputs are Grid Plane Surface or Plane. "
+                + Environment.NewLine
+                + "If no input here then the point's z-coordinate will be used for an xy-plane at that elevation");
+              return;
+            }
 
-              break;
+            break;
         }
       } else {
         plane = Plane.WorldXY;
@@ -201,7 +201,7 @@ namespace GsaGH.Components {
 
         switch (_expansionType) {
           case ExpansionType.To1D:
-            gridPlaneSurface.GridSurface.ElementType = 
+            gridPlaneSurface.GridSurface.ElementType =
               GsaAPI.GridSurface.Element_Type.ONE_DIMENSIONAL;
             break;
 
@@ -221,7 +221,7 @@ namespace GsaGH.Components {
       if (plnNormal.Z != 1) {
         this.AddRuntimeRemark("The grid plane basis is not defined in world coordinates. \n" +
           "The input point´s X and Y coordinates are use as the grid plane´s local coordiantes.");
-      } 
+      }
 
       gridPointLoad.ApiLoad.X = point3d.X;
       gridPointLoad.ApiLoad.Y = point3d.Y;

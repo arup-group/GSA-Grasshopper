@@ -56,14 +56,14 @@ namespace GsaGH.Components {
           return;
 
         case GsaResultGoo goo: {
-          result = (GsaResult)goo.Value;
-          if (result.CaseType == CaseType.CombinationCase) {
-            this.AddRuntimeError("Footfall Result only available for Analysis Cases");
-            return;
-          }
+            result = (GsaResult)goo.Value;
+            if (result.CaseType == CaseType.CombinationCase) {
+              this.AddRuntimeError("Footfall Result only available for Analysis Cases");
+              return;
+            }
 
-          break;
-        }
+            break;
+          }
         default:
           this.AddRuntimeError("Error converting input to GSA Result");
           return;
@@ -72,9 +72,9 @@ namespace GsaGH.Components {
       string nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
 
       ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-      INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> resonant
+      IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> resonant
         = result.NodeResonantFootfalls.ResultSubset(nodeIds);
-      INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> transient
+      IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> transient
         = result.NodeTransientFootfalls.ResultSubset(nodeIds);
 
       da.SetData(0, resonant.GetExtrema(resonant.Max.MaximumResponseFactor).MaximumResponseFactor);

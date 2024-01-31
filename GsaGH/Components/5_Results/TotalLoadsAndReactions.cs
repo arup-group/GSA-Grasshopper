@@ -129,47 +129,42 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       da.GetData(0, ref ghTyp);
 
-      switch (ghTyp?.Value) {
-        case GsaResultGoo goo: 
-          result = (GsaResult)goo.Value;
-          if (result.CaseType == CaseType.CombinationCase) {
-            this.AddRuntimeError("Global Result only available for Analysis Cases");
-            return;
-          }
+      result = Inputs.GetResultInput(this, ghTyp);
+      if (result == null) {
+        return;
+      }
 
-          break;
-        
-        default:
-          this.AddRuntimeError("Error converting input to GSA Result");
-          return;
+      if (result.CaseType == CaseType.CombinationCase) {
+        this.AddRuntimeError("Global Result only available for Analysis Cases");
+        return;
       }
 
       IGlobalResultsCache globalResultsCache = result.GlobalResults;
 
       int i = 0;
-      IInternalForce f = globalResultsCache.TotalLoad;
-      da.SetData(i++, new GH_UnitNumber(f.X.ToUnit(_forceUnit)));
-      da.SetData(i++, new GH_UnitNumber(f.Y.ToUnit(_forceUnit)));
-      da.SetData(i++, new GH_UnitNumber(f.Z.ToUnit(_forceUnit)));
-      da.SetData(i++, new GH_UnitNumber(f.Xyz.ToUnit(_forceUnit)));
+      IReactionForce f = globalResultsCache.TotalLoad;
+      da.SetData(i++, new GH_UnitNumber(f.XToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(f.YToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(f.ZToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(f.XyzToUnit(_forceUnit)));
 
-      IInternalForce m = globalResultsCache.TotalLoad;
-      da.SetData(i++, new GH_UnitNumber(m.Xx.ToUnit(_momentUnit)));
-      da.SetData(i++, new GH_UnitNumber(m.Yy.ToUnit(_momentUnit)));
-      da.SetData(i++, new GH_UnitNumber(m.Zz.ToUnit(_momentUnit)));
+      IReactionForce m = globalResultsCache.TotalLoad;
+      da.SetData(i++, new GH_UnitNumber(m.XxToUnit(_momentUnit)));
+      da.SetData(i++, new GH_UnitNumber(m.YyToUnit(_momentUnit)));
+      da.SetData(i++, new GH_UnitNumber(m.ZzToUnit(_momentUnit)));
       da.SetData(i++, new GH_UnitNumber(m.Xxyyzz));
 
-      IInternalForce rf = globalResultsCache.TotalLoad;
-      da.SetData(i++, new GH_UnitNumber(rf.X.ToUnit(_forceUnit)));
-      da.SetData(i++, new GH_UnitNumber(rf.Y.ToUnit(_forceUnit)));
-      da.SetData(i++, new GH_UnitNumber(rf.Z.ToUnit(_forceUnit)));
+      IReactionForce rf = globalResultsCache.TotalLoad;
+      da.SetData(i++, new GH_UnitNumber(rf.XToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(rf.YToUnit(_forceUnit)));
+      da.SetData(i++, new GH_UnitNumber(rf.ZToUnit(_forceUnit)));
       da.SetData(i++, new GH_UnitNumber(rf.Xyz));
 
-      IInternalForce rm = globalResultsCache.TotalLoad;
-      da.SetData(i++, new GH_UnitNumber(rm.Xx.ToUnit(_momentUnit)));
-      da.SetData(i++, new GH_UnitNumber(rm.Yy.ToUnit(_momentUnit)));
-      da.SetData(i++, new GH_UnitNumber(rm.Zz.ToUnit(_momentUnit)));
-      da.SetData(i, new GH_UnitNumber(rm.Xxyyzz.ToUnit(_momentUnit)));
+      IReactionForce rm = globalResultsCache.TotalLoad;
+      da.SetData(i++, new GH_UnitNumber(rm.XxToUnit(_momentUnit)));
+      da.SetData(i++, new GH_UnitNumber(rm.YyToUnit(_momentUnit)));
+      da.SetData(i++, new GH_UnitNumber(rm.ZzToUnit(_momentUnit)));
+      da.SetData(i, new GH_UnitNumber(rm.XxyyzzToUnit(_momentUnit)));
 
       PostHog.Result(result.CaseType, -1, "Global", "TotalLoadsAndReactions");
     }

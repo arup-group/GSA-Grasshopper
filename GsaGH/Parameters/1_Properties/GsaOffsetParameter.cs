@@ -25,11 +25,11 @@ namespace GsaGH.Parameters {
 
     protected override GsaOffsetGoo PreferredCast(object data) {
       if (GH_Convert.ToDouble(data, out double myval, GH_Conversion.Both)) {
-        this.AddRuntimeWarning("Number converted to Z-offset in "+
+        this.AddRuntimeWarning("Number converted to Z-offset in " +
           DefaultUnits.LengthUnitSection.ToString());
         return new GsaOffsetGoo(new GsaOffset(0, 0, 0, myval, DefaultUnits.LengthUnitSection));
       }
-      
+
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Offset");
       return new GsaOffsetGoo(null);
     }

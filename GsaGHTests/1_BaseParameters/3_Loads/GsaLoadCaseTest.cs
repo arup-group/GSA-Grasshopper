@@ -1,5 +1,5 @@
-﻿using GsaGH.Parameters;
-using System;
+﻿using System;
+using GsaGH.Parameters;
 using Xunit;
 
 namespace GsaGHTests.Parameters {

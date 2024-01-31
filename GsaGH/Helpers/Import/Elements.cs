@@ -7,16 +7,18 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Import {
   internal class Elements {
+    internal ConcurrentBag<GsaAssemblyGoo> Assemblies { get; private set; }
     internal ConcurrentBag<GsaElement1dGoo> Element1ds { get; private set; }
     internal ConcurrentBag<GsaElement2dGoo> Element2ds { get; private set; }
     internal ConcurrentBag<GsaElement3dGoo> Element3ds { get; private set; }
-    
+
     internal Elements(GsaModel model, string elementList = "All") {
       var elem1dDict = new ConcurrentDictionary<int, Element>();
       var elem2dDict = new ConcurrentDictionary<int, Element>();
       var elem3dDict = new ConcurrentDictionary<int, Element>();
+      ReadOnlyDictionary<int, GsaAPI.Assembly> aDict = model.Model.Assemblies(); 
       ReadOnlyDictionary<int, Element> eDict = model.Model.Elements(elementList);
-      
+
       Parallel.ForEach(eDict, item => {
         int elemDimension = 1; // default assume 1D element
         ElementType type = item.Value.Type;
@@ -43,7 +45,7 @@ namespace GsaGH.Helpers.Import {
         switch (elemDimension) {
           case 1:
             elem1dDict.TryAdd(item.Key, item.Value);
-            
+
             break;
 
           case 2:
@@ -57,7 +59,7 @@ namespace GsaGH.Helpers.Import {
       });
 
       var steps = new List<int> {
-        0, 1, 2
+        0, 1, 2, 3
       };
       Parallel.ForEach(steps, i => {
         switch (i) {
@@ -80,6 +82,14 @@ namespace GsaGH.Helpers.Import {
             if (elem3dDict.Count > 0) {
               Element3ds = GsaElementFactory.CreateElement3dFromApi(elem3dDict, model);
             }
+            break;
+
+          case 3:
+            Assemblies = new ConcurrentBag<GsaAssemblyGoo>();
+            Parallel.ForEach(aDict, item => {
+              var assembly = new GsaAssembly(item);
+              Assemblies.Add(new GsaAssemblyGoo(assembly));
+            });
             break;
         }
       });

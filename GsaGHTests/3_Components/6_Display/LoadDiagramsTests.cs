@@ -17,7 +17,7 @@ namespace GsaGHTests.Components.Display {
       ComponentTestHelper.SetInput(comp, model);
       return comp;
     }
-    
+
     [Fact]
     public void DefaultDropSelectionsTest() {
       var comp = new LoadDiagrams();

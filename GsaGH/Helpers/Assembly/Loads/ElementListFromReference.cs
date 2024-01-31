@@ -16,7 +16,7 @@ namespace GsaGH.Helpers.Assembly {
          .Add(item.Key));
       return relationships;
     }
-    
+
     private string GetElementsReferenceDefinition(Guid guid) {
       return _elements.GuidDictionary.TryGetValue(guid, out Collection<int> ids) ?
         GsaList.CreateListDefinition(ids.ToList()) : string.Empty;

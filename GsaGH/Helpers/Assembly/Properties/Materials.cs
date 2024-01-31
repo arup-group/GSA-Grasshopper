@@ -42,7 +42,7 @@ namespace GsaGH.Helpers.Assembly {
       matDict.SetValue(id, guid, material);
       return id;
     }
-    
+
     private static int AddOrSetStandardMaterial<T>(GsaMaterial material, GsaGuidDictionary<T> matDict) {
       var standardMaterial = (T)((IGsaStandardMaterial)material).StandardMaterial;
 
@@ -76,7 +76,7 @@ namespace GsaGH.Helpers.Assembly {
       if (material is GsaReferencedMaterial refMat) {
         return refMat.Id;
       }
-      
+
       if (!_materials.ContainsKey(material.Guid)) {
         _materials.Add(material.Guid, material);
       }
@@ -208,7 +208,7 @@ namespace GsaGH.Helpers.Assembly {
           if (!material.IsFromApi) {
             continue;
           }
-          
+
           if (material.ConcreteDesignCodeName != string.Empty &&
             material.ConcreteDesignCodeName != GenericConcreteCodeName) {
             return material.ConcreteDesignCodeName;
@@ -292,7 +292,7 @@ namespace GsaGH.Helpers.Assembly {
           if (!material.IsFromApi) {
             continue;
           }
-          
+
           if (material.SteelDesignCodeName != string.Empty) {
             return material.SteelDesignCodeName;
           }
@@ -347,7 +347,7 @@ namespace GsaGH.Helpers.Assembly {
             // material was created in Grasshopper
             if (material.MaterialType == MatType.Concrete) {
               CheckConcreteDesignCode(material);
-            } 
+            }
 
             if (material.MaterialType == MatType.Steel) {
               CheckSteelDesignCode(material);

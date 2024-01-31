@@ -1,7 +1,7 @@
-﻿using GsaGH.Parameters;
+﻿using System.Drawing;
+using GsaGH.Parameters;
 using OasysUnits;
 using Rhino.Geometry;
-using System.Drawing;
 using Xunit;
 using Line = Rhino.Geometry.Line;
 

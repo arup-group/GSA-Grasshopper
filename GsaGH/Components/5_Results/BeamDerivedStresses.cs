@@ -114,19 +114,14 @@ namespace GsaGH.Components {
       var outVonMises = new DataTree<GH_UnitNumber>();
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
-        switch (ghTyp?.Value) {
-          case GsaResultGoo goo:
-            result = (GsaResult)goo.Value;
-            elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
-            break;
-
-          default:
-            this.AddRuntimeError("Error converting input to GSA Result");
-            return;
+        result = Inputs.GetResultInput(this, ghTyp);
+        if (result == null) {
+          return;
         }
 
+        elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
-        IEntity1dResultSubset<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> resultSet = 
+        IEntity1dResultSubset<IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> resultSet =
           result.Element1dDerivedStresses.ResultSubset(elementIds, positionsCount);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -137,7 +132,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Stress1d[0]) {
-          foreach (KeyValuePair<int, IList<IEntity1dDerivedStress>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IEntity1dQuantity<IStress1dDerived>>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outShearY.AddRange(kvp.Value[p - 1].Results.Values.Select(

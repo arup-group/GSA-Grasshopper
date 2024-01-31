@@ -1,11 +1,11 @@
-﻿using GsaAPI;
+﻿using System;
+using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using System;
 using Xunit;
 
 namespace GsaGHTests.Components.Loads {
@@ -272,7 +272,7 @@ namespace GsaGHTests.Components.Loads {
       lengthUnit = GsaAPI.LengthUnit.Foot;
       Assert.Equal(lengthUnit, load.ApiLoad.Equation().LengthUnits);
       Assert.Equal(forceunit, load.ApiLoad.Equation().PressureUnits);
-      
+
       comp.SetSelected(1, 8); // KilopoundForcePerSquareInch
       output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
       load = (GsaFaceLoad)output.Value;

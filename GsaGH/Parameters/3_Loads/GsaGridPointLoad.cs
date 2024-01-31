@@ -21,7 +21,10 @@ namespace GsaGH.Parameters {
       get => ApiLoad.Name;
       set => ApiLoad.Name = value;
     }
-    public GsaGridPointLoad() { }
+
+    public GsaGridPointLoad() {
+      ApiLoad.Direction = Direction.Z;
+    }
 
     public IGsaLoad Duplicate() {
       var dup = new GsaGridPointLoad {
@@ -37,7 +40,7 @@ namespace GsaGH.Parameters {
         },
         GridPlaneSurface = GridPlaneSurface.Duplicate(),
       };
-      
+
       if (LoadCase != null) {
         dup.LoadCase = LoadCase;
       }
@@ -48,8 +51,8 @@ namespace GsaGH.Parameters {
     internal Point3d GetPoint(LengthUnit unit) {
       LengthUnit m = LengthUnit.Meter;
       double z = 0;
-      if(GridPlaneSurface != null) {
-        z = GridPlaneSurface.Plane.OriginZ; 
+      if (GridPlaneSurface != null) {
+        z = GridPlaneSurface.Plane.OriginZ;
       }
 
       return new Point3d(

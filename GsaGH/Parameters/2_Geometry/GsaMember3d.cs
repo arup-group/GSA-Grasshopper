@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
-using Line = Rhino.Geometry.Line;
-using LengthUnit = OasysUnits.Units.LengthUnit;
 using Rhino.Geometry.Collections;
-using GsaGH.Helpers;
+using LengthUnit = OasysUnits.Units.LengthUnit;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -85,7 +85,7 @@ namespace GsaGH.Parameters {
       ApiMember.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
       UpdatePreview();
     }
-    
+
     public Member DuplicateApiObject() {
       var mem = new Member {
         Group = ApiMember.Group,
@@ -118,7 +118,7 @@ namespace GsaGH.Parameters {
 
     public override string ToString() {
       string id = Id > 0 ? $"ID:{Id}" : string.Empty;
-      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
+      string type = Mappings._memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
       return string.Join(" ", id, type).TrimSpaces();
     }
 

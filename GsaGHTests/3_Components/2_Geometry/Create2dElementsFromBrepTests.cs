@@ -1,10 +1,10 @@
-﻿using GsaAPI;
+﻿using System.Collections.Generic;
+using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
 using Rhino.Geometry;
-using System.Collections.Generic;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {

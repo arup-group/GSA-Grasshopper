@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -25,9 +26,22 @@ namespace GsaGH.Components {
       Hidden = true;
     }
 
+    public override bool Read(GH_IReader reader) {
+      GH_IReader designTaskParam = reader.FindChunk("param_output", 3);
+      if (designTaskParam == null) {
+        IGH_Param param = Params.Output[3];
+        Params.UnregisterOutputParameter(param);
+        bool flag = base.Read(reader);
+        Params.RegisterOutputParam(param);
+        return flag;
+      } else {
+        return base.Read(reader);
+      }
+    }
+
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA",
-        "GSA model containing some Analysis Cases, Combinations and Tasks", 
+        "GSA model containing some Analysis Cases, Combinations and Tasks",
         GH_ParamAccess.item);
     }
 
@@ -38,6 +52,8 @@ namespace GsaGH.Components {
         "List of Analysis Cases in model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaCombinationCaseParameter(), "Combination Cases", "ΣC",
         "List of Combination Cases in model", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaDesignTaskParameter(), "Design Tasks", "ΣD",
+        "List of Steel Design Tasks in model", GH_ParamAccess.list);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -48,10 +64,12 @@ namespace GsaGH.Components {
         = modelGoo.Value.GetAnalysisTasksAndCombinations();
       var combinationCaseGoos = modelGoo.Value.Model.CombinationCases().Select(keyValuePair
         => new GsaCombinationCaseGoo(new GsaCombinationCase(keyValuePair))).ToList();
-
+      var designTaskGoos = modelGoo.Value.Model.SteelDesignTasks().Select(keyValuePair
+        => new GsaDesignTaskGoo(new GsaSteelDesignTask(keyValuePair, modelGoo.Value))).ToList();
       da.SetDataList(0, tuple.Item1);
       da.SetDataList(1, tuple.Item2);
       da.SetDataList(2, combinationCaseGoos);
+      da.SetDataList(3, designTaskGoos);
     }
   }
 }

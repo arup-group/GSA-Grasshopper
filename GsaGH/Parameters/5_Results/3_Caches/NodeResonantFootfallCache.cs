@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class NodeResonantFootfallCache : INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> {
+  public class NodeResonantFootfallCache : IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
     public IDictionary<int, IList<IFootfall>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IFootfall>>();
-    
+
     internal NodeResonantFootfallCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
     }
 
-    public INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> ResultSubset(ICollection<int> nodeIds) {
+    public IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> ResultSubset(ICollection<int> nodeIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(nodeIds);
       if (missingIds.Count > 0) {
         string nodelist = string.Join(" ", missingIds);

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using DocsGeneration.Data;
 using DocsGeneration.MarkDowns.Helpers;
 
@@ -62,7 +62,7 @@ namespace DocsGeneration.MarkDowns {
     private static void CreateParameter(Parameter parameter, List<string> parmeterNames) {
       string filePath = FileHelper.CreateMarkDownFileName(parameter);
       Console.WriteLine($"Writing {filePath}");
-      
+
       string text = $"# {parameter.Name}\n\n";
       if (GsaGH.GsaGhInfo.isBeta) {
         text += StringHelper.AddBetaWarning();
@@ -95,7 +95,7 @@ namespace DocsGeneration.MarkDowns {
           "Name",
           "Description"
         };
-      
+
         var widths = new List<int>() {
           Table.IconWidth,
           Table.NameWidth,

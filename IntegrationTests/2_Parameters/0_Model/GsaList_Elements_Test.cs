@@ -5,7 +5,7 @@ using Xunit;
 
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  
+
   public class GsaList_Elements_Test {
     public static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
@@ -39,6 +39,12 @@ namespace IntegrationTests.Parameters {
     [InlineData("Test7Verticies", 120)]
     [InlineData("Test7Faces", 90)]
     [InlineData("Test8IdsAreEqual", 0)]
+    [InlineData("Test9Result1", true)]
+    [InlineData("Test9Result2", true)]
+    [InlineData("Test9Result3", true)]
+    [InlineData("Test10Result1", true)]
+    [InlineData("Test10Result2", true)]
+    [InlineData("Test10Result3", true)]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);

@@ -31,6 +31,7 @@ namespace GsaGH.Components {
   public class GetModelGeometry : GH_OasysTaskCapableComponent<GetModelGeometry.SolveResults>,
     IGH_VariableParameterComponent {
     public class SolveResults {
+      internal ConcurrentBag<GsaAssemblyGoo> Assemblies { get; set; }
       internal ConcurrentBag<GsaNodeGoo> DisplaySupports { get; set; }
       internal ConcurrentBag<GsaElement1dGoo> Elem1ds { get; set; }
       internal ConcurrentBag<GsaElement2dGoo> Elem2ds { get; set; }
@@ -47,7 +48,7 @@ namespace GsaGH.Components {
     }
 
     public override BoundingBox ClippingBox => _boundingBox;
-    public override Guid ComponentGuid => new Guid("6c4cb686-a6d1-4a79-b01b-fadc5d6da520");
+    public override Guid ComponentGuid => new Guid("7a5b627e-067e-4f77-9bb3-d528e686238c");
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     public List<List<string>> _dropDownItems;
@@ -67,7 +68,7 @@ namespace GsaGH.Components {
     private SolveResults _results;
 
     public GetModelGeometry() : base("Get Model Geometry", "GetGeo",
-      "Get nodes, elements and members from GSA model", CategoryName.Name(),
+      "Get nodes, elements, members and assembliers from GSA model", CategoryName.Name(),
       SubCategoryName.Cat0()) { }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
@@ -202,11 +203,11 @@ namespace GsaGH.Components {
             }
 
             if (node.Value.SupportPreview.Xaxis != null) {
-              args.Display.DrawLine(node.Value.SupportPreview.Xaxis, 
+              args.Display.DrawLine(node.Value.SupportPreview.Xaxis,
                 Color.FromArgb(255, 244, 96, 96), 1);
-              args.Display.DrawLine(node.Value.SupportPreview.Yaxis, 
+              args.Display.DrawLine(node.Value.SupportPreview.Yaxis,
                 Color.FromArgb(255, 96, 244, 96), 1);
-              args.Display.DrawLine(node.Value.SupportPreview.Zaxis, 
+              args.Display.DrawLine(node.Value.SupportPreview.Zaxis,
                 Color.FromArgb(255, 96, 96, 234), 1);
             }
           }
@@ -269,7 +270,7 @@ namespace GsaGH.Components {
       Params.Output[i].Name = "3D Members in [" + unitAbbreviation + "]";
 
       i = 1;
-      for (int j = 1; j < 7; j++) {
+      for (int j = 1; j < 8; j++) {
         Params.Output[i].Access
           = _mode == FoldMode.List ? GH_ParamAccess.list : GH_ParamAccess.tree;
       }
@@ -382,8 +383,8 @@ namespace GsaGH.Components {
         "El", $"Filter the Elements by list. (by default 'all'){Environment.NewLine}" +
         $"Element/Member list should take the form:{Environment.NewLine}" +
         $" 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)" +
-        $"{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary." 
-        + $"{Environment.NewLine}You can input a member list to get child elements.", 
+        $"{Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary."
+        + $"{Environment.NewLine}You can input a member list to get child elements.",
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaMemberListParameter());
       pManager[1].Optional = true;
@@ -411,6 +412,8 @@ namespace GsaGH.Components {
         "2D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
       pManager.AddParameter(new GsaMember3dParameter(), "3D Members in [" + unitAbbreviation + "]", "M3D",
         "3D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
+      pManager.AddParameter(new GsaAssemblyParameter(), "Assemblies", "A",
+        "Assemblies from GSA Model", GH_ParamAccess.list);
     }
 
     protected override void SolveInternal(IGH_DataAccess data) {
@@ -468,7 +471,7 @@ namespace GsaGH.Components {
       if (!GetSolveResults(data, out SolveResults results)) {
         GsaModelGoo modelGoo = null;
         data.GetData(0, ref modelGoo);
-        
+
         GsaListGoo nodeListGoo = null;
         string nodeList = "all";
         if (data.GetData(1, ref nodeListGoo)) {
@@ -676,6 +679,10 @@ namespace GsaGH.Components {
             element3dsNotShaded.Select(e => e.Value.DisplayMesh));
         }
       }
+
+      if (!(results.Assemblies is null) || results.Assemblies.Count == 0) {
+        data.SetDataList(7, results.Assemblies.OrderBy(item => item.Value.Id));
+      }
     }
 
     private SolveResults Compute(GsaModel model, string nodeList, string elemList, string memList) {
@@ -708,10 +715,11 @@ namespace GsaGH.Components {
               _results.Elem1ds = elements.Element1ds;
               _results.Elem2ds = elements.Element2ds;
               _results.Elem3ds = elements.Element3ds;
+              _results.Assemblies = elements.Assemblies;
               break;
 
             case 2:
-              var members = new Members(model, memList, this);
+              var members = new Members(model, this, memList);
               _results.Mem1ds = members.Member1ds;
               _results.Mem2ds = members.Member2ds;
               _results.Mem3ds = members.Member3ds;

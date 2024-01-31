@@ -13,6 +13,8 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(CreateModel), true)]
     [InlineData(typeof(GetModelLoads))]
     [InlineData(typeof(ListInfo))]
+    [InlineData(typeof(PropertyQuantities))]
+    [InlineData(typeof(MaterialQuantities))]
     //prop
     [InlineData(typeof(CreateCustomMaterial))]
     [InlineData(typeof(CreateMaterial))]
@@ -30,6 +32,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(SectionAlignment))]
     [InlineData(typeof(CreateEffectiveLengthOptions))]
     [InlineData(typeof(CreateMemberEndRestraint))]
+    [InlineData(typeof(CreateAssembly))]
     //loads
     [InlineData(typeof(CreateBeamLoad))]
     [InlineData(typeof(CreateBeamThermalLoad))]
@@ -45,6 +48,7 @@ namespace GsaGHTests.CustomComponent {
     //analysis
     [InlineData(typeof(AnalyseModel), true)]
     [InlineData(typeof(CreateAnalysisTask))]
+    [InlineData(typeof(CreateSteelDesignTask))]
     //results
     [InlineData(typeof(BeamDerivedStresses), true)]
     [InlineData(typeof(BeamDisplacements), true)]

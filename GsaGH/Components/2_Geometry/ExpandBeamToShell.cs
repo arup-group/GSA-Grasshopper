@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
@@ -16,9 +16,9 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
-using OasysUnits;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+using OasysUnits;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -807,8 +807,8 @@ namespace GsaGH.Components {
         string cat = " " + profile.Split(' ')[1] + " ";
         string prof = profile.Split(' ')[2];
 
-        if(!cat.Contains("UC ")) {
-          foreach (string value in new List<string>() { "UPE", "PFC", "UPN", "-U ", "-CH", "C ", " MC ", " WT ", " MT ", " ST ", "-EA", "-UA", "-RHS", "-SHS", "-FLATS", "-ROUNDS", "-SQUARES", " ISJC", "T ", "-CPF", "-IA", "-L", "-2L", "UE-AM", "C-AM", "EA-AM"}) {
+        if (!cat.Contains("UC ")) {
+          foreach (string value in new List<string>() { "UPE", "PFC", "UPN", "-U ", "-CH", "C ", " MC ", " WT ", " MT ", " ST ", "-EA", "-UA", "-RHS", "-SHS", "-FLATS", "-ROUNDS", "-SQUARES", " ISJC", "T ", "-CPF", "-IA", "-L", "-2L", "UE-AM", "C-AM", "EA-AM" }) {
             if (cat.Contains(value)) {
               this.AddRuntimeError("Unable to expand none-I Catalogue profile");
               return;

@@ -1,9 +1,9 @@
-﻿using Grasshopper.Kernel.Types;
-using GsaGH.Parameters;
-using GsaGHTests.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Grasshopper.Kernel.Types;
+using GsaGH.Parameters;
+using GsaGHTests.Helpers;
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
@@ -36,6 +36,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaMember1dGoo), typeof(GsaMember1d))]
     [InlineData(typeof(GsaMember2dGoo), typeof(GsaMember2d))]
     [InlineData(typeof(GsaMember3dGoo), typeof(GsaMember3d))]
+    [InlineData(typeof(GsaAssemblyGoo), typeof(GsaAssembly))]
     [InlineData(typeof(GsaNodeGoo), typeof(GsaNode))]
     [InlineData(typeof(GsaEffectiveLengthOptionsGoo), typeof(GsaEffectiveLengthOptions))]
     // 3_Loads

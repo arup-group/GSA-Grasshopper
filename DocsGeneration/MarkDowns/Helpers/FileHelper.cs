@@ -107,7 +107,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
     }
     internal static string CreateFileName(string name, string postfix, string prefix = "gsagh") {
       string spacer = "-";
-      return 
+      return
         $"{prefix.ToLower()}{spacer}" +
         $"{name.Replace(" ", "-").ToLower()}{spacer}" +
         $"{postfix.ToLower()}";

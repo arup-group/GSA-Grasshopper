@@ -185,7 +185,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(GsaAPI.EntityType.Element, original.ApiLoad.EntityType);
       Assert.Equal("name", original.ApiLoad.Name);
       Assert.False(original.ApiLoad.IsProjected);
-      
+
       Assert.Equal(equation.Axis, original.ApiLoad.Equation().Axis);
       Assert.Equal(equation.Expression, original.ApiLoad.Equation().Expression);
       Assert.Equal(equation.LengthUnits, original.ApiLoad.Equation().LengthUnits);

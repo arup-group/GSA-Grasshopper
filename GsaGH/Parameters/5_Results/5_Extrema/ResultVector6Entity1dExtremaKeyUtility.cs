@@ -7,8 +7,8 @@ namespace GsaGH.Parameters.Results {
       this IDictionary<int, IList<T>> subset)
       where T : IEntity1dQuantity<U> where U : IResultItem {
 
-      var maxValue = new ResultVector6<double>(double.MinValue);
-      var minValue = new ResultVector6<double>(double.MaxValue);
+      var maxValue = new ResultVector6<double?>(double.MinValue);
+      var minValue = new ResultVector6<double?>(double.MaxValue);
 
       var maxKey = new ResultVector6<Entity1dExtremaKey>();
       var minKey = new ResultVector6<Entity1dExtremaKey>();
@@ -18,13 +18,13 @@ namespace GsaGH.Parameters.Results {
         for (int permutation = 0; permutation < values.Count; permutation++) {
           foreach (double position in values[permutation].Results.Keys) {
             switch (values[permutation]) {
-              case IEntity1dDisplacement displacement:
+              case IEntity1dQuantity<IDisplacement> displacement:
                 UpdateExtrema<IDisplacement, Length, Angle>(displacement.Results[position],
                   elementId, permutation, position,
                   ref maxValue, ref minValue, ref maxKey, ref minKey);
                 break;
 
-              case IEntity1dInternalForce force:
+              case IEntity1dQuantity<IInternalForce> force:
                 UpdateExtrema<IInternalForce, Force, Moment>(force.Results[position],
                   elementId, permutation, position,
                   ref maxValue, ref minValue, ref maxKey, ref minKey);
@@ -39,7 +39,7 @@ namespace GsaGH.Parameters.Results {
     }
 
     private static void UpdateExtrema<T, Q1, Q2>(T item, int elementId, int permutation, double position,
-      ref ResultVector6<double> maxValue, ref ResultVector6<double> minValue,
+      ref ResultVector6<double?> maxValue, ref ResultVector6<double?> minValue,
       ref ResultVector6<Entity1dExtremaKey> maxKey, ref ResultVector6<Entity1dExtremaKey> minKey)
       where T : IResultVector6<Q1, Q2> where Q1 : IQuantity where Q2 : IQuantity {
 

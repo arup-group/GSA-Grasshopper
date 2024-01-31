@@ -10,6 +10,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -156,9 +157,14 @@ namespace GsaGH.Components {
         return;
       }
 
-      var assembly = new ModelAssembly(null, null, null, nodes, null, null, null, member1ds,
-        member2ds, member3ds, null, null, null, null, null, null, null, null, null, null,
-        _lengthUnit, ToleranceMenu.Tolerance, true, this);
+      var geometry = new GsaGeometry {
+        Nodes = nodes,
+        Member1ds = member1ds,
+        Member2ds = member2ds,
+        Member3ds = member3ds
+      };
+      var assembly = new ModelAssembly(null, null, null, geometry, null, null, null, _lengthUnit,
+        ToleranceMenu.Tolerance, true, this);
       Model gsa = assembly.GetModel();
 
       var outModel = new GsaModel {

@@ -23,6 +23,7 @@ namespace GsaGH.Parameters {
 
     public GsaGridLineLoad() {
       ApiLoad.PolyLineReference = 0;
+      ApiLoad.Direction = Direction.Z;
     }
 
     public IGsaLoad Duplicate() {
@@ -43,7 +44,7 @@ namespace GsaGH.Parameters {
         GridPlaneSurface = GridPlaneSurface.Duplicate(),
         Points = Points,
       };
-      
+
       if (LoadCase != null) {
         dup.LoadCase = LoadCase;
       }

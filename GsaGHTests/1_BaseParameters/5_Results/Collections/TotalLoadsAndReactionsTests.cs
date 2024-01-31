@@ -110,16 +110,16 @@ namespace GsaGHTests.Parameters.Results {
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
       List<double> expected = TotalLoadsAndReactionsA3.TotalLoad;
 
-      IInternalForce actual = result.GlobalResults.TotalLoad;
+      IReactionForce actual = result.GlobalResults.TotalLoad;
 
-      Assert.Equal(expected[0], RoundTo4SigDigits(actual.X.ToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[1], RoundTo4SigDigits(actual.Y.ToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[2], RoundTo4SigDigits(actual.Z.ToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[3], RoundTo4SigDigits(actual.Xyz.ToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[4], RoundTo4SigDigits(actual.Xx.ToUnit(MomentUnit.KilonewtonMeter)));
-      Assert.Equal(expected[5], RoundTo4SigDigits(actual.Yy.ToUnit(MomentUnit.KilonewtonMeter)));
-      Assert.Equal(expected[6], RoundTo4SigDigits(actual.Zz.ToUnit(MomentUnit.KilonewtonMeter)));
-      Assert.Equal(expected[7], RoundTo4SigDigits(actual.Xxyyzz.ToUnit(MomentUnit.KilonewtonMeter)));
+      Assert.Equal(expected[0], RoundTo4SigDigits(actual.XToUnit(ForceUnit.Kilonewton)));
+      Assert.Equal(expected[1], RoundTo4SigDigits(actual.YToUnit(ForceUnit.Kilonewton)));
+      Assert.Equal(expected[2], RoundTo4SigDigits(actual.ZToUnit(ForceUnit.Kilonewton)));
+      Assert.Equal(expected[3], RoundTo4SigDigits(actual.XyzToUnit(ForceUnit.Kilonewton)));
+      Assert.Equal(expected[4], RoundTo4SigDigits(actual.XxToUnit(MomentUnit.KilonewtonMeter)));
+      Assert.Equal(expected[5], RoundTo4SigDigits(actual.YyToUnit(MomentUnit.KilonewtonMeter)));
+      Assert.Equal(expected[6], RoundTo4SigDigits(actual.ZzToUnit(MomentUnit.KilonewtonMeter)));
+      Assert.Equal(expected[7], RoundTo4SigDigits(actual.XxyyzzToUnit(MomentUnit.KilonewtonMeter)));
     }
 
     [Fact]
@@ -127,16 +127,16 @@ namespace GsaGHTests.Parameters.Results {
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 3);
       List<double> expected = TotalLoadsAndReactionsA3.TotalReaction;
 
-      IInternalForce actual = result.GlobalResults.TotalReaction;
+      IReactionForce actual = result.GlobalResults.TotalReaction;
 
-      Assert.Equal(expected[0], RoundTo4SigDigits(actual.X.ToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[1], RoundTo4SigDigits(actual.Y.ToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[2], RoundTo4SigDigits(actual.Z.ToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[3], RoundTo4SigDigits(actual.Xyz.ToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[4], RoundTo4SigDigits(actual.Xx.ToUnit(MomentUnit.KilonewtonMeter)));
-      Assert.Equal(expected[5], RoundTo4SigDigits(actual.Yy.ToUnit(MomentUnit.KilonewtonMeter)));
-      Assert.Equal(expected[6], RoundTo4SigDigits(actual.Zz.ToUnit(MomentUnit.KilonewtonMeter)));
-      Assert.Equal(expected[7], RoundTo4SigDigits(actual.Xxyyzz.ToUnit(MomentUnit.KilonewtonMeter)));
+      Assert.Equal(expected[0], RoundTo4SigDigits(actual.XToUnit(ForceUnit.Kilonewton)));
+      Assert.Equal(expected[1], RoundTo4SigDigits(actual.YToUnit(ForceUnit.Kilonewton)));
+      Assert.Equal(expected[2], RoundTo4SigDigits(actual.ZToUnit(ForceUnit.Kilonewton)));
+      Assert.Equal(expected[3], RoundTo4SigDigits(actual.XyzToUnit(ForceUnit.Kilonewton)));
+      Assert.Equal(expected[4], RoundTo4SigDigits(actual.XxToUnit(MomentUnit.KilonewtonMeter)));
+      Assert.Equal(expected[5], RoundTo4SigDigits(actual.YyToUnit(MomentUnit.KilonewtonMeter)));
+      Assert.Equal(expected[6], RoundTo4SigDigits(actual.ZzToUnit(MomentUnit.KilonewtonMeter)));
+      Assert.Equal(expected[7], RoundTo4SigDigits(actual.XxyyzzToUnit(MomentUnit.KilonewtonMeter)));
     }
 
     private double RoundTo4SigDigits(IQuantity quantity) {

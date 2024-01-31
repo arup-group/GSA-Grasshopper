@@ -50,38 +50,38 @@ namespace GsaGH.Components {
 
       switch (i) {
         case 0 when _selectedItems[i] == _type[0]: {
-          if (_resultType == CaseType.AnalysisCase) {
-            return;
-          }
-
-          _resultType = CaseType.AnalysisCase;
-          UpdateDropdowns();
-          break;
-        }
-        case 0: {
-          if (_selectedItems[i] == _type[1]) {
-            if (_resultType == CaseType.CombinationCase) {
+            if (_resultType == CaseType.AnalysisCase) {
               return;
             }
 
-            _resultType = CaseType.CombinationCase;
+            _resultType = CaseType.AnalysisCase;
             UpdateDropdowns();
+            break;
           }
+        case 0: {
+            if (_selectedItems[i] == _type[1]) {
+              if (_resultType == CaseType.CombinationCase) {
+                return;
+              }
 
-          break;
-        }
-        case 1: {
-          int newId = int.Parse(
-            string.Join(string.Empty, _selectedItems[i].ToCharArray().Where(char.IsDigit)));
-          if (newId != _caseId) {
-            _caseId = newId;
-            if (_resultType == CaseType.CombinationCase) {
-              UpdatePermutations();
+              _resultType = CaseType.CombinationCase;
+              UpdateDropdowns();
             }
-          }
 
-          break;
-        }
+            break;
+          }
+        case 1: {
+            int newId = int.Parse(
+              string.Join(string.Empty, _selectedItems[i].ToCharArray().Where(char.IsDigit)));
+            if (newId != _caseId) {
+              _caseId = newId;
+              if (_resultType == CaseType.CombinationCase) {
+                UpdatePermutations();
+              }
+            }
+
+            break;
+          }
         case 2 when _selectedItems[i].ToLower() != "all":
           _permutationIDs = new List<int>() {
             int.Parse(string.Join(string.Empty, _selectedItems[i].ToCharArray().Where(char.IsDigit))),
@@ -279,9 +279,9 @@ namespace GsaGH.Components {
             return;
           }
 
-          IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult
+          ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> tempNodeCombResult
             = _combinationCaseResults[_caseId]
-             .NodeResults(_gsaModel.Model.Nodes().Keys.First().ToString());
+             .NodeDisplacement(_gsaModel.Model.Nodes().Keys.First().ToString());
           int nP = tempNodeCombResult[tempNodeCombResult.Keys.First()].Count;
           if (_permutationIDs.Count == 1 && _permutationIDs[0] == -1) {
             _permutationIDs = Enumerable.Range(1, nP).ToList();
@@ -367,20 +367,13 @@ namespace GsaGH.Components {
             "All",
           });
           _selectedItems.Add("All");
-          UpdatePermutations();
-        } else {
-          _dropDownItems[2] = new List<string>() {
-            "All",
-          };
-          _selectedItems[2] = "All";
+        } else if (
+          _dropDownItems[2].Count - 1 == modelResults.Item3.Branch(new GH_Path(_caseId)).Count) {
+          return;
         }
 
-        List<int?> ints = modelResults.Item3.Branch(new GH_Path(_caseId));
-        if (ints != null) {
-          _dropDownItems[2].AddRange(ints.Select(x => "P" + x.ToString()).ToList());
-        } else {
-          _dropDownItems[2].Add("-");
-        }
+        UpdatePermutations();
+
       } else if (_dropDownItems.Count > 2) {
         _dropDownItems.RemoveAt(2);
         _selectedItems.RemoveAt(2);
@@ -403,9 +396,9 @@ namespace GsaGH.Components {
         _selectedItems[1] = $"C{_caseId}";
       }
 
-      IReadOnlyDictionary<int, ReadOnlyCollection<NodeResult>> tempNodeCombResult
+      ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> tempNodeCombResult
         = _combinationCaseResults[_caseId]
-         .NodeResults(_gsaModel.Model.Nodes().Keys.First().ToString());
+         .NodeDisplacement(_gsaModel.Model.Nodes().Keys.First().ToString());
       int nP = tempNodeCombResult[tempNodeCombResult.Keys.First()].Count;
       var permutationsInCase = Enumerable.Range(1, nP).ToList();
       if (_dropDownItems.Count < 3) {
@@ -420,7 +413,7 @@ namespace GsaGH.Components {
       }
 
       _selectedItems[2] = "All";
-      _dropDownItems[2].AddRange(permutationsInCase.Select(x => "P" + x.ToString()).ToList());
+      _dropDownItems[2].AddRange(permutationsInCase.Select(x => $"P{x}").ToList());
       _permutationIDs = new List<int>() {
         -1,
       };

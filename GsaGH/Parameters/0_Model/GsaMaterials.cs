@@ -66,11 +66,11 @@ namespace GsaGH.Parameters {
             : new GsaReferencedMaterial(gradeProp, MatType.Glass);
 
         case MaterialType.FIRST:
-          return SteelMaterials.TryGetValue(gradeProp, out GsaMaterial steel) ? steel 
+          return SteelMaterials.TryGetValue(gradeProp, out GsaMaterial steel) ? steel
             : new GsaReferencedMaterial(gradeProp, MatType.Steel);
 
         case MaterialType.TIMBER:
-          return TimberMaterials.TryGetValue(gradeProp, out GsaMaterial timber) ? timber 
+          return TimberMaterials.TryGetValue(gradeProp, out GsaMaterial timber) ? timber
             : new GsaReferencedMaterial(gradeProp, MatType.Timber);
 
         default:

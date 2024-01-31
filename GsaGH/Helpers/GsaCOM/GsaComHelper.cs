@@ -44,7 +44,7 @@ namespace GsaGH.Helpers {
       gsa.SaveAs(tempPath);
       var gsaGh = new GsaModel();
       gsaGh.Model.Open(tempPath);
-      
+
       return gsaGh;
     }
 

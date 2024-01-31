@@ -1,4 +1,8 @@
-﻿using Grasshopper.Kernel.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Grasshopper.Kernel.Data;
 using GsaGH.Components;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
@@ -8,10 +12,6 @@ using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
 using OasysUnits;
 using OasysUnits.Units;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Xunit;
 
 namespace GsaGHTests.Components.Results {
@@ -109,25 +109,25 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor3HelperEnum.Xx, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Yy, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Zz, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Xy, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Yz, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Xx, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Yy, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Zz, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Xy, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Yz, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Xx, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Yy, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Zz, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Xy, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Yz, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Bottom)]
-    public void Element2dStressesMaxFromAnalysisCaseTest(ResultTensor3HelperEnum component, Layer2d layer) {
+    [InlineData(ResultTensor3.Xx, Layer2d.Top)]
+    [InlineData(ResultTensor3.Yy, Layer2d.Top)]
+    [InlineData(ResultTensor3.Zz, Layer2d.Top)]
+    [InlineData(ResultTensor3.Xy, Layer2d.Top)]
+    [InlineData(ResultTensor3.Yz, Layer2d.Top)]
+    [InlineData(ResultTensor3.Zx, Layer2d.Top)]
+    [InlineData(ResultTensor3.Xx, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Yy, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Zz, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Xy, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Yz, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Zx, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Xx, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Yy, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Zz, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Xy, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Yz, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Zx, Layer2d.Bottom)]
+    public void Element2dStressesMaxFromAnalysisCaseTest(ResultTensor3 component, Layer2d layer) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component, layer).Max();
@@ -147,26 +147,26 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor3HelperEnum.Xx, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Yy, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Zz, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Xy, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Yz, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Xx, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Yy, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Zz, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Xy, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Yz, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Xx, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Yy, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Zz, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Xy, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Yz, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Xx, Layer2d.Top)]
+    [InlineData(ResultTensor3.Yy, Layer2d.Top)]
+    [InlineData(ResultTensor3.Zz, Layer2d.Top)]
+    [InlineData(ResultTensor3.Xy, Layer2d.Top)]
+    [InlineData(ResultTensor3.Yz, Layer2d.Top)]
+    [InlineData(ResultTensor3.Zx, Layer2d.Top)]
+    [InlineData(ResultTensor3.Xx, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Yy, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Zz, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Xy, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Yz, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Zx, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Xx, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Yy, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Zz, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Xy, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Yz, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Zx, Layer2d.Bottom)]
     public void Element2dStressesMaxFromCombinationCaseTest(
-      ResultTensor3HelperEnum component, Layer2d layer) {
+      ResultTensor3 component, Layer2d layer) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Max(
@@ -188,26 +188,26 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor3HelperEnum.Xx, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Yy, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Zz, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Xy, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Yz, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Xx, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Yy, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Zz, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Xy, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Yz, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Xx, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Yy, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Zz, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Xy, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Yz, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Xx, Layer2d.Top)]
+    [InlineData(ResultTensor3.Yy, Layer2d.Top)]
+    [InlineData(ResultTensor3.Zz, Layer2d.Top)]
+    [InlineData(ResultTensor3.Xy, Layer2d.Top)]
+    [InlineData(ResultTensor3.Yz, Layer2d.Top)]
+    [InlineData(ResultTensor3.Zx, Layer2d.Top)]
+    [InlineData(ResultTensor3.Xx, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Yy, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Zz, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Xy, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Yz, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Zx, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Xx, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Yy, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Zz, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Xy, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Yz, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Zx, Layer2d.Bottom)]
     public void Element2dStressesMinFromAnalysisCaseTest(
-      ResultTensor3HelperEnum component, Layer2d layer) {
+      ResultTensor3 component, Layer2d layer) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
       double expected = ExpectedAnalysisCaseValues(component, layer).Min();
@@ -227,26 +227,26 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    [InlineData(ResultTensor3HelperEnum.Xx, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Yy, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Zz, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Xy, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Yz, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Top)]
-    [InlineData(ResultTensor3HelperEnum.Xx, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Yy, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Zz, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Xy, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Yz, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Middle)]
-    [InlineData(ResultTensor3HelperEnum.Xx, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Yy, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Zz, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Xy, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Yz, Layer2d.Bottom)]
-    [InlineData(ResultTensor3HelperEnum.Zx, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Xx, Layer2d.Top)]
+    [InlineData(ResultTensor3.Yy, Layer2d.Top)]
+    [InlineData(ResultTensor3.Zz, Layer2d.Top)]
+    [InlineData(ResultTensor3.Xy, Layer2d.Top)]
+    [InlineData(ResultTensor3.Yz, Layer2d.Top)]
+    [InlineData(ResultTensor3.Zx, Layer2d.Top)]
+    [InlineData(ResultTensor3.Xx, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Yy, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Zz, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Xy, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Yz, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Zx, Layer2d.Middle)]
+    [InlineData(ResultTensor3.Xx, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Yy, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Zz, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Xy, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Yz, Layer2d.Bottom)]
+    [InlineData(ResultTensor3.Zx, Layer2d.Bottom)]
     public void Element2dStressesMinFromcombinationCaseTest(
-      ResultTensor3HelperEnum component, Layer2d layer) {
+      ResultTensor3 component, Layer2d layer) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
       double expected = Math.Min(
@@ -267,42 +267,42 @@ namespace GsaGHTests.Components.Results {
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
 
-    private List<double> ExpectedAnalysisCaseValues(ResultTensor3HelperEnum component, Layer2d layer) {
+    private List<double> ExpectedAnalysisCaseValues(ResultTensor3 component, Layer2d layer) {
       switch (component) {
-        case ResultTensor3HelperEnum.Xx: return Element2dStressesA1.XxInMPa(layer);
-        case ResultTensor3HelperEnum.Yy: return Element2dStressesA1.YyInMPa(layer);
-        case ResultTensor3HelperEnum.Zz: return Element2dStressesA1.ZzInMPa(layer);
-        case ResultTensor3HelperEnum.Xy: return Element2dStressesA1.XyInMPa(layer);
-        case ResultTensor3HelperEnum.Yz: return Element2dStressesA1.YzInMPa(layer);
-        case ResultTensor3HelperEnum.Zx: return Element2dStressesA1.ZxInMPa(layer);
+        case ResultTensor3.Xx: return Element2dStressesA1.XxInMPa(layer);
+        case ResultTensor3.Yy: return Element2dStressesA1.YyInMPa(layer);
+        case ResultTensor3.Zz: return Element2dStressesA1.ZzInMPa(layer);
+        case ResultTensor3.Xy: return Element2dStressesA1.XyInMPa(layer);
+        case ResultTensor3.Yz: return Element2dStressesA1.YzInMPa(layer);
+        case ResultTensor3.Zx: return Element2dStressesA1.ZxInMPa(layer);
       }
 
       throw new NotImplementedException();
     }
 
     private List<double> ExpectedCombinationCaseC2p1Values(
-      ResultTensor3HelperEnum component, Layer2d layer) {
+      ResultTensor3 component, Layer2d layer) {
       switch (component) {
-        case ResultTensor3HelperEnum.Xx: return Element2dStressesC2p1.XxInMPa(layer);
-        case ResultTensor3HelperEnum.Yy: return Element2dStressesC2p1.YyInMPa(layer);
-        case ResultTensor3HelperEnum.Zz: return Element2dStressesC2p1.ZzInMPa(layer);
-        case ResultTensor3HelperEnum.Xy: return Element2dStressesC2p1.XyInMPa(layer);
-        case ResultTensor3HelperEnum.Yz: return Element2dStressesC2p1.YzInMPa(layer);
-        case ResultTensor3HelperEnum.Zx: return Element2dStressesC2p1.ZxInMPa(layer);
+        case ResultTensor3.Xx: return Element2dStressesC2p1.XxInMPa(layer);
+        case ResultTensor3.Yy: return Element2dStressesC2p1.YyInMPa(layer);
+        case ResultTensor3.Zz: return Element2dStressesC2p1.ZzInMPa(layer);
+        case ResultTensor3.Xy: return Element2dStressesC2p1.XyInMPa(layer);
+        case ResultTensor3.Yz: return Element2dStressesC2p1.YzInMPa(layer);
+        case ResultTensor3.Zx: return Element2dStressesC2p1.ZxInMPa(layer);
       }
 
       throw new NotImplementedException();
     }
 
     private List<double> ExpectedCombinationCaseC2p2Values(
-      ResultTensor3HelperEnum component, Layer2d layer) {
+      ResultTensor3 component, Layer2d layer) {
       switch (component) {
-        case ResultTensor3HelperEnum.Xx: return Element2dStressesC2p2.XxInMPa(layer);
-        case ResultTensor3HelperEnum.Yy: return Element2dStressesC2p2.YyInMPa(layer);
-        case ResultTensor3HelperEnum.Zz: return Element2dStressesC2p2.ZzInMPa(layer);
-        case ResultTensor3HelperEnum.Xy: return Element2dStressesC2p2.XyInMPa(layer);
-        case ResultTensor3HelperEnum.Yz: return Element2dStressesC2p2.YzInMPa(layer);
-        case ResultTensor3HelperEnum.Zx: return Element2dStressesC2p2.ZxInMPa(layer);
+        case ResultTensor3.Xx: return Element2dStressesC2p2.XxInMPa(layer);
+        case ResultTensor3.Yy: return Element2dStressesC2p2.YyInMPa(layer);
+        case ResultTensor3.Zz: return Element2dStressesC2p2.ZzInMPa(layer);
+        case ResultTensor3.Xy: return Element2dStressesC2p2.XyInMPa(layer);
+        case ResultTensor3.Yz: return Element2dStressesC2p2.YzInMPa(layer);
+        case ResultTensor3.Zx: return Element2dStressesC2p2.ZxInMPa(layer);
       }
 
       throw new NotImplementedException();

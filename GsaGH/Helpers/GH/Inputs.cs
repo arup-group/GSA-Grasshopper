@@ -8,6 +8,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Results;
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Helpers.GH {
@@ -295,8 +296,12 @@ namespace GsaGH.Helpers.GH {
             owner.AddRuntimeWarning($"No child elements found for Members {warningIds}");
           }
 
-          owner.AddRuntimeRemark($"Element definition was derived from Elements with Parent " +
-            $"Member included in '{listGoo.Value.Name}' List");
+          string listName = string.Empty;
+          if (!string.IsNullOrEmpty(listGoo.Value.Name)) {
+            listName = $"'{listGoo.Value.Name}' ";
+          }
+          owner.AddRuntimeRemark($"Element definition was derived from Elements with parent " +
+            $"Members included in {listName}List");
           return GsaList.CreateListDefinition(elementIds);
         }
       }
@@ -320,8 +325,12 @@ namespace GsaGH.Helpers.GH {
       }
 
       if (elementIds2.Count > 0) {
-        owner.AddRuntimeRemark($"Element definition was derived from Elements with Parent "
-          + $"Member included in '{listGoo.Value.Name}' List");
+        string listName = string.Empty;
+        if (!string.IsNullOrEmpty(listGoo.Value.Name)) {
+          listName = $"'{listGoo.Value.Name}' ";
+        }
+        owner.AddRuntimeRemark($"Element definition was derived from Elements with parent "
+          + $"Members included in {listName}List");
         return GsaList.CreateListDefinition(elementIds2);
       }
 
@@ -397,6 +406,49 @@ namespace GsaGH.Helpers.GH {
       }
 
       return memberList;
+    }
+
+    internal static GsaResult GetResultInput(GH_Component owner, GH_ObjectWrapper ghTyp) {
+      var goo = (GsaResultGoo)ghTyp.Value;
+      var result = (GsaResult)goo.Value;
+      if (result == null) {
+        string errMsg = owner.RuntimeMessages(GH_RuntimeMessageLevel.Error)[0];
+        if (errMsg.StartsWith("Use 'SelectResults'")) {
+          var connect = new Guid(
+            errMsg.Split(new string[] { "Connect" }, StringSplitOptions.None).Last());
+          owner.Params.Input[0].RemoveAllSources();
+          IGH_Param newInput = owner.OnPingDocument().FindParameter(connect);
+          owner.Params.Input[0].AddSource(newInput);
+        }
+
+        return null;
+      }
+
+      return result;
+    }
+
+    internal static bool IsResultCaseEnveloped(
+      GH_Component owner, GsaResult result, ref string caseTxt, EnvelopeMethod envelope) {
+      switch (result.CaseType) {
+        case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
+          owner.AddRuntimeRemark("Combination Case " + result.CaseId + " contains "
+            + result.SelectedPermutationIds.Count
+            + $" permutations which have been enveloped using {envelope} method."
+            + Environment.NewLine
+            + "Change the enveloping method by right-clicking the component.");
+          owner.Message = $"{owner.Message} \n{envelope}";
+          caseTxt = $"Case C{result.CaseId} ({result.SelectedPermutationIds.Count} perm.)" +
+            "\n" + ResultsUtility.EnvelopeMethodAbbreviated(envelope);
+          return true;
+        case CaseType.CombinationCase:
+          caseTxt = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
+          return result.Permutations != 1;
+
+        case CaseType.AnalysisCase:
+        default:
+          caseTxt = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
+          return false;
+      }
     }
   }
 }

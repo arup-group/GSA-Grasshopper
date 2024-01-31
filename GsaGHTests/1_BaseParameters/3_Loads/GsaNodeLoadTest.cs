@@ -46,7 +46,7 @@ namespace GsaGHTests.Parameters {
         ApiLoad = {
           AxisProperty = 2,
           Case = 100,
-          Direction = Direction.XY,
+          Direction = Direction.X,
           Nodes = "all",
           Name = "name",
           Value = 97.5,
@@ -60,7 +60,7 @@ namespace GsaGHTests.Parameters {
       duplicate.Type = duplicateType;
       duplicate.ApiLoad.AxisProperty = 3;
       duplicate.ApiLoad.Case = 99;
-      duplicate.ApiLoad.Direction = Direction.YY;
+      duplicate.ApiLoad.Direction = Direction.Y;
       duplicate.ApiLoad.Nodes = "";
       duplicate.ApiLoad.Name = "";
       duplicate.ApiLoad.Value = -3.3;
@@ -68,7 +68,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(originalType, original.Type);
       Assert.Equal(2, original.ApiLoad.AxisProperty);
       Assert.Equal(100, original.ApiLoad.Case);
-      Assert.Equal(Direction.XY, original.ApiLoad.Direction);
+      Assert.Equal(Direction.X, original.ApiLoad.Direction);
       Assert.Equal("all", original.ApiLoad.Nodes);
       Assert.Equal("name", original.ApiLoad.Name);
       Assert.Equal(97.5, original.ApiLoad.Value);

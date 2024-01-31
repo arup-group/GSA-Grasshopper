@@ -19,7 +19,7 @@ namespace GsaGH.Parameters {
 
     private FrpMaterial _frpMaterial;
 
-    internal GsaFrpMaterial(FrpMaterial frpMaterial, bool fromApi = false, 
+    internal GsaFrpMaterial(FrpMaterial frpMaterial, bool fromApi = false,
       string concreteDesignCodeName = "", string steelDesignCodeName = "") {
       ConcreteDesignCodeName = concreteDesignCodeName;
       IsFromApi = fromApi;

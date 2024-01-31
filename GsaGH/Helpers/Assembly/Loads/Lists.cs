@@ -7,7 +7,7 @@ using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
-    private void ConvertList(List<GsaList> lists, List<IGsaLoad> loads, GH_Component owner) {
+    private void ConvertList(List<GsaList> lists, List<IGsaLoad> loads, List<IGsaDesignTask> designTasks, GH_Component owner) {
       _lists = new GsaGuidDictionary<EntityList>(_model.Lists());
 
       // Add lists embedded in loads as they may have ID > 0 set
@@ -15,6 +15,13 @@ namespace GsaGH.Helpers.Assembly {
         lists = GetLoadLists(loads);
       } else if (!loads.IsNullOrEmpty()) {
         lists.AddRange(GetLoadLists(loads));
+      }
+
+      // Add lists embedded in designTasks as they may have ID > 0 set
+      if (lists == null && !designTasks.IsNullOrEmpty()) {
+        lists = GetDesignTaskList(designTasks);
+      } else if (!designTasks.IsNullOrEmpty()) {
+        lists.AddRange(GetDesignTaskList(designTasks));
       }
 
       ConvertList(lists, owner);
@@ -34,6 +41,17 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
       return loadLists;
+    }
+
+    private static List<GsaList> GetDesignTaskList(List<IGsaDesignTask> tasks) {
+      var taskLists = new List<GsaList>();
+      foreach (IGsaDesignTask task in tasks.Where(gsaTask => gsaTask != null)) {
+        GsaList list = task?.List;
+        if (list != null) {
+          taskLists.Add(list);
+        }
+      }
+      return taskLists;
     }
   }
 }

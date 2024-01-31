@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GH_IO.Serialization;
-using Grasshopper;
 using Grasshopper.GUI;
 using Grasshopper.GUI.Gradient;
 using Grasshopper.Kernel;
@@ -36,6 +35,7 @@ using Rhino.Display;
 using Rhino.Geometry;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using ForceUnit = OasysUnits.Units.ForceUnit;
+using Layer2d = GsaGH.Parameters.Results.Layer2d;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
@@ -128,6 +128,7 @@ namespace GsaGH.Components {
     private bool _showLegend = true;
     private bool _slider = true;
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
+    private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
 
     public Contour2dResults() : base("Contour 2D Results", "Contour2d",
       "Displays GSA 2D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -179,6 +180,11 @@ namespace GsaGH.Components {
         _legendScale = reader.GetDouble("legendScale");
       }
 
+      if (reader.ItemExists("envelope")) {
+        _envelopeType = (EnvelopeMethod)Enum.Parse(
+          typeof(EnvelopeMethod), reader.GetString("envelope"));
+      }
+
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("model"));
       _lengthResultUnit
         = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
@@ -199,9 +205,9 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
       switch (i) {
-        case 0: { 
-          switch (j) {
-              case 0: 
+        case 0: {
+            switch (j) {
+              case 0:
                 if (_dropDownItems[1] != _displacement) {
                   while (
                     _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
@@ -221,8 +227,8 @@ namespace GsaGH.Components {
                 }
 
                 break;
-                
-              case 1: 
+
+              case 1:
                 if (_dropDownItems[1] != _force) {
                   while (
                     _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
@@ -242,8 +248,8 @@ namespace GsaGH.Components {
                 }
 
                 break;
-                
-              case 2: 
+
+              case 2:
                 if (_dropDownItems[1] != _stress) {
                   if (_dropDownItems.Count < 3) {
                     _dropDownItems.Insert(2, _layer); //insert layer dropdown as third dd list
@@ -265,8 +271,8 @@ namespace GsaGH.Components {
                 }
 
                 break;
-                
-              case 3: 
+
+              case 3:
                 if (_dropDownItems[1] != _footfall) {
                   while (
                     _dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
@@ -288,67 +294,67 @@ namespace GsaGH.Components {
                 break;
             }
 
-          break;
-        }
+            break;
+          }
         case 1: {
-          bool redraw = false;
-          _selectedItems[1] = _dropDownItems[1][j];
-          if (_mode == FoldMode.Displacement) {
-            if (((int)_disp > 3) & (j < 4)) {
-              redraw = true;
-              _slider = true;
-            }
-
-            if (((int)_disp < 4) & (j > 3)) {
-              redraw = true;
-              _slider = false;
-            }
-          }
-
-          _disp = (DisplayValue)j;
-          if (_dropDownItems[1] != _displacement) {
-            _isShear = false;
-            if (_mode == FoldMode.Force) {
-              if ((j == 3) | (j == 4)) {
-                _disp = (DisplayValue)j - 3;
-                _isShear = true;
-              } else if (j > 4) {
-                _disp = j switch {
-                  8 => DisplayValue.ResXyz,
-                  9 => DisplayValue.ResXxyyzz,
-                  _ => (DisplayValue)j - 1,
-                };
+            bool redraw = false;
+            _selectedItems[1] = _dropDownItems[1][j];
+            if (_mode == FoldMode.Displacement) {
+              if (((int)_disp > 3) & (j < 4)) {
+                redraw = true;
+                _slider = true;
               }
-            } else if (_mode == FoldMode.Force || _mode == FoldMode.Stress) {
-              if (j > 2) {
-                _disp = (DisplayValue)j + 1;
+
+              if (((int)_disp < 4) & (j > 3)) {
+                redraw = true;
+                _slider = false;
               }
             }
-          }
 
-          if (redraw) {
-            ReDrawComponent();
-          }
+            _disp = (DisplayValue)j;
+            if (_dropDownItems[1] != _displacement) {
+              _isShear = false;
+              if (_mode == FoldMode.Force) {
+                if ((j == 3) | (j == 4)) {
+                  _disp = (DisplayValue)j - 3;
+                  _isShear = true;
+                } else if (j > 4) {
+                  _disp = j switch {
+                    8 => DisplayValue.ResXyz,
+                    9 => DisplayValue.ResXxyyzz,
+                    _ => (DisplayValue)j - 1,
+                  };
+                }
+              } else if (_mode == FoldMode.Force || _mode == FoldMode.Stress) {
+                if (j > 2) {
+                  _disp = (DisplayValue)j + 1;
+                }
+              }
+            }
 
-          break;
-        }
+            if (redraw) {
+              ReDrawComponent();
+            }
+
+            break;
+          }
         case 2 when _mode == FoldMode.Stress: {
-          switch (j) {
-            case 0:
-              _flayer = Layer2d.Top;
-              break;
+            switch (j) {
+              case 0:
+                _flayer = Layer2d.Top;
+                break;
 
-            case 1:
-              _flayer = Layer2d.Middle;
-              break;
+              case 1:
+                _flayer = Layer2d.Middle;
+                break;
 
-            case 2:
-              _flayer = Layer2d.Bottom;
-              break;
+              case 2:
+                _flayer = Layer2d.Bottom;
+                break;
+            }
+
+            break;
           }
-
-          break;
-        }
       }
 
       base.UpdateUI();
@@ -411,6 +417,7 @@ namespace GsaGH.Components {
       writer.SetString("force", ForcePerLength.GetAbbreviation(_forcePerLengthUnit));
       writer.SetString("moment", Force.GetAbbreviation(_forceUnit));
       writer.SetString("stress", Pressure.GetAbbreviation(_stressUnitResult));
+      writer.SetString("envelope", _envelopeType.ToString());
       return base.Write(writer);
     }
 
@@ -420,6 +427,10 @@ namespace GsaGH.Components {
       }
 
       Menu_AppendSeparator(menu);
+
+      ToolStripMenuItem envelopeMenu = GenerateToolStripMenuItem.GetEnvelopeSubMenuItem(_envelopeType, UpdateEnvelope);
+      menu.Items.Add(envelopeMenu);
+
       Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
 
       var gradient = new GH_GradientControl();
@@ -546,41 +557,15 @@ namespace GsaGH.Components {
       _case = string.Empty;
       _resType = string.Empty;
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp)) {
+      da.GetData(0, ref ghTyp);
+      result = Inputs.GetResultInput(this, ghTyp);
+      if (result == null) {
         return;
       }
 
-      switch (ghTyp?.Value) {
-        case GsaResultGoo goo:
-          result = (GsaResult)goo.Value;
-          elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
-
-          switch (result.CaseType) {
-            case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
-              this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
-                + result.SelectedPermutationIds.Count
-                + " permutations - only one permutation can be displayed at a time."
-                + Environment.NewLine
-                + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
-              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-              break;
-
-            case CaseType.CombinationCase:
-              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-              break;
-
-            case CaseType.AnalysisCase:
-              _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
-              break;
-          }
-
-          break;
-
-        default:
-          this.AddRuntimeError("Error converting input to GSA Result");
-          return;
-      }
-
+      bool enveloped = Inputs.IsResultCaseEnveloped(this, result, ref _case, _envelopeType);
+      List<int> permutations = result.SelectedPermutationIds;
+      elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
       ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
 
@@ -606,9 +591,6 @@ namespace GsaGH.Components {
       }
 
       ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);
-      int permutation = result.SelectedPermutationIds == null
-        ? 0 : result.SelectedPermutationIds[0] - 1;
-
       ConcurrentDictionary<int, IList<IQuantity>> values = null;
       ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> valuesXyz = null;
 
@@ -646,23 +628,23 @@ namespace GsaGH.Components {
               dmax = displacements.GetExtrema(displacements.Max.Xyz).Xyz.As(_lengthResultUnit);
               dmin = displacements.GetExtrema(displacements.Min.Xyz).Xyz.As(_lengthResultUnit);
               translationSelector = (r) => r.Xyz.ToUnit(_lengthResultUnit);
-              valuesXyz = ResultsUtility.GetResultResultanTranslation(
-                displacements.Subset, _lengthUnit, permutation);
+              valuesXyz = ResultsUtility.GetResultResultantTranslation(
+                displacements.Subset, _lengthUnit, permutations, _envelopeType);
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(displacements.Subset, translationSelector, permutation);
+          values = ResultsUtility.GetResultComponent(displacements.Subset, translationSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.Force:
-          IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, 
+          IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d,
             ResultTensor2InAxis<Entity2dExtremaKey>> forces
               = result.Element2dForces.ResultSubset(elementIds);
-          IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, 
-            ResultVector2<Entity2dExtremaKey>> shears 
+          IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d,
+            ResultVector2<Entity2dExtremaKey>> shears
               = result.Element2dShearForces.ResultSubset(elementIds);
-          IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, 
-            ResultTensor2AroundAxis<Entity2dExtremaKey>> moments 
+          IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d,
+            ResultTensor2AroundAxis<Entity2dExtremaKey>> moments
               = result.Element2dMoments.ResultSubset(elementIds);
           Func<IForce2d, IQuantity> forceSelector = null;
           Func<IShear2d, IQuantity> shearSelector = null;
@@ -673,7 +655,6 @@ namespace GsaGH.Components {
               dmax = shears.GetExtrema(shears.Max.Qx).Qx.As(_forcePerLengthUnit);
               dmin = shears.GetExtrema(shears.Min.Qx).Qx.As(_forcePerLengthUnit);
               shearSelector = (r) => r.Qx.ToUnit(_forcePerLengthUnit);
-              values = ResultsUtility.GetResultComponent(shears.Subset, shearSelector, permutation);
               break;
 
             case DisplayValue.Y when _isShear:
@@ -681,7 +662,6 @@ namespace GsaGH.Components {
               dmax = shears.GetExtrema(shears.Max.Qy).Qy.As(_forcePerLengthUnit);
               dmin = shears.GetExtrema(shears.Min.Qy).Qy.As(_forcePerLengthUnit);
               shearSelector = (r) => r.Qy.ToUnit(_forcePerLengthUnit);
-              values = ResultsUtility.GetResultComponent(shears.Subset, shearSelector, permutation);
               break;
 
             case DisplayValue.X:
@@ -689,7 +669,6 @@ namespace GsaGH.Components {
               dmax = forces.GetExtrema(forces.Max.Nx).Nx.As(_forcePerLengthUnit);
               dmin = forces.GetExtrema(forces.Min.Nx).Nx.As(_forcePerLengthUnit);
               forceSelector = (r) => r.Nx.ToUnit(_forcePerLengthUnit);
-              values = ResultsUtility.GetResultComponent(forces.Subset, forceSelector, permutation);
               break;
 
             case DisplayValue.Y:
@@ -697,7 +676,6 @@ namespace GsaGH.Components {
               dmax = forces.GetExtrema(forces.Max.Ny).Ny.As(_forcePerLengthUnit);
               dmin = forces.GetExtrema(forces.Min.Ny).Ny.As(_forcePerLengthUnit);
               forceSelector = (r) => r.Ny.ToUnit(_forcePerLengthUnit);
-              values = ResultsUtility.GetResultComponent(forces.Subset, forceSelector, permutation);
               break;
 
             case DisplayValue.Z:
@@ -705,7 +683,6 @@ namespace GsaGH.Components {
               dmax = forces.GetExtrema(forces.Max.Nxy).Nxy.As(_forcePerLengthUnit);
               dmin = forces.GetExtrema(forces.Min.Nxy).Nxy.As(_forcePerLengthUnit);
               forceSelector = (r) => r.Nxy.ToUnit(_forcePerLengthUnit);
-              values = ResultsUtility.GetResultComponent(forces.Subset, forceSelector, permutation);
               break;
 
             case DisplayValue.Xx:
@@ -713,7 +690,6 @@ namespace GsaGH.Components {
               dmax = moments.GetExtrema(moments.Max.Mx).Mx.As(_forceUnit);
               dmin = moments.GetExtrema(moments.Min.Mx).Mx.As(_forceUnit);
               momentSelector = (r) => r.Mx.ToUnit(_forceUnit);
-              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
               break;
 
             case DisplayValue.Yy:
@@ -721,7 +697,6 @@ namespace GsaGH.Components {
               dmax = moments.GetExtrema(moments.Max.My).My.As(_forceUnit);
               dmin = moments.GetExtrema(moments.Min.My).My.As(_forceUnit);
               momentSelector = (r) => r.My.ToUnit(_forceUnit);
-              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
               break;
 
             case DisplayValue.Zz:
@@ -729,7 +704,6 @@ namespace GsaGH.Components {
               dmax = moments.GetExtrema(moments.Max.Mxy).Mxy.As(_forceUnit);
               dmin = moments.GetExtrema(moments.Min.Mxy).Mxy.As(_forceUnit);
               momentSelector = (r) => r.Mxy.ToUnit(_forceUnit);
-              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
               break;
 
             case DisplayValue.ResXyz:
@@ -737,7 +711,6 @@ namespace GsaGH.Components {
               dmax = moments.GetExtrema(moments.Max.WoodArmerX).WoodArmerX.As(_forceUnit);
               dmin = moments.GetExtrema(moments.Min.WoodArmerX).WoodArmerX.As(_forceUnit);
               momentSelector = (r) => r.WoodArmerX.ToUnit(_forceUnit);
-              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
               break;
 
             case DisplayValue.ResXxyyzz:
@@ -745,10 +718,17 @@ namespace GsaGH.Components {
               dmax = moments.GetExtrema(moments.Max.WoodArmerY).WoodArmerY.As(_forceUnit);
               dmin = moments.GetExtrema(moments.Min.WoodArmerY).WoodArmerY.As(_forceUnit);
               momentSelector = (r) => r.WoodArmerY.ToUnit(_forceUnit);
-              values = ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutation);
               break;
           }
 
+          values = shearSelector != null
+            ? ResultsUtility.GetResultComponent(
+              shears.Subset, shearSelector, permutations, _envelopeType)
+            : forceSelector != null
+              ? ResultsUtility.GetResultComponent(
+                forces.Subset, forceSelector, permutations, _envelopeType)
+              : ResultsUtility.GetResultComponent(
+                moments.Subset, momentSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.Stress:
@@ -800,12 +780,13 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(stresses.Subset, stressSelector, permutation);
+          values = ResultsUtility.GetResultComponent(
+            stresses.Subset, stressSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.Footfall when result.CaseType == CaseType.AnalysisCase:
           _resType = "Response Factor [-]";
-          INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfallCache
+          IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> nodeFootfallCache
           = _selectedItems[1] == "Resonant"
             ? result.NodeResonantFootfalls
             : result.NodeTransientFootfalls;
@@ -813,8 +794,8 @@ namespace GsaGH.Components {
             (r) => new Ratio(r.MaximumResponseFactor, RatioUnit.DecimalFraction);
           ICollection<int> nodeIds;
           (values, nodeIds) = ResultsUtility.MapNodeResultToElements(
-            elems, nodeFootfallCache, footfallSelector, permutation);
-          INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfall
+            elems, nodeFootfallCache, footfallSelector, _envelopeType);
+          IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> nodeFootfall
             = nodeFootfallCache.ResultSubset(nodeIds);
           dmax = nodeFootfall.GetExtrema(nodeFootfall.Max.MaximumResponseFactor).MaximumResponseFactor;
           dmin = nodeFootfall.GetExtrema(nodeFootfall.Min.MaximumResponseFactor).MaximumResponseFactor;
@@ -828,6 +809,11 @@ namespace GsaGH.Components {
         List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
         significantDigits = (int)rounded[2];
       } else {
+        if (enveloped) {
+          dmax = values.Values.Select(x => x.Max()).Max().Value;
+          dmin = values.Values.Select(x => x.Min()).Min().Value;
+        }
+
         List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
         dmax = rounded[0];
         dmin = rounded[1];
@@ -963,52 +949,46 @@ namespace GsaGH.Components {
         }
 
         switch (_mode) {
-              case FoldMode.Displacement when (int)_disp < 4: {
-                var displacement = new Length(t, _lengthResultUnit);
-                _legendValues.Add(displacement.ToString("f" + significantDigits));
-                ts.Add(new GH_UnitNumber(displacement));
-                Message = Length.GetAbbreviation(_lengthResultUnit);
-                break;
-              }
-              case FoldMode.Displacement: {
-                var rotation = new Angle(t, AngleUnit.Radian);
-                _legendValues.Add(rotation.ToString("s" + significantDigits));
-                ts.Add(new GH_UnitNumber(rotation));
-                Message = Angle.GetAbbreviation(AngleUnit.Radian);
-                break;
-              }
-              case FoldMode.Force when ((int)_disp < 3) | _isShear: {
-                var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
-                _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
-                ts.Add(new GH_UnitNumber(forcePerLength));
-                Message = ForcePerLength.GetAbbreviation(_forcePerLengthUnit);
-                break;
-              }
-              case FoldMode.Force: {
-                _legendValues.Add(
-                  new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)).ToString(
-                    "s" + significantDigits) + "/" + Length.GetAbbreviation(lengthUnit));
-                var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
-                ts.Add(new GH_UnitNumber(moment));
-                Message = Moment.GetAbbreviation(UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit))
-                  + "/" + Length.GetAbbreviation(lengthUnit);
-                break;
-              }
-              case FoldMode.Stress: {
-                var stress = new Pressure(t, _stressUnitResult);
-                _legendValues.Add(stress.ToString("s" + significantDigits));
-                ts.Add(new GH_UnitNumber(stress));
-                Message = Pressure.GetAbbreviation(_stressUnitResult);
-                break;
-              }
-              case FoldMode.Footfall: {
-                var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-                _legendValues.Add(responseFactor.ToString("s" + significantDigits));
-                ts.Add(new GH_UnitNumber(responseFactor));
-                Message = string.Empty;
-                break;
-              }
+          case FoldMode.Displacement when (int)_disp < 4: {
+              var displacement = new Length(t, _lengthResultUnit);
+              _legendValues.Add(displacement.ToString("f" + significantDigits));
+              ts.Add(new GH_UnitNumber(displacement));
+              break;
             }
+          case FoldMode.Displacement: {
+              var rotation = new Angle(t, AngleUnit.Radian);
+              _legendValues.Add(rotation.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(rotation));
+              break;
+            }
+          case FoldMode.Force when ((int)_disp < 3) | _isShear: {
+              var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
+              _legendValues.Add(forcePerLength.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(forcePerLength));
+              break;
+            }
+          case FoldMode.Force: {
+              _legendValues.Add(
+                new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)).ToString(
+                  "s" + significantDigits) + "/" + Length.GetAbbreviation(lengthUnit));
+              var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
+              ts.Add(new GH_UnitNumber(moment));
+              break;
+            }
+          case FoldMode.Stress: {
+              var stress = new Pressure(t, _stressUnitResult);
+              _legendValues.Add(stress.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(stress));
+              Message = Pressure.GetAbbreviation(_stressUnitResult);
+              break;
+            }
+          case FoldMode.Footfall: {
+              var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
+              _legendValues.Add(responseFactor.ToString("s" + significantDigits));
+              ts.Add(new GH_UnitNumber(responseFactor));
+              break;
+            }
+        }
 
         if (Math.Abs(t) > 1) {
           // remove thousand separator
@@ -1026,7 +1006,7 @@ namespace GsaGH.Components {
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {
-      doc ??= Instances.ActiveCanvas.Document;
+      doc ??= OnPingDocument();
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
 
@@ -1100,6 +1080,12 @@ namespace GsaGH.Components {
     internal void ShowLegend(object sender, EventArgs e) {
       _showLegend = !_showLegend;
       ExpirePreview(true);
+    }
+
+    internal void UpdateEnvelope(string type) {
+      _envelopeType = (EnvelopeMethod)Enum.Parse(typeof(EnvelopeMethod), type);
+      ExpirePreview(true);
+      base.UpdateUI();
     }
 
     internal void UpdateForce(string unit) {

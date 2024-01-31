@@ -165,7 +165,7 @@ namespace GsaGH.Components {
         "Get Property Thickness", GH_ParamAccess.item);
       pManager.AddGenericParameter("Reference Surface", "RS",
         "Reference Surface Middle (default) = 0, Top = 1, Bottom = 2", GH_ParamAccess.item);
-      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", 
+      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off",
         "Additional Offset", GH_ParamAccess.item);
       pManager.AddParameter(new GsaProperty2dModifierParameter());
       pManager.AddGenericParameter("Support Type", "ST", "Support Type", GH_ParamAccess.item);
@@ -317,7 +317,7 @@ namespace GsaGH.Components {
       } else {
         da.SetData(4, ax);
       }
-      da.SetData(5, Mappings.prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.ApiProp2d.Type).Key);
+      da.SetData(5, Mappings._prop2dTypeMapping.FirstOrDefault(x => x.Value == prop.ApiProp2d.Type).Key);
       da.SetData(6, new GsaMaterialGoo(prop.Material));
       da.SetData(7,
         prop.ApiProp2d.Description == string.Empty ? new GH_UnitNumber(Length.Zero) :
@@ -327,7 +327,7 @@ namespace GsaGH.Components {
       da.SetData(10, new GsaProperty2dModifierGoo(
         new GsaProperty2dModifier(prop.ApiProp2d.PropertyModifier)));
       da.SetData(11, prop.ApiProp2d.SupportType);
-      da.SetData(12, prop.ApiProp2d.SupportType != SupportType.Auto 
+      da.SetData(12, prop.ApiProp2d.SupportType != SupportType.Auto
         ? prop.ApiProp2d.ReferenceEdge : -1);
     }
 

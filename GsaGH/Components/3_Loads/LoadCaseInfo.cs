@@ -32,7 +32,7 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
       GsaLoadCaseGoo loadCaseGoo = null;
-      da.GetData(0, ref  loadCaseGoo);
+      da.GetData(0, ref loadCaseGoo);
 
       da.SetData(0, loadCaseGoo.Value.Id);
       da.SetData(1, loadCaseGoo.Value.LoadCase.Name);

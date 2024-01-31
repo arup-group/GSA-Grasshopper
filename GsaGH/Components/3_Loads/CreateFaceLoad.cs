@@ -25,7 +25,7 @@ namespace GsaGH.Components {
       Uniform,
       Variable,
       Point,
-      Equation, 
+      Equation,
     }
 
     public override Guid ComponentGuid => new Guid("c4ad7a1e-350b-48b2-b636-24b6ef7bd0f3");
@@ -164,7 +164,7 @@ namespace GsaGH.Components {
           Params.Input[5].NickName = "Ae";
           Params.Input[5].Name = "Equation Axis";
           Params.Input[5].Description = "The Axis ID for which the equation is specified. " +
-            "By defualt global is used.";
+            "By default global is used.";
           Params.Input[5].Access = GH_ParamAccess.item;
           Params.Input[5].Optional = true;
 
@@ -482,7 +482,7 @@ namespace GsaGH.Components {
                 lengthUnit = GsaAPI.LengthUnit.Foot;
                 break;
             }
-            
+
             var equ = new PressureEquation() {
               LengthUnits = lengthUnit,
               PressureUnits = forceunit,
@@ -632,43 +632,43 @@ namespace GsaGH.Components {
     private string EquationTextHelp() {
       return
        "Normal mathematical notation is used in expressions:\n"
-	    + "\n"
-	    + "The arithmetic operators are +,-,*,/,^: normal operator precedence is followed\n"
-	    + "The constants pi (3.14...) and g (9.81...) are defined\n"
-	    + "Parenthesis can be used to clarify the order of operations\n"
-	    + "\n"
-	    + "The following functions can be used:\n"
-	    + "   sqrt(x)    square root\n"
-	    + "   abs(x)     absolute value\n"
-	    + "   exp(x)     e raised to power of\n"
-	    + "   ln(x)      natural logarithm\n"
-	    + "   log(x)     base 10 logarithm\n"
-	    + "   sin(x)     sine (in radians)\n"
-	    + "   cos(x)     cosine (in radians)\n"
-	    + "   tan(x)     tangent (in radians)\n"
-	    + "   asin(x)    inverse sine (in radians)\n"
-	    + "   acos(x)    inverse cosine (in radians)\n"
-	    + "   atan(x)    inverse tangent (in radians)\n"
-	    + "   atan(y,x)  inverse tangent of (y/x) (in radians)\n"
-	    + "   sinh(x)    hyperbolic sine\n"
-	    + "   cosh(x)    hyperbolic cosine\n"
-	    + "   tanh(x)    hyperbolic tangent\n"
-	    + "   asinh(x)   inverse hyperbolic sine\n"
-	    + "   acosh(x)   inverse hyperbolic cosine\n"
-	    + "   atanh(x)   inverse hyperbolic tangent\n"
-	    + "   radians(x) conversion of degrees to radians\n"
-	    + "   degrees(x) conversion of radians to degrees\n"
-	    + "   floor(x)   round a number down to integer value\n"
-	    + "   ceil(x)    round a number up to integer value\n"
-	    + "   sign(x)    return sign of number\n"
-	    + "   max(x,y)   maximum of two numbers\n"
-	    + "   min(x,y)   minimum of two numbers\n"
      + "\n"
-	    + "Conditional expressions can be specified in the form:\n"
-	    + "   if(condition,true_expression,false_expression)\n"
-	    + "The conditional operators are >,<,!=(or <>),>=,<=,==(or=)\n"
-	    + "and the logical operators are && (and) and || (or)\n"
-	    + "Conditional expressions can be nested.\n";
+     + "The arithmetic operators are +,-,*,/,^: normal operator precedence is followed\n"
+     + "The constants pi (3.14...) and g (9.81...) are defined\n"
+     + "Parenthesis can be used to clarify the order of operations\n"
+     + "\n"
+     + "The following functions can be used:\n"
+     + "   sqrt(x)    square root\n"
+     + "   abs(x)     absolute value\n"
+     + "   exp(x)     e raised to power of\n"
+     + "   ln(x)      natural logarithm\n"
+     + "   log(x)     base 10 logarithm\n"
+     + "   sin(x)     sine (in radians)\n"
+     + "   cos(x)     cosine (in radians)\n"
+     + "   tan(x)     tangent (in radians)\n"
+     + "   asin(x)    inverse sine (in radians)\n"
+     + "   acos(x)    inverse cosine (in radians)\n"
+     + "   atan(x)    inverse tangent (in radians)\n"
+     + "   atan(y,x)  inverse tangent of (y/x) (in radians)\n"
+     + "   sinh(x)    hyperbolic sine\n"
+     + "   cosh(x)    hyperbolic cosine\n"
+     + "   tanh(x)    hyperbolic tangent\n"
+     + "   asinh(x)   inverse hyperbolic sine\n"
+     + "   acosh(x)   inverse hyperbolic cosine\n"
+     + "   atanh(x)   inverse hyperbolic tangent\n"
+     + "   radians(x) conversion of degrees to radians\n"
+     + "   degrees(x) conversion of radians to degrees\n"
+     + "   floor(x)   round a number down to integer value\n"
+     + "   ceil(x)    round a number up to integer value\n"
+     + "   sign(x)    return sign of number\n"
+     + "   max(x,y)   maximum of two numbers\n"
+     + "   min(x,y)   minimum of two numbers\n"
+     + "\n"
+     + "Conditional expressions can be specified in the form:\n"
+     + "   if(condition,true_expression,false_expression)\n"
+     + "The conditional operators are >,<,!=(or <>),>=,<=,==(or=)\n"
+     + "and the logical operators are && (and) and || (or)\n"
+     + "Conditional expressions can be nested.\n";
     }
   }
 }

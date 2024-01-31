@@ -1,9 +1,9 @@
-﻿using GsaGHTests.Helper;
-using GsaGHTests.Parameters;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GsaGHTests.Helper;
+using GsaGHTests.Parameters;
 using Xunit;
 
 namespace GsaGH.Parameters.Results {
@@ -20,14 +20,13 @@ namespace GsaGH.Parameters.Results {
     public void GetMissingKeysTests(
       string elementList, int cacheCount, int newKeyId, bool newKeyIsMissing) {
       // Assemble
-      GsaResult result
-        = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
       int invalidDimension = 666;
       int validDimension = 1;
       ReadOnlyCollection<int> elementIds = result.ElementIds(elementList, string.IsNullOrEmpty(elementList) ? invalidDimension : validDimension);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>>
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>>
         resultSet = result.Element1dDisplacements.ResultSubset(elementIds, 1);
 
       if (cacheCount == 0) {
@@ -57,14 +56,14 @@ namespace GsaGH.Parameters.Results {
     [InlineData(null, 0, -3, true)]
     public void GetMissingKeysAndPositionsTests(string elementList, int cacheCount, int newKeyId, bool newKeyIsMissing) {
       // Assemble
-      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
       int invalidDimension = 666;
       int validDimension = 1;
 
       ReadOnlyCollection<int> elementIds = result.ElementIds(elementList, string.IsNullOrEmpty(elementList) ? invalidDimension : validDimension);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet
         = result.Element1dDisplacements.ResultSubset(elementIds, 2);
 
       if (cacheCount == 0) {
@@ -78,7 +77,7 @@ namespace GsaGH.Parameters.Results {
       var newKeys = new Collection<int>() { newKeyId };
 
       ConcurrentBag<int> missingIds = result.Element1dDisplacements.Cache.
-        GetMissingKeysAndPositions<IEntity1dDisplacement, IDisplacement>(newKeys, positions);
+        GetMissingKeysAndPositions<IDisplacement>(newKeys, positions);
 
       if (newKeyIsMissing) {
         Assert.Single(missingIds);
@@ -94,11 +93,11 @@ namespace GsaGH.Parameters.Results {
     [InlineData(-4, false)]
     public void GetSubsetIsValidWhenKeyIsValid(int newKey, bool newKeyIsValid) {
       // Assemble
-      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
 
       // Act
       ReadOnlyCollection<int> elementIds = result.ElementIds("2 3 4 5", 1);
-      IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>>
+      IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>>
         resultSet = result.Element1dDisplacements.ResultSubset(elementIds, 2);
 
       Assert.Equal(3, result.Element1dDisplacements.Cache.Count);
@@ -108,7 +107,7 @@ namespace GsaGH.Parameters.Results {
         newKey
       };
 
-      IDictionary<int, IList<IEntity1dDisplacement>> subset
+      IDictionary<int, IList<IEntity1dQuantity<IDisplacement>>> subset
         = result.Element1dDisplacements.Cache.GetSubset(newKeys);
 
       if (newKeyIsValid) {

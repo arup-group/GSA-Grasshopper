@@ -13,9 +13,9 @@ namespace GsaGH.Parameters {
 
     public Guid RefObjectGuid => throw new NotImplementedException();
 
-    public int CaseId { 
-      get => ApiLoad.Case; 
-      set => ApiLoad.Case = value; 
+    public int CaseId {
+      get => ApiLoad.Case;
+      set => ApiLoad.Case = value;
     }
     public string Name {
       get => ApiLoad.Name;
@@ -25,8 +25,11 @@ namespace GsaGH.Parameters {
     internal Point3d _refPoint = Point3d.Unset;
 
     public GsaNodeLoad() {
-      ApiLoad = new NodeLoad();
+      ApiLoad = new NodeLoad() {
+        Direction = Direction.Z,
+      };
       Type = NodeLoadType.NodeLoad;
+
     }
 
     public IGsaLoad Duplicate() {

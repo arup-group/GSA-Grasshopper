@@ -1,9 +1,9 @@
-﻿using GsaGH.Components;
+﻿using System.Collections.Generic;
+using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
 using OasysGH.Components;
-using System.Collections.Generic;
 using Xunit;
 
 namespace GsaGHTests.Parameters {

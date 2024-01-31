@@ -57,8 +57,7 @@ namespace GsaGH.Helpers.GsaApi {
       try {
         // will fail for superseeded codes
         return new Model(concreteDesignCode, steelDesignCode);
-      }
-      catch (GsaApiException) { //GsaAPI.GsaApiException: 'Concrete design code is not supported.'
+      } catch (GsaApiException) { //GsaAPI.GsaApiException: 'Concrete design code is not supported.'
         ReadOnlyCollection<string> concreteCodes = DesignCode.GetConcreteDesignCodeNames();
         if (!concreteCodes.Contains(concreteDesignCode)) {
           concreteDesignCode = FindSimilarCode(concreteDesignCode, concreteCodes);

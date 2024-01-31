@@ -28,16 +28,16 @@ namespace GsaGH.Parameters.Results {
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
-              = analysisCase.Element2dDisplacement(elementList, 0);
-            Parallel.ForEach(aCaseResults.Keys, elementId => 
+              = analysisCase.Element2dDisplacement(elementList);
+            Parallel.ForEach(aCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IMeshQuantity<IDisplacement>>>)Cache).TryAdd(
               elementId, Entity2dResultsFactory.CreateDisplacements(aCaseResults[elementId])));
             break;
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
-              = combinationCase.Element2dDisplacement(elementList, 0);
-            Parallel.ForEach(cCaseResults.Keys, elementId => 
+              = combinationCase.Element2dDisplacement(elementList);
+            Parallel.ForEach(cCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IMeshQuantity<IDisplacement>>>)Cache).TryAdd(
               elementId, Entity2dResultsFactory.CreateDisplacements(cCaseResults[elementId])));
             break;

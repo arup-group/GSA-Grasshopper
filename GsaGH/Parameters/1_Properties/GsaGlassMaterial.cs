@@ -19,7 +19,7 @@ namespace GsaGH.Parameters {
 
     private GlassMaterial _glassMaterial;
 
-    internal GsaGlassMaterial(GlassMaterial glassMaterial, bool fromApi = false, 
+    internal GsaGlassMaterial(GlassMaterial glassMaterial, bool fromApi = false,
       string concreteDesignCodeName = "", string steelDesignCodeName = "") {
       ConcreteDesignCodeName = concreteDesignCodeName;
       IsFromApi = fromApi;

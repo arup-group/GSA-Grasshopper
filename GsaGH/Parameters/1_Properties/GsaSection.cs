@@ -14,15 +14,15 @@ namespace GsaGH.Parameters {
   public class GsaSection : Property {
     public Section ApiSection { get; internal set; }
     public GsaSectionModifier Modifier { get; set; }
-    public GsaSectionProperties SectionProperties 
+    public GsaSectionProperties SectionProperties
       => new GsaSectionProperties(ApiSection.Properties());
     public Length AdditionalOffsetY {
-      get => ApiSection == null ? Length.Zero 
+      get => ApiSection == null ? Length.Zero
         : new Length(ApiSection.AdditionalOffsetY, LengthUnit.Meter);
       set => ApiSection.AdditionalOffsetY = value.Meters;
     }
     public Length AdditionalOffsetZ {
-      get => ApiSection == null ? Length.Zero 
+      get => ApiSection == null ? Length.Zero
         : new Length(ApiSection.AdditionalOffsetZ, LengthUnit.Meter);
       set => ApiSection.AdditionalOffsetZ = value.Meters;
     }
@@ -30,7 +30,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Empty constructor instantiating a new API object
     /// </summary>
-    public GsaSection() { 
+    public GsaSection() {
       ApiSection = new Section();
     }
 
@@ -104,7 +104,7 @@ namespace GsaGH.Parameters {
       }
 
       string prof = ApiSection.Profile.Replace("%", " ");
-      string mat = Material != null ? MaterialType 
+      string mat = Material != null ? MaterialType
         : ApiSection.MaterialType.ToString().ToPascalCase();
       string mod = (Modifier != null && Modifier.IsModified) ? "modified" : string.Empty;
       return string.Join(" ", pb, prof, mat, mod).TrimSpaces();

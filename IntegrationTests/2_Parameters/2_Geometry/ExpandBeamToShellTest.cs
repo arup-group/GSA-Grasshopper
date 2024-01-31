@@ -1,9 +1,6 @@
 ﻿using System.IO;
 using System.Reflection;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
-using GsaGH.Parameters;
-using GsaGHTests.Helpers;
 using Xunit;
 
 namespace IntegrationTests.Parameters {

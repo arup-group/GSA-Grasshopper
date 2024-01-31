@@ -20,6 +20,7 @@ namespace GsaGH.Parameters {
     public GsaFaceLoad() {
       ApiLoad = new FaceLoad {
         Type = FaceLoadType.CONSTANT,
+        Direction = Direction.Z,
       };
     }
 
@@ -52,7 +53,7 @@ namespace GsaGH.Parameters {
         case FaceLoadType.POINT:
           dup.ApiLoad.IsProjected = ApiLoad.IsProjected;
           dup.ApiLoad.SetValue(0, ApiLoad.Value(0));
-          dup.ApiLoad.Position = new Vector2(ApiLoad.Position.X, ApiLoad.Position.Y); 
+          dup.ApiLoad.Position = new Vector2(ApiLoad.Position.X, ApiLoad.Position.Y);
           break;
 
         case FaceLoadType.EQUATION:

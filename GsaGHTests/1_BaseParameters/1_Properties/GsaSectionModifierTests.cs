@@ -1,9 +1,9 @@
-﻿using GsaAPI;
+﻿using System;
+using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
-using System;
 using Xunit;
 
 namespace GsaGHTests.Parameters {

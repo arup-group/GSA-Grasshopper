@@ -58,8 +58,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create new instance by casting from a Brep with optional inclusion geometry
     /// </summary>
-    public GsaMember2d(
-      Brep brep, List<Curve> includeCurves = null, Point3dList includePoints = null) {
+    public GsaMember2d(Brep brep, List<Curve> includeCurves = null, Point3dList includePoints = null) {
       ApiMember = new Member {
         Type = MemberType.GENERIC_2D,
       };
@@ -244,7 +243,7 @@ namespace GsaGH.Parameters {
       }
 
       string id = Id > 0 ? $"ID:{Id}" : string.Empty;
-      string type = Mappings.memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
+      string type = Mappings._memberTypeMapping.FirstOrDefault(x => x.Value == ApiMember.Type).Key;
       return string.Join(" ", id, type, incl).TrimSpaces();
     }
 

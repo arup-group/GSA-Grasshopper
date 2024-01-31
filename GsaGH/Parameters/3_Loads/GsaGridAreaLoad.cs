@@ -23,6 +23,7 @@ namespace GsaGH.Parameters {
 
     public GsaGridAreaLoad() {
       ApiLoad.Type = GridAreaPolyLineType.PLANE;
+      ApiLoad.Direction = Direction.Z;
     }
 
     public IGsaLoad Duplicate() {

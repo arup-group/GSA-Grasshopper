@@ -164,20 +164,15 @@ namespace GsaGH.Components {
       da.GetDataList(0, ghTypes);
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
-        switch (ghTyp?.Value) {
-          case GsaResultGoo goo:
-            result = (GsaResult)goo.Value;
-            elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
-            break;
-
-          default:
-            this.AddRuntimeError("Error converting input to GSA Result");
-            return;
+        result = Inputs.GetResultInput(this, ghTyp);
+        if (result == null) {
+          return;
         }
 
+        elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
         if (_average) {
-          INodeResultSubset<IEnergyDensity, NodeExtremaKey> resultSet =
+          IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> resultSet =
             result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
 
           List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -190,14 +185,14 @@ namespace GsaGH.Components {
           if (_selectedItems[0] == "All") {
             foreach (KeyValuePair<int, IList<IEnergyDensity>> kvp in resultSet.Subset) {
               foreach (int p in permutations) {
-                var path = new GH_Path(result.CaseId, 
+                var path = new GH_Path(result.CaseId,
                   result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
                 outResults.Add(new GH_UnitNumber(kvp.Value[p - 1].EnergyDensity
                   .ToUnit(_energyUnit)), path);
               }
             }
           } else {
-            NodeExtremaKey key = _selectedItems[0] == "Max" ? resultSet.Max : resultSet.Min;
+            Entity0dExtremaKey key = _selectedItems[0] == "Max" ? resultSet.Max : resultSet.Min;
             IEnergyDensity extrema = resultSet.GetExtrema(key);
             int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
             var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
@@ -205,7 +200,7 @@ namespace GsaGH.Components {
                   .ToUnit(_energyUnit)), path);
           }
         } else {
-          IEntity1dResultSubset<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> resultSet =
+          IEntity1dResultSubset<IEnergyDensity, Entity1dExtremaKey> resultSet =
             result.Element1dStrainEnergyDensities.ResultSubset(elementIds, positionsCount);
 
           List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -216,7 +211,7 @@ namespace GsaGH.Components {
           }
 
           if (_selectedItems[0] == "All") {
-            foreach (KeyValuePair<int, IList<IEntity1dStrainEnergyDensity>> kvp in resultSet.Subset) {
+            foreach (KeyValuePair<int, IList<IEntity1dQuantity<IEnergyDensity>>> kvp in resultSet.Subset) {
               foreach (int p in permutations) {
                 var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
                 outResults.AddRange(kvp.Value[p - 1].Results.Values.Select(

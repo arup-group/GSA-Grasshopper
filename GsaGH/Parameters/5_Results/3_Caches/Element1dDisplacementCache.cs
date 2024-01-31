@@ -7,11 +7,11 @@ using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
   public class Element1dDisplacementCache
-    : IEntity1dResultCache<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> {
+    : IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
 
-    public IDictionary<int, IList<IEntity1dDisplacement>> Cache { get; }
-      = new ConcurrentDictionary<int, IList<IEntity1dDisplacement>>();
+    public IDictionary<int, IList<IEntity1dQuantity<IDisplacement>>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IEntity1dQuantity<IDisplacement>>>();
 
     internal Element1dDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -21,41 +21,51 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>>
+    public IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>>
       ResultSubset(ICollection<int> elementIds, int positionCount) {
       var positions = Enumerable.Range(0, positionCount).Select(
         i => (double)i / (positionCount - 1)).ToList();
       return ResultSubset(elementIds, new ReadOnlyCollection<double>(positions));
     }
 
-    public IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>>
+    public IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>>
       ResultSubset(ICollection<int> elementIds, ReadOnlyCollection<double> positions) {
-      ConcurrentBag<int> missingIds
-        = Cache.GetMissingKeysAndPositions<IEntity1dDisplacement, IDisplacement>(elementIds, positions);
+      ConcurrentBag<int> missingIds = Cache.GetMissingKeysAndPositions(elementIds, positions);
       if (missingIds.Count > 0) {
         string elementList = string.Join(" ", missingIds);
+        var concurrent = Cache as ConcurrentDictionary<int, IList<IEntity1dQuantity<IDisplacement>>>;
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
               = analysisCase.Element1dDisplacement(elementList, positions);
-            Parallel.ForEach(aCaseResults.Keys, elementId => 
-             ((ConcurrentDictionary<int, IList<IEntity1dDisplacement>>)Cache).AddOrUpdate(
-              elementId, Entity1dResultsFactory.CreateDisplacements(aCaseResults[elementId], positions),
-              (key, oldValue) => oldValue.AddMissingPositions(aCaseResults[elementId], positions)));
+            Parallel.ForEach(aCaseResults.Keys, elementId =>
+             concurrent.AddOrUpdate(
+              elementId,
+              // Add
+              Entity1dResultsFactory.CreateResults(
+                aCaseResults[elementId], positions, (a, b) => new Entity1dDisplacement(a, b)),
+              // Update
+              (key, oldValue) => oldValue.AddMissingPositions(
+                aCaseResults[elementId], positions, (a) => new Displacement(a))));
             break;
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
               = combinationCase.Element1dDisplacement(elementList, positions);
-            Parallel.ForEach(cCaseResults.Keys, elementId => 
-             ((ConcurrentDictionary<int, IList<IEntity1dDisplacement>>)Cache).AddOrUpdate(
-              elementId, Entity1dResultsFactory.CreateDisplacements(cCaseResults[elementId], positions),
-              (key, oldValue) => oldValue.AddMissingPositions(cCaseResults[elementId], positions)));
+            Parallel.ForEach(cCaseResults.Keys, elementId =>
+             concurrent.AddOrUpdate(
+              elementId,
+              // Add
+              Entity1dResultsFactory.CreateResults(
+                cCaseResults[elementId], positions, (a, b) => new Entity1dDisplacement(a, b)),
+              // Update
+              (key, oldValue) => oldValue.AddMissingPositions(
+                cCaseResults[elementId], positions, (a) => new Displacement(a))));
             break;
         }
       }
 
-      return new Entity1dDisplacements(Cache.GetSubset(elementIds));
+      return new Entity1dDisplacements(Cache.GetSubset(elementIds, positions));
     }
   }
 }

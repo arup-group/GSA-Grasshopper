@@ -10,7 +10,7 @@ namespace GsaGH.Parameters {
   /// </summary>
   public class GsaAnnotationGoo : GH_OasysGeometricGoo<IGsaAnnotation> {
     public static string Description => "GSA Annotation";
-      
+
     public static string Name => "Annotation";
     public static string NickName => "An";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;

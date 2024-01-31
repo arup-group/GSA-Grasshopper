@@ -2,67 +2,89 @@
 
 namespace GsaGHTests.Helper {
   internal static class GsaFile {
-    private static string steelDesignComplex = "";
-    private static string steelDesignSimple = "";
-    private static string element2dSimple = "";
-    private static string element3dSimple = "";
-    private static string springForces = "";
-    private static string steelFootfall = "";
+    private static string _steelDesignComplex = string.Empty;
+    private static string _steelDesignSimple = string.Empty;
+    private static string _element2dSimple = string.Empty;
+    private static string _element3dSimple = string.Empty;
+    private static string _springForces = string.Empty;
+    private static string _steelFootfall = string.Empty;
+    private static string _element2dMultiPropsFromParentMember = string.Empty;
+    private static string _basicFrame = string.Empty;
+
     internal static string SteelDesignComplex {
       get {
-        if (steelDesignComplex == "") {
-          steelDesignComplex = FilePath("Steel_Design_Complex.gwb");
+        if (_steelDesignComplex == string.Empty) {
+          _steelDesignComplex = FilePath("Steel_Design_Complex.gwb");
         }
 
-        return steelDesignComplex;
+        return _steelDesignComplex;
       }
     }
 
     internal static string SteelDesignSimple {
       get {
-        if (steelDesignSimple == "") {
-          steelDesignSimple = FilePath("Steel_Design_Simple.gwb");
+        if (_steelDesignSimple == string.Empty) {
+          _steelDesignSimple = FilePath("Steel_Design_Simple.gwb");
         }
 
-        return steelDesignSimple;
+        return _steelDesignSimple;
       }
     }
 
     internal static string Element2dSimple {
       get {
-        if (element2dSimple == "") {
-          element2dSimple = FilePath("Element2d_Simple.gwb");
+        if (_element2dSimple == string.Empty) {
+          _element2dSimple = FilePath("Element2d_Simple.gwb");
         }
 
-        return element2dSimple;
+        return _element2dSimple;
+      }
+    }
+
+    internal static string Element2dMultiPropsParentMember {
+      get {
+        if (_element2dMultiPropsFromParentMember == string.Empty) {
+          _element2dMultiPropsFromParentMember = FilePath("Element2dMultiPropsFromParentMember.gwb");
+        }
+
+        return _element2dMultiPropsFromParentMember;
       }
     }
 
     internal static string Element3dSimple {
       get {
-        if (element3dSimple == "") {
-          element3dSimple = FilePath("Element3d_Simple.gwb");
+        if (_element3dSimple == string.Empty) {
+          _element3dSimple = FilePath("Element3d_Simple.gwb");
         }
 
-        return element3dSimple;
+        return _element3dSimple;
       }
     }
     internal static string SpringForces {
       get {
-        if (springForces == "") {
-          springForces = FilePath("spring-reaction-forces.gwb");
+        if (_springForces == string.Empty) {
+          _springForces = FilePath("spring-reaction-forces.gwb");
         }
 
-        return springForces;
+        return _springForces;
       }
     }
     internal static string SteelFootfall {
       get {
-        if (steelFootfall == "") {
-          steelFootfall = FilePath("footfall_steel.gwb");
+        if (_steelFootfall == string.Empty) {
+          _steelFootfall = FilePath("footfall_steel.gwb");
         }
 
-        return steelFootfall;
+        return _steelFootfall;
+      }
+    }
+    internal static string BasicFrame {
+      get {
+        if (_basicFrame == string.Empty) {
+          _basicFrame = FilePath("basicFrame.gwb");
+        }
+
+        return _basicFrame;
       }
     }
 

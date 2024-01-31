@@ -11,6 +11,7 @@ using GsaGH.Helpers;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
@@ -109,12 +110,26 @@ namespace GsaGH.Components {
       ToleranceMenu.UpdateMessage(this, _lengthUnit);
 
       // add report output to old components
-      if (Params.Output.Count == 1) {
-        Params.RegisterOutputParam(new Param_String());
-        Params.Output[1].Name = "Report";
-        Params.Output[1].NickName = "R";
-        Params.Output[1].Description = "Analysis Task Report(s)";
+      if (Params.Output.Count < 5) {
+        Params.Output[1].Name = "Errors";
+        Params.Output[1].NickName = "E";
+        Params.Output[1].Description = "Analysis Task Errors";
         Params.Output[1].Access = GH_ParamAccess.list;
+        Params.RegisterOutputParam(new Param_String());
+        Params.Output[2].Name = "Warnings";
+        Params.Output[2].NickName = "W";
+        Params.Output[2].Description = "Analysis Task Warnings";
+        Params.Output[2].Access = GH_ParamAccess.list;
+        Params.RegisterOutputParam(new Param_String());
+        Params.Output[3].Name = "Remarks";
+        Params.Output[3].NickName = "R";
+        Params.Output[3].Description = "Analysis Task Notes and Remarks";
+        Params.Output[3].Access = GH_ParamAccess.list;
+        Params.RegisterOutputParam(new Param_String());
+        Params.Output[4].Name = "Log";
+        Params.Output[4].NickName = "L";
+        Params.Output[4].Description = "Analysis Task logs";
+        Params.Output[4].Access = GH_ParamAccess.list;
         VariableParameterMaintenance();
       }
     }
@@ -160,27 +175,23 @@ namespace GsaGH.Components {
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter());
-      pManager.AddTextParameter("Report", "R", "Analysis Task Report(s)", GH_ParamAccess.list);
+      pManager.AddTextParameter("Errors", "E", "Analysis Task Errors", GH_ParamAccess.list);
+      pManager.AddTextParameter("Warnings", "W", "Analysis Task Warnings", GH_ParamAccess.list);
+      pManager.AddTextParameter("Remarks", "R", "Analysis Task Notes and Remarks", GH_ParamAccess.list);
+      pManager.AddTextParameter("Logs", "L", "Analysis Task logs", GH_ParamAccess.list);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
       // Collect inputs
       (List<GsaModel> models, List<GsaList> lists, List<GsaGridLine> gridLines) = InputsForModelAssembly.GetModelsAndLists(this, da, 0, true);
-      (List<GsaMaterial> materials, List<GsaSection> sections, List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds,
-        List<GsaSpringProperty> springProps) = InputsForModelAssembly.GetProperties(this, da, 1, true);
-      (List<GsaNode> nodes, List<GsaElement1d> elem1ds, List<GsaElement2d> elem2ds,
-        List<GsaElement3d> elem3ds, List<GsaMember1d> mem1ds, List<GsaMember2d> mem2ds,
-        List<GsaMember3d> mem3ds) = InputsForModelAssembly.GetGeometry(this, da, 2, true);
-      (List<IGsaLoad> loads, List<GsaGridPlaneSurface> gridPlaneSurfaces, List<GsaLoadCase> loadCases)
-        = InputsForModelAssembly.GetLoading(this, da, 3, true);
-      (List<GsaAnalysisTask> analysisTasks, List<GsaCombinationCase> combinationCases)
-        = InputsForModelAssembly.GetAnalysis(this, da, 4, true);
+      GsaProperties properties = InputsForModelAssembly.GetProperties(this, da, 1, true);
+      GsaGeometry geometry = InputsForModelAssembly.GetGeometry(this, da, 2, true);
+      GsaLoading loading = InputsForModelAssembly.GetLoading(this, da, 3, true);
+      GsaAnalysis analysis = InputsForModelAssembly.GetAnalysis(this, da, 4, true);
 
-      if (models is null & lists is null & gridLines is null & nodes is null & elem1ds is null
-        & elem2ds is null & elem3ds is null & mem1ds is null & mem2ds is null & mem3ds is null
-        & materials is null & sections is null & prop2Ds is null & prop3Ds is null & springProps is null
-        & loads is null & loadCases is null & gridPlaneSurfaces is null & analysisTasks is null
-        & combinationCases is null) {
+      if (models.IsNullOrEmpty() & lists.IsNullOrEmpty() & gridLines.IsNullOrEmpty()
+        & geometry.IsNullOrEmpty() & properties.IsNullOrEmpty()
+        & loading.IsNullOrEmpty() & analysis.IsNullOrEmpty()) {
         this.AddRuntimeWarning("Input parameters failed to collect data");
         return;
       }
@@ -196,9 +207,8 @@ namespace GsaGH.Components {
       }
 
       // Assemble model
-      var assembly = new ModelAssembly(model, lists, gridLines, nodes, elem1ds, elem2ds, elem3ds,
-        mem1ds, mem2ds, mem3ds, materials, sections, prop2Ds, prop3Ds, springProps, loads, gridPlaneSurfaces,
-        loadCases, analysisTasks, combinationCases, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
+      var assembly = new ModelAssembly(model, lists, gridLines, geometry, properties, loading,
+        analysis, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
       model.Model = assembly.GetModel();
 
       // Run analysis
@@ -235,51 +245,64 @@ namespace GsaGH.Components {
           this.AddRuntimeError(message);
         }
 
-
         if (tryAnalyse) {
-          var reports = new List<string>();
-          string syncWarn = CatchElemFromMemSyncWarning();
-          if (!string.IsNullOrEmpty(syncWarn)) {
-            string warning = "Member and element synchronisation check has one or more warnings. " +
-              "Check report output for details";
-            this.AddRuntimeWarning($" {warning}");
-            reports.Add(syncWarn);
-          }
+          var logs = new List<string>();
+          var notes = new List<string>();
+          var remarks = new List<string>();
+          var warnings = new List<string>();
+          var errors = new List<string>();
 
           foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks) {
-            if (model.Model.Analyse(task.Key)) {
+            if (model.Model.Analyse(task.Key, out TaskReport report)) {
               OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
                 model.Model.Elements().Count);
             } else {
               string message = "Analysis Task " + task.Key +
-                " has one or more errors. Check report output for details";
+                " failed with one or more errors. Check report output for details";
               this.AddRuntimeError($" {message}");
             }
 
-            string report = model.Model.AnalysisTaskReport(task.Key);
-            string[] split = report.Split('\n');
-            report = split[0].Replace(": ", "\n") + "\n" + string.Join("\n", split.Skip(1));
-            report = report.Replace("Checking", "\nChecks:");
-            report = report.Replace("Solving", "\nSolver:");
-            report += "\n \n";
-            reports.Add(report);
+            logs.Add(report.Log);
+            notes.AddRange(report.Notes);
+            remarks.AddRange(report.Warnings);
+            foreach (string message in report.SevereWarnings) {
+              this.AddRuntimeWarning($"Task {task.Key}: {message}");
+              warnings.Add($"Task {task.Key}: {message}");
+            }
 
-            if (report.Contains("Error ")) {
-              string message = "Analysis Task " + task.Key +
-                " has one or more errors. Check report output for details";
-              this.AddRuntimeError($" {message}");
-            } else if (report.Contains("Severe warning ")) {
-              string message = "Analysis Task " + task.Key +
-                " has one or more severe warnings. Check report output for details";
-              this.AddRuntimeWarning($" {message}");
-            } else if (report.Contains("Warning ")) {
-              string message = "Analysis Task " + task.Key +
-                " has one or more warnings. Check report output for details";
-              this.AddRuntimeRemark($" {message}");
+            foreach (string message in report.Errors) {
+              this.AddRuntimeError($"Task {task.Key}: {message}");
+              errors.Add($"Task {task.Key}: {message}");
             }
           }
+
+          var notesAndRemarks = new List<string>();
+          foreach (string message in remarks) {
+            if (!RuntimeMessages(GH_RuntimeMessageLevel.Remark).Contains(message)) {
+              this.AddRuntimeRemark(message);
+              notesAndRemarks.Add($"Warning: {message}");
+            }
+          }
+
+          foreach (string message in notes) {
+            if (!notesAndRemarks.Contains($"Note: {message}")) {
+              notesAndRemarks.Add($"Note: {message}");
+            }
+          }
+
+          string syncWarn = CatchElemFromMemSyncWarning();
+          if (!string.IsNullOrEmpty(syncWarn)) {
+            string warning = "Member and element synchronisation check has one or more warnings. " +
+            "Check report output for details";
+            this.AddRuntimeWarning(warning);
+            notesAndRemarks.Add(syncWarn);
+          }
+
           model.Guid = Guid.NewGuid();
-          da.SetDataList(1, reports);
+          da.SetDataList(1, errors);
+          da.SetDataList(2, warnings);
+          da.SetDataList(3, notesAndRemarks);
+          da.SetDataList(4, logs);
         }
       }
 

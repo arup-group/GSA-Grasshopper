@@ -26,6 +26,9 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(GridLineInfo))]
     [InlineData(typeof(SaveGsaModel))]
     [InlineData(typeof(ModelTitles))]
+    [InlineData(typeof(PropertyQuantities))]
+    [InlineData(typeof(MaterialQuantities))]
+    // 1_Properties
     [InlineData(typeof(CreateBool6))]
     [InlineData(typeof(CreateCustomMaterial))]
     [InlineData(typeof(CreateMaterial))]
@@ -53,6 +56,7 @@ namespace GsaGHTests.Components {
     // 2_Geometry
     [InlineData(typeof(Create1dElement))]
     [InlineData(typeof(Create2dElement))]
+    [InlineData(typeof(CreateAssembly))]
     [InlineData(typeof(Create1dMember))]
     [InlineData(typeof(Create2dMember))]
     [InlineData(typeof(Create3dMember))]
@@ -73,6 +77,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(ExpandBeamToShell))]
     [InlineData(typeof(LocalAxes))]
     [InlineData(typeof(SectionAlignment))]
+    [InlineData(typeof(GetAssembly))]
     // 3_Loads
     [InlineData(typeof(CreateBeamLoad))]
     [InlineData(typeof(CreateBeamThermalLoad))]
@@ -95,6 +100,11 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateAnalysisTask))]
     [InlineData(typeof(CreateCombinationCase))]
     [InlineData(typeof(EditAnalysisTask))]
+    [InlineData(typeof(CreateSteelSectionPool))]
+    [InlineData(typeof(SteelSectionPoolNames))]
+    [InlineData(typeof(CreateSteelDesignTask))]
+    [InlineData(typeof(DesignTaskInfo))]
+    [InlineData(typeof(SteelDesign))]
     // 5_Results
     [InlineData(typeof(BeamDerivedStresses))]
     [InlineData(typeof(BeamDisplacements))]
@@ -138,12 +148,20 @@ namespace GsaGHTests.Components {
       Assert.NotEqual(new Guid(), comp.ComponentGuid);
       Assert.Equal(PluginInfo.Instance, comp.PluginInfo);
     }
-
     [Fact]
     public void GH_OasysTaskCapableComponent() {
       var comp = new GetModelGeometry();
       Assert.NotNull(comp.Icon_24x24);
       Assert.NotEqual(GH_Exposure.hidden, comp.Exposure);
+      Assert.NotEqual(new Guid(), comp.ComponentGuid);
+      Assert.Equal(PluginInfo.Instance, comp.PluginInfo);
+    }
+
+    [Fact]
+    public void GH_OasysTaskCapableComponent_OBSOLETE() {
+      var comp = new GetModelGeometry_OBSOLETE();
+      Assert.NotNull(comp.Icon_24x24);
+      Assert.Equal(GH_Exposure.hidden, comp.Exposure);
       Assert.NotEqual(new Guid(), comp.ComponentGuid);
       Assert.Equal(PluginInfo.Instance, comp.PluginInfo);
     }

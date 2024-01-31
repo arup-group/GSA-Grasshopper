@@ -151,7 +151,7 @@ namespace GsaGH.Parameters {
         return "Invalid 3D Element";
       }
 
-      var types = ApiElements.Select(t => Mappings.elementTypeMapping.FirstOrDefault(
+      var types = ApiElements.Select(t => Mappings._elementTypeMapping.FirstOrDefault(
         x => x.Value == t.Type).Key).ToList();
       string type = string.Join("/", types.Distinct());
       string info = "N:" + NgonMesh.Vertices.Count + " E:" + ApiElements.Count;

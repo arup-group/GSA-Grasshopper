@@ -13,6 +13,8 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateModel), 1)]
     [InlineData(typeof(GetModelLoads), 1)]
     [InlineData(typeof(ListInfo), 1)]
+    [InlineData(typeof(PropertyQuantities), 1)]
+    [InlineData(typeof(MaterialQuantities), 1)]
     //Properties
     [InlineData(typeof(CreateCustomMaterial), 4)]
     [InlineData(typeof(CreateMaterial), 3)]
@@ -27,6 +29,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateElementsFromMembers), 1)]
     [InlineData(typeof(SectionAlignment), 1)]
     [InlineData(typeof(CreateMemberEndRestraint), 1)]
+    [InlineData(typeof(CreateAssembly), 2)]
     //Loads
     [InlineData(typeof(CreateBeamLoad), 2)]
     [InlineData(typeof(CreateBeamThermalLoad), 2)]
@@ -42,6 +45,7 @@ namespace GsaGHTests.Components {
     //Analysis
     [InlineData(typeof(AnalyseModel), 1)]
     [InlineData(typeof(CreateAnalysisTask), 1)]
+    [InlineData(typeof(CreateSteelDesignTask), 2)]
     //Results
     [InlineData(typeof(BeamDerivedStresses), 2)]
     [InlineData(typeof(BeamDisplacements), 2)]
@@ -66,6 +70,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(ReactionForceDiagrams), 1)]
     [InlineData(typeof(SelectResult), 2)]
     [InlineData(typeof(SpringReactionForces), 3)]
+    [InlineData(typeof(SteelDesignEffectiveLength), 2)]
     [InlineData(typeof(TotalLoadsAndReactions), 2)]
     [InlineData(typeof(Member1dDisplacements), 2)]
     [InlineData(typeof(Member1dForcesAndMoments), 3)]
@@ -127,7 +132,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(BeamDisplacements), "All", "Min |R|")]
     [InlineData(typeof(BeamForcesAndMoments), "All", "Min |Myz|")]
     [InlineData(typeof(BeamStrainEnergyDensity), "All", "Min")]
-    [InlineData(typeof(Contour1dResults), "Displacement", "Footfall")]
+    [InlineData(typeof(Contour1dResults), "Displacement", "Steel Design")]
     [InlineData(typeof(ResultDiagrams), "Force", "Stress")]
     [InlineData(typeof(Contour2dResults), "Displacement", "Footfall")]
     [InlineData(typeof(Element2dDisplacements), "All", "Min |R|")]
@@ -144,6 +149,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(ReactionForceDiagrams), "Resolved |F|", "Resolved |M|")]
     [InlineData(typeof(SelectResult), "AnalysisCase", "Combination")]
     [InlineData(typeof(SpringReactionForces), "kN", "tf", 1)]
+    [InlineData(typeof(SteelDesignEffectiveLength), "mm", "ft", 1)]
     [InlineData(typeof(TotalLoadsAndReactions), "kN", "tf")]
     [InlineData(typeof(Member1dDisplacements), "All", "Min |R|")]
     [InlineData(typeof(Member1dForcesAndMoments), "All", "Min |Myz|")]

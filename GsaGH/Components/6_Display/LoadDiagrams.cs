@@ -215,7 +215,7 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm", 
+      pManager.AddParameter(new GsaDiagramParameter(), "Diagram lines", "Dgm",
         "Lines and arrowheads of the GSA Load Diagram", GH_ParamAccess.list);
       pManager.AddParameter(new GsaAnnotationParameter(), "Annotations",
         "An", "Annotations for the diagram", GH_ParamAccess.list);
@@ -281,7 +281,7 @@ namespace GsaGH.Components {
       var diagramLines = new ConcurrentBag<GsaDiagramGoo>();
       var diagramAnnotations = new ConcurrentBag<GsaAnnotationGoo>();
 
-      double arrowScale = _gsaModel.BoundingBox.Diagonal.Length * 
+      double arrowScale = _gsaModel.BoundingBox.Diagonal.Length *
       (autoScale ? 0.00025 : computedScale);
 
       List<DiagramType> types = GetSelectedDiagramTypes();
@@ -368,15 +368,15 @@ namespace GsaGH.Components {
     private List<DiagramType> GetSelectedDiagramTypes() {
       var types = new List<DiagramType>();
       if (_selectedItems[1] == "All") {
-        types.AddRange(Mappings.diagramTypeMappingLoads.Select(x => x.GsaApiEnum).ToList());
+        types.AddRange(Mappings._diagramTypeMappingLoads.Select(x => x.GsaApiEnum).ToList());
       } else {
         if (_selectedItems[2] == "All") {
-          types.AddRange(Mappings.diagramTypeMappingLoads.Where(
+          types.AddRange(Mappings._diagramTypeMappingLoads.Where(
             item => item.Description.StartsWith(
               _selectedItems[1])).Select(item => item.GsaApiEnum).ToList());
         } else {
           string type = $"{_selectedItems[1]} {_selectedItems[2]}";
-          types.Add(Mappings.diagramTypeMappingLoads.Where(
+          types.Add(Mappings._diagramTypeMappingLoads.Where(
             item => item.Description.Contains(type))
             .Select(item => item.GsaApiEnum).FirstOrDefault());
         }
@@ -393,7 +393,7 @@ namespace GsaGH.Components {
     }
 
     private void PopulateTypeNames(ref List<string> list, string typeIdentifier) {
-      list = Mappings.diagramTypeMappingLoads
+      list = Mappings._diagramTypeMappingLoads
        .Where(item => item.Description.Contains(typeIdentifier))
        .Select(item => item.Description).ToList();
       list = list.Select(x => x.Replace(typeIdentifier + " ", string.Empty)).ToList();
@@ -450,7 +450,7 @@ namespace GsaGH.Components {
       if (!_dropDownItems[0].Contains(_selectedItems[0])) {
         _selectedItems[0] = _dropDownItems[0][0];
       }
-      
+
       _caseId = _selectedItems[0];
     }
   }

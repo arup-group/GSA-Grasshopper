@@ -64,6 +64,7 @@ namespace GsaGH.Components {
       Footfall,
       ProjectedStress,
       DerivedStress,
+      SteelDesign
     }
 
     public override Guid ComponentGuid => new Guid("ce7a8f84-4c72-4fd4-a207-485e8bf7ac38");
@@ -98,6 +99,9 @@ namespace GsaGH.Components {
       "Intermediate Pts",
       "Average",
     });
+    private readonly List<string> _steelDesign = new List<string>(new[] {
+      "Utilisation"
+    });
     private readonly List<string> _projStress = new List<string>(new[] {
       "Axial, A",
       "Shear, Sy",
@@ -122,6 +126,7 @@ namespace GsaGH.Components {
       "Derived Stress",
       "Strain Energy",
       "Footfall",
+      "Steel Design"
     });
     private string _case = string.Empty;
     private double _defScale = 250;
@@ -143,6 +148,7 @@ namespace GsaGH.Components {
     private bool _showLegend = true;
     private bool _slider = true;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
+    private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
 
     public Contour1dResults() : base("Contour 1D Results", "Contour1d",
       "Displays GSA 1D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -193,6 +199,11 @@ namespace GsaGH.Components {
         _legendScale = reader.GetDouble("legendScale");
       }
 
+      if (reader.ItemExists("envelope")) {
+        _envelopeType = (EnvelopeMethod)Enum.Parse(
+          typeof(EnvelopeMethod), reader.GetString("envelope"));
+      }
+
       if (reader.ItemExists("stress")) {
         _stressUnit = (PressureUnit)UnitsHelper.Parse(
           typeof(PressureUnit), reader.GetString("stress"));
@@ -219,31 +230,31 @@ namespace GsaGH.Components {
       switch (i) {
         case 0:
           switch (j) {
-            case 0: 
-                if (_dropDownItems[1] != _displacement) {
-                  _dropDownItems[1] = _displacement;
+            case 0:
+              if (_dropDownItems[1] != _displacement) {
+                _dropDownItems[1] = _displacement;
 
-                  _selectedItems[0] = _dropDownItems[0][0];
-                  _selectedItems[1] = _dropDownItems[1][3];
+                _selectedItems[0] = _dropDownItems[0][0];
+                _selectedItems[1] = _dropDownItems[1][3];
 
-                  _disp = DisplayValue.ResXyz;
-                  DisplacementModeClicked();
-                }
+                _disp = DisplayValue.ResXyz;
+                DisplacementModeClicked();
+              }
 
-                break;
-              
-            case 1: 
-                if (_dropDownItems[1] != _force) {
-                  _dropDownItems[1] = _force;
+              break;
 
-                  _selectedItems[0] = _dropDownItems[0][1];
-                  _selectedItems[1] = _dropDownItems[1][5]; // set Myy as default
+            case 1:
+              if (_dropDownItems[1] != _force) {
+                _dropDownItems[1] = _force;
 
-                  _disp = DisplayValue.Yy;
-                  ForceModeClicked();
-                }
+                _selectedItems[0] = _dropDownItems[0][1];
+                _selectedItems[1] = _dropDownItems[1][5]; // set Myy as default
 
-                break;
+                _disp = DisplayValue.Yy;
+                ForceModeClicked();
+              }
+
+              break;
 
             case 2:
               if (_dropDownItems[1] != _projStress) {
@@ -271,32 +282,44 @@ namespace GsaGH.Components {
 
               break;
 
-            case 4: 
-                if (_dropDownItems[1] != _strainenergy) {
-                  _dropDownItems[1] = _strainenergy;
+            case 4:
+              if (_dropDownItems[1] != _strainenergy) {
+                _dropDownItems[1] = _strainenergy;
 
-                  _selectedItems[0] = _dropDownItems[0][4];
-                  _selectedItems[1] = _dropDownItems[1][1]; // set average as default
+                _selectedItems[0] = _dropDownItems[0][4];
+                _selectedItems[1] = _dropDownItems[1][1]; // set average as default
 
-                  _disp = DisplayValue.Y;
-                  StrainEnergyModeClicked();
-                }
+                _disp = DisplayValue.Y;
+                StrainEnergyModeClicked();
+              }
 
-                break;
-              
-            case 5: 
-                if (_dropDownItems[1] != _footfall) {
-                  _dropDownItems[1] = _footfall;
+              break;
 
-                  _selectedItems[0] = _dropDownItems[0][5];
-                  _selectedItems[1] = _dropDownItems[1][0];
+            case 5:
+              if (_dropDownItems[1] != _footfall) {
+                _dropDownItems[1] = _footfall;
 
-                  _disp = DisplayValue.X;
-                  FootfallModeClicked();
-                }
+                _selectedItems[0] = _dropDownItems[0][5];
+                _selectedItems[1] = _dropDownItems[1][0];
 
-                break;
-              
+                _disp = DisplayValue.X;
+                FootfallModeClicked();
+              }
+
+              break;
+
+            case 6:
+              if (_dropDownItems[1] != _steelDesign) {
+                _dropDownItems[1] = _steelDesign;
+
+                _selectedItems[0] = _dropDownItems[0][6];
+                _selectedItems[1] = _dropDownItems[1][0];
+
+                SteelDesignModeClicked();
+              }
+
+              break;
+
           }
 
           break;
@@ -383,6 +406,11 @@ namespace GsaGH.Components {
         case FoldMode.Footfall:
           Params.Output[2].Name = "Legend Values [-]";
           break;
+
+        case FoldMode.SteelDesign:
+          Params.Output[2].Name
+            = "Legend Values [" + Ratio.GetAbbreviation(RatioUnit.DecimalFraction) + "]";
+          break;
       }
     }
 
@@ -401,6 +429,7 @@ namespace GsaGH.Components {
       writer.SetString("force", Force.GetAbbreviation(_forceUnit));
       writer.SetString("moment", Moment.GetAbbreviation(_momentUnit));
       writer.SetString("energy", Energy.GetAbbreviation(_energyResultUnit));
+      writer.SetString("envelope", _envelopeType.ToString());
       return base.Write(writer);
     }
 
@@ -410,6 +439,10 @@ namespace GsaGH.Components {
       }
 
       Menu_AppendSeparator(menu);
+
+      ToolStripMenuItem envelopeMenu = GenerateToolStripMenuItem.GetEnvelopeSubMenuItem(_envelopeType, UpdateEnvelope);
+      menu.Items.Add(envelopeMenu);
+
       Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
 
       var gradient = new GH_GradientControl();
@@ -491,6 +524,10 @@ namespace GsaGH.Components {
         case FoldMode.Footfall:
           Message = string.Empty;
           break;
+
+        case FoldMode.SteelDesign:
+          Message = string.Empty;
+          break;
       }
     }
 
@@ -549,41 +586,16 @@ namespace GsaGH.Components {
       string elementlist = "All";
       _case = string.Empty;
       _resType = string.Empty;
-
       var ghTyp = new GH_ObjectWrapper();
-      if (!da.GetData(0, ref ghTyp)) {
+      da.GetData(0, ref ghTyp);
+      result = Inputs.GetResultInput(this, ghTyp);
+      if (result == null) {
         return;
       }
 
-      switch (ghTyp?.Value) {
-        case GsaResultGoo goo:
-          result = (GsaResult)goo.Value;
-          elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
-          switch (result.CaseType) {
-            case CaseType.CombinationCase when result.SelectedPermutationIds.Count > 1:
-              this.AddRuntimeWarning("Combination Case " + result.CaseId + " contains "
-                + result.SelectedPermutationIds.Count
-                + " permutations - only one permutation can be displayed at a time."
-                + Environment.NewLine
-                + "Displaying first permutation; please use the 'Select Results' to select other single permutations");
-              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-              break;
-
-            case CaseType.CombinationCase:
-              _case = "Case C" + result.CaseId + " P" + result.SelectedPermutationIds[0];
-              break;
-
-            case CaseType.AnalysisCase:
-              _case = "Case A" + result.CaseId + Environment.NewLine + result.CaseName;
-              break;
-          }
-          break;
-
-        default:
-          this.AddRuntimeError("Error converting input to GSA Result");
-          return;
-      }
-
+      bool enveloped = Inputs.IsResultCaseEnveloped(this, result, ref _case, _envelopeType);
+      List<int> permutations = result.SelectedPermutationIds;
+      elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
       ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
       if (elems.Count == 0) {
@@ -620,16 +632,14 @@ namespace GsaGH.Components {
       GH_Convert.ToDouble(ghScale, out double scale, GH_Conversion.Both);
 
       ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
-      int permutation = result.SelectedPermutationIds == null
-        ? 0 : result.SelectedPermutationIds[0] - 1;
       double dmax = 0;
       double dmin = 0;
       ConcurrentDictionary<int, IList<IQuantity>> values = null;
       ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> valuesXyz = null;
       switch (_mode) {
         case FoldMode.Displacement:
-          IEntity1dResultSubset<IEntity1dDisplacement, IDisplacement, ResultVector6<Entity1dExtremaKey>> displacements = Quarterion.CoordinateTransformationTo(
-            result.Element1dDisplacements.ResultSubset(elementIds, positionsCount).Subset, 
+          IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> displacements = Quaternions.CoordinateTransformationTo(
+            result.Element1dDisplacements.ResultSubset(elementIds, positionsCount).Subset,
             Plane.WorldXY, result.Model.Model);
           Func<IDisplacement, IQuantity> displacementSelector = null;
           switch (_disp) {
@@ -659,8 +669,8 @@ namespace GsaGH.Components {
               dmax = displacements.GetExtrema(displacements.Max.Xyz).Xyz.As(_lengthResultUnit);
               dmin = displacements.GetExtrema(displacements.Min.Xyz).Xyz.As(_lengthResultUnit);
               displacementSelector = (r) => r.Xyz.ToUnit(_lengthResultUnit);
-              valuesXyz = ResultsUtility.GetResultResultanTranslation(
-                displacements.Subset, lengthUnit, permutation);
+              valuesXyz = ResultsUtility.GetResultResultantTranslation(
+                displacements.Subset, lengthUnit, permutations, _envelopeType);
               break;
 
             case DisplayValue.Xx:
@@ -692,11 +702,12 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(displacements.Subset, displacementSelector, permutation);
+          values = ResultsUtility.GetResultComponent(
+            displacements.Subset, displacementSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.Force:
-          IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> forces =
+          IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> forces =
           result.Element1dInternalForces.ResultSubset(elementIds, positionsCount);
           Func<IInternalForce, IQuantity> forceSelector = null;
           switch (_disp) {
@@ -757,11 +768,12 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(forces.Subset, forceSelector, permutation);
+          values = ResultsUtility.GetResultComponent(
+            forces.Subset, forceSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.ProjectedStress:
-          IEntity1dResultSubset<IEntity1dStress, IStress1d, ResultStress1d<Entity1dExtremaKey>> stresses =
+          IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> stresses =
           result.Element1dStresses.ResultSubset(elementIds, positionsCount);
           Func<IStress1d, IQuantity> stressSelector = null;
           switch (_disp) {
@@ -829,11 +841,12 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(stresses.Subset, stressSelector, permutation);
+          values = ResultsUtility.GetResultComponent(
+            stresses.Subset, stressSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.DerivedStress:
-          IEntity1dResultSubset<IEntity1dDerivedStress, IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> derivedStresses =
+          IEntity1dResultSubset<IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> derivedStresses =
           result.Element1dDerivedStresses.ResultSubset(elementIds, positionsCount);
           Func<IStress1dDerived, IQuantity> derivedStressSelector = null;
           switch (_disp) {
@@ -866,33 +879,38 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(derivedStresses.Subset, derivedStressSelector, permutation);
+          values = ResultsUtility.GetResultComponent(
+            derivedStresses.Subset, derivedStressSelector, permutations, _envelopeType);
           break;
 
         case FoldMode.StrainEnergy:
           switch (_disp) {
             case DisplayValue.X:
-              IEntity1dResultSubset<IEntity1dStrainEnergyDensity, IEnergyDensity, Entity1dExtremaKey> strainEnergies =
+              IEntity1dResultSubset<IEnergyDensity, Entity1dExtremaKey> strainEnergies =
                 result.Element1dStrainEnergyDensities.ResultSubset(elementIds, positionsCount);
               _resType = "Strain Energy Density";
               dmax = strainEnergies.GetExtrema(strainEnergies.Max).EnergyDensity.As(_energyResultUnit);
               dmin = strainEnergies.GetExtrema(strainEnergies.Min).EnergyDensity.As(_energyResultUnit);
               Func<IEnergyDensity, IQuantity> strainEnergySelector = (r) => r.EnergyDensity.ToUnit(_energyResultUnit);
-              values = ResultsUtility.GetResultComponent(strainEnergies.Subset, strainEnergySelector, permutation);
+              values = ResultsUtility.GetResultComponent(
+                strainEnergies.Subset, strainEnergySelector, permutations, _envelopeType);
               break;
 
             default:
-              INodeResultSubset<IEnergyDensity, NodeExtremaKey> averageStrainEnergies =
+              IEntity0dResultSubset<IEnergyDensity, Entity0dExtremaKey> averageStrainEnergies =
                 result.Element1dAverageStrainEnergyDensities.ResultSubset(elementIds);
               _resType = "Average Strain E Dens.";
               dmax = averageStrainEnergies.GetExtrema(averageStrainEnergies.Max).EnergyDensity.As(_energyResultUnit);
               dmin = averageStrainEnergies.GetExtrema(averageStrainEnergies.Min).EnergyDensity.As(_energyResultUnit);
               positionsCount = 2;
               values = new ConcurrentDictionary<int, IList<IQuantity>>();
-              Parallel.ForEach(averageStrainEnergies.Subset, kvp => values.TryAdd(kvp.Key, new List<IQuantity>() {
-                  kvp.Value[permutation].EnergyDensity.ToUnit(_energyResultUnit),
-                  kvp.Value[permutation].EnergyDensity.ToUnit(_energyResultUnit),
-                }));
+              Parallel.ForEach(averageStrainEnergies.Subset, kvp => {
+                IQuantity energy = kvp.Value.Select(x => x.EnergyDensity).Envelope(_envelopeType);
+                values.TryAdd(kvp.Key, new List<IQuantity>() {
+                  energy,
+                  energy,
+                });
+              });
               break;
           }
           break;
@@ -900,19 +918,46 @@ namespace GsaGH.Components {
         case FoldMode.Footfall when result.CaseType == CaseType.AnalysisCase:
           positionsCount = 2;
           _resType = "Response Factor [-]";
-          INodeResultCache<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfallCache
-          = _selectedItems[1] == "Resonant" 
+          IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> nodeFootfallCache
+          = _selectedItems[1] == "Resonant"
             ? result.NodeResonantFootfalls
             : result.NodeTransientFootfalls;
-          Func<IFootfall, IQuantity> footfallSelector = 
+          Func<IFootfall, IQuantity> footfallSelector =
             (r) => new Ratio(r.MaximumResponseFactor, RatioUnit.DecimalFraction);
           ICollection<int> nodeIds;
           (values, nodeIds) = ResultsUtility.MapNodeResultToElements(
-            elems, nodeFootfallCache, footfallSelector, permutation);
-          INodeResultSubset<IFootfall, ResultFootfall<NodeExtremaKey>> nodeFootfall 
+            elems, nodeFootfallCache, footfallSelector, _envelopeType);
+          IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> nodeFootfall
             = nodeFootfallCache.ResultSubset(nodeIds);
           dmax = nodeFootfall.GetExtrema(nodeFootfall.Max.MaximumResponseFactor).MaximumResponseFactor;
           dmin = nodeFootfall.GetExtrema(nodeFootfall.Min.MaximumResponseFactor).MaximumResponseFactor;
+          break;
+
+        case FoldMode.SteelDesign:
+          IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> utilisation =
+            result.SteelUtilisations.ResultSubset(elementIds);
+
+          _resType = "Utilisation";
+          IEntity0dResultCache<ISteelUtilisation, SteelUtilisationExtremaKeys> utilisationsCache
+          = result.SteelUtilisations;
+
+          if (utilisation.GetExtrema(utilisation.Max.Overall).OverallAs(RatioUnit.DecimalFraction) != null) {
+            dmax = (double)utilisation.GetExtrema(utilisation.Max.Overall).OverallAs(RatioUnit.DecimalFraction);
+          }
+          if (utilisation.GetExtrema(utilisation.Min.Overall).OverallAs(RatioUnit.DecimalFraction) != null) {
+            dmin = (double)utilisation.GetExtrema(utilisation.Min.Overall).OverallAs(RatioUnit.DecimalFraction);
+          }
+          positionsCount = 2;
+
+          values = new ConcurrentDictionary<int, IList<IQuantity>>();
+
+          Parallel.ForEach(elems, element => {
+            Ratio overall = utilisation.Subset[element.Value.ParentMember.Member].Select(x => x.Overall).Envelope(_envelopeType);
+            values.TryAdd(element.Key, new List<IQuantity>() {
+                  overall,
+                  overall
+            });
+          });
           break;
       }
 
@@ -928,6 +973,11 @@ namespace GsaGH.Components {
         List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
         significantDigits = (int)rounded[2];
       } else {
+        if (enveloped) {
+          dmax = values.Values.Select(x => x.Max()).Max().Value;
+          dmin = values.Values.Select(x => x.Min()).Min().Value;
+        }
+
         List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
         dmax = rounded[0];
         dmin = rounded[1];
@@ -1048,29 +1098,29 @@ namespace GsaGH.Components {
         }
 
         switch (_mode) {
-          case FoldMode.Displacement when (int)_disp < 4: 
-              var displacement = new Length(t, _lengthResultUnit);
-              _legendValues.Add(displacement.ToString("f" + significantDigits));
-              ts.Add(new GH_UnitNumber(displacement));
-              break;
-            
-          case FoldMode.Displacement: 
-              var rotation = new Angle(t, AngleUnit.Radian);
-              _legendValues.Add(rotation.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(rotation));
-              break;
-            
-          case FoldMode.Force when (int)_disp < 4: 
-              var force = new Force(t, _forceUnit);
-              _legendValues.Add(force.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(force));
-              break;
-            
-          case FoldMode.Force: 
-              var moment = new Moment(t, _momentUnit);
-              _legendValues.Add(moment.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(moment));
-              break;
+          case FoldMode.Displacement when (int)_disp < 4:
+            var displacement = new Length(t, _lengthResultUnit);
+            _legendValues.Add(displacement.ToString("f" + significantDigits));
+            ts.Add(new GH_UnitNumber(displacement));
+            break;
+
+          case FoldMode.Displacement:
+            var rotation = new Angle(t, AngleUnit.Radian);
+            _legendValues.Add(rotation.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(rotation));
+            break;
+
+          case FoldMode.Force when (int)_disp < 4:
+            var force = new Force(t, _forceUnit);
+            _legendValues.Add(force.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(force));
+            break;
+
+          case FoldMode.Force:
+            var moment = new Moment(t, _momentUnit);
+            _legendValues.Add(moment.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(moment));
+            break;
 
           case FoldMode.ProjectedStress:
           case FoldMode.DerivedStress:
@@ -1079,22 +1129,28 @@ namespace GsaGH.Components {
             ts.Add(new GH_UnitNumber(stress));
             break;
 
-          case FoldMode.StrainEnergy: 
-              var energy = new Energy(t, _energyResultUnit);
-              _legendValues.Add(energy.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(energy));
-              break;
-            
-          case FoldMode.Footfall: 
-              var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-              _legendValues.Add(responseFactor.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(responseFactor));
-              break;
+          case FoldMode.StrainEnergy:
+            var energy = new Energy(t, _energyResultUnit);
+            _legendValues.Add(energy.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(energy));
+            break;
+
+          case FoldMode.Footfall:
+            var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
+            _legendValues.Add(responseFactor.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(responseFactor));
+            break;
+
+          case FoldMode.SteelDesign:
+            var utilisation = new Ratio(t, RatioUnit.DecimalFraction);
+            _legendValues.Add(utilisation.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(utilisation));
+            break;
         }
 
         if (Math.Abs(t) > 1) {
           // remove thousand separator
-          _legendValues[i] = _legendValues[i].Replace(",", string.Empty); 
+          _legendValues[i] = _legendValues[i].Replace(",", string.Empty);
         }
 
         _legendValuesPosY.Add(_legend.Height - starty + (gripheight / 2) - 2);
@@ -1108,7 +1164,7 @@ namespace GsaGH.Components {
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {
-      doc ??= Instances.ActiveCanvas.Document;
+      doc ??= OnPingDocument();
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
 
@@ -1186,6 +1242,14 @@ namespace GsaGH.Components {
       ReDrawComponent();
     }
 
+    private void SteelDesignModeClicked() {
+      RecordUndoEvent(_mode + " Parameters");
+      _mode = FoldMode.SteelDesign;
+      _slider = false;
+      _defScale = 0;
+      ReDrawComponent();
+    }
+
     private void ReDrawComponent() {
       var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
       CreateAttributes();
@@ -1197,6 +1261,12 @@ namespace GsaGH.Components {
     internal void ShowLegend(object sender, EventArgs e) {
       _showLegend = !_showLegend;
       ExpirePreview(true);
+    }
+
+    internal void UpdateEnvelope(string type) {
+      _envelopeType = (EnvelopeMethod)Enum.Parse(typeof(EnvelopeMethod), type);
+      ExpirePreview(true);
+      base.UpdateUI();
     }
 
     internal void UpdateEnergy(string unit) {

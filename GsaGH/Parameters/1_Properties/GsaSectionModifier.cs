@@ -106,7 +106,7 @@ namespace GsaGH.Parameters {
           & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
           throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
         }
-        
+
         ApiSectionModifier.JModifier = value.QuantityInfo.UnitType == typeof(AreaMomentOfInertiaUnit)
           ? new SectionModifierAttribute(SectionModifierOptionType.TO,
             value.As(AreaMomentOfInertiaUnit.MeterToTheFourth))
@@ -120,7 +120,7 @@ namespace GsaGH.Parameters {
           new Ratio(ApiSectionModifier.K11Modifier.Value, RatioUnit.DecimalFraction).ToUnit(
             RatioUnit.Percent)
         : new Ratio(ApiSectionModifier.K11Modifier.Value, RatioUnit.DecimalFraction);
-      set => ApiSectionModifier.K11Modifier = value.Unit == RatioUnit.Percent 
+      set => ApiSectionModifier.K11Modifier = value.Unit == RatioUnit.Percent
         ? new SectionModifierAttribute(SectionModifierOptionType.BY,
             value.As(RatioUnit.DecimalFraction))
         // assume that percentage unit is modify BY option
@@ -130,11 +130,11 @@ namespace GsaGH.Parameters {
     }
     public Ratio K22Modifier {
       get
-        => ApiSectionModifier.K22Modifier.Option == SectionModifierOptionType.BY 
+        => ApiSectionModifier.K22Modifier.Option == SectionModifierOptionType.BY
         ? new Ratio(ApiSectionModifier.K22Modifier.Value, RatioUnit.DecimalFraction).ToUnit(
-            RatioUnit.Percent) 
+            RatioUnit.Percent)
         : new Ratio(ApiSectionModifier.K22Modifier.Value, RatioUnit.DecimalFraction);
-      set => ApiSectionModifier.K22Modifier = value.Unit == RatioUnit.Percent 
+      set => ApiSectionModifier.K22Modifier = value.Unit == RatioUnit.Percent
         ? new SectionModifierAttribute(SectionModifierOptionType.BY,
             value.As(RatioUnit.DecimalFraction))
         // assume that percentage unit is modify BY option
@@ -167,9 +167,9 @@ namespace GsaGH.Parameters {
         }
 
         ApiSectionModifier.VolumeModifier
-          = value.QuantityInfo.UnitType == typeof(VolumePerLengthUnit) 
+          = value.QuantityInfo.UnitType == typeof(VolumePerLengthUnit)
           ? new SectionModifierAttribute(SectionModifierOptionType.TO,
-              value.As(VolumePerLengthUnit.CubicMeterPerMeter)) 
+              value.As(VolumePerLengthUnit.CubicMeterPerMeter))
           : new SectionModifierAttribute(SectionModifierOptionType.BY,
               value.As(RatioUnit.DecimalFraction));
       }
@@ -177,7 +177,7 @@ namespace GsaGH.Parameters {
 
     public SectionModifier ApiSectionModifier { get; private set; }
 
-    public GsaSectionModifier() { 
+    public GsaSectionModifier() {
       ApiSectionModifier = new SectionModifier();
     }
 
@@ -326,7 +326,7 @@ namespace GsaGH.Parameters {
 
       switch (ApiSectionModifier.StressOption) {
         case SectionModifierStressType.NO_MOD:
-    
+
           stress = "X";
           break;
 

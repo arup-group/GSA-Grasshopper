@@ -62,6 +62,17 @@ namespace GsaGHTests.Helpers {
         : (IList<IGH_Goo>)component.Params.Output[index].VolatileData.get_Branch(path);
       return output.Select(x => ((GH_UnitNumber)x).Value).ToList();
     }
+    public static List<IGH_Goo> GetResultOutputAllData(
+      GH_Component component, int index, GH_Path path = null) {
+      if (path == null) {
+        component.Params.Output[index].DataMapping = GH_DataMapping.Flatten;
+      }
+      component.ExpireSolution(true);
+      component.Params.Output[index].ExpireSolution(true);
+      component.Params.Output[index].CollectData();
+
+      return component.Params.Output[index].VolatileData.AllData(false).ToList();
+    }
 
     public static IList<GH_Path> GetPathOutput(GH_Component component, int index) {
       component.ExpireSolution(true);
@@ -117,17 +128,6 @@ namespace GsaGHTests.Helpers {
       component.Params.Input[index].AddSource(input);
     }
 
-    public static void SetInput(GH_Component component, List<object> objs, int index = 0) {
-      var input = new Param_GenericObject();
-      input.CreateAttributes();
-      input.Access = GH_ParamAccess.list;
-      foreach (object obj in objs) {
-        input.PersistentData.Append(new GH_ObjectWrapper(obj));
-      }
-
-      component.Params.Input[index].AddSource(input);
-    }
-
     public static void SetInput(GH_Component component, Point3d pt, int index = 0) {
       var input = new Param_Point();
       input.CreateAttributes();
@@ -153,6 +153,17 @@ namespace GsaGHTests.Helpers {
       var input = new Param_Mesh();
       input.CreateAttributes();
       input.PersistentData.Append(new GH_Mesh(mesh));
+      component.Params.Input[index].AddSource(input);
+    }
+
+    public static void SetListInput(GH_Component component, List<object> objs, int index = 0) {
+      var input = new Param_GenericObject();
+      input.CreateAttributes();
+      input.Access = GH_ParamAccess.list;
+      foreach (object obj in objs) {
+        input.PersistentData.Append(new GH_ObjectWrapper(obj));
+      }
+
       component.Params.Input[index].AddSource(input);
     }
 

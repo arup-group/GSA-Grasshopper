@@ -16,7 +16,7 @@ namespace GsaGHTests.GooWrappers {
     public void GsaMember3dParameterBakeTest() {
       GH_OasysComponent comp = CreateMember3dTests.ComponentMother();
       var output = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp);
-      
+
       var param = new GsaMember3dParameter();
       param.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, output);
 

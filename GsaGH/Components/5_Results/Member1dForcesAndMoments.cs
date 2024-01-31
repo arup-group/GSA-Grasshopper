@@ -27,8 +27,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class Member1dForcesAndMoments : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("36973d2e-ee21-4165-aa7e-2fd07a76aec3");
-    // to-do: bug in GSA 10.2.3 member results, hide this component for now
-    public override GH_Exposure Exposure => GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Member1dForcesAndMoments;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
@@ -108,27 +107,27 @@ namespace GsaGH.Components {
       string note = ResultNotes.Note1dResults;
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx",
-        "Member Axial Forces in Local Member X-direction." + forcerule + note,
+        "Member Axial Force in Local Member X-direction." + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy",
-        "Member Shear Forces in Local Member Y-direction." + forcerule + note,
+        "Member Shear Force in Local Member Y-direction." + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz",
-        "Member Shear Forces in Local Member Z-direction." + forcerule + note,
+        "Member Shear Force in Local Member Z-direction." + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force |YZ| [" + forceunitAbbreviation + "]", "|Fyz|",
-        "Total |YZ| Member Shear Forces." + note, GH_ParamAccess.tree);
+        "Total |YZ| Member Shear Force." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx",
-        "Member Torsional Moments around Local Member X-axis." + momentrule + note,
+        "Member Torsional Moment around Local Member X-axis." + momentrule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy",
-        "Member Bending Moments around Local Member Y-axis." + momentrule + note,
+        "Member Bending Moment around Local Member Y-axis." + momentrule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz",
-        "Member Bending Moments around Local Member Z-axis." + momentrule + note,
+        "Member Bending Moment around Local Member Z-axis." + momentrule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |YZ| [" + momentunitAbbreviation + "]", "|Myz|",
-        "Total |YYZZ| Member Bending Moments." + note, GH_ParamAccess.tree);
+        "Total |YYZZ| Member Bending Moment." + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
@@ -152,19 +151,14 @@ namespace GsaGH.Components {
       var outRotXyz = new DataTree<GH_UnitNumber>();
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
-        switch (ghTyp?.Value) {
-          case GsaResultGoo goo:
-            result = (GsaResult)goo.Value;
-            memberList = Inputs.GetMemberListDefinition(this, da, 1, result.Model);
-            break;
-
-          default:
-            this.AddRuntimeError("Error converting input to GSA Result");
-            return;
+        result = Inputs.GetResultInput(this, ghTyp);
+        if (result == null) {
+          return;
         }
 
+        memberList = Inputs.GetMemberListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> elementIds = result.MemberIds(memberList);
-        IEntity1dResultSubset<IEntity1dInternalForce, IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet =
+        IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet =
           result.Member1dInternalForces.ResultSubset(elementIds, positionsCount);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
@@ -175,7 +169,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6InternalForces[0]) {
-          foreach (KeyValuePair<int, IList<IEntity1dInternalForce>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IEntity1dQuantity<IInternalForce>>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outTransX.AddRange(kvp.Value[p - 1].Results.Values.Select(

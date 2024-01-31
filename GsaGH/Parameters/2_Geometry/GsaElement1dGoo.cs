@@ -113,7 +113,7 @@ namespace GsaGH.Parameters {
       xmorph.Morph(xLn);
       elem.Line = xLn;
       elem.UpdateReleasesPreview();
-      elem.Section3dPreview?.Morph(xmorph); 
+      elem.Section3dPreview?.Morph(xmorph);
       return new GsaElement1dGoo(elem);
     }
 

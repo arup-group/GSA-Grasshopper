@@ -10,7 +10,7 @@ namespace GsaGHTests.Model {
     public static void GetModelGridLinesTest() {
       // Assemble
       var comp = new GetModelGridLines();
-      
+
       // Act
       ComponentTestHelper.SetInput(comp, CreateGridLineTest.CreateModelWithGridlines());
       var outputGoo = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);

@@ -148,7 +148,7 @@ namespace GsaGHTests.Components.Geometry {
     public void SetMeshModeTest(int mode, string expected) {
       GH_OasysComponent comp = ComponentMother();
 
-      ComponentTestHelper.SetInput(comp, mode, 13); 
+      ComponentTestHelper.SetInput(comp, mode, 13);
       var output13 = (GH_String)ComponentTestHelper.GetOutput(comp, 13);
       Assert.Equal(expected, output13.Value);
     }

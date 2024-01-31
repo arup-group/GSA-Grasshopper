@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
-using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi.EnumMappings;
@@ -38,8 +36,8 @@ namespace GsaGH.Components {
 
     public void OpenFile() {
       var fdi = new OpenFileDialog {
-        Filter = "GSA Files(*.gwb)|*.gwb|All files (*.*)|*.*",
-      }; //"GSA Files(*.gwa; *.gwb)|*.gwa;*.gwb|All files (*.*)|*.*"
+        Filter = "GSA Files (*.gwb)|*.gwb|GSA Text Files (*.gwa)|*.gwa|All files (*.*)|*.*",
+      };
       bool res = fdi.ShowOpenDialog();
 
       if (!res) {
@@ -67,7 +65,7 @@ namespace GsaGH.Components {
 
       panel.UserText = fileName;
       _panelGuid = panel.InstanceGuid;
-      Instances.ActiveCanvas.Document.AddObject(panel, false);
+      OnPingDocument().AddObject(panel, false);
       Params.Input[0].AddSource(panel);
 
       (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
@@ -93,12 +91,8 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       var model = new Model();
-      var ghTyp = new GH_ObjectWrapper();
       string fileName = string.Empty;
       da.GetData(0, ref fileName);
-      if (!fileName.EndsWith(".gwb")) {
-        fileName += ".gwb";
-      }
 
       model.Open(fileName);
 
@@ -108,12 +102,12 @@ namespace GsaGH.Components {
       };
       UpdateMessage(fileName);
 
-      if(gsaModel.Materials.SanitizeGenericCodeNames()) {
+      if (gsaModel.Materials.SanitizeGenericCodeNames()) {
         this.AddRuntimeRemark("The opened model contains generic materials with no design code");
       }
 
       da.SetData(0, new GsaModelGoo(gsaModel));
-      PostHog.ModelIO(GsaGH.PluginInfo.Instance, "openGWB",
+      PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"open{fileName.Substring(fileName.LastIndexOf('.') + 1).ToUpper()}",
         (int)(new FileInfo(fileName).Length / 1024));
     }
 
