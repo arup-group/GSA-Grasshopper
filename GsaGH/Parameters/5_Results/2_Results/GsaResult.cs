@@ -109,6 +109,10 @@ namespace GsaGH.Parameters.Results {
       get;
       private set;
     }
+    public NodalForcesAndMomentsCache NodalForcesAndMoments {
+      get;
+      private set;
+    }
 
     internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseId) {
       if (model == null || result == null) {
@@ -232,6 +236,8 @@ namespace GsaGH.Parameters.Results {
 
       SteelUtilisations = new SteelUtilisationCache(result);
 
+      NodalForcesAndMoments = new NodalForcesAndMomentsCache(result, model?.Model);
+
       GlobalResults = new GlobalResultsCache(result);
 
       Model = model;
@@ -272,6 +278,8 @@ namespace GsaGH.Parameters.Results {
       Member1dInternalForces = new Member1dInternalForceCache(result);
 
       SteelUtilisations = new SteelUtilisationCache(result);
+
+      NodalForcesAndMoments = new NodalForcesAndMomentsCache(result, model?.Model);
 
       Model = model;
       CaseType = CaseType.CombinationCase;
