@@ -109,7 +109,7 @@ namespace GsaGH.Parameters.Results {
       get;
       private set;
     }
-    public NodalForcesAndMomentsCache NodalForcesAndMoments {
+    public IEntity0dResultCache <IReactionForce, ResultVector6<Entity0dExtremaKey>> NodalForcesAndMoments {
       get;
       private set;
     }

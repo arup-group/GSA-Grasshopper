@@ -4,11 +4,13 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using GH_IO.Serialization;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
@@ -22,6 +24,8 @@ using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
+using ForceUnit = OasysUnits.Units.ForceUnit;
+using MomentUnit = OasysUnits.Units.MomentUnit;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -149,133 +153,70 @@ namespace GsaGH.Components {
         }
 
         nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
-        ReadOnlyCollection<int> elementIds = result.NodeIds(nodeList);
-        IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> forces
-          = result.for.ResultSubset(elementIds);
-        IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> shears = result.Element2dShearForces.ResultSubset(elementIds);
-        IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> moments = result.Element2dMoments.ResultSubset(elementIds);
+        ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
+        IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> resultSet = result.NodalForcesAndMoments.ResultSubset(nodeIds);
+
+        if (resultSet.Ids.Count < 1) {
+          this.AddRuntimeWarning("There is no nodal forces and moments");
+          return;
+        }
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
         };
         if (permutations.Count == 1 && permutations[0] == -1) {
-          permutations = Enumerable.Range(1, forces.Subset.Values.First().Count).ToList();
+          permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6ReactionForces[0]) {
-          Parallel.For(0, 3, thread => {
-            switch (thread) {
-              case 0:
-                foreach (KeyValuePair<int, IList<IMeshQuantity<IForce2d>>> kvp in forces
-                 .Subset) {
-                  foreach (int p in permutations) {
-                    var path = new GH_Path(result.CaseId,
-                      result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
-                    outX.AddRange(
-                      kvp.Value[p - 1].Results()
-                       .Select(r => new GH_UnitNumber(r.Nx.ToUnit(_forceUnit))), path);
-                    outY.AddRange(
-                      kvp.Value[p - 1].Results()
-                       .Select(r => new GH_UnitNumber(r.Ny.ToUnit(_forceUnit))), path);
-                    outXy.AddRange(
-                      kvp.Value[p - 1].Results()
-                       .Select(r => new GH_UnitNumber(r.Nxy.ToUnit(_forceUnit))), path);
-                  }
-                }
-
-                break;
-
-              case 1:
-                foreach (KeyValuePair<int, IList<IMeshQuantity<IShear2d>>> kvp in shears
-                 .Subset) {
-                  foreach (int p in permutations) {
-                    var path = new GH_Path(result.CaseId,
-                      result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
-                    outQx.AddRange(
-                      kvp.Value[p - 1].Results()
-                       .Select(r => new GH_UnitNumber(r.Qx.ToUnit(_forceUnit))), path);
-                    outQy.AddRange(
-                      kvp.Value[p - 1].Results()
-                       .Select(r => new GH_UnitNumber(r.Qy.ToUnit(_forceUnit))), path);
-                  }
-                }
-
-                break;
-
-              case 2:
-                foreach (KeyValuePair<int, IList<IMeshQuantity<IMoment2d>>> kvp in moments
-                 .Subset) {
-                  foreach (int p in permutations) {
-                    var path = new GH_Path(result.CaseId,
-                      result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
-                    outXx.AddRange(
-                      kvp.Value[p - 1].Results()
-                       .Select(r => new GH_UnitNumber(r.Mx.ToUnit(_momentUnit))), path);
-                    outYy.AddRange(
-                      kvp.Value[p - 1].Results()
-                       .Select(r => new GH_UnitNumber(r.My.ToUnit(_momentUnit))), path);
-                    outXxyy.AddRange(
-                      kvp.Value[p - 1].Results()
-                       .Select(r => new GH_UnitNumber(r.Mxy.ToUnit(_momentUnit))), path);
-                    outWaxx.AddRange(
-                      kvp.Value[p - 1].Results().Select(r
-                        => new GH_UnitNumber(r.WoodArmerX.ToUnit(_momentUnit))), path);
-                    outWayy.AddRange(
-                      kvp.Value[p - 1].Results().Select(r
-                        => new GH_UnitNumber(r.WoodArmerY.ToUnit(_momentUnit))), path);
-                  }
-                }
-
-                break;
+          foreach (int id in resultSet.Ids) {
+            foreach (int p in permutations) {
+              var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p);
+              IReactionForce res = resultSet.Subset[id][p - 1];
+              outTransX.Add(new GH_UnitNumber(res.XToUnit(_forceUnit)), path);
+              outTransY.Add(new GH_UnitNumber(res.YToUnit(_forceUnit)), path);
+              outTransZ.Add(new GH_UnitNumber(res.ZToUnit(_forceUnit)), path);
+              outTransXyz.Add(new GH_UnitNumber(res.XyzToUnit(_forceUnit)), path);
+              outRotX.Add(new GH_UnitNumber(res.XxToUnit(_momentUnit)), path);
+              outRotY.Add(new GH_UnitNumber(res.YyToUnit(_momentUnit)), path);
+              outRotZ.Add(new GH_UnitNumber(res.ZzToUnit(_momentUnit)), path);
+              outRotXyz.Add(new GH_UnitNumber(res.XxyyzzToUnit(_momentUnit)), path);
+              outIDs.Add(id, path);
             }
-          });
-        } else {
-          Entity2dExtremaKey key = ExtremaHelper.Elem2dForcesAndMomentsExtremaKey(forces, moments, shears, _selectedItems[0]);
-          if (key != null) {
-            IForce2d forceExtrema = forces.GetExtrema(key);
-            int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
-            var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
-            outX.Add(new GH_UnitNumber(forceExtrema.Nx.ToUnit(_forceUnit)), path);
-            outY.Add(new GH_UnitNumber(forceExtrema.Ny.ToUnit(_forceUnit)), path);
-            outXy.Add(new GH_UnitNumber(forceExtrema.Nxy.ToUnit(_forceUnit)), path);
-
-            IShear2d shearExtrema = shears.GetExtrema(key);
-            outQx.Add(new GH_UnitNumber(shearExtrema.Qx.ToUnit(_forceUnit)), path);
-            outQy.Add(new GH_UnitNumber(shearExtrema.Qy.ToUnit(_forceUnit)), path);
-
-            IMoment2d momentExtrema = moments.GetExtrema(key);
-            outXx.Add(new GH_UnitNumber(momentExtrema.Mx.ToUnit(_momentUnit)), path);
-            outYy.Add(new GH_UnitNumber(momentExtrema.My.ToUnit(_momentUnit)), path);
-            outXxyy.Add(new GH_UnitNumber(momentExtrema.Mxy.ToUnit(_momentUnit)), path);
-            outWaxx.Add(new GH_UnitNumber(momentExtrema.WoodArmerX.ToUnit(_momentUnit)), path);
-            outWayy.Add(new GH_UnitNumber(momentExtrema.WoodArmerY.ToUnit(_momentUnit)), path);
           }
+        } else {
+          Entity0dExtremaKey key = ExtremaHelper.ReactionForceExtremaKey(resultSet, _selectedItems[0]);
+          IReactionForce extrema = resultSet.GetExtrema(key);
+          int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
+          var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
+          outTransX.Add(new GH_UnitNumber(extrema.XToUnit(_forceUnit)), path);
+          outTransY.Add(new GH_UnitNumber(extrema.YToUnit(_forceUnit)), path);
+          outTransZ.Add(new GH_UnitNumber(extrema.ZToUnit(_forceUnit)), path);
+          outTransXyz.Add(new GH_UnitNumber(extrema.XyzToUnit(_forceUnit)), path);
+          outRotX.Add(new GH_UnitNumber(extrema.XxToUnit(_momentUnit)), path);
+          outRotY.Add(new GH_UnitNumber(extrema.YyToUnit(_momentUnit)), path);
+          outRotZ.Add(new GH_UnitNumber(extrema.ZzToUnit(_momentUnit)), path);
+          outRotXyz.Add(new GH_UnitNumber(extrema.XxyyzzToUnit(_momentUnit)), path);
+          outIDs.Add(key.Id, path);
         }
 
-        PostHog.Result(result.CaseType, 2, "Force");
+        PostHog.Result(result.CaseType, 2, "NodalForcesAndMoments");
       }
 
-      da.SetDataTree(0, outX);
-      da.SetDataTree(1, outY);
-      da.SetDataTree(2, outXy);
-      da.SetDataTree(3, outQx);
-      da.SetDataTree(4, outQy);
-      da.SetDataTree(5, outXx);
-      da.SetDataTree(6, outYy);
-      da.SetDataTree(7, outXxyy);
-      da.SetDataTree(8, outWaxx);
-      da.SetDataTree(9, outWayy);
+      da.SetDataTree(0, outTransX);
+      da.SetDataTree(1, outTransY);
+      da.SetDataTree(2, outTransZ);
+      da.SetDataTree(3, outTransXyz);
+      da.SetDataTree(4, outRotX);
+      da.SetDataTree(5, outRotY);
+      da.SetDataTree(6, outRotZ);
+      da.SetDataTree(7, outRotXyz);
+      da.SetDataTree(8, outIDs);
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      if (_selectedItems.Count == 2) {
-        _spacerDescriptions.Insert(0, "Max/Min");
-        _dropDownItems.Insert(0, ExtremaHelper.Elem2dForcesAndMoments.ToList());
-        _selectedItems.Insert(0, _dropDownItems[0][0]);
-      }
-      _forceUnit
-        = (ForcePerLengthUnit)UnitsHelper.Parse(typeof(ForcePerLengthUnit), _selectedItems[1]);
-      _momentUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[2]);
+      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[1]);
+      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[2]);
       base.UpdateUIFromSelectedItems();
     }
   }
