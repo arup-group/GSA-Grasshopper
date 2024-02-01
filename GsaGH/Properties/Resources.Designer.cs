@@ -1553,6 +1553,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap NodalForcesAndMoments {
+            get {
+                object obj = ResourceManager.GetObject("NodalForcesAndMoments", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap NodeDisplacements {
             get {
                 object obj = ResourceManager.GetObject("NodeDisplacements", resourceCulture);
