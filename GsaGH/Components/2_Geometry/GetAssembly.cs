@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
@@ -123,39 +124,41 @@ namespace GsaGH.Components {
       GsaAssembly assembly = assemblyGoo.Value;
 
       var entities = new GsaList("", assembly.ApiAssembly.EntityList, assembly.ApiAssembly.EntityType);
-      da.SetData(0, assembly.ApiAssembly.Name);
-      da.SetData(2, new GsaListGoo(entities));
-      da.SetData(3, assembly.ApiAssembly.Topology1);
-      da.SetData(4, assembly.ApiAssembly.Topology2);
-      da.SetData(5, assembly.ApiAssembly.OrientationNode);
-      da.SetData(6, new Length(assembly.ApiAssembly.ExtentY, LengthUnit.Meter).ToUnit(_lengthUnit));
-      da.SetData(7, new Length(assembly.ApiAssembly.ExtentZ, LengthUnit.Meter).ToUnit(_lengthUnit));
+      da.SetDataList(0, new List<object>() { assembly.ApiAssembly.Name }, 0);
+      da.SetDataList(2, new List<object>() { new GsaListGoo(entities) }, 2);
+      da.SetDataList(3, new List<object>() { assembly.ApiAssembly.Topology1 }, 3);
+      da.SetDataList(4, new List<object>() { assembly.ApiAssembly.Topology2 }, 4);
+      da.SetDataList(5, new List<object>() { assembly.ApiAssembly.OrientationNode }, 5);
+      da.SetDataList(6, new List<object>() { new Length(assembly.ApiAssembly.ExtentY, LengthUnit.Meter).ToUnit(_lengthUnit) }, 6);
+      da.SetDataList(7, new List<object>() { new Length(assembly.ApiAssembly.ExtentZ, LengthUnit.Meter).ToUnit(_lengthUnit) }, 7);
 
       switch (assembly.ApiAssembly) {
         case AssemblyByExplicitPositions byExplicitPositions:
-          da.SetData(1, "By explicit positions");
-          da.SetDataList(8, byExplicitPositions.InternalTopology);
-          da.SetData(9, byExplicitPositions.CurveFit);
-          da.SetDataList(10, byExplicitPositions.Positions);
+          da.SetDataList(1, new List<object>() { "By explicit positions" }, 1);
+          da.SetDataList(8, byExplicitPositions.InternalTopology, 8);
+          da.SetDataList(9, new List<object>() { byExplicitPositions.CurveFit }, 9);
+          da.SetDataList(10, byExplicitPositions.Positions, 10);
           break;
 
         case AssemblyByNumberOfPoints byNumberOfPoints:
-          da.SetData(1, "By number of points");
-          da.SetDataList(8, byNumberOfPoints.InternalTopology);
-          da.SetData(9, byNumberOfPoints.CurveFit);
-          da.SetData(10, byNumberOfPoints.NumberOfPoints);
+          da.SetDataList(1, new List<object>() { "By number of points" }, 1);
+          da.SetDataList(8, byNumberOfPoints.InternalTopology, 8);
+          da.SetDataList(9, new List<object>() { byNumberOfPoints.CurveFit }, 9);
+          da.SetDataList(10, new List<object>() { byNumberOfPoints.NumberOfPoints }, 10);
           break;
 
         case AssemblyBySpacingOfPoints bySpacingOfPoints:
-          da.SetData(1, "By spacing of points");
-          da.SetDataList(8, bySpacingOfPoints.InternalTopology);
-          da.SetData(9, bySpacingOfPoints.CurveFit);
-          da.SetData(10, new Length(bySpacingOfPoints.Spacing, LengthUnit.Meter).ToUnit(_lengthUnit));
+          da.SetDataList(1, new List<object>() { "By spacing of points" }, 1);
+          da.SetDataList(8, bySpacingOfPoints.InternalTopology, 8);
+          da.SetDataList(9, new List<object>() { bySpacingOfPoints.CurveFit }, 9);
+          da.SetDataList(10, new List<object>() { new Length(bySpacingOfPoints.Spacing, LengthUnit.Meter).ToUnit(_lengthUnit) }, 10);
           break;
 
         case AssemblyByStorey byStorey:
-          da.SetData(1, "By storey");
-          da.SetData(10, byStorey.StoreyList);
+          da.SetDataList(1, new List<object>() { "By storey" }, 1);
+          da.SetDataList(8, null, 8);
+          da.SetDataList(9, null, 9);
+          da.SetDataList(10, new List<object>() { byStorey.StoreyList }, 10);
           break;
       }
     }

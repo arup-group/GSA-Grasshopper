@@ -173,7 +173,7 @@ namespace GsaGHTests.Components.Geometry {
       var extentsY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 6);
       var extentsZ = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 7);
       IList internalTopology = ComponentTestHelper.GetListOutput(comp, 8);
-      var curveFit = (GH_Integer)ComponentTestHelper.GetOutput(comp, 9);
+      IList curveFit = ComponentTestHelper.GetListOutput(comp, 9);
       var storeyList = (GH_String)ComponentTestHelper.GetOutput(comp, 10);
 
       Assert.Equal("Name", name.Value);
@@ -186,7 +186,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(1.0, ((Length)extentsY.Value).As(LengthUnit.Meter));
       Assert.Equal(-1.0, ((Length)extentsZ.Value).As(LengthUnit.Meter));
       Assert.Empty(internalTopology);
-      Assert.Null(curveFit);
+      Assert.Empty(curveFit);
       Assert.Equal("7", storeyList.Value);
     }
   }
