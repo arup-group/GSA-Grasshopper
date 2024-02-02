@@ -17,7 +17,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Components {
   public class GetAssembly : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("c54ffe55-aaa7-4edc-999a-c48f6990d254");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetAssembly;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
