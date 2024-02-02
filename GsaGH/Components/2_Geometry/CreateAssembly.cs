@@ -64,6 +64,9 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       string lengthUnitAbr = Length.GetAbbreviation(_lengthUnit);
 
+      SetInputProperties(5, "Extents y [" + lengthUnitAbr + "]", "Ey", "[Optional] Extents of the Assembly in y-direction", GH_ParamAccess.item);
+      SetInputProperties(6, "Extents y [" + lengthUnitAbr + "]", "Ey", "[Optional] Extents of the Assembly in y-direction", GH_ParamAccess.item);
+
       int maxIndex = Params.Input.Count - 1;
       switch (_mode) {
         case AssemblyType.ByExplicitPositions:
