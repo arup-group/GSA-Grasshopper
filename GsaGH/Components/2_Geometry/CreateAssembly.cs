@@ -38,7 +38,7 @@ namespace GsaGH.Components {
       };
 
     public override Guid ComponentGuid => new Guid("00eabd44-12cc-4c27-b924-82542602749f");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+    public override GH_Exposure Exposure => GH_Exposure.quinary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateAssembly;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
@@ -63,6 +63,9 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       string lengthUnitAbr = Length.GetAbbreviation(_lengthUnit);
+
+      SetInputProperties(5, "Extents y [" + lengthUnitAbr + "]", "Ey", "[Optional] Extents of the Assembly in y-direction", GH_ParamAccess.item);
+      SetInputProperties(6, "Extents y [" + lengthUnitAbr + "]", "Ey", "[Optional] Extents of the Assembly in y-direction", GH_ParamAccess.item);
 
       int maxIndex = Params.Input.Count - 1;
       switch (_mode) {

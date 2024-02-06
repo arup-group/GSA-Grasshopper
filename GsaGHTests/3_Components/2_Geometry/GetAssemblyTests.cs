@@ -63,17 +63,20 @@ namespace GsaGHTests.Components.Geometry {
       GH_OasysComponent comp = GetByExplicitPositionsComponentMother();
 
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, 0);
-      var assemblyEntities = (GsaListGoo)ComponentTestHelper.GetOutput(comp, 1);
-      var topology1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 2);
-      var topology2 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 3);
-      var orientationNode = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
-      var extentsY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 5);
-      var extentsZ = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 6);
-      IList internalTopology = ComponentTestHelper.GetListOutput(comp, 7);
-      var curveFit = (GH_Integer)ComponentTestHelper.GetOutput(comp, 8);
-      IList positions = ComponentTestHelper.GetListOutput(comp, 9);
+      var type = (GH_String)ComponentTestHelper.GetOutput(comp, 1);
+      var assemblyEntities = (GsaListGoo)ComponentTestHelper.GetOutput(comp, 2);
+      var topology1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 3);
+      var topology2 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
+      var orientationNode = (GH_Integer)ComponentTestHelper.GetOutput(comp, 5);
+      var extentsY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 6);
+      var extentsZ = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 7);
+      IList internalTopology = ComponentTestHelper.GetListOutput(comp, 8);
+      var curveFit = (GH_Integer)ComponentTestHelper.GetOutput(comp, 9);
+      IList positions = ComponentTestHelper.GetListOutput(comp, 10
+        );
 
       Assert.Equal("Name", name.Value);
+      Assert.Equal("By explicit positions", type.Value);
       Assert.Equal(EntityType.Member, assemblyEntities.Value.EntityType);
       Assert.Equal("1", assemblyEntities.Value.Definition);
       Assert.Equal(1, topology1.Value);
@@ -96,17 +99,19 @@ namespace GsaGHTests.Components.Geometry {
       GH_OasysComponent comp = GetByNumberOfPointsComponentMother();
 
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, 0);
-      var assemblyEntities = (GsaListGoo)ComponentTestHelper.GetOutput(comp, 1);
-      var topology1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 2);
-      var topology2 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 3);
-      var orientationNode = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
-      var extentsY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 5);
-      var extentsZ = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 6);
-      IList internalTopology = ComponentTestHelper.GetListOutput(comp, 7);
-      var curveFit = (GH_Integer)ComponentTestHelper.GetOutput(comp, 8);
-      var number = (GH_Integer)ComponentTestHelper.GetOutput(comp, 9);
+      var type = (GH_String)ComponentTestHelper.GetOutput(comp, 1);
+      var assemblyEntities = (GsaListGoo)ComponentTestHelper.GetOutput(comp, 2);
+      var topology1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 3);
+      var topology2 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
+      var orientationNode = (GH_Integer)ComponentTestHelper.GetOutput(comp, 5);
+      var extentsY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 6 );
+      var extentsZ = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 7);
+      IList internalTopology = ComponentTestHelper.GetListOutput(comp, 8);
+      var curveFit = (GH_Integer)ComponentTestHelper.GetOutput(comp, 9);
+      var number = (GH_Integer)ComponentTestHelper.GetOutput(comp, 10);
 
       Assert.Equal("Name", name.Value);
+      Assert.Equal("By number of points", type.Value);
       Assert.Equal(EntityType.Member, assemblyEntities.Value.EntityType);
       Assert.Equal("1", assemblyEntities.Value.Definition);
       Assert.Equal(1, topology1.Value);
@@ -127,17 +132,19 @@ namespace GsaGHTests.Components.Geometry {
       GH_OasysComponent comp = GetBySpacingOfPointsComponentMother();
 
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, 0);
-      var assemblyEntities = (GsaListGoo)ComponentTestHelper.GetOutput(comp, 1);
-      var topology1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 2);
-      var topology2 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 3);
-      var orientationNode = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
-      var extentsY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 5);
-      var extentsZ = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 6);
-      IList internalTopology = ComponentTestHelper.GetListOutput(comp, 7);
-      var curveFit = (GH_Integer)ComponentTestHelper.GetOutput(comp, 8);
-      var spacing = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 9);
+      var type = (GH_String)ComponentTestHelper.GetOutput(comp, 1);
+      var assemblyEntities = (GsaListGoo)ComponentTestHelper.GetOutput(comp, 2);
+      var topology1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 3);
+      var topology2 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
+      var orientationNode = (GH_Integer)ComponentTestHelper.GetOutput(comp, 5);
+      var extentsY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 6);
+      var extentsZ = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 7);
+      IList internalTopology = ComponentTestHelper.GetListOutput(comp, 8);
+      var curveFit = (GH_Integer)ComponentTestHelper.GetOutput(comp, 9);
+      var spacing = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 10);
 
       Assert.Equal("Name", name.Value);
+      Assert.Equal("By spacing of points", type.Value);
       Assert.Equal(EntityType.Member, assemblyEntities.Value.EntityType);
       Assert.Equal("1", assemblyEntities.Value.Definition);
       Assert.Equal(1, topology1.Value);
@@ -158,17 +165,19 @@ namespace GsaGHTests.Components.Geometry {
       GH_OasysComponent comp = GetByStoreyComponentMother();
 
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, 0);
-      var assemblyEntities = (GsaListGoo)ComponentTestHelper.GetOutput(comp, 1);
-      var topology1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 2);
-      var topology2 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 3);
-      var orientationNode = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
-      var extentsY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 5);
-      var extentsZ = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 6);
-      IList internalTopology = ComponentTestHelper.GetListOutput(comp, 7);
-      var curveFit = (GH_Integer)ComponentTestHelper.GetOutput(comp, 8);
-      var storeyList = (GH_String)ComponentTestHelper.GetOutput(comp, 9);
+      var type = (GH_String)ComponentTestHelper.GetOutput(comp, 1);
+      var assemblyEntities = (GsaListGoo)ComponentTestHelper.GetOutput(comp, 2);
+      var topology1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 3);
+      var topology2 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
+      var orientationNode = (GH_Integer)ComponentTestHelper.GetOutput(comp, 5);
+      var extentsY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 6);
+      var extentsZ = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 7);
+      IList internalTopology = ComponentTestHelper.GetListOutput(comp, 8);
+      IList curveFit = ComponentTestHelper.GetListOutput(comp, 9);
+      var storeyList = (GH_String)ComponentTestHelper.GetOutput(comp, 10);
 
       Assert.Equal("Name", name.Value);
+      Assert.Equal("By storey", type.Value);
       Assert.Equal(EntityType.Member, assemblyEntities.Value.EntityType);
       Assert.Equal("1", assemblyEntities.Value.Definition);
       Assert.Equal(1, topology1.Value);
@@ -177,7 +186,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(1.0, ((Length)extentsY.Value).As(LengthUnit.Meter));
       Assert.Equal(-1.0, ((Length)extentsZ.Value).As(LengthUnit.Meter));
       Assert.Empty(internalTopology);
-      Assert.Null(curveFit);
+      Assert.Empty(curveFit);
       Assert.Equal("7", storeyList.Value);
     }
   }
