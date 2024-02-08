@@ -115,6 +115,26 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
+    public AssemblyDisplacementCache AssemblyDisplacements {
+      get;
+      private set;
+    }
+
+    public AssemblyDriftsCache AssemblyDrifts {
+      get;
+      private set;
+    }
+
+    public AssemblyDriftIndicesCache AssemblyDriftIndices {
+      get;
+      private set;
+    }
+
+    public AssemblyForcesAndMomentsCache AssemblyForcesAndMoments {
+      get;
+      private set;
+    }
+
     internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseId) {
       if (model == null || result == null) {
         return;
@@ -238,6 +258,11 @@ namespace GsaGH.Parameters.Results {
       SteelUtilisations = new SteelUtilisationCache(result);
       SteelDesignEffectiveLengths = new SteelDesignEffectiveLengthCache(result);
 
+      AssemblyDisplacements = new AssemblyDisplacementCache(result);
+      AssemblyDrifts = new AssemblyDriftsCache(result);
+      AssemblyDriftIndices = new AssemblyDriftIndicesCache(result);
+      AssemblyForcesAndMoments = new AssemblyForcesAndMomentsCache(result);
+
       GlobalResults = new GlobalResultsCache(result);
 
       Model = model;
@@ -279,6 +304,11 @@ namespace GsaGH.Parameters.Results {
 
       SteelUtilisations = new SteelUtilisationCache(result);
       SteelDesignEffectiveLengths = new SteelDesignEffectiveLengthCache(result);
+
+      AssemblyDisplacements = new AssemblyDisplacementCache(result);
+      AssemblyDrifts = new AssemblyDriftsCache(result);
+      AssemblyDriftIndices = new AssemblyDriftIndicesCache(result);
+      AssemblyForcesAndMoments = new AssemblyForcesAndMomentsCache(result);
 
       Model = model;
       CaseType = CaseType.CombinationCase;
