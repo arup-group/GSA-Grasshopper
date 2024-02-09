@@ -146,6 +146,7 @@ namespace GsaGH.Parameters {
 
     internal Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations() {
       ReadOnlyDictionary<int, AnalysisTask> tasks = Model.AnalysisTasks();
+      ReadOnlyDictionary<int, LoadCase> loadCases = Model.LoadCases();
 
       var tasksList = new List<GsaAnalysisTaskGoo>();
       var caseList = new List<GsaAnalysisCaseGoo>();
@@ -162,7 +163,12 @@ namespace GsaGH.Parameters {
       foreach (int caseId in caseIDs) {
         string caseName = Model.AnalysisCaseName(caseId);
         if (caseName == string.Empty) {
-          caseName = "Case " + caseId;
+          if (loadCases.ContainsKey(caseId)) {
+            caseName = loadCases[caseId].Name;
+          }
+          if (caseName == string.Empty) {
+            caseName = "Case " + caseId;
+          }
         }
 
         string caseDescription = Model.AnalysisCaseDescription(caseId);
