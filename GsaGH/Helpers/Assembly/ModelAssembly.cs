@@ -507,6 +507,10 @@ namespace GsaGH.Helpers.Assembly {
           owner.AddRuntimeWarning(warning + ids);
         }
 
+        if (toleranceCoincidentNodes.Value > 0) {
+          _model.CollapseCoincidentNodes(toleranceCoincidentNodes.Meters);
+        }
+
         _model.CreateElementsFromMembers();
       }
 
