@@ -15,125 +15,43 @@ namespace GsaGH.Parameters.Results {
   /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element3dresult">3D Element Results</see>: `Displacement` and `Stress`.</description></item>
   /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#globalresult">Global Results</see>: `Frequency`, `LoadFactor`, `ModalGeometricStiffness`, `ModalMass`, `ModalStiffness`, `TotalLoad`, `TotalReaction`, `Mode`, `EffectiveInertia`, `EffectiveMass` and `Eigenvalue`.</description></item>
   /// </list></para>
-  /// <para>All result values from the <see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/introduction.html">.NET API</see> has been wrapped in <see href="https://docs.oasys-software.com/structural/gsa/references/gsagh/gsagh-unitnumber-parameter.html">Unit Number</see> and can be converted into different measures on the fly. The Result parameter caches the result values</para>
+  /// <para>All result values from the <see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/introduction.html">.NET API</see> have been wrapped in <see href="https://docs.oasys-software.com/structural/gsa/references/gsagh/gsagh-unitnumber-parameter.html">Unit Number</see> and can be converted into different measures on the fly. The Result parameter caches the result values.</para>
   /// </summary>
   public class GsaResult : IGsaResult {
-    // Caches
-    public IEntity0dResultCache<IEnergyDensity, Entity0dExtremaKey> Element1dAverageStrainEnergyDensities {
-      get;
-      private set;
-    }
-    public IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>> Element1dDisplacements {
-      get;
-      private set;
-    }
-    public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>> Element1dInternalForces {
-      get;
-      private set;
-    }
-    public IEntity1dResultCache<IEnergyDensity, Entity1dExtremaKey> Element1dStrainEnergyDensities {
-      get;
-      private set;
-    }
-    public IEntity1dResultCache<IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> Element1dDerivedStresses {
-      get;
-      private set;
-    }
-    public IEntity1dResultCache<IStress1d, ResultStress1d<Entity1dExtremaKey>> Element1dStresses {
-      get;
-      private set;
-    }
-    public IMeshResultCache<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> Element2dDisplacements {
-      get;
-      private set;
-    }
-    public IEntity2dLayeredResultCache<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element2dStresses {
-      get;
-      private set;
-    }
-    public IMeshResultCache<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> Element2dForces {
-      get;
-      private set;
-    }
-    public IMeshResultCache<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> Element2dMoments {
-      get;
-      private set;
-    }
-    public IMeshResultCache<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> Element2dShearForces {
-      get;
-      private set;
-    }
-    public IMeshResultCache<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> Element3dDisplacements {
-      get;
-      private set;
-    }
-    public IMeshResultCache<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element3dStresses {
-      get;
-      private set;
-    }
-    public IEntity0dResultCache<IDisplacement, ResultVector6<Entity0dExtremaKey>> NodeDisplacements {
-      get;
-      private set;
-    }
-    public IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> NodeResonantFootfalls {
-      get;
-      private set;
-    }
-    public IEntity0dResultCache<IReactionForce, ResultVector6<Entity0dExtremaKey>> NodeReactionForces {
-      get;
-      private set;
-    }
-    public IEntity0dResultCache<IReactionForce, ResultVector6<Entity0dExtremaKey>> NodeSpringForces {
-      get;
-      private set;
-    }
-    public IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> NodeTransientFootfalls {
-      get;
-      private set;
-    }
-    public IGlobalResultsCache GlobalResults {
-      get;
-      private set;
-    }
-    public IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>>
-      Member1dDisplacements {
-      get;
-      private set;
-    }
-    public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>>
-      Member1dInternalForces {
-      get;
-      private set;
-    }
-    public IEntity0dResultCache<ISteelUtilisation, SteelUtilisationExtremaKeys> SteelUtilisations {
-      get;
-      private set;
-    }
+    public int CaseId { get; set; }
+    public int Permutations { get; set; } = 0;
+    public string CaseName { get; set; }
+    public GsaModel Model { get; set; }
+    public List<int> SelectedPermutationIds { get; set; }
+    public CaseType CaseType { get; set; }
 
-    public SteelDesignEffectiveLengthCache SteelDesignEffectiveLengths {
-      get;
-      private set;
-    }
-
-    public AssemblyDisplacementCache AssemblyDisplacements {
-      get;
-      private set;
-    }
-
-    public AssemblyDriftsCache AssemblyDrifts {
-      get;
-      private set;
-    }
-
-    public AssemblyDriftIndicesCache AssemblyDriftIndices {
-      get;
-      private set;
-    }
-
-    public AssemblyForcesAndMomentsCache AssemblyForcesAndMoments {
-      get;
-      private set;
-    }
+    public IEntity0dResultCache<IEnergyDensity, Entity0dExtremaKey> Element1dAverageStrainEnergyDensities { get; private set; }
+    public IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>> Element1dDisplacements { get; private set; }
+    public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>> Element1dInternalForces { get; private set; }
+    public IEntity1dResultCache<IEnergyDensity, Entity1dExtremaKey> Element1dStrainEnergyDensities { get; private set; }
+    public IEntity1dResultCache<IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> Element1dDerivedStresses { get; private set; }
+    public IEntity1dResultCache<IStress1d, ResultStress1d<Entity1dExtremaKey>> Element1dStresses { get; private set; }
+    public IMeshResultCache<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> Element2dDisplacements { get; private set; }
+    public IEntity2dLayeredResultCache<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element2dStresses { get; private set; }
+    public IMeshResultCache<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> Element2dForces { get; private set; }
+    public IMeshResultCache<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> Element2dMoments { get; private set; }
+    public IMeshResultCache<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> Element2dShearForces { get; private set; }
+    public IMeshResultCache<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> Element3dDisplacements { get; private set; }
+    public IMeshResultCache<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> Element3dStresses { get; private set; }
+    public IEntity0dResultCache<IDisplacement, ResultVector6<Entity0dExtremaKey>> NodeDisplacements { get; private set; }
+    public IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> NodeResonantFootfalls { get; private set; }
+    public IEntity0dResultCache<IReactionForce, ResultVector6<Entity0dExtremaKey>> NodeReactionForces { get; private set; }
+    public IEntity0dResultCache<IReactionForce, ResultVector6<Entity0dExtremaKey>> NodeSpringForces { get; private set; }
+    public IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>> NodeTransientFootfalls { get; private set; }
+    public IGlobalResultsCache GlobalResults { get; private set; }
+    public IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>> Member1dDisplacements { get; private set; }
+    public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>> Member1dInternalForces { get; private set; }
+    public IEntity0dResultCache<ISteelUtilisation, SteelUtilisationExtremaKeys> SteelUtilisations { get; private set; }
+    public SteelDesignEffectiveLengthCache SteelDesignEffectiveLengths { get; private set; }
+    public AssemblyDisplacementCache AssemblyDisplacements { get; private set; }
+    public AssemblyDriftsCache AssemblyDrifts { get; private set; }
+    public AssemblyDriftIndicesCache AssemblyDriftIndices { get; private set; }
+    public AssemblyForcesAndMomentsCache AssemblyForcesAndMoments { get; private set; }
 
     internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseId) {
       if (model == null || result == null) {
@@ -151,14 +69,6 @@ namespace GsaGH.Parameters.Results {
 
       InitialiseCombinationsCaseResults(model, result, caseId, permutations?.OrderBy(x => x));
     }
-
-    // Other members
-    public int CaseId { get; set; }
-    public int Permutations { get; set; } = 0;
-    public string CaseName { get; set; }
-    public GsaModel Model { get; set; }
-    public List<int> SelectedPermutationIds { get; set; }
-    public CaseType CaseType { get; set; }
 
     public override string ToString() {
       string txt = string.Empty;
