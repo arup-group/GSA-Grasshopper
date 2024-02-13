@@ -88,16 +88,6 @@ namespace GsaGH.Parameters.Results {
         maxKey.Y = new Entity1dExtremaKey(assemblyId, position, permutation);
       }
 
-      //if (item.Z.Value > maxValue.Z) {
-      //  maxValue.Z = item.Z.Value;
-      //  maxKey.Z = new Entity1dExtremaKey(assemblyId, position, permutation);
-      //}
-
-      //if (item.Xyz.Value > maxValue.Xyz) {
-      //  maxValue.Xyz = item.Xyz.Value;
-      //  maxKey.Xyz = new Entity1dExtremaKey(assemblyId, position, permutation);
-      //}
-
       if (item.Xy.Value > maxValue.Xy) {
         maxValue.Xy = item.Xy.Value;
         maxKey.Xy = new Entity1dExtremaKey(assemblyId, position, permutation);
@@ -113,16 +103,6 @@ namespace GsaGH.Parameters.Results {
         minKey.Y = new Entity1dExtremaKey(assemblyId, position, permutation);
       }
 
-      //if (item.Z.Value < minValue.Z) {
-      //  minValue.Z = item.Z.Value;
-      //  minKey.Z = new Entity1dExtremaKey(assemblyId, position, permutation);
-      //}
-
-      //if (item.Xyz.Value < minValue.Xyz) {
-      //  minValue.Xyz = item.Xyz.Value;
-      //  minKey.Xyz = new Entity1dExtremaKey(assemblyId, position, permutation);
-      //}
-
       if (item.Xy.Value < minValue.Xy) {
         minValue.Xy = item.Xy.Value;
         minKey.Xy = new Entity1dExtremaKey(assemblyId, position, permutation);
@@ -131,8 +111,7 @@ namespace GsaGH.Parameters.Results {
 
     private static void UpdateExtrema(IDrift<double> item, int assemblyId, int permutation, double position,
       ref DriftResultVector<double> maxValue, ref DriftResultVector<double> minValue,
-      ref DriftResultVector<Entity1dExtremaKey> maxKey, ref DriftResultVector<Entity1dExtremaKey> minKey)
-    {
+      ref DriftResultVector<Entity1dExtremaKey> maxKey, ref DriftResultVector<Entity1dExtremaKey> minKey) {
 
       if (item.X > maxValue.X) {
         maxValue.X = item.X;
@@ -143,16 +122,6 @@ namespace GsaGH.Parameters.Results {
         maxValue.Y = item.Y;
         maxKey.Y = new Entity1dExtremaKey(assemblyId, position, permutation);
       }
-
-      //if (item.Z > maxValue.Z) {
-      //  maxValue.Z = item.Z;
-      //  maxKey.Z = new Entity1dExtremaKey(assemblyId, position, permutation);
-      //}
-
-      //if (item.Xyz > maxValue.Xyz) {
-      //  maxValue.Xyz = item.Xyz;
-      //  maxKey.Xyz = new Entity1dExtremaKey(assemblyId, position, permutation);
-      //}
 
       if (item.Xy > maxValue.Xy) {
         maxValue.Xy = item.Xy;
@@ -168,16 +137,6 @@ namespace GsaGH.Parameters.Results {
         minValue.Y = item.Y;
         minKey.Y = new Entity1dExtremaKey(assemblyId, position, permutation);
       }
-
-      //if (item.Z < minValue.Z) {
-      //  minValue.Z = item.Z;
-      //  minKey.Z = new Entity1dExtremaKey(assemblyId, position, permutation);
-      //}
-
-      //if (item.Xyz < minValue.Xyz) {
-      //  minValue.Xyz = item.Xyz;
-      //  minKey.Xyz = new Entity1dExtremaKey(assemblyId, position, permutation);
-      //}
 
       if (item.Xy < minValue.Xy) {
         minValue.Xy = item.Xy;

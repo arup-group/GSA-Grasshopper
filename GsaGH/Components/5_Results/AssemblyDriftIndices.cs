@@ -40,8 +40,6 @@ namespace GsaGH.Components {
       int i = 0;
       Params.Output[i++].Name = "Drift Index X";
       Params.Output[i++].Name = "Drift Index Y";
-      //Params.Output[i++].Name = "Drift Index Z";
-      //Params.Output[i].Name = "Drift Index |XYZ|";
       Params.Output[i].Name = "Drift Index XY";
     }
 
@@ -72,10 +70,6 @@ namespace GsaGH.Components {
         "Drift Index in Local Assembly X-direction." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Drift Index Y", "DIy",
         "Drift Index in Local Assembly Y-direction." + note, GH_ParamAccess.tree);
-      //pManager.AddGenericParameter("Drift Index Z", "DIz",
-      //  "Drift Index in Local Assembly Z-direction." + note, GH_ParamAccess.tree);
-      //pManager.AddGenericParameter("Drift Index |XYZ|", "|DI|",
-      //  "Combined |XYZ| Drift Index." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Drift Index XY", "In-plane",
         "Drift Index in Local Assembly XY-plane." + note, GH_ParamAccess.tree);
     }
@@ -89,8 +83,6 @@ namespace GsaGH.Components {
 
       var outTransX = new DataTree<double>();
       var outTransY = new DataTree<double>();
-      //var outTransZ = new DataTree<double>();
-      //var outTransXyz = new DataTree<double>();
       var outTransXy = new DataTree<double>();
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
@@ -117,8 +109,6 @@ namespace GsaGH.Components {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outTransX.AddRange(kvp.Value[p - 1].Results.Values.Select(r => r.X), path);
               outTransY.AddRange(kvp.Value[p - 1].Results.Values.Select(r => r.Y), path);
-              //outTransZ.AddRange(kvp.Value[p - 1].Results.Values.Select(r => r.Z), path);
-              //outTransXyz.AddRange(kvp.Value[p - 1].Results.Values.Select(r => r.Xyz), path);
               outTransXy.AddRange(kvp.Value[p - 1].Results.Values.Select(r => r.Xy), path);
             }
           }
@@ -129,8 +119,6 @@ namespace GsaGH.Components {
           var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
           outTransX.Add(extrema.X, path);
           outTransY.Add(extrema.Y, path);
-          //outTransZ.Addextrema.Z, path);
-          //outTransXyz.Add(extrema.Xyz, path);
           outTransXy.Add(extrema.Xy, path);
         }
 
@@ -139,8 +127,6 @@ namespace GsaGH.Components {
 
       da.SetDataTree(0, outTransX);
       da.SetDataTree(1, outTransY);
-      //da.SetDataTree(2, outTransZ);
-      //da.SetDataTree(3, outTransXyz);
       da.SetDataTree(2, outTransXy);
     }
 

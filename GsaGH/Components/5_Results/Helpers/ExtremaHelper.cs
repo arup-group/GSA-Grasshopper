@@ -180,13 +180,9 @@ namespace GsaGH.Components.Helpers {
         "All",
         "Max Dx",
         "Max Dy",
-        //"Max Dz",
-        //"Max |D|",
         "Max In-plane",
         "Min Dx",
         "Min Dy",
-        //"Min Dz",
-        //"Min |D|",
         "Min In-plane"
       });
 
@@ -195,13 +191,9 @@ namespace GsaGH.Components.Helpers {
         "All",
         "Max DIx",
         "Max DIy",
-        //"Max DIz",
-        //"Max |DI|",
         "Max In-plane",
         "Min DIx",
         "Min DIy",
-        //"Min DIz",
-        //"Min |DI|",
         "Min In-plane"
   });
 
