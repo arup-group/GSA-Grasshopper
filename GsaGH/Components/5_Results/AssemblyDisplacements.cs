@@ -23,17 +23,17 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to get GSA beam displacement values
+  ///   Component to get GSA assembly displacement values
   /// </summary>
-  public class BeamDisplacements : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("1b7e99e8-c3c9-42c3-9474-792ddd17388d");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+  public class AssemblyDisplacements : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("9ac30786-4dd0-4071-b0b4-355d79dd96ee");
+    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.BeamDisplacements;
+    protected override Bitmap Icon => Resources.AssemblyDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
 
-    public BeamDisplacements() : base("Beam Displacements", "BeamDisp",
-      "Element1D Translation and Rotation result values", CategoryName.Name(),
+    public AssemblyDisplacements() : base("Assembly Displacements", "AssemblyDisp",
+      "Assembly Translation and Rotation result values", CategoryName.Name(),
       SubCategoryName.Cat5()) {
       Hidden = true;
     }
@@ -72,43 +72,36 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
-        GH_ParamAccess.list);
-      pManager.AddParameter(new GsaElementMemberListParameter());
-      pManager[1].Optional = true;
-      pManager.AddIntegerParameter("Intermediate Points", "nP",
-        "Number of intermediate equidistant points (default 3)", GH_ParamAccess.item, 3);
+      pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.list);
+      //pManager.AddParameter(new GsaElementMemberListParameter());
+      //pManager[1].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-      string note = ResultNotes.Note1dResults;
+      string note = ResultNotes.NoteAssemblyResults;
 
       pManager.AddGenericParameter("Translation X [" + unitAbbreviation + "]", "Ux",
-        "Translation in Local Element X-direction." + note, GH_ParamAccess.tree);
+        "Translation in Local Assembly X-direction." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translation Y [" + unitAbbreviation + "]", "Uy",
-        "Translation in Local Element Y-direction." + note, GH_ParamAccess.tree);
+        "Translation in Local Assembly Y-direction." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translation Z [" + unitAbbreviation + "]", "Uz",
-        "Translation in Local Element Z-direction." + note, GH_ParamAccess.tree);
+        "Translation in Local Assembly Z-direction." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translation |XYZ| [" + unitAbbreviation + "]", "|U|",
         "Combined |XYZ| Translation." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotation XX [rad]", "Rxx",
-        "Rotation around Local Element X-axis." + note, GH_ParamAccess.tree);
+        "Rotation around Local Assembly X-axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotation YY [rad]", "Ryy",
-        "Rotation around Local Element Y-axis." + note, GH_ParamAccess.tree);
+        "Rotation around Local Assembly Y-axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotation ZZ [rad]", "Rzz",
-        "Rotation around Local Element Z-axis." + note, GH_ParamAccess.tree);
+        "Rotation around Local Assembly Z-axis." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotation |XYZ| [rad]", "|R|",
         "Combined |XXYYZZ| Rotation." + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
       GsaResult result;
-      string elementlist = "All";
-      var ghDivisions = new GH_Integer();
-      da.GetData(2, ref ghDivisions);
-      GH_Convert.ToInt32(ghDivisions, out int positionsCount, GH_Conversion.Both);
-      positionsCount = Math.Abs(positionsCount) + 2; // taken absolute value and add 2 end points.
+      string assemblylist = "All";
 
       var ghTypes = new List<GH_ObjectWrapper>();
       da.GetDataList(0, ghTypes);
@@ -128,11 +121,10 @@ namespace GsaGH.Components {
           return;
         }
 
-        elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
+        //assemblylist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
 
-        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
-        IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet =
-          result.Element1dDisplacements.ResultSubset(elementIds, positionsCount);
+        ReadOnlyCollection<int> assemblyIds = result.AssemblyIds(assemblylist);
+        Parameters.Results.AssemblyDisplacements resultSet = result.AssemblyDisplacements.ResultSubset(assemblyIds);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
@@ -142,7 +134,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, IList<IEntity1dQuantity<IDisplacement>>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IAssemblyQuantity<IDisplacement>>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outTransX.AddRange(kvp.Value[p - 1].Results.Values.Select(
@@ -164,7 +156,7 @@ namespace GsaGH.Components {
             }
           }
         } else {
-          Entity1dExtremaKey key = ExtremaHelper.DisplacementExtremaKey(resultSet, _selectedItems[0]);
+          Entity1dExtremaKey key = ExtremaHelper.AssemblyDisplacementExtremaKey(resultSet, _selectedItems[0]);
           IDisplacement extrema = resultSet.GetExtrema(key);
           int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
           var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
@@ -178,7 +170,7 @@ namespace GsaGH.Components {
           outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz), path);
         }
 
-        PostHog.Result(result.CaseType, 1, "Displacement");
+        PostHog.Result(result.CaseType, 1, "AssemblyDisplacement");
       }
 
       da.SetDataTree(0, outTransX);

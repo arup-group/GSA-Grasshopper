@@ -137,6 +137,21 @@ namespace GsaGH.Parameters.Results {
       return Model.Model.ExpandList(entityList);
     }
 
+    internal ReadOnlyCollection<int> AssemblyIds(string assemblyList) {
+      assemblyList = assemblyList.Trim();
+      if (assemblyList.ToLower() == "all") {
+        ReadOnlyDictionary<int, Assembly> assemblies = Model.Model.Assemblies();
+        return new ReadOnlyCollection<int>(assemblies.Keys.ToList());
+      }
+
+      var entityList = new EntityList() {
+        Definition = assemblyList,
+        Type = GsaAPI.EntityType.Undefined,
+        Name = "as",
+      };
+      return Model.Model.ExpandList(entityList);
+    }
+
     private void InitialiseAnalysisCaseResults(
       GsaModel model, AnalysisCaseResult result, int caseId) {
 

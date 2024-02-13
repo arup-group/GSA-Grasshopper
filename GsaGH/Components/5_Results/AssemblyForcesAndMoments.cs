@@ -23,18 +23,18 @@ using OasysUnits.Units;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to get GSA beam force values
+  ///   Component to get GSA assembly force values
   /// </summary>
-  public class BeamForcesAndMoments : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("5dee1b78-7b47-4c65-9d17-446140fc4e0d");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary;
+  public class AssemblyForcesAndMoments : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("1ca1c8b4-aa11-45db-acd2-dd96925678f4");
+    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.BeamForcesAndMoments;
+    protected override Bitmap Icon => Resources.AssemblyForcesAndMoments;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
 
-    public BeamForcesAndMoments() : base("Beam Forces and Moments", "BeamForces",
-      "Element1D Force and Moment result values", CategoryName.Name(), SubCategoryName.Cat5()) {
+    public AssemblyForcesAndMoments() : base("Assembly Forces and Moments", "AssemblyForces",
+      "Assembly Force and Moment result values", CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
     }
 
@@ -92,10 +92,8 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
-      pManager.AddParameter(new GsaElementListParameter());
-      pManager[1].Optional = true;
-      pManager.AddIntegerParameter("Intermediate Points", "nP",
-        "Number of intermediate equidistant points (default 3)", GH_ParamAccess.item, 3);
+      //pManager.AddParameter(new GsaElementListParameter());
+      //pManager[1].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -104,39 +102,34 @@ namespace GsaGH.Components {
 
       string forcerule = Environment.NewLine + "+ve axial forces are tensile";
       string momentrule = Environment.NewLine + "Moments follow the right hand grip rule";
-      string note = ResultNotes.Note1dResults;
+      string note = ResultNotes.NoteAssemblyResults;
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx",
-        "Element Axial Force in Local Element X-direction." + forcerule + note,
+        "Assembly Axial Force in Local Element X-direction." + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy",
-        "Element Shear Force in Local Element Y-direction." + forcerule + note,
+        "Assembly Shear Force in Local Element Y-direction." + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz",
-        "Element Shear Force in Local Element Z-direction." + forcerule + note,
+        "Assembly Shear Force in Local Element Z-direction." + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force |YZ| [" + forceunitAbbreviation + "]", "|Fyz|",
-        "Total |YZ| Element Shear Force." + note, GH_ParamAccess.tree);
+        "Total |YZ| Assembly Shear Force." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx",
-        "Element Torsional Moment around Local Element X-axis." + momentrule + note,
-        GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy",
-        "Element Bending Moment around Local Element Y-axis." + momentrule + note,
+        "Assembly Torsional Moment around Local Element X-axis." + momentrule + note,
+        GH_ParamAccess.tree); pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy",
+        "Assembly Bending Moment around Local Element Y-axis." + momentrule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz",
-        "Element Bending Moment around Local Element Z-axis." + momentrule + note,
+        "Assembly Bending Moment around Local Element Z-axis." + momentrule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |YZ| [" + momentunitAbbreviation + "]", "|Myz|",
-        "Total |YYZZ| Element Bending Moment." + note, GH_ParamAccess.tree);
+        "Total |YYZZ| Assembly Bending Moment." + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
       GsaResult result;
-      string elementlist = "All";
-      var ghDivisions = new GH_Integer();
-      da.GetData(2, ref ghDivisions);
-      GH_Convert.ToInt32(ghDivisions, out int positionsCount, GH_Conversion.Both);
-      positionsCount = Math.Abs(positionsCount) + 2; // taken absolute value and add 2 end points.
+      string assemblylist = "All";
 
       var ghTypes = new List<GH_ObjectWrapper>();
       da.GetDataList(0, ghTypes);
@@ -156,10 +149,8 @@ namespace GsaGH.Components {
           return;
         }
 
-        elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
-        ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
-        IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> resultSet =
-          result.Element1dInternalForces.ResultSubset(elementIds, positionsCount);
+        ReadOnlyCollection<int> elementIds = result.AssemblyIds(assemblylist);
+        Parameters.Results.AssemblyForcesAndMoments resultSet = result.AssemblyForcesAndMoments.ResultSubset(elementIds);
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
@@ -169,7 +160,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, IList<IEntity1dQuantity<IInternalForce>>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IAssemblyQuantity<IInternalForce>>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outTransX.AddRange(kvp.Value[p - 1].Results.Values.Select(
@@ -191,7 +182,7 @@ namespace GsaGH.Components {
             }
           }
         } else {
-          Entity1dExtremaKey key = ExtremaHelper.InternalForceExtremaKey(resultSet, _selectedItems[0]);
+          Entity1dExtremaKey key = ExtremaHelper.AssemblyForceExtremaKey(resultSet, _selectedItems[0]);
           IInternalForce extrema = resultSet.GetExtrema(key);
           int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
           var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
@@ -205,7 +196,7 @@ namespace GsaGH.Components {
           outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz.ToUnit(_momentUnit)), path);
         }
 
-        PostHog.Result(result.CaseType, 1, "Force");
+        PostHog.Result(result.CaseType, 1, "AssemblyForce");
       }
 
       da.SetDataTree(0, outTransX);

@@ -1,6 +1,4 @@
-﻿using OasysUnits;
-
-namespace GsaGH.Parameters.Results {
+﻿namespace GsaGH.Parameters.Results {
   public interface IDrift<T> : IResultItem {
     T X { get; }
     T Y { get; }

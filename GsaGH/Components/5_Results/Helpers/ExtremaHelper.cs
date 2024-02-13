@@ -175,6 +175,36 @@ namespace GsaGH.Components.Helpers {
         "Min |M|",
       });
 
+    internal static readonly ReadOnlyCollection<string> AssemblyDrifts
+      = new ReadOnlyCollection<string>(new[] {
+        "All",
+        "Max Dx",
+        "Max Dy",
+        //"Max Dz",
+        //"Max |D|",
+        "Max In-plane",
+        "Min Dx",
+        "Min Dy",
+        //"Min Dz",
+        //"Min |D|",
+        "Min In-plane"
+      });
+
+    internal static readonly ReadOnlyCollection<string> AssemblyDriftIndices
+      = new ReadOnlyCollection<string>(new[] {
+        "All",
+        "Max DIx",
+        "Max DIy",
+        //"Max DIz",
+        //"Max |DI|",
+        "Max In-plane",
+        "Min DIx",
+        "Min DIy",
+        //"Min DIz",
+        //"Min |DI|",
+        "Min In-plane"
+  });
+
     internal static U FootfallExtremaKey<U>(
       IEntity0dResultSubset<IFootfall, ResultFootfall<U>> resultSet, string key) {
       return key switch {
@@ -230,6 +260,63 @@ namespace GsaGH.Components.Helpers {
         "Min Shear Z" => resultSet.Min.ElasticShearZ,
         "Min Torsional" => resultSet.Min.Torsional,
         "Min von Mises" => resultSet.Min.VonMises,
+        _ => throw new ArgumentException("Extrema case not found"),
+      };
+    }
+
+    internal static U AssemblyDisplacementExtremaKey<T, U>(
+      IAssemblyResultSubset<T, ResultVector6<U>> resultSet, string key) where T : IResultItem {
+      return key switch {
+        "Max Ux" => resultSet.Max.X,
+        "Max Uy" => resultSet.Max.Y,
+        "Max Uz" => resultSet.Max.Z,
+        "Max |U|" => resultSet.Max.Xyz,
+        "Max Rxx" => resultSet.Max.Xx,
+        "Max Ryy" => resultSet.Max.Yy,
+        "Max Rzz" => resultSet.Max.Zz,
+        "Max |R|" => resultSet.Max.Xxyyzz,
+        "Min Ux" => resultSet.Min.X,
+        "Min Uy" => resultSet.Min.Y,
+        "Min Uz" => resultSet.Min.Z,
+        "Min |U|" => resultSet.Min.Xyz,
+        "Min Rxx" => resultSet.Min.Xx,
+        "Min Ryy" => resultSet.Min.Yy,
+        "Min Rzz" => resultSet.Min.Zz,
+        "Min |R|" => resultSet.Min.Xxyyzz,
+        _ => throw new ArgumentException("Extrema case not found"),
+      };
+    }
+
+    internal static U AssemblyDriftsExtremaKey<T, U>(
+      IAssemblyResultSubset<T, DriftResultVector<U>> resultSet, string key) where T : IResultItem {
+      return key switch {
+        "Max Dx" => resultSet.Max.X,
+        "Max Dy" => resultSet.Max.Y,
+        //"Max Dz" => resultSet.Max.Z,
+        //"Max |D|" => resultSet.Max.Xyz,
+        "Max In-plane" => resultSet.Max.Xy,
+        "Min Dx" => resultSet.Min.X,
+        "Min Dy" => resultSet.Min.Y,
+        //"Min Dz" => resultSet.Min.Z,
+        //"Min |D|" => resultSet.Min.Xyz,
+        "Min In-plane" => resultSet.Min.Xy,
+        _ => throw new ArgumentException("Extrema case not found"),
+      };
+    }
+
+    internal static U AssemblyDriftIndicesExtremaKey<T, U>(
+      IAssemblyResultSubset<T, DriftResultVector<U>> resultSet, string key) where T : IResultItem {
+      return key switch {
+        "Max DIx" => resultSet.Max.X,
+        "Max DIy" => resultSet.Max.Y,
+        //"Max DIz" => resultSet.Max.Z,
+        //"Max |DI|" => resultSet.Max.Xyz,
+        "Max In-plane" => resultSet.Max.Xy,
+        "Min DIx" => resultSet.Min.X,
+        "Min DIy" => resultSet.Min.Y,
+        //"Min DIz" => resultSet.Min.Z,
+        //"Min |DI|" => resultSet.Min.Xyz,
+        "Min In-plane" => resultSet.Min.Xy,
         _ => throw new ArgumentException("Extrema case not found"),
       };
     }
@@ -340,6 +427,29 @@ namespace GsaGH.Components.Helpers {
         "Min Myy" => resultSet.Min.Yy,
         "Min Mzz" => resultSet.Min.Zz,
         "Min |M|" => resultSet.Min.Xxyyzz,
+        _ => throw new ArgumentException("Extrema case not found"),
+      };
+    }
+
+    internal static U AssemblyForceExtremaKey<T, U>(
+      IAssemblyResultSubset<T, ResultVector6<U>> resultSet, string key) where T : IResultItem {
+      return key switch {
+        "Max Fx" => resultSet.Max.X,
+        "Max Fy" => resultSet.Max.Y,
+        "Max Fz" => resultSet.Max.Z,
+        "Max |Fyz|" => resultSet.Max.Xyz,
+        "Max Mxx" => resultSet.Max.Xx,
+        "Max Myy" => resultSet.Max.Yy,
+        "Max Mzz" => resultSet.Max.Zz,
+        "Max |Myz|" => resultSet.Max.Xxyyzz,
+        "Min Fx" => resultSet.Min.X,
+        "Min Fy" => resultSet.Min.Y,
+        "Min Fz" => resultSet.Min.Z,
+        "Min |Fyz|" => resultSet.Min.Xyz,
+        "Min Mxx" => resultSet.Min.Xx,
+        "Min Myy" => resultSet.Min.Yy,
+        "Min Mzz" => resultSet.Min.Zz,
+        "Min |Myz|" => resultSet.Min.Xxyyzz,
         _ => throw new ArgumentException("Extrema case not found"),
       };
     }
