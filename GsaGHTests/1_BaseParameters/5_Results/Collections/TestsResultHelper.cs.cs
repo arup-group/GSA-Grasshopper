@@ -821,5 +821,45 @@ namespace GsaGHTests.Parameters.Results {
 
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
+
+    public static double ResultsHelper(AssemblyDisplacements result, ResultVector6 component, bool max) {
+      double d = 0;
+      ResultVector6<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
+      switch (component) {
+        case ResultVector6.X:
+          d = result.GetExtrema(extrema.X).X.Millimeters;
+          break;
+
+        case ResultVector6.Y:
+          d = result.GetExtrema(extrema.Y).Y.Millimeters;
+          break;
+
+        case ResultVector6.Z:
+          d = result.GetExtrema(extrema.Z).Z.Millimeters;
+          break;
+
+        case ResultVector6.Xyz:
+          d = result.GetExtrema(extrema.Xyz).Xyz.Millimeters;
+          break;
+
+        case ResultVector6.Xx:
+          d = result.GetExtrema(extrema.Xx).Xx.Radians;
+          break;
+
+        case ResultVector6.Yy:
+          d = result.GetExtrema(extrema.Yy).Yy.Radians;
+          break;
+
+        case ResultVector6.Zz:
+          d = result.GetExtrema(extrema.Zz).Zz.Radians;
+          break;
+
+        case ResultVector6.Xxyyzz:
+          d = result.GetExtrema(extrema.Xxyyzz).Xxyyzz.Radians;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
   }
 }
