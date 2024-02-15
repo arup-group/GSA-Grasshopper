@@ -939,5 +939,45 @@ namespace GsaGHTests.Parameters.Results {
 
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
+
+    public static double ResultsHelper(AssemblyForcesAndMoments result, ResultVector6 component, bool max) {
+      double d = 0;
+      ResultVector6<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
+      switch (component) {
+        case ResultVector6.X:
+          d = result.GetExtrema(extrema.X).X.Kilonewtons;
+          break;
+
+        case ResultVector6.Y:
+          d = result.GetExtrema(extrema.Y).Y.Kilonewtons;
+          break;
+
+        case ResultVector6.Z:
+          d = result.GetExtrema(extrema.Z).Z.Kilonewtons;
+          break;
+
+        case ResultVector6.Xyz:
+          d = result.GetExtrema(extrema.Xyz).Xyz.Kilonewtons;
+          break;
+
+        case ResultVector6.Xx:
+          d = result.GetExtrema(extrema.Xx).Xx.KilonewtonMeters;
+          break;
+
+        case ResultVector6.Yy:
+          d = result.GetExtrema(extrema.Yy).Yy.KilonewtonMeters;
+          break;
+
+        case ResultVector6.Zz:
+          d = result.GetExtrema(extrema.Zz).Zz.KilonewtonMeters;
+          break;
+
+        case ResultVector6.Xxyyzz:
+          d = result.GetExtrema(extrema.Xxyyzz).Xxyyzz.KilonewtonMeters;
+          break;
+      }
+
+      return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
   }
 }
