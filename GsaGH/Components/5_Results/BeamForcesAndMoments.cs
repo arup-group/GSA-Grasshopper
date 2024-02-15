@@ -60,7 +60,7 @@ namespace GsaGH.Components {
       Params.Output[i++].Name = "Force X [" + forceunitAbbreviation + "]";
       Params.Output[i++].Name = "Force Y [" + forceunitAbbreviation + "]";
       Params.Output[i++].Name = "Force Z [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Force |XYZ| [" + forceunitAbbreviation + "]";
+      Params.Output[i++].Name = "Force |YZ| [" + forceunitAbbreviation + "]";
       Params.Output[i++].Name = "Moment XX [" + momentunitAbbreviation + "]";
       Params.Output[i++].Name = "Moment YY [" + momentunitAbbreviation + "]";
       Params.Output[i++].Name = "Moment ZZ [" + momentunitAbbreviation + "]";
