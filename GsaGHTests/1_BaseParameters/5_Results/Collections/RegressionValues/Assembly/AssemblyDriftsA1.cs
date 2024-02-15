@@ -6,6 +6,7 @@ namespace GsaGHTests.Parameters.Results {
     // "assembly-simple.gwb" for Assembly 2 for analysis case A1
     internal static List<double> XInMillimeter() {
       return new List<double>() {
+        0,
         1.02E-06,
         1.00E-06,
         -5.16E-07,
@@ -20,6 +21,7 @@ namespace GsaGHTests.Parameters.Results {
 
     internal static List<double> YInMillimeter() {
       return new List<double>() {
+        0,
         -0.005176,
         0.003411,
         0.001123,
@@ -34,6 +36,7 @@ namespace GsaGHTests.Parameters.Results {
 
     internal static List<double> XyInMillimeter() {
       return new List<double>() {
+        0,
         0.005176,
         0.003411,
         0.001123,

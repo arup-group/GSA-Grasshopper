@@ -19,7 +19,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6.Yy)]
     [InlineData(ResultVector6.Zz)]
     [InlineData(ResultVector6.Xxyyzz)]
-    public void DisplacementsMaxFromAnalysisCaseTest(ResultVector6 component) {
+    public void AssemblyDisplacementsMaxFromAnalysisCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.AssemblySimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
@@ -43,7 +43,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6.Xxyyzz)]
     public void AssemblyDisplacementsMaxFromCombinationCaseTest(ResultVector6 component) {
       // Assemble
-      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.AssemblySimple, 1);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.AssemblySimple, 1);
       double expected = ExpectedCombinationCaseValues(component).Max();
 
       // Act
@@ -85,9 +85,9 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6.Yy)]
     [InlineData(ResultVector6.Zz)]
     [InlineData(ResultVector6.Xxyyzz)]
-    public void AssemblyDisplacementsMinFromcombinationCaseTest(ResultVector6 component) {
+    public void AssemblyDisplacementsMinFromCombinationCaseTest(ResultVector6 component) {
       // Assemble
-      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.AssemblySimple, 1);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.AssemblySimple, 1);
       double expected = ExpectedCombinationCaseValues(component).Min();
 
       // Act
@@ -137,7 +137,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6.Xxyyzz)]
     public void AssemblyDisplacementValuesFromCombinationCaseTest(ResultVector6 component) {
       // Assemble
-      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.AssemblySimple, 1);
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.AssemblySimple, 1);
       List<double> expected = ExpectedCombinationCaseValues(component);
 
       // Act
@@ -171,14 +171,14 @@ namespace GsaGHTests.Parameters.Results {
 
     private List<double> ExpectedCombinationCaseValues(ResultVector6 component) {
       switch (component) {
-        //case ResultVector6.X: return Element1dDisplacementsC4p1.XInMillimeter();
-        //case ResultVector6.Y: return Element1dDisplacementsC4p1.YInMillimeter();
-        //case ResultVector6.Z: return Element1dDisplacementsC4p1.ZInMillimeter();
-        //case ResultVector6.Xyz: return Element1dDisplacementsC4p1.XyzInMillimeter();
-        //case ResultVector6.Xx: return Element1dDisplacementsC4p1.XxInRadian();
-        //case ResultVector6.Yy: return Element1dDisplacementsC4p1.YyInRadian();
-        //case ResultVector6.Zz: return Element1dDisplacementsC4p1.ZzInRadian();
-        //case ResultVector6.Xxyyzz: return Element1dDisplacementsC4p1.XxyyzzInRadian();
+        case ResultVector6.X: return AssemblyDisplacementsC1.XInMillimeter();
+        case ResultVector6.Y: return AssemblyDisplacementsC1.YInMillimeter();
+        case ResultVector6.Z: return AssemblyDisplacementsC1.ZInMillimeter();
+        case ResultVector6.Xyz: return AssemblyDisplacementsC1.XyzInMillimeter();
+        case ResultVector6.Xx: return AssemblyDisplacementsC1.XxInRadian();
+        case ResultVector6.Yy: return AssemblyDisplacementsC1.YyInRadian();
+        case ResultVector6.Zz: return AssemblyDisplacementsC1.ZzInRadian();
+        case ResultVector6.Xxyyzz: return AssemblyDisplacementsC1.XxyyzzInRadian();
       }
 
       throw new NotImplementedException();
