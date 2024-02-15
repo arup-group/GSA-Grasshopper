@@ -4,9 +4,9 @@ using System.Linq;
 using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
-  public class AssemblyDrifts : IAssemblyResultSubset<IDrift<Length>, ResultVector6<Entity1dExtremaKey>> {
-    public ResultVector6<Entity1dExtremaKey> Max { get; private set; }
-    public ResultVector6<Entity1dExtremaKey> Min { get; private set; }
+  public class AssemblyDrifts : IAssemblyResultSubset<IDrift<Length>, DriftResultVector<Entity1dExtremaKey>> {
+    public DriftResultVector<Entity1dExtremaKey> Max { get; private set; }
+    public DriftResultVector<Entity1dExtremaKey> Min { get; private set; }
     public IList<int> Ids { get; private set; }
 
     public IDictionary<int, IList<IAssemblyQuantity<IDrift<Length>>>> Subset { get; }
@@ -15,7 +15,7 @@ namespace GsaGH.Parameters.Results {
     public AssemblyDrifts(IDictionary<int, IList<IAssemblyQuantity<IDrift<Length>>>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
-      (Max, Min) = results.GetResultVector6AssemblyExtremaKeys<IAssemblyQuantity<IDrift<Length>>, IDrift<Length>>();
+      (Max, Min) = results.GetDriftResultExtremaKeys<IAssemblyQuantity<IDrift<Length>>, IDrift<Length>>();
     }
 
     public IDrift<Length> GetExtrema(IEntity1dExtremaKey key) {

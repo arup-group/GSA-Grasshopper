@@ -18,22 +18,22 @@ namespace GsaGH.Parameters.Results {
       X = new Force(result.X, ForceUnit.Newton);
       Y = new Force(result.Y, ForceUnit.Newton);
       Z = new Force(result.Z, ForceUnit.Newton);
-      Xyz = QuantityUtility.PythagoreanTriple(Y, Z);
+      Xyz = QuantityUtility.PythagoreanQuadruple(X,Y, Z);
       Xx = new Moment(result.XX, MomentUnit.NewtonMeter);
       Yy = new Moment(result.YY, MomentUnit.NewtonMeter);
       Zz = new Moment(result.ZZ, MomentUnit.NewtonMeter);
-      Xxyyzz = QuantityUtility.PythagoreanTriple(Yy, Zz);
+      Xxyyzz = QuantityUtility.PythagoreanQuadruple(Xx, Yy, Zz);
     }
 
     internal InternalForce(AssemblyResult result) {
       X = new Force(result.Values.X, ForceUnit.Newton);
       Y = new Force(result.Values.Y, ForceUnit.Newton);
       Z = new Force(result.Values.Z, ForceUnit.Newton);
-      Xyz = QuantityUtility.PythagoreanTriple(Y, Z);
+      Xyz = QuantityUtility.PythagoreanQuadruple(X, Y, Z);
       Xx = new Moment(result.Values.XX, MomentUnit.NewtonMeter);
       Yy = new Moment(result.Values.YY, MomentUnit.NewtonMeter);
       Zz = new Moment(result.Values.ZZ, MomentUnit.NewtonMeter);
-      Xxyyzz = QuantityUtility.PythagoreanTriple(Yy, Zz);
+      Xxyyzz = QuantityUtility.PythagoreanQuadruple(Xx, Yy, Zz);
     }
   }
 }
