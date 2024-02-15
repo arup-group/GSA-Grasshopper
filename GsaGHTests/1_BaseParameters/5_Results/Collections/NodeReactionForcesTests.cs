@@ -257,7 +257,7 @@ namespace GsaGHTests.Parameters.Results {
 
         case ResultVector6.Z: return NodeReactionForcesA1.ZInKiloNewtons();
 
-        case ResultVector6.Xyz: return NodeReactionForcesA1.XyzInKiloNewtons();
+        case ResultVector6.Xyz: return NodeReactionForcesA1.YzInKiloNewtons();
 
         case ResultVector6.Xx: return NodeReactionForcesA1.XxInKiloNewtonsPerMeter();
 
@@ -280,7 +280,7 @@ namespace GsaGHTests.Parameters.Results {
 
         case ResultVector6.Z: return NodeReactionForcesC4p1.ZInKiloNewtons();
 
-        case ResultVector6.Xyz: return NodeReactionForcesC4p1.XyzInKiloNewtons();
+        case ResultVector6.Xyz: return NodeReactionForcesC4p1.YzInKiloNewtons();
 
         case ResultVector6.Xx: return NodeReactionForcesC4p1.XxInKiloNewtonsPerMeter();
 
@@ -303,7 +303,7 @@ namespace GsaGHTests.Parameters.Results {
 
         case ResultVector6.Z: return NodeReactionForcesC4p2.ZInKiloNewtons();
 
-        case ResultVector6.Xyz: return NodeReactionForcesC4p2.XyzInKiloNewtons();
+        case ResultVector6.Xyz: return NodeReactionForcesC4p2.YzInKiloNewtons();
 
         case ResultVector6.Xx: return NodeReactionForcesC4p2.XxInKiloNewtonsPerMeter();
 

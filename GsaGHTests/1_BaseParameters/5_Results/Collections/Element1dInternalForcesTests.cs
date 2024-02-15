@@ -249,11 +249,11 @@ namespace GsaGHTests.Parameters.Results {
         case ResultVector6.X: return Element1dForcesAndMomentsA1.XInKiloNewton();
         case ResultVector6.Y: return Element1dForcesAndMomentsA1.YInKiloNewton();
         case ResultVector6.Z: return Element1dForcesAndMomentsA1.ZInKiloNewton();
-        case ResultVector6.Xyz: return Element1dForcesAndMomentsA1.XyzInKiloNewton();
+        case ResultVector6.Xyz: return Element1dForcesAndMomentsA1.YzInKiloNewton();
         case ResultVector6.Xx: return Element1dForcesAndMomentsA1.XxInKiloNewtonMeter();
         case ResultVector6.Yy: return Element1dForcesAndMomentsA1.YyInKiloNewtonMeter();
         case ResultVector6.Zz: return Element1dForcesAndMomentsA1.ZzInKiloNewtonMeter();
-        case ResultVector6.Xxyyzz: return Element1dForcesAndMomentsA1.XxyyzzInKiloNewtonMeter();
+        case ResultVector6.Xxyyzz: return Element1dForcesAndMomentsA1.YyzzInKiloNewtonMeter();
       }
 
       throw new NotImplementedException();
@@ -264,11 +264,11 @@ namespace GsaGHTests.Parameters.Results {
         case ResultVector6.X: return Element1dForcesAndMomentsC4p1.XInKiloNewton();
         case ResultVector6.Y: return Element1dForcesAndMomentsC4p1.YInKiloNewton();
         case ResultVector6.Z: return Element1dForcesAndMomentsC4p1.ZInKiloNewton();
-        case ResultVector6.Xyz: return Element1dForcesAndMomentsC4p1.XyzInKiloNewton();
+        case ResultVector6.Xyz: return Element1dForcesAndMomentsC4p1.YzInKiloNewton();
         case ResultVector6.Xx: return Element1dForcesAndMomentsC4p1.XxInKiloNewtonMeter();
         case ResultVector6.Yy: return Element1dForcesAndMomentsC4p1.YyInKiloNewtonMeter();
         case ResultVector6.Zz: return Element1dForcesAndMomentsC4p1.ZzInKiloNewtonMeter();
-        case ResultVector6.Xxyyzz: return Element1dForcesAndMomentsC4p1.XxyyzzInKiloNewtonMeter();
+        case ResultVector6.Xxyyzz: return Element1dForcesAndMomentsC4p1.YyzzInKiloNewtonMeter();
       }
 
       throw new NotImplementedException();
@@ -279,11 +279,11 @@ namespace GsaGHTests.Parameters.Results {
         case ResultVector6.X: return Element1dForcesAndMomentsC4p2.XInKiloNewton();
         case ResultVector6.Y: return Element1dForcesAndMomentsC4p2.YInKiloNewton();
         case ResultVector6.Z: return Element1dForcesAndMomentsC4p2.ZInKiloNewton();
-        case ResultVector6.Xyz: return Element1dForcesAndMomentsC4p2.XyzInKiloNewton();
+        case ResultVector6.Xyz: return Element1dForcesAndMomentsC4p2.YzInKiloNewton();
         case ResultVector6.Xx: return Element1dForcesAndMomentsC4p2.XxInKiloNewtonMeter();
         case ResultVector6.Yy: return Element1dForcesAndMomentsC4p2.YyInKiloNewtonMeter();
         case ResultVector6.Zz: return Element1dForcesAndMomentsC4p2.ZzInKiloNewtonMeter();
-        case ResultVector6.Xxyyzz: return Element1dForcesAndMomentsC4p2.XxyyzzInKiloNewtonMeter();
+        case ResultVector6.Xxyyzz: return Element1dForcesAndMomentsC4p2.YyzzInKiloNewtonMeter();
       }
 
       throw new NotImplementedException();
