@@ -8,11 +8,11 @@ namespace GsaGH.Parameters.Results {
     public Force X { get; internal set; }
     public Force Y { get; internal set; }
     public Force Z { get; internal set; }
-    public Force Xyz { get; internal set; }
+    public Force Xyz { get; internal set; } // here Yz!
     public Moment Xx { get; internal set; }
     public Moment Yy { get; internal set; }
     public Moment Zz { get; internal set; }
-    public Moment Xxyyzz { get; internal set; }
+    public Moment Xxyyzz { get; internal set; } // here Yyzz!
 
     internal InternalForce(Double6 result) {
       X = new Force(result.X, ForceUnit.Newton);

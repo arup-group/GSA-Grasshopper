@@ -10,9 +10,9 @@ namespace GsaGH.Parameters.Results {
     public Length Xy { get; internal set; }
 
     internal Drift(AssemblyDriftResult result) {
-      X = new Length(result.Dx, LengthUnit.Meter);
-      Y = new Length(result.Dy, LengthUnit.Meter);
-      Xy = new Length(result.Dxy, LengthUnit.Meter);
+      X = new Length(result.X, LengthUnit.Meter);
+      Y = new Length(result.Y, LengthUnit.Meter);
+      Xy = new Length(result.XY, LengthUnit.Meter);
     }
   }
 }

@@ -6,15 +6,13 @@ using OasysUnits;
 namespace GsaGH.Parameters.Results {
   public class AssemblyDrift : IAssemblyQuantity<IDrift<Length>> {
     public IDictionary<double, IDrift<Length>> Results { get; private set; } = new Dictionary<double, IDrift<Length>>();
+    public IList<string> Storeys { get; private set; } = new List<string>();
 
     internal AssemblyDrift(ReadOnlyCollection<AssemblyDriftResult> result) {
       for (int i = 0; i < result.Count; i++) {
         Results.Add(result[i].Position, new Drift(result[i]));
+        Storeys.Add(result[i].Storey);
       }
     }
-
-    //private AssemblyDisplacement(IDictionary<double, IDisplacement> results) {
-    //  Results = results;
-    //}
   }
 }
