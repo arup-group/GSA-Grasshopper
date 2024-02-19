@@ -284,13 +284,9 @@ namespace GsaGH.Components.Helpers {
       return key switch {
         "Max Dx" => resultSet.Max.X,
         "Max Dy" => resultSet.Max.Y,
-        //"Max Dz" => resultSet.Max.Z,
-        //"Max |D|" => resultSet.Max.Xyz,
         "Max In-plane" => resultSet.Max.Xy,
         "Min Dx" => resultSet.Min.X,
         "Min Dy" => resultSet.Min.Y,
-        //"Min Dz" => resultSet.Min.Z,
-        //"Min |D|" => resultSet.Min.Xyz,
         "Min In-plane" => resultSet.Min.Xy,
         _ => throw new ArgumentException("Extrema case not found"),
       };
@@ -301,13 +297,9 @@ namespace GsaGH.Components.Helpers {
       return key switch {
         "Max DIx" => resultSet.Max.X,
         "Max DIy" => resultSet.Max.Y,
-        //"Max DIz" => resultSet.Max.Z,
-        //"Max |DI|" => resultSet.Max.Xyz,
         "Max In-plane" => resultSet.Max.Xy,
         "Min DIx" => resultSet.Min.X,
         "Min DIy" => resultSet.Min.Y,
-        //"Min DIz" => resultSet.Min.Z,
-        //"Min |DI|" => resultSet.Min.Xyz,
         "Min In-plane" => resultSet.Min.Xy,
         _ => throw new ArgumentException("Extrema case not found"),
       };

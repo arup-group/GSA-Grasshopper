@@ -48,8 +48,6 @@ namespace GsaGH.Components {
       int i = 0;
       Params.Output[i++].Name = "Drift X [" + unitAbbreviation + "]";
       Params.Output[i++].Name = "Drift Y [" + unitAbbreviation + "]";
-      //Params.Output[i++].Name = "Drift Z [" + unitAbbreviation + "]";
-      //Params.Output[i].Name = "Drift |XYZ| [" + unitAbbreviation + "]";
       Params.Output[i].Name = "Drift XY [" + unitAbbreviation + "]";
     }
 
@@ -85,10 +83,6 @@ namespace GsaGH.Components {
         "Drift in Local Assembly X-direction." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Drift Y [" + unitAbbreviation + "]", "Dy",
         "Drift in Local Assembly Y-direction." + note, GH_ParamAccess.tree);
-      //pManager.AddGenericParameter("Drift Z [" + unitAbbreviation + "]", "Dz",
-      //  "Drift in Local Assembly Z-direction." + note, GH_ParamAccess.tree);
-      //pManager.AddGenericParameter("Drift |XYZ| [" + unitAbbreviation + "]", "|D|",
-      //  "Combined |XYZ| Drift." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Drift XY [" + unitAbbreviation + "]", "In-plane",
         "Drift in Local Assembly XY-plane." + note, GH_ParamAccess.tree);
     }
@@ -102,8 +96,6 @@ namespace GsaGH.Components {
 
       var outTransX = new DataTree<GH_UnitNumber>();
       var outTransY = new DataTree<GH_UnitNumber>();
-      //var outTransZ = new DataTree<GH_UnitNumber>();
-      //var outTransXyz = new DataTree<GH_UnitNumber>();
       var outTransXy = new DataTree<GH_UnitNumber>();
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
@@ -132,10 +124,6 @@ namespace GsaGH.Components {
                 r => new GH_UnitNumber(r.X.ToUnit(_lengthUnit))), path);
               outTransY.AddRange(kvp.Value[p - 1].Results.Values.Select(
                 r => new GH_UnitNumber(r.Y.ToUnit(_lengthUnit))), path);
-              //outTransZ.AddRange(kvp.Value[p - 1].Results.Values.Select(
-              //  r => new GH_UnitNumber(r.Z.ToUnit(_lengthUnit))), path);
-              //outTransXyz.AddRange(kvp.Value[p - 1].Results.Values.Select(
-              //  r => new GH_UnitNumber(r.Xyz.ToUnit(_lengthUnit))), path);
               outTransXy.AddRange(kvp.Value[p - 1].Results.Values.Select(
                 r => new GH_UnitNumber(r.Xy.ToUnit(_lengthUnit))), path);
             }
@@ -147,8 +135,6 @@ namespace GsaGH.Components {
           var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
           outTransX.Add(new GH_UnitNumber(extrema.X.ToUnit(_lengthUnit)), path);
           outTransY.Add(new GH_UnitNumber(extrema.Y.ToUnit(_lengthUnit)), path);
-          //outTransZ.Add(new GH_UnitNumber(extrema.Z.ToUnit(_lengthUnit)), path);
-          //outTransXyz.Add(new GH_UnitNumber(extrema.Xyz.ToUnit(_lengthUnit)), path);
           outTransXy.Add(new GH_UnitNumber(extrema.Xy.ToUnit(_lengthUnit)), path);
         }
 
@@ -157,8 +143,6 @@ namespace GsaGH.Components {
 
       da.SetDataTree(0, outTransX);
       da.SetDataTree(1, outTransY);
-      //da.SetDataTree(2, outTransZ);
-      //da.SetDataTree(3, outTransXyz);
       da.SetDataTree(2, outTransXy);
     }
 
