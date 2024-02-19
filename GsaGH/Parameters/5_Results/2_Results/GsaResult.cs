@@ -114,6 +114,11 @@ namespace GsaGH.Parameters.Results {
       private set;
     }
 
+    public SteelDesignEffectiveLengthCache SteelDesignEffectiveLengths {
+      get;
+      private set;
+    }
+
     internal GsaResult(GsaModel model, AnalysisCaseResult result, int caseId) {
       if (model == null || result == null) {
         return;
@@ -235,6 +240,7 @@ namespace GsaGH.Parameters.Results {
       Member1dDisplacements = new Member1dDisplacementCache(result);
 
       SteelUtilisations = new SteelUtilisationCache(result);
+      SteelDesignEffectiveLengths = new SteelDesignEffectiveLengthCache(result);
 
       NodalForcesAndMoments = new NodalForcesAndMomentsCache(result, model?.Model);
 
@@ -278,6 +284,7 @@ namespace GsaGH.Parameters.Results {
       Member1dInternalForces = new Member1dInternalForceCache(result);
 
       SteelUtilisations = new SteelUtilisationCache(result);
+      SteelDesignEffectiveLengths = new SteelDesignEffectiveLengthCache(result);
 
       NodalForcesAndMoments = new NodalForcesAndMomentsCache(result, model?.Model);
 
