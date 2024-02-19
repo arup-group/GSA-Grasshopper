@@ -25,12 +25,12 @@ namespace GsaGH.Parameters.Results {
         string entityList = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<AssemblyDriftIndicesResult>> aCaseResults
+            ReadOnlyDictionary<int, ReadOnlyCollection<AssemblyDriftIndexResult>> aCaseResults
                = analysisCase.AssemblyDriftIndices(entityList);
 
             Parallel.ForEach(aCaseResults.Keys, entityId => {
               var positions = new Collection<double>();
-              foreach (AssemblyDriftIndicesResult result in aCaseResults[entityId]) {
+              foreach (AssemblyDriftIndexResult result in aCaseResults[entityId]) {
                 positions.Add(result.Position);
               }
 
@@ -40,14 +40,14 @@ namespace GsaGH.Parameters.Results {
             break;
 
           case CombinationCaseResult combinationCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<AssemblyDriftIndicesResult>>> cCaseResults
+            ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<AssemblyDriftIndexResult>>> cCaseResults
             = combinationCase.AssemblyDriftIndices(entityList);
 
             Parallel.ForEach(cCaseResults.Keys, entityId => {
               var permutationResults = new Collection<IAssemblyQuantity<IDrift<double>>>();
-              foreach (ReadOnlyCollection<AssemblyDriftIndicesResult> permutation in cCaseResults[entityId]) {
+              foreach (ReadOnlyCollection<AssemblyDriftIndexResult> permutation in cCaseResults[entityId]) {
                 var positions = new Collection<double>();
-                foreach (AssemblyDriftIndicesResult result in permutation) {
+                foreach (AssemblyDriftIndexResult result in permutation) {
                   positions.Add(result.Position);
                 }
 
