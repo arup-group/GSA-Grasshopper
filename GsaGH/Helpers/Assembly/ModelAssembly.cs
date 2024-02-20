@@ -541,7 +541,7 @@ namespace GsaGH.Helpers.Assembly {
           // remark if >80% of nodes are removed for elements or >66% for members
           double remarkSurvivalRate = elemCount > memCount ? 0.2 : 0.33;
 
-          if (newNodeCount == 1) {
+          if (newNodeCount == 1 && _initialNodeCount > 1) {
             owner.AddRuntimeWarning("After collapsing coincident nodes only one node remained."
               + Environment.NewLine
               + "This indicates that you have set a tolerance that is too low."

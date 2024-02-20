@@ -69,7 +69,7 @@ namespace GsaGHTests.Helpers.GH {
       ComponentTestHelper.SetInput(comp, goo, 2);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
       Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
     }
 
