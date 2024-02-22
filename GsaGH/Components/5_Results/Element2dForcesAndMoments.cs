@@ -95,6 +95,19 @@ namespace GsaGH.Components {
       Params.Output[i].Name = "Wood-Armer Y [" + momentunitAbbreviation + "]";
     }
 
+    protected override void BeforeSolveInstance() {
+      base.BeforeSolveInstance();
+
+      if (Params.Input.Count < 3) {
+        Params.RegisterInputParam(new Param_Integer());
+        Params.Input[2].Name = "Axis";
+        Params.Input[2].NickName = "Ax";
+        Params.Input[2].Description = "Standard Axis: Global (0), Local (-1), Natural (-2), Default (-10), XElevation (-11), YElevation (-12), GlobalCylindrical (-13), Vertical (-14)";
+        Params.Input[2].Access = GH_ParamAccess.item;
+        Params.Input[2].Optional = true;
+      }
+    }
+
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Max/Min",
@@ -121,8 +134,8 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
       pManager.AddParameter(new GsaElementMemberListParameter());
-      pManager[1].Optional = true;
       pManager.AddIntegerParameter("Axis", "Ax", "Standard Axis: Global (0), Local (-1), Natural (-2), Default (-10), XElevation (-11), YElevation (-12), GlobalCylindrical (-13), Vertical (-14)", GH_ParamAccess.item);
+      pManager[1].Optional = true;
       pManager[2].Optional = true;
     }
 

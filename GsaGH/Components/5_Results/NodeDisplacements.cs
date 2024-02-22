@@ -6,6 +6,7 @@ using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
@@ -50,6 +51,19 @@ namespace GsaGH.Components {
       Params.Output[i++].Name = "Translations Y [" + unitAbbreviation + "]";
       Params.Output[i++].Name = "Translations Z [" + unitAbbreviation + "]";
       Params.Output[i].Name = "Translations |XYZ| [" + unitAbbreviation + "]";
+    }
+
+    protected override void BeforeSolveInstance() {
+      base.BeforeSolveInstance();
+
+      if (Params.Input.Count < 3) {
+        Params.RegisterInputParam(new Param_Integer());
+        Params.Input[2].Name = "Axis";
+        Params.Input[2].NickName = "Ax";
+        Params.Input[2].Description = "Standard Axis: Global (0), Local (-1), Natural (-2), Default (-10), XElevation (-11), YElevation (-12), GlobalCylindrical (-13), Vertical (-14)";
+        Params.Input[2].Access = GH_ParamAccess.item;
+        Params.Input[2].Optional = true;
+      }
     }
 
     protected override void InitialiseDropdowns() {
