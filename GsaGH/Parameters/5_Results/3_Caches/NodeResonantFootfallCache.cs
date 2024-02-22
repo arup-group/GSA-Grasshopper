@@ -10,10 +10,6 @@ namespace GsaGH.Parameters.Results {
     public IDictionary<int, IList<IFootfall>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IFootfall>>();
 
-    IApiResult IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>>.ApiResult => throw new System.NotImplementedException();
-
-    IDictionary<int, IList<IFootfall>> IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>>.Cache => throw new System.NotImplementedException();
-
     internal NodeResonantFootfallCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
     }
@@ -43,10 +39,6 @@ namespace GsaGH.Parameters.Results {
 
     private bool IsInvalid(KeyValuePair<int, NodeFootfallResult> kvp) {
       return double.IsNaN(kvp.Value.MaximumResponseFactor);
-    }
-
-    IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> IEntity0dResultCache<IFootfall, ResultFootfall<Entity0dExtremaKey>>.ResultSubset(ICollection<int> list) {
-      throw new System.NotImplementedException();
     }
 
     public void SetStandardAxis(int axisId) {
