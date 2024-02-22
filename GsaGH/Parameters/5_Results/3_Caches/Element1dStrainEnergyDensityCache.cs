@@ -67,5 +67,9 @@ namespace GsaGH.Parameters.Results {
 
       return new Entity1dStrainEnergyDensities(Cache.GetSubset(elementIds, positions));
     }
+
+    public void SetStandardAxis(int axisId) {
+      throw new System.NotImplementedException();
+    }
   }
 }

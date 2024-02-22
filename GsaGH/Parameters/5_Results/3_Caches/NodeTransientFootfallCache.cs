@@ -39,5 +39,9 @@ namespace GsaGH.Parameters.Results {
     private bool IsInvalid(KeyValuePair<int, NodeFootfallResult> kvp) {
       return double.IsNaN(kvp.Value.MaximumResponseFactor);
     }
+
+    public void SetStandardAxis(int axisId) {
+      throw new System.NotImplementedException();
+    }
   }
 }

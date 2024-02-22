@@ -78,6 +78,8 @@ namespace GsaGH.Components {
       pManager[1].Optional = true;
       pManager.AddIntegerParameter("Intermediate Points", "nP",
         "Number of intermediate equidistant points (default 3)", GH_ParamAccess.item, 3);
+      pManager.AddIntegerParameter("Axis", "Ax", "Standard Axis: Global (0), Local (-1), Natural (-2), Default (-10), XElevation (-11), YElevation (-12), GlobalCylindrical (-13), Vertical (-14)", GH_ParamAccess.item);
+      pManager[3].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -128,8 +130,11 @@ namespace GsaGH.Components {
           return;
         }
 
-        elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
+        int axisId = -10;
+        da.GetData(3, ref axisId);
+        result.Element1dDisplacements.SetStandardAxis(axisId);
 
+        elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
         IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> resultSet =
           result.Element1dDisplacements.ResultSubset(elementIds, positionsCount);

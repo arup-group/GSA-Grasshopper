@@ -8,6 +8,7 @@ using GsaAPI;
 namespace GsaGH.Parameters.Results {
   public class NodeDisplacementCache : IEntity0dResultCache<IDisplacement, ResultVector6<Entity0dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
+    private int _axisId = -10;
 
     public IDictionary<int, IList<IDisplacement>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IDisplacement>>();
@@ -26,7 +27,7 @@ namespace GsaGH.Parameters.Results {
         string nodelist = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
-            ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeDisplacement(nodelist);
+            ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeDisplacement(nodelist, _axisId);
             Parallel.ForEach(aCaseResults, resultKvp => {
               if (IsInvalid(resultKvp)) {
                 return;
@@ -39,7 +40,7 @@ namespace GsaGH.Parameters.Results {
             break;
 
           case CombinationCaseResult combinationCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults = combinationCase.NodeDisplacement(nodelist);
+            ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults = combinationCase.NodeDisplacement(nodelist, _axisId);
             Parallel.ForEach(cCaseResults, resultKvp => {
               if (IsInvalid(resultKvp)) {
                 return;
@@ -71,6 +72,14 @@ namespace GsaGH.Parameters.Results {
     private bool IsNotNaN(Double6 values) {
       return !double.IsNaN(values.X) || !double.IsNaN(values.Y) || !double.IsNaN(values.Z)
         || !double.IsNaN(values.XX) || !double.IsNaN(values.YY) || !double.IsNaN(values.ZZ);
+    }
+
+    public void SetStandardAxis(int axisId) {
+      if (axisId != _axisId) {
+        Cache.Clear();
+      }
+
+      _axisId = axisId;
     }
   }
 }

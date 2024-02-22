@@ -9,6 +9,7 @@ namespace GsaGH.Parameters.Results {
   public class Element1dInternalForceCache
     : IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
+    private int _axisId = -10;
 
     public IDictionary<int, IList<IEntity1dQuantity<IInternalForce>>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IEntity1dQuantity<IInternalForce>>>();
@@ -37,7 +38,7 @@ namespace GsaGH.Parameters.Results {
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
-              = analysisCase.Element1dForce(elementList, positions);
+              = analysisCase.Element1dForce(elementList, positions, _axisId);
             Parallel.ForEach(aCaseResults.Keys, elementId =>
              concurrent.AddOrUpdate(
               elementId,
@@ -51,7 +52,7 @@ namespace GsaGH.Parameters.Results {
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
-              = combinationCase.Element1dForce(elementList, positions);
+              = combinationCase.Element1dForce(elementList, positions, _axisId);
             Parallel.ForEach(cCaseResults.Keys, elementId =>
              concurrent.AddOrUpdate(
               elementId,
@@ -66,6 +67,10 @@ namespace GsaGH.Parameters.Results {
       }
 
       return new Entity1dInternalForces(Cache.GetSubset(elementIds, positions));
+    }
+
+    public void SetStandardAxis(int axisId) {
+      throw new System.NotImplementedException();
     }
   }
 }

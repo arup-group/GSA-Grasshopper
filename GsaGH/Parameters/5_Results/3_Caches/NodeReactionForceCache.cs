@@ -12,6 +12,7 @@ namespace GsaGH.Parameters.Results {
     public IApiResult ApiResult { get; set; }
     public IDictionary<int, IList<IReactionForce>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IReactionForce>>();
+    private int _axisId = -10;
 
     internal ReadOnlyDictionary<int, Node> Nodes { get; private set; }
 
@@ -40,7 +41,7 @@ namespace GsaGH.Parameters.Results {
         string nodelist = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
-            ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeReactionForce(nodelist);
+            ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeReactionForce(nodelist, _axisId);
             Parallel.ForEach(aCaseResults, resultKvp => {
               if (!SupportNodeIds.Contains(resultKvp.Key) && IsNaN(resultKvp.Value)) {
                 return;
@@ -56,7 +57,7 @@ namespace GsaGH.Parameters.Results {
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults
-              = combinationCase.NodeReactionForce(nodelist);
+              = combinationCase.NodeReactionForce(nodelist, _axisId);
             Parallel.ForEach(cCaseResults, resultKvp => {
               if (!SupportNodeIds.Contains(resultKvp.Key) && resultKvp.Value.Any(IsNaN)) {
                 return;
@@ -91,6 +92,14 @@ namespace GsaGH.Parameters.Results {
       });
 
       SupportNodeIds = supportnodeIDs;
+    }
+
+    public void SetStandardAxis(int axisId) {
+      if (axisId != _axisId) {
+        Cache.Clear();
+      }
+
+      _axisId = axisId;
     }
   }
 }

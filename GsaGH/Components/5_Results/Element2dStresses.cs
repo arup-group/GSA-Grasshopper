@@ -82,6 +82,8 @@ namespace GsaGH.Components {
         + "Input an integer between -1 and 1, representing the normalised thickness,"
         + Environment.NewLine + "default value is zero => middle of the element.",
         GH_ParamAccess.item, 0);
+      pManager.AddIntegerParameter("Axis", "Ax", "Standard Axis: Global (0), Local (-1), Natural (-2), Default (-10), XElevation (-11), YElevation (-12), GlobalCylindrical (-13), Vertical (-14)", GH_ParamAccess.item);
+      pManager[3].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -134,6 +136,10 @@ namespace GsaGH.Components {
         if (result == null) {
           return;
         }
+
+        int axisId = -10;
+        da.GetData(3, ref axisId);
+        result.Element2dStresses.SetStandardAxis(axisId);
 
         elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);

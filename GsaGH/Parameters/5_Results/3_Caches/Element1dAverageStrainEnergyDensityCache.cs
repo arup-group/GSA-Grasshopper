@@ -50,5 +50,9 @@ namespace GsaGH.Parameters.Results {
 
       return new Entity1dAverageStrainEnergyDensity(Cache.GetSubset(elementIds));
     }
+
+    public void SetStandardAxis(int axisId) {
+      throw new System.NotImplementedException();
+    }
   }
 }

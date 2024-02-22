@@ -8,6 +8,7 @@ namespace GsaGH.Parameters.Results {
   public class Element2dDisplacementCache
     : IMeshResultCache<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
+    private int _axisId = -10;
 
     public IDictionary<int, IList<IMeshQuantity<IDisplacement>>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IMeshQuantity<IDisplacement>>>();
@@ -28,7 +29,7 @@ namespace GsaGH.Parameters.Results {
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
-              = analysisCase.Element2dDisplacement(elementList);
+              = analysisCase.Element2dDisplacement(elementList, _axisId);
             Parallel.ForEach(aCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IMeshQuantity<IDisplacement>>>)Cache).TryAdd(
               elementId, Entity2dResultsFactory.CreateDisplacements(aCaseResults[elementId])));
@@ -36,7 +37,7 @@ namespace GsaGH.Parameters.Results {
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
-              = combinationCase.Element2dDisplacement(elementList);
+              = combinationCase.Element2dDisplacement(elementList, _axisId);
             Parallel.ForEach(cCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IMeshQuantity<IDisplacement>>>)Cache).TryAdd(
               elementId, Entity2dResultsFactory.CreateDisplacements(cCaseResults[elementId])));
@@ -45,6 +46,14 @@ namespace GsaGH.Parameters.Results {
       }
 
       return new Entity2dDisplacements(Cache.GetSubset(elementIds));
+    }
+
+    public void SetStandardAxis(int axisId) {
+      if (axisId != _axisId) {
+        Cache.Clear();
+      }
+
+      _axisId = axisId;
     }
   }
 }
