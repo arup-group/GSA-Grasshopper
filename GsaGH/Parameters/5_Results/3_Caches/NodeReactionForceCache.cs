@@ -12,9 +12,8 @@ namespace GsaGH.Parameters.Results {
     public IApiResult ApiResult { get; set; }
     public IDictionary<int, IList<IReactionForce>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IReactionForce>>();
-    private int _axisId = -10;
-
     internal ReadOnlyDictionary<int, Node> Nodes { get; private set; }
+    private int _axisId = -10;
 
     internal NodeReactionForceCache(AnalysisCaseResult result, Model model) {
       ApiResult = new ApiResult(result);

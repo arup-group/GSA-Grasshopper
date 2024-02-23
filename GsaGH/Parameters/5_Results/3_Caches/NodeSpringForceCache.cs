@@ -12,7 +12,7 @@ namespace GsaGH.Parameters.Results {
     public IDictionary<int, IList<IReactionForce>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IReactionForce>>();
     private int _axisId = -10;
-
+    
     internal NodeSpringForceCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
     }

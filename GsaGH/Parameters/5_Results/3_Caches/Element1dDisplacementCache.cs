@@ -9,10 +9,9 @@ namespace GsaGH.Parameters.Results {
   public class Element1dDisplacementCache
     : IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-    private int _axisId = -10;
-
     public IDictionary<int, IList<IEntity1dQuantity<IDisplacement>>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IEntity1dQuantity<IDisplacement>>>();
+    private int _axisId = -10;
 
     internal Element1dDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);

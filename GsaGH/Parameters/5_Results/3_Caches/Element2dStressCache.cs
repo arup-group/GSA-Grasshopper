@@ -8,14 +8,13 @@ namespace GsaGH.Parameters.Results {
   public class Element2dStressCache
     : IEntity2dLayeredResultCache<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-    private int _axisId = -10;
-
     public IDictionary<int, IList<IMeshQuantity<IStress>>> CacheBottomLayer { get; }
       = new ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>();
     public IDictionary<int, IList<IMeshQuantity<IStress>>> CacheMiddleLayer { get; }
       = new ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>();
     public IDictionary<int, IList<IMeshQuantity<IStress>>> CacheTopLayer { get; }
       = new ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>();
+    private int _axisId = -10;
 
     internal Element2dStressCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);

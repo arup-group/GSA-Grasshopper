@@ -8,10 +8,9 @@ namespace GsaGH.Parameters.Results {
   public class Element3dStressCache
     : IMeshResultCache<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-    private int _axisId = -10;
-
     public IDictionary<int, IList<IMeshQuantity<IStress>>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>();
+    private int _axisId = -10;
 
     internal Element3dStressCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);

@@ -9,10 +9,9 @@ namespace GsaGH.Parameters.Results {
   public class Element1dStressCache
     : IEntity1dResultCache<IStress1d, ResultStress1d<Entity1dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-    private int _axisId = -10;
-
     public IDictionary<int, IList<IEntity1dQuantity<IStress1d>>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IEntity1dQuantity<IStress1d>>>();
+    private int _axisId = -10;
 
     internal Element1dStressCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -70,7 +69,11 @@ namespace GsaGH.Parameters.Results {
     }
 
     public void SetStandardAxis(int axisId) {
-      throw new System.NotImplementedException();
+      if(axisId != _axisId) {
+        Cache.Clear();
+      }
+
+      _axisId = axisId;
     }
   }
 }

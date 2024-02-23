@@ -8,10 +8,9 @@ namespace GsaGH.Parameters.Results {
   public class Element2dShearForceCache
     : IMeshResultCache<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-    private int _axisId = -10;
-
     public IDictionary<int, IList<IMeshQuantity<IShear2d>>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IMeshQuantity<IShear2d>>>();
+    private int _axisId = -10;
 
     internal Element2dShearForceCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);

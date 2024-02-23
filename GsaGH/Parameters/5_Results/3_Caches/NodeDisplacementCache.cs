@@ -8,10 +8,9 @@ using GsaAPI;
 namespace GsaGH.Parameters.Results {
   public class NodeDisplacementCache : IEntity0dResultCache<IDisplacement, ResultVector6<Entity0dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-    private int _axisId = -10;
-
     public IDictionary<int, IList<IDisplacement>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IDisplacement>>();
+    private int _axisId = -10;
 
     internal NodeDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);

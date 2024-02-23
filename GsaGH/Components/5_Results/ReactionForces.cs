@@ -164,7 +164,7 @@ namespace GsaGH.Components {
 
         int axisId = -10;
         da.GetData(2, ref axisId);
-        result.NodeSpringForces.SetStandardAxis(axisId);
+        result.NodeReactionForces.SetStandardAxis(axisId);
 
         nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);

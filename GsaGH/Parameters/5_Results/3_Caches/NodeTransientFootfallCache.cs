@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -41,7 +42,7 @@ namespace GsaGH.Parameters.Results {
     }
 
     public void SetStandardAxis(int axisId) {
-      throw new System.NotImplementedException();
+      throw new NotImplementedException("Footfall is independent from chosen axis");
     }
   }
 }

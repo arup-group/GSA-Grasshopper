@@ -8,10 +8,9 @@ namespace GsaGH.Parameters.Results {
   public class Element2dMomentCache
     : IMeshResultCache<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-    private int _axisId = -10;
-
     public IDictionary<int, IList<IMeshQuantity<IMoment2d>>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IMeshQuantity<IMoment2d>>>();
+    private int _axisId = -10;
 
     internal Element2dMomentCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
