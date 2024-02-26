@@ -205,6 +205,7 @@ namespace GsaGH.Components {
         da.GetData(2, ref axisId);
         result.Element2dForces.SetStandardAxis(axisId);
         result.Element2dShearForces.SetStandardAxis(axisId);
+        result.Element2dMoments.SetStandardAxis(axisId);
 
         elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);
