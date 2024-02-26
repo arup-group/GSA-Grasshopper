@@ -10,7 +10,7 @@ namespace GsaGH.Parameters.Results {
     public IApiResult ApiResult { get; set; }
     public IDictionary<int, IList<IEntity1dQuantity<IInternalForce>>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IEntity1dQuantity<IInternalForce>>>();
-    private int _axisId = 10;
+    private int _axisId = -10;
 
     internal Member1dInternalForceCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
