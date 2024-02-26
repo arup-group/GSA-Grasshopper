@@ -36,7 +36,7 @@ namespace GsaGH.Parameters.Results {
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> aCaseResults
-              = analysisCase.Member1dForce(memberList, positions);
+              = analysisCase.Member1dForce(memberList, positions, _axisId);
             Parallel.ForEach(aCaseResults.Keys, memberId =>
              concurrent.AddOrUpdate(
               memberId,
@@ -50,7 +50,7 @@ namespace GsaGH.Parameters.Results {
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Double6>>> cCaseResults
-              = combinationCase.Member1dForce(memberList, positions);
+              = combinationCase.Member1dForce(memberList, positions, _axisId);
             Parallel.ForEach(cCaseResults.Keys, memberId =>
              concurrent.AddOrUpdate(
               memberId,

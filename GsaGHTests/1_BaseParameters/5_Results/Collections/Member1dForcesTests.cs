@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GsaAPI;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using Xunit;
@@ -242,6 +243,26 @@ namespace GsaGHTests.Parameters.Results {
       }
 
       throw new NotImplementedException();
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(0)]
+    [InlineData(-2)]
+    [InlineData(-11)]
+    [InlineData(-12)]
+    [InlineData(-13)]
+    [InlineData(-14)]
+    public void SetAxisThrowsExceptionTest(int axisId) {
+      // Assemble
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+
+      // Act
+      result.Member1dInternalForces.SetStandardAxis(axisId);
+      ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
+
+      // Assert
+      Assert.Throws<GsaApiException>(() => result.Member1dInternalForces.ResultSubset(memberIds, 5));
     }
   }
 }
