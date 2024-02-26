@@ -6,7 +6,7 @@ using Xunit;
 
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
-  public class StandardAxisTest {
+  public class Element1dStandardAxisTest {
     private static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
 
