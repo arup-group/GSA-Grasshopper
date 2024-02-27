@@ -69,7 +69,7 @@ namespace GsaGH.Parameters.Results {
     }
 
     public void SetStandardAxis(int axisId) {
-      throw new System.NotImplementedException();
+      throw new NotImplementedException("Strain energy density is independent from chosen axis");
     }
   }
 }
