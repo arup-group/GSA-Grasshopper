@@ -61,8 +61,7 @@ namespace GsaGH.Parameters.Results {
       InitialiseAnalysisCaseResults(model, result, caseId);
     }
 
-    internal GsaResult(
-      GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
+    internal GsaResult(GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
       if (model == null || result == null) {
         return;
       }
@@ -152,8 +151,7 @@ namespace GsaGH.Parameters.Results {
       return Model.Model.ExpandList(entityList);
     }
 
-    private void InitialiseAnalysisCaseResults(
-      GsaModel model, AnalysisCaseResult result, int caseId) {
+    private void InitialiseAnalysisCaseResults(GsaModel model, AnalysisCaseResult result, int caseId) {
 
       Element1dAverageStrainEnergyDensities = new Element1dAverageStrainEnergyDensityCache(result);
       Element1dDisplacements = new Element1dDisplacementCache(result);
