@@ -115,6 +115,43 @@ namespace IntegrationTests.Parameters {
       Assert.Equal(0, outputD48.Value);
     }
 
+    [Fact]
+    public void SpringReactionForcesTest() {
+      GH_Document doc = Document;
+
+      IGH_Param d51 = Helper.FindParameter(doc, "d51");
+      var outputD51 = (GH_Number)d51.VolatileData.get_Branch(0)[0];
+      Assert.Equal(0, outputD51.Value);
+
+      IGH_Param d52 = Helper.FindParameter(doc, "d52");
+      var outputD52 = (GH_Number)d52.VolatileData.get_Branch(0)[0];
+      Assert.Equal(0, outputD52.Value);
+
+      IGH_Param d53 = Helper.FindParameter(doc, "d53");
+      var outputD53 = (GH_Number)d53.VolatileData.get_Branch(0)[0];
+      Assert.Equal(0, outputD53.Value);
+
+      IGH_Param d54 = Helper.FindParameter(doc, "d54");
+      var outputD54 = (GH_Number)d54.VolatileData.get_Branch(0)[0];
+      Assert.Equal(0, outputD54.Value);
+
+      IGH_Param d55 = Helper.FindParameter(doc, "d55");
+      var outputD55 = (GH_Number)d55.VolatileData.get_Branch(0)[0];
+      Assert.Equal(0, outputD55.Value);
+
+      IGH_Param d56 = Helper.FindParameter(doc, "d56");
+      var outputD56 = (GH_Number)d56.VolatileData.get_Branch(0)[0];
+      Assert.Equal(0, outputD56.Value);
+
+      IGH_Param d57 = Helper.FindParameter(doc, "d57");
+      var outputD57 = (GH_Number)d57.VolatileData.get_Branch(0)[0];
+      Assert.Equal(0, outputD57.Value);
+
+      IGH_Param d58 = Helper.FindParameter(doc, "d58");
+      var outputD58 = (GH_Number)d58.VolatileData.get_Branch(0)[0];
+      Assert.Equal(0, outputD58.Value);
+    }
+
     private static GH_Document OpenDocument() {
       string fileName = MethodBase.GetCurrentMethod().DeclaringType + ".gh";
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
