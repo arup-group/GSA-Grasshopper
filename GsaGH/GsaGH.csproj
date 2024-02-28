@@ -59,11 +59,12 @@ Copyright © Oasys 1985 - 2024</Description>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.3" />
-    <PackageReference Include="OasysGH" Version="1.0.2" />
+    <PackageReference Include="OasysUnits" Version="1.0.0" />
     <PackageReference Include="RhinoCommon" Version="6.27.20176.5001">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>compile;build</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
   
   <ItemGroup>
@@ -76,6 +77,9 @@ Copyright © Oasys 1985 - 2024</Description>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="OasysGH">
+      <HintPath>..\..\OasysGH\OasysGH\bin\x64\Debug\net48\OasysGH.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />

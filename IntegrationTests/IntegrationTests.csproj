@@ -5,9 +5,11 @@
     <Platforms>x64</Platforms>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="OasysUnits" Version="1.0.0" />
     <PackageReference Include="Rhino.Inside" Version="7.0.0" />
-    <PackageReference Include="xunit" Version="2.6.6" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="xunit" Version="2.7.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.7">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -29,6 +31,9 @@
     </Reference>
     <Reference Include="Interop.Gsa_10_2">
       <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.2\Interop.Gsa_10_2.dll</HintPath>
+    </Reference>
+    <Reference Include="OasysGH">
+      <HintPath>..\..\OasysGH\OasysGH\bin\x64\Debug\net48\OasysGH.dll</HintPath>
     </Reference>
   </ItemGroup>
 
