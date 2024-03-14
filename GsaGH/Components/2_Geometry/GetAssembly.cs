@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using GH_IO.Serialization;
@@ -17,7 +18,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Components {
   public class GetAssembly : GH_OasysComponent, IGH_VariableParameterComponent {
     public override Guid ComponentGuid => new Guid("c54ffe55-aaa7-4edc-999a-c48f6990d254");
-    public override GH_Exposure Exposure => GH_Exposure.quarternary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetAssembly;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
@@ -102,23 +103,15 @@ namespace GsaGH.Components {
       string lengthUnitAbr = Length.GetAbbreviation(_lengthUnit);
 
       pManager.AddTextParameter("Name", "Na", "Assembly Name", GH_ParamAccess.item);
-
+      pManager.AddTextParameter("Assembly type", "aT", "Assembly type", GH_ParamAccess.item);
       pManager.AddGenericParameter("List", "El", "Assembly Entities", GH_ParamAccess.item);
-
       pManager.AddIntegerParameter("Topology 1", "To1", "Node at the start of the Assembly", GH_ParamAccess.item);
-
       pManager.AddIntegerParameter("Topology 2", "To2", "Node at the end of the Assembly", GH_ParamAccess.item);
-
       pManager.AddIntegerParameter("Orientation Node", "⭮N", "Assembly Orientation Node", GH_ParamAccess.item);
-
       pManager.AddGenericParameter("Extents y [" + lengthUnitAbr + "]", "Ey", "Extents of the Assembly in y-direction", GH_ParamAccess.item);
-
       pManager.AddGenericParameter("Extents z [" + lengthUnitAbr + "]", "Ez", "Extents of the Assembly in z-direction", GH_ParamAccess.item);
-
       pManager.AddIntegerParameter("Internal Topology", "IT", " List of nodes that define the curve of the Assembly", GH_ParamAccess.list);
-
       pManager.AddIntegerParameter("Curve Fit", "CF", "Curve Fit for curved elements" + $"{Environment.NewLine}Lagrange Interpolation (2) or Circular Arc (1)", GH_ParamAccess.item);
-
       pManager.AddGenericParameter("Definition", "D", "Assembly definition", GH_ParamAccess.item);
     }
 
@@ -131,35 +124,41 @@ namespace GsaGH.Components {
       GsaAssembly assembly = assemblyGoo.Value;
 
       var entities = new GsaList("", assembly.ApiAssembly.EntityList, assembly.ApiAssembly.EntityType);
-      da.SetData(0, assembly.ApiAssembly.Name);
-      da.SetData(1, new GsaListGoo(entities));
-      da.SetData(2, assembly.ApiAssembly.Topology1);
-      da.SetData(3, assembly.ApiAssembly.Topology2);
-      da.SetData(4, assembly.ApiAssembly.OrientationNode);
-      da.SetData(5, new Length(assembly.ApiAssembly.ExtentY, LengthUnit.Meter).ToUnit(_lengthUnit));
-      da.SetData(6, new Length(assembly.ApiAssembly.ExtentZ, LengthUnit.Meter).ToUnit(_lengthUnit));
+      da.SetDataList(0, new List<object>() { assembly.ApiAssembly.Name }, 0);
+      da.SetDataList(2, new List<object>() { new GsaListGoo(entities) }, 2);
+      da.SetDataList(3, new List<object>() { assembly.ApiAssembly.Topology1 }, 3);
+      da.SetDataList(4, new List<object>() { assembly.ApiAssembly.Topology2 }, 4);
+      da.SetDataList(5, new List<object>() { assembly.ApiAssembly.OrientationNode }, 5);
+      da.SetDataList(6, new List<object>() { new Length(assembly.ApiAssembly.ExtentY, LengthUnit.Meter).ToUnit(_lengthUnit) }, 6);
+      da.SetDataList(7, new List<object>() { new Length(assembly.ApiAssembly.ExtentZ, LengthUnit.Meter).ToUnit(_lengthUnit) }, 7);
 
       switch (assembly.ApiAssembly) {
         case AssemblyByExplicitPositions byExplicitPositions:
-          da.SetDataList(7, byExplicitPositions.InternalTopology);
-          da.SetData(8, byExplicitPositions.CurveFit);
-          da.SetDataList(9, byExplicitPositions.Positions);
+          da.SetDataList(1, new List<object>() { "By explicit positions" }, 1);
+          da.SetDataList(8, byExplicitPositions.InternalTopology, 8);
+          da.SetDataList(9, new List<object>() { byExplicitPositions.CurveFit }, 9);
+          da.SetDataList(10, byExplicitPositions.Positions, 10);
           break;
 
         case AssemblyByNumberOfPoints byNumberOfPoints:
-          da.SetDataList(7, byNumberOfPoints.InternalTopology);
-          da.SetData(8, byNumberOfPoints.CurveFit);
-          da.SetData(9, byNumberOfPoints.NumberOfPoints);
+          da.SetDataList(1, new List<object>() { "By number of points" }, 1);
+          da.SetDataList(8, byNumberOfPoints.InternalTopology, 8);
+          da.SetDataList(9, new List<object>() { byNumberOfPoints.CurveFit }, 9);
+          da.SetDataList(10, new List<object>() { byNumberOfPoints.NumberOfPoints }, 10);
           break;
 
         case AssemblyBySpacingOfPoints bySpacingOfPoints:
-          da.SetDataList(7, bySpacingOfPoints.InternalTopology);
-          da.SetData(8, bySpacingOfPoints.CurveFit);
-          da.SetData(9, new Length(bySpacingOfPoints.Spacing, LengthUnit.Meter).ToUnit(_lengthUnit));
+          da.SetDataList(1, new List<object>() { "By spacing of points" }, 1);
+          da.SetDataList(8, bySpacingOfPoints.InternalTopology, 8);
+          da.SetDataList(9, new List<object>() { bySpacingOfPoints.CurveFit }, 9);
+          da.SetDataList(10, new List<object>() { new Length(bySpacingOfPoints.Spacing, LengthUnit.Meter).ToUnit(_lengthUnit) }, 10);
           break;
 
         case AssemblyByStorey byStorey:
-          da.SetData(9, byStorey.StoreyList);
+          da.SetDataList(1, new List<object>() { "By storey" }, 1);
+          da.SetDataList(8, null, 8);
+          da.SetDataList(9, null, 9);
+          da.SetDataList(10, new List<object>() { byStorey.StoreyList }, 10);
           break;
       }
     }

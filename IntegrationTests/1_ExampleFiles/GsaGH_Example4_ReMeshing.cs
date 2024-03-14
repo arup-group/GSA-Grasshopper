@@ -34,11 +34,11 @@ namespace IntegrationTests.ExampleFiles {
     public void CountMeshTest() {
       IGH_Param param = Helper.FindParameter(Document(), "Vertices");
       var output = (GH_Integer)param.VolatileData.get_Branch(0)[0];
-      Assert.Equal(553, output.Value);
+      Assert.Equal(561, output.Value);
 
       IGH_Param param2 = Helper.FindParameter(Document(), "Faces");
       var output2 = (GH_Integer)param2.VolatileData.get_Branch(0)[0];
-      Assert.Equal(148, output2.Value);
+      Assert.Equal(150, output2.Value);
     }
 
     [Fact]

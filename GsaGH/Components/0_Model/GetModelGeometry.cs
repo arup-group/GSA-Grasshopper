@@ -412,7 +412,7 @@ namespace GsaGH.Components {
         "2D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
       pManager.AddParameter(new GsaMember3dParameter(), "3D Members in [" + unitAbbreviation + "]", "M3D",
         "3D Members (Design Layer) from GSA Model imported to selected unit", GH_ParamAccess.list);
-      pManager.AddParameter(new GsaAssemblyParameter(), "Assemblies", "A",
+      pManager.AddParameter(new GsaAssemblyParameter(), "Assemblies", "As",
         "Assemblies from GSA Model", GH_ParamAccess.list);
     }
 

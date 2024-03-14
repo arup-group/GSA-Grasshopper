@@ -15,7 +15,7 @@ using OasysUnits.Units;
 namespace GsaGH.Components {
   public class GetEffectiveLengthOptions : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("363fe80b-d18d-4d5a-88ad-dd3ab72595d9");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GetEffectiveLengthOptions;
 

@@ -14,7 +14,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class MemberEndRestraintInfo : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("945c9221-6dd1-4d9e-8622-42bfd816b65d");
-    public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.MemberEndRestraintInfo;
 
