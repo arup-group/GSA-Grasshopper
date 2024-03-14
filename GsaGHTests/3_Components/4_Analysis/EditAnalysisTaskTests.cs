@@ -27,8 +27,8 @@ namespace GsaGHTests.Components.Analysis {
 
       var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(comp);
 
-      Assert.Equal("my Task", output.Value.Name);
-      Assert.Equal(AnalysisTaskType.Static, output.Value.Type);
+      Assert.Equal("my Task", output.Value.Task.Name);
+      Assert.Equal((int)AnalysisTaskType.Static, output.Value.Task.Type);
       Assert.Equal("my Case", output.Value.Cases[0].Name);
       Assert.Equal("1.4L1 + 0.8L3", output.Value.Cases[0].Definition);
     }

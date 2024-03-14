@@ -2,6 +2,7 @@
 using GsaGH.Parameters;
 using GsaGHTests.Helper;
 using GsaGHTests.Model;
+using OasysGH.Components;
 using Xunit;
 using LoadCaseType = GsaGH.Parameters.LoadCaseType;
 
@@ -216,7 +217,7 @@ namespace GsaGHTests.Helpers.Export {
       var steelExample = new GsaModel();
       steelExample.Model.Open(GsaFile.SteelDesignSimple);
 
-      OasysGH.Components.GH_OasysDropDownComponent assemblyComponent = CreateModelTest.CreateModelFromModels(new List<GsaModelGoo>() {
+      GH_OasysDropDownComponent assemblyComponent = CreateModelTest.CreateModelFromModels(new List<GsaModelGoo>() {
           new GsaModelGoo(steelExample),
           loadModelGoo,
         });

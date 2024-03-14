@@ -84,7 +84,7 @@ namespace GsaGH.Components {
         }
 
         da.SetData(0, new GsaAnalysisTaskGoo(gsaTask));
-        da.SetData(1, gsaTask.Name);
+        da.SetData(1, gsaTask.Task.Name);
         if (gsaTask.Cases != null) {
           da.SetDataList(2,
             new List<GsaAnalysisCaseGoo>(gsaTask.Cases.Select(x => new GsaAnalysisCaseGoo(x))));
@@ -92,7 +92,7 @@ namespace GsaGH.Components {
           da.SetData(2, null);
         }
 
-        da.SetData(3, gsaTask.Type.ToString());
+        da.SetData(3, gsaTask.Task.Type.ToString());
         da.SetData(4, gsaTask.Id);
       } else {
         string type = analysisTaskGoo.Value.GetType().ToString();

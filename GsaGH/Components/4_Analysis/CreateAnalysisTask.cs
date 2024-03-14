@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -97,18 +98,27 @@ namespace GsaGH.Components {
           "Default Task has been created; it will by default contain all cases found in model");
       }
 
-      if (_tasktype != AnalysisTaskType.Static) {
-        this.AddRuntimeWarning("It is currently not possible to adjust the solver settings. "
-          + Environment.NewLine
-          + "Please verify the solver settings in GSA ('Task and Cases' -> 'Analysis Tasks')");
+      AnalysisTask task = null;
+      switch (_tasktype) {
+        case AnalysisTaskType.Static:
+          task = null;
+          break;
+
+        case AnalysisTaskType.StaticPDelta:
+          task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask("", new GeometricStiffnessFromResultCase(1));
+          break;
+
+        default:
+          this.AddRuntimeWarning("It is currently not possible to create Analysis Tasks of type " + _tasktype);
+          break;
       }
 
-      var task = new GsaAnalysisTask {
-        Name = name,
+      var gsaAnalysisTask = new GsaAnalysisTask() {
         Cases = cases,
-        Type = _tasktype,
+        Task = task,
       };
-      da.SetData(0, new GsaAnalysisTaskGoo(task));
+
+      da.SetData(0, new GsaAnalysisTaskGoo(gsaAnalysisTask));
     }
 
     protected override void UpdateUIFromSelectedItems() {

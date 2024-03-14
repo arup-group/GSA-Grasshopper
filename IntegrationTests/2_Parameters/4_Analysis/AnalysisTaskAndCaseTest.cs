@@ -111,14 +111,14 @@ namespace IntegrationTests.Parameters {
       var output = (GsaAnalysisTaskGoo)param.VolatileData.get_Branch(0)[0];
       GsaAnalysisTask gsaghobject = output.Value;
 
-      Assert.Equal("Task 1", gsaghobject.Name);
+      Assert.Equal("Task 1", gsaghobject.Task.Name);
       Assert.Equal(1, gsaghobject.Id);
       Assert.Equal(2, gsaghobject.Cases.Count);
       Assert.Equal("DL", gsaghobject.Cases[0].Name);
       Assert.Equal("LL", gsaghobject.Cases[1].Name);
       Assert.Equal("L1", gsaghobject.Cases[0].Definition);
       Assert.Equal("L2", gsaghobject.Cases[1].Definition);
-      Assert.Equal(AnalysisTaskType.Static, gsaghobject.Type);
+      Assert.Equal((int)AnalysisTaskType.Static, gsaghobject.Task.Type);
     }
 
     [Fact]
