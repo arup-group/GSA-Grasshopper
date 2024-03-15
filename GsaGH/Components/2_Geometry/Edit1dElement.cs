@@ -135,9 +135,10 @@ namespace GsaGH.Components {
       var elem = new GsaElement1d();
 
       GsaElement1dGoo element1dGoo = null;
-      if (da.GetData(0, ref element1dGoo)) {
-        elem = new GsaElement1d(element1dGoo.Value);
+      if (!da.GetData(0, ref element1dGoo)) {
+        return;
       }
+      elem = new GsaElement1d(element1dGoo.Value);
 
       var ghString = new GH_String();
       if (da.GetData(5, ref ghString)) {

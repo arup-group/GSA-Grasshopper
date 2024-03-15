@@ -82,9 +82,10 @@ namespace GsaGH.Components {
       var elem = new GsaElement3d();
 
       GsaElement3dGoo element3dGoo = null;
-      if (da.GetData(0, ref element3dGoo)) {
-        elem = new GsaElement3d(element3dGoo.Value);
+      if (!da.GetData(0, ref element3dGoo)) {
+        return;
       }
+      elem = new GsaElement3d(element3dGoo.Value);
 
       // 1 ID
       var ghIds = new List<GH_Integer>();
