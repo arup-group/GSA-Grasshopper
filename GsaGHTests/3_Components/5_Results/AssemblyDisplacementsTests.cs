@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GsaGH.Components;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
@@ -46,7 +45,7 @@ namespace GsaGHTests.Components.Results {
 
       List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
-      // Assert Max in set
+      // Assert
       double max = output.Max().As(Unit(component));
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
     }
@@ -60,22 +59,20 @@ namespace GsaGHTests.Components.Results {
     [InlineData(ResultVector6.Yy)]
     [InlineData(ResultVector6.Zz)]
     [InlineData(ResultVector6.Xxyyzz)]
-    public void Element1dDisplacementsMaxFromCombinationCaseTest(ResultVector6 component) {
+    public void AssemblyDisplacementsMaxFromCombinationCaseTest(ResultVector6 component) {
       // Assemble
-      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
-      double expected = Math.Max(ExpectedCombinationCaseC4p1Values(component).Max(),
-        ExpectedCombinationCaseC4p2Values(component).Max());
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.AssemblySimple, 1);
+      double expected = ExpectedCombinationCaseC1Values(component).Max();
 
       // Act
-      var comp = new BeamDisplacements();
+      var comp = new AssemblyDisplacements();
       comp.SetSelected(0, 1 + (int)component);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       ComponentTestHelper.SetInput(comp, "2", 1);
-      ComponentTestHelper.SetInput(comp, 2, 2); // number of divisions, 2 + ends = 4
 
       List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
-      // Assert Max in set
+      // Assert
       double max = output.Max().As(Unit(component));
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
     }
@@ -89,21 +86,20 @@ namespace GsaGHTests.Components.Results {
     [InlineData(ResultVector6.Yy)]
     [InlineData(ResultVector6.Zz)]
     [InlineData(ResultVector6.Xxyyzz)]
-    public void Element1dDisplacementsMinFromAnalysisCaseTest(ResultVector6 component) {
+    public void AssemblyDisplacementsMinFromAnalysisCaseTest(ResultVector6 component) {
       // Assemble
-      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.AssemblySimple, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
-      var comp = new BeamDisplacements();
+      var comp = new AssemblyDisplacements();
       comp.SetSelected(0, 9 + (int)component);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       ComponentTestHelper.SetInput(comp, "2", 1);
-      ComponentTestHelper.SetInput(comp, 2, 2); // number of divisions, 2 + ends = 4
 
       List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
-      // Assert Min in set
+      // Assert 
       double min = output.Min().As(Unit(component));
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
@@ -117,22 +113,20 @@ namespace GsaGHTests.Components.Results {
     [InlineData(ResultVector6.Yy)]
     [InlineData(ResultVector6.Zz)]
     [InlineData(ResultVector6.Xxyyzz)]
-    public void Element1dDisplacementsMinFromcombinationCaseTest(ResultVector6 component) {
+    public void AssemblyDisplacementsMinFromcombinationCaseTest(ResultVector6 component) {
       // Assemble
-      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
-      double expected = Math.Min(ExpectedCombinationCaseC4p1Values(component).Min(),
-        ExpectedCombinationCaseC4p2Values(component).Min());
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.AssemblySimple, 1);
+      double expected = ExpectedCombinationCaseC1Values(component).Min();
 
       // Act
-      var comp = new BeamDisplacements();
+      var comp = new AssemblyDisplacements();
       comp.SetSelected(0, 9 + (int)component);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       ComponentTestHelper.SetInput(comp, "2", 1);
-      ComponentTestHelper.SetInput(comp, 2, 2); // number of divisions, 2 + ends = 4
 
       List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
-      // Assert Min in set
+      // Assert
       double min = output.Min().As(Unit(component));
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
@@ -152,31 +146,16 @@ namespace GsaGHTests.Components.Results {
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseC4p1Values(ResultVector6 component) {
+    private List<double> ExpectedCombinationCaseC1Values(ResultVector6 component) {
       switch (component) {
-        case ResultVector6.X: return Element1dDisplacementsC4p1.XInMillimeter();
-        case ResultVector6.Y: return Element1dDisplacementsC4p1.YInMillimeter();
-        case ResultVector6.Z: return Element1dDisplacementsC4p1.ZInMillimeter();
-        case ResultVector6.Xyz: return Element1dDisplacementsC4p1.XyzInMillimeter();
-        case ResultVector6.Xx: return Element1dDisplacementsC4p1.XxInRadian();
-        case ResultVector6.Yy: return Element1dDisplacementsC4p1.YyInRadian();
-        case ResultVector6.Zz: return Element1dDisplacementsC4p1.ZzInRadian();
-        case ResultVector6.Xxyyzz: return Element1dDisplacementsC4p1.XxyyzzInRadian();
-      }
-
-      throw new NotImplementedException();
-    }
-
-    private List<double> ExpectedCombinationCaseC4p2Values(ResultVector6 component) {
-      switch (component) {
-        case ResultVector6.X: return Element1dDisplacementsC4p2.XInMillimeter();
-        case ResultVector6.Y: return Element1dDisplacementsC4p2.YInMillimeter();
-        case ResultVector6.Z: return Element1dDisplacementsC4p2.ZInMillimeter();
-        case ResultVector6.Xyz: return Element1dDisplacementsC4p2.XyzInMillimeter();
-        case ResultVector6.Xx: return Element1dDisplacementsC4p2.XxInRadian();
-        case ResultVector6.Yy: return Element1dDisplacementsC4p2.YyInRadian();
-        case ResultVector6.Zz: return Element1dDisplacementsC4p2.ZzInRadian();
-        case ResultVector6.Xxyyzz: return Element1dDisplacementsC4p2.XxyyzzInRadian();
+        case ResultVector6.X: return AssemblyDisplacementsC1.XInMillimeter();
+        case ResultVector6.Y: return AssemblyDisplacementsC1.YInMillimeter();
+        case ResultVector6.Z: return AssemblyDisplacementsC1.ZInMillimeter();
+        case ResultVector6.Xyz: return AssemblyDisplacementsC1.XyzInMillimeter();
+        case ResultVector6.Xx: return AssemblyDisplacementsC1.XxInRadian();
+        case ResultVector6.Yy: return AssemblyDisplacementsC1.YyInRadian();
+        case ResultVector6.Zz: return AssemblyDisplacementsC1.ZzInRadian();
+        case ResultVector6.Xxyyzz: return AssemblyDisplacementsC1.XxyyzzInRadian();
       }
 
       throw new NotImplementedException();
