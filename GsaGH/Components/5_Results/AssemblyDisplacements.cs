@@ -121,7 +121,7 @@ namespace GsaGH.Components {
           return;
         }
 
-        //assemblylist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
+        assemblylist = Inputs.GetAssemblyListDefinition(this, da, 1, result.Model);
 
         ReadOnlyCollection<int> assemblyIds = result.AssemblyIds(assemblylist);
         Parameters.Results.AssemblyDisplacements resultSet = result.AssemblyDisplacements.ResultSubset(assemblyIds);

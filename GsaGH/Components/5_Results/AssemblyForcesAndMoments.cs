@@ -149,6 +149,8 @@ namespace GsaGH.Components {
           return;
         }
 
+        assemblylist = Inputs.GetAssemblyListDefinition(this, da, 1, result.Model);
+
         ReadOnlyCollection<int> elementIds = result.AssemblyIds(assemblylist);
         Parameters.Results.AssemblyForcesAndMoments resultSet = result.AssemblyForcesAndMoments.ResultSubset(elementIds);
 
