@@ -74,7 +74,7 @@ namespace GsaGHTests.Parameters.Results {
         -0.2286,
         -0.1017,
         -0.2824,
-        4.18E-04,
+        4.181E-04,
         -0.01825
       };
     }

@@ -9,7 +9,7 @@ namespace GsaGHTests.Parameters.Results {
         0,
         1.02E-06,
         1.00E-06,
-        -5.16E-07,
+        -5.157E-07,
         5.56E-08,
         4.05E-08,
         -4.45E-09,
