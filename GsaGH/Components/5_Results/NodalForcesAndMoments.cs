@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
-using GH_IO.Serialization;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
-using GsaAPI;
 using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
@@ -23,7 +19,6 @@ using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using MomentUnit = OasysUnits.Units.MomentUnit;
 
@@ -99,7 +94,9 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
       pManager.AddParameter(new GsaNodeListParameter());
+      pManager.AddIntegerParameter("Axis", "Ax", "Standard Axis: Global (0), Local (-1), Natural (-2), Default (-10), XElevation (-11), YElevation (-12), GlobalCylindrical (-13), Vertical (-14)", GH_ParamAccess.item);
       pManager[1].Optional = true;
+      pManager[2].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -107,25 +104,24 @@ namespace GsaGH.Components {
       string momentunitAbbreviation = Moment.GetAbbreviation(_momentUnit);
 
       string note = ResultNotes.NoteNodeResults;
-      string axis = " in Global Axis.";
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx",
-        "Nodal Forces in Global X-direction" + axis + note, GH_ParamAccess.tree);
+        "Nodal Force in X-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy",
-        "Nodal Forces in Global Y-direction" + axis + note, GH_ParamAccess.tree);
+        "Nodal Force in Y-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz",
-        "Nodal Forces in Global Z-direction" + axis + note, GH_ParamAccess.tree);
+        "Nodal Force in Z-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force |XYZ| [" + forceunitAbbreviation + "]", "|F|",
-        "Combined |XYZ| Nodal Forces" + axis + note, GH_ParamAccess.tree);
+        "Combined |XYZ| Nodal Force" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx",
-        "Nodal Moments around Global X-axis" + axis + note, GH_ParamAccess.tree);
+        "Nodal Moment around X-axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy",
-        "Nodal Moments around Global Y-axis" + axis + note, GH_ParamAccess.tree);
+        "Nodal Moment around Y-axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz",
-        "Nodal Moments around Global Z-axis" + axis + note, GH_ParamAccess.tree);
+        "Nodal Moment around Z-axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]", "|M|",
-        "Combined |XXYYZZ| Nodal Moments" + axis + note, GH_ParamAccess.tree);
-      pManager.AddIntegerParameter("Nodes IDs", "ID", "Node IDs for each result value",
+        "Combined |XXYYZZ| Nodal Moment" + note, GH_ParamAccess.tree);
+      pManager.AddIntegerParameter("Node IDs", "ID", "Node IDs for each result value",
         GH_ParamAccess.list);
     }
 
