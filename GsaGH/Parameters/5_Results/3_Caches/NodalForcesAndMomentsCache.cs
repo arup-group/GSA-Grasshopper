@@ -8,20 +8,17 @@ using GsaAPI;
 namespace GsaGH.Parameters.Results {
   public class NodalForcesAndMomentsCache : IEntity0dResultCache<IReactionForce, ResultVector6<Entity0dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-
-    private readonly Model _model;
+    private int _axisId = -10;
 
     public IDictionary<int, IList<IReactionForce>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IReactionForce>>();
 
-    internal NodalForcesAndMomentsCache(AnalysisCaseResult result, Model model) {
+    internal NodalForcesAndMomentsCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
-      _model = model;
     }
 
-    internal NodalForcesAndMomentsCache(CombinationCaseResult result, Model model) {
+    internal NodalForcesAndMomentsCache(CombinationCaseResult result) {
       ApiResult = new ApiResult(result);
-      _model = model;
     }
 
     public IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> ResultSubset(ICollection<int> nodeIds) {
@@ -30,7 +27,7 @@ namespace GsaGH.Parameters.Results {
         string nodelist = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
-            ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeConstraintForce(nodelist);
+            ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeConstraintForce(nodelist, _axisId);
             Parallel.ForEach(aCaseResults, resultKvp => {
               if (IsInvalid(resultKvp)) {
                 return;
@@ -43,7 +40,7 @@ namespace GsaGH.Parameters.Results {
             break;
 
           case CombinationCaseResult combinationCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults = combinationCase.NodeConstraintForce(nodelist);
+            ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults = combinationCase.NodeConstraintForce(nodelist, _axisId);
             Parallel.ForEach(cCaseResults, resultKvp => {
               if (IsInvalid(resultKvp)) {
                 return;
@@ -74,6 +71,14 @@ namespace GsaGH.Parameters.Results {
     private bool IsNotNaN(Double6 values) {
       return !double.IsNaN(values.X) || !double.IsNaN(values.Y) || !double.IsNaN(values.Z)
         || !double.IsNaN(values.XX) || !double.IsNaN(values.YY) || !double.IsNaN(values.ZZ);
+    }
+
+    public void SetStandardAxis(int axisId) {
+      if (axisId != _axisId) {
+        Cache.Clear();
+      }
+
+      _axisId = axisId;
     }
   }
 }

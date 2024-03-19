@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters.Results {
       };
     }
 
-    internal static List<double> XyzInKiloNewton() {
+    internal static List<double> YzInKiloNewton() {
       return new List<double>() {
         37.50,
 18.75,
@@ -74,7 +74,7 @@ namespace GsaGHTests.Parameters.Results {
       };
     }
 
-    internal static List<double> XxyyzzInKiloNewtonMeter() {
+    internal static List<double> YyzzInKiloNewtonMeter() {
       return new List<double>() {
         236.7E-9,
 52.73,

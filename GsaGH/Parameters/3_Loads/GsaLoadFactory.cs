@@ -257,7 +257,6 @@ namespace GsaGH.Parameters {
             Nodes.Vector3dFromXyzUnit(ax.XYPlane.X, ax.XYPlane.Y, ax.XYPlane.Z, unit));
         } else {
           plane = Plane.WorldXY;
-          plane.OriginZ = new Length(gp.Elevation, LengthUnit.Meter).As(unit);
         }
         gps.Plane = plane;
       }

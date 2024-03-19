@@ -143,9 +143,59 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AssemblyDisplacements {
+            get {
+                object obj = ResourceManager.GetObject("AssemblyDisplacements", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AssemblyDriftIndices {
+            get {
+                object obj = ResourceManager.GetObject("AssemblyDriftIndices", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AssemblyDrifts {
+            get {
+                object obj = ResourceManager.GetObject("AssemblyDrifts", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AssemblyForcesAndMoments {
+            get {
+                object obj = ResourceManager.GetObject("AssemblyForcesAndMoments", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap AssemblyParam {
             get {
                 object obj = ResourceManager.GetObject("AssemblyParam", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AssemblyStabilityIndices {
+            get {
+                object obj = ResourceManager.GetObject("AssemblyStabilityIndices", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
