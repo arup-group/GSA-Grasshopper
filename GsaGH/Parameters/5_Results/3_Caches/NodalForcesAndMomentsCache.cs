@@ -1,17 +1,16 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using GsaAPI;
 
 namespace GsaGH.Parameters.Results {
-  public class NodalForcesAndMomentsCache : IEntity0dResultCache<IReactionForce, ResultVector6<Entity0dExtremaKey>> {
+  public class NodalForcesAndMomentsCache {
     public IApiResult ApiResult { get; set; }
     private int _axisId = -10;
 
-    public IDictionary<int, IList<IReactionForce>> Cache { get; }
-      = new ConcurrentDictionary<int, IList<IReactionForce>>();
+    public IDictionary<int, Collection<IDictionary<int, IReactionForce>>> Cache { get; }
+      = new ConcurrentDictionary<int, Collection<IDictionary<int, IReactionForce>>>();
 
     internal NodalForcesAndMomentsCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -21,56 +20,42 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> ResultSubset(ICollection<int> nodeIds) {
+    public NodalForcesAndMomentsSubset ResultSubset(ICollection<int> nodeIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(nodeIds);
       if (missingIds.Count > 0) {
         string nodelist = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
-            ReadOnlyDictionary<int, Double6> aCaseResults = analysisCase.NodeConstraintForce(nodelist, _axisId);
+            ReadOnlyDictionary<int, ReadOnlyDictionary<int, Double6>> aCaseResults = analysisCase.NodalForcesAndMoments(nodelist, _axisId);
             Parallel.ForEach(aCaseResults, resultKvp => {
-              if (IsInvalid(resultKvp)) {
-                return;
+              var res = new ConcurrentDictionary<int, IReactionForce>();
+              foreach (KeyValuePair<int, Double6> force in resultKvp.Value) {
+                res.TryAdd(force.Key, new ReactionForce(force.Value));
               }
 
-              var res = new ReactionForce(resultKvp.Value);
-              ((ConcurrentDictionary<int, IList<IReactionForce>>)Cache).TryAdd(
-                resultKvp.Key, new Collection<IReactionForce>() { res });
+              Cache.Add(resultKvp.Key, new Collection<IDictionary<int, IReactionForce>>() { res });
             });
             break;
 
           case CombinationCaseResult combinationCase:
-            ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> cCaseResults = combinationCase.NodeConstraintForce(nodelist, _axisId);
+            ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyDictionary<int, Double6>>> cCaseResults = combinationCase.NodalForcesAndMoments(nodelist, _axisId);
             Parallel.ForEach(cCaseResults, resultKvp => {
-              if (IsInvalid(resultKvp)) {
-                return;
+              var permutationResults = new Collection<IDictionary<int, IReactionForce>>();
+              foreach (ReadOnlyDictionary<int, Double6> permutation in resultKvp.Value) {
+                var res = new ConcurrentDictionary<int, IReactionForce>();
+                foreach (KeyValuePair<int, Double6> force in permutation) {
+                  res.TryAdd(force.Key, new ReactionForce(force.Value));
+                }
+
+                permutationResults.Add(res);
               }
 
-              var permutationResults = new Collection<IReactionForce>();
-              foreach (Double6 permutation in resultKvp.Value) {
-                permutationResults.Add(new ReactionForce(permutation));
-              }
-
-              ((ConcurrentDictionary<int, IList<IReactionForce>>)Cache).TryAdd(
-                resultKvp.Key, permutationResults);
+              Cache.Add(resultKvp.Key, permutationResults);
             });
             break;
         }
       }
       return new NodalForcesAndMomentsSubset(Cache.GetSubset(nodeIds));
-    }
-
-    private bool IsInvalid(KeyValuePair<int, ReadOnlyCollection<Double6>> kvp) {
-      return kvp.Value.Any(res => !IsNotNaN(res));
-    }
-
-    private bool IsInvalid(KeyValuePair<int, Double6> kvp) {
-      return !IsNotNaN(kvp.Value);
-    }
-
-    private bool IsNotNaN(Double6 values) {
-      return !double.IsNaN(values.X) || !double.IsNaN(values.Y) || !double.IsNaN(values.Z)
-        || !double.IsNaN(values.XX) || !double.IsNaN(values.YY) || !double.IsNaN(values.ZZ);
     }
 
     public void SetStandardAxis(int axisId) {

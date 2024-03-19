@@ -47,7 +47,7 @@ namespace GsaGH.Parameters.Results {
     public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>> Member1dInternalForces { get; private set; }
     public IEntity0dResultCache<ISteelUtilisation, SteelUtilisationExtremaKeys> SteelUtilisations { get; private set; }
     public SteelDesignEffectiveLengthCache SteelDesignEffectiveLengths { get; private set; }
-    public IEntity0dResultCache<IReactionForce, ResultVector6<Entity0dExtremaKey>> NodalForcesAndMoments { get; private set; }
+    public NodalForcesAndMomentsCache NodalForcesAndMoments { get; private set; }
     public AssemblyDisplacementCache AssemblyDisplacements { get; private set; }
     public AssemblyDriftsCache AssemblyDrifts { get; private set; }
     public AssemblyDriftIndicesCache AssemblyDriftIndices { get; private set; }

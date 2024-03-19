@@ -121,7 +121,7 @@ namespace GsaGH.Components {
         "Nodal Moment around Z-axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]", "|M|",
         "Combined |XXYYZZ| Nodal Moment" + note, GH_ParamAccess.tree);
-      pManager.AddIntegerParameter("Node IDs", "ID", "Node IDs for each result value",
+      pManager.AddIntegerParameter("Element IDs", "ID", "Element IDs for each result value",
         GH_ParamAccess.list);
     }
 
@@ -148,9 +148,13 @@ namespace GsaGH.Components {
           return;
         }
 
+        int axisId = -10;
+        da.GetData(2, ref axisId);
+        result.NodalForcesAndMoments.SetStandardAxis(axisId);
+
         nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-        IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> resultSet = result.NodalForcesAndMoments.ResultSubset(nodeIds);
+        NodalForcesAndMomentsSubset resultSet = result.NodalForcesAndMoments.ResultSubset(nodeIds);
 
         if (resultSet.Ids.Count < 1) {
           this.AddRuntimeWarning("There is no nodal forces and moments");
@@ -167,33 +171,21 @@ namespace GsaGH.Components {
         if (_selectedItems[0] == ExtremaHelper.Vector6ReactionForces[0]) {
           foreach (int id in resultSet.Ids) {
             foreach (int p in permutations) {
-              var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p);
-              IReactionForce res = resultSet.Subset[id][p - 1];
-              outTransX.Add(new GH_UnitNumber(res.XToUnit(_forceUnit)), path);
-              outTransY.Add(new GH_UnitNumber(res.YToUnit(_forceUnit)), path);
-              outTransZ.Add(new GH_UnitNumber(res.ZToUnit(_forceUnit)), path);
-              outTransXyz.Add(new GH_UnitNumber(res.XyzToUnit(_forceUnit)), path);
-              outRotX.Add(new GH_UnitNumber(res.XxToUnit(_momentUnit)), path);
-              outRotY.Add(new GH_UnitNumber(res.YyToUnit(_momentUnit)), path);
-              outRotZ.Add(new GH_UnitNumber(res.ZzToUnit(_momentUnit)), path);
-              outRotXyz.Add(new GH_UnitNumber(res.XxyyzzToUnit(_momentUnit)), path);
-              outIDs.Add(id, path);
+              IDictionary<int, IReactionForce> res = resultSet.Subset[id][p - 1];
+              var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, id);
+              foreach (KeyValuePair<int, IReactionForce> force in res) {
+                outTransX.Add(new GH_UnitNumber(force.Value.XToUnit(_forceUnit)), path);
+                outTransY.Add(new GH_UnitNumber(force.Value.YToUnit(_forceUnit)), path);
+                outTransZ.Add(new GH_UnitNumber(force.Value.ZToUnit(_forceUnit)), path);
+                outTransXyz.Add(new GH_UnitNumber(force.Value.XyzToUnit(_forceUnit)), path);
+                outRotX.Add(new GH_UnitNumber(force.Value.XxToUnit(_momentUnit)), path);
+                outRotY.Add(new GH_UnitNumber(force.Value.YyToUnit(_momentUnit)), path);
+                outRotZ.Add(new GH_UnitNumber(force.Value.ZzToUnit(_momentUnit)), path);
+                outRotXyz.Add(new GH_UnitNumber(force.Value.XxyyzzToUnit(_momentUnit)), path);
+                outIDs.Add(force.Key, path);
+              }
             }
           }
-        } else {
-          Entity0dExtremaKey key = ExtremaHelper.ReactionForceExtremaKey(resultSet, _selectedItems[0]);
-          IReactionForce extrema = resultSet.GetExtrema(key);
-          int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
-          var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
-          outTransX.Add(new GH_UnitNumber(extrema.XToUnit(_forceUnit)), path);
-          outTransY.Add(new GH_UnitNumber(extrema.YToUnit(_forceUnit)), path);
-          outTransZ.Add(new GH_UnitNumber(extrema.ZToUnit(_forceUnit)), path);
-          outTransXyz.Add(new GH_UnitNumber(extrema.XyzToUnit(_forceUnit)), path);
-          outRotX.Add(new GH_UnitNumber(extrema.XxToUnit(_momentUnit)), path);
-          outRotY.Add(new GH_UnitNumber(extrema.YyToUnit(_momentUnit)), path);
-          outRotZ.Add(new GH_UnitNumber(extrema.ZzToUnit(_momentUnit)), path);
-          outRotXyz.Add(new GH_UnitNumber(extrema.XxyyzzToUnit(_momentUnit)), path);
-          outIDs.Add(key.Id, path);
         }
 
         PostHog.Result(result.CaseType, 2, "NodalForcesAndMoments");
