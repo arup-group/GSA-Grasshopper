@@ -39,7 +39,7 @@ namespace GsaGH {
     internal static int MinGsaVersion = 4;
     internal const string TermsConditions
       = "Oasys terms and conditions apply. See https://www.oasys-software.com/terms-conditions for details. ";
-    internal const string Vers = "1.2.0";
+    internal const string Vers = "1.2.1";
     internal static string disclaimer = $"{PluginName} is pre-release and under active development, " +
       $"including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. " +
       $"Future versions may contain breaking changes. Any files, results, or other types of output information created using " +
