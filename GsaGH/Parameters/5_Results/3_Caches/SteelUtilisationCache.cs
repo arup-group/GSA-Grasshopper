@@ -19,8 +19,8 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> ResultSubset(ICollection<int> elementIds) {
-      ConcurrentBag<int> missingIds = Cache.GetMissingKeys(elementIds);
+    public IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> ResultSubset(ICollection<int> memberIds) {
+      ConcurrentBag<int> missingIds = Cache.GetMissingKeys(memberIds);
       if (missingIds.Count > 0) {
         string elementList = string.Join(" ", missingIds);
         switch (ApiResult.Result) {
@@ -48,7 +48,7 @@ namespace GsaGH.Parameters.Results {
         }
       }
 
-      return new SteelUtilisations(Cache.GetSubset(elementIds));
+      return new SteelUtilisations(Cache.GetSubset(memberIds));
     }
   }
 }
