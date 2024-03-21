@@ -64,6 +64,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(GlobalPerformanceResults))]
     [InlineData(typeof(Member1dDisplacements))]
     [InlineData(typeof(Member1dForcesAndMoments))]
+    [InlineData(typeof(NodalForcesAndMoments))]
     [InlineData(typeof(NodeDisplacements))]
     [InlineData(typeof(ReactionForces))]
     [InlineData(typeof(SpringReactionForces))]

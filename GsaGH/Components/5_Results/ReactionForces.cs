@@ -6,6 +6,7 @@ using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
@@ -67,6 +68,19 @@ namespace GsaGH.Components {
       Params.Output[i].Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
     }
 
+    protected override void BeforeSolveInstance() {
+      base.BeforeSolveInstance();
+
+      if (Params.Input.Count < 3) {
+        Params.RegisterInputParam(new Param_Integer());
+        Params.Input[2].Name = "Axis";
+        Params.Input[2].NickName = "Ax";
+        Params.Input[2].Description = "Standard Axis: Global (0), Local (-1), Natural (-2), Default (-10), XElevation (-11), YElevation (-12), GlobalCylindrical (-13), Vertical (-14)";
+        Params.Input[2].Access = GH_ParamAccess.item;
+        Params.Input[2].Optional = true;
+      }
+    }
+
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
         "Max/Min",
@@ -93,7 +107,9 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
       pManager.AddParameter(new GsaNodeListParameter());
+      pManager.AddIntegerParameter("Axis", "Ax", "Standard Axis: Global (0), Local (-1), Natural (-2), Default (-10), XElevation (-11), YElevation (-12), GlobalCylindrical (-13), Vertical (-14)", GH_ParamAccess.item);
       pManager[1].Optional = true;
+      pManager[2].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -101,25 +117,24 @@ namespace GsaGH.Components {
       string momentunitAbbreviation = Moment.GetAbbreviation(_momentUnit);
 
       string note = ResultNotes.NoteNodeResults;
-      string axis = " in Global Axis.";
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx",
-        "Reaction Forces in Global X-direction" + axis + note, GH_ParamAccess.tree);
+        "Reaction Force in X-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy",
-        "Reaction Forces in Global Y-direction" + axis + note, GH_ParamAccess.tree);
+        "Reaction Force in Y-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz",
-        "Reaction Forces in Global Z-direction" + axis + note, GH_ParamAccess.tree);
+        "Reaction Force in Z-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force |XYZ| [" + forceunitAbbreviation + "]", "|F|",
-        "Combined |XYZ| Reaction Forces" + axis + note, GH_ParamAccess.tree);
+        "Combined |XYZ| Reaction Force" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx",
-        "Reaction Moments around Global X-axis" + axis + note, GH_ParamAccess.tree);
+        "Reaction Moment around X-axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy",
-        "Reaction Moments around Global Y-axis" + axis + note, GH_ParamAccess.tree);
+        "Reaction Moment around Y-axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz",
-        "Reaction Moments around Global Z-axis" + axis + note, GH_ParamAccess.tree);
+        "Reaction Moment around Z-axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]", "|M|",
-        "Combined |XXYYZZ| Reaction Moments" + axis + note, GH_ParamAccess.tree);
-      pManager.AddIntegerParameter("Nodes IDs", "ID", "Node IDs for each result value",
+        "Combined |XXYYZZ| Reaction Moment" + note, GH_ParamAccess.tree);
+      pManager.AddIntegerParameter("Node IDs", "ID", "Node IDs for each result value",
         GH_ParamAccess.list);
     }
 
@@ -145,6 +160,10 @@ namespace GsaGH.Components {
         if (result == null) {
           return;
         }
+
+        int axisId = -10;
+        da.GetData(2, ref axisId);
+        result.NodeReactionForces.SetStandardAxis(axisId);
 
         nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
