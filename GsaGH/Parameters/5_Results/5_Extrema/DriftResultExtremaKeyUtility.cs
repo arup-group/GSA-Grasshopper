@@ -5,7 +5,7 @@ namespace GsaGH.Parameters.Results {
   public static partial class ExtremaKeyUtility {
     public static (ResultVector6<Entity1dExtremaKey> Max, ResultVector6<Entity1dExtremaKey> Min) GetResultVector6AssemblyExtremaKeys<T, U>(
       this IDictionary<int, IList<T>> subset)
-      where T : IAssemblyQuantity<U> where U : IResultItem {
+      where T : IEntity1dQuantity<U> where U : IResultItem {
 
       var maxValue = new ResultVector6<double?>(double.MinValue);
       var minValue = new ResultVector6<double?>(double.MaxValue);
@@ -18,13 +18,13 @@ namespace GsaGH.Parameters.Results {
         for (int permutation = 0; permutation < values.Count; permutation++) {
           foreach (double position in values[permutation].Results.Keys) {
             switch (values[permutation]) {
-              case IAssemblyQuantity<IDisplacement> displacement:
+              case IEntity1dQuantity<IDisplacement> displacement:
                 UpdateExtrema<IDisplacement, Length, Angle>(displacement.Results[position],
                   elementId, permutation, position,
                   ref maxValue, ref minValue, ref maxKey, ref minKey);
                 break;
 
-              case IAssemblyQuantity<IInternalForce> force:
+              case IEntity1dQuantity<IInternalForce> force:
                 UpdateExtrema<IInternalForce, Force, Moment>(force.Results[position],
                   elementId, permutation, position,
                   ref maxValue, ref minValue, ref maxKey, ref minKey);
@@ -40,7 +40,7 @@ namespace GsaGH.Parameters.Results {
 
     public static (DriftResultVector<Entity1dExtremaKey> Max, DriftResultVector<Entity1dExtremaKey> Min) GetDriftResultExtremaKeys<T, U>(
       this IDictionary<int, IList<T>> subset)
-      where T : IAssemblyQuantity<U> where U : IResultItem {
+      where T : IEntity1dQuantity<U> where U : IResultItem {
 
       var maxValue = new DriftResultVector<double>(double.MinValue);
       var minValue = new DriftResultVector<double>(double.MaxValue);
@@ -53,13 +53,13 @@ namespace GsaGH.Parameters.Results {
         for (int permutation = 0; permutation < values.Count; permutation++) {
           foreach (double position in values[permutation].Results.Keys) {
             switch (values[permutation]) {
-              case IAssemblyQuantity<IDrift<Length>> drift:
+              case IEntity1dQuantity<IDrift<Length>> drift:
                 UpdateExtrema<IDrift<Length>, Length>(drift.Results[position],
                   assemblyId, permutation, position,
                   ref maxValue, ref minValue, ref maxKey, ref minKey);
                 break;
 
-              case IAssemblyQuantity<IDrift<double>> driftIndex:
+              case IEntity1dQuantity<IDrift<double>> driftIndex:
                 UpdateExtrema(driftIndex.Results[position],
                   assemblyId, permutation, position,
                   ref maxValue, ref minValue, ref maxKey, ref minKey);

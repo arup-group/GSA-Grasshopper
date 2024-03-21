@@ -22,7 +22,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class AssemblyDriftIndices : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("daf4ab65-cad8-4c8f-9a34-7897c260e6d5");
-    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.AssemblyDriftIndices;
 
@@ -104,7 +104,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, IList<IAssemblyQuantity<IDrift<double>>>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IEntity1dQuantity<IDrift<double>>>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outTransX.AddRange(kvp.Value[p - 1].Results.Values.Select(r => r.X), path);

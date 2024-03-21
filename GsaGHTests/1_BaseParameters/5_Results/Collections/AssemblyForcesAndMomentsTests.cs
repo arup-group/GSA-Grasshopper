@@ -116,7 +116,7 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyForcesAndMoments resultSet = result.AssemblyForcesAndMoments.ResultSubset(new Collection<int>() { 2 });
 
       // Assert
-      IList<IAssemblyQuantity<IInternalForce>> forceQuantity = resultSet.Subset[2];
+      IList<IEntity1dQuantity<IInternalForce>> forceQuantity = resultSet.Subset[2];
       Assert.Single(forceQuantity);
 
       int position = 0;
@@ -144,7 +144,7 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyForcesAndMoments resultSet = result.AssemblyForcesAndMoments.ResultSubset(new Collection<int>() { 2 });
 
       // Assert
-      IList<IAssemblyQuantity<IInternalForce>> forceQuantity = resultSet.Subset[2];
+      IList<IEntity1dQuantity<IInternalForce>> forceQuantity = resultSet.Subset[2];
       Assert.Single(forceQuantity);
 
       int position = 0;

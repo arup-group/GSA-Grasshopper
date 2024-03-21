@@ -91,7 +91,7 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyDrifts resultSet = result.AssemblyDrifts.ResultSubset(new Collection<int>() { 2 });
 
       // Assert
-      IList<IAssemblyQuantity<IDrift<Length>>> driftQuantity = resultSet.Subset[2];
+      IList<IEntity1dQuantity<IDrift<Length>>> driftQuantity = resultSet.Subset[2];
       Assert.Single(driftQuantity);
 
       int position = 0;
@@ -114,7 +114,7 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyDrifts resultSet = result.AssemblyDrifts.ResultSubset(new Collection<int>() { 2 });
 
       // Assert
-      IList<IAssemblyQuantity<IDrift<Length>>> driftQuantity = resultSet.Subset[2];
+      IList<IEntity1dQuantity<IDrift<Length>>> driftQuantity = resultSet.Subset[2];
       Assert.Single(driftQuantity);
 
       int position = 0;

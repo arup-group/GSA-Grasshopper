@@ -27,7 +27,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class AssemblyForcesAndMoments : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("1ca1c8b4-aa11-45db-acd2-dd96925678f4");
-    public override GH_Exposure Exposure => GH_Exposure.senary | GH_Exposure.obscure;
+    public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.AssemblyForcesAndMoments;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
@@ -162,7 +162,7 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, IList<IAssemblyQuantity<IInternalForce>>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IEntity1dQuantity<IInternalForce>>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
               outTransX.AddRange(kvp.Value[p - 1].Results.Values.Select(

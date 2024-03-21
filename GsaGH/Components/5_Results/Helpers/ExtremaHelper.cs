@@ -257,7 +257,7 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U AssemblyDisplacementExtremaKey<T, U>(
-      IAssemblyResultSubset<T, ResultVector6<U>> resultSet, string key) where T : IResultItem {
+      IEntity1dResultSubset<T, ResultVector6<U>> resultSet, string key) where T : IResultItem {
       return key switch {
         "Max Ux" => resultSet.Max.X,
         "Max Uy" => resultSet.Max.Y,
@@ -280,7 +280,7 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U AssemblyDriftsExtremaKey<T, U>(
-      IAssemblyResultSubset<T, DriftResultVector<U>> resultSet, string key) where T : IResultItem {
+      IEntity1dResultSubset<T, DriftResultVector<U>> resultSet, string key) where T : IResultItem {
       return key switch {
         "Max Dx" => resultSet.Max.X,
         "Max Dy" => resultSet.Max.Y,
@@ -293,7 +293,7 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U AssemblyDriftIndicesExtremaKey<T, U>(
-      IAssemblyResultSubset<T, DriftResultVector<U>> resultSet, string key) where T : IResultItem {
+      IEntity1dResultSubset<T, DriftResultVector<U>> resultSet, string key) where T : IResultItem {
       return key switch {
         "Max DIx" => resultSet.Max.X,
         "Max DIy" => resultSet.Max.Y,
@@ -416,7 +416,7 @@ namespace GsaGH.Components.Helpers {
     }
 
     internal static U AssemblyForceExtremaKey<T, U>(
-      IAssemblyResultSubset<T, ResultVector6<U>> resultSet, string key) where T : IResultItem {
+      IEntity1dResultSubset<T, ResultVector6<U>> resultSet, string key) where T : IResultItem {
       return key switch {
         "Max Fx" => resultSet.Max.X,
         "Max Fy" => resultSet.Max.Y,
