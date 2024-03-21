@@ -126,9 +126,7 @@ namespace GsaGH.Components {
       "Derived Stress",
       "Strain Energy",
       "Footfall",
-      "Steel Design",
-      "Drifts",
-      "Drift Indices"
+      "Steel Design"
     });
     private string _case = string.Empty;
     private double _defScale = 250;

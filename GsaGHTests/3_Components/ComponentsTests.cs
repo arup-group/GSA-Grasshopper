@@ -74,6 +74,8 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SteelDesignEffectiveLength), 2)]
     [InlineData(typeof(TotalLoadsAndReactions), 2)]
     // Display
+    [InlineData(typeof(AssemblyResultDiagrams), 2)]
+    [InlineData(typeof(AssemblyResults), 2)]
     [InlineData(typeof(Contour1dResults), 2)]
     [InlineData(typeof(Contour2dResults), 2)]
     [InlineData(typeof(Contour3dResults), 2)]
