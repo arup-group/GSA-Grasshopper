@@ -119,6 +119,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(FootfallResults))]
     [InlineData(typeof(GetResult))]
     [InlineData(typeof(GlobalPerformanceResults))]
+    [InlineData(typeof(NodalForcesAndMoments))]
     [InlineData(typeof(NodeDisplacements))]
     [InlineData(typeof(ReactionForces))]
     [InlineData(typeof(ReactionForceDiagrams))]

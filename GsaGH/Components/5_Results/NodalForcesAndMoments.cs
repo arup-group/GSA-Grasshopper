@@ -41,13 +41,13 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
       switch (i) {
-        case 1:
+        case 0:
           _forceUnit
-            = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[1]);
+            = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[0]);
           break;
 
-        case 2:
-          _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[2]);
+        case 1:
+          _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[1]);
           break;
       }
 
@@ -70,16 +70,12 @@ namespace GsaGH.Components {
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
-        "Max/Min",
         "Force Unit",
         "Moment Unit",
       });
 
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
-
-      _dropDownItems.Add(ExtremaHelper.Vector6ReactionForces.ToList());
-      _selectedItems.Add(_dropDownItems[0][0]);
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
       _selectedItems.Add(Force.GetAbbreviation(_forceUnit));
@@ -168,22 +164,20 @@ namespace GsaGH.Components {
           permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
         }
 
-        if (_selectedItems[0] == ExtremaHelper.Vector6ReactionForces[0]) {
-          foreach (int id in resultSet.Ids) {
-            foreach (int p in permutations) {
-              IDictionary<int, IReactionForce> res = resultSet.Subset[id][p - 1];
-              var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, id);
-              foreach (KeyValuePair<int, IReactionForce> force in res) {
-                outTransX.Add(new GH_UnitNumber(force.Value.XToUnit(_forceUnit)), path);
-                outTransY.Add(new GH_UnitNumber(force.Value.YToUnit(_forceUnit)), path);
-                outTransZ.Add(new GH_UnitNumber(force.Value.ZToUnit(_forceUnit)), path);
-                outTransXyz.Add(new GH_UnitNumber(force.Value.XyzToUnit(_forceUnit)), path);
-                outRotX.Add(new GH_UnitNumber(force.Value.XxToUnit(_momentUnit)), path);
-                outRotY.Add(new GH_UnitNumber(force.Value.YyToUnit(_momentUnit)), path);
-                outRotZ.Add(new GH_UnitNumber(force.Value.ZzToUnit(_momentUnit)), path);
-                outRotXyz.Add(new GH_UnitNumber(force.Value.XxyyzzToUnit(_momentUnit)), path);
-                outIDs.Add(force.Key, path);
-              }
+        foreach (int id in resultSet.Ids) {
+          foreach (int p in permutations) {
+            IDictionary<int, IReactionForce> res = resultSet.Subset[id][p - 1];
+            var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, id);
+            foreach (KeyValuePair<int, IReactionForce> force in res) {
+              outTransX.Add(new GH_UnitNumber(force.Value.XToUnit(_forceUnit)), path);
+              outTransY.Add(new GH_UnitNumber(force.Value.YToUnit(_forceUnit)), path);
+              outTransZ.Add(new GH_UnitNumber(force.Value.ZToUnit(_forceUnit)), path);
+              outTransXyz.Add(new GH_UnitNumber(force.Value.XyzToUnit(_forceUnit)), path);
+              outRotX.Add(new GH_UnitNumber(force.Value.XxToUnit(_momentUnit)), path);
+              outRotY.Add(new GH_UnitNumber(force.Value.YyToUnit(_momentUnit)), path);
+              outRotZ.Add(new GH_UnitNumber(force.Value.ZzToUnit(_momentUnit)), path);
+              outRotXyz.Add(new GH_UnitNumber(force.Value.XxyyzzToUnit(_momentUnit)), path);
+              outIDs.Add(force.Key, path);
             }
           }
         }
@@ -203,8 +197,8 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[1]);
-      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[2]);
+      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[0]);
+      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
   }
