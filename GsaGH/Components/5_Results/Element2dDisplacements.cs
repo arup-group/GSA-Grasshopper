@@ -98,22 +98,22 @@ namespace GsaGH.Components {
 
       string note = ResultNotes.Note2dResults;
 
-      pManager.AddGenericParameter("Translations X [" + unitAbbreviation + "]", "Ux",
-        "Translations in X-direction in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Translations Y [" + unitAbbreviation + "]", "Uy",
-        "Translations in Y-direction in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Translations Z [" + unitAbbreviation + "]", "Uz",
-        "Translations in Z-direction in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Translations |XYZ| [" + unitAbbreviation + "]", "|U|",
-        "Combined |XYZ| Translations." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Rotations XX [rad]", "Rxx",
-        "Rotations around X-axis in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Rotations YY [rad]", "Ryy",
-        "Rotations around Y-axis in Global Axiss." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Rotations ZZ [rad]", "Rzz",
-        "Rotations around Z-axis in Global Axis." + note, GH_ParamAccess.tree);
-      pManager.AddGenericParameter("Rotations |XYZ| [rad]", "|R|",
-        "Combined |XXYYZZ| Rotations." + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Translation X [" + unitAbbreviation + "]", "Ux",
+        "Translation in X-direction" + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Translation Y [" + unitAbbreviation + "]", "Uy",
+        "Translation in Y-direction" + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Translation Z [" + unitAbbreviation + "]", "Uz",
+        "Translation in Z-direction" + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Translation |XYZ| [" + unitAbbreviation + "]", "|U|",
+        "Combined |XYZ| Translation" + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Rotation XX [rad]", "Rxx",
+        "Rotation around X-axis" + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Rotation YY [rad]", "Ryy",
+        "Rotation around Y-axis" + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Rotation ZZ [rad]", "Rzz",
+        "Rotation around Z-axis" + note, GH_ParamAccess.tree);
+      pManager.AddGenericParameter("Rotation |XYZ| [rad]", "|R|",
+        "Combined |XXYYZZ| Rotation" + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {

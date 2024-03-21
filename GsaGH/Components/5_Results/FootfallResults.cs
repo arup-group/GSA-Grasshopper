@@ -84,7 +84,7 @@ namespace GsaGH.Components {
         "The node ID of the critical frequency" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Critical Frequency [" + hz + "]", "Cf",
         "The critical frequency" + note, GH_ParamAccess.tree);
-      pManager.AddIntegerParameter("Nodes IDs", "ID", "Node IDs for each result value",
+      pManager.AddIntegerParameter("Node IDs", "ID", "Node IDs for each result value",
         GH_ParamAccess.tree);
     }
 

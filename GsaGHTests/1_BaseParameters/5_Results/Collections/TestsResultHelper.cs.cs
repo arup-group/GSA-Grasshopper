@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
 using OasysUnits;
@@ -978,6 +979,61 @@ namespace GsaGHTests.Parameters.Results {
       }
 
       return ResultHelper.RoundToSignificantDigits(d, 4);
+    }
+
+    internal static List<double> ResultsHelper(IDictionary<int, IReactionForce> result, ResultVector6 component) {
+      var d = new List<double>();
+      switch (component) {
+        case ResultVector6.X:
+          foreach (IReactionForce force in result.Values) {
+            d.Add(((Force)force.X).Kilonewtons);
+          }
+          break;
+
+        case ResultVector6.Y:
+          foreach (IReactionForce force in result.Values) {
+            d.Add(((Force)force.Y).Kilonewtons);
+          }
+          break;
+
+        case ResultVector6.Z:
+          foreach (IReactionForce force in result.Values) {
+            d.Add(((Force)force.Z).Kilonewtons);
+          }
+          break;
+
+        case ResultVector6.Xyz:
+          foreach (IReactionForce force in result.Values) {
+            d.Add(((Force)force.Xyz).Kilonewtons);
+          }
+          break;
+
+        case ResultVector6.Xx:
+          foreach (IReactionForce force in result.Values) {
+            d.Add(((Moment)force.Xx).KilonewtonMeters);
+          }
+          break;
+
+        case ResultVector6.Yy:
+          foreach (IReactionForce force in result.Values) {
+            d.Add(((Moment)force.Yy).KilonewtonMeters);
+          }
+          break;
+
+        case ResultVector6.Zz:
+          foreach (IReactionForce force in result.Values) {
+            d.Add(((Moment)force.Zz).KilonewtonMeters);
+          }
+          break;
+
+        case ResultVector6.Xxyyzz:
+          foreach (IReactionForce force in result.Values) {
+            d.Add(((Moment)force.Xxyyzz).KilonewtonMeters);
+          }
+          break;
+      }
+
+      return d;
     }
   }
 }

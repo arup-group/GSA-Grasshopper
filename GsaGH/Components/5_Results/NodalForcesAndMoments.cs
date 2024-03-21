@@ -6,7 +6,6 @@ using System.Linq;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
@@ -20,34 +19,35 @@ using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
+using ForceUnit = OasysUnits.Units.ForceUnit;
+using MomentUnit = OasysUnits.Units.MomentUnit;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to get GSA spring reaction forces
+  ///   Component to retrieve non-geometric objects from a GSA model
   /// </summary>
-  public class SpringReactionForces : GH_OasysDropDownComponent {
-    public override Guid ComponentGuid => new Guid("60f6a109-577d-4e90-8790-7f8cf110b230");
-    public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
+  public class NodalForcesAndMoments : GH_OasysDropDownComponent {
+    public override Guid ComponentGuid => new Guid("3da705d4-d926-4c80-ab35-c64f4463fd3f");
+    public override GH_Exposure Exposure => GH_Exposure.quinary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.SpringReactionForces;
+    protected override Bitmap Icon => Resources.NodalForcesAndMoments;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
-
-    public SpringReactionForces() : base("Spring Reaction Forces", "SpringForce",
-      "Spring Reaction Force result values", CategoryName.Name(), SubCategoryName.Cat5()) {
+    public NodalForcesAndMoments() : base("Nodal Forces and Moments", "NodalForces",
+      "Nodal Force and Moment result values", CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
     }
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
       switch (i) {
-        case 1:
-          _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[i]);
+        case 0:
+          _forceUnit
+            = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[0]);
           break;
 
-        case 2:
-          _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[i]);
+        case 1:
+          _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[1]);
           break;
       }
 
@@ -61,38 +61,21 @@ namespace GsaGH.Components {
       Params.Output[i++].Name = "Force X [" + forceunitAbbreviation + "]";
       Params.Output[i++].Name = "Force Y [" + forceunitAbbreviation + "]";
       Params.Output[i++].Name = "Force Z [" + forceunitAbbreviation + "]";
-      Params.Output[i++].Name = "Force |XYZ| [" + forceunitAbbreviation + "]";
+      Params.Output[i++].Name = "Force |F| [" + forceunitAbbreviation + "]";
       Params.Output[i++].Name = "Moment XX [" + momentunitAbbreviation + "]";
       Params.Output[i++].Name = "Moment YY [" + momentunitAbbreviation + "]";
       Params.Output[i++].Name = "Moment ZZ [" + momentunitAbbreviation + "]";
-      Params.Output[i].Name = "Moment |XXYYZZ| [" + momentunitAbbreviation + "]";
-    }
-
-    protected override void BeforeSolveInstance() {
-      base.BeforeSolveInstance();
-
-      if (Params.Input.Count < 3) {
-        Params.RegisterInputParam(new Param_Integer());
-        Params.Input[2].Name = "Axis";
-        Params.Input[2].NickName = "Ax";
-        Params.Input[2].Description = "Standard Axis: Global (0), Local (-1), Natural (-2), Default (-10), XElevation (-11), YElevation (-12), GlobalCylindrical (-13), Vertical (-14)";
-        Params.Input[2].Access = GH_ParamAccess.item;
-        Params.Input[2].Optional = true;
-      }
+      Params.Output[i].Name = "Moment |M| [" + momentunitAbbreviation + "]";
     }
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
-        "Max/Min",
         "Force Unit",
         "Moment Unit",
       });
 
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
-
-      _dropDownItems.Add(ExtremaHelper.Vector6ReactionForces.ToList());
-      _selectedItems.Add(_dropDownItems[0][0]);
 
       _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Force));
       _selectedItems.Add(Force.GetAbbreviation(_forceUnit));
@@ -119,28 +102,27 @@ namespace GsaGH.Components {
       string note = ResultNotes.NoteNodeResults;
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx",
-        "Reaction Force in X-direction" + note, GH_ParamAccess.tree);
+        "Nodal Force in X-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy",
-        "Reaction Force in Y-direction" + note, GH_ParamAccess.tree);
+        "Nodal Force in Y-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz",
-        "Reaction Force in Z-direction" + note, GH_ParamAccess.tree);
+        "Nodal Force in Z-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force |XYZ| [" + forceunitAbbreviation + "]", "|F|",
-        "Combined |XYZ| Reaction Force" + note, GH_ParamAccess.tree);
+        "Combined |XYZ| Nodal Force" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx",
-        "Reaction Moment around X-axis" + note, GH_ParamAccess.tree);
+        "Nodal Moment around X-axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy",
-        "Reaction Moment around Y-axis" + note, GH_ParamAccess.tree);
+        "Nodal Moment around Y-axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz",
-        "Reaction Moment around Z-axis" + note, GH_ParamAccess.tree);
+        "Nodal Moment around Z-axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |XYZ| [" + momentunitAbbreviation + "]", "|M|",
-        "Combined |XXYYZZ| Reaction Moment" + note, GH_ParamAccess.tree);
-      pManager.AddIntegerParameter("Node IDs", "ID", "Node IDs for each result value",
+        "Combined |XXYYZZ| Nodal Moment" + note, GH_ParamAccess.tree);
+      pManager.AddIntegerParameter("Element IDs", "ID", "Element IDs for each result value",
         GH_ParamAccess.list);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      GsaResult result;
-
+      GsaResult result = null;
       string nodeList = "All";
 
       var ghTypes = new List<GH_ObjectWrapper>();
@@ -164,53 +146,43 @@ namespace GsaGH.Components {
 
         int axisId = -10;
         da.GetData(2, ref axisId);
-        result.NodeSpringForces.SetStandardAxis(axisId);
+        result.NodalForcesAndMoments.SetStandardAxis(axisId);
 
         nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-        IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> resultSet
-          = result.NodeSpringForces.ResultSubset(nodeIds);
+        Parameters.Results.NodalForcesAndMoments resultSet = result.NodalForcesAndMoments.ResultSubset(nodeIds);
+
+        if (resultSet.Ids.Count < 1) {
+          this.AddRuntimeWarning("There is no nodal forces and moments");
+          return;
+        }
 
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
         };
-
         if (permutations.Count == 1 && permutations[0] == -1) {
           permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
         }
 
-        if (_selectedItems[0] == ExtremaHelper.Vector6ReactionForces[0]) {
-          foreach (KeyValuePair<int, IList<IReactionForce>> kvp in resultSet.Subset) {
-            foreach (int p in permutations) {
-              var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p);
-              outTransX.Add(new GH_UnitNumber(kvp.Value[p - 1].XToUnit(_forceUnit)), path);
-              outTransY.Add(new GH_UnitNumber(kvp.Value[p - 1].YToUnit(_forceUnit)), path);
-              outTransZ.Add(new GH_UnitNumber(kvp.Value[p - 1].ZToUnit(_forceUnit)), path);
-              outTransXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].XyzToUnit(_forceUnit)), path);
-              outRotX.Add(new GH_UnitNumber(kvp.Value[p - 1].Xx), path);
-              outRotY.Add(new GH_UnitNumber(kvp.Value[p - 1].Yy), path);
-              outRotZ.Add(new GH_UnitNumber(kvp.Value[p - 1].Zz), path);
-              outRotXyz.Add(new GH_UnitNumber(kvp.Value[p - 1].Xxyyzz), path);
-              outIDs.Add(kvp.Key, path);
+        foreach (int id in resultSet.Ids) {
+          foreach (int p in permutations) {
+            IDictionary<int, IReactionForce> res = resultSet.Subset[id][p - 1];
+            var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, id);
+            foreach (KeyValuePair<int, IReactionForce> force in res) {
+              outTransX.Add(new GH_UnitNumber(force.Value.XToUnit(_forceUnit)), path);
+              outTransY.Add(new GH_UnitNumber(force.Value.YToUnit(_forceUnit)), path);
+              outTransZ.Add(new GH_UnitNumber(force.Value.ZToUnit(_forceUnit)), path);
+              outTransXyz.Add(new GH_UnitNumber(force.Value.XyzToUnit(_forceUnit)), path);
+              outRotX.Add(new GH_UnitNumber(force.Value.XxToUnit(_momentUnit)), path);
+              outRotY.Add(new GH_UnitNumber(force.Value.YyToUnit(_momentUnit)), path);
+              outRotZ.Add(new GH_UnitNumber(force.Value.ZzToUnit(_momentUnit)), path);
+              outRotXyz.Add(new GH_UnitNumber(force.Value.XxyyzzToUnit(_momentUnit)), path);
+              outIDs.Add(force.Key, path);
             }
           }
-        } else {
-          Entity0dExtremaKey key = ExtremaHelper.ReactionForceExtremaKey(resultSet, _selectedItems[0]);
-          IReactionForce extrema = resultSet.GetExtrema(key);
-          int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
-          var path = new GH_Path(result.CaseId, key.Permutation + perm);
-          outTransX.Add(new GH_UnitNumber(extrema.XToUnit(_forceUnit)), path);
-          outTransY.Add(new GH_UnitNumber(extrema.YToUnit(_forceUnit)), path);
-          outTransZ.Add(new GH_UnitNumber(extrema.ZToUnit(_forceUnit)), path);
-          outTransXyz.Add(new GH_UnitNumber(extrema.XyzToUnit(_forceUnit)), path);
-          outRotX.Add(new GH_UnitNumber(extrema.Xx), path);
-          outRotY.Add(new GH_UnitNumber(extrema.Yy), path);
-          outRotZ.Add(new GH_UnitNumber(extrema.Zz), path);
-          outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz), path);
-          outIDs.Add(key.Id, path);
         }
 
-        PostHog.Result(result.CaseType, 0, "Force", "Spring");
+        PostHog.Result(result.CaseType, 2, "NodalForcesAndMoments");
       }
 
       da.SetDataTree(0, outTransX);
@@ -225,15 +197,8 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      if (_selectedItems.Count == 2) {
-        _spacerDescriptions.Insert(0, "Max/Min");
-        _dropDownItems.Insert(0, ExtremaHelper.Vector6ReactionForces.ToList());
-        _selectedItems.Insert(0, _dropDownItems[0][0]);
-      }
-
-      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[1]);
-      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[2]);
-
+      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[0]);
+      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
   }

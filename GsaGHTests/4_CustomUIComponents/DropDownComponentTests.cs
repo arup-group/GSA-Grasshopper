@@ -15,7 +15,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(ListInfo))]
     [InlineData(typeof(PropertyQuantities))]
     [InlineData(typeof(MaterialQuantities))]
-    //prop
+    // Properties
     [InlineData(typeof(CreateCustomMaterial))]
     [InlineData(typeof(CreateMaterial))]
     [InlineData(typeof(Create2dMember))]
@@ -26,14 +26,14 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(CreateSectionModifier))]
     [InlineData(typeof(CreateSpringProperty))]
     [InlineData(typeof(CreateProfile), true)]
-    //geometry
+    // Geometry
     [InlineData(typeof(Create2dElementsFromBrep))]
     [InlineData(typeof(CreateElementsFromMembers))]
     [InlineData(typeof(SectionAlignment))]
     [InlineData(typeof(CreateEffectiveLengthOptions))]
     [InlineData(typeof(CreateMemberEndRestraint))]
     [InlineData(typeof(CreateAssembly))]
-    //loads
+    // Loads
     [InlineData(typeof(CreateBeamLoad))]
     [InlineData(typeof(CreateBeamThermalLoad))]
     [InlineData(typeof(CreateFaceLoad))]
@@ -45,11 +45,11 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(CreateGridSurface))]
     [InlineData(typeof(CreateNodeLoad))]
     [InlineData(typeof(LoadProperties))]
-    //analysis
+    // Analysis
     [InlineData(typeof(AnalyseModel), true)]
     [InlineData(typeof(CreateAnalysisTask))]
     [InlineData(typeof(CreateSteelDesignTask))]
-    //results
+    // Results
     [InlineData(typeof(AssemblyDisplacements))]
     [InlineData(typeof(AssemblyDriftIndices))]
     [InlineData(typeof(AssemblyDrifts))]
@@ -69,11 +69,12 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(GlobalPerformanceResults))]
     [InlineData(typeof(Member1dDisplacements))]
     [InlineData(typeof(Member1dForcesAndMoments))]
+    [InlineData(typeof(NodalForcesAndMoments))]
     [InlineData(typeof(NodeDisplacements))]
     [InlineData(typeof(ReactionForces))]
     [InlineData(typeof(SpringReactionForces))]
     [InlineData(typeof(TotalLoadsAndReactions))]
-    //display
+    // Display
     [InlineData(typeof(Contour1dResults), true)]
     [InlineData(typeof(Contour2dResults), true)]
     [InlineData(typeof(Contour3dResults), true)]
