@@ -20,7 +20,7 @@ namespace GsaGH.Parameters.Results {
       ApiResult = new ApiResult(result);
     }
 
-    public NodalForcesAndMomentsSubset ResultSubset(ICollection<int> nodeIds) {
+    public NodalForcesAndMoments ResultSubset(ICollection<int> nodeIds) {
       ConcurrentBag<int> missingIds = Cache.GetMissingKeys(nodeIds);
       if (missingIds.Count > 0) {
         string nodelist = string.Join(" ", missingIds);
@@ -55,7 +55,7 @@ namespace GsaGH.Parameters.Results {
             break;
         }
       }
-      return new NodalForcesAndMomentsSubset(Cache.GetSubset(nodeIds));
+      return new NodalForcesAndMoments(Cache.GetSubset(nodeIds));
     }
 
     public void SetStandardAxis(int axisId) {

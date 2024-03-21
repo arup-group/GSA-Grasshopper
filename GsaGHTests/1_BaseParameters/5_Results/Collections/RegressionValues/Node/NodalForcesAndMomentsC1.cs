@@ -1,78 +1,78 @@
 ﻿using System.Collections.Generic;
 
 namespace GsaGHTests.Parameters.Results {
-  public class NodalForcesAndMomentsA1 {
+  public class NodalForcesAndMomentsC1 {
     // these are regression tests, the values are taken directly from GSA results
-    // "Steel_Design_Complex.gwb" for node 442 for analysis case A1
+    // "Steel_Design_Complex.gwb" for nodes 1324 to 1327 for combination case C1
     internal static List<double> XInKiloNewtons() {
       return new List<double>() {
-        60.910,
-        337.200,
-        -177.800,
-        -220.400
+        68.070,
+        466.100,
+        -242.900,
+        -291.300
       };
     }
 
     internal static List<double> YInKiloNewtons() {
       return new List<double>() {
-        343.600,
-        53.070,
-        -194.300,
-        -202.400
+        466.100,
+        68.070,
+        -242.900,
+        -291.300
       };
     }
 
     internal static List<double> ZInKiloNewtons() {
       return new List<double>() {
-        -189.100,
-        -167.900,
-        -274.000,
-        631.000
+        -225.600,
+        -225.600,
+        -381.500,
+        832.700
       };
     }
 
-    internal static List<double> XyzInKiloNewtons() {
+    internal static List<double> YzInKiloNewtons() {
       return new List<double>() {
-        396.900,
-        380.400,
-        380.100,
-        698.400
+        522.300,
+        522.300,
+        513.400,
+        929.000
       };
     }
 
     internal static List<double> XxInKiloNewtonsPerMeter() {
       return new List<double>() {
-        -188.300,
-        21.160,
-        202.900,
-        -35.760
+        -215.900,
+        29.820,
+        259.200,
+        -73.100
       };
     }
 
     internal static List<double> YyInKiloNewtonsPerMeter() {
       return new List<double>() {
-        -23.010,
-        159.800,
-        -189.700,
-        52.9
+        -29.820,
+        215.900,
+        -259.200,
+        73.100
       };
     }
 
     internal static List<double> ZzInKiloNewtonsPerMeter() {
       return new List<double>() {
-        -63.400,
-        50.020,
-        -0.8961,
-        14.280
+        -67.080,
+        67.080,
+        0,
+        0.000005779
       };
     }
 
     internal static List<double> XxyyzzInKiloNewtonsPerMeter() {
       return new List<double>() {
-        200.000,
-        168.800,
-        277.700,
-        65.390
+        228.100,
+        228.100,
+        366.600,
+        103.400
       };
     }
   }

@@ -154,7 +154,7 @@ namespace GsaGH.Components {
 
         nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> nodeIds = result.NodeIds(nodeList);
-        NodalForcesAndMomentsSubset resultSet = result.NodalForcesAndMoments.ResultSubset(nodeIds);
+        Parameters.Results.NodalForcesAndMoments resultSet = result.NodalForcesAndMoments.ResultSubset(nodeIds);
 
         if (resultSet.Ids.Count < 1) {
           this.AddRuntimeWarning("There is no nodal forces and moments");
