@@ -24,7 +24,6 @@ namespace GsaGH.Parameters.Results {
     public GsaModel Model { get; set; }
     public List<int> SelectedPermutationIds { get; set; }
     public CaseType CaseType { get; set; }
-
     public IEntity0dResultCache<IEnergyDensity, Entity0dExtremaKey> Element1dAverageStrainEnergyDensities { get; private set; }
     public IEntity1dResultCache<IDisplacement, ResultVector6<Entity1dExtremaKey>> Element1dDisplacements { get; private set; }
     public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>> Element1dInternalForces { get; private set; }
@@ -48,6 +47,7 @@ namespace GsaGH.Parameters.Results {
     public IEntity1dResultCache<IInternalForce, ResultVector6<Entity1dExtremaKey>> Member1dInternalForces { get; private set; }
     public IEntity0dResultCache<ISteelUtilisation, SteelUtilisationExtremaKeys> SteelUtilisations { get; private set; }
     public SteelDesignEffectiveLengthCache SteelDesignEffectiveLengths { get; private set; }
+    public NodalForcesAndMomentsCache NodalForcesAndMoments { get; private set; }
     public AssemblyDisplacementCache AssemblyDisplacements { get; private set; }
     public AssemblyDriftsCache AssemblyDrifts { get; private set; }
     public AssemblyDriftIndicesCache AssemblyDriftIndices { get; private set; }
@@ -181,6 +181,8 @@ namespace GsaGH.Parameters.Results {
       SteelUtilisations = new SteelUtilisationCache(result);
       SteelDesignEffectiveLengths = new SteelDesignEffectiveLengthCache(result);
 
+      NodalForcesAndMoments = new NodalForcesAndMomentsCache(result);
+
       AssemblyDisplacements = new AssemblyDisplacementCache(result);
       AssemblyDrifts = new AssemblyDriftsCache(result);
       AssemblyDriftIndices = new AssemblyDriftIndicesCache(result);
@@ -227,6 +229,8 @@ namespace GsaGH.Parameters.Results {
 
       SteelUtilisations = new SteelUtilisationCache(result);
       SteelDesignEffectiveLengths = new SteelDesignEffectiveLengthCache(result);
+
+      NodalForcesAndMoments = new NodalForcesAndMomentsCache(result);
 
       AssemblyDisplacements = new AssemblyDisplacementCache(result);
       AssemblyDrifts = new AssemblyDriftsCache(result);
