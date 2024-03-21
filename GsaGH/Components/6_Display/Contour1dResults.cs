@@ -64,7 +64,9 @@ namespace GsaGH.Components {
       Footfall,
       ProjectedStress,
       DerivedStress,
-      SteelDesign
+      SteelDesign,
+      Drifts,
+      DriftIndices
     }
 
     public override Guid ComponentGuid => new Guid("ce7a8f84-4c72-4fd4-a207-485e8bf7ac38");
@@ -95,7 +97,7 @@ namespace GsaGH.Components {
       "Moment Mzz",
       "Res. Moment |Myz|",
     });
-    private readonly List<string> _strainenergy = new List<string>(new[] {
+    private readonly List<string> _strainEnergy = new List<string>(new[] {
       "Intermediate Pts",
       "Average",
     });
@@ -126,7 +128,9 @@ namespace GsaGH.Components {
       "Derived Stress",
       "Strain Energy",
       "Footfall",
-      "Steel Design"
+      "Steel Design",
+      "Drifts",
+      "Drift Indices"
     });
     private string _case = string.Empty;
     private double _defScale = 250;
@@ -283,8 +287,8 @@ namespace GsaGH.Components {
               break;
 
             case 4:
-              if (_dropDownItems[1] != _strainenergy) {
-                _dropDownItems[1] = _strainenergy;
+              if (_dropDownItems[1] != _strainEnergy) {
+                _dropDownItems[1] = _strainEnergy;
 
                 _selectedItems[0] = _dropDownItems[0][4];
                 _selectedItems[1] = _dropDownItems[1][1]; // set average as default
@@ -632,6 +636,8 @@ namespace GsaGH.Components {
       GH_Convert.ToDouble(ghScale, out double scale, GH_Conversion.Both);
 
       ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
+      ReadOnlyCollection<int> assemblyIds = result.AssemblyIds("all");
+
       double dmax = 0;
       double dmin = 0;
       ConcurrentDictionary<int, IList<IQuantity>> values = null;
@@ -641,6 +647,11 @@ namespace GsaGH.Components {
           IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> displacements = Quaternions.CoordinateTransformationTo(
             result.Element1dDisplacements.ResultSubset(elementIds, positionsCount).Subset,
             Plane.WorldXY, result.Model.Model);
+
+
+          Parameters.Results.AssemblyDisplacements assemblyDisplacements = result.AssemblyDisplacements.ResultSubset(assemblyIds);
+
+
           Func<IDisplacement, IQuantity> displacementSelector = null;
           switch (_disp) {
             case DisplayValue.X:

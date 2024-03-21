@@ -50,6 +50,10 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(AnalyseModel))]
     [InlineData(typeof(CreateSteelDesignTask))]
     // Results
+    [InlineData(typeof(AssemblyDisplacements))]
+    [InlineData(typeof(AssemblyDriftIndices))]
+    [InlineData(typeof(AssemblyDrifts))]
+    [InlineData(typeof(AssemblyForcesAndMoments))]
     [InlineData(typeof(BeamDerivedStresses))]
     [InlineData(typeof(BeamDisplacements))]
     [InlineData(typeof(BeamForcesAndMoments))]

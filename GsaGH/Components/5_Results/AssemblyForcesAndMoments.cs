@@ -212,12 +212,6 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      if (_selectedItems.Count == 2) {
-        _spacerDescriptions.Insert(0, "Max/Min");
-        _dropDownItems.Insert(0, ExtremaHelper.Vector6InternalForces.ToList());
-        _selectedItems.Insert(0, _dropDownItems[0][0]);
-      }
-
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), _selectedItems[1]);
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), _selectedItems[2]);
       base.UpdateUIFromSelectedItems();

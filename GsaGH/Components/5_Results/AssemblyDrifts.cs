@@ -147,12 +147,6 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      if (_selectedItems.Count == 1) {
-        _spacerDescriptions.Insert(0, "Max/Min");
-        _dropDownItems.Insert(0, ExtremaHelper.AssemblyDrifts.ToList());
-        _selectedItems.Insert(0, _dropDownItems[0][0]);
-      }
-
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
       base.UpdateUIFromSelectedItems();
     }
