@@ -195,33 +195,33 @@ namespace GsaGH.Helpers.GH {
       return list;
     }
 
-    internal static string GetAssemblyListDefinition(GH_Component owner, IGH_DataAccess da, int inputid, GsaModel model) {
-      string assemblyList = "All";
+    internal static EntityList GetAssemblyList(GH_Component owner, IGH_DataAccess da, int inputid) {
+      var list = new EntityList() {
+        Definition = "All",
+        Type = GsaAPI.EntityType.Assembly
+      };
+
       var ghType = new GH_ObjectWrapper();
       if (!da.GetData(inputid, ref ghType)) {
-        return assemblyList;
+        return list;
       }
 
       if (!(ghType.Value is GsaListGoo listGoo)) {
-        GH_Convert.ToString(ghType.Value, out assemblyList, GH_Conversion.Both);
-        if (string.IsNullOrEmpty(assemblyList) || assemblyList.ToLower() == "all") {
-          assemblyList = "All";
+        GH_Convert.ToString(ghType.Value, out string definition, GH_Conversion.Both);
+        if (string.IsNullOrEmpty(definition) || definition.ToLower() == "all") {
+          definition = "All";
         }
 
-        return assemblyList;
+        list.Definition = definition;
+        return list;
       }
 
       if (listGoo.Value.EntityType != EntityType.Assembly) {
-        owner.AddRuntimeWarning("List must be of either type Assembly to apply to assembly filter");
-        return string.Empty;
+        owner.AddRuntimeWarning("List must be of type Assembly to apply to assembly filter");
+        return list;
       }
 
-      if (model.Model.Lists().Values.Where(
-        x => x.Type == GsaAPI.EntityType.Assembly && x.Name == listGoo.Value.Name).Any()) {
-        return "\"" + listGoo.Value.Name + "\"";
-      }
-
-      return listGoo.Value.Definition;
+      return listGoo.Value.GetApiList();
     }
 
     internal static EntityList GetElementOrMemberList(
@@ -254,6 +254,35 @@ namespace GsaGH.Helpers.GH {
       }
 
       return listGoo.Value.GetApiList();
+    }
+
+    internal static string GetAssemblyListDefinition(GH_Component owner, IGH_DataAccess da, int inputid, GsaModel model) {
+      string assemblyList = "All";
+      var ghType = new GH_ObjectWrapper();
+      if (!da.GetData(inputid, ref ghType)) {
+        return assemblyList;
+      }
+
+      if (!(ghType.Value is GsaListGoo listGoo)) {
+        GH_Convert.ToString(ghType.Value, out assemblyList, GH_Conversion.Both);
+        if (string.IsNullOrEmpty(assemblyList) || assemblyList.ToLower() == "all") {
+          assemblyList = "All";
+        }
+
+        return assemblyList;
+      }
+
+      if (listGoo.Value.EntityType != EntityType.Assembly) {
+        owner.AddRuntimeWarning("List must be of either type Assembly to apply to assembly filter");
+        return string.Empty;
+      }
+
+      if (model.Model.Lists().Values.Where(
+        x => x.Type == GsaAPI.EntityType.Assembly && x.Name == listGoo.Value.Name).Any()) {
+        return "\"" + listGoo.Value.Name + "\"";
+      }
+
+      return listGoo.Value.Definition;
     }
 
     internal static string GetElementListDefinition(

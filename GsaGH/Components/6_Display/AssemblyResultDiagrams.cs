@@ -54,18 +54,11 @@ namespace GsaGH.Components {
       _selectedItems[i] = _dropDownItems[i][j];
       if (i == 0) {
         if (j == 0) {
-          if (_dropDownItems[1] != Mappings._diagramTypeMappingForce.Select(item => item.Description)
+          if (_dropDownItems[1] != Mappings._diagramTypeMappingAssemblyForce.Select(item => item.Description)
            .ToList()) {
-            _dropDownItems[1] = Mappings._diagramTypeMappingForce.Select(item => item.Description)
+            _dropDownItems[1] = Mappings._diagramTypeMappingAssemblyForce.Select(item => item.Description)
              .ToList();
             _selectedItems[1] = _dropDownItems[1][5]; // Myy
-          }
-        } else {
-          if (_dropDownItems[1] != Mappings._diagramTypeMappingStress
-           .Select(item => item.Description).ToList()) {
-            _dropDownItems[1] = Mappings._diagramTypeMappingStress.Select(item => item.Description)
-             .ToList();
-            _selectedItems[1] = _dropDownItems[1][7]; // Combined C1
           }
         }
       }
@@ -113,12 +106,11 @@ namespace GsaGH.Components {
       _selectedItems = new List<string>();
 
       _dropDownItems.Add(new List<string>() {
-        "Force",
-        "Stress",
+        "Force"
       });
       _selectedItems.Add(_dropDownItems[0][0]);
 
-      _dropDownItems.Add(Mappings._diagramTypeMappingForce.Select(item => item.Description)
+      _dropDownItems.Add(Mappings._diagramTypeMappingAssemblyForce.Select(item => item.Description)
        .ToList());
       _selectedItems.Add(_dropDownItems[1][5]); // Myy
 
@@ -128,7 +120,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaElementMemberListParameter());
+      pManager.AddParameter(new GsaAssemblyListParameter());
       pManager.AddBooleanParameter("Annotation", "A", "Show Annotation", GH_ParamAccess.item,
         false);
       pManager.AddIntegerParameter("Significant Digits", "SD", "Round values to significant digits",
@@ -193,7 +185,7 @@ namespace GsaGH.Components {
         }
       }
 
-      EntityList list = Inputs.GetElementOrMemberList(this, da, 1);
+      EntityList list = Inputs.GetAssemblyList(this, da, 1);
 
       var ghScale = new GH_Number();
       double scale = 1;
@@ -206,7 +198,7 @@ namespace GsaGH.Components {
       LengthUnit lengthUnit = result.Model.ModelUnit;
 
       DiagramType type = _selectedItems[0] == "Force"
-        ? Mappings._diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
+        ? Mappings._diagramTypeMappingAssemblyForce.Where(item => item.Description == _selectedItems[1])
           .Select(item => item.GsaApiEnum).FirstOrDefault()
         : Mappings._diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1])
           .Select(item => item.GsaApiEnum).FirstOrDefault();
@@ -317,15 +309,14 @@ namespace GsaGH.Components {
     private bool IsForce() {
       bool isForce = false;
       DiagramType type = _selectedItems[0] == "Force" ?
-        Mappings._diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
+        Mappings._diagramTypeMappingAssemblyForce.Where(item => item.Description == _selectedItems[1])
          .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings._diagramTypeMappingStress
          .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
          .FirstOrDefault();
       switch (type) {
-        case DiagramType.AxialForceFx:
-        case DiagramType.ShearForceFy:
-        case DiagramType.ShearForceFz:
-        case DiagramType.ResolvedShearFyz:
+        case DiagramType.AssemblyAxialForceFx:
+        case DiagramType.AssemblyShearForceFy:
+        case DiagramType.AssemblyShearForceFz:
           isForce = true;
           break;
       }
@@ -336,15 +327,14 @@ namespace GsaGH.Components {
     private bool IsMoment() {
       bool isMoment = false;
       DiagramType type = _selectedItems[0] == "Force" ?
-        Mappings._diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
+        Mappings._diagramTypeMappingAssemblyForce.Where(item => item.Description == _selectedItems[1])
          .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings._diagramTypeMappingStress
          .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
          .FirstOrDefault();
       switch (type) {
-        case DiagramType.MomentMyy:
-        case DiagramType.MomentMzz:
-        case DiagramType.ResolvedMomentMyz:
-        case DiagramType.TorsionMxx:
+        case DiagramType.AssemblyMomentMyy:
+        case DiagramType.AssemblyMomentMzz:
+        case DiagramType.AssemblyTorsionMxx:
           isMoment = true;
           break;
       }
@@ -352,37 +342,13 @@ namespace GsaGH.Components {
       return isMoment;
     }
 
-    private bool IsStress() {
-      bool isStress = false;
-      DiagramType type = _selectedItems[0] == "Force" ?
-        Mappings._diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
-         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings._diagramTypeMappingStress
-         .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
-         .FirstOrDefault();
-      switch (type) {
-        case DiagramType.AxialStressA:
-        case DiagramType.BendingStressByNegativeZ:
-        case DiagramType.BendingStressByPositiveZ:
-        case DiagramType.BendingStressBzNegativeY:
-        case DiagramType.BendingStressBzPositiveY:
-        case DiagramType.CombinedStressC1:
-        case DiagramType.CombinedStressC2:
-        case DiagramType.ShearStressSz:
-        case DiagramType.ShearStressSy:
-          isStress = true;
-          break;
-      }
-
-      return isStress;
-    }
-
-    internal void UpdateForce(string unit) {
+    private void UpdateForce(string unit) {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
 
-    internal void UpdateMoment(string unit) {
+    private void UpdateMoment(string unit) {
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();

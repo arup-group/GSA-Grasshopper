@@ -212,8 +212,24 @@ namespace GsaGH.Helpers.GsaApi {
         { "Torsional", typeof(TorsionalSpringProperty) }
       };
 
-    internal static readonly IList<DiagramTypeMapping> _diagramTypeMappingForce
+    internal static readonly IList<DiagramTypeMapping> _diagramTypeMappingAssemblyForce
           = new List<DiagramTypeMapping>() {
+            new DiagramTypeMapping("Axial Fx", DiagramType.AssemblyAxialForceFx,
+              Diagram.ApiDiagramType.AxialForceFx),
+            new DiagramTypeMapping("Shear Fy", DiagramType.AssemblyShearForceFy,
+              Diagram.ApiDiagramType.ShearForceFy),
+            new DiagramTypeMapping("Shear Fz", DiagramType.AssemblyShearForceFz,
+              Diagram.ApiDiagramType.ShearForceFz),
+            new DiagramTypeMapping("Torsion Mxx", DiagramType.AssemblyTorsionMxx,
+              Diagram.ApiDiagramType.TorsionMxx),
+            new DiagramTypeMapping("Moment Myy", DiagramType.AssemblyMomentMyy,
+              ApiDiagramType.MomentMyy),
+            new DiagramTypeMapping("Moment Mzz", DiagramType.AssemblyMomentMzz,
+              ApiDiagramType.MomentMzz)
+          };
+
+    internal static readonly IList<DiagramTypeMapping> _diagramTypeMappingForce
+      = new List<DiagramTypeMapping>() {
         new DiagramTypeMapping("Axial Fx", DiagramType.AxialForceFx,
           Diagram.ApiDiagramType.AxialForceFx),
         new DiagramTypeMapping("Shear Fy", DiagramType.ShearForceFy,
@@ -224,8 +240,10 @@ namespace GsaGH.Helpers.GsaApi {
           Diagram.ApiDiagramType.ResolvedShearFyz),
         new DiagramTypeMapping("Torsion Mxx", DiagramType.TorsionMxx,
           Diagram.ApiDiagramType.TorsionMxx),
-        new DiagramTypeMapping("Moment Myy", DiagramType.MomentMyy, Diagram.ApiDiagramType.MomentMyy),
-        new DiagramTypeMapping("Moment Mzz", DiagramType.MomentMzz, Diagram.ApiDiagramType.MomentMzz),
+        new DiagramTypeMapping("Moment Myy", DiagramType.MomentMyy,
+          ApiDiagramType.MomentMyy),
+        new DiagramTypeMapping("Moment Mzz", DiagramType.MomentMzz,
+          ApiDiagramType.MomentMzz),
         new DiagramTypeMapping("Res. Moment |Myz|", DiagramType.ResolvedMomentMyz,
           Diagram.ApiDiagramType.ResolvedMomentMyz), };
 

@@ -66,7 +66,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("15d88d76-6dfc-434b-928f-687b91d52002");
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.Contour1dResults;
+    protected override Bitmap Icon => null;
     private readonly List<string> _displacement = new List<string>(new[] {
       "Translation Ux",
       "Translation Uy",
@@ -102,10 +102,10 @@ namespace GsaGH.Components {
       "Res. Moment |Myz|",
     });
     private readonly List<string> _type = new List<string>(new[] {
-      "Displacements",
-      "Drifts",
-      "Drift Indices",
-      "Forces"
+      "Displacement",
+      "Drift",
+      "Drift Index",
+      "Force"
     });
     private string _case = string.Empty;
     private double _defScale = 250;
@@ -470,7 +470,7 @@ namespace GsaGH.Components {
 
     protected override void SolveInternal(IGH_DataAccess da) {
       GsaResult result;
-      string elementlist = "All";
+      string assemblyList = "All";
       _case = string.Empty;
       _resType = string.Empty;
       var ghTyp = new GH_ObjectWrapper();
@@ -482,11 +482,15 @@ namespace GsaGH.Components {
 
       bool enveloped = Inputs.IsResultCaseEnveloped(this, result, ref _case, _envelopeType);
       List<int> permutations = result.SelectedPermutationIds;
-      elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
-      ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
+      assemblyList = Inputs.GetAssemblyListDefinition(this, da, 1, result.Model);
+      ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements();
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
-      if (elems.Count == 0) {
-        this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
+      ReadOnlyDictionary<int, Assembly> assemblies = result.Model.Model.Assemblies();
+
+      // todo: check if at least one assembly is in list!
+
+      if (assemblies.Count == 0) {
+        this.AddRuntimeError($"Model contains no results for assemblies in list '{assemblyList}'");
         return;
       }
 
@@ -660,7 +664,7 @@ namespace GsaGH.Components {
       }
 
       if (values.IsNullOrEmpty()) {
-        this.AddRuntimeError($"Model contains no results for assemblies in list '{elementlist}'");
+        this.AddRuntimeError($"Model contains no results for assemblies in list '{assemblyList}'");
         return;
       }
 
@@ -684,7 +688,10 @@ namespace GsaGH.Components {
 
       var resultLines = new DataTree<LineResultGoo>();
 
-      Parallel.ForEach(elems, element => {
+      //Parallel.ForEach(elems, element => {
+
+      foreach (KeyValuePair<int, Element> element in elems) {
+
         if (element.Value.IsDummy || element.Value.Type == ElementType.LINK
           || element.Value.Topology.Count > 2) {
           return;
@@ -696,75 +703,79 @@ namespace GsaGH.Components {
 
         int key = element.Key;
 
-        //for (int i = 0; i < positionsCount - 1; i++) {
-        //  if ((dmin == 0) & (dmax == 0)) {
-        //    continue;
-        //  }
 
-        //  var startTranslation = new Vector3d(0, 0, 0);
-        //  var endTranslation = new Vector3d(0, 0, 0);
+        int positionsCount = 10;
 
-        //  IQuantity t1 = values[key][i];
-        //  IQuantity t2 = values[key][i + 1];
+        for (int i = 0; i < positionsCount - 1; i++) {
+          if ((dmin == 0) & (dmax == 0)) {
+            continue;
+          }
 
-        //  var start = new Point3d(ln.PointAt((double)i / (positionsCount - 1)));
-        //  var end = new Point3d(ln.PointAt((double)(i + 1) / (positionsCount - 1)));
+          var startTranslation = new Vector3d(0, 0, 0);
+          var endTranslation = new Vector3d(0, 0, 0);
 
-        //  if (_mode == FoldMode.Displacement && (int)_disp < 4) {
-        //    switch (_disp) {
-        //      case DisplayValue.X:
-        //        startTranslation.X = t1.As(lengthUnit) * _defScale;
-        //        endTranslation.X = t2.As(lengthUnit) * _defScale;
-        //        break;
+          IQuantity t1 = values[key][i];
+          IQuantity t2 = values[key][i + 1];
 
-        //      case DisplayValue.Y:
-        //        startTranslation.Y = t1.As(lengthUnit) * _defScale;
-        //        endTranslation.Y = t2.As(lengthUnit) * _defScale;
-        //        break;
+          var start = new Point3d(ln.PointAt((double)i / (positionsCount - 1)));
+          var end = new Point3d(ln.PointAt((double)(i + 1) / (positionsCount - 1)));
 
-        //      case DisplayValue.Z:
-        //        startTranslation.Z = t1.As(lengthUnit) * _defScale;
-        //        endTranslation.Z = t2.As(lengthUnit) * _defScale;
-        //        break;
+          if (_mode == FoldMode.Displacement && (int)_disp < 4) {
+            switch (_disp) {
+              case DisplayValue.X:
+                startTranslation.X = t1.As(lengthUnit) * _defScale;
+                endTranslation.X = t2.As(lengthUnit) * _defScale;
+                break;
 
-        //      case DisplayValue.ResXyz:
-        //        startTranslation.X = valuesXyz[key].x[i] * _defScale;
-        //        startTranslation.Y = valuesXyz[key].y[i] * _defScale;
-        //        startTranslation.Z = valuesXyz[key].z[i] * _defScale;
-        //        endTranslation.X = valuesXyz[key].x[i + 1] * _defScale;
-        //        endTranslation.Y = valuesXyz[key].y[i + 1] * _defScale;
-        //        endTranslation.Z = valuesXyz[key].z[i + 1] * _defScale;
-        //        break;
-        //    }
+              case DisplayValue.Y:
+                startTranslation.Y = t1.As(lengthUnit) * _defScale;
+                endTranslation.Y = t2.As(lengthUnit) * _defScale;
+                break;
 
-        //    start.Transform(Transform.Translation(startTranslation));
-        //    end.Transform(Transform.Translation(endTranslation));
-        //  }
+              case DisplayValue.Z:
+                startTranslation.Z = t1.As(lengthUnit) * _defScale;
+                endTranslation.Z = t2.As(lengthUnit) * _defScale;
+                break;
 
-        //  var segmentline = new Line(start, end);
-        //  double tnorm1 = (2 * (t1.Value - dmin) / (dmax - dmin)) - 1;
-        //  double tnorm2 = (2 * (t2.Value - dmin) / (dmax - dmin)) - 1;
-        //  Color valcol1 = double.IsNaN(tnorm1) ? Color.Black : ghGradient.ColourAt(tnorm1);
-        //  Color valcol2 = double.IsNaN(tnorm2) ? Color.Black : ghGradient.ColourAt(tnorm2);
-        //  float size1 = t1.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t1.Value / dmax * scale)) :
-        //    Math.Max(2, (float)(Math.Abs(t1.Value) / Math.Abs(dmin) * scale));
-        //  if (double.IsNaN(size1)) {
-        //    size1 = 1;
-        //  }
+              case DisplayValue.ResXyz:
+                startTranslation.X = valuesXyz[key].x[i] * _defScale;
+                startTranslation.Y = valuesXyz[key].y[i] * _defScale;
+                startTranslation.Z = valuesXyz[key].z[i] * _defScale;
+                endTranslation.X = valuesXyz[key].x[i + 1] * _defScale;
+                endTranslation.Y = valuesXyz[key].y[i + 1] * _defScale;
+                endTranslation.Z = valuesXyz[key].z[i + 1] * _defScale;
+                break;
+            }
 
-        //  float size2 = t2.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t2.Value / dmax * scale)) :
-        //    Math.Max(2, (float)(Math.Abs(t2.Value) / Math.Abs(dmin) * scale));
-        //  if (double.IsNaN(size2)) {
-        //    size2 = 1;
-        //  }
+            start.Transform(Transform.Translation(startTranslation));
+            end.Transform(Transform.Translation(endTranslation));
+          }
 
-        //  lock (resultLines) {
-        //    resultLines.Add(
-        //      new LineResultGoo(segmentline, t1, t2, valcol1, valcol2, size1, size2, key),
-        //      new GH_Path(key));
-        //  }
-        //}
-      });
+          var segmentline = new Line(start, end);
+          double tnorm1 = (2 * (t1.Value - dmin) / (dmax - dmin)) - 1;
+          double tnorm2 = (2 * (t2.Value - dmin) / (dmax - dmin)) - 1;
+          Color valcol1 = double.IsNaN(tnorm1) ? Color.Black : ghGradient.ColourAt(tnorm1);
+          Color valcol2 = double.IsNaN(tnorm2) ? Color.Black : ghGradient.ColourAt(tnorm2);
+          float size1 = t1.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t1.Value / dmax * scale)) :
+            Math.Max(2, (float)(Math.Abs(t1.Value) / Math.Abs(dmin) * scale));
+          if (double.IsNaN(size1)) {
+            size1 = 1;
+          }
+
+          float size2 = t2.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t2.Value / dmax * scale)) :
+            Math.Max(2, (float)(Math.Abs(t2.Value) / Math.Abs(dmin) * scale));
+          if (double.IsNaN(size2)) {
+            size2 = 1;
+          }
+
+          lock (resultLines) {
+            resultLines.Add(
+              new LineResultGoo(segmentline, t1, t2, valcol1, valcol2, size1, size2, key),
+              new GH_Path(key));
+          }
+        }
+      }
+      //});
 
       int gripheight = _legend.Height / ghGradient.GripCount;
       _legendValues = new List<string>();
