@@ -10,7 +10,6 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.Grahics;
 using GsaGH.Parameters;
@@ -45,6 +44,24 @@ namespace GsaGH.Components {
 
     public AssemblyResultDiagrams() : base("Assembly Result Diagrams", "AssemblyResultDiagram",
       "Displays GSA Assembly Result Diagram", CategoryName.Name(), SubCategoryName.Cat6()) { }
+
+    private Point3d GenerateAnnotationPosition(Line vector) {
+      var start = new Point3d(vector.End.X, vector.End.Y, vector.End.Z);
+      var span = new Vector3d(vector.Start.X - vector.End.X, vector.Start.Y - vector.End.Y, vector.Start.Z - vector.End.Z);
+
+      var line = new Rhino.Geometry.Line(start, span);
+      Point3d endPoint = line.To;
+
+      int _pixelsPerUnit = 100;
+      int offset = 50;
+      Vector3d direction = line.Direction;
+
+      direction.Unitize();
+      var t = Transform.Translation(direction * offset / _pixelsPerUnit);
+      endPoint.Transform(t);
+
+      return endPoint;
+    }
 
     public override bool Read(GH_IReader reader) {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("force"));
@@ -284,7 +301,7 @@ namespace GsaGH.Components {
       da.GetData(2, ref showAnnotations);
       da.GetData(3, ref significantDigits);
 
-      diagramAnnotations = GenerateAnnotations(diagramResults.Annotations, lengthScaleFactor,
+      diagramAnnotations = GenerateAnnotations(diagramResults, lengthScaleFactor,
         significantDigits, color);
 
       ((IGH_PreviewObject)Params.Output[1]).Hidden = !showAnnotations;
@@ -295,33 +312,39 @@ namespace GsaGH.Components {
       PostHog.Diagram("Result", result.CaseType, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
     }
 
-    private List<GsaAnnotationGoo> GenerateAnnotations(
-      IReadOnlyCollection<Annotation> annotationsFromModel, double lengthScaleFactor,
-      int significantDigits, Color color) {
+    private List<GsaAnnotationGoo> GenerateAnnotations(GraphicDrawResult diagramResults,
+      double lengthScaleFactor, int significantDigits, Color color) {
+      IReadOnlyCollection<Annotation> annotationsFromModel = diagramResults.Annotations;
+      ReadOnlyCollection<Line> lines = diagramResults.Lines;
+
       var diagramAnnotations = new List<GsaAnnotationGoo>();
 
+      int i = 0;
       foreach (Annotation annotation in annotationsFromModel) {
-        {
-          //move position
-          var location = new Point3d(annotation.Position.X, annotation.Position.Y,
-            annotation.Position.Z);
+        //move position
+        Point3d location;
+        if (_selectedItems[0] != "Force") {
+          location = GenerateAnnotationPosition(lines[i]);
+        } else {
+          location = new Point3d(annotation.Position.X, annotation.Position.Y,
+           annotation.Position.Z);
           location *= lengthScaleFactor;
-
-          string valueToAnnotate = annotation.String;
-          if (double.TryParse(annotation.String, out double valResult)) {
-            //convert annotation value
-            double valueScaleFactor = ComputeUnitScale();
-            valueToAnnotate
-              = $"{Math.Round(valResult * valueScaleFactor, significantDigits)} {Message}";
-          }
-
-          if (color == Color.Empty) {
-            color = (Color)annotation.Colour;
-          }
-
-          diagramAnnotations.Add(new GsaAnnotationGoo(
-            new GsaAnnotationDot(location, color, valueToAnnotate)));
         }
+
+        string valueToAnnotate = annotation.String;
+        if (double.TryParse(annotation.String, out double valResult)) {
+          //convert annotation value
+          double valueScaleFactor = ComputeUnitScale();
+          valueToAnnotate = $"{Math.Round(valResult * valueScaleFactor, significantDigits)} {Message}";
+        }
+
+        if (color == Color.Empty) {
+          color = (Color)annotation.Colour;
+        }
+
+        diagramAnnotations.Add(new GsaAnnotationGoo(
+          new GsaAnnotationDot(location, color, valueToAnnotate)));
+        i++;
       }
 
       return diagramAnnotations;
