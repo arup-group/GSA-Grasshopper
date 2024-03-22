@@ -43,7 +43,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(Create1dElement), 1)] // Section3dPreviewComponent
     [InlineData(typeof(Create1dMember), 1)] // Section3dPreviewDropDownComponent
     [InlineData(typeof(AssemblyResultDiagrams), 4)]
-    [InlineData(typeof(AssemblyResults), 4)]
+    [InlineData(typeof(AssemblyResults), 8)]
     public void AppendAdditionalMenuItemsTest(Type t, int expectedItems) {
       var comp = (GH_Component)Activator.CreateInstance(t);
       var form = new ContextMenuStrip();
