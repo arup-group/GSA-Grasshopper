@@ -935,8 +935,9 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.SteelDesign:
+          ReadOnlyCollection<int> memberIds = result.MemberIds(elementlist);
           IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> utilisation =
-            result.SteelUtilisations.ResultSubset(elementIds);
+            result.SteelUtilisations.ResultSubset(memberIds);
 
           _resType = "Utilisation";
           IEntity0dResultCache<ISteelUtilisation, SteelUtilisationExtremaKeys> utilisationsCache
