@@ -5,7 +5,6 @@ using GsaAPI;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using AlignmentType = GsaGH.Parameters.AlignmentType;
-using Diagram = GsaGH.Parameters;
 using DiagramType = GsaAPI.DiagramType;
 
 namespace GsaGH.Helpers.GsaApi {

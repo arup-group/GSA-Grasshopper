@@ -127,7 +127,7 @@ namespace GsaGH.Parameters.Results {
       switch (envelopeType) {
         case EnvelopeMethod.Maximum:
           for (int i = 1; i < subset.Count(); i++) {
-            if(subset.ElementAt(i) == null) {
+            if (subset.ElementAt(i) == null) {
               continue;
             }
             if (((Ratio)subset.ElementAt(i)).As(unit) > val.As(unit)) {

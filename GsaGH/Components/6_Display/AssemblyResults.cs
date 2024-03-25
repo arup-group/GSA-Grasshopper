@@ -79,15 +79,15 @@ namespace GsaGH.Components {
     private readonly List<string> _drift = new List<string>(new[] {
       "Drift Dx",
       "Drift Dy",
-      "Drift Dz",
-      "Drift |D|",
+      //"Drift Dz",
+      //"Drift |D|",
       "In-plane Drift"
     });
     private readonly List<string> _driftIndex = new List<string>(new[] {
       "Drift Index DIx",
       "Drift Index DIy",
-      "Drift Index DIz",
-      "Drift Index |DI|",
+      //"Drift Index DIz",
+      //"Drift Index |DI|",
       "In-plane Drift Index"
     });
     private readonly List<string> _force = new List<string>(new[] {
@@ -214,7 +214,7 @@ namespace GsaGH.Components {
                 _dropDownItems[1] = _drift;
 
                 _selectedItems[0] = _dropDownItems[0][1];
-                _selectedItems[1] = _dropDownItems[1][0]; 
+                _selectedItems[1] = _dropDownItems[1][0];
 
                 _disp = DisplayValue.X;
                 DriftModeClicked();
@@ -240,7 +240,7 @@ namespace GsaGH.Components {
                 _dropDownItems[1] = _force;
 
                 _selectedItems[0] = _dropDownItems[0][1];
-                _selectedItems[1] = _dropDownItems[1][5]; 
+                _selectedItems[1] = _dropDownItems[1][5];
 
                 _disp = DisplayValue.Yy;
                 ForceModeClicked();
@@ -486,9 +486,21 @@ namespace GsaGH.Components {
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
       ReadOnlyDictionary<int, Assembly> assemblies = result.Model.Model.Assemblies();
 
-      // todo: check if at least one assembly is in list!
+      var list = new EntityList {
+        Definition = assemblyList,
+        Type = GsaAPI.EntityType.Assembly
+      };
 
-      if (assemblies.Count == 0) {
+      ReadOnlyCollection<int> assemblyIds = result.AssemblyIds(assemblyList);
+
+      var filteredAssemblies = new Dictionary<int, Assembly>();
+      foreach (KeyValuePair<int, Assembly> assembly in assemblies) {
+        if (assemblyIds.Contains(assembly.Key)) {
+          filteredAssemblies.Add(assembly.Key, assembly.Value);
+        }
+      }
+
+      if (filteredAssemblies.Count == 0) {
         this.AddRuntimeError($"Model contains no results for assemblies in list '{assemblyList}'");
         return;
       }
@@ -515,8 +527,6 @@ namespace GsaGH.Components {
       var ghScale = new GH_Number();
       da.GetData(4, ref ghScale);
       GH_Convert.ToDouble(ghScale, out double scale, GH_Conversion.Both);
-
-      ReadOnlyCollection<int> assemblyIds = result.AssemblyIds("all");
 
       double dmax = 0;
       double dmin = 0;
@@ -553,7 +563,6 @@ namespace GsaGH.Components {
               dmax = displacements.GetExtrema(displacements.Max.Xyz).Xyz.As(_lengthResultUnit);
               dmin = displacements.GetExtrema(displacements.Min.Xyz).Xyz.As(_lengthResultUnit);
               displacementSelector = (r) => r.Xyz.ToUnit(_lengthResultUnit);
-
 
               valuesXyz = ResultsUtility.GetResultResultantTranslation(
                 displacements.Subset, lengthUnit, permutations, _envelopeType);
@@ -592,9 +601,65 @@ namespace GsaGH.Components {
             displacements.Subset, displacementSelector, permutations, _envelopeType);
           break;
 
+        case FoldMode.Drift:
+          Parameters.Results.AssemblyDrifts drifts = result.AssemblyDrifts.ResultSubset(assemblyIds);
+          Func<Drift, IQuantity> driftSelector = null;
+          switch (_disp) {
+            case DisplayValue.X:
+              _resType = "Drift, Dx";
+              dmax = drifts.GetExtrema(drifts.Max.X).X.As(_lengthResultUnit);
+              dmin = drifts.GetExtrema(drifts.Min.X).X.As(_lengthResultUnit);
+              driftSelector = (r) => r.X.ToUnit(_lengthResultUnit);
+              break;
 
+            case DisplayValue.Y:
+              _resType = "Drift, Dy";
+              dmax = drifts.GetExtrema(drifts.Max.Y).Y.As(_lengthResultUnit);
+              dmin = drifts.GetExtrema(drifts.Min.Y).Y.As(_lengthResultUnit);
+              driftSelector = (r) => r.Y.ToUnit(_lengthResultUnit);
+              break;
 
+            case DisplayValue.Z:
+              _resType = "In-plane Drift, Dxy";
+              dmax = drifts.GetExtrema(drifts.Max.Xy).Xy.As(_lengthResultUnit);
+              dmin = drifts.GetExtrema(drifts.Min.Xy).Xy.As(_lengthResultUnit);
+              driftSelector = (r) => r.Xy.ToUnit(_lengthResultUnit);
+              break;
+          }
 
+          values = ResultsUtility.GetResultComponent(
+            drifts.Subset, driftSelector, permutations, _envelopeType);
+          break;
+
+        case FoldMode.DriftIndex:
+          Parameters.Results.AssemblyDriftIndices driftIndices = result.AssemblyDriftIndices.ResultSubset(assemblyIds);
+          Func<DriftIndex, IQuantity> driftIndexSelector = null;
+          switch (_disp) {
+            case DisplayValue.X:
+              _resType = "Drift Index, DIx";
+              dmax = driftIndices.GetExtrema(driftIndices.Max.X).X.Value;
+              dmin = driftIndices.GetExtrema(driftIndices.Min.X).X.Value;
+              driftIndexSelector = (r) => r.X;
+              break;
+
+            case DisplayValue.Y:
+              _resType = "Drift Index, DIy";
+              dmax = driftIndices.GetExtrema(driftIndices.Max.Y).Y.Value;
+              dmin = driftIndices.GetExtrema(driftIndices.Min.Y).Y.Value;
+              driftIndexSelector = (r) => r.Y;
+              break;
+
+            case DisplayValue.Z:
+              _resType = "In-plane Drift Index, DIxy";
+              dmax = driftIndices.GetExtrema(driftIndices.Max.Xy).Xy.Value;
+              dmin = driftIndices.GetExtrema(driftIndices.Min.Xy).Xy.Value;
+              driftIndexSelector = (r) => r.Xy;
+              break;
+          }
+
+          values = ResultsUtility.GetResultComponent(
+            driftIndices.Subset, driftIndexSelector, permutations, _envelopeType);
+          break;
 
         case FoldMode.Force:
           Parameters.Results.AssemblyForcesAndMoments forces =
@@ -689,21 +754,17 @@ namespace GsaGH.Components {
 
       //Parallel.ForEach(elems, element => {
 
-      foreach (KeyValuePair<int, Element> element in elems) {
-
-        if (element.Value.IsDummy || element.Value.Type == ElementType.LINK
-          || element.Value.Topology.Count > 2) {
-          return;
-        }
+      foreach (KeyValuePair<int, Assembly> assembly in filteredAssemblies) {
+        Node topology1 = nodes[assembly.Value.Topology1];
+        Node topology2 = nodes[assembly.Value.Topology2];
 
         var ln = new Line(
-          Nodes.Point3dFromNode(nodes[element.Value.Topology[0]], lengthUnit), // start point
-          Nodes.Point3dFromNode(nodes[element.Value.Topology[1]], lengthUnit)); // end point
+          Nodes.Point3dFromNode(topology1, lengthUnit), // start point
+          Nodes.Point3dFromNode(topology2, lengthUnit)); // end point
 
-        int key = element.Key;
+        int key = assembly.Key;
 
-
-        int positionsCount = 10;
+        int positionsCount = values[key].Count;
 
         for (int i = 0; i < positionsCount - 1; i++) {
           if ((dmin == 0) & (dmax == 0)) {
@@ -816,6 +877,18 @@ namespace GsaGH.Components {
             var rotation = new Angle(t, AngleUnit.Radian);
             _legendValues.Add(rotation.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(rotation));
+            break;
+
+          case FoldMode.Drift:
+            var drift = new Length(t, _lengthResultUnit);
+            _legendValues.Add(drift.ToString("f" + significantDigits));
+            ts.Add(new GH_UnitNumber(drift));
+            break;
+
+          case FoldMode.DriftIndex:
+            var driftIndex = new Ratio(t, RatioUnit.DecimalFraction);
+            _legendValues.Add(driftIndex.ToString("f" + significantDigits));
+            ts.Add(new GH_UnitNumber(driftIndex));
             break;
 
           case FoldMode.Force when (int)_disp < 4:

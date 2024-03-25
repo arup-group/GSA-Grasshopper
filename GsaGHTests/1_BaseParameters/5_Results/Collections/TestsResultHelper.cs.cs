@@ -318,7 +318,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(IDrift<Length> result, DriftResultVector component) {
+    public static double ResultsHelper(Drift result, DriftResultVector component) {
       double d = 0;
       switch (component) {
         case DriftResultVector.X:
@@ -337,19 +337,19 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(IDrift<double> result, DriftResultVector component) {
+    public static double ResultsHelper(DriftIndex result, DriftResultVector component) {
       double d = 0;
       switch (component) {
         case DriftResultVector.X:
-          d = result.X;
+          d = result.X.Value;
           break;
 
         case DriftResultVector.Y:
-          d = result.Y;
+          d = result.Y.Value;
           break;
 
         case DriftResultVector.Xy:
-          d = result.Xy;
+          d = result.Xy.Value;
           break;
       }
 
@@ -926,15 +926,15 @@ namespace GsaGHTests.Parameters.Results {
       DriftResultVector<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
         case DriftResultVector.X:
-          d = result.GetExtrema(extrema.X).X;
+          d = result.GetExtrema(extrema.X).X.DecimalFractions;
           break;
 
         case DriftResultVector.Y:
-          d = result.GetExtrema(extrema.Y).Y;
+          d = result.GetExtrema(extrema.Y).Y.DecimalFractions;
           break;
 
         case DriftResultVector.Xy:
-          d = result.GetExtrema(extrema.Xy).Xy;
+          d = result.GetExtrema(extrema.Xy).Xy.DecimalFractions;
           break;
       }
 

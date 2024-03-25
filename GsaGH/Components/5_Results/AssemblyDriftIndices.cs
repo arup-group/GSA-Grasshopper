@@ -15,6 +15,7 @@ using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Parameters;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -81,9 +82,9 @@ namespace GsaGH.Components {
       var ghTypes = new List<GH_ObjectWrapper>();
       da.GetDataList(0, ghTypes);
 
-      var outTransX = new DataTree<double>();
-      var outTransY = new DataTree<double>();
-      var outTransXy = new DataTree<double>();
+      var outTransX = new DataTree<GH_UnitNumber>();
+      var outTransY = new DataTree<GH_UnitNumber>();
+      var outTransXy = new DataTree<GH_UnitNumber>();
 
       foreach (GH_ObjectWrapper ghTyp in ghTypes) {
         result = Inputs.GetResultInput(this, ghTyp);
@@ -104,22 +105,22 @@ namespace GsaGH.Components {
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {
-          foreach (KeyValuePair<int, IList<IEntity1dQuantity<IDrift<double>>>> kvp in resultSet.Subset) {
+          foreach (KeyValuePair<int, IList<IEntity1dQuantity<DriftIndex>>> kvp in resultSet.Subset) {
             foreach (int p in permutations) {
               var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
-              outTransX.AddRange(kvp.Value[p - 1].Results.Values.Select(r => r.X), path);
-              outTransY.AddRange(kvp.Value[p - 1].Results.Values.Select(r => r.Y), path);
-              outTransXy.AddRange(kvp.Value[p - 1].Results.Values.Select(r => r.Xy), path);
+              outTransX.AddRange(kvp.Value[p - 1].Results.Values.Select(r => new GH_UnitNumber(r.X)), path);
+              outTransY.AddRange(kvp.Value[p - 1].Results.Values.Select(r => new GH_UnitNumber(r.Y)), path);
+              outTransXy.AddRange(kvp.Value[p - 1].Results.Values.Select(r => new GH_UnitNumber(r.Xy)), path);
             }
           }
         } else {
           Entity1dExtremaKey key = ExtremaHelper.AssemblyDriftIndicesExtremaKey(resultSet, _selectedItems[0]);
-          IDrift<double> extrema = resultSet.GetExtrema(key);
+          DriftIndex extrema = resultSet.GetExtrema(key);
           int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
           var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
-          outTransX.Add(extrema.X, path);
-          outTransY.Add(extrema.Y, path);
-          outTransXy.Add(extrema.Xy, path);
+          outTransX.Add(new GH_UnitNumber(extrema.X), path);
+          outTransY.Add(new GH_UnitNumber(extrema.Y), path);
+          outTransXy.Add(new GH_UnitNumber(extrema.Xy), path);
         }
 
         PostHog.Result(result.CaseType, 1, "AssemblyDriftIndex");

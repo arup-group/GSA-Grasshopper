@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using GsaAPI;
-using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
   public class AssemblyDriftsCache {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, IList<IEntity1dQuantity<IDrift<Length>>>> Cache { get; }
-      = new ConcurrentDictionary<int, IList<IEntity1dQuantity<IDrift<Length>>>>();
+    public ConcurrentDictionary<int, IList<IEntity1dQuantity<Drift>>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IEntity1dQuantity<Drift>>>();
 
     internal AssemblyDriftsCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -36,7 +35,7 @@ namespace GsaGH.Parameters.Results {
               }
 
               var results = new AssemblyDrift(aCaseResults[entityId]);
-              Cache.TryAdd(entityId, new List<IEntity1dQuantity<IDrift<Length>>>() { results });
+              Cache.TryAdd(entityId, new List<IEntity1dQuantity<Drift>>() { results });
             });
             break;
 
@@ -45,7 +44,7 @@ namespace GsaGH.Parameters.Results {
             = combinationCase.AssemblyDrifts(entityList);
 
             Parallel.ForEach(cCaseResults.Keys, entityId => {
-              var permutationResults = new Collection<IEntity1dQuantity<IDrift<Length>>>();
+              var permutationResults = new Collection<IEntity1dQuantity<Drift>>();
               foreach (ReadOnlyCollection<AssemblyDriftResult> permutation in cCaseResults[entityId]) {
                 var positions = new Collection<double>();
                 foreach (AssemblyDriftResult result in permutation) {

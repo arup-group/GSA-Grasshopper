@@ -16,30 +16,6 @@ using AssemblyDriftIndices = GsaGH.Components.AssemblyDriftIndices;
 namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class AssemblyDriftIndicesTests {
-    private static double FindMax(IList<IGH_Goo> output) {
-      double max = double.MinValue;
-      foreach (IGH_Goo goo in output) {
-        var number = (GH_Number)goo;
-        double value = (double)number.Value;
-        if (value > max) {
-          max = value;
-        }
-      }
-      return max;
-    }
-
-    private static double FindMin(IList<IGH_Goo> output) {
-      double min = double.MaxValue;
-      foreach (IGH_Goo goo in output) {
-        var number = (GH_Number)goo;
-        double value = (double)number.Value;
-        if (value < min) {
-          min = value;
-        }
-      }
-      return min;
-    }
-
     [Fact]
     public void InvalidInputErrorTests() {
       var comp = new AssemblyDriftIndices();
@@ -63,10 +39,10 @@ namespace GsaGHTests.Components.Results {
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       ComponentTestHelper.SetInput(comp, "2", 1);
 
-      var output = (IList<IGH_Goo>)ComponentTestHelper.GetListOutput(comp, (int)component);
+      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
       // Assert
-      double max = FindMax(output);
+      double max = output.Max().As(RatioUnit.DecimalFraction);
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
     }
 
@@ -85,10 +61,10 @@ namespace GsaGHTests.Components.Results {
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       ComponentTestHelper.SetInput(comp, "2", 1);
 
-      var output = (IList<IGH_Goo>)ComponentTestHelper.GetListOutput(comp, (int)component);
+      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
       // Assert
-      double max = FindMax(output);
+      double max = output.Max().As(RatioUnit.DecimalFraction);
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
     }
 
@@ -107,10 +83,10 @@ namespace GsaGHTests.Components.Results {
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       ComponentTestHelper.SetInput(comp, "2", 1);
 
-      var output = (IList<IGH_Goo>)ComponentTestHelper.GetListOutput(comp, (int)component);
+      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
       // Assert 
-      double min = FindMin(output);
+      double min = output.Min().As(RatioUnit.DecimalFraction);
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
 
@@ -129,10 +105,10 @@ namespace GsaGHTests.Components.Results {
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       ComponentTestHelper.SetInput(comp, "2", 1);
 
-      var output = (IList<IGH_Goo>)ComponentTestHelper.GetListOutput(comp, (int)component);
+      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
       // Assert
-      double min = FindMin(output);
+      double min = output.Min().As(RatioUnit.DecimalFraction);
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
 

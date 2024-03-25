@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using GsaAPI;
-using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
-  public class AssemblyDrift : IEntity1dQuantity<IDrift<Length>> {
-    public IDictionary<double, IDrift<Length>> Results { get; private set; } = new Dictionary<double, IDrift<Length>>();
+  public class AssemblyDrift : IEntity1dQuantity<Drift> {
+    public IDictionary<double, Drift> Results { get; private set; } = new Dictionary<double, Drift>();
     public IList<string> Storeys { get; private set; } = new List<string>();
 
     internal AssemblyDrift(ReadOnlyCollection<AssemblyDriftResult> result) {
@@ -16,7 +15,7 @@ namespace GsaGH.Parameters.Results {
       }
     }
 
-    public IEntity1dQuantity<IDrift<Length>> TakePositions(ICollection<double> positions) {
+    public IEntity1dQuantity<Drift> TakePositions(ICollection<double> positions) {
       throw new NotImplementedException("Assembly drifts don´t support dynamic positions");
     }
   }
