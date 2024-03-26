@@ -239,7 +239,7 @@ namespace GsaGH.Components {
               if (_dropDownItems[1] != _force) {
                 _dropDownItems[1] = _force;
 
-                _selectedItems[0] = _dropDownItems[0][1];
+                _selectedItems[0] = _dropDownItems[0][3];
                 _selectedItems[1] = _dropDownItems[1][5];
 
                 _disp = DisplayValue.Yy;
