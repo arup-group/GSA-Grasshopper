@@ -350,6 +350,24 @@ namespace GsaGH.Components {
       return diagramAnnotations;
     }
 
+    internal void UpdateForce(string unit) {
+      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
+      ExpirePreview(true);
+      base.UpdateUI();
+    }
+
+    internal void UpdateLength(string unit) {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+      ExpirePreview(true);
+      base.UpdateUI();
+    }
+
+    internal void UpdateMoment(string unit) {
+      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
+      ExpirePreview(true);
+      base.UpdateUI();
+    }
+
     private bool IsGhObjectValid(GH_ObjectWrapper ghObject) {
       bool valid = false;
       if (ghObject?.Value == null) {
@@ -422,24 +440,6 @@ namespace GsaGH.Components {
       }
 
       return isMoment;
-    }
-
-    private void UpdateForce(string unit) {
-      _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    private void UpdateLength(string unit) {
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    private void UpdateMoment(string unit) {
-      _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
     }
   }
 }
