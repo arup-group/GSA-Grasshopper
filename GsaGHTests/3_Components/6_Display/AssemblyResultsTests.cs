@@ -49,7 +49,7 @@ namespace GsaGHTests.Components.Display {
     public void DrawViewportMeshesAndWiresTest() {
       var comp = new AssemblyResults();
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.AssemblyByStorey, 1);
-      ComponentTestHelper.SetInput(comp, result);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
 
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 0, 0);
       SetSelectedDrawViewportMeshesAndWiresTest(comp, 1, 0);
