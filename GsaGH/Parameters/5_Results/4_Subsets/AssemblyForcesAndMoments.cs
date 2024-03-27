@@ -14,7 +14,7 @@ namespace GsaGH.Parameters.Results {
     public AssemblyForcesAndMoments(IDictionary<int, IList<IEntity1dQuantity<IInternalForce>>> results) {
       Subset = results;
       Ids = results.Keys.OrderBy(x => x).ToList();
-      (Max, Min) = results.GetResultVector6AssemblyExtremaKeys<IEntity1dQuantity<IInternalForce>, IInternalForce>();
+      (Max, Min) = results.GetResultVector6Entity1dExtremaKeys<IEntity1dQuantity<IInternalForce>, IInternalForce>();
     }
 
     public IInternalForce GetExtrema(IEntity1dExtremaKey key) {
