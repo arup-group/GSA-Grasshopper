@@ -50,7 +50,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("Converged1", "Optimisation converged after 1 iteration(s) with 2 changed section(s) and leaving 1 section(s) unchanged")]
     [InlineData("Converged2", "Optimisation converged after 2 iteration(s) with 3 changed section(s)")]
     [InlineData("NotConverged", "Optimisation did not converge within 1 iterations with 3 changed section(s)")]
-    [InlineData("AnalysisError", "Section Library 2: material grade is undefined.")]
+    [InlineData("AnalysisError", "Section Library 1: material grade is undefined.")]
     [InlineData("InefficiencyWarning", "\tMember 1 is inefficient. (Section utilisation is less than 0.5)")]
     [InlineData("DesignTaskIdError", true)]
     public void SteelDesignTest(string groupIdentifier, object expected) {

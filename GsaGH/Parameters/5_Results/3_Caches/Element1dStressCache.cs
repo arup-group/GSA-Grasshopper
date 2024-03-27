@@ -9,9 +9,9 @@ namespace GsaGH.Parameters.Results {
   public class Element1dStressCache
     : IEntity1dResultCache<IStress1d, ResultStress1d<Entity1dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-
     public IDictionary<int, IList<IEntity1dQuantity<IStress1d>>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IEntity1dQuantity<IStress1d>>>();
+    private int _axisId = -10;
 
     internal Element1dStressCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -37,7 +37,7 @@ namespace GsaGH.Parameters.Results {
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<StressResult1d>> aCaseResults
-              = analysisCase.Element1dStress(elementList, positions);
+              = analysisCase.Element1dStress(elementList, positions, _axisId);
             Parallel.ForEach(aCaseResults.Keys, elementId =>
              concurrent.AddOrUpdate(
               elementId,
@@ -51,7 +51,7 @@ namespace GsaGH.Parameters.Results {
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<StressResult1d>>> cCaseResults
-              = combinationCase.Element1dStress(elementList, positions);
+              = combinationCase.Element1dStress(elementList, positions, _axisId);
             Parallel.ForEach(cCaseResults.Keys, elementId =>
             concurrent.AddOrUpdate(
               elementId,
@@ -66,6 +66,14 @@ namespace GsaGH.Parameters.Results {
       }
 
       return new Entity1dStresses(Cache.GetSubset(elementIds, positions));
+    }
+
+    public void SetStandardAxis(int axisId) {
+      if(axisId != _axisId) {
+        Cache.Clear();
+      }
+
+      _axisId = axisId;
     }
   }
 }

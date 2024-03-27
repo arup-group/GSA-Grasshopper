@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GsaAPI;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using Xunit;
@@ -46,7 +47,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultDerivedStress1d.ShearZ)]
     [InlineData(ResultDerivedStress1d.Torsion)]
     [InlineData(ResultDerivedStress1d.VonMises)]
-    public void Element1dStresssMaxFromAnalysisCaseTest(ResultDerivedStress1d component) {
+    public void Element1dStressMaxFromAnalysisCaseTest(ResultDerivedStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Max();
@@ -66,7 +67,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultDerivedStress1d.ShearZ)]
     [InlineData(ResultDerivedStress1d.Torsion)]
     [InlineData(ResultDerivedStress1d.VonMises)]
-    public void Element1dStresssMaxFromCombinationCaseTest(ResultDerivedStress1d component) {
+    public void Element1dStressMaxFromCombinationCaseTest(ResultDerivedStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Max(ExpectedCombinationCaseC4p1Values(component).Max(),
@@ -87,7 +88,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultDerivedStress1d.ShearZ)]
     [InlineData(ResultDerivedStress1d.Torsion)]
     [InlineData(ResultDerivedStress1d.VonMises)]
-    public void Element1dStresssMinFromAnalysisCaseTest(ResultDerivedStress1d component) {
+    public void Element1dStressMinFromAnalysisCaseTest(ResultDerivedStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       double expected = ExpectedAnalysisCaseValues(component).Min();
@@ -107,7 +108,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultDerivedStress1d.ShearZ)]
     [InlineData(ResultDerivedStress1d.Torsion)]
     [InlineData(ResultDerivedStress1d.VonMises)]
-    public void Element1dStresssMinFromcombinationCaseTest(ResultDerivedStress1d component) {
+    public void Element1dStressMinFromcombinationCaseTest(ResultDerivedStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       double expected = Math.Min(ExpectedCombinationCaseC4p1Values(component).Min(),
@@ -128,7 +129,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultDerivedStress1d.ShearZ)]
     [InlineData(ResultDerivedStress1d.Torsion)]
     [InlineData(ResultDerivedStress1d.VonMises)]
-    public void Element1dStresssValuesFromAnalysisCaseTest(ResultDerivedStress1d component) {
+    public void Element1dStressValuesFromAnalysisCaseTest(ResultDerivedStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       List<double> expected = ExpectedAnalysisCaseValues(component);
@@ -160,7 +161,7 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultDerivedStress1d.ShearZ)]
     [InlineData(ResultDerivedStress1d.Torsion)]
     [InlineData(ResultDerivedStress1d.VonMises)]
-    public void Element1dStresssValuesFromCombinationCaseTest(ResultDerivedStress1d component) {
+    public void Element1dStressValuesFromCombinationCaseTest(ResultDerivedStress1d component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       List<double> expectedP1 = ExpectedCombinationCaseC4p1Values(component);
@@ -192,7 +193,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Fact]
-    public void Element1dDerivedStresssCacheChangePositionsTest() {
+    public void Element1dDerivedStressCacheChangePositionsTest() {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 4);
       int positionsCount = 5;
@@ -250,6 +251,26 @@ namespace GsaGHTests.Parameters.Results {
       }
 
       throw new NotImplementedException();
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(0)]
+    [InlineData(-2)]
+    [InlineData(-11)]
+    [InlineData(-12)]
+    [InlineData(-13)]
+    [InlineData(-14)]
+    public void SetAxisThrowsExceptionTest(int axisId) {
+      // Assemble
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+
+      // Act
+      result.Element1dDerivedStresses.SetStandardAxis(axisId);
+      ReadOnlyCollection<int> elementIds = result.ElementIds(ElementList, 1);
+
+      // Assert
+      Assert.Throws<GsaApiException>(() => result.Element1dDerivedStresses.ResultSubset(elementIds, 4));
     }
   }
 }

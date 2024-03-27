@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -40,7 +41,7 @@ namespace GsaGHTests.Helpers {
       return param.VolatileData.get_Branch(branch)[item];
     }
 
-    public static System.Collections.IList GetListOutput(
+    public static IList GetListOutput(
      GH_Component component, int index = 0, int branch = 0) {
       component.ExpireSolution(true);
       component.Params.Output[index].ExpireSolution(true);
@@ -62,6 +63,7 @@ namespace GsaGHTests.Helpers {
         : (IList<IGH_Goo>)component.Params.Output[index].VolatileData.get_Branch(path);
       return output.Select(x => ((GH_UnitNumber)x).Value).ToList();
     }
+
     public static List<IGH_Goo> GetResultOutputAllData(
       GH_Component component, int index, GH_Path path = null) {
       if (path == null) {

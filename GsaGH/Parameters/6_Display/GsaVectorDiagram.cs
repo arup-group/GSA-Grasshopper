@@ -43,6 +43,7 @@ namespace GsaGH.Parameters {
         Color = Colours.GsaDarkPurple;
       }
     }
+
     private GsaVectorDiagram() { }
 
     public void DrawViewportMeshes(GH_PreviewMeshArgs args) { }

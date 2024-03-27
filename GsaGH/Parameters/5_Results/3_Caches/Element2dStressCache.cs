@@ -8,13 +8,13 @@ namespace GsaGH.Parameters.Results {
   public class Element2dStressCache
     : IEntity2dLayeredResultCache<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-
     public IDictionary<int, IList<IMeshQuantity<IStress>>> CacheBottomLayer { get; }
       = new ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>();
     public IDictionary<int, IList<IMeshQuantity<IStress>>> CacheMiddleLayer { get; }
       = new ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>();
     public IDictionary<int, IList<IMeshQuantity<IStress>>> CacheTopLayer { get; }
       = new ConcurrentDictionary<int, IList<IMeshQuantity<IStress>>>();
+    private int _axisId = -10;
 
     internal Element2dStressCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -51,14 +51,14 @@ namespace GsaGH.Parameters.Results {
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Tensor3>> aCaseResults
-              = analysisCase.Element2dStress(elementList, fLayer);
+              = analysisCase.Element2dStress(elementList, fLayer, _axisId);
             Parallel.ForEach(aCaseResults.Keys, elementId => cache.TryAdd(
               elementId, Entity2dResultsFactory.CreateStresses(aCaseResults[elementId])));
             break;
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Tensor3>>> cCaseResults
-              = combinationCase.Element2dStress(elementList, fLayer);
+              = combinationCase.Element2dStress(elementList, fLayer, _axisId);
             Parallel.ForEach(cCaseResults.Keys, elementId => cache.TryAdd(
               elementId, Entity2dResultsFactory.CreateStresses(cCaseResults[elementId])));
             break;
@@ -66,6 +66,16 @@ namespace GsaGH.Parameters.Results {
       }
 
       return new MeshStresses(cache.GetSubset(elementIds));
+    }
+
+    public void SetStandardAxis(int axisId) {
+      if (axisId != _axisId) {
+        CacheTopLayer.Clear();
+        CacheMiddleLayer.Clear();
+        CacheBottomLayer.Clear();
+      }
+
+      _axisId = axisId;
     }
   }
 }

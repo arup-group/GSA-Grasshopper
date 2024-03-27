@@ -220,11 +220,11 @@ namespace GsaGHTests.Components.Results {
         case ResultVector6.X: return Member1dForcesA1.XInKiloNewton();
         case ResultVector6.Y: return Member1dForcesA1.YInKiloNewton();
         case ResultVector6.Z: return Member1dForcesA1.ZInKiloNewton();
-        case ResultVector6.Xyz: return Member1dForcesA1.XyzInKiloNewton();
+        case ResultVector6.Xyz: return Member1dForcesA1.YzInKiloNewton();
         case ResultVector6.Xx: return Member1dForcesA1.XxInKiloNewtonMeter();
         case ResultVector6.Yy: return Member1dForcesA1.YyInKiloNewtonMeter();
         case ResultVector6.Zz: return Member1dForcesA1.ZzInKiloNewtonMeter();
-        case ResultVector6.Xxyyzz: return Member1dForcesA1.XxyyzzInKiloNewtonMeter();
+        case ResultVector6.Xxyyzz: return Member1dForcesA1.YyzzInKiloNewtonMeter();
       }
 
       throw new NotImplementedException();
@@ -235,11 +235,11 @@ namespace GsaGHTests.Components.Results {
         case ResultVector6.X: return Member1dForcesC1.XInKiloNewton();
         case ResultVector6.Y: return Member1dForcesC1.YInKiloNewton();
         case ResultVector6.Z: return Member1dForcesC1.ZInKiloNewton();
-        case ResultVector6.Xyz: return Member1dForcesC1.XyzInKiloNewton();
+        case ResultVector6.Xyz: return Member1dForcesC1.YzInKiloNewton();
         case ResultVector6.Xx: return Member1dForcesC1.XxInKiloNewtonMeter();
         case ResultVector6.Yy: return Member1dForcesC1.YyInKiloNewtonMeter();
         case ResultVector6.Zz: return Member1dForcesC1.ZzInKiloNewtonMeter();
-        case ResultVector6.Xxyyzz: return Member1dForcesC1.XxyyzzInKiloNewtonMeter();
+        case ResultVector6.Xxyyzz: return Member1dForcesC1.YyzzInKiloNewtonMeter();
       }
 
       throw new NotImplementedException();

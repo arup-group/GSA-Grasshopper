@@ -5,5 +5,6 @@ namespace GsaGH.Parameters.Results {
     IApiResult ApiResult { get; }
     IDictionary<int, IList<T1>> Cache { get; }
     IEntity0dResultSubset<T1, T2> ResultSubset(ICollection<int> list);
+    void SetStandardAxis(int axisId);
   }
 }

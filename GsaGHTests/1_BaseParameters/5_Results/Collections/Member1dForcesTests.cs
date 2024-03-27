@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GsaAPI;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using Xunit;
@@ -219,11 +220,11 @@ namespace GsaGHTests.Parameters.Results {
         case ResultVector6.X: return Member1dForcesA1.XInKiloNewton();
         case ResultVector6.Y: return Member1dForcesA1.YInKiloNewton();
         case ResultVector6.Z: return Member1dForcesA1.ZInKiloNewton();
-        case ResultVector6.Xyz: return Member1dForcesA1.XyzInKiloNewton();
+        case ResultVector6.Xyz: return Member1dForcesA1.YzInKiloNewton();
         case ResultVector6.Xx: return Member1dForcesA1.XxInKiloNewtonMeter();
         case ResultVector6.Yy: return Member1dForcesA1.YyInKiloNewtonMeter();
         case ResultVector6.Zz: return Member1dForcesA1.ZzInKiloNewtonMeter();
-        case ResultVector6.Xxyyzz: return Member1dForcesA1.XxyyzzInKiloNewtonMeter();
+        case ResultVector6.Xxyyzz: return Member1dForcesA1.YyzzInKiloNewtonMeter();
       }
 
       throw new NotImplementedException();
@@ -234,14 +235,34 @@ namespace GsaGHTests.Parameters.Results {
         case ResultVector6.X: return Member1dForcesC1.XInKiloNewton();
         case ResultVector6.Y: return Member1dForcesC1.YInKiloNewton();
         case ResultVector6.Z: return Member1dForcesC1.ZInKiloNewton();
-        case ResultVector6.Xyz: return Member1dForcesC1.XyzInKiloNewton();
+        case ResultVector6.Xyz: return Member1dForcesC1.YzInKiloNewton();
         case ResultVector6.Xx: return Member1dForcesC1.XxInKiloNewtonMeter();
         case ResultVector6.Yy: return Member1dForcesC1.YyInKiloNewtonMeter();
         case ResultVector6.Zz: return Member1dForcesC1.ZzInKiloNewtonMeter();
-        case ResultVector6.Xxyyzz: return Member1dForcesC1.XxyyzzInKiloNewtonMeter();
+        case ResultVector6.Xxyyzz: return Member1dForcesC1.YyzzInKiloNewtonMeter();
       }
 
       throw new NotImplementedException();
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(0)]
+    [InlineData(-2)]
+    [InlineData(-11)]
+    [InlineData(-12)]
+    [InlineData(-13)]
+    [InlineData(-14)]
+    public void SetAxisThrowsExceptionTest(int axisId) {
+      // Assemble
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+
+      // Act
+      result.Member1dInternalForces.SetStandardAxis(axisId);
+      ReadOnlyCollection<int> memberIds = result.MemberIds(MemberList);
+
+      // Assert
+      Assert.Throws<GsaApiException>(() => result.Member1dInternalForces.ResultSubset(memberIds, 5));
     }
   }
 }

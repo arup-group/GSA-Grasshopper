@@ -67,19 +67,19 @@ namespace GsaGH.Components {
         string note = ResultNotes.Note2dForceResults;
         Params.Output[8].NickName = "M*x";
         Params.Output[8].Description
-          = "Element Wood-Armer Moments (Mx + sgn(Mx)·|Mxy|) around Local Element X-axis."
+          = "Element Wood-Armer Moment (Mx + sgn(Mx)·|Mxy|) around X-axis"
           + momentrule + note;
         Params.Output[8].Access = GH_ParamAccess.tree;
 
         Params.RegisterOutputParam(new Param_GenericObject());
         Params.Output[9].NickName = "M*y";
         Params.Output[9].Description
-          = "Element Wood-Armer Moments (My + sgn(My)·|Mxy|) around Local Element Y-axis."
+          = "Element Wood-Armer Moment (My + sgn(My)·|Mxy|) around Y-axis"
           + momentrule + note;
         Params.Output[9].Access = GH_ParamAccess.tree;
 
         Params.Output[6].Description
-          = "Element Moments around Local Element Y-axis." + momentrule + note;
+          = "Element Moment around Y-axis" + momentrule + note;
       }
 
       int i = 0;
@@ -93,6 +93,19 @@ namespace GsaGH.Components {
       Params.Output[i++].Name = "Moment XY [" + momentunitAbbreviation + "]";
       Params.Output[i++].Name = "Wood-Armer X [" + momentunitAbbreviation + "]";
       Params.Output[i].Name = "Wood-Armer Y [" + momentunitAbbreviation + "]";
+    }
+
+    protected override void BeforeSolveInstance() {
+      base.BeforeSolveInstance();
+
+      if (Params.Input.Count < 3) {
+        Params.RegisterInputParam(new Param_Integer());
+        Params.Input[2].Name = "Axis";
+        Params.Input[2].NickName = "Ax";
+        Params.Input[2].Description = "Standard Axis: Global (0), Local (-1), Natural (-2), Default (-10), XElevation (-11), YElevation (-12), GlobalCylindrical (-13), Vertical (-14)";
+        Params.Input[2].Access = GH_ParamAccess.item;
+        Params.Input[2].Optional = true;
+      }
     }
 
     protected override void InitialiseDropdowns() {
@@ -121,7 +134,9 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
         GH_ParamAccess.list);
       pManager.AddParameter(new GsaElementMemberListParameter());
+      pManager.AddIntegerParameter("Axis", "Ax", "Standard Axis: Global (0), Local (-1), Natural (-2), Default (-10), XElevation (-11), YElevation (-12), GlobalCylindrical (-13), Vertical (-14)", GH_ParamAccess.item);
       pManager[1].Optional = true;
+      pManager[2].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
@@ -139,26 +154,26 @@ namespace GsaGH.Components {
         + "Element results are NOT averaged at nodes";
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Nx",
-        "Element in-plane Forces in Local X-direction." + forcerule + note, GH_ParamAccess.tree);
+        "Element in-plane Force in X-direction" + forcerule + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Ny",
-        "Element in-plane Forces in Local Y-direction." + forcerule + note, GH_ParamAccess.tree);
+        "Element in-plane Force in Y-direction" + forcerule + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force XY [" + forceunitAbbreviation + "]", "Nxy",
-        "Element in-plane Forces in Local XY-direction." + forcerule + note, GH_ParamAccess.tree);
+        "Element in-plane Force in XY-direction" + forcerule + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Shear X [" + forceunitAbbreviation + "]", "Qx",
-        "Element through thickness Shears in Local XZ-plane." + note, GH_ParamAccess.tree);
+        "Element through thickness Shear in XZ-plane" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Shear Y [" + forceunitAbbreviation + "]", "Qz",
-        "Element through thickness Shears in Local YZ-plane." + note, GH_ParamAccess.tree);
+        "Element through thickness Shear in YZ-plane" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment X [" + momentunitAbbreviation + "]", "Mx",
-        "Element Moments around Local Element X-axis." + momentrule + note, GH_ParamAccess.tree);
+        "Element Moment around X-axis" + momentrule + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment Y [" + momentunitAbbreviation + "]", "My",
-        "Element Moments around Local Element Y-axis." + momentrule + note, GH_ParamAccess.tree);
+        "Element Moment around Y-axis" + momentrule + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment XY [" + momentunitAbbreviation + "]", "Mxy",
-        "Element Moments around Local Element XY-axis." + momentrule + note, GH_ParamAccess.tree);
+        "Element Moment around XY-axis" + momentrule + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Wood-Armer X [" + momentunitAbbreviation + "]", "M*x",
-        "Element Wood-Armer Moments (Mx + sgn(Mx)·|Mxy|) around Local Element X-axis." + momentrule
+        "Element Wood-Armer Moment (Mx + sgn(Mx)·|Mxy|) around X-axis" + momentrule
         + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Wood-Armer Y [" + momentunitAbbreviation + "]", "M*y",
-        "Element Wood-Armer Moments (My + sgn(My)·|Mxy|) around Local Element Y-axis." + momentrule
+        "Element Wood-Armer Moment (My + sgn(My)·|Mxy|) around Y-axis" + momentrule
         + note, GH_ParamAccess.tree);
     }
 
@@ -185,6 +200,12 @@ namespace GsaGH.Components {
         if (result == null) {
           return;
         }
+
+        int axisId = -10;
+        da.GetData(2, ref axisId);
+        result.Element2dForces.SetStandardAxis(axisId);
+        result.Element2dShearForces.SetStandardAxis(axisId);
+        result.Element2dMoments.SetStandardAxis(axisId);
 
         elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
         ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);

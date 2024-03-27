@@ -39,11 +39,10 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
-      int i = 4;
-      Params.Output[i++].Name = "Grid Point Loads [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "Grid Line Loads [" + unitAbbreviation + "]";
-      Params.Output[i++].Name = "Grid Area Loads [" + unitAbbreviation + "]";
-      Params.Output[i].Name = "Grid Plane Surfaces [" + unitAbbreviation + "]";
+      Params.Output[5].Name = "Grid Point Loads [" + unitAbbreviation + "]";
+      Params.Output[6].Name = "Grid Line Loads [" + unitAbbreviation + "]";
+      Params.Output[7].Name = "Grid Area Loads [" + unitAbbreviation + "]";
+      Params.Output[8].Name = "Grid Plane Surfaces [" + unitAbbreviation + "]";
     }
 
     protected override void InitialiseDropdowns() {

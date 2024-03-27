@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -38,6 +39,10 @@ namespace GsaGH.Parameters.Results {
     }
     private bool IsInvalid(KeyValuePair<int, NodeFootfallResult> kvp) {
       return double.IsNaN(kvp.Value.MaximumResponseFactor);
+    }
+
+    public void SetStandardAxis(int axisId) {
+      throw new NotImplementedException("Footfall is independent from chosen axis");
     }
   }
 }

@@ -8,9 +8,9 @@ namespace GsaGH.Parameters.Results {
   public class Element2dShearForceCache
     : IMeshResultCache<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> {
     public IApiResult ApiResult { get; set; }
-
     public IDictionary<int, IList<IMeshQuantity<IShear2d>>> Cache { get; }
       = new ConcurrentDictionary<int, IList<IMeshQuantity<IShear2d>>>();
+    private int _axisId = -10;
 
     internal Element2dShearForceCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -28,7 +28,7 @@ namespace GsaGH.Parameters.Results {
         switch (ApiResult.Result) {
           case AnalysisCaseResult analysisCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<Vector2>> aCaseResults
-              = analysisCase.Element2dShear(elementList);
+              = analysisCase.Element2dShear(elementList, _axisId);
             Parallel.ForEach(aCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IMeshQuantity<IShear2d>>>)Cache).TryAdd(
               elementId, Entity2dResultsFactory.CreateShearForce(aCaseResults[elementId])));
@@ -36,7 +36,7 @@ namespace GsaGH.Parameters.Results {
 
           case CombinationCaseResult combinationCase:
             ReadOnlyDictionary<int, ReadOnlyCollection<ReadOnlyCollection<Vector2>>> cCaseResults
-              = combinationCase.Element2dShear(elementList);
+              = combinationCase.Element2dShear(elementList, _axisId);
             Parallel.ForEach(cCaseResults.Keys, elementId =>
              ((ConcurrentDictionary<int, IList<IMeshQuantity<IShear2d>>>)Cache).TryAdd(
               elementId, Entity2dResultsFactory.CreateShearForce(cCaseResults[elementId])));
@@ -45,6 +45,14 @@ namespace GsaGH.Parameters.Results {
       }
 
       return new Entity2dShearForce(Cache.GetSubset(elementIds));
+    }
+
+    public void SetStandardAxis(int axisId) {
+      if (axisId != _axisId) {
+        Cache.Clear();
+      }
+
+      _axisId = axisId;
     }
   }
 }
