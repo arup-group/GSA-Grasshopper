@@ -1,15 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+using GsaGH.Helpers.GsaApi;
+using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
+using GsaGHTests.Helpers;
+using GsaGHTests.Parameters.Results;
 using OasysUnits;
+using OasysUnits.Units;
 using Xunit;
+using AssemblyForcesAndMoments = GsaGH.Components.AssemblyForcesAndMoments;
 
-namespace GsaGHTests.Parameters.Results {
+namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class AssemblyForcesAndMomentsTests {
+    [Fact]
+    public void InvalidInputErrorTests() {
+      var comp = new AssemblyForcesAndMoments();
+      ComponentTestHelper.SetInput(comp, "not a result");
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
     [Theory]
     [InlineData(ResultVector6.X)]
     [InlineData(ResultVector6.Y)]
@@ -25,11 +38,16 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
-      AssemblyForcesAndMoments resultSet = result.AssemblyForcesAndMoments.ResultSubset(new Collection<int>() { 2 });
+      var comp = new AssemblyForcesAndMoments();
+      comp.SetSelected(0, 1 + (int)component);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, "2", 1);
 
-      // Assert 
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max, 1E-6);
+      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
+
+      // Assert
+      double max = output.Max().As(Unit(component));
+      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
     }
 
     [Theory]
@@ -44,14 +62,19 @@ namespace GsaGHTests.Parameters.Results {
     public void AssemblyForcesAndMomentsMaxFromCombinationCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.AssemblySimple, 1);
-      double expected = ExpectedCombinationCaseValues(component).Max();
+      double expected = ExpectedCombinationCaseC1Values(component).Max();
 
       // Act
-      AssemblyForcesAndMoments resultSet = result.AssemblyForcesAndMoments.ResultSubset(new Collection<int>() { 2 });
+      var comp = new AssemblyForcesAndMoments();
+      comp.SetSelected(0, 1 + (int)component);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, "2", 1);
+
+      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
       // Assert
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max, 1E-6);
+      double max = output.Max().As(Unit(component));
+      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
     }
 
     [Theory]
@@ -69,11 +92,16 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
-      AssemblyForcesAndMoments resultSet = result.AssemblyForcesAndMoments.ResultSubset(new Collection<int>() { 2 });
+      var comp = new AssemblyForcesAndMoments();
+      comp.SetSelected(0, 9 + (int)component);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, "2", 1);
 
-      // Assert
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min, 1E-6);
+      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
+
+      // Assert 
+      double min = output.Min().As(Unit(component));
+      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
 
     [Theory]
@@ -85,73 +113,22 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6.Yy)]
     [InlineData(ResultVector6.Zz)]
     [InlineData(ResultVector6.Xxyyzz)]
-    public void AssemblyForcesAndMomentsMinFromCombinationCaseTest(ResultVector6 component) {
+    public void AssemblyForcesAndMomentsMinFromcombinationCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.AssemblySimple, 1);
-      double expected = ExpectedCombinationCaseValues(component).Min();
+      double expected = ExpectedCombinationCaseC1Values(component).Min();
 
       // Act
-      AssemblyForcesAndMoments resultSet = result.AssemblyForcesAndMoments.ResultSubset(new Collection<int>() { 2 });
+      var comp = new AssemblyForcesAndMoments();
+      comp.SetSelected(0, 9 + (int)component);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, "2", 1);
+
+      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
       // Assert
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min, 1E-6);
-    }
-
-    [Theory]
-    [InlineData(ResultVector6.X)]
-    [InlineData(ResultVector6.Y)]
-    [InlineData(ResultVector6.Z)]
-    [InlineData(ResultVector6.Xyz)]
-    [InlineData(ResultVector6.Xx)]
-    [InlineData(ResultVector6.Yy)]
-    [InlineData(ResultVector6.Zz)]
-    [InlineData(ResultVector6.Xxyyzz)]
-    public void AssemblyForcesAndMomentValuesFromAnalysisCaseTest(ResultVector6 component) {
-      // Assemble
-      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.AssemblySimple, 1);
-      List<double> expected = ExpectedAnalysisCaseValues(component);
-
-      // Act
-      AssemblyForcesAndMoments resultSet = result.AssemblyForcesAndMoments.ResultSubset(new Collection<int>() { 2 });
-
-      // Assert
-      IList<IEntity1dQuantity<IInternalForce>> forceQuantity = resultSet.Subset[2];
-      Assert.Single(forceQuantity);
-
-      int position = 0;
-      foreach (IInternalForce force in forceQuantity[0].Results.Values) {
-        double x = TestsResultHelper.ResultsHelper(force, component);
-        Assert.Equal(expected[position++], x, 1E-6);
-      }
-    }
-
-    [Theory]
-    [InlineData(ResultVector6.X)]
-    [InlineData(ResultVector6.Y)]
-    [InlineData(ResultVector6.Z)]
-    [InlineData(ResultVector6.Xyz)]
-    [InlineData(ResultVector6.Xx)]
-    [InlineData(ResultVector6.Yy)]
-    [InlineData(ResultVector6.Zz)]
-    [InlineData(ResultVector6.Xxyyzz)]
-    public void AssemblyForcesAndMomentValuesFromCombinationCaseTest(ResultVector6 component) {
-      // Assemble
-      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.AssemblySimple, 1);
-      List<double> expected = ExpectedCombinationCaseValues(component);
-
-      // Act
-      AssemblyForcesAndMoments resultSet = result.AssemblyForcesAndMoments.ResultSubset(new Collection<int>() { 2 });
-
-      // Assert
-      IList<IEntity1dQuantity<IInternalForce>> forceQuantity = resultSet.Subset[2];
-      Assert.Single(forceQuantity);
-
-      int position = 0;
-      foreach (IInternalForce force in forceQuantity[0].Results.Values) {
-        double x = TestsResultHelper.ResultsHelper(force, component);
-        Assert.Equal(expected[position++], x, 1E-6);
-      }
+      double min = output.Min().As(Unit(component));
+      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
 
     private List<double> ExpectedAnalysisCaseValues(ResultVector6 component) {
@@ -169,7 +146,7 @@ namespace GsaGHTests.Parameters.Results {
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseValues(ResultVector6 component) {
+    private List<double> ExpectedCombinationCaseC1Values(ResultVector6 component) {
       switch (component) {
         case ResultVector6.X: return AssemblyForcesAndMomentsC1.XInKiloNewton();
         case ResultVector6.Y: return AssemblyForcesAndMomentsC1.YInKiloNewton();
@@ -182,6 +159,14 @@ namespace GsaGHTests.Parameters.Results {
       }
 
       throw new NotImplementedException();
+    }
+
+    private Enum Unit(ResultVector6 component) {
+      Enum unit = ForceUnit.Kilonewton;
+      if ((int)component > 3) {
+        unit = MomentUnit.KilonewtonMeter;
+      }
+      return unit;
     }
   }
 }

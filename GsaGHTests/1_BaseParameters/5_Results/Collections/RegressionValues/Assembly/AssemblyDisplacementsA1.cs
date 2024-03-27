@@ -82,14 +82,14 @@ namespace GsaGHTests.Parameters.Results {
     internal static List<double> YyInRadian() {
       return new List<double>() {
         1.31E-09,
-        1.52E-09,
+        1.518E-09,
         1.62E-10,
         2.12E-10,
         1.09E-10,
         3.36E-11,
         -1.18E-11,
         -4.55E-11,
-        -6.90E-11,
+        -6.897E-11,
         4.41E-11
       };
     }
@@ -97,7 +97,7 @@ namespace GsaGHTests.Parameters.Results {
     internal static List<double> ZzInRadian() {
       return new List<double>() {
         0.0,
-        -1.34E-09,
+        -1.336E-09,
         -120.7E-12,
         176.5E-12,
         128.2E-12,
@@ -114,7 +114,7 @@ namespace GsaGHTests.Parameters.Results {
         1.41E-05,
         3.36E-06,
         2.30E-06,
-        9.66E-08,
+        9.657E-08,
         1.65E-07,
         1.96E-07,
         1.82E-07,

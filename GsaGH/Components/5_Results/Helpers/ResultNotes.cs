@@ -28,5 +28,10 @@ namespace GsaGH.Components.Helpers {
 
     internal static string Note3dStressResults = Note2dResults +
       Environment.NewLine + "+ve stresses: tensile (ie. +ve direct strain)";
+
+    internal static string NoteAssemblyResults =
+      Environment.NewLine + "DataTree organised as { `CaseID` ; `Permutation` ; `AssemblyID` } " +
+      Environment.NewLine + "fx. `{1;2;3}` is Case 1, Permutation 2, Assembly 3, where each " +
+      Environment.NewLine + "branch contains a list of results per assembly position/storey.";
   }
 }

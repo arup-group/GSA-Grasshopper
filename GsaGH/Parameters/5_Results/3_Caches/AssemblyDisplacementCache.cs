@@ -8,8 +8,8 @@ namespace GsaGH.Parameters.Results {
   public class AssemblyDisplacementCache {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, IList<IAssemblyQuantity<IDisplacement>>> Cache { get; }
-      = new ConcurrentDictionary<int, IList<IAssemblyQuantity<IDisplacement>>>();
+    public ConcurrentDictionary<int, IList<IEntity1dQuantity<IDisplacement>>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IEntity1dQuantity<IDisplacement>>>();
 
     internal AssemblyDisplacementCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -35,7 +35,7 @@ namespace GsaGH.Parameters.Results {
               }
 
               var results = new AssemblyDisplacement(aCaseResults[entityId]);
-              Cache.TryAdd(entityId, new List<IAssemblyQuantity<IDisplacement>>() { results });
+              Cache.TryAdd(entityId, new List<IEntity1dQuantity<IDisplacement>>() { results });
             });
             break;
 
@@ -44,7 +44,7 @@ namespace GsaGH.Parameters.Results {
             = combinationCase.AssemblyDisplacements(entityList);
 
             Parallel.ForEach(cCaseResults.Keys, entityId => {
-              var permutationResults = new Collection<IAssemblyQuantity<IDisplacement>>();
+              var permutationResults = new Collection<IEntity1dQuantity<IDisplacement>>();
               foreach (ReadOnlyCollection<AssemblyResult> permutation in cCaseResults[entityId]) {
                 var positions = new Collection<double>();
                 foreach (AssemblyResult result in permutation) {

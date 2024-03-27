@@ -1,15 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+using GsaGH.Helpers.GsaApi;
+using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
+using GsaGHTests.Helpers;
+using GsaGHTests.Parameters.Results;
 using OasysUnits;
+using OasysUnits.Units;
 using Xunit;
+using AssemblyDisplacements = GsaGH.Components.AssemblyDisplacements;
 
-namespace GsaGHTests.Parameters.Results {
+namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
   public class AssemblyDisplacementsTests {
+    [Fact]
+    public void InvalidInputErrorTests() {
+      var comp = new AssemblyDisplacements();
+      ComponentTestHelper.SetInput(comp, "not a result");
+      comp.Params.Output[0].CollectData();
+      Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
     [Theory]
     [InlineData(ResultVector6.X)]
     [InlineData(ResultVector6.Y)]
@@ -25,11 +38,16 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component).Max();
 
       // Act
-      AssemblyDisplacements resultSet = result.AssemblyDisplacements.ResultSubset(new Collection<int>() { 2 });
+      var comp = new AssemblyDisplacements();
+      comp.SetSelected(0, 1 + (int)component);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, "2", 1);
 
-      // Assert 
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max, 1E-6);
+      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
+
+      // Assert
+      double max = output.Max().As(Unit(component));
+      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
     }
 
     [Theory]
@@ -44,14 +62,19 @@ namespace GsaGHTests.Parameters.Results {
     public void AssemblyDisplacementsMaxFromCombinationCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.AssemblySimple, 1);
-      double expected = ExpectedCombinationCaseValues(component).Max();
+      double expected = ExpectedCombinationCaseC1Values(component).Max();
 
       // Act
-      AssemblyDisplacements resultSet = result.AssemblyDisplacements.ResultSubset(new Collection<int>() { 2 });
+      var comp = new AssemblyDisplacements();
+      comp.SetSelected(0, 1 + (int)component);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, "2", 1);
+
+      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
       // Assert
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max, 1E-6);
+      double max = output.Max().As(Unit(component));
+      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
     }
 
     [Theory]
@@ -69,11 +92,16 @@ namespace GsaGHTests.Parameters.Results {
       double expected = ExpectedAnalysisCaseValues(component).Min();
 
       // Act
-      AssemblyDisplacements resultSet = result.AssemblyDisplacements.ResultSubset(new Collection<int>() { 2 });
+      var comp = new AssemblyDisplacements();
+      comp.SetSelected(0, 9 + (int)component);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, "2", 1);
 
-      // Assert
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min, 1E-6);
+      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
+
+      // Assert 
+      double min = output.Min().As(Unit(component));
+      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
 
     [Theory]
@@ -85,73 +113,22 @@ namespace GsaGHTests.Parameters.Results {
     [InlineData(ResultVector6.Yy)]
     [InlineData(ResultVector6.Zz)]
     [InlineData(ResultVector6.Xxyyzz)]
-    public void AssemblyDisplacementsMinFromCombinationCaseTest(ResultVector6 component) {
+    public void AssemblyDisplacementsMinFromcombinationCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.AssemblySimple, 1);
-      double expected = ExpectedCombinationCaseValues(component).Min();
+      double expected = ExpectedCombinationCaseC1Values(component).Min();
 
       // Act
-      AssemblyDisplacements resultSet = result.AssemblyDisplacements.ResultSubset(new Collection<int>() { 2 });
+      var comp = new AssemblyDisplacements();
+      comp.SetSelected(0, 9 + (int)component);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, "2", 1);
+
+      List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
       // Assert
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min, 1E-6);
-    }
-
-    [Theory]
-    [InlineData(ResultVector6.X)]
-    [InlineData(ResultVector6.Y)]
-    [InlineData(ResultVector6.Z)]
-    [InlineData(ResultVector6.Xyz)]
-    [InlineData(ResultVector6.Xx)]
-    [InlineData(ResultVector6.Yy)]
-    [InlineData(ResultVector6.Zz)]
-    [InlineData(ResultVector6.Xxyyzz)]
-    public void AssemblyDisplacementValuesFromAnalysisCaseTest(ResultVector6 component) {
-      // Assemble
-      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.AssemblySimple, 1);
-      List<double> expected = ExpectedAnalysisCaseValues(component);
-
-      // Act
-      AssemblyDisplacements resultSet = result.AssemblyDisplacements.ResultSubset(new Collection<int>() { 2 });
-
-      // Assert
-      IList<IEntity1dQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[2];
-      Assert.Single(displacementQuantity);
-
-      int position = 0;
-      foreach (IDisplacement displacement in displacementQuantity[0].Results.Values) {
-        double x = TestsResultHelper.ResultsHelper(displacement, component);
-        Assert.Equal(expected[position++], x, 1E-6);
-      }
-    }
-
-    [Theory]
-    [InlineData(ResultVector6.X)]
-    [InlineData(ResultVector6.Y)]
-    [InlineData(ResultVector6.Z)]
-    [InlineData(ResultVector6.Xyz)]
-    [InlineData(ResultVector6.Xx)]
-    [InlineData(ResultVector6.Yy)]
-    [InlineData(ResultVector6.Zz)]
-    [InlineData(ResultVector6.Xxyyzz)]
-    public void AssemblyDisplacementValuesFromCombinationCaseTest(ResultVector6 component) {
-      // Assemble
-      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.AssemblySimple, 1);
-      List<double> expected = ExpectedCombinationCaseValues(component);
-
-      // Act
-      AssemblyDisplacements resultSet = result.AssemblyDisplacements.ResultSubset(new Collection<int>() { 2 });
-
-      // Assert
-      IList<IEntity1dQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[2];
-      Assert.Single(displacementQuantity);
-
-      int position = 0;
-      foreach (IDisplacement displacement in displacementQuantity[0].Results.Values) {
-        double x = TestsResultHelper.ResultsHelper(displacement, component);
-        Assert.Equal(expected[position++], x, 1E-6);
-      }
+      double min = output.Min().As(Unit(component));
+      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
 
     private List<double> ExpectedAnalysisCaseValues(ResultVector6 component) {
@@ -169,7 +146,7 @@ namespace GsaGHTests.Parameters.Results {
       throw new NotImplementedException();
     }
 
-    private List<double> ExpectedCombinationCaseValues(ResultVector6 component) {
+    private List<double> ExpectedCombinationCaseC1Values(ResultVector6 component) {
       switch (component) {
         case ResultVector6.X: return AssemblyDisplacementsC1.XInMillimeter();
         case ResultVector6.Y: return AssemblyDisplacementsC1.YInMillimeter();
@@ -182,6 +159,14 @@ namespace GsaGHTests.Parameters.Results {
       }
 
       throw new NotImplementedException();
+    }
+
+    private Enum Unit(ResultVector6 component) {
+      Enum unit = LengthUnit.Millimeter;
+      if ((int)component > 3) {
+        unit = AngleUnit.Radian;
+      }
+      return unit;
     }
   }
 }

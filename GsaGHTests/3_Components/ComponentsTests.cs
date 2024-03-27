@@ -46,7 +46,11 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(AnalyseModel), 1)]
     [InlineData(typeof(CreateAnalysisTask), 1)]
     [InlineData(typeof(CreateSteelDesignTask), 2)]
-    // Results
+    //Results
+    [InlineData(typeof(AssemblyDisplacements), 2)]
+    [InlineData(typeof(AssemblyDriftIndices), 1)]
+    [InlineData(typeof(AssemblyDrifts), 2)]
+    [InlineData(typeof(AssemblyForcesAndMoments), 3)]
     [InlineData(typeof(BeamDerivedStresses), 2)]
     [InlineData(typeof(BeamDisplacements), 2)]
     [InlineData(typeof(BeamForcesAndMoments), 3)]
@@ -70,6 +74,8 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SteelDesignEffectiveLength), 2)]
     [InlineData(typeof(TotalLoadsAndReactions), 2)]
     // Display
+    [InlineData(typeof(AssemblyResultDiagrams), 2)]
+    [InlineData(typeof(AssemblyResults), 2)]
     [InlineData(typeof(Contour1dResults), 2)]
     [InlineData(typeof(Contour2dResults), 2)]
     [InlineData(typeof(Contour3dResults), 2)]

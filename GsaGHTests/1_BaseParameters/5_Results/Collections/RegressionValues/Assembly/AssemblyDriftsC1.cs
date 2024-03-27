@@ -38,7 +38,7 @@ namespace GsaGHTests.Parameters.Results {
       return new List<double>() {
         0,
         7.60E-03,
-        8.31E-03,
+        8.313E-03,
         6.94E-03,
         6.69E-03,
         7.15E-03,
