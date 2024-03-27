@@ -65,7 +65,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("15d88d76-6dfc-434b-928f-687b91d52002");
     public override GH_Exposure Exposure => GH_Exposure.quarternary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => null;
+    protected override Bitmap Icon => Resources.AssemblyResults;
     private readonly List<string> _displacement = new List<string>(new[] {
       "Translation Ux",
       "Translation Uy",

@@ -35,7 +35,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("1b059edf-69aa-4c54-bcd6-01e3def03ef1");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => null;
+    protected override Bitmap Icon => Resources.AssemblyResultDiagrams;
 
     private string _case = string.Empty;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
