@@ -102,6 +102,7 @@ namespace GsaGH.Components {
               = "Invalid member list\n\nThe member list should take the form:\n 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (Z4 XY55)\nwhere:\nGn  ->  Members in group n\nPn  ->  Members of property n\nPB(n)  ->  1D beam, bar, rod, strut and tie members (of property n)\nPA(n)  ->  2D members (of property n)n\nM(n)  ->  Members (of analysis material n)\nMS(n)  ->  Steel members (of grade n)\nMC(n)  ->  Concrete members (of grade n)\nMP(n)  ->  FRP members (of grade n)\nXn  ->  Members on global X line through node n\nYn  ->  ditto for Y\nZn  ->  ditto for Z\nXYn  ->  Members on global XY plane passing through node n\nYZn  ->  ditto for YZ\nZXn  ->  ditto for ZX\n\n* may be used in place of a member or property number\nto refer to the highest numbered member or property.";
             break;
 
+          case EntityType.Assembly:
           case EntityType.Case:
           case EntityType.Undefined:
             message

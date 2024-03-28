@@ -12,7 +12,7 @@ namespace GsaGH.Parameters {
   /// <summary>
   /// <para>An Entity List is expressed as a string of text in a specific syntax along with the List
   /// Type. In Grasshopper, a Entity List can also contain a copy of all the items in the list. </para>
-  /// <para>Lists (of nodes, elements, members or cases) are used, for example, when a particular load
+  /// <para>Lists (of nodes, elements, members, assemblies or cases) are used, for example, when a particular load
   /// is to be applied to one or several elements. To define a series of items the list can either
   /// specify each individually or, if applicable, use a more concise 
   /// <see href="https://docs.oasys-software.com/structural/gsa/references/listsandembeddedlists.html">syntax</see>.</para>
@@ -32,6 +32,7 @@ namespace GsaGH.Parameters {
       ConcurrentBag<GsaElement3dGoo> e3d) _elements;
     internal (ConcurrentBag<GsaMember1dGoo> m1d, ConcurrentBag<GsaMember2dGoo> m2d,
       ConcurrentBag<GsaMember3dGoo> m3d) _members;
+    internal ConcurrentBag<GsaAssemblyGoo> _assemblies;
     private GsaModel _model;
 
     public GsaList() { }
@@ -99,6 +100,13 @@ namespace GsaGH.Parameters {
             dup._members = (new ConcurrentBag<GsaMember1dGoo>(_members.m1d.ToList()),
               new ConcurrentBag<GsaMember2dGoo>(_members.m2d.ToList()),
               new ConcurrentBag<GsaMember3dGoo>(_members.m3d.ToList()));
+          }
+
+          break;
+
+        case EntityType.Assembly:
+          if (_assemblies != null) {
+            dup._assemblies = new ConcurrentBag<GsaAssemblyGoo>(_assemblies.ToList());
           }
 
           break;
@@ -172,6 +180,17 @@ namespace GsaGH.Parameters {
             s += "containing "
               + (_members.m1d.Count + _members.m2d.Count + _members.m3d.Count) + " "
               + EntityType.ToString() + "s";
+          } else {
+            s += EntityType.ToString() + "s" + (Definition != null
+              ? " (" + Definition.Trim() + ")"
+              : string.Empty);
+          }
+
+          break;
+
+        case EntityType.Assembly:
+          if (!_assemblies.IsNullOrEmpty()) {
+            s += "containing " + _assemblies.Count + " " + EntityType.ToString() + "s";
           } else {
             s += EntityType.ToString() + "s" + (Definition != null
               ? " (" + Definition.Trim() + ")"
@@ -283,6 +302,14 @@ namespace GsaGH.Parameters {
             list.AddRange(_members.m3d.OrderBy(x => x.Value.Id));
           }
 
+          break;
+
+        case EntityType.Assembly:
+          if (_assemblies == null) {
+            return new List<object>();
+          }
+
+          list = new List<object>(_assemblies.OrderBy(x => x.Value.Id));
           break;
 
         case EntityType.Case:
@@ -433,6 +460,10 @@ namespace GsaGH.Parameters {
           }
           break;
 
+        case EntityType.Assembly:
+          _assemblies = new ConcurrentBag<GsaAssemblyGoo>(gooObjects.Select(x => (GsaAssemblyGoo)x));
+          break;
+
         case EntityType.Case:
           _cases = gooObjects.Select(x => (int)x).ToList();
           break;
@@ -491,6 +522,15 @@ namespace GsaGH.Parameters {
             Definition = Definition
           };
           _cases = _model.Model.ExpandList(tempApiList).ToList();
+          break;
+
+        case EntityType.Assembly:
+          // ???????
+          // ???????
+          // ???????
+          // ???????
+          // ???????
+          // ???????
           break;
 
         case EntityType.Undefined:
