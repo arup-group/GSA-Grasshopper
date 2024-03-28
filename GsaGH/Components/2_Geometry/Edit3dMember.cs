@@ -99,9 +99,10 @@ namespace GsaGH.Components {
       var mem = new GsaMember3d();
 
       GsaMember3dGoo member3dGoo = null;
-      if (da.GetData(0, ref member3dGoo)) {
-        mem = new GsaMember3d(member3dGoo.Value);
+      if (!da.GetData(0, ref member3dGoo)) {
+        return;
       }
+      mem = new GsaMember3d(member3dGoo.Value);
 
       int id = 0;
       if (da.GetData(1, ref id)) {

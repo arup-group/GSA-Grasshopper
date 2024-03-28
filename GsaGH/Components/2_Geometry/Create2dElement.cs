@@ -36,6 +36,9 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       GH_Mesh ghmesh = null;
       da.GetData(0, ref ghmesh);
+      if (ghmesh == null) {
+        return;
+      }
       var elem = new GsaElement2d(ghmesh.Value);
 
       GsaProperty2dGoo prop2dGoo = null;

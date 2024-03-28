@@ -148,7 +148,7 @@ namespace GsaGH.Components {
       var member3dGoos = new List<GsaMember3dGoo>();
       var member3ds = new List<GsaMember3d>();
       if (da.GetDataList(3, member3dGoos)) {
-        member3ds = member3dGoos.ConvertAll(x => x.Value);
+        member3ds = member3dGoos.ConvertAll(x => x?.Value);
       }
 
       // manually add a warning if no input is set, as all three inputs are optional

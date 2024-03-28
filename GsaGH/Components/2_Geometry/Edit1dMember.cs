@@ -178,9 +178,10 @@ namespace GsaGH.Components {
       var mem = new GsaMember1d();
 
       GsaMember1dGoo member1dGoo = null;
-      if (da.GetData(0, ref member1dGoo)) {
-        mem = new GsaMember1d(member1dGoo.Value);
+      if (!da.GetData(0, ref member1dGoo)) {
+        return;
       }
+      mem = new GsaMember1d(member1dGoo.Value);
 
       GH_String ghstring = null;
       if (da.GetData(6, ref ghstring)) {

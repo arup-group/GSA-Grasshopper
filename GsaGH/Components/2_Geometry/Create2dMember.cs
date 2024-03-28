@@ -75,6 +75,9 @@ namespace GsaGH.Components {
     protected override void SolveInternal(IGH_DataAccess da) {
       GH_Brep ghbrep = null;
       da.GetData(0, ref ghbrep);
+      if (ghbrep == null) {
+        return;
+      }
 
       var points = new Point3dList();
       var ghpts = new List<GH_Point>();

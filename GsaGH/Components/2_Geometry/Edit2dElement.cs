@@ -98,9 +98,10 @@ namespace GsaGH.Components {
       var elem = new GsaElement2d();
 
       GsaElement2dGoo element2dGoo = null;
-      if (da.GetData(0, ref element2dGoo)) {
-        elem = new GsaElement2d(element2dGoo.Value);
+      if (!da.GetData(0, ref element2dGoo)) {
+        return;
       }
+      elem = new GsaElement2d(element2dGoo.Value);
 
       // #### inputs ####
       // no good way of updating location of mesh on the fly //

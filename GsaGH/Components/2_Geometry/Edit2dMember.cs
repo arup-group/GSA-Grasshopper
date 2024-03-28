@@ -160,9 +160,10 @@ namespace GsaGH.Components {
       var mem = new GsaMember2d();
 
       GsaMember2dGoo member2dGoo = null;
-      if (da.GetData(0, ref member2dGoo)) {
-        mem = new GsaMember2d(member2dGoo.Value);
+      if (!da.GetData(0, ref member2dGoo)) {
+        return;
       }
+      mem = new GsaMember2d(member2dGoo.Value);
 
       int id = 0;
       if (da.GetData(1, ref id)) {

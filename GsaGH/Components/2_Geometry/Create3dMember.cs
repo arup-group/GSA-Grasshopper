@@ -44,6 +44,9 @@ namespace GsaGH.Components {
 
       var ghTyp = new GH_ObjectWrapper();
       da.GetData(0, ref ghTyp);
+      if (ghTyp == null || ghTyp.Value == null) {
+        return;
+      }
       if (GH_Convert.ToBrep(ghTyp.Value, ref brep, GH_Conversion.Both)) {
         member = new GsaMember3d(brep);
       } else if (GH_Convert.ToMesh(ghTyp.Value, ref mesh, GH_Conversion.Both)) {
