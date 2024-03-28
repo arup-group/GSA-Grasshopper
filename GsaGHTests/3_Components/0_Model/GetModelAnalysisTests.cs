@@ -12,7 +12,7 @@ namespace GsaGHTests.Model {
       // Assemble
       var comp = new GetModelAnalysis();
       var model = new GsaModel();
-      model.Model.Open(GsaFile.SteelDesignSimple);
+      model.ApiModel.Open(GsaFile.SteelDesignSimple);
 
       // Act
       ComponentTestHelper.SetInput(comp, new GsaModelGoo(model));
@@ -24,8 +24,8 @@ namespace GsaGHTests.Model {
       Assert.NotNull(taskGoo);
       Assert.Equal(1, taskGoo.Value.Id);
       Assert.Equal(2, taskGoo.Value.Cases.Count);
-      Assert.Equal("Task 1", taskGoo.Value.Task.Name);
-      Assert.Equal((int)AnalysisTaskType.Static, taskGoo.Value.Task.Type);
+      Assert.Equal("Task 1", taskGoo.Value.ApiTask.Name);
+      Assert.Equal((int)AnalysisTaskType.Static, taskGoo.Value.ApiTask.Type);
 
       Assert.NotNull(caseGoo);
       Assert.Equal(1, caseGoo.Value.Id);

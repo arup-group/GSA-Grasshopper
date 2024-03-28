@@ -101,11 +101,11 @@ namespace GsaGH.Components {
       AnalysisTask task = null;
       switch (_tasktype) {
         case AnalysisTaskType.Static:
-          task = null;
+          task = AnalysisTaskFactory.CreateStaticAnalysisTask(name);
           break;
 
         case AnalysisTaskType.StaticPDelta:
-          task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask("", new GeometricStiffnessFromResultCase(1));
+          task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name, new GeometricStiffnessFromResultCase(1));
           break;
 
         default:
@@ -115,7 +115,7 @@ namespace GsaGH.Components {
 
       var gsaAnalysisTask = new GsaAnalysisTask() {
         Cases = cases,
-        Task = task,
+        ApiTask = task,
       };
 
       da.SetData(0, new GsaAnalysisTaskGoo(gsaAnalysisTask));

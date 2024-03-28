@@ -12,7 +12,7 @@ namespace GsaGH.Parameters {
   public class GsaAnalysisTask {
     public List<GsaAnalysisCase> Cases { get; set; } = new List<GsaAnalysisCase>();
     public int Id { get; set; } = 0;
-    public AnalysisTask Task { get; internal set; } = null;
+    public AnalysisTask ApiTask { get; internal set; }
 
     public GsaAnalysisTask() {
       Id = 0;
@@ -26,20 +26,11 @@ namespace GsaGH.Parameters {
         Cases.Add(new GsaAnalysisCase(caseId, caseName, caseDescription));
       }
 
-      Task = task;
-    }
-
-    public GsaAnalysisTask Duplicate() {
-      var dup = new GsaAnalysisTask {
-        Id = Id,
-        Cases = Cases.ToList(),
-        Task = Task // ???
-      };
-      return dup;
+      ApiTask = task;
     }
 
     public override string ToString() {
-      return (Id > 0 ? $"ID:{Id} " : string.Empty) + $"'{Task.Name}' {Task.Type}".Replace("_", " ")
+      return (Id > 0 ? $"ID:{Id} " : string.Empty) + $"'{ApiTask.Name}' {ApiTask.Type}".Replace("_", " ")
         .TrimSpaces();
     }
 

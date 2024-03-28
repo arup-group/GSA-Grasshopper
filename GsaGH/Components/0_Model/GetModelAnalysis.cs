@@ -62,9 +62,9 @@ namespace GsaGH.Components {
 
       Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
         = modelGoo.Value.GetAnalysisTasksAndCombinations();
-      var combinationCaseGoos = modelGoo.Value.Model.CombinationCases().Select(keyValuePair
+      var combinationCaseGoos = modelGoo.Value.ApiModel.CombinationCases().Select(keyValuePair
         => new GsaCombinationCaseGoo(new GsaCombinationCase(keyValuePair))).ToList();
-      var designTaskGoos = modelGoo.Value.Model.SteelDesignTasks().Select(keyValuePair
+      var designTaskGoos = modelGoo.Value.ApiModel.SteelDesignTasks().Select(keyValuePair
         => new GsaDesignTaskGoo(new GsaSteelDesignTask(keyValuePair, modelGoo.Value))).ToList();
       da.SetDataList(0, tuple.Item1);
       da.SetDataList(1, tuple.Item2);

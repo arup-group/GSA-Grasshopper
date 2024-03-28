@@ -31,7 +31,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaAnalysisCaseParameter(), GsaAnalysisCaseGoo.Name + "(s)",
         GsaAnalysisCaseGoo.NickName, "Add list of " + GsaAnalysisCaseGoo.Name + " to task",
         GH_ParamAccess.list);
-      for (int i = 0; i < pManager.ParamCount; i++) {
+      for (int i = 1; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
       }
     }
@@ -49,11 +49,12 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var gsaTask = new GsaAnalysisTask();
+      GsaAnalysisTask gsaTask;
       GsaAnalysisTaskGoo analysisTaskGoo = null;
-      if (da.GetData(0, ref analysisTaskGoo)) {
-        gsaTask = analysisTaskGoo.Value.Duplicate();
+      if (!da.GetData(0, ref analysisTaskGoo)) {
+        return;
       }
+      gsaTask = analysisTaskGoo.Value;
 
       if (gsaTask != null) {
         var ghTypes = new List<GH_ObjectWrapper>();
@@ -84,7 +85,7 @@ namespace GsaGH.Components {
         }
 
         da.SetData(0, new GsaAnalysisTaskGoo(gsaTask));
-        da.SetData(1, gsaTask.Task.Name);
+        da.SetData(1, gsaTask.ApiTask.Name);
         if (gsaTask.Cases != null) {
           da.SetDataList(2,
             new List<GsaAnalysisCaseGoo>(gsaTask.Cases.Select(x => new GsaAnalysisCaseGoo(x))));
@@ -92,7 +93,8 @@ namespace GsaGH.Components {
           da.SetData(2, null);
         }
 
-        da.SetData(3, gsaTask.Task.Type.ToString());
+        var type = (AnalysisTaskType)gsaTask.ApiTask.Type;
+        da.SetData(3, type.ToString());
         da.SetData(4, gsaTask.Id);
       } else {
         string type = analysisTaskGoo.Value.GetType().ToString();

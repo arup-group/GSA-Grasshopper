@@ -277,7 +277,7 @@ namespace GsaGH.Helpers.GH {
         return string.Empty;
       }
 
-      if (model.Model.Lists().Values.Where(
+      if (model.ApiModel.Lists().Values.Where(
         x => x.Type == GsaAPI.EntityType.Assembly && x.Name == listGoo.Value.Name).Any()) {
         return "\"" + listGoo.Value.Name + "\"";
       }
@@ -310,7 +310,7 @@ namespace GsaGH.Helpers.GH {
       }
 
       if (listGoo.Value.EntityType == EntityType.Element) {
-        if (model.Model.Lists().Values.Where(
+        if (model.ApiModel.Lists().Values.Where(
           x => x.Type == GsaAPI.EntityType.Element && x.Name == listGoo.Value.Name).Any()) {
           return "\"" + listGoo.Value.Name + "\"";
         }
@@ -320,11 +320,11 @@ namespace GsaGH.Helpers.GH {
 
       // list is Member list
       ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship
-        = ModelAssembly.GetMemberElementRelationship(model.Model);
+        = ModelAssembly.GetMemberElementRelationship(model.ApiModel);
 
       // try find existing list of same name in model
       if (listGoo.Value.Name != null && listGoo.Value.Name != string.Empty) {
-        if (model.Model.Lists().Values.Where(
+        if (model.ApiModel.Lists().Values.Where(
           x => x.Type == GsaAPI.EntityType.Element
           && x.Name == $"Children of '{listGoo.Value.Name}'").Any()) {
           owner.AddRuntimeRemark($"Element definition was derived from Children of " +
@@ -332,12 +332,12 @@ namespace GsaGH.Helpers.GH {
           return "\"" + listGoo.Value.Name + "\"";
         }
 
-        foreach (EntityList list in model.Model.Lists().Values) {
+        foreach (EntityList list in model.ApiModel.Lists().Values) {
           if (list.Type != GsaAPI.EntityType.Member || list.Name != listGoo.Value.Name) {
             continue;
           }
 
-          ReadOnlyCollection<int> memberIds = model.Model.ExpandList(list);
+          ReadOnlyCollection<int> memberIds = model.ApiModel.ExpandList(list);
           var elementIds = new List<int>();
           var warnings = new List<int>(); ;
           foreach (int memberId in memberIds) {
@@ -369,7 +369,7 @@ namespace GsaGH.Helpers.GH {
       if (string.IsNullOrEmpty(tempList.Name)) {
         tempList.Name = "List";
       }
-      ReadOnlyCollection<int> memberIds2 = model.Model.ExpandList(tempList);
+      ReadOnlyCollection<int> memberIds2 = model.ApiModel.ExpandList(tempList);
 
       var elementIds2 = new List<int>();
       var warnings2 = new List<int>(); ;
@@ -414,7 +414,7 @@ namespace GsaGH.Helpers.GH {
             return listGoo.Value.Definition;
           }
 
-          if (model.Model.Lists().Values.Where(
+          if (model.ApiModel.Lists().Values.Where(
             x => x.Type == GsaAPI.EntityType.Node && x.Name == listGoo.Value.Name).Any()) {
             return "\"" + listGoo.Value.Name + "\"";
           }
@@ -447,7 +447,7 @@ namespace GsaGH.Helpers.GH {
             return listGoo.Value.Definition;
           }
 
-          if (model.Model.Lists().Values.Where(
+          if (model.ApiModel.Lists().Values.Where(
             x => x.Type == GsaAPI.EntityType.Member && x.Name == listGoo.Value.Name).Any()) {
             return "\"" + listGoo.Value.Name + "\"";
           }

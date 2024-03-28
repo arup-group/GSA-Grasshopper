@@ -157,7 +157,7 @@ namespace GsaGH.Components {
         }
 
         var model = new GsaModel();
-        model.Model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_lengthUnit);
+        model.ApiModel.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_lengthUnit);
         if (models != null) {
           if (models.Count > 0) {
             model = models.Count > 1

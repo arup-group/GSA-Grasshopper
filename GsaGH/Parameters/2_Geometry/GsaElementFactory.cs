@@ -32,7 +32,7 @@ namespace GsaGH.Parameters {
     internal static ConcurrentBag<GsaElement2dGoo> CreateElement2dFromApi(
       ConcurrentDictionary<int, Element> elements, GsaModel model) {
       ReadOnlyDictionary<int, Node> nodes = model.ApiNodes;
-      ReadOnlyDictionary<int, Axis> axDict = model.Model.Axes();
+      ReadOnlyDictionary<int, Axis> axDict = model.ApiModel.Axes();
 
       var sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, Element>>();
       Parallel.ForEach(elements, elem => {
@@ -105,8 +105,8 @@ namespace GsaGH.Parameters {
 
     internal static ConcurrentBag<GsaElement3dGoo> CreateElement3dFromApi(
       ConcurrentDictionary<int, Element> elements, GsaModel model) {
-      ReadOnlyDictionary<int, Node> nodes = model.Model.Nodes();
-      ReadOnlyDictionary<int, Axis> axDict = model.Model.Axes();
+      ReadOnlyDictionary<int, Node> nodes = model.ApiModel.Nodes();
+      ReadOnlyDictionary<int, Axis> axDict = model.ApiModel.Axes();
 
       var sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, Element>>();
       Parallel.ForEach(elements, elem => {

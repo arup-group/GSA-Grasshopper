@@ -16,8 +16,8 @@ namespace GsaGH.Helpers.Import {
       var elem1dDict = new ConcurrentDictionary<int, Element>();
       var elem2dDict = new ConcurrentDictionary<int, Element>();
       var elem3dDict = new ConcurrentDictionary<int, Element>();
-      ReadOnlyDictionary<int, GsaAPI.Assembly> aDict = model.Model.Assemblies(); 
-      ReadOnlyDictionary<int, Element> eDict = model.Model.Elements(elementList);
+      ReadOnlyDictionary<int, GsaAPI.Assembly> aDict = model.ApiModel.Assemblies(); 
+      ReadOnlyDictionary<int, Element> eDict = model.ApiModel.Elements(elementList);
 
       Parallel.ForEach(eDict, item => {
         int elemDimension = 1; // default assume 1D element

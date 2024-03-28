@@ -12,10 +12,10 @@ namespace GsaGH.Helpers.GsaApi {
 
     public static Tuple<List<string>, List<int>, DataTree<int?>> GetAvalailableResults(
       GsaModel model) {
-      ReadOnlyDictionary<int, AnalysisCaseResult> analysisCaseResults = model.Model.Results();
+      ReadOnlyDictionary<int, AnalysisCaseResult> analysisCaseResults = model.ApiModel.Results();
       ReadOnlyDictionary<int, CombinationCaseResult> combinationCaseResults
-        = model.Model.CombinationCaseResults();
-      int tempNodeId = model.Model.Nodes().Keys.First();
+        = model.ApiModel.CombinationCaseResults();
+      int tempNodeId = model.ApiModel.Nodes().Keys.First();
 
       var type = new List<string>();
       var caseIds = new List<int>();
