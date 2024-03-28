@@ -6,6 +6,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 
@@ -17,7 +18,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("82d76442-cc58-49c6-b6d7-d0ae998ce063");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => null;
+    protected override Bitmap Icon => Resources.AnalysisTaskInfo;
 
     public AnalysisTaskInfo() : base("Analysis Task Info", "TaskInfo",
       "Get information about a GSA Analysis Task",
