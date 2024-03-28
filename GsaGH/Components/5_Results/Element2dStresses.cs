@@ -106,17 +106,17 @@ namespace GsaGH.Components {
       string note = ResultNotes.Note2dStressResults;
 
       pManager.AddGenericParameter("Stress XX [" + unitAbbreviation + "]", "xx",
-        "Stress in XX-direction in Global Axis." + note, GH_ParamAccess.tree);
+        "Stress in XX-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Stress YY [" + unitAbbreviation + "]", "yy",
-        "Stress in YY-direction in Global Axis." + note, GH_ParamAccess.tree);
+        "Stress in YY-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Stress ZZ [" + unitAbbreviation + "]", "zz",
-        "Stress in ZZ-direction in Global Axis." + note, GH_ParamAccess.tree);
+        "Stress in ZZ-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Stress XY [" + unitAbbreviation + "]", "xy",
-        "Stress in XY-direction in Global Axis." + note, GH_ParamAccess.tree);
+        "Stress in XY-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Stress YZ [" + unitAbbreviation + "]", "yz",
-        "Stress in YZ-direction in Global Axis." + note, GH_ParamAccess.tree);
+        "Stress in YZ-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Stress ZX [" + unitAbbreviation + "]", "zx",
-        "Stress in ZX-direction in Global Axis." + note, GH_ParamAccess.tree);
+        "Stress in ZX-direction" + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {

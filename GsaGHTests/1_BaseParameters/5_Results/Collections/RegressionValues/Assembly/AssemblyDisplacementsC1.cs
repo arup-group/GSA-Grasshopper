@@ -66,8 +66,8 @@ namespace GsaGHTests.Parameters.Results {
 
     internal static List<double> XxInRadian() {
       return new List<double>() {
-        1.51E-05,
-        4.34E-07,
+        1.512E-05,
+        4.336E-07,
         2.58E-06,
         5.58E-06,
         6.19E-06,
@@ -81,14 +81,14 @@ namespace GsaGHTests.Parameters.Results {
 
     internal static List<double> YyInRadian() {
       return new List<double>() {
-        -63.0E-09,
+        -62.95E-09,
         -1.47E-07,
         -2.05E-07,
         -3.01E-07,
         -4.24E-07,
         -5.15E-07,
-        -5.76E-07,
-        -5.77E-07,
+        -5.757E-07,
+        -5.766E-07,
         -5.74E-07,
         -5.73E-07
       };
@@ -101,8 +101,8 @@ namespace GsaGHTests.Parameters.Results {
         7.02E-07,
         1.16E-06,
         1.70E-06,
-        1.89E-06,
-        1.89E-06,
+        1.885E-06,
+        1.888E-06,
         1.50E-06,
         1.29E-06,
         1.26E-06
@@ -111,8 +111,8 @@ namespace GsaGHTests.Parameters.Results {
 
     internal static List<double> XxyyzzInRadian() {
       return new List<double>() {
-        1.51E-05,
-        6.23E-07,
+        1.512E-05,
+        6.226E-07,
         2.68E-06,
         5.71E-06,
         6.43E-06,
