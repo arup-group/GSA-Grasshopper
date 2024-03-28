@@ -8,14 +8,14 @@ namespace GsaGHTests.Components {
   public class ComponentsTests {
 
     [Theory]
-    //Model
+    // Model
     [InlineData(typeof(CreateList), 1)]
     [InlineData(typeof(CreateModel), 1)]
     [InlineData(typeof(GetModelLoads), 1)]
     [InlineData(typeof(ListInfo), 1)]
     [InlineData(typeof(PropertyQuantities), 1)]
     [InlineData(typeof(MaterialQuantities), 1)]
-    //Properties
+    // Properties
     [InlineData(typeof(CreateCustomMaterial), 4)]
     [InlineData(typeof(CreateMaterial), 3)]
     [InlineData(typeof(CreateOffset), 1)]
@@ -24,13 +24,13 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateSection), 1)]
     [InlineData(typeof(CreateSectionModifier), 3)]
     [InlineData(typeof(CreateSpringProperty), 2)]
-    //Geometry
+    // Geometry
     [InlineData(typeof(Create2dElementsFromBrep), 2)]
     [InlineData(typeof(CreateElementsFromMembers), 1)]
     [InlineData(typeof(SectionAlignment), 1)]
     [InlineData(typeof(CreateMemberEndRestraint), 1)]
     [InlineData(typeof(CreateAssembly), 2)]
-    //Loads
+    // Loads
     [InlineData(typeof(CreateBeamLoad), 2)]
     [InlineData(typeof(CreateBeamThermalLoad), 2)]
     [InlineData(typeof(CreateFaceLoad), 2)]
@@ -42,38 +42,46 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateGridSurface), 1)]
     [InlineData(typeof(CreateNodeLoad), 2)]
     [InlineData(typeof(LoadProperties), 2)]
-    //Analysis
+    // Analysis
     [InlineData(typeof(AnalyseModel), 1)]
     [InlineData(typeof(CreateAnalysisTask), 1)]
     [InlineData(typeof(CreateSteelDesignTask), 2)]
     //Results
+    [InlineData(typeof(AssemblyDisplacements), 2)]
+    [InlineData(typeof(AssemblyDriftIndices), 1)]
+    [InlineData(typeof(AssemblyDrifts), 2)]
+    [InlineData(typeof(AssemblyForcesAndMoments), 3)]
     [InlineData(typeof(BeamDerivedStresses), 2)]
     [InlineData(typeof(BeamDisplacements), 2)]
     [InlineData(typeof(BeamForcesAndMoments), 3)]
     [InlineData(typeof(BeamStrainEnergyDensity), 2)]
     [InlineData(typeof(BeamStresses), 2)]
-    [InlineData(typeof(Contour1dResults), 2)]
-    [InlineData(typeof(ResultDiagrams), 2)]
-    [InlineData(typeof(Contour2dResults), 2)]
     [InlineData(typeof(Element2dDisplacements), 2)]
     [InlineData(typeof(Element2dForcesAndMoments), 3)]
     [InlineData(typeof(Element2dStresses), 2)]
-    [InlineData(typeof(Contour3dResults), 2)]
     [InlineData(typeof(Element3dDisplacements), 2)]
     [InlineData(typeof(Element3dStresses), 2)]
-    [InlineData(typeof(GlobalPerformanceResults_OBSOLETE), 3)]
-    [InlineData(typeof(GlobalPerformanceResults), 3)]
-    [InlineData(typeof(ContourNodeResults), 2)]
-    [InlineData(typeof(NodeDisplacements), 2)]
     [InlineData(typeof(FootfallResults), 2)]
+    [InlineData(typeof(GlobalPerformanceResults), 3)]
+    [InlineData(typeof(GlobalPerformanceResults_OBSOLETE), 3)]
+    [InlineData(typeof(Member1dDisplacements), 2)]
+    [InlineData(typeof(Member1dForcesAndMoments), 3)]
+    [InlineData(typeof(NodalForcesAndMoments), 2)]
+    [InlineData(typeof(NodeDisplacements), 2)]
     [InlineData(typeof(ReactionForces), 3)]
-    [InlineData(typeof(ReactionForceDiagrams), 1)]
     [InlineData(typeof(SelectResult), 2)]
     [InlineData(typeof(SpringReactionForces), 3)]
     [InlineData(typeof(SteelDesignEffectiveLength), 2)]
     [InlineData(typeof(TotalLoadsAndReactions), 2)]
-    [InlineData(typeof(Member1dDisplacements), 2)]
-    [InlineData(typeof(Member1dForcesAndMoments), 3)]
+    // Display
+    [InlineData(typeof(AssemblyResultDiagrams), 2)]
+    [InlineData(typeof(AssemblyResults), 2)]
+    [InlineData(typeof(Contour1dResults), 2)]
+    [InlineData(typeof(Contour2dResults), 2)]
+    [InlineData(typeof(Contour3dResults), 2)]
+    [InlineData(typeof(ContourNodeResults), 2)]
+    [InlineData(typeof(ReactionForceDiagrams), 1)]
+    [InlineData(typeof(ResultDiagrams), 2)]
     public void WhenInitialiseDropdowns_ThenDropDownItemsCount_ShouldBeValid(
       Type t, int expectedListCount) {
       var obj = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
@@ -96,12 +104,12 @@ namespace GsaGHTests.Components {
     }
 
     [Theory]
-    //Model
+    // Model
     [InlineData(typeof(CreateList), "Node", "Case")]
     [InlineData(typeof(CreateModel), "m", "ft")]
     [InlineData(typeof(GetModelLoads), "m", "ft")]
     [InlineData(typeof(ListInfo), "m", "ft")]
-    //Properties
+    // Properties
     [InlineData(typeof(CreateCustomMaterial), "Timber", "Fabric")]
     [InlineData(typeof(CreateMaterial), "Concrete", "Fabric")]
     [InlineData(typeof(CreateOffset), "m", "ft")]
@@ -109,11 +117,11 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(Create2dPropertyModifier), "Modify by", "Modify to")]
     [InlineData(typeof(CreateSection), "Centroid", "BottomRight")]
     [InlineData(typeof(CreateSectionModifier), "Modify by", "Modify to")]
-    //Geometry
+    // Geometry
     [InlineData(typeof(Create2dElementsFromBrep), "Tri-6 only", "Quad-8 only")]
     [InlineData(typeof(CreateElementsFromMembers), "m", "ft")]
     [InlineData(typeof(SectionAlignment), "Centroid", "BottomRight")]
-    //Loads
+    // Loads
     [InlineData(typeof(CreateBeamLoad), "Uniform", "Trilinear")]
     [InlineData(typeof(CreateBeamThermalLoad), "Uniform", "Uniform")]
     [InlineData(typeof(CreateFaceLoad), "Uniform", "Equation")]
@@ -125,10 +133,10 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateGridSurface), "1D, One-way span", "2D")]
     [InlineData(typeof(CreateNodeLoad), "NodeForce", "Settlement")]
     [InlineData(typeof(LoadProperties), "kN", "kipf")]
-    //Analysis
+    // Analysis
     [InlineData(typeof(AnalyseModel), "m", "ft")]
     [InlineData(typeof(CreateAnalysisTask), "Static", "Static")]
-    //Results
+    // Results
     [InlineData(typeof(BeamDisplacements), "All", "Min |R|")]
     [InlineData(typeof(BeamForcesAndMoments), "All", "Min |Myz|")]
     [InlineData(typeof(BeamStrainEnergyDensity), "All", "Min")]

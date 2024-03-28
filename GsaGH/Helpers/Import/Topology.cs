@@ -37,12 +37,12 @@ namespace GsaGH.Helpers.Import {
       var points = new List<string>();
       //string gsa_topology = "7 8 9 a 10 11 7 V(12 13 a 14 15) L(16 a 18 17) 94 P 20 P(19 21 22) L(23 24) 84";
       gsaTopology = gsaTopology.ToUpper();
-      char[] spearator = {
+      char[] separator = {
         '(',
         ')',
       };
 
-      string[] strlist = gsaTopology.Split(spearator);
+      string[] strlist = gsaTopology.Split(separator);
       var topos = new List<string>(strlist);
 
       // first split out anything in brackets and put them into lists for V, L or P

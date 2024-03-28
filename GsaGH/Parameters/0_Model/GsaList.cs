@@ -225,6 +225,7 @@ namespace GsaGH.Parameters {
         EntityType.Element => GsaAPI.EntityType.Element,
         EntityType.Member => GsaAPI.EntityType.Member,
         EntityType.Case => GsaAPI.EntityType.Case,
+        EntityType.Assembly => GsaAPI.EntityType.Assembly,
         _ => GsaAPI.EntityType.Undefined,
       };
     }

@@ -8,5 +8,6 @@ namespace GsaGH.Parameters.Results {
     IDictionary<int, IList<T1>> CacheMiddleLayer { get; }
     IDictionary<int, IList<T1>> CacheTopLayer { get; }
     IMeshResultSubset<T1, T2, T3> ResultSubset(ICollection<int> elementIds, Layer2d layer);
+    void SetStandardAxis(int axisId);
   }
 }

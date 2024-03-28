@@ -10,6 +10,8 @@ namespace GsaGHTests.Helper {
     private static string _steelFootfall = string.Empty;
     private static string _element2dMultiPropsFromParentMember = string.Empty;
     private static string _basicFrame = string.Empty;
+    private static string _assemblySimple = string.Empty;
+    private static string _assemblyByStorey = string.Empty;
 
     internal static string SteelDesignComplex {
       get {
@@ -85,6 +87,26 @@ namespace GsaGHTests.Helper {
         }
 
         return _basicFrame;
+      }
+    }
+
+    internal static string AssemblySimple {
+      get {
+        if (_assemblySimple == string.Empty) {
+          _assemblySimple = FilePath("assembly-simple.gwb");
+        }
+
+        return _assemblySimple;
+      }
+    }
+
+    internal static string AssemblyByStorey {
+      get {
+        if (_assemblyByStorey == string.Empty) {
+          _assemblyByStorey = FilePath("assembly-by-storey.gwb");
+        }
+
+        return _assemblyByStorey;
       }
     }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -66,6 +67,10 @@ namespace GsaGH.Parameters.Results {
       }
 
       return new Entity1dStrainEnergyDensities(Cache.GetSubset(elementIds, positions));
+    }
+
+    public void SetStandardAxis(int axisId) {
+      throw new NotImplementedException("Strain energy density is independent from chosen axis");
     }
   }
 }

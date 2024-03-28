@@ -25,6 +25,17 @@ namespace GsaGH.Parameters.Results {
       Xxyyzz = QuantityUtility.PythagoreanQuadruple(Xx, Yy, Zz);
     }
 
+    internal Displacement(AssemblyResult result) {
+      X = new Length(result.Values.X, LengthUnit.Meter);
+      Y = new Length(result.Values.Y, LengthUnit.Meter);
+      Z = new Length(result.Values.Z, LengthUnit.Meter);
+      Xyz = QuantityUtility.PythagoreanQuadruple(X, Y, Z);
+      Xx = CreateAngle(result.Values.XX);
+      Yy = CreateAngle(result.Values.YY);
+      Zz = CreateAngle(result.Values.ZZ);
+      Xxyyzz = QuantityUtility.PythagoreanQuadruple(Xx, Yy, Zz);
+    }
+
     private Angle CreateAngle(double val) {
       // TO-DO: GSA-5351 remove NaN and Infinity values from GsaAPI results
       if (!double.IsNaN(val)) {

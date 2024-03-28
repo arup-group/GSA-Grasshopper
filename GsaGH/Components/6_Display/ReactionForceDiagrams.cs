@@ -68,6 +68,23 @@ namespace GsaGH.Components {
       "Diplays GSA Node Reaction Force Results as Vector Diagrams", CategoryName.Name(),
       SubCategoryName.Cat6()) { }
 
+    private static Point3d GenerateAnnotationPosition(GsaVectorDiagram vector) {
+      var line = new Line(vector.AnchorPoint, vector.Direction);
+      line.Flip();
+      line.Transform(Transform.Scale(vector.AnchorPoint, -1));
+      Point3d endPoint = line.From;
+
+      int _pixelsPerUnit = 100;
+      int offset = 30;
+      Vector3d direction = line.Direction;
+
+      direction.Unitize();
+      var t = Transform.Translation(direction * -1 * offset / _pixelsPerUnit);
+      endPoint.Transform(t);
+
+      return endPoint;
+    }
+    
     public override void CreateAttributes() {
       if (!_isInitialised) {
         InitialiseDropdowns();
@@ -457,23 +474,6 @@ namespace GsaGH.Components {
 
       dataAccess.SetDataList(0, vectors);
       dataAccess.SetDataList(1, annos);
-    }
-
-    private Point3d GenerateAnnotationPosition(GsaVectorDiagram vector) {
-      var line = new Line(vector.AnchorPoint, vector.Direction);
-      line.Flip();
-      line.Transform(Transform.Scale(vector.AnchorPoint, -1));
-      Point3d endPoint = line.From;
-
-      int _pixelsPerUnit = 100;
-      int offset = 30;
-      Vector3d direction = line.Direction;
-
-      direction.Unitize();
-      var t = Transform.Translation(direction * -1 * offset / _pixelsPerUnit);
-      endPoint.Transform(t);
-
-      return endPoint;
     }
 
     private void UpdateForce(string unit) {

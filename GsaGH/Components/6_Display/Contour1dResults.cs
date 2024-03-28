@@ -95,7 +95,7 @@ namespace GsaGH.Components {
       "Moment Mzz",
       "Res. Moment |Myz|",
     });
-    private readonly List<string> _strainenergy = new List<string>(new[] {
+    private readonly List<string> _strainEnergy = new List<string>(new[] {
       "Intermediate Pts",
       "Average",
     });
@@ -283,8 +283,8 @@ namespace GsaGH.Components {
               break;
 
             case 4:
-              if (_dropDownItems[1] != _strainenergy) {
-                _dropDownItems[1] = _strainenergy;
+              if (_dropDownItems[1] != _strainEnergy) {
+                _dropDownItems[1] = _strainEnergy;
 
                 _selectedItems[0] = _dropDownItems[0][4];
                 _selectedItems[1] = _dropDownItems[1][1]; // set average as default
@@ -632,6 +632,7 @@ namespace GsaGH.Components {
       GH_Convert.ToDouble(ghScale, out double scale, GH_Conversion.Both);
 
       ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 1);
+
       double dmax = 0;
       double dmin = 0;
       ConcurrentDictionary<int, IList<IQuantity>> values = null;
@@ -934,8 +935,9 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.SteelDesign:
+          ReadOnlyCollection<int> memberIds = result.MemberIds(elementlist);
           IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> utilisation =
-            result.SteelUtilisations.ResultSubset(elementIds);
+            result.SteelUtilisations.ResultSubset(memberIds);
 
           _resType = "Utilisation";
           IEntity0dResultCache<ISteelUtilisation, SteelUtilisationExtremaKeys> utilisationsCache
