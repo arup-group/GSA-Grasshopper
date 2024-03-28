@@ -176,6 +176,21 @@ namespace GsaGH.Helpers.GH {
               }
               break;
 
+            case EntityType.Assembly:
+              switch (gh_typ.Value) {
+                case GsaAssemblyGoo assemblyGoo:
+                  list.Add(assemblyGoo);
+                  break;
+
+                default:
+                  owner.AddRuntimeError("Unable to convert " + owner.Params.Input[inputid].NickName
+                      + " input (index: " + i + ") input parameter of type "
+                      + gh_typ.Value.GetType().Name.Replace("Goo", string.Empty)
+                      + Environment.NewLine + " to Assembly or Property and has been ignored");
+                  continue;
+              }
+              break;
+
             case EntityType.Case:
               int caseId = 0;
               if (!GH_Convert.ToInt32(gh_typ.Value, out caseId, GH_Conversion.Both)) {
