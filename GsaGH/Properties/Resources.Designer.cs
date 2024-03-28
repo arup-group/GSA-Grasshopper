@@ -193,6 +193,26 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AssemblyResultDiagrams {
+            get {
+                object obj = ResourceManager.GetObject("AssemblyResultDiagrams", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap AssemblyResults {
+            get {
+                object obj = ResourceManager.GetObject("AssemblyResults", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap AssemblyStabilityIndices {
             get {
                 object obj = ResourceManager.GetObject("AssemblyStabilityIndices", resourceCulture);
@@ -1596,6 +1616,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap ModelUnits {
             get {
                 object obj = ResourceManager.GetObject("ModelUnits", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap NodalForcesAndMoments {
+            get {
+                object obj = ResourceManager.GetObject("NodalForcesAndMoments", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

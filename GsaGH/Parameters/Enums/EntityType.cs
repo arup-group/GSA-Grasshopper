@@ -5,5 +5,6 @@
     Element,
     Member,
     Case,
+    Assembly
   }
 }

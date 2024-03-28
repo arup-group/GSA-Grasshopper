@@ -116,7 +116,7 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyDisplacements resultSet = result.AssemblyDisplacements.ResultSubset(new Collection<int>() { 2 });
 
       // Assert
-      IList<IAssemblyQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[2];
+      IList<IEntity1dQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[2];
       Assert.Single(displacementQuantity);
 
       int position = 0;
@@ -144,7 +144,7 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyDisplacements resultSet = result.AssemblyDisplacements.ResultSubset(new Collection<int>() { 2 });
 
       // Assert
-      IList<IAssemblyQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[2];
+      IList<IEntity1dQuantity<IDisplacement>> displacementQuantity = resultSet.Subset[2];
       Assert.Single(displacementQuantity);
 
       int position = 0;

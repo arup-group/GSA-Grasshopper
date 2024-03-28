@@ -4,12 +4,12 @@ namespace GsaGHTests.Parameters.Results {
   public class AssemblyDriftIndicesA1 {
     // these are regression tests, the values are taken directly from GSA results
     // "assembly-simple.gwb" for Assembly 2 for analysis case A1
-    internal static List<double> XInMillimeter() {
+    internal static List<double> X() {
       return new List<double>() {
         0,
         1.01E-09,
         9.00E-10,
-        -4.64E-10,
+        -4.642E-10,
         5.01E-11,
         3.65E-11,
         -4.01E-12,
@@ -19,10 +19,10 @@ namespace GsaGHTests.Parameters.Results {
       };
     }
 
-    internal static List<double> YInMillimeter() {
+    internal static List<double> Y() {
       return new List<double>() {
         0,
-        -5.12E-06,
+        -5.124E-06,
         3.07E-06,
         1.01E-06,
         -1.32E-07,
@@ -34,10 +34,10 @@ namespace GsaGHTests.Parameters.Results {
       };
     }
 
-    internal static List<double> XyInMillimeter() {
+    internal static List<double> Xy() {
       return new List<double>() {
         0,
-        5.12E-06,
+        5.124E-06,
         3.07E-06,
         1.01E-06,
         1.32E-07,
