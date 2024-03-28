@@ -44,6 +44,7 @@ namespace GsaGH.Components {
 
       _dropDownItems.Add(new List<string>() {
         AnalysisTaskType.Static.ToString(),
+        AnalysisTaskType.StaticPDelta.ToString(),
       });
       _selectedItems.Add(_tasktype.ToString());
 
