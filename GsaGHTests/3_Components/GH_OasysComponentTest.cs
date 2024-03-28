@@ -99,7 +99,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateAnalysisCase))]
     [InlineData(typeof(CreateAnalysisTask))]
     [InlineData(typeof(CreateCombinationCase))]
-    [InlineData(typeof(EditAnalysisTask))]
+    [InlineData(typeof(AnalysisTaskInfo))]
     [InlineData(typeof(CreateSteelSectionPool))]
     [InlineData(typeof(SteelSectionPoolNames))]
     [InlineData(typeof(CreateSteelDesignTask))]
