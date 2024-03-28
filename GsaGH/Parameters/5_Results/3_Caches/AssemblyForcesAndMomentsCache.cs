@@ -8,8 +8,8 @@ namespace GsaGH.Parameters.Results {
   public class AssemblyForcesAndMomentsCache {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, IList<IAssemblyQuantity<IInternalForce>>> Cache { get; }
-      = new ConcurrentDictionary<int, IList<IAssemblyQuantity<IInternalForce>>>();
+    public ConcurrentDictionary<int, IList<IEntity1dQuantity<IInternalForce>>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IEntity1dQuantity<IInternalForce>>>();
 
     internal AssemblyForcesAndMomentsCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -35,7 +35,7 @@ namespace GsaGH.Parameters.Results {
               }
 
               var results = new AssemblyInternalForce(aCaseResults[entityId]);
-              Cache.TryAdd(entityId, new List<IAssemblyQuantity<IInternalForce>>() { results });
+              Cache.TryAdd(entityId, new List<IEntity1dQuantity<IInternalForce>>() { results });
             });
             break;
 
@@ -44,7 +44,7 @@ namespace GsaGH.Parameters.Results {
             = combinationCase.AssemblyForcesAndMoments(entityList);
 
             Parallel.ForEach(cCaseResults.Keys, entityId => {
-              var permutationResults = new Collection<IAssemblyQuantity<IInternalForce>>();
+              var permutationResults = new Collection<IEntity1dQuantity<IInternalForce>>();
               foreach (ReadOnlyCollection<AssemblyResult> permutation in cCaseResults[entityId]) {
                 var positions = new Collection<double>();
                 foreach (AssemblyResult result in permutation) {
