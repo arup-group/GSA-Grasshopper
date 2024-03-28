@@ -112,7 +112,7 @@ namespace GsaGHTests.Model {
     [Fact]
     public void CreateModelWithGridLines() {
       GsaModelGoo model = CreateModelWithGridlines();
-      Assert.Single(model.Value.Model.GridLines());
+      Assert.Single(model.Value.ApiModel.GridLines());
     }
   }
 }

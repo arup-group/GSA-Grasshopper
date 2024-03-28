@@ -18,7 +18,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CombinationCaseInfo;
 
     public CombinationCaseInfo() : base("Combination Case Info", "CombinationInfo",
-      "Get information of a GSA Combination Case", CategoryName.Name(), SubCategoryName.Cat4()) {
+      "Get information about a GSA Combination Case", CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;
     }
 

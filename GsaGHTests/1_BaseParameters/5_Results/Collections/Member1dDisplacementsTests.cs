@@ -23,7 +23,7 @@ namespace GsaGHTests.Parameters.Results {
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert member IDs
-      var expectedIds = result.Model.Model.Members(MemberList).Keys.OrderBy(x => x).ToList();
+      var expectedIds = result.Model.ApiModel.Members(MemberList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
 
@@ -38,7 +38,7 @@ namespace GsaGHTests.Parameters.Results {
         = result.Member1dDisplacements.ResultSubset(memberIds, 5);
 
       // Assert member IDs
-      var expectedIds = result.Model.Model.Members(MemberList).Keys.OrderBy(x => x).ToList();
+      var expectedIds = result.Model.ApiModel.Members(MemberList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
 

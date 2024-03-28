@@ -108,7 +108,7 @@ namespace GsaGH.Components {
 
       Directory.CreateDirectory(Path.GetDirectoryName(fileNameAndPath) ?? string.Empty);
 
-      string mes = model.Model.SaveAs(fileNameAndPath).ToString();
+      string mes = model.ApiModel.SaveAs(fileNameAndPath).ToString();
       if (mes == ReturnValue.GS_OK.ToString()) {
         _fileNameLastSaved = fileNameAndPath;
         PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"save{fileNameAndPath.Substring(fileNameAndPath.LastIndexOf('.') + 1).ToUpper()}",

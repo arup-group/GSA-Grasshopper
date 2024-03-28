@@ -20,7 +20,7 @@ namespace GsaGH.Parameters {
     internal GsaSteelDesignTask(KeyValuePair<int, SteelDesignTask> kvp, GsaModel model) {
       Id = kvp.Key;
       ApiTask = kvp.Value;
-      foreach (KeyValuePair<int, EntityList> apiList in model.Model.Lists()) {
+      foreach (KeyValuePair<int, EntityList> apiList in model.ApiModel.Lists()) {
         if (apiList.Value.Name == ApiTask.ListDefinition.Replace("\"", string.Empty)) {
           List = new GsaList(apiList.Key, apiList.Value, model);
           return;

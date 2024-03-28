@@ -22,7 +22,7 @@ namespace GsaGH.Helpers.Import {
       Member2ds = new ConcurrentBag<GsaMember2dGoo>();
       Member3ds = new ConcurrentBag<GsaMember3dGoo>();
 
-      ReadOnlyDictionary<int, Member> mDict = model.Model.Members(memberList);
+      ReadOnlyDictionary<int, Member> mDict = model.ApiModel.Members(memberList);
 
       var errors1d = new ConcurrentBag<int>();
       var errors2d = new ConcurrentBag<int>();

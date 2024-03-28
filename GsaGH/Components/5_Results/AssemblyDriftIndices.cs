@@ -68,11 +68,11 @@ namespace GsaGH.Components {
       string note = ResultNotes.NoteAssemblyResults;
 
       pManager.AddGenericParameter("Drift Index X", "DIx",
-        "Drift Index in Local Assembly X-direction." + note, GH_ParamAccess.tree);
+        "Drift Index in Local Assembly X-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Drift Index Y", "DIy",
-        "Drift Index in Local Assembly Y-direction." + note, GH_ParamAccess.tree);
+        "Drift Index in Local Assembly Y-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Drift Index XY", "In-plane",
-        "Drift Index in Local Assembly XY-plane." + note, GH_ParamAccess.tree);
+        "Drift Index in Local Assembly XY-plane" + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {

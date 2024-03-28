@@ -13,7 +13,7 @@ namespace GsaGHTests.Helpers.Export {
 
     internal void TestAnalysisMaterial(GsaMaterial expected, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, AnalysisMaterial> apiMaterials
-        = actualModel.Model.AnalysisMaterials();
+        = actualModel.ApiModel.AnalysisMaterials();
       Assert.True(apiMaterials.ContainsKey(expectedId),
         "Analysis material with id " + expectedId + " is not present in model");
 
@@ -27,11 +27,11 @@ namespace GsaGHTests.Helpers.Export {
 
     internal void TestElement1d(
       GsaElement1d expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
-      ReadOnlyDictionary<int, Element> apiElements = actualModel.Model.Elements();
+      ReadOnlyDictionary<int, Element> apiElements = actualModel.ApiModel.Elements();
       Assert.True(apiElements.ContainsKey(expectedId),
         "Element with id " + expectedId + " is not present in model");
 
-      ReadOnlyDictionary<int, Node> apiNodes = actualModel.Model.Nodes();
+      ReadOnlyDictionary<int, Node> apiNodes = actualModel.ApiModel.Nodes();
       Element api = apiElements[expectedId];
       Node apiStart = apiNodes[api.Topology[0]];
       Node apiEnd = apiNodes[api.Topology[1]];
@@ -77,8 +77,8 @@ namespace GsaGHTests.Helpers.Export {
 
     internal void TestElement2d(
       GsaElement2d expected, LengthUnit unit, List<int> expectedIds, GsaModel actualModel) {
-      ReadOnlyDictionary<int, Element> apiElements = actualModel.Model.Elements();
-      ReadOnlyDictionary<int, Node> apiNodes = actualModel.Model.Nodes();
+      ReadOnlyDictionary<int, Element> apiElements = actualModel.ApiModel.Elements();
+      ReadOnlyDictionary<int, Node> apiNodes = actualModel.ApiModel.Nodes();
 
       int i = 0;
       foreach (int id in expectedIds) {
@@ -112,11 +112,11 @@ namespace GsaGHTests.Helpers.Export {
 
     internal void TestMember1d(
       GsaMember1d expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
-      ReadOnlyDictionary<int, Member> apiElements = actualModel.Model.Members();
+      ReadOnlyDictionary<int, Member> apiElements = actualModel.ApiModel.Members();
       Assert.True(apiElements.ContainsKey(expectedId),
         "Member with id " + expectedId + " is not present in model");
 
-      ReadOnlyDictionary<int, Node> apiNodes = actualModel.Model.Nodes();
+      ReadOnlyDictionary<int, Node> apiNodes = actualModel.ApiModel.Nodes();
       Member api = apiElements[expectedId];
       string[] topologySplit = api.Topology.Split(' ');
       int i = 0;
@@ -166,11 +166,11 @@ namespace GsaGHTests.Helpers.Export {
 
     internal void TestMember2d(
       GsaMember2d expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
-      ReadOnlyDictionary<int, Member> apiElements = actualModel.Model.Members();
+      ReadOnlyDictionary<int, Member> apiElements = actualModel.ApiModel.Members();
       Assert.True(apiElements.ContainsKey(expectedId),
         "Member with id " + expectedId + " is not present in model");
 
-      ReadOnlyDictionary<int, Node> apiNodes = actualModel.Model.Nodes();
+      ReadOnlyDictionary<int, Node> apiNodes = actualModel.ApiModel.Nodes();
       Member api = apiElements[expectedId];
       string[] topologySplit = api.Topology.Split(' ');
       for (int i = 0; i < expected.Topology.Count; i++) {
@@ -196,11 +196,11 @@ namespace GsaGHTests.Helpers.Export {
 
     internal void TestMember3d(
       GsaMember3d expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
-      ReadOnlyDictionary<int, Member> apiElements = actualModel.Model.Members();
+      ReadOnlyDictionary<int, Member> apiElements = actualModel.ApiModel.Members();
       Assert.True(apiElements.ContainsKey(expectedId),
         "Member with id " + expectedId + " is not present in model");
 
-      ReadOnlyDictionary<int, Node> apiNodes = actualModel.Model.Nodes();
+      ReadOnlyDictionary<int, Node> apiNodes = actualModel.ApiModel.Nodes();
       Member api = apiElements[expectedId];
       string[] faces = api.Topology.Split(';');
       int faceId = 0;
@@ -238,7 +238,7 @@ namespace GsaGHTests.Helpers.Export {
 
     internal void TestNode(
       GsaNode expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
-      ReadOnlyDictionary<int, Node> apiNodes = actualModel.Model.Nodes();
+      ReadOnlyDictionary<int, Node> apiNodes = actualModel.ApiModel.Nodes();
       Assert.True(apiNodes.ContainsKey(expectedId),
         "Node with id " + expectedId + " is not present in model");
 
@@ -256,7 +256,7 @@ namespace GsaGHTests.Helpers.Export {
       Assert.Equal(apiNode.Restraint.ZZ, expected.Restraint.Zz);
 
       if (!expected.IsGlobalAxis) {
-        ReadOnlyDictionary<int, Axis> apiAxes = actualModel.Model.Axes();
+        ReadOnlyDictionary<int, Axis> apiAxes = actualModel.ApiModel.Axes();
         Assert.True(apiAxes.ContainsKey(apiNode.AxisProperty),
           "Axis with id " + apiNode.AxisProperty + " is not present in model");
         Axis apiAxis = apiAxes[apiNode.AxisProperty];
@@ -282,7 +282,7 @@ namespace GsaGHTests.Helpers.Export {
     }
 
     internal void TestProp2d(GsaProperty2d expected, int expectedId, GsaModel actualModel) {
-      ReadOnlyDictionary<int, Prop2D> apiProp2ds = actualModel.Model.Prop2Ds();
+      ReadOnlyDictionary<int, Prop2D> apiProp2ds = actualModel.ApiModel.Prop2Ds();
       Assert.True(apiProp2ds.ContainsKey(expectedId),
         "Prop2d with id " + expectedId + " is not present in model");
 
@@ -297,7 +297,7 @@ namespace GsaGHTests.Helpers.Export {
     }
 
     internal void TestProp3d(GsaProperty3d expected, int expectedId, GsaModel actualModel) {
-      ReadOnlyDictionary<int, Prop3D> apiProp3ds = actualModel.Model.Prop3Ds();
+      ReadOnlyDictionary<int, Prop3D> apiProp3ds = actualModel.ApiModel.Prop3Ds();
       Assert.True(apiProp3ds.ContainsKey(expectedId),
         "Prop3d with id " + expectedId + " is not present in model");
 
@@ -311,7 +311,7 @@ namespace GsaGHTests.Helpers.Export {
     }
 
     internal void TestSection(GsaSection expected, int expectedId, GsaModel actualModel) {
-      ReadOnlyDictionary<int, Section> apiSections = actualModel.Model.Sections();
+      ReadOnlyDictionary<int, Section> apiSections = actualModel.ApiModel.Sections();
       Assert.True(apiSections.ContainsKey(expectedId),
         "Section with id " + expectedId + " is not present in model");
 

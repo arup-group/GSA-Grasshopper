@@ -47,7 +47,7 @@ namespace GsaGHTests.Components.Results {
         var ids = paths.Select(x => x.Indices[2]).ToList();
         for (int j = 0; j < ids.Count; j++) {
           // Assert element IDs
-          var expectedIds = result.Model.Model.Elements(ElementList).Keys.OrderBy(x => x).ToList();
+          var expectedIds = result.Model.ApiModel.Elements(ElementList).Keys.OrderBy(x => x).ToList();
           Assert.Equal(expectedIds[j], ids[j]);
         }
       }

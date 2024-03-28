@@ -22,7 +22,7 @@ namespace GsaGHTests.Parameters {
       // Act
       m.AddList(apilist);
 
-      var model = new GsaModel() { Model = m };
+      var model = new GsaModel() { ApiModel = m };
       GsaList list = model.GetLists()[0];
 
       Assert.Equal(1, list.Id);
@@ -50,7 +50,7 @@ namespace GsaGHTests.Parameters {
 
       // Act
       m.AddList(apilist);
-      var model = new GsaModel() { Model = m };
+      var model = new GsaModel() { ApiModel = m };
       GsaList list = model.GetLists()[0];
 
       // Assert
@@ -94,7 +94,7 @@ namespace GsaGHTests.Parameters {
 
       // Act
       m.AddList(apilist);
-      var model = new GsaModel() { Model = m };
+      var model = new GsaModel() { ApiModel = m };
       GsaList list = model.GetLists()[0];
 
       // Assert
@@ -137,7 +137,7 @@ namespace GsaGHTests.Parameters {
 
       // Act
       m.AddList(apilist);
-      var model = new GsaModel() { Model = m };
+      var model = new GsaModel() { ApiModel = m };
       GsaList list = model.GetLists()[0];
 
       // Assert

@@ -23,7 +23,7 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert element IDs
-      var expectedIds = result.Model.Model.Elements(ElementList).Keys.OrderBy(x => x).ToList();
+      var expectedIds = result.Model.ApiModel.Elements(ElementList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
 
@@ -38,7 +38,7 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element2dForces.ResultSubset(elementIds);
 
       // Assert element IDs
-      var expectedIds = result.Model.Model.Elements(ElementList).Keys.OrderBy(x => x).ToList();
+      var expectedIds = result.Model.ApiModel.Elements(ElementList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
 

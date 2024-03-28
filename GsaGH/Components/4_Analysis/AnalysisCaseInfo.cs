@@ -19,7 +19,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.AnalysisCaseInfo;
 
     public AnalysisCaseInfo() : base("Analysis Case Info", "CaseInfo",
-      "Get information about the properties of a GSA Analysis Case (Load Case or Combination)",
+      "Get information about a GSA Analysis Case",
       CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;
     }
@@ -43,10 +43,9 @@ namespace GsaGH.Components {
       }
 
       if (ghTyp.Value is GsaAnalysisCaseGoo goo) {
-        GsaAnalysisCase gsaCase = goo.Value.Duplicate();
-        da.SetData(0, gsaCase.Name);
-        da.SetData(1, gsaCase.Definition);
-        da.SetData(2, gsaCase.Id);
+        da.SetData(0, goo.Value.Name);
+        da.SetData(1, goo.Value.Definition);
+        da.SetData(2, goo.Value.Id);
       } else {
         string type = ghTyp.Value.GetType().ToString();
         type = type.Replace("GsaGH.Parameters.", string.Empty);
