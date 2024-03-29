@@ -91,11 +91,11 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyDriftIndices resultSet = result.AssemblyDriftIndices.ResultSubset(new Collection<int>() { 2 });
 
       // Assert
-      IList<IAssemblyQuantity<IDrift<double>>> driftQuantity = resultSet.Subset[2];
+      IList<IEntity1dQuantity<DriftIndex>> driftQuantity = resultSet.Subset[2];
       Assert.Single(driftQuantity);
 
       int position = 0;
-      foreach (IDrift<double> drift in driftQuantity[0].Results.Values) {
+      foreach (DriftIndex drift in driftQuantity[0].Results.Values) {
         double x = TestsResultHelper.ResultsHelper(drift, component);
         Assert.Equal(expected[position++], x, 1E-6);
       }
@@ -114,11 +114,11 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyDriftIndices resultSet = result.AssemblyDriftIndices.ResultSubset(new Collection<int>() { 2 });
 
       // Assert
-      IList<IAssemblyQuantity<IDrift<double>>> driftQuantity = resultSet.Subset[2];
+      IList<IEntity1dQuantity<DriftIndex>> driftQuantity = resultSet.Subset[2];
       Assert.Single(driftQuantity);
 
       int position = 0;
-      foreach (IDrift<double> drift in driftQuantity[0].Results.Values) {
+      foreach (DriftIndex drift in driftQuantity[0].Results.Values) {
         double x = TestsResultHelper.ResultsHelper(drift, component);
         Assert.Equal(expected[position++], x, 1E-5);
       }
@@ -126,9 +126,9 @@ namespace GsaGHTests.Parameters.Results {
 
     private List<double> ExpectedAnalysisCaseValues(DriftResultVector component) {
       switch (component) {
-        case DriftResultVector.X: return AssemblyDriftIndicesA1.XInMillimeter();
-        case DriftResultVector.Y: return AssemblyDriftIndicesA1.YInMillimeter();
-        case DriftResultVector.Xy: return AssemblyDriftIndicesA1.XyInMillimeter();
+        case DriftResultVector.X: return AssemblyDriftIndicesA1.X();
+        case DriftResultVector.Y: return AssemblyDriftIndicesA1.Y();
+        case DriftResultVector.Xy: return AssemblyDriftIndicesA1.Xy();
       }
 
       throw new NotImplementedException();
@@ -136,9 +136,9 @@ namespace GsaGHTests.Parameters.Results {
 
     private List<double> ExpectedCombinationCaseValues(DriftResultVector component) {
       switch (component) {
-        case DriftResultVector.X: return AssemblyDriftIndicesC1.XInMillimeter();
-        case DriftResultVector.Y: return AssemblyDriftIndicesC1.YInMillimeter();
-        case DriftResultVector.Xy: return AssemblyDriftIndicesC1.XyInMillimeter();
+        case DriftResultVector.X: return AssemblyDriftIndicesC1.X();
+        case DriftResultVector.Y: return AssemblyDriftIndicesC1.Y();
+        case DriftResultVector.Xy: return AssemblyDriftIndicesC1.Xy();
       }
 
       throw new NotImplementedException();

@@ -28,7 +28,7 @@ namespace GsaGH.Components {
   /// </summary>
   public class NodalForcesAndMoments : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("3da705d4-d926-4c80-ab35-c64f4463fd3f");
-    public override GH_Exposure Exposure => GH_Exposure.quinary;
+    public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.NodalForcesAndMoments;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;

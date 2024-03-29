@@ -68,7 +68,7 @@ namespace GsaGH.Components {
     private SolveResults _results;
 
     public GetModelGeometry() : base("Get Model Geometry", "GetGeo",
-      "Get nodes, elements, members and assembliers from GSA model", CategoryName.Name(),
+      "Get nodes, elements, members and assemblies from GSA model", CategoryName.Name(),
       SubCategoryName.Cat0()) { }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {

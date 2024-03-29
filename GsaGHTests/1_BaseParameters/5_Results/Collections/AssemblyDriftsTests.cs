@@ -91,11 +91,11 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyDrifts resultSet = result.AssemblyDrifts.ResultSubset(new Collection<int>() { 2 });
 
       // Assert
-      IList<IAssemblyQuantity<IDrift<Length>>> driftQuantity = resultSet.Subset[2];
+      IList<IEntity1dQuantity<Drift>> driftQuantity = resultSet.Subset[2];
       Assert.Single(driftQuantity);
 
       int position = 0;
-      foreach (IDrift<Length> drift in driftQuantity[0].Results.Values) {
+      foreach (Drift drift in driftQuantity[0].Results.Values) {
         double x = TestsResultHelper.ResultsHelper(drift, component);
         Assert.Equal(expected[position++], x, 1E-6);
       }
@@ -114,11 +114,11 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyDrifts resultSet = result.AssemblyDrifts.ResultSubset(new Collection<int>() { 2 });
 
       // Assert
-      IList<IAssemblyQuantity<IDrift<Length>>> driftQuantity = resultSet.Subset[2];
+      IList<IEntity1dQuantity<Drift>> driftQuantity = resultSet.Subset[2];
       Assert.Single(driftQuantity);
 
       int position = 0;
-      foreach (IDrift<Length> drift in driftQuantity[0].Results.Values) {
+      foreach (Drift drift in driftQuantity[0].Results.Values) {
         double x = TestsResultHelper.ResultsHelper(drift, component);
         Assert.Equal(expected[position++], x, 1E-5);
       }

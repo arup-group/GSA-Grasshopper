@@ -14,6 +14,10 @@ namespace GsaGHTests.GooWrappers {
     private static IGH_Param _modelParam = null;
 
     [Theory]
+    [InlineData(typeof(AssemblyDisplacements))]
+    [InlineData(typeof(AssemblyDrifts))]
+    [InlineData(typeof(AssemblyDriftIndices))]
+    [InlineData(typeof(AssemblyForcesAndMoments))]
     [InlineData(typeof(BeamDerivedStresses))]
     [InlineData(typeof(BeamDisplacements))]
     [InlineData(typeof(BeamForcesAndMoments))]
@@ -32,6 +36,8 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(ReactionForces))]
     [InlineData(typeof(SpringReactionForces))]
     [InlineData(typeof(TotalLoadsAndReactions))]
+    [InlineData(typeof(AssemblyResultDiagrams))]
+    [InlineData(typeof(AssemblyResults))]
     [InlineData(typeof(Contour1dResults))]
     [InlineData(typeof(Contour2dResults))]
     [InlineData(typeof(Contour3dResults))]

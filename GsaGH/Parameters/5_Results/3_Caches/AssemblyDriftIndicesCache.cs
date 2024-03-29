@@ -8,8 +8,8 @@ namespace GsaGH.Parameters.Results {
   public class AssemblyDriftIndicesCache {
     public IApiResult ApiResult { get; set; }
 
-    public ConcurrentDictionary<int, IList<IAssemblyQuantity<IDrift<double>>>> Cache { get; }
-      = new ConcurrentDictionary<int, IList<IAssemblyQuantity<IDrift<double>>>>();
+    public ConcurrentDictionary<int, IList<IEntity1dQuantity<DriftIndex>>> Cache { get; }
+      = new ConcurrentDictionary<int, IList<IEntity1dQuantity<DriftIndex>>>();
 
     internal AssemblyDriftIndicesCache(AnalysisCaseResult result) {
       ApiResult = new ApiResult(result);
@@ -35,7 +35,7 @@ namespace GsaGH.Parameters.Results {
               }
 
               var results = new AssemblyDriftIndex(aCaseResults[entityId]);
-              Cache.TryAdd(entityId, new List<IAssemblyQuantity<IDrift<double>>>() { results });
+              Cache.TryAdd(entityId, new List<IEntity1dQuantity<DriftIndex>>() { results });
             });
             break;
 
@@ -44,7 +44,7 @@ namespace GsaGH.Parameters.Results {
             = combinationCase.AssemblyDriftIndices(entityList);
 
             Parallel.ForEach(cCaseResults.Keys, entityId => {
-              var permutationResults = new Collection<IAssemblyQuantity<IDrift<double>>>();
+              var permutationResults = new Collection<IEntity1dQuantity<DriftIndex>>();
               foreach (ReadOnlyCollection<AssemblyDriftIndexResult> permutation in cCaseResults[entityId]) {
                 var positions = new Collection<double>();
                 foreach (AssemblyDriftIndexResult result in permutation) {

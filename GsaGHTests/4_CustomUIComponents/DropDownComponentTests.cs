@@ -50,6 +50,10 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(CreateAnalysisTask))]
     [InlineData(typeof(CreateSteelDesignTask))]
     // Results
+    [InlineData(typeof(AssemblyDisplacements))]
+    [InlineData(typeof(AssemblyDriftIndices))]
+    [InlineData(typeof(AssemblyDrifts))]
+    [InlineData(typeof(AssemblyForcesAndMoments))]
     [InlineData(typeof(BeamDerivedStresses), true)]
     [InlineData(typeof(BeamDisplacements), true)]
     [InlineData(typeof(BeamForcesAndMoments))]
@@ -71,6 +75,8 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(SpringReactionForces))]
     [InlineData(typeof(TotalLoadsAndReactions))]
     // Display
+    [InlineData(typeof(AssemblyResultDiagrams))]
+    [InlineData(typeof(AssemblyResults), true)]
     [InlineData(typeof(Contour1dResults), true)]
     [InlineData(typeof(Contour2dResults), true)]
     [InlineData(typeof(Contour3dResults), true)]

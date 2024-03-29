@@ -679,4 +679,10 @@
   <data name="AssemblyStabilityIndices" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\AssemblyStabilityIndices.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="AssemblyResultDiagrams" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\AssemblyResultDiagrams.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AssemblyResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Icons\AssemblyResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
