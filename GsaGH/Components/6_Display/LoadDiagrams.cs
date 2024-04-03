@@ -242,6 +242,7 @@ namespace GsaGH.Components {
       string caseList = string.Empty;
       if (da.GetData(1, ref caseList)) {
         _selectedItems[0] = caseList;
+        _caseId = caseList;
       }
 
       EntityList list = Inputs.GetElementOrMemberList(this, da, 2);
