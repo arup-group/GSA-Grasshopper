@@ -25,7 +25,7 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("5f6ff7ac-65c9-417b-a373-bb45a3163e99");
     public override GH_Exposure Exposure => GH_Exposure.septenary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.DesignTaskInfo;
+    protected override Bitmap Icon => Resources.SteelUtilisations;
 
     public SteelUtilisations() : base("Steel Utilisations", "SteelUtil", "Steel Utilisation values",
       CategoryName.Name(), SubCategoryName.Cat5()) {
