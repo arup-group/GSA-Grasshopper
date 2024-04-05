@@ -48,7 +48,7 @@ namespace GsaGHTests.Components.Results {
 
       for (int i = 0; i < comp.Params.Output.Count; i++) { // loop through each output
         IList<GH_Path> paths = ComponentTestHelper.GetPathOutput(comp, i);
-        Assert.Equal(1, paths.Count);
+        Assert.Single(paths);
 
         var cases = paths.Select(x => x.Indices[0]).ToList();
         foreach (int caseid in cases) {
