@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaGH.Parameters.Results;
+using GsaGHTests._1_BaseParameters._5_Results;
 using GsaGHTests.Helper;
 using Xunit;
 
@@ -81,7 +82,7 @@ namespace GsaGHTests.Parameters.Results {
       var values = new List<double?>();
       values.AddRange(ExpectedCombinationCaseC2p1Values(component));
       values.AddRange(ExpectedCombinationCaseC2p2Values(component));
-      double? expected = NodeReactionForcesTests.Max(values);
+      double? expected = MaxMinHelper.Max(values);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -131,7 +132,7 @@ namespace GsaGHTests.Parameters.Results {
       var values = new List<double?>();
       values.AddRange(ExpectedCombinationCaseC2p1Values(component));
       values.AddRange(ExpectedCombinationCaseC2p2Values(component));
-      double? expected = NodeReactionForcesTests.Min(values);
+      double? expected = MaxMinHelper.Min(values);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);

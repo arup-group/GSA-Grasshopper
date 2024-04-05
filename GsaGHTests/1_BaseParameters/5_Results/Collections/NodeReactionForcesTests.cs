@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaGH.Parameters.Results;
+using GsaGHTests._1_BaseParameters._5_Results;
 using GsaGHTests.Helper;
 using Xunit;
 
@@ -10,46 +11,6 @@ namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
   public class NodeReactionForcesTests {
     private static readonly string NodeList = "1324 to 1327";
-
-    internal static double? Max(List<double?> values) {
-      double? max = null;
-
-      foreach (double? value in values) {
-        if (value == null) {
-          continue;
-        }
-
-        if (max == null) {
-          max = value;
-        }
-
-        if (value > max) {
-          max = value;
-        }
-      }
-
-      return max;
-    }
-
-    internal static double? Min(List<double?> values) {
-      double? min = null;
-
-      foreach (double? value in values) {
-        if (value == null) {
-          continue;
-        }
-
-        if (min == null) {
-          min = value;
-        }
-
-        if (value < min) {
-          min = value;
-        }
-      }
-
-      return min;
-    }
 
     [Fact]
     public void NodeReactionForceNodeIdsFromAnalysisCaseTest() {
@@ -120,7 +81,7 @@ namespace GsaGHTests.Parameters.Results {
       var values = new List<double?>();
       values.AddRange(ExpectedCombinationCaseC4p1Values(component));
       values.AddRange(ExpectedCombinationCaseC4p2Values(component));
-      double? expected = Max(values);
+      double? expected = MaxMinHelper.Max(values);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -170,7 +131,7 @@ namespace GsaGHTests.Parameters.Results {
       var values = new List<double?>();
       values.AddRange(ExpectedCombinationCaseC4p1Values(component));
       values.AddRange(ExpectedCombinationCaseC4p2Values(component));
-      double? expected = Min(values);
+      double? expected = MaxMinHelper.Min(values);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);

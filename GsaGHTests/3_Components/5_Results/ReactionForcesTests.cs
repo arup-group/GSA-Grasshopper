@@ -8,6 +8,7 @@ using GsaGH.Components;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+using GsaGHTests._1_BaseParameters._5_Results;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
@@ -137,7 +138,7 @@ namespace GsaGHTests.Components.Results {
       var values = new List<double?>();
       values.AddRange(ExpectedCombinationCaseC4p1Values(component));
       values.AddRange(ExpectedCombinationCaseC4p2Values(component));
-      double? expected = NodeReactionForcesTests.Max(values);
+      double? expected = MaxMinHelper.Max(values);
 
       // Act
       var comp = new ReactionForces();
@@ -192,7 +193,7 @@ namespace GsaGHTests.Components.Results {
       var values = new List<double?>();
       values.AddRange(ExpectedCombinationCaseC4p1Values(component));
       values.AddRange(ExpectedCombinationCaseC4p2Values(component));
-      double? expected = NodeReactionForcesTests.Min(values);
+      double? expected = MaxMinHelper.Min(values);
 
       // Act
       var comp = new ReactionForces();
