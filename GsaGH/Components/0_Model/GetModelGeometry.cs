@@ -68,7 +68,7 @@ namespace GsaGH.Components {
     private SolveResults _results;
 
     public GetModelGeometry() : base("Get Model Geometry", "GetGeo",
-      "Get nodes, elements, members and assembliers from GSA model", CategoryName.Name(),
+      "Get nodes, elements, members and assemblies from GSA model", CategoryName.Name(),
       SubCategoryName.Cat0()) { }
 
     bool IGH_VariableParameterComponent.CanInsertParameter(GH_ParameterSide side, int index) {
@@ -269,9 +269,8 @@ namespace GsaGH.Components {
       Params.Output[i++].Name = "2D Members in [" + unitAbbreviation + "]";
       Params.Output[i].Name = "3D Members in [" + unitAbbreviation + "]";
 
-      i = 1;
       for (int j = 1; j < 8; j++) {
-        Params.Output[i].Access
+        Params.Output[j].Access
           = _mode == FoldMode.List ? GH_ParamAccess.list : GH_ParamAccess.tree;
       }
     }
