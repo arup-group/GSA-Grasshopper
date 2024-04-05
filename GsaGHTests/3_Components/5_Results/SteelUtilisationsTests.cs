@@ -1,22 +1,19 @@
 ﻿using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGHTests._1_BaseParameters._5_Results.Collections.RegressionValues;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
-using GsaGHTests.Parameters.Results;
+using GsaGHTests.Parameters;
+using OasysGH.Parameters;
 using OasysUnits;
-using OasysUnits.Units;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OasysGH.Parameters;
 using Xunit;
+using GsaResultTests = GsaGHTests.Parameters.Results.GsaResultTests;
 using SteelUtilisations = GsaGH.Components.SteelUtilisations;
-using GsaGH.Components;
-using GsaGHTests._1_BaseParameters._5_Results;
 
 namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]

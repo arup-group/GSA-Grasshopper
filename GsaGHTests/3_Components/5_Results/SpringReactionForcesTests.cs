@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using Grasshopper.Kernel.Data;
+﻿using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GsaGH.Components;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
-using GsaGHTests._1_BaseParameters._5_Results;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
+using GsaGHTests.Parameters;
 using GsaGHTests.Parameters.Results;
 using OasysUnits;
 using OasysUnits.Units;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Xunit;
+using GsaResultTests = GsaGHTests.Parameters.Results.GsaResultTests;
 
 namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]

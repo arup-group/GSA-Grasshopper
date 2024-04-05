@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GsaGHTests._1_BaseParameters._5_Results {
+namespace GsaGHTests.Parameters {
   public class MaxMinHelper {
     public static double? Max(List<double?> values) {
       double? max = null;
