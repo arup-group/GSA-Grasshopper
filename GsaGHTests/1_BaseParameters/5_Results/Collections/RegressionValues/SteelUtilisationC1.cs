@@ -4,18 +4,18 @@ using OasysGH.Parameters;
 using System.Collections.Generic;
 
 namespace GsaGHTests._1_BaseParameters._5_Results.Collections.RegressionValues {
-  public class SteelUtilisationsA1 {
+  public class SteelUtilisationsC1 {
     // these are regression tests, the values are taken directly from GSA results
-    // "Steel_Design_Simple.gwb" for member id=all for analysis case A1
+    // "Steel_Design_Simple.gwb" for member id=all for analysis case C1
 
     internal static List<double?> Overall= new List<double?>() {
-      0.1499,
+      0.4017,
     };
     internal static List<double?> LocalCombined= new List<double?>() {
-      0.1499,
+      0.4017,
     };
     internal static List<double?> BucklingCombined= new List<double?>() {
-      0.1421
+      0.3716,
     };
     internal static List<double?> LocalAxis= new List<double?>() {
       0,
@@ -24,13 +24,13 @@ namespace GsaGHTests._1_BaseParameters._5_Results.Collections.RegressionValues {
       0,
     };
     internal static List<double?> LocalSv= new List<double?>() {
-      0.04847,
+      0.09888,
     };
     internal static List<double?> LocalTorsion= new List<double?>() {
       0,
     };
     internal static List<double?> LocalMuu= new List<double?>() {
-      0.1499,
+      0.4017,
     };
     internal static List<double?> LocalMvv= new List<double?>() {
       0,
