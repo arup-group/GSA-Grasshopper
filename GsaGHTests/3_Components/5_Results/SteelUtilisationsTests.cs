@@ -2,10 +2,10 @@
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
-using GsaGHTests._1_BaseParameters._5_Results.Collections.RegressionValues;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters;
+using GsaGHTests.Parameters.Results;
 using OasysGH.Parameters;
 using OasysUnits;
 using System;
