@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
@@ -15,6 +16,7 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using EntityType = GsaGH.Parameters.EntityType;
+using TemperatureUnit = OasysUnits.Units.TemperatureUnit;
 
 namespace GsaGH.Components {
   public class CreateFaceThermalLoad : GH_OasysDropDownComponent {
@@ -177,7 +179,8 @@ namespace GsaGH.Components {
             }
           default: {
               if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
-                faceThermalLoad.ApiLoad.EntityList = elemList;
+                faceThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
+                faceThermalLoad.ApiLoad.EntityList = $"\"{elemList}\"";
               }
 
               break;

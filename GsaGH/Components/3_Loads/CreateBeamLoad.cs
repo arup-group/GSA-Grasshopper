@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
@@ -299,7 +302,8 @@ namespace GsaGH.Components {
 
           default:
             if (GH_Convert.ToString(ghTyp.Value, out string beamList, GH_Conversion.Both)) {
-              beamLoad.ApiLoad.EntityList = beamList;
+              beamLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
+              beamLoad.ApiLoad.EntityList = $"\"{beamList}\"";
             }
             break;
         }

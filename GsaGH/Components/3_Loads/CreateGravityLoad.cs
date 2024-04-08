@@ -2,6 +2,7 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
@@ -135,7 +136,8 @@ namespace GsaGH.Components {
             }
           default: {
               if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
-                gravityLoad.ApiLoad.EntityList = elemList;
+                gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
+                gravityLoad.ApiLoad.EntityList = $"\"{elemList}\"";
               }
 
               break;
