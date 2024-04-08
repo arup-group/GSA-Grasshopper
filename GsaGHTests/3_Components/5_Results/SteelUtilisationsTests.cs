@@ -36,7 +36,7 @@ namespace GsaGHTests.Components.Results {
       // Assemble
       GsaResult result = caseName.Equals("A") 
         ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, index) 
-        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, index);
+        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, index, new List<int>() {1});
 
       Assert.NotNull(result);
       // Act
@@ -67,7 +67,7 @@ namespace GsaGHTests.Components.Results {
       // Assemble
       GsaResult result = caseName.Equals("A")
         ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, index)
-        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, index);
+        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, index, new List<int>() { 1 });
 
       var comp = new SteelUtilisations();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -97,7 +97,7 @@ namespace GsaGHTests.Components.Results {
       // Assemble
       GsaResult result = caseName.Equals("A")
         ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, index)
-        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, index);
+        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, index, new List<int>() { 1 });
 
       List<List<double?>> expectedOutput = GetExpectedOutput(caseName, index);
 
@@ -135,7 +135,7 @@ namespace GsaGHTests.Components.Results {
       // Assemble
       GsaResult result = caseName.Equals("A")
         ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, index)
-        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, index);
+        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, index, new List<int>() { 1 });
 
       List<List<double?>> expectedOutput = GetExpectedOutput(caseName, index);
 

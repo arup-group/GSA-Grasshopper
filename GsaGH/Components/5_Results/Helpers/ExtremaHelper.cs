@@ -544,8 +544,8 @@ namespace GsaGH.Components.Helpers {
       };
     }
 
-    internal static Ratio? SteelUtilisationsExtremaKey<T, U>(
-      IEntity0dResultSubset<T, SteelUtilisation> resultSet, string key) where T : IResultItem {
+    internal static Entity0dExtremaKey SteelUtilisationsExtremaKey(
+      IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> resultSet, string key) {
       return key switch {
         "Max Overall" => resultSet.Max.Overall,
         "Max LocalCombined" => resultSet.Max.LocalCombined,

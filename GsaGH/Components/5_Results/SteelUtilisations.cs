@@ -116,26 +116,46 @@ namespace GsaGH.Components {
         permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
       }
 
-      foreach (KeyValuePair<int, IList<ISteelUtilisation>> kvp in resultSet.Subset) {
-        int p = permutations[0];
-        var path = new GH_Path(result.CaseId,
-          result.SelectedPermutationIds == null ? 0 : permutations[0], kvp.Key);
+      if (_selectedItems[0] == ExtremaHelper.SteelUtilisations[0]) {
+        foreach (KeyValuePair<int, IList<ISteelUtilisation>> kvp in resultSet.Subset) {
+          foreach (int p in permutations) {
+            var path = new GH_Path(result.CaseId, result.SelectedPermutationIds == null ? 0 : p);
 
-        o.Add(new GH_UnitNumber(kvp.Value[p - 1].Overall), path);
-        lc.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalCombined), path);
-        bc.Add(new GH_UnitNumber(kvp.Value[p - 1].BucklingCombined), path);
-        ax.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalAxial), path);
-        su.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalShearU), path);
-        sv.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalShearV), path);
-        to.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalTorsion), path);
-        mam.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalMajorMoment), path);
-        mim.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalMinorMoment), path);
-        mab.Add(new GH_UnitNumber(kvp.Value[p - 1].MajorBuckling), path);
-        mib.Add(new GH_UnitNumber(kvp.Value[p - 1].MinorBuckling), path);
-        ltb.Add(new GH_UnitNumber(kvp.Value[p - 1].LateralTorsionalBuckling), path);
-        tb.Add(new GH_UnitNumber(kvp.Value[p - 1].TorsionalBuckling), path);
-        fb.Add(new GH_UnitNumber(kvp.Value[p - 1].FlexuralBuckling), path);
-
+            o.Add(new GH_UnitNumber(kvp.Value[p - 1].Overall), path);
+            lc.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalCombined), path);
+            bc.Add(new GH_UnitNumber(kvp.Value[p - 1].BucklingCombined), path);
+            ax.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalAxial), path);
+            su.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalShearU), path);
+            sv.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalShearV), path);
+            to.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalTorsion), path);
+            mam.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalMajorMoment), path);
+            mim.Add(new GH_UnitNumber(kvp.Value[p - 1].LocalMinorMoment), path);
+            mab.Add(new GH_UnitNumber(kvp.Value[p - 1].MajorBuckling), path);
+            mib.Add(new GH_UnitNumber(kvp.Value[p - 1].MinorBuckling), path);
+            ltb.Add(new GH_UnitNumber(kvp.Value[p - 1].LateralTorsionalBuckling), path);
+            tb.Add(new GH_UnitNumber(kvp.Value[p - 1].TorsionalBuckling), path);
+            fb.Add(new GH_UnitNumber(kvp.Value[p - 1].FlexuralBuckling), path);
+          }
+        }
+      } else {
+        Entity0dExtremaKey key = ExtremaHelper.SteelUtilisationsExtremaKey(resultSet, _selectedItems[0]);
+        ISteelUtilisation extrema = resultSet.GetExtrema(key);
+        int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
+        var path = new GH_Path(result.CaseId, key.Permutation + perm);
+        o.Add(new GH_UnitNumber(extrema.Overall), path);
+        lc.Add(new GH_UnitNumber(extrema.LocalCombined), path);
+        bc.Add(new GH_UnitNumber(extrema.BucklingCombined), path);
+        ax.Add(new GH_UnitNumber(extrema.LocalAxial), path);
+        su.Add(new GH_UnitNumber(extrema.LocalShearU), path);
+        sv.Add(new GH_UnitNumber(extrema.LocalShearV), path);
+        to.Add(new GH_UnitNumber(extrema.LocalTorsion), path);
+        mam.Add(new GH_UnitNumber(extrema.LocalMajorMoment), path);
+        mim.Add(new GH_UnitNumber(extrema.LocalMinorMoment), path);
+        mab.Add(new GH_UnitNumber(extrema.MajorBuckling), path);
+        mib.Add(new GH_UnitNumber(extrema.MinorBuckling), path);
+        ltb.Add(new GH_UnitNumber(extrema.LateralTorsionalBuckling), path);
+        tb.Add(new GH_UnitNumber(extrema.TorsionalBuckling), path);
+        fb.Add(new GH_UnitNumber(extrema.FlexuralBuckling), path);
       }
 
       PostHog.Result(result.CaseType, 1, "SteelUtilisations");
