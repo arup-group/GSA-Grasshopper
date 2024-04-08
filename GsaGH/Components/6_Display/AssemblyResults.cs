@@ -293,18 +293,6 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-      if (Params.Input.Count != 6) {
-        var scale = (Param_Number)Params.Input[3];
-        Params.UnregisterInputParameter(Params.Input[3], false);
-        Params.RegisterInputParam(new Param_Interval());
-        Params.Input[3].Name = "Min/Max Domain";
-        Params.Input[3].NickName = "I";
-        Params.Input[3].Description = "Optional Domain for custom Min to Max contour colours";
-        Params.Input[3].Optional = true;
-        Params.Input[3].Access = GH_ParamAccess.item;
-        Params.RegisterInputParam(scale);
-      }
-
       switch (_mode) {
         case FoldMode.Displacement when (int)_disp < 4:
           Params.Output[2].Name = "Values [" + Length.GetAbbreviation(_lengthResultUnit) + "]";
