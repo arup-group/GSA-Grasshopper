@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper;
@@ -293,14 +294,14 @@ namespace GsaGH.Components {
 
     public override void VariableParameterMaintenance() {
       if (Params.Input.Count != 6) {
-        var scale = (Param_Number)Params.Input[4];
-        Params.UnregisterInputParameter(Params.Input[4], false);
+        var scale = (Param_Number)Params.Input[3];
+        Params.UnregisterInputParameter(Params.Input[3], false);
         Params.RegisterInputParam(new Param_Interval());
-        Params.Input[4].Name = "Min/Max Domain";
-        Params.Input[4].NickName = "I";
-        Params.Input[4].Description = "Optional Domain for custom Min to Max contour colours";
-        Params.Input[4].Optional = true;
-        Params.Input[4].Access = GH_ParamAccess.item;
+        Params.Input[3].Name = "Min/Max Domain";
+        Params.Input[3].NickName = "I";
+        Params.Input[3].Description = "Optional Domain for custom Min to Max contour colours";
+        Params.Input[3].Optional = true;
+        Params.Input[3].Access = GH_ParamAccess.item;
         Params.RegisterInputParam(scale);
       }
 
@@ -752,9 +753,7 @@ namespace GsaGH.Components {
 
       var resultLines = new DataTree<LineResultGoo>();
 
-      //Parallel.ForEach(elems, element => {
-
-      foreach (KeyValuePair<int, Assembly> assembly in filteredAssemblies) {
+      Parallel.ForEach(assemblies, assembly => {
         Node topology1 = nodes[assembly.Value.Topology1];
         Node topology2 = nodes[assembly.Value.Topology2];
 
@@ -834,8 +833,7 @@ namespace GsaGH.Components {
               new GH_Path(key));
           }
         }
-      }
-      //});
+      });
 
       int gripheight = _legend.Height / ghGradient.GripCount;
       _legendValues = new List<string>();
