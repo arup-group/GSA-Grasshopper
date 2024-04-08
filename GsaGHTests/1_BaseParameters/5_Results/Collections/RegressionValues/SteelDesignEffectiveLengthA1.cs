@@ -3,7 +3,7 @@ using Grasshopper;
 using OasysGH.Parameters;
 using System.Collections.Generic;
 
-namespace GsaGHTests._1_BaseParameters._5_Results.Collections.RegressionValues {
+namespace GsaGHTests.Parameters.Results {
   public class SteelDesignEffectiveLengthA1 {
     // these are regression tests, the values are taken directly from GSA results
     // "BasicFrame.gwb" for member id=46,47,48 for analysis case A1

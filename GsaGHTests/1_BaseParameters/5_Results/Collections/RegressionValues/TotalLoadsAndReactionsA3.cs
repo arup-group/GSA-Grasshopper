@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GsaGHTests._1_BaseParameters._5_Results.Collections.RegressionValues {
+namespace GsaGHTests.Parameters.Results {
   public class TotalLoadsAndReactionsA3 {
     // these are regression tests, the values are taken directly from GSA results
     // "Steel_Design_Complex.gwb" for all nodes for analysis case A3

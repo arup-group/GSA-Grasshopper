@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
-using GsaGHTests._1_BaseParameters._5_Results.Collections.RegressionValues;
 using GsaGHTests.Helper;
 using OasysUnits;
 using OasysUnits.Units;
