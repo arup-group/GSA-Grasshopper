@@ -179,7 +179,7 @@ namespace GsaGH.Components {
             if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
               faceThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               faceThermalLoad.ApiLoad.EntityList = elemList;
-              if (faceThermalLoad.ApiLoad.EntityList != elemList) {
+              if (faceThermalLoad.ApiLoad.EntityList != elemList && elemList.ToLower() != "all") {
                 faceThermalLoad.ApiLoad.EntityList = $"\"{elemList}\"";
               }
             }

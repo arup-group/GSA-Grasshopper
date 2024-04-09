@@ -181,7 +181,7 @@ namespace GsaGH.Components {
             if (GH_Convert.ToString(ghTyp.Value, out string beamList, GH_Conversion.Both)) {
               beamThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               beamThermalLoad.ApiLoad.EntityList = beamList;
-              if (beamThermalLoad.ApiLoad.EntityList != beamList) {
+              if (beamThermalLoad.ApiLoad.EntityList != beamList && beamList.ToLower() != "all") {
                 beamThermalLoad.ApiLoad.EntityList = $"\"{beamList}\"";
               }
             }

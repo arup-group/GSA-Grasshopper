@@ -306,7 +306,7 @@ namespace GsaGH.Components {
             if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
               faceLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               faceLoad.ApiLoad.EntityList = elemList;
-              if (faceLoad.ApiLoad.EntityList != elemList) {
+              if (faceLoad.ApiLoad.EntityList != elemList && elemList.ToLower() != "all") {
                 faceLoad.ApiLoad.EntityList = $"\"{elemList}\"";
               }
             }

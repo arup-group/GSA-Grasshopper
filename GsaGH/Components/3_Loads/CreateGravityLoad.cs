@@ -143,7 +143,7 @@ namespace GsaGH.Components {
             if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
               gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               gravityLoad.ApiLoad.EntityList = elemList;
-              if (gravityLoad.ApiLoad.EntityList != elemList) {
+              if (gravityLoad.ApiLoad.EntityList != elemList && elemList.ToLower() != "all") {
                 gravityLoad.ApiLoad.EntityList = $"\"{elemList}\"";
               }
             }
