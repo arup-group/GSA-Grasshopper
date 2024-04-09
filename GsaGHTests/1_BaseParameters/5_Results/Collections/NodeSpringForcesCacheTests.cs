@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GsaGH.Parameters.Results;
-using GsaGHTests._1_BaseParameters._5_Results;
 using GsaGHTests.Helper;
 using Xunit;
 
