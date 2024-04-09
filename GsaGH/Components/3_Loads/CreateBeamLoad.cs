@@ -299,7 +299,11 @@ namespace GsaGH.Components {
 
           default:
             if (GH_Convert.ToString(ghTyp.Value, out string beamList, GH_Conversion.Both)) {
+              beamLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               beamLoad.ApiLoad.EntityList = beamList;
+              if (beamLoad.ApiLoad.EntityList != beamList && beamList.ToLower() != "all") {
+                beamLoad.ApiLoad.EntityList = $"\"{beamList}\"";
+              }
             }
             break;
         }

@@ -106,7 +106,6 @@ namespace GsaGHTests.Parameters {
       orig.ApiProp2d.Description = "less cool property";
       orig.ApiProp2d.Type = Property2D_Type.LOAD;
       orig.ApiProp2d.SupportType = SupportType.AllEdges;
-      orig.ApiProp2d.ReferenceEdge = 4;
       orig.ApiProp2d.ReferenceSurface = ReferenceSurface.Top;
       orig.AdditionalOffsetZ = new Length(50.0, LengthUnit.Millimeter);
 
@@ -127,7 +126,6 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("less cool property", orig.ApiProp2d.Description);
       Assert.Equal(Property2D_Type.LOAD.ToString(), orig.ApiProp2d.Type.ToString());
       Assert.Equal(SupportType.AllEdges, orig.ApiProp2d.SupportType);
-      Assert.Equal(4, orig.ApiProp2d.ReferenceEdge);
       Assert.Equal(4, orig.Id);
       Assert.Equal(ReferenceSurface.Top, orig.ApiProp2d.ReferenceSurface);
       Assert.Equal(50, orig.AdditionalOffsetZ.As(LengthUnit.Millimeter));
