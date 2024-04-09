@@ -55,6 +55,12 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
 
+      foreach(EntityList list in _lists.ReadOnlyDictionary.Values) {
+        if(load.ApiLoad.EntityList == $"\"{list.Name}\"") {
+          load.ApiLoad.EntityType = list.Type;
+        }
+      }
+
       _beamLoads.Add(load.ApiLoad);
     }
 
@@ -87,6 +93,12 @@ namespace GsaGH.Helpers.Assembly {
           }
 
           return;
+        }
+      }
+
+      foreach (EntityList list in _lists.ReadOnlyDictionary.Values) {
+        if (load.ApiLoad.EntityList == $"\"{list.Name}\"") {
+          load.ApiLoad.EntityType = list.Type;
         }
       }
 
@@ -124,6 +136,13 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
 
+
+      foreach (EntityList list in _lists.ReadOnlyDictionary.Values) {
+        if (load.ApiLoad.EntityList == $"\"{list.Name}\"") {
+          load.ApiLoad.EntityType = list.Type;
+        }
+      }
+
       _faceLoads.Add(load.ApiLoad);
     }
 
@@ -155,6 +174,12 @@ namespace GsaGH.Helpers.Assembly {
             owner.AddRuntimeWarning(warning);
           }
           return;
+        }
+      }
+
+      foreach (EntityList list in _lists.ReadOnlyDictionary.Values) {
+        if (load.ApiLoad.EntityList == $"\"{list.Name}\"") {
+          load.ApiLoad.EntityType = list.Type;
         }
       }
 
@@ -191,6 +216,12 @@ namespace GsaGH.Helpers.Assembly {
           }
 
           return;
+        }
+      }
+
+      foreach (EntityList list in _lists.ReadOnlyDictionary.Values) {
+        if (load.ApiLoad.EntityList == $"\"{list.Name}\"") {
+          load.ApiLoad.EntityType = list.Type;
         }
       }
 
