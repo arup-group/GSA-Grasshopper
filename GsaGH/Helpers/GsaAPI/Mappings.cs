@@ -213,55 +213,63 @@ namespace GsaGH.Helpers.GsaApi {
 
     internal static readonly IList<DiagramTypeMapping> _diagramTypeMappingAssemblyDisplacement
       = new List<DiagramTypeMapping>() {
-            new DiagramTypeMapping("Translation Ux", DiagramType.AssemblyDisplacementUx,
-              ApiDiagramType.AxialForceFx),
-            new DiagramTypeMapping("Translation Uy", DiagramType.AssemblyDisplacementUy,
-              ApiDiagramType.ShearForceFy),
-            new DiagramTypeMapping("Translation Uz", DiagramType.AssemblyDisplacementUz,
-              ApiDiagramType.ShearForceFz),
-            new DiagramTypeMapping("Rotation Rxx", DiagramType.AssemblyRotationRxx,
-              ApiDiagramType.TorsionMxx),
-            new DiagramTypeMapping("Rotation Ryy", DiagramType.AssemblyRotationRxx,
-              ApiDiagramType.MomentMyy),
-            new DiagramTypeMapping("Rotation Rzz", DiagramType.AssemblyRotationRxx,
-              ApiDiagramType.MomentMzz)
+        new DiagramTypeMapping("Translation Ux", DiagramType.AssemblyDisplacementUx,
+          ApiDiagramType.TranslationUx),
+        new DiagramTypeMapping("Translation Uy", DiagramType.AssemblyDisplacementUy,
+          ApiDiagramType.TranslationUy),
+        new DiagramTypeMapping("Translation Uz", DiagramType.AssemblyDisplacementUz,
+          ApiDiagramType.TranslationUz),
+        new DiagramTypeMapping("Resolved Translation |U|", DiagramType.ResolvedAssemblyDisplacementU,
+          ApiDiagramType.ResolvedTranslationU),
+        new DiagramTypeMapping("Rotation Rxx", DiagramType.AssemblyRotationRxx,
+          ApiDiagramType.RotationRxx),
+        new DiagramTypeMapping("Rotation Ryy", DiagramType.AssemblyRotationRxx,
+          ApiDiagramType.RotationRyy),
+        new DiagramTypeMapping("Rotation Rzz", DiagramType.AssemblyRotationRxx,
+          ApiDiagramType.RotationRzz),
+        new DiagramTypeMapping("Resolved Rotation |R|", DiagramType.ResolvedAssemblyRotationR,
+          ApiDiagramType.ResolvedRotationR)
       };
 
     internal static readonly IList<DiagramTypeMapping> _diagramTypeMappingAssemblyDrift
       = new List<DiagramTypeMapping>() {
-            new DiagramTypeMapping("Drift Dx", DiagramType.AssemblyDriftX,
-              ApiDiagramType.AxialForceFx),
-            new DiagramTypeMapping("Drift Dy", DiagramType.AssemblyDriftY,
-              ApiDiagramType.ShearForceFy),
-            new DiagramTypeMapping("In-plane Drift", DiagramType.AssemblyDriftXY,
-              ApiDiagramType.ShearForceFz)
+        new DiagramTypeMapping("Drift Dx", DiagramType.AssemblyDriftX,
+          ApiDiagramType.DriftX),
+        new DiagramTypeMapping("Drift Dy", DiagramType.AssemblyDriftY,
+          ApiDiagramType.DriftY),
+        //new DiagramTypeMapping("Resolved Drift |D|", DiagramType.ResolvedAssemblyDrift,
+        //  ApiDiagramType.ResolvedDrift),
+        new DiagramTypeMapping("In-plane Drift", DiagramType.AssemblyDriftXY,
+          ApiDiagramType.DriftXY)
       };
 
     internal static readonly IList<DiagramTypeMapping> _diagramTypeMappingAssemblyDriftIndex
       = new List<DiagramTypeMapping>() {
-            new DiagramTypeMapping("Drift Index DIx", DiagramType.AssemblyDriftIndexX,
-              ApiDiagramType.AxialForceFx),
-            new DiagramTypeMapping("Drift Index DIy", DiagramType.AssemblyDriftIndexY,
-              ApiDiagramType.ShearForceFy),
-            new DiagramTypeMapping("In-plane Drift Index", DiagramType.AssemblyDriftIndexXY,
-              ApiDiagramType.ShearForceFz)
+        new DiagramTypeMapping("Drift Index DIx", DiagramType.AssemblyDriftIndexX,
+          ApiDiagramType.DriftIndexX),
+        new DiagramTypeMapping("Drift Index DIy", DiagramType.AssemblyDriftIndexY,
+          ApiDiagramType.DriftIndexY),
+        //new DiagramTypeMapping("Resolved Drift Index |DI|", DiagramType.ResolvedAssemblyDriftIndex,
+        //  ApiDiagramType.ResolvedDriftIndex),
+        new DiagramTypeMapping("In-plane Drift Index", DiagramType.AssemblyDriftIndexXY,
+          ApiDiagramType.DriftIndexXY)
       };
 
     internal static readonly IList<DiagramTypeMapping> _diagramTypeMappingAssemblyForce
-          = new List<DiagramTypeMapping>() {
-            new DiagramTypeMapping("Axial Fx", DiagramType.AssemblyAxialForceFx,
-              ApiDiagramType.AxialForceFx),
-            new DiagramTypeMapping("Shear Fy", DiagramType.AssemblyShearForceFy,
-              ApiDiagramType.ShearForceFy),
-            new DiagramTypeMapping("Shear Fz", DiagramType.AssemblyShearForceFz,
-              ApiDiagramType.ShearForceFz),
-            new DiagramTypeMapping("Torsion Mxx", DiagramType.AssemblyTorsionMxx,
-              ApiDiagramType.TorsionMxx),
-            new DiagramTypeMapping("Moment Myy", DiagramType.AssemblyMomentMyy,
-              ApiDiagramType.MomentMyy),
-            new DiagramTypeMapping("Moment Mzz", DiagramType.AssemblyMomentMzz,
-              ApiDiagramType.MomentMzz)
-          };
+      = new List<DiagramTypeMapping>() {
+        new DiagramTypeMapping("Axial Fx", DiagramType.AssemblyAxialForceFx,
+          ApiDiagramType.AxialForceFx),
+        new DiagramTypeMapping("Shear Fy", DiagramType.AssemblyShearForceFy,
+          ApiDiagramType.ShearForceFy),
+        new DiagramTypeMapping("Shear Fz", DiagramType.AssemblyShearForceFz,
+          ApiDiagramType.ShearForceFz),
+        new DiagramTypeMapping("Torsion Mxx", DiagramType.AssemblyTorsionMxx,
+          ApiDiagramType.TorsionMxx),
+        new DiagramTypeMapping("Moment Myy", DiagramType.AssemblyMomentMyy,
+          ApiDiagramType.MomentMyy),
+        new DiagramTypeMapping("Moment Mzz", DiagramType.AssemblyMomentMzz,
+          ApiDiagramType.MomentMzz)
+      };
 
     internal static readonly IList<DiagramTypeMapping> _diagramTypeMappingForce
       = new List<DiagramTypeMapping>() {
