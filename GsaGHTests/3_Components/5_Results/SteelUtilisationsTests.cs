@@ -1,4 +1,7 @@
-﻿using Grasshopper.Kernel.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Grasshopper.Kernel.Data;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
@@ -8,9 +11,6 @@ using GsaGHTests.Parameters;
 using GsaGHTests.Parameters.Results;
 using OasysGH.Parameters;
 using OasysUnits;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 using GsaResultTests = GsaGHTests.Parameters.Results.GsaResultTests;
 using SteelUtilisations = GsaGH.Components.SteelUtilisations;
@@ -34,9 +34,9 @@ namespace GsaGHTests.Components.Results {
     [InlineData("C", 1)]
     public void SteelUtilisationsIdsFromCaseTest(string caseName, int index) {
       // Assemble
-      GsaResult result = caseName.Equals("A") 
-        ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, index) 
-        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, index, new List<int>() {1});
+      GsaResult result = caseName.Equals("A")
+        ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, index)
+        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, index, new List<int>() { 1 });
 
       Assert.NotNull(result);
       // Act
@@ -94,7 +94,6 @@ namespace GsaGHTests.Components.Results {
     [InlineData("C", 1)]
     public void SteelUtilisationsMinFromCaseTest(string caseName, int index) {
       // Assemble
-      // Assemble
       GsaResult result = caseName.Equals("A")
         ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, index)
         : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, index, new List<int>() { 1 });
@@ -108,7 +107,7 @@ namespace GsaGHTests.Components.Results {
 
         // Act
         var comp = new SteelUtilisations();
-        comp.SetSelected(0, 9 + i);
+        comp.SetSelected(0, 15 + i);
         ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
         ComponentTestHelper.SetInput(comp, _memberList, 1);
 
@@ -132,7 +131,6 @@ namespace GsaGHTests.Components.Results {
     [InlineData("C", 1)]
     public void SteelUtilisationsMaxFromCaseTest(string caseName, int index) {
       // Assemble
-      // Assemble
       GsaResult result = caseName.Equals("A")
         ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, index)
         : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignSimple, index, new List<int>() { 1 });
@@ -146,7 +144,7 @@ namespace GsaGHTests.Components.Results {
 
         // Act
         var comp = new SteelUtilisations();
-        comp.SetSelected(0, 9 + i);
+        comp.SetSelected(0, i);
         ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
         ComponentTestHelper.SetInput(comp, _memberList, 1);
 
@@ -166,7 +164,7 @@ namespace GsaGHTests.Components.Results {
 
     private Enum Unit() {
       Enum unit = Ratio.BaseUnit;
-     
+
       return unit;
     }
 

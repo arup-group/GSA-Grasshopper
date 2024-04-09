@@ -19,7 +19,7 @@ using OasysGH.Parameters;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to get SteelDesignEffectiveLength
+  ///   Component to get SteelUtilisations
   /// </summary>
   public class SteelUtilisations : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("5f6ff7ac-65c9-417b-a373-bb45a3163e99");
@@ -27,7 +27,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.SteelUtilisations;
 
-    public SteelUtilisations() : base("Steel Utilisations", "SteelUtil", "Steel Utilisation values",
+    public SteelUtilisations() : base("Steel Utilisations", "SteelUtil", "Steel Utilisation result values",
       CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
     }
@@ -66,10 +66,10 @@ namespace GsaGH.Components {
       pManager.AddGenericParameter("LocalShearU", "Su", "Local Major Shear Utilisation ratio", GH_ParamAccess.list);
       pManager.AddGenericParameter("LocalShearV", "Sv", "Local Minor Shear Utilisation ratio", GH_ParamAccess.list);
       pManager.AddGenericParameter("LocalTorsion", "To", "Local Torsion Utilisation ratio", GH_ParamAccess.list);
-      pManager.AddGenericParameter("LocalMajorMoment", "MaM", "Local Major Moment Utilisation ratio", GH_ParamAccess.list);
-      pManager.AddGenericParameter("LocalMinorMoment", "MiM", "Local Minor Moment Utilisation ratio", GH_ParamAccess.list);
-      pManager.AddGenericParameter("MajorBuckling", "MaB", "Major Buckling Utilisation ratio", GH_ParamAccess.list);
-      pManager.AddGenericParameter("MinorBuckling", "MiB", "Minor Buckling Utilisation ratio", GH_ParamAccess.list);
+      pManager.AddGenericParameter("LocalMajorMoment", "Muu", "Local Major Moment Utilisation ratio", GH_ParamAccess.list);
+      pManager.AddGenericParameter("LocalMinorMoment", "Mvv", "Local Minor Moment Utilisation ratio", GH_ParamAccess.list);
+      pManager.AddGenericParameter("MajorBuckling", "Buu", "Major Buckling Utilisation ratio", GH_ParamAccess.list);
+      pManager.AddGenericParameter("MinorBuckling", "Bvv", "Minor Buckling Utilisation ratio", GH_ParamAccess.list);
       pManager.AddGenericParameter("LateralTorsionalBuckling", "LTB", "Lateral Torsional Buckling Utilisation ratio", GH_ParamAccess.list);
       pManager.AddGenericParameter("TorsionalBuckling", "TB", "Torsional Buckling Utilisation ratio", GH_ParamAccess.list);
       pManager.AddGenericParameter("FlexuralBuckling", "FB", "Flexural Buckling Utilisation ratio", GH_ParamAccess.list);

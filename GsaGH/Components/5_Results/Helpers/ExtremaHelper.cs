@@ -196,7 +196,7 @@ namespace GsaGH.Components.Helpers {
         "Min DIx",
         "Min DIy",
         "Min In-plane"
-  });
+      });
 
     internal static readonly ReadOnlyCollection<string> SteelUtilisations
       = new ReadOnlyCollection<string>(new[] {
@@ -225,6 +225,8 @@ namespace GsaGH.Components.Helpers {
         "Min LocalMajorMoment",
         "Min LocalMinorMoment",
         "Min MajorBuckling",
+        "Min MinorBuckling",
+        "Min LateralTorsionalBuckling",
         "Min TorsionalBuckling",
         "Min FlexuralBuckling",
       });
