@@ -219,7 +219,7 @@ namespace GsaGH.Helpers.GsaApi {
           ApiDiagramType.TranslationUy),
         new DiagramTypeMapping("Translation Uz", DiagramType.AssemblyDisplacementUz,
           ApiDiagramType.TranslationUz),
-        new DiagramTypeMapping("Resolved Translation |U|", DiagramType.ResolvedAssemblyDisplacementU,
+        new DiagramTypeMapping("Res. Translation |U|", DiagramType.ResolvedAssemblyDisplacementU,
           ApiDiagramType.ResolvedTranslationU),
         new DiagramTypeMapping("Rotation Rxx", DiagramType.AssemblyRotationRxx,
           ApiDiagramType.RotationRxx),
@@ -227,7 +227,7 @@ namespace GsaGH.Helpers.GsaApi {
           ApiDiagramType.RotationRyy),
         new DiagramTypeMapping("Rotation Rzz", DiagramType.AssemblyRotationRxx,
           ApiDiagramType.RotationRzz),
-        new DiagramTypeMapping("Resolved Rotation |R|", DiagramType.ResolvedAssemblyRotationR,
+        new DiagramTypeMapping("Res. Rotation |R|", DiagramType.ResolvedAssemblyRotationR,
           ApiDiagramType.ResolvedRotationR)
       };
 
@@ -237,8 +237,8 @@ namespace GsaGH.Helpers.GsaApi {
           ApiDiagramType.DriftX),
         new DiagramTypeMapping("Drift Dy", DiagramType.AssemblyDriftY,
           ApiDiagramType.DriftY),
-        //new DiagramTypeMapping("Resolved Drift |D|", DiagramType.ResolvedAssemblyDrift,
-        //  ApiDiagramType.ResolvedDrift),
+        new DiagramTypeMapping("Res. Drift |D|", DiagramType.ResolvedAssemblyDrift,
+          ApiDiagramType.ResolvedDrift),
         new DiagramTypeMapping("In-plane Drift", DiagramType.AssemblyDriftXY,
           ApiDiagramType.DriftXY)
       };
@@ -249,8 +249,8 @@ namespace GsaGH.Helpers.GsaApi {
           ApiDiagramType.DriftIndexX),
         new DiagramTypeMapping("Drift Index DIy", DiagramType.AssemblyDriftIndexY,
           ApiDiagramType.DriftIndexY),
-        //new DiagramTypeMapping("Resolved Drift Index |DI|", DiagramType.ResolvedAssemblyDriftIndex,
-        //  ApiDiagramType.ResolvedDriftIndex),
+        new DiagramTypeMapping("Res. Drift Index |DI|", DiagramType.ResolvedAssemblyDriftIndex,
+          ApiDiagramType.ResolvedDriftIndex),
         new DiagramTypeMapping("In-plane Drift Index", DiagramType.AssemblyDriftIndexXY,
           ApiDiagramType.DriftIndexXY)
       };

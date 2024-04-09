@@ -60,10 +60,10 @@
     DriftX,
     DriftY,
     DriftXY,
-    // ResolvedDrift,
+    ResolvedDrift,
     DriftIndexX,
     DriftIndexY,
     DriftIndexXY,
-    // ResolvedDriftIndex,
+    ResolvedDriftIndex,
   }
 }

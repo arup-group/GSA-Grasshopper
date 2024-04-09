@@ -80,15 +80,11 @@ namespace GsaGH.Components {
     private readonly List<string> _drift = new List<string>(new[] {
       "Drift Dx",
       "Drift Dy",
-      //"Drift Dz",
-      //"Drift |D|",
       "In-plane Drift"
     });
     private readonly List<string> _driftIndex = new List<string>(new[] {
       "Drift Index DIx",
       "Drift Index DIy",
-      //"Drift Index DIz",
-      //"Drift Index |DI|",
       "In-plane Drift Index"
     });
     private readonly List<string> _force = new List<string>(new[] {
@@ -475,11 +471,6 @@ namespace GsaGH.Components {
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
       ReadOnlyDictionary<int, Assembly> assemblies = result.Model.Model.Assemblies();
 
-      var list = new EntityList {
-        Definition = assemblyList,
-        Type = GsaAPI.EntityType.Assembly
-      };
-
       ReadOnlyCollection<int> assemblyIds = result.AssemblyIds(assemblyList);
 
       var filteredAssemblies = new Dictionary<int, Assembly>();
@@ -741,7 +732,7 @@ namespace GsaGH.Components {
 
       var resultLines = new DataTree<LineResultGoo>();
 
-      Parallel.ForEach(assemblies, assembly => {
+      Parallel.ForEach(filteredAssemblies, assembly => {
         Node topology1 = nodes[assembly.Value.Topology1];
         Node topology2 = nodes[assembly.Value.Topology2];
 
