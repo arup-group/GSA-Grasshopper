@@ -131,6 +131,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SelectResult))]
     [InlineData(typeof(SpringReactionForces))]
     [InlineData(typeof(TotalLoadsAndReactions))]
+    [InlineData(typeof(SteelUtilisations))]
     // 6_Display
     [InlineData(typeof(AnnotateDetailed))]
     [InlineData(typeof(Annotate))]
@@ -153,6 +154,7 @@ namespace GsaGHTests.Components {
       Assert.NotEqual(new Guid(), comp.ComponentGuid);
       Assert.Equal(PluginInfo.Instance, comp.PluginInfo);
     }
+
     [Fact]
     public void GH_OasysTaskCapableComponent() {
       var comp = new GetModelGeometry();

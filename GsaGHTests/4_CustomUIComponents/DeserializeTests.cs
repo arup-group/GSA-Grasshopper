@@ -73,6 +73,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(ReactionForces))]
     [InlineData(typeof(SpringReactionForces))]
     [InlineData(typeof(TotalLoadsAndReactions))]
+    [InlineData(typeof(SteelUtilisations))]
     // Display
     [InlineData(typeof(AssemblyResultDiagrams))]
     [InlineData(typeof(AssemblyResults))]

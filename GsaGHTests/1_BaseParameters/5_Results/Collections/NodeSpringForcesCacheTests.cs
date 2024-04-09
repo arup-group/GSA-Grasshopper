@@ -81,7 +81,7 @@ namespace GsaGHTests.Parameters.Results {
       var values = new List<double?>();
       values.AddRange(ExpectedCombinationCaseC2p1Values(component));
       values.AddRange(ExpectedCombinationCaseC2p2Values(component));
-      double? expected = NodeReactionForcesTests.Max(values);
+      double? expected = MaxMinHelper.Max(values);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
@@ -131,7 +131,7 @@ namespace GsaGHTests.Parameters.Results {
       var values = new List<double?>();
       values.AddRange(ExpectedCombinationCaseC2p1Values(component));
       values.AddRange(ExpectedCombinationCaseC2p2Values(component));
-      double? expected = NodeReactionForcesTests.Min(values);
+      double? expected = MaxMinHelper.Min(values);
 
       // Act
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
