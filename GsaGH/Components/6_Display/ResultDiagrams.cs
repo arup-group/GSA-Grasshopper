@@ -277,6 +277,13 @@ namespace GsaGH.Components {
 
       PostHog.Diagram("Result", result.CaseType, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
     }
+    protected override void UpdateUIFromSelectedItems() {
+      if (_dropDownItems[1].Count == 2) {
+        _dropDownItems[0].Insert(0, "Displacement");
+      }
+
+      base.UpdateUIFromSelectedItems();
+    }
 
     private List<GsaAnnotationGoo> GenerateAnnotations(
       IReadOnlyCollection<Annotation> annotationsFromModel, double lengthScaleFactor,
