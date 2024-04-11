@@ -8,7 +8,6 @@ using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
-using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
@@ -278,7 +277,7 @@ namespace GsaGH.Components {
       PostHog.Diagram("Result", result.CaseType, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
     }
     protected override void UpdateUIFromSelectedItems() {
-      if (_dropDownItems[1].Count == 2) {
+      if (_dropDownItems[0].Count == 2) {
         _dropDownItems[0].Insert(0, "Displacement");
       }
 
