@@ -57,5 +57,16 @@ namespace GsaGHTests.Components.Display {
       comp.Params.Output[0].CollectData();
       Assert.Equal("MN·m", comp.Message);
     }
+
+    [Fact]
+    public void UpdateLengthTest() {
+      var comp = new ResultDiagrams();
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      comp.SetSelected(0, 0); // displacement
+      comp.UpdateLength("cm");
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("cm", comp.Message);
+    }
   }
 }

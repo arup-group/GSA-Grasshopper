@@ -43,5 +43,15 @@ namespace GsaGHTests.Components.Display {
       comp.Params.Output[0].CollectData();
       Assert.Equal("MN·m", comp.Message);
     }
+    [Fact]
+    public void UpdateStressTest() {
+      var comp = new ResultDiagrams();
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.AssemblyByStorey, 1);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      comp.SetSelected(0, 2);
+      comp.UpdateStress("mPa");
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("mPa", comp.Message);
+    }
   }
 }
