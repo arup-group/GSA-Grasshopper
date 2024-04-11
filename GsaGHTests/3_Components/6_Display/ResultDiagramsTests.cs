@@ -29,7 +29,7 @@ namespace GsaGHTests.Components.Display {
       var comp = new ResultDiagrams();
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      comp.SetSelected(0, 0); // force
+      comp.SetSelected(0, 1); // force
       comp.SetSelected(1, 0); // Axial force
       comp.UpdateForce("MN");
       comp.Params.Output[0].CollectData();
@@ -41,7 +41,7 @@ namespace GsaGHTests.Components.Display {
       var comp = new ResultDiagrams();
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      comp.SetSelected(0, 1); // stress
+      comp.SetSelected(0, 2); // stress
       comp.UpdateStress("kPa");
       comp.Params.Output[0].CollectData();
       Assert.Equal("kPa", comp.Message);
@@ -52,6 +52,7 @@ namespace GsaGHTests.Components.Display {
       var comp = new ResultDiagrams();
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      comp.SetSelected(0, 1); // force
       comp.UpdateMoment("MN·m");
       comp.Params.Output[0].CollectData();
       Assert.Equal("MN·m", comp.Message);
