@@ -219,7 +219,7 @@ namespace GsaGH.Helpers.GsaApi {
               ApiDiagramType.TranslationUy),
             new DiagramTypeMapping("Translation Uz", DiagramType.TranslationUz,
               ApiDiagramType.TranslationUz),
-            new DiagramTypeMapping("Resolved Translation U", DiagramType.ResolvedTranslationU,
+            new DiagramTypeMapping("Res. Translation U", DiagramType.ResolvedTranslationU,
               ApiDiagramType.ResolvedTranslationU),
             new DiagramTypeMapping("Rotation Rxx", DiagramType.RotationRxx,
               ApiDiagramType.RotationRxx),
@@ -227,7 +227,7 @@ namespace GsaGH.Helpers.GsaApi {
               ApiDiagramType.RotationRyy),
             new DiagramTypeMapping("Rotation Rzz", DiagramType.RotationRxx,
               ApiDiagramType.RotationRzz),
-            new DiagramTypeMapping("Resolved Rotation R", DiagramType.ResolvedRotationR,
+            new DiagramTypeMapping("Res. Rotation R", DiagramType.ResolvedRotationR,
               ApiDiagramType.ResolvedRotationR),
       };
 
