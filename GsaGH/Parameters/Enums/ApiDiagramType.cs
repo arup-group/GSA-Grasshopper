@@ -49,5 +49,13 @@
     Load3dFacePressure,
     Load3dThermalUniform,
     Load3dThermalGradient,
+    TranslationUx,
+    TranslationUy,
+    TranslationUz,
+    ResolvedTranslationU,
+    RotationRxx,
+    RotationRyy,
+    RotationRzz,
+    ResolvedRotationR,
   }
 }
