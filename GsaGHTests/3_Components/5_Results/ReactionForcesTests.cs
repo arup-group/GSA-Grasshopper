@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using Grasshopper.Kernel.Data;
+﻿using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using GsaGH.Components;
 using GsaGH.Helpers.GsaApi;
@@ -10,10 +6,16 @@ using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
+using GsaGHTests.Parameters;
 using GsaGHTests.Parameters.Results;
 using OasysUnits;
 using OasysUnits.Units;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Xunit;
+using GsaResultTests = GsaGHTests.Parameters.Results.GsaResultTests;
 
 namespace GsaGHTests.Components.Results {
   [Collection("GrasshopperFixture collection")]
@@ -137,7 +139,7 @@ namespace GsaGHTests.Components.Results {
       var values = new List<double?>();
       values.AddRange(ExpectedCombinationCaseC4p1Values(component));
       values.AddRange(ExpectedCombinationCaseC4p2Values(component));
-      double? expected = NodeReactionForcesTests.Max(values);
+      double? expected = MaxMinHelper.Max(values);
 
       // Act
       var comp = new ReactionForces();
@@ -192,7 +194,7 @@ namespace GsaGHTests.Components.Results {
       var values = new List<double?>();
       values.AddRange(ExpectedCombinationCaseC4p1Values(component));
       values.AddRange(ExpectedCombinationCaseC4p2Values(component));
-      double? expected = NodeReactionForcesTests.Min(values);
+      double? expected = MaxMinHelper.Min(values);
 
       // Act
       var comp = new ReactionForces();

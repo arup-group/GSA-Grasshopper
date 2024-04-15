@@ -13,8 +13,8 @@ using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using OasysUnits.Units;
 using EntityType = GsaGH.Parameters.EntityType;
+using TemperatureUnit = OasysUnits.Units.TemperatureUnit;
 
 namespace GsaGH.Components {
   public class CreateBeamThermalLoad : GH_OasysDropDownComponent {
@@ -144,7 +144,6 @@ namespace GsaGH.Components {
 
             break;
 
-
           case GsaElement1dGoo element1dGoo:
             beamThermalLoad.RefObjectGuid = element1dGoo.Value.Guid;
             beamThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
@@ -180,7 +179,11 @@ namespace GsaGH.Components {
 
           default:
             if (GH_Convert.ToString(ghTyp.Value, out string beamList, GH_Conversion.Both)) {
+              beamThermalLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
               beamThermalLoad.ApiLoad.EntityList = beamList;
+              if (beamThermalLoad.ApiLoad.EntityList != beamList && beamList.ToLower() != "all") {
+                beamThermalLoad.ApiLoad.EntityList = $"\"{beamList}\"";
+              }
             }
             break;
         }

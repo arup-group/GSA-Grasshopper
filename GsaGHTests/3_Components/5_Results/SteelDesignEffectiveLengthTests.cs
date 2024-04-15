@@ -6,7 +6,6 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
-using GsaGHTests._1_BaseParameters._5_Results.Collections.RegressionValues;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
