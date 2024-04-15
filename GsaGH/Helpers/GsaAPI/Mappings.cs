@@ -211,6 +211,26 @@ namespace GsaGH.Helpers.GsaApi {
         { "Torsional", typeof(TorsionalSpringProperty) }
       };
 
+    internal static readonly IList<DiagramTypeMapping> _diagramTypeMappingDisplacement
+      = new List<DiagramTypeMapping>() {
+            new DiagramTypeMapping("Translation Ux", DiagramType.TranslationUx,
+              ApiDiagramType.TranslationUx),
+            new DiagramTypeMapping("Translation Uy", DiagramType.TranslationUy,
+              ApiDiagramType.TranslationUy),
+            new DiagramTypeMapping("Translation Uz", DiagramType.TranslationUz,
+              ApiDiagramType.TranslationUz),
+            new DiagramTypeMapping("Res. Translation U", DiagramType.ResolvedTranslationU,
+              ApiDiagramType.ResolvedTranslationU),
+            new DiagramTypeMapping("Rotation Rxx", DiagramType.RotationRxx,
+              ApiDiagramType.RotationRxx),
+            new DiagramTypeMapping("Rotation Ryy", DiagramType.RotationRyy,
+              ApiDiagramType.RotationRyy),
+            new DiagramTypeMapping("Rotation Rzz", DiagramType.RotationRxx,
+              ApiDiagramType.RotationRzz),
+            new DiagramTypeMapping("Res. Rotation R", DiagramType.ResolvedRotationR,
+              ApiDiagramType.ResolvedRotationR),
+      };
+
     internal static readonly IList<DiagramTypeMapping> _diagramTypeMappingAssemblyDisplacement
       = new List<DiagramTypeMapping>() {
         new DiagramTypeMapping("Translation Ux", DiagramType.AssemblyDisplacementUx,

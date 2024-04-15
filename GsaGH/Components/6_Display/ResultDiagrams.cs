@@ -38,6 +38,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.ResultDiagrams;
 
     private string _case = string.Empty;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
@@ -46,6 +47,10 @@ namespace GsaGH.Components {
       "Displays GSA 1D Element Result Diagram", CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     public override bool Read(GH_IReader reader) {
+      string length = string.Empty;
+      _lengthUnit = reader.TryGetString("length", ref length) 
+        ? (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), length) 
+        : DefaultUnits.LengthUnitResult;
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("force"));
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), reader.GetString("moment"));
       _stressUnit
@@ -57,6 +62,13 @@ namespace GsaGH.Components {
       _selectedItems[i] = _dropDownItems[i][j];
       if (i == 0) {
         if (j == 0) {
+          if (_dropDownItems[1] != Mappings._diagramTypeMappingDisplacement.Select(item => item.Description)
+           .ToList()) {
+            _dropDownItems[1] = Mappings._diagramTypeMappingDisplacement.Select(item => item.Description)
+             .ToList();
+            _selectedItems[1] = _dropDownItems[1][3]; // resolved translation u
+          }
+        } else if (j == 1) {
           if (_dropDownItems[1] != Mappings._diagramTypeMappingForce.Select(item => item.Description)
            .ToList()) {
             _dropDownItems[1] = Mappings._diagramTypeMappingForce.Select(item => item.Description)
@@ -77,6 +89,7 @@ namespace GsaGH.Components {
     }
 
     public override bool Write(GH_IWriter writer) {
+      writer.SetString("length", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("force", Force.GetAbbreviation(_forceUnit));
       writer.SetString("moment", Moment.GetAbbreviation(_momentUnit));
       writer.SetString("stress", Pressure.GetAbbreviation(_stressUnit));
@@ -90,6 +103,8 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
+      ToolStripMenuItem lengthUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Length",
+        EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit), UpdateLength);
       ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
         EngineeringUnits.Force, Force.GetAbbreviation(_forceUnit), UpdateForce);
       ToolStripMenuItem momentUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Moment",
@@ -100,6 +115,7 @@ namespace GsaGH.Components {
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
 
       unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
+        lengthUnitsMenu,
         forceUnitsMenu,
         momentUnitsMenu,
         stressUnitsMenu,
@@ -120,14 +136,14 @@ namespace GsaGH.Components {
       _selectedItems = new List<string>();
 
       _dropDownItems.Add(new List<string>() {
+        "Displacement",
         "Force",
         "Stress",
       });
       _selectedItems.Add(_dropDownItems[0][0]);
-
-      _dropDownItems.Add(Mappings._diagramTypeMappingForce.Select(item => item.Description)
+      _dropDownItems.Add(Mappings._diagramTypeMappingDisplacement.Select(item => item.Description)
        .ToList());
-      _selectedItems.Add(_dropDownItems[1][5]); // Myy
+      _selectedItems.Add(_dropDownItems[1][3]);
 
       _isInitialised = true;
     }
@@ -165,6 +181,8 @@ namespace GsaGH.Components {
         Message = Moment.GetAbbreviation(_momentUnit);
       } else if (IsStress()) {
         Message = Pressure.GetAbbreviation(_stressUnit);
+      }  else if (IsDisplacement()) {
+        Message = Length.GetAbbreviation(_lengthUnit);
       } else {
         Message = "Error";
         this.AddRuntimeError("Cannot get unit for selected diagramType!");
@@ -214,11 +232,7 @@ namespace GsaGH.Components {
 
       LengthUnit lengthUnit = result.Model.ModelUnit;
 
-      DiagramType type = _selectedItems[0] == "Force"
-        ? Mappings._diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
-          .Select(item => item.GsaApiEnum).FirstOrDefault()
-        : Mappings._diagramTypeMappingStress.Where(item => item.Description == _selectedItems[1])
-          .Select(item => item.GsaApiEnum).FirstOrDefault();
+      DiagramType type = GetDiagramType();
 
       double unitScale = ComputeUnitScale(autoScale);
       double computedScale
@@ -261,6 +275,13 @@ namespace GsaGH.Components {
       da.SetDataList(1, diagramAnnotations);
 
       PostHog.Diagram("Result", result.CaseType, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
+    }
+    protected override void UpdateUIFromSelectedItems() {
+      if (_dropDownItems[0].Count == 2) {
+        _dropDownItems[0].Insert(0, "Displacement");
+      }
+
+      base.UpdateUIFromSelectedItems();
     }
 
     private List<GsaAnnotationGoo> GenerateAnnotations(
@@ -317,6 +338,8 @@ namespace GsaGH.Components {
           unitScaleFactor = UnitConverter.Convert(1, Pressure.BaseUnit, _stressUnit);
         } else if (IsMoment()) {
           unitScaleFactor = UnitConverter.Convert(1, Moment.BaseUnit, _momentUnit);
+        }else if (IsDisplacement()) {
+          unitScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, _lengthUnit);
         } else {
           this.AddRuntimeError("Not supported diagramType!");
         }
@@ -327,11 +350,7 @@ namespace GsaGH.Components {
 
     private bool IsForce() {
       bool isForce = false;
-      DiagramType type = _selectedItems[0] == "Force" ?
-        Mappings._diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
-         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings._diagramTypeMappingStress
-         .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
-         .FirstOrDefault();
+      DiagramType type = GetDiagramType();
       switch (type) {
         case DiagramType.AxialForceFx:
         case DiagramType.ShearForceFy:
@@ -346,11 +365,7 @@ namespace GsaGH.Components {
 
     private bool IsMoment() {
       bool isMoment = false;
-      DiagramType type = _selectedItems[0] == "Force" ?
-        Mappings._diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
-         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings._diagramTypeMappingStress
-         .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
-         .FirstOrDefault();
+      DiagramType type = GetDiagramType();
       switch (type) {
         case DiagramType.MomentMyy:
         case DiagramType.MomentMzz:
@@ -365,11 +380,7 @@ namespace GsaGH.Components {
 
     private bool IsStress() {
       bool isStress = false;
-      DiagramType type = _selectedItems[0] == "Force" ?
-        Mappings._diagramTypeMappingForce.Where(item => item.Description == _selectedItems[1])
-         .Select(item => item.GsaApiEnum).FirstOrDefault() : Mappings._diagramTypeMappingStress
-         .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
-         .FirstOrDefault();
+      DiagramType type = GetDiagramType();
       switch (type) {
         case DiagramType.AxialStressA:
         case DiagramType.BendingStressByNegativeZ:
@@ -387,6 +398,49 @@ namespace GsaGH.Components {
       return isStress;
     }
 
+    private bool IsDisplacement() {
+      bool isDisplacement = false;
+      DiagramType type = GetDiagramType();
+      switch (type) {
+        case DiagramType.TranslationUx:
+        case DiagramType.TranslationUy:
+        case DiagramType.TranslationUz:
+        case DiagramType.ResolvedTranslationU:
+        case DiagramType.RotationRxx:
+        case DiagramType.RotationRyy:
+        case DiagramType.RotationRzz:
+        case DiagramType.ResolvedRotationR:
+          isDisplacement = true;
+          break;
+      }
+
+      return isDisplacement;
+    }
+
+    private DiagramType GetDiagramType() {
+      DiagramType type = DiagramType.AxialForceFx;
+      switch (_selectedItems[0]) {
+        case "Force":
+          type = Mappings._diagramTypeMappingForce
+           .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
+           .FirstOrDefault();
+          break;
+        case "Displacement":
+          type = Mappings._diagramTypeMappingDisplacement
+           .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
+           .FirstOrDefault();
+          break;
+        case "Stress":
+          type = Mappings._diagramTypeMappingStress
+           .Where(item => item.Description == _selectedItems[1]).Select(item => item.GsaApiEnum)
+           .FirstOrDefault();
+          break;
+        default: break;
+      }
+
+      return type;
+    }
+
     internal void UpdateForce(string unit) {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
       ExpirePreview(true);
@@ -401,6 +455,11 @@ namespace GsaGH.Components {
 
     internal void UpdateMoment(string unit) {
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), unit);
+      ExpirePreview(true);
+      base.UpdateUI();
+    }
+    internal void UpdateLength(string unit) {
+      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
