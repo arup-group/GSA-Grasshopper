@@ -57,5 +57,13 @@
     RotationRyy,
     RotationRzz,
     ResolvedRotationR,
+    DriftX,
+    DriftY,
+    DriftXY,
+    ResolvedDrift,
+    DriftIndexX,
+    DriftIndexY,
+    DriftIndexXY,
+    ResolvedDriftIndex,
   }
 }
