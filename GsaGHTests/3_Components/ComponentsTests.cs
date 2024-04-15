@@ -159,7 +159,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SelectResult), "AnalysisCase", "Combination")]
     [InlineData(typeof(SpringReactionForces), "kN", "tf", 1)]
     [InlineData(typeof(SteelDesignEffectiveLength), "mm", "ft", 1)]
-    [InlineData(typeof(SteelUtilisations), "All", "Min FlexuralBuckling")]
+    [InlineData(typeof(SteelUtilisations), "All", "Min FB")]
     [InlineData(typeof(TotalLoadsAndReactions), "kN", "tf")]
     [InlineData(typeof(Member1dDisplacements), "All", "Min |R|")]
     [InlineData(typeof(Member1dForcesAndMoments), "All", "Min |Myz|")]
