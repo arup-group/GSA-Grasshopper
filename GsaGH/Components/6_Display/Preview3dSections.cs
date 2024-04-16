@@ -8,13 +8,11 @@ using GsaGH.Helpers;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
-using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units;
-using OasysGH.Units.Helpers;
 using OasysUnits;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -33,24 +31,16 @@ namespace GsaGH.Components {
       CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     protected override void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new[] {
-        "Unit",
-        "Settings",
-      });
-
+      // this has been a drop down component before
+      _spacerDescriptions = new List<string>();
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
-
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
       _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      _selectedItems[i] = _dropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
-      base.UpdateUI();
+      // this has been a drop down component before
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -157,7 +147,6 @@ namespace GsaGH.Components {
         }
 
         var model = new GsaModel();
-        model.Model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_lengthUnit);
         if (models != null) {
           if (models.Count > 0) {
             model = models.Count > 1
