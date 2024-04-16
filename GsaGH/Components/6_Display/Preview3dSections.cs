@@ -14,7 +14,6 @@ using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units;
 using OasysUnits;
-using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   public class Preview3dSections : GH_OasysDropDownComponent {
@@ -22,7 +21,6 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Preview3dSections;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Section3dPreview _analysisSection3dPreview;
     private Section3dPreview _designSection3dPreview;
 
@@ -156,7 +154,7 @@ namespace GsaGH.Components {
         }
 
         // Assemble model
-        var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);
+        var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, mem1ds, mem2ds, DefaultUnits.LengthUnitGeometry);
         GsaAPI.Model previewModel = assembly.GetModel();
 
         var steps = new List<int> {
