@@ -1923,6 +1923,16 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap SteelUtilisations {
+            get {
+                object obj = ResourceManager.GetObject("SteelUtilisations", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap TaperProfile {
             get {
                 object obj = ResourceManager.GetObject("TaperProfile", resourceCulture);

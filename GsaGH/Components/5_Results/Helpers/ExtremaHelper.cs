@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using GsaGH.Parameters.Results;
+using OasysUnits;
 
 namespace GsaGH.Components.Helpers {
   internal class ExtremaHelper {
@@ -195,7 +196,40 @@ namespace GsaGH.Components.Helpers {
         "Min DIx",
         "Min DIy",
         "Min In-plane"
-  });
+      });
+
+    internal static readonly ReadOnlyCollection<string> SteelUtilisations
+      = new ReadOnlyCollection<string>(new[] {
+        "All",
+        "Max Overall",
+        "Max |Local|",
+        "Max |B|",
+        "Max Ax",
+        "Max Su",
+        "Max Sv",
+        "Max T",
+        "Max Muu",
+        "Max Mvv",
+        "Max FBuu",
+        "Max FBvv",
+        "Max LTB",
+        "Max TB",
+        "Max FB",
+        "Min Overall",
+        "Min |Local|",
+        "Min |B|",
+        "Min Ax",
+        "Min Su",
+        "Min Sv",
+        "Min T",
+        "Min Muu",
+        "Min Mvv",
+        "Min FBuu",
+        "Min FBv",
+        "Min LTB",
+        "Min TB",
+        "Min FB",
+      });
 
     internal static U FootfallExtremaKey<U>(
       IEntity0dResultSubset<IFootfall, ResultFootfall<U>> resultSet, string key) {
@@ -508,6 +542,41 @@ namespace GsaGH.Components.Helpers {
         "Max Qy" => resultSetShear.Max.Qy,
         "Min Qx" => resultSetShear.Min.Qx,
         "Min Qy" => resultSetShear.Min.Qy,
+        _ => throw new ArgumentException("Extrema case not found"),
+      };
+    }
+
+    internal static Entity0dExtremaKey SteelUtilisationsExtremaKey(
+      IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> resultSet, string key) {
+      return key switch {
+        "Max Overall" => resultSet.Max.Overall,
+        "Max |Local|" => resultSet.Max.LocalCombined,
+        "Max |B|" => resultSet.Max.BucklingCombined,
+        "Max Ax" => resultSet.Max.LocalAxial,
+        "Max Su" => resultSet.Max.LocalShearU,
+        "Max Sv" => resultSet.Max.LocalShearV,
+        "Max T" => resultSet.Max.LocalTorsion,
+        "Max Muu" => resultSet.Max.LocalMajorMoment,
+        "Max Mvv" => resultSet.Max.LocalMinorMoment,
+        "Max FBuu" => resultSet.Max.MajorBuckling,
+        "Max FBvv" => resultSet.Max.MinorBuckling,
+        "Max LTB" => resultSet.Max.LateralTorsionalBuckling,
+        "Max TB" => resultSet.Max.TorsionalBuckling,
+        "Max FB" => resultSet.Max.FlexuralBuckling,
+        "Min Overall" => resultSet.Min.Overall,
+        "Min |Local|" => resultSet.Min.LocalCombined,
+        "Min |B|" => resultSet.Min.BucklingCombined,
+        "Min Ax" => resultSet.Min.LocalAxial,
+        "Min Su" => resultSet.Min.LocalShearU,
+        "Min Sv" => resultSet.Min.LocalShearV,
+        "Min T" => resultSet.Min.LocalTorsion,
+        "Min Muu" => resultSet.Min.LocalMajorMoment,
+        "Min Mvv" => resultSet.Min.LocalMinorMoment,
+        "Min FBuu" => resultSet.Min.MajorBuckling,
+        "Min FBv" => resultSet.Min.MinorBuckling,
+        "Min LTB" => resultSet.Min.LateralTorsionalBuckling,
+        "Min TB" => resultSet.Min.TorsionalBuckling,
+        "Min FB" => resultSet.Min.FlexuralBuckling,
         _ => throw new ArgumentException("Extrema case not found"),
       };
     }

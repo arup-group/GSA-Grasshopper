@@ -69,77 +69,87 @@ namespace GsaGH.Components {
         }
 
         switch (ghTyp.Value) {
-          case GsaListGoo value: {
-              if (value.Value.EntityType == EntityType.Element
-                || value.Value.EntityType == EntityType.Member) {
-                gravityLoad.ReferenceList = value.Value;
-                gravityLoad.ReferenceType = ReferenceType.List;
-              } else {
-                this.AddRuntimeWarning(
-                  "List must be of type Element or Member to apply to beam loading");
-              }
-              break;
+          case GsaListGoo value:
+            if (value.Value.EntityType == EntityType.Element
+              || value.Value.EntityType == EntityType.Member) {
+              gravityLoad.ReferenceList = value.Value;
+              gravityLoad.ReferenceType = ReferenceType.List;
+            } else {
+              this.AddRuntimeWarning(
+                "List must be of type Element or Member to apply to beam loading");
             }
-          case GsaElement2dGoo value: {
-              gravityLoad.RefObjectGuid = value.Value.Guid;
-              gravityLoad.ReferenceType = ReferenceType.Element;
-              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
-              break;
-            }
-          case GsaMember1dGoo value: {
-              gravityLoad.RefObjectGuid = value.Value.Guid;
-              gravityLoad.ReferenceType = ReferenceType.Member;
-              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
-              break;
-            }
-          case GsaMember2dGoo value: {
-              gravityLoad.RefObjectGuid = value.Value.Guid;
-              gravityLoad.ReferenceType = ReferenceType.Member;
-              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
-              break;
-            }
-          case GsaMember3dGoo value: {
-              gravityLoad.RefObjectGuid = value.Value.Guid;
-              gravityLoad.ReferenceType = ReferenceType.Member;
-              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
-              break;
-            }
-          case GsaMaterialGoo value: {
-              if (value.Value.Id != 0) {
-                this.AddRuntimeWarning(
-                "Reference Material must be a Custom Material");
-                return;
-              }
-              gravityLoad.RefObjectGuid = value.Value.Guid;
-              gravityLoad.ReferenceType = ReferenceType.Property;
-              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
-              break;
-            }
-          case GsaSectionGoo value: {
-              gravityLoad.RefObjectGuid = value.Value.Guid;
-              gravityLoad.ReferenceType = ReferenceType.Property;
-              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
-              break;
-            }
-          case GsaProperty2dGoo value: {
-              gravityLoad.RefObjectGuid = value.Value.Guid;
-              gravityLoad.ReferenceType = ReferenceType.Property;
-              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
-              break;
-            }
-          case GsaProperty3dGoo value: {
-              gravityLoad.RefObjectGuid = value.Value.Guid;
-              gravityLoad.ReferenceType = ReferenceType.Property;
-              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
-              break;
-            }
-          default: {
-              if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
-                gravityLoad.ApiLoad.EntityList = elemList;
-              }
+            break;
 
-              break;
+          case GsaElement1dGoo value:
+            gravityLoad.RefObjectGuid = value.Value.Guid;
+            gravityLoad.ReferenceType = ReferenceType.Element;
+            gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
+            break;
+
+          case GsaElement2dGoo value:
+            gravityLoad.RefObjectGuid = value.Value.Guid;
+            gravityLoad.ReferenceType = ReferenceType.Element;
+            gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
+            break;
+
+          case GsaMember1dGoo value:
+            gravityLoad.RefObjectGuid = value.Value.Guid;
+            gravityLoad.ReferenceType = ReferenceType.Member;
+            gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
+            break;
+
+          case GsaMember2dGoo value:
+            gravityLoad.RefObjectGuid = value.Value.Guid;
+            gravityLoad.ReferenceType = ReferenceType.Member;
+            gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
+            break;
+
+          case GsaMember3dGoo value:
+            gravityLoad.RefObjectGuid = value.Value.Guid;
+            gravityLoad.ReferenceType = ReferenceType.Member;
+            gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Member;
+            break;
+
+          case GsaMaterialGoo value:
+            if (value.Value.Id != 0) {
+              this.AddRuntimeWarning(
+              "Reference Material must be a Custom Material");
+              return;
             }
+            gravityLoad.RefObjectGuid = value.Value.Guid;
+            gravityLoad.ReferenceType = ReferenceType.Property;
+            gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
+            break;
+
+          case GsaSectionGoo value:
+            gravityLoad.RefObjectGuid = value.Value.Guid;
+            gravityLoad.ReferenceType = ReferenceType.Property;
+            gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
+            break;
+
+          case GsaProperty2dGoo value:
+            gravityLoad.RefObjectGuid = value.Value.Guid;
+            gravityLoad.ReferenceType = ReferenceType.Property;
+            gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
+            break;
+
+          case GsaProperty3dGoo value:
+            gravityLoad.RefObjectGuid = value.Value.Guid;
+            gravityLoad.ReferenceType = ReferenceType.Property;
+            gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
+            break;
+
+          default:
+            if (GH_Convert.ToString(ghTyp.Value, out string elemList, GH_Conversion.Both)) {
+              gravityLoad.ApiLoad.EntityType = GsaAPI.EntityType.Element;
+              gravityLoad.ApiLoad.EntityList = elemList;
+              if (gravityLoad.ApiLoad.EntityList != elemList && elemList.ToLower() != "all") {
+                gravityLoad.ApiLoad.EntityList = $"\"{elemList}\"";
+              }
+            }
+
+            break;
+
         }
       } else {
         gravityLoad.ApiLoad.EntityList = "All";

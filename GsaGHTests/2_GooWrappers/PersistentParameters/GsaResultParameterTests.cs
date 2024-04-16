@@ -45,6 +45,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(ReactionForceDiagrams))]
     [InlineData(typeof(ResultDiagrams))]
     [InlineData(typeof(PreviewDeformed3dSections))]
+    [InlineData(typeof(SteelUtilisations))]
     public void GsaResultParameterPreferredCastFromModelParameterTest(Type componentType) {
       var doc = new GH_Document();
       var open = new OpenModel();
@@ -93,6 +94,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(ReactionForceDiagrams))]
     [InlineData(typeof(ResultDiagrams))]
     [InlineData(typeof(PreviewDeformed3dSections))]
+    [InlineData(typeof(SteelUtilisations))]
     public void GsaResultParameterNullTest(Type componentType) {
       var comp = (GH_Component)Activator.CreateInstance(componentType);
       comp.CreateAttributes();
