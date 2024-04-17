@@ -22,6 +22,7 @@ using OasysGH.Units.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using Rhino.Geometry;
+using AngleUnit = OasysUnits.Units.AngleUnit;
 using DiagramType = GsaAPI.DiagramType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -29,7 +30,7 @@ using Line = GsaAPI.Line;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to get Element1D results
+  ///   Component to get Element1D result diagrams
   /// </summary>
   public class ResultDiagrams : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("7ae7ac36-f811-4c20-911f-ddb119f45644");
@@ -38,6 +39,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.ResultDiagrams;
 
     private string _case = string.Empty;
+    private AngleUnit _angleUnit = DefaultUnits.AngleUnit;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
@@ -47,9 +49,13 @@ namespace GsaGH.Components {
       "Displays GSA 1D Element Result Diagram", CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     public override bool Read(GH_IReader reader) {
+      string angle = string.Empty;
+      _angleUnit = reader.TryGetString("angle", ref angle)
+        ? (AngleUnit)UnitsHelper.Parse(typeof(AngleUnit), angle)
+        : DefaultUnits.AngleUnit;
       string length = string.Empty;
-      _lengthUnit = reader.TryGetString("length", ref length) 
-        ? (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), length) 
+      _lengthUnit = reader.TryGetString("length", ref length)
+        ? (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), length)
         : DefaultUnits.LengthUnitResult;
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("force"));
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), reader.GetString("moment"));
@@ -89,6 +95,7 @@ namespace GsaGH.Components {
     }
 
     public override bool Write(GH_IWriter writer) {
+      writer.SetString("angle", Angle.GetAbbreviation(_angleUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("force", Force.GetAbbreviation(_forceUnit));
       writer.SetString("moment", Moment.GetAbbreviation(_momentUnit));
@@ -103,6 +110,8 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
 
+      ToolStripMenuItem angleUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Angle",
+        EngineeringUnits.Angle, Angle.GetAbbreviation(_angleUnit), UpdateAngle);
       ToolStripMenuItem lengthUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Length",
         EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit), UpdateLength);
       ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
@@ -115,6 +124,7 @@ namespace GsaGH.Components {
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
 
       unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
+        angleUnitsMenu,
         lengthUnitsMenu,
         forceUnitsMenu,
         momentUnitsMenu,
@@ -140,10 +150,10 @@ namespace GsaGH.Components {
         "Force",
         "Stress",
       });
-      _selectedItems.Add(_dropDownItems[0][0]);
-      _dropDownItems.Add(Mappings._diagramTypeMappingDisplacement.Select(item => item.Description)
+      _selectedItems.Add(_dropDownItems[0][1]);
+      _dropDownItems.Add(Mappings._diagramTypeMappingForce.Select(item => item.Description)
        .ToList());
-      _selectedItems.Add(_dropDownItems[1][3]);
+      _selectedItems.Add(_dropDownItems[1][5]); // Myy
 
       _isInitialised = true;
     }
@@ -181,8 +191,10 @@ namespace GsaGH.Components {
         Message = Moment.GetAbbreviation(_momentUnit);
       } else if (IsStress()) {
         Message = Pressure.GetAbbreviation(_stressUnit);
-      }  else if (IsDisplacement()) {
+      } else if (IsTranslation()) {
         Message = Length.GetAbbreviation(_lengthUnit);
+      } else if (IsRotation()) {
+        Message = Angle.GetAbbreviation(_angleUnit);
       } else {
         Message = "Error";
         this.AddRuntimeError("Cannot get unit for selected diagramType!");
@@ -256,8 +268,27 @@ namespace GsaGH.Components {
       da.GetData(4, ref color);
 
       double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
+      bool doubleArrow = false;
+      bool isDisplacement = false;
+      if (_selectedItems[0] == "Displacement") {
+        isDisplacement = true;
+        if (IsTranslation()) {
+          color = Color.FromArgb(102, 220, 103);
+        } else {
+          color = Color.FromArgb(184, 46, 46);
+          doubleArrow = true;
+        }
+      }
+
       foreach (Line item in linesFromModel) {
-        diagramLines.Add(new GsaDiagramGoo(new GsaLineDiagram(item, lengthScaleFactor, color)));
+        if (isDisplacement) {
+          var anchor = new Point3d(item.Start.X, item.Start.Y, item.Start.Z);
+          // direction is reversed since GsaVectorDiagram has been implemented for reaction forces, needs refactoring!
+          var direction = new Vector3d(item.Start.X - item.End.X, item.Start.Y - item.End.Y, item.Start.Z - item.End.Z);
+          diagramLines.Add(new GsaDiagramGoo(new GsaVectorDiagram(anchor, direction, doubleArrow, color)));
+        } else {
+          diagramLines.Add(new GsaDiagramGoo(new GsaLineDiagram(item, lengthScaleFactor, color)));
+        }
       }
 
       bool showAnnotations = true;
@@ -276,6 +307,7 @@ namespace GsaGH.Components {
 
       PostHog.Diagram("Result", result.CaseType, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
     }
+
     protected override void UpdateUIFromSelectedItems() {
       if (_dropDownItems[0].Count == 2) {
         _dropDownItems[0].Insert(0, "Displacement");
@@ -338,8 +370,10 @@ namespace GsaGH.Components {
           unitScaleFactor = UnitConverter.Convert(1, Pressure.BaseUnit, _stressUnit);
         } else if (IsMoment()) {
           unitScaleFactor = UnitConverter.Convert(1, Moment.BaseUnit, _momentUnit);
-        }else if (IsDisplacement()) {
+        } else if (IsTranslation()) {
           unitScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, _lengthUnit);
+        } else if (IsRotation()) {
+          unitScaleFactor = UnitConverter.Convert(1, Angle.BaseUnit, _angleUnit);
         } else {
           this.AddRuntimeError("Not supported diagramType!");
         }
@@ -398,23 +432,34 @@ namespace GsaGH.Components {
       return isStress;
     }
 
-    private bool IsDisplacement() {
-      bool isDisplacement = false;
+    private bool IsTranslation() {
+      bool isTranslation = false;
       DiagramType type = GetDiagramType();
       switch (type) {
         case DiagramType.TranslationUx:
         case DiagramType.TranslationUy:
         case DiagramType.TranslationUz:
         case DiagramType.ResolvedTranslationU:
+          isTranslation = true;
+          break;
+      }
+
+      return isTranslation;
+    }
+
+    private bool IsRotation() {
+      bool isRotation = false;
+      DiagramType type = GetDiagramType();
+      switch (type) {
         case DiagramType.RotationRxx:
         case DiagramType.RotationRyy:
         case DiagramType.RotationRzz:
         case DiagramType.ResolvedRotationR:
-          isDisplacement = true;
+          isRotation = true;
           break;
       }
 
-      return isDisplacement;
+      return isRotation;
     }
 
     private DiagramType GetDiagramType() {
@@ -460,6 +505,12 @@ namespace GsaGH.Components {
     }
     internal void UpdateLength(string unit) {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
+      ExpirePreview(true);
+      base.UpdateUI();
+    }
+
+    internal void UpdateAngle(string unit) {
+      _angleUnit = (AngleUnit)UnitsHelper.Parse(typeof(AngleUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
