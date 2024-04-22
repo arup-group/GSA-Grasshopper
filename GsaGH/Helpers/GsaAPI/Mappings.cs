@@ -213,22 +213,22 @@ namespace GsaGH.Helpers.GsaApi {
 
     internal static readonly IList<DiagramTypeMapping> _diagramTypeMappingDisplacement
       = new List<DiagramTypeMapping>() {
-            new DiagramTypeMapping("Translation Ux", DiagramType.TranslationUx,
-              ApiDiagramType.TranslationUx),
-            new DiagramTypeMapping("Translation Uy", DiagramType.TranslationUy,
-              ApiDiagramType.TranslationUy),
-            new DiagramTypeMapping("Translation Uz", DiagramType.TranslationUz,
-              ApiDiagramType.TranslationUz),
-            new DiagramTypeMapping("Res. Translation U", DiagramType.ResolvedTranslationU,
-              ApiDiagramType.ResolvedTranslationU),
-            new DiagramTypeMapping("Rotation Rxx", DiagramType.RotationRxx,
-              ApiDiagramType.RotationRxx),
-            new DiagramTypeMapping("Rotation Ryy", DiagramType.RotationRyy,
-              ApiDiagramType.RotationRyy),
-            new DiagramTypeMapping("Rotation Rzz", DiagramType.RotationRxx,
-              ApiDiagramType.RotationRzz),
-            new DiagramTypeMapping("Res. Rotation R", DiagramType.ResolvedRotationR,
-              ApiDiagramType.ResolvedRotationR),
+        new DiagramTypeMapping("Elem. Trans. Ux", DiagramType.TranslationUx,
+          ApiDiagramType.TranslationUx),
+        new DiagramTypeMapping("Elem. Trans. Uy", DiagramType.TranslationUy,
+          ApiDiagramType.TranslationUy),
+        new DiagramTypeMapping("Elem. Trans. Uz", DiagramType.TranslationUz,
+          ApiDiagramType.TranslationUz),
+        new DiagramTypeMapping("Res. Trans. U", DiagramType.ResolvedTranslationU,
+          ApiDiagramType.ResolvedTranslationU),
+        new DiagramTypeMapping("Elem. Rot. Rxx", DiagramType.RotationRxx,
+          ApiDiagramType.RotationRxx),
+        new DiagramTypeMapping("Elem. Rot. Ryy", DiagramType.RotationRyy,
+          ApiDiagramType.RotationRyy),
+        new DiagramTypeMapping("Elem. Rot. Rzz", DiagramType.RotationRxx,
+          ApiDiagramType.RotationRzz),
+        new DiagramTypeMapping("Res. Rot. R", DiagramType.ResolvedRotationR,
+          ApiDiagramType.ResolvedRotationR),
       };
 
     internal static readonly IList<DiagramTypeMapping> _diagramTypeMappingAssemblyDisplacement
