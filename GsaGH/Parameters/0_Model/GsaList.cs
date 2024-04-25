@@ -234,6 +234,7 @@ namespace GsaGH.Parameters {
         GsaAPI.EntityType.Element => EntityType.Element,
         GsaAPI.EntityType.Member => EntityType.Member,
         GsaAPI.EntityType.Case => EntityType.Case,
+        GsaAPI.EntityType.Assembly => EntityType.Assembly,
         _ => EntityType.Undefined,
       };
     }
@@ -519,16 +520,13 @@ namespace GsaGH.Parameters {
           var tempApiList = new EntityList() {
             Type = GsaAPI.EntityType.Case,
             Name = Name,
-            Definition = Definition
+            Definition = Definition,
           };
           _cases = _model.Model.ExpandList(tempApiList).ToList();
           break;
 
         case EntityType.Assembly:
-          // ???????
-          // ???????
-          // ???????
-          // ???????
+          _assemblies = new Elements(_model, Definition).Assemblies;
           // ???????
           // ???????
           break;

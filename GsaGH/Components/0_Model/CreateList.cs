@@ -43,6 +43,7 @@ namespace GsaGH.Components {
         EntityType.Element.ToString(),
         EntityType.Member.ToString(),
         EntityType.Case.ToString(),
+        EntityType.Assembly.ToString(),
       });
       _selectedItems.Add(_dropDownItems[0][0]);
 
