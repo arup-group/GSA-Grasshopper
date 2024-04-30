@@ -237,6 +237,10 @@ namespace GsaGH.Helpers.Assembly {
         $"({Length.GetAbbreviation(_unit)})";
       }
 
+      if(load.ApiPolyline != null) {
+        _model.AddPolyline(load.ApiPolyline);
+      }
+
       if (load.GridPlaneSurface == null) {
         _gridAreaLoads.Add(load.ApiLoad);
         return;
@@ -263,6 +267,10 @@ namespace GsaGH.Helpers.Assembly {
         load.ApiLoad.PolyLineDefinition =
           GridLoadHelper.ClearDefinitionForUnit(load.ApiLoad.PolyLineDefinition) +
           $"({Length.GetAbbreviation(_unit)})";
+      }
+
+      if (load.ApiPolyline != null) {
+        _model.AddPolyline(load.ApiPolyline);
       }
 
       GsaGridPlaneSurface gridplnsrf = load.GridPlaneSurface;

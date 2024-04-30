@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using Grasshopper.Kernel;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -92,29 +92,21 @@ namespace GsaGH.Components {
       GsaModelGoo modelGoo = null;
       da.GetData(0, ref modelGoo);
 
-      GsaAPI.Model model = modelGoo.Value.Model;
-      ReadOnlyDictionary<int, GsaAPI.LoadCase> loadCases = model.LoadCases();
-      List<GsaLoadCaseGoo> cases = GsaLoadFactory.CreateLoadCasesFromApi(loadCases);
-      List<GsaLoadGoo> gravity = GsaLoadFactory.CreateGravityLoadsFromApi(model.GravityLoads(), loadCases);
-      List<GsaLoadGoo> node = GsaLoadFactory.CreateNodeLoadsFromApi(model, loadCases);
-      List<GsaLoadGoo> beam = GsaLoadFactory.CreateBeamLoadsFromApi(model.BeamLoads(), loadCases);
-      List<GsaLoadGoo> beamThermal = GsaLoadFactory.CreateBeamThermalLoadsFromApi(model.BeamThermalLoads(), loadCases);
-      List<GsaLoadGoo> face = GsaLoadFactory.CreateFaceLoadsFromApi(model.FaceLoads(), loadCases);
-      List<GsaLoadGoo> faceThermal = GsaLoadFactory.CreateFaceThermalLoadsFromApi(model.FaceThermalLoads(), loadCases);
+      Model model = modelGoo.Value.Model;
+      List<GsaLoadCaseGoo> cases = GsaLoadFactory.CreateLoadCasesFromApi(model);
+      List<GsaLoadGoo> gravity = GsaLoadFactory.CreateGravityLoadsFromApi(model);
+      List<GsaLoadGoo> node = GsaLoadFactory.CreateNodeLoadsFromApi(model);
+      List<GsaLoadGoo> beam = GsaLoadFactory.CreateBeamLoadsFromApi(model);
+      List<GsaLoadGoo> beamThermal = GsaLoadFactory.CreateBeamThermalLoadsFromApi(model);
+      List<GsaLoadGoo> face = GsaLoadFactory.CreateFaceLoadsFromApi(model);
+      List<GsaLoadGoo> faceThermal = GsaLoadFactory.CreateFaceThermalLoadsFromApi(model);
+      List<GsaLoadGoo> point = GsaLoadFactory.CreateGridPointLoadsFromApi(model, _lengthUnit);
+      List<GsaLoadGoo> line = GsaLoadFactory.CreateGridLineLoadsFromApi(model, _lengthUnit);
+      List<GsaLoadGoo> area = GsaLoadFactory.CreateGridAreaLoadsFromApi(model, _lengthUnit);
 
-      IReadOnlyDictionary<int, GsaAPI.GridSurface> srfDict = model.GridSurfaces();
-      IReadOnlyDictionary<int, GsaAPI.GridPlane> plnDict = model.GridPlanes();
-      IReadOnlyDictionary<int, GsaAPI.Axis> axDict = model.Axes();
-      List<GsaLoadGoo> point = GsaLoadFactory.CreateGridPointLoadsFromApi(
-        model.GridPointLoads(), srfDict, plnDict, axDict, loadCases, _lengthUnit);
-      List<GsaLoadGoo> line = GsaLoadFactory.CreateGridLineLoadsFromApi(
-        model.GridLineLoads(), srfDict, plnDict, axDict, loadCases, _lengthUnit);
-      List<GsaLoadGoo> area = GsaLoadFactory.CreateGridAreaLoadsFromApi(
-        model.GridAreaLoads(), srfDict, plnDict, axDict, loadCases, _lengthUnit);
-
+      IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
       var gps = srfDict.Keys.Select(key
-        => new GsaGridPlaneSurfaceGoo(GsaLoadFactory.CreateGridPlaneSurfaceFromApi(srfDict, plnDict, axDict, key,
-          _lengthUnit))).ToList();
+        => new GsaGridPlaneSurfaceGoo(GsaLoadFactory.CreateGridPlaneSurfaceFromApi(model, key, _lengthUnit))).ToList();
 
       da.SetDataList(0, cases);
       da.SetDataList(1, gravity);

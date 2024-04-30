@@ -1,4 +1,5 @@
-﻿using GsaAPI;
+﻿using System.Collections.Generic;
+using GsaAPI;
 using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
@@ -27,7 +28,7 @@ namespace GsaGH.Parameters {
       return ClearDefGetUnit(definition).def;
     }
 
-    internal static Point3dList ConvertPoints(string definition, LengthUnit desiredUnit, Plane localPlane) {
+        internal static Point3dList ConvertPoints(string definition, LengthUnit desiredUnit, Plane localPlane) {
       (LengthUnit lengthUnit, string def) = ClearDefGetUnit(definition);
       var points = new Point3dList();
       string[] pts = def.Split(')');
@@ -41,6 +42,19 @@ namespace GsaGH.Parameters {
           point.Transform(map);
           points.Add(point);
         }
+      }
+      return points;
+    }
+
+    internal static Point3dList ConvertPoints(List<Vector2> definition, LengthUnit desiredUnit, Plane localPlane) {
+      var map = Transform.ChangeBasis(localPlane, Plane.WorldXY);
+      var points = new Point3dList();
+      foreach (Vector2 vector in definition) {
+        var x = new Length(vector.X, LengthUnit.Meter);
+        var y = new Length(vector.Y, LengthUnit.Meter);
+        var point = new Point3d(x.As(desiredUnit), y.As(desiredUnit), 0);
+        point.Transform(map);
+        points.Add(point);
       }
       return points;
     }
