@@ -28,7 +28,7 @@ namespace GsaGH.Parameters {
       return ClearDefGetUnit(definition).def;
     }
 
-        internal static Point3dList ConvertPoints(string definition, LengthUnit desiredUnit, Plane localPlane) {
+    internal static Point3dList ConvertPoints(string definition, LengthUnit desiredUnit, Plane localPlane) {
       (LengthUnit lengthUnit, string def) = ClearDefGetUnit(definition);
       var points = new Point3dList();
       string[] pts = def.Split(')');

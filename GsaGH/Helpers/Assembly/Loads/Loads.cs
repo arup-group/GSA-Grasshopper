@@ -237,7 +237,7 @@ namespace GsaGH.Helpers.Assembly {
         $"({Length.GetAbbreviation(_unit)})";
       }
 
-      if(load.ApiPolyline != null) {
+      if(load.ApiLoad.PolyLineReference > 0) {
         _model.AddPolyline(load.ApiPolyline);
       }
 
@@ -269,7 +269,7 @@ namespace GsaGH.Helpers.Assembly {
           $"({Length.GetAbbreviation(_unit)})";
       }
 
-      if (load.ApiPolyline != null) {
+      if (load.ApiLoad.PolyLineReference > 0) {
         _model.AddPolyline(load.ApiPolyline);
       }
 
