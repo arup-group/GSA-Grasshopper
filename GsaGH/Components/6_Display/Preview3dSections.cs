@@ -14,9 +14,7 @@ using GsaGH.Properties;
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units;
-using OasysGH.Units.Helpers;
 using OasysUnits;
-using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
   public class Preview3dSections : GH_OasysDropDownComponent {
@@ -24,7 +22,6 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Preview3dSections;
-    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Section3dPreview _analysisSection3dPreview;
     private Section3dPreview _designSection3dPreview;
 
@@ -33,24 +30,16 @@ namespace GsaGH.Components {
       CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     protected override void InitialiseDropdowns() {
-      _spacerDescriptions = new List<string>(new[] {
-        "Unit",
-        "Settings",
-      });
-
+      // this has been a drop down component before
+      _spacerDescriptions = new List<string>();
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
-
-      _dropDownItems.Add(UnitsHelper.GetFilteredAbbreviations(EngineeringUnits.Length));
-      _selectedItems.Add(Length.GetAbbreviation(_lengthUnit));
 
       _isInitialised = true;
     }
 
     public override void SetSelected(int i, int j) {
-      _selectedItems[i] = _dropDownItems[i][j];
-      _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[i]);
-      base.UpdateUI();
+      // this has been a drop down component before
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -157,7 +146,6 @@ namespace GsaGH.Components {
         }
 
         var model = new GsaModel();
-        model.ApiModel.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_lengthUnit);
         if (models != null) {
           if (models.Count > 0) {
             model = models.Count > 1
@@ -167,7 +155,7 @@ namespace GsaGH.Components {
         }
 
         // Assemble model
-        var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);
+        var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, mem1ds, mem2ds, DefaultUnits.LengthUnitGeometry);
         GsaAPI.Model previewModel = assembly.GetModel();
 
         var steps = new List<int> {

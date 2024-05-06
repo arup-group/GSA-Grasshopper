@@ -6,7 +6,6 @@ using Xunit;
 namespace GsaGHTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class ComponentsTests {
-
     [Theory]
     // Model
     [InlineData(typeof(CreateList), 1)]

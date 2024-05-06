@@ -17,9 +17,6 @@ using Rhino;
 using Rhino.DocObjects;
 
 namespace GsaGH.Components {
-  /// <summary>
-  ///   Component to get Element1D results
-  /// </summary>
   public class PreviewDeformed3dSections : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("f1a7f1b4-8c34-43c0-a4f0-6dd207cbf48b");
     public override GH_Exposure Exposure => GH_Exposure.primary;
@@ -39,7 +36,9 @@ namespace GsaGH.Components {
         "Scale");
       _isInitialised = true;
     }
+
     protected override void InitialiseDropdowns() { }
+
     public override bool Read(GH_IReader reader) {
       _noDigits = reader.GetInt32("noDec");
       _maxValue = reader.GetDouble("valMax");
@@ -47,14 +46,18 @@ namespace GsaGH.Components {
       _defScale = reader.GetDouble("val");
       return base.Read(reader);
     }
+
     public void SetMaxMin(double max, double min) {
       _maxValue = max;
       _minValue = min;
     }
+
     public override void SetSelected(int i, int j) { }
+
     public void SetVal(double value) {
       _defScale = value;
     }
+
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("noDec", _noDigits);
       writer.SetDouble("valMax", _maxValue);

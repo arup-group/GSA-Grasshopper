@@ -29,7 +29,7 @@ using Line = GsaAPI.Line;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to get Assembly results
+  ///   Component to get Assembly result diagrams
   /// </summary>
   public class AssemblyResultDiagrams : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("1b059edf-69aa-4c54-bcd6-01e3def03ef1");
