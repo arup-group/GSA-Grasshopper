@@ -229,7 +229,7 @@ namespace GsaGH.Components {
               break;
 
             case GsaMember2dGoo m2d:
-              m2d.Value.PolyCurve.TryGetPolyline(out Polyline pl);
+              m2d.Value.PolyCurve.TryGetPolyline(out Rhino.Geometry.Polyline pl);
               if (_text3d) {
                 Plane.FitPlaneToPoints(pl, out Plane pln);
                 pln.Origin = pl.CenterPoint();

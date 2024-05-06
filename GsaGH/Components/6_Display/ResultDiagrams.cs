@@ -264,14 +264,14 @@ namespace GsaGH.Components {
       GraphicDrawResult diagramResults = result.Model.Model.GetDiagrams(graphic);
       ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
 
-      Color color = Color.Empty;
-      da.GetData(4, ref color);
-
-      double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
-      bool doubleArrow = false;
       bool isDisplacement = false;
       if (_selectedItems[0] == "Displacement") {
         isDisplacement = true;
+      }
+
+      Color color = Color.Empty;
+      bool doubleArrow = false;
+      if (!da.GetData(4, ref color) && isDisplacement) {
         if (IsTranslation()) {
           color = Color.FromArgb(102, 220, 103);
         } else {
@@ -279,6 +279,8 @@ namespace GsaGH.Components {
           doubleArrow = true;
         }
       }
+
+      double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
 
       foreach (Line item in linesFromModel) {
         if (isDisplacement) {
