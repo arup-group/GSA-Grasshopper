@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using Rhino.Geometry;
 using Xunit;
+using Polyline = GsaAPI.Polyline;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -44,6 +46,7 @@ namespace GsaGHTests.Parameters {
           Type = type,
           Value = 10,
         },
+        ApiPolyline = new Polyline(new List<Vector2>())
       };
       var originalGridPlaneSurface = new GsaGridPlaneSurface();
       original.GridPlaneSurface = originalGridPlaneSurface;

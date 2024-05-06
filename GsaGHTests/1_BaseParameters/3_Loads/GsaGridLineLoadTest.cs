@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using GsaAPI;
 using GsaGH.Parameters;
 using GsaGHTests.Helpers;
@@ -44,6 +45,7 @@ namespace GsaGHTests.Parameters {
           ValueAtStart = 10,
           ValueAtEnd = 20,
         },
+        ApiPolyline = new Polyline(new List<Vector2>())
       };
 
       var duplicate = (GsaGridLineLoad)original.Duplicate();
