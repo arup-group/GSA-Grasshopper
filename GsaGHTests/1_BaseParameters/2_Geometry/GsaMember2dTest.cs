@@ -70,7 +70,7 @@ namespace GsaGHTests.Parameters {
         new Point3d(4, 2, 0),
       };
       pts.Add(pts[0]);
-      var pol = new Polyline(pts);
+      var pol = new Rhino.Geometry.Polyline(pts);
       Brep brep = Brep.CreatePlanarBreps(pol.ToNurbsCurve(), 0.001)[0];
 
       var inclpts = new Point3dList {
