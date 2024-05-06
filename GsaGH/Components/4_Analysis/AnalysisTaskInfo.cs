@@ -37,8 +37,8 @@ namespace GsaGH.Components {
         GsaAnalysisCaseGoo.NickName, "List of " + GsaAnalysisCaseGoo.Description,
         GH_ParamAccess.list);
       pManager.AddTextParameter("Solver Type", "sT", "Solver Type", GH_ParamAccess.item);
-      pManager.AddIntegerParameter("TaskID", "ID",
-        "The Task number if the Analysis Case ever belonged to a model", GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Task ID", "ID", "The Task number of the Analysis Task",
+        GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
