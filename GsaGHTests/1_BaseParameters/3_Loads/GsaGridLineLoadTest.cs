@@ -45,7 +45,12 @@ namespace GsaGHTests.Parameters {
           ValueAtStart = 10,
           ValueAtEnd = 20,
         },
-        ApiPolyline = new Polyline(new List<Vector2>())
+        ApiPolyline = new Polyline(new List<Vector2>() {
+          new Vector2(-3.1, 8.8),
+          new Vector2(13.6, 9.8),
+          new Vector2(12.2 , 14.3),
+          new Vector2(-0.7, 15.6),
+        })
       };
 
       var duplicate = (GsaGridLineLoad)original.Duplicate();
