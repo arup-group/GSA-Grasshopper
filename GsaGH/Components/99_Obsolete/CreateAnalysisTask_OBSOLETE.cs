@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -104,10 +105,10 @@ namespace GsaGH.Components {
       }
 
       var task = new GsaAnalysisTask {
-        Name = name,
         Cases = cases,
-        Type = _tasktype,
+        ApiTask = AnalysisTaskFactory.CreateStaticAnalysisTask(name)
       };
+
       da.SetData(0, new GsaAnalysisTaskGoo(task));
     }
 
