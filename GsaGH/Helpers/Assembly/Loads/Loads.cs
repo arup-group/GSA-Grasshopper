@@ -55,6 +55,12 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
 
+      foreach(EntityList list in _lists.ReadOnlyDictionary.Values) {
+        if(load.ApiLoad.EntityList == $"\"{list.Name}\"") {
+          load.ApiLoad.EntityType = list.Type;
+        }
+      }
+
       _beamLoads.Add(load.ApiLoad);
     }
 
@@ -87,6 +93,12 @@ namespace GsaGH.Helpers.Assembly {
           }
 
           return;
+        }
+      }
+
+      foreach (EntityList list in _lists.ReadOnlyDictionary.Values) {
+        if (load.ApiLoad.EntityList == $"\"{list.Name}\"") {
+          load.ApiLoad.EntityType = list.Type;
         }
       }
 
@@ -124,6 +136,13 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
 
+
+      foreach (EntityList list in _lists.ReadOnlyDictionary.Values) {
+        if (load.ApiLoad.EntityList == $"\"{list.Name}\"") {
+          load.ApiLoad.EntityType = list.Type;
+        }
+      }
+
       _faceLoads.Add(load.ApiLoad);
     }
 
@@ -155,6 +174,12 @@ namespace GsaGH.Helpers.Assembly {
             owner.AddRuntimeWarning(warning);
           }
           return;
+        }
+      }
+
+      foreach (EntityList list in _lists.ReadOnlyDictionary.Values) {
+        if (load.ApiLoad.EntityList == $"\"{list.Name}\"") {
+          load.ApiLoad.EntityType = list.Type;
         }
       }
 
@@ -194,6 +219,12 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
 
+      foreach (EntityList list in _lists.ReadOnlyDictionary.Values) {
+        if (load.ApiLoad.EntityList == $"\"{list.Name}\"") {
+          load.ApiLoad.EntityType = list.Type;
+        }
+      }
+
       _gravityLoads.Add(load.ApiLoad);
     }
 
@@ -204,6 +235,10 @@ namespace GsaGH.Helpers.Assembly {
         load.ApiLoad.PolyLineDefinition =
         GridLoadHelper.ClearDefinitionForUnit(load.ApiLoad.PolyLineDefinition) +
         $"({Length.GetAbbreviation(_unit)})";
+      }
+
+      if(load.ApiLoad.PolyLineReference > 0) {
+        _model.AddPolyline(load.ApiPolyline);
       }
 
       if (load.GridPlaneSurface == null) {
@@ -232,6 +267,10 @@ namespace GsaGH.Helpers.Assembly {
         load.ApiLoad.PolyLineDefinition =
           GridLoadHelper.ClearDefinitionForUnit(load.ApiLoad.PolyLineDefinition) +
           $"({Length.GetAbbreviation(_unit)})";
+      }
+
+      if (load.ApiLoad.PolyLineReference > 0) {
+        _model.AddPolyline(load.ApiPolyline);
       }
 
       GsaGridPlaneSurface gridplnsrf = load.GridPlaneSurface;

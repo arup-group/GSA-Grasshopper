@@ -133,37 +133,28 @@ namespace GsaGH.Helpers {
       }).ToList();
 
       var gooloads = new List<GsaLoadGoo>();
-      ReadOnlyDictionary<int, LoadCase> loadCases = appendModel.Model.LoadCases();
-      gooloads.AddRange(GsaLoadFactory.CreateGravityLoadsFromApi(appendModel.Model.GravityLoads(), loadCases));
-      gooloads.AddRange(GsaLoadFactory.CreateNodeLoadsFromApi(appendModel.Model, loadCases));
-      gooloads.AddRange(GsaLoadFactory.CreateBeamLoadsFromApi(appendModel.Model.BeamLoads(), loadCases));
-      gooloads.AddRange(GsaLoadFactory.CreateBeamThermalLoadsFromApi(appendModel.Model.BeamThermalLoads(), loadCases));
-      gooloads.AddRange(GsaLoadFactory.CreateFaceLoadsFromApi(appendModel.Model.FaceLoads(), loadCases));
-      gooloads.AddRange(GsaLoadFactory.CreateFaceThermalLoadsFromApi(appendModel.Model.FaceThermalLoads(), loadCases));
+      gooloads.AddRange(GsaLoadFactory.CreateGravityLoadsFromApi(appendModel.Model));
+      gooloads.AddRange(GsaLoadFactory.CreateNodeLoadsFromApi(appendModel.Model));
+      gooloads.AddRange(GsaLoadFactory.CreateBeamLoadsFromApi(appendModel.Model));
+      gooloads.AddRange(GsaLoadFactory.CreateBeamThermalLoadsFromApi(appendModel.Model));
+      gooloads.AddRange(GsaLoadFactory.CreateFaceLoadsFromApi(appendModel.Model));
+      gooloads.AddRange(GsaLoadFactory.CreateFaceThermalLoadsFromApi(appendModel.Model));
 
       IReadOnlyDictionary<int, GridSurface> srfDict = appendModel.Model.GridSurfaces();
       IReadOnlyDictionary<int, GridPlane> plnDict = appendModel.Model.GridPlanes();
 
-      gooloads.AddRange(GsaLoadFactory.CreateGridPointLoadsFromApi(
-        appendModel.Model.GridPointLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases,
-        LengthUnit.Meter));
-      gooloads.AddRange(GsaLoadFactory.CreateGridLineLoadsFromApi(
-        appendModel.Model.GridLineLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases,
-        LengthUnit.Meter));
-      gooloads.AddRange(GsaLoadFactory.CreateGridAreaLoadsFromApi(
-        appendModel.Model.GridAreaLoads(), srfDict, plnDict, appendModel.ApiAxis, loadCases,
-        LengthUnit.Meter));
+      gooloads.AddRange(GsaLoadFactory.CreateGridPointLoadsFromApi(appendModel.Model, LengthUnit.Meter));
+      gooloads.AddRange(GsaLoadFactory.CreateGridLineLoadsFromApi(appendModel.Model, LengthUnit.Meter));
+      gooloads.AddRange(GsaLoadFactory.CreateGridAreaLoadsFromApi(appendModel.Model, LengthUnit.Meter));
       var loads = gooloads.Select(n => n.Value).ToList();
 
       var gpsgoo = srfDict.Keys.Select(key => new GsaGridPlaneSurfaceGoo(
-           GsaLoadFactory.CreateGridPlaneSurfaceFromApi(
-              srfDict, plnDict, appendModel.ApiAxis, key, LengthUnit.Meter))).ToList();
+           GsaLoadFactory.CreateGridPlaneSurfaceFromApi(appendModel.Model, key, LengthUnit.Meter))).ToList();
       var gps = gpsgoo.Select(n => n.Value).ToList();
 
       List<GsaList> lists = appendModel.GetLists();
       List<GsaGridLine> gridLines = appendModel.GetGridLines();
-      var gsaLoadCases =
-        GsaLoadFactory.CreateLoadCasesFromApi(loadCases).Select(n => n.Value).ToList();
+      var gsaLoadCases = GsaLoadFactory.CreateLoadCasesFromApi(appendModel.Model).Select(n => n.Value).ToList();
       var designTasks = new List<IGsaDesignTask>();
       foreach (SteelDesignTask designTask in appendModel.Model.SteelDesignTasks().Values) {
         var kvp = new KeyValuePair<int, SteelDesignTask>(0, designTask);

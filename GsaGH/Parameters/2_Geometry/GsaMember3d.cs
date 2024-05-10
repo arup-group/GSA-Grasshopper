@@ -12,6 +12,7 @@ using Rhino.Geometry;
 using Rhino.Geometry.Collections;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
+using Polyline = Rhino.Geometry.Polyline;
 
 namespace GsaGH.Parameters {
   /// <summary>

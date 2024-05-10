@@ -20,46 +20,46 @@ namespace GsaGH.Parameters.Results {
     public Ratio? FlexuralBuckling { get; internal set; }
 
     internal SteelUtilisation(SteelUtilisationResult values) {
-      if (!double.IsNaN(values.Overall)) {
+      if (!(double.IsNaN(values.Overall) || double.IsInfinity(values.Overall))) {
         Overall = new Ratio(values.Overall, RatioUnit.DecimalFraction);
       }
-      if (!double.IsNaN(values.LocalCombined)) {
+      if (!(double.IsNaN(values.LocalCombined) ||double.IsInfinity(values.LocalCombined))) {
         LocalCombined = new Ratio(values.LocalCombined, RatioUnit.DecimalFraction);
       }
-      if (!double.IsNaN(values.BucklingCombined)) {
+      if (!(double.IsNaN(values.BucklingCombined) || double.IsInfinity(values.BucklingCombined))) {
         BucklingCombined = new Ratio(values.BucklingCombined, RatioUnit.DecimalFraction);
       }
-      if (!double.IsNaN(values.LocalAxial)) {
+      if (!(double.IsNaN(values.LocalAxial) || double.IsInfinity(values.LocalAxial))) {
         LocalAxial = new Ratio(values.LocalAxial, RatioUnit.DecimalFraction);
       }
-      if (!double.IsNaN(values.LocalSu)) {
+      if (!(double.IsNaN(values.LocalSu) || double.IsInfinity(values.LocalSu))) {
         LocalShearU = new Ratio(values.LocalSu, RatioUnit.DecimalFraction);
       }
-      if (!double.IsNaN(values.LocalSv)) {
+      if (!(double.IsNaN(values.LocalSv) || double.IsInfinity(values.LocalSv))) {
         LocalShearV = new Ratio(values.LocalSv, RatioUnit.DecimalFraction);
       }
-      if (!double.IsNaN(values.LocalTorsion)) {
+      if (!(double.IsNaN(values.LocalTorsion) || double.IsInfinity(values.LocalTorsion))) {
         LocalTorsion = new Ratio(values.LocalTorsion, RatioUnit.DecimalFraction);
       }
-      if (!double.IsNaN(values.LocalMuu)) {
+      if (!(double.IsNaN(values.LocalMuu) || double.IsInfinity(values.LocalMuu))) {
         LocalMajorMoment = new Ratio(values.LocalMuu, RatioUnit.DecimalFraction);
       }
-      if (!double.IsNaN(values.LocalMvv)) {
+      if (!(double.IsNaN(values.LocalMvv) || double.IsInfinity(values.LocalMvv))) {
         LocalMinorMoment = new Ratio(values.LocalMvv, RatioUnit.DecimalFraction);
       }
-      if (!double.IsNaN(values.BucklingUu)) {
+      if (!(double.IsNaN(values.BucklingUu) || double.IsInfinity(values.BucklingUu))) {
         MajorBuckling = new Ratio(values.BucklingUu, RatioUnit.DecimalFraction);
       }
-      if (!double.IsNaN(values.BucklingVv)) {
+      if (!(double.IsNaN(values.BucklingVv) || double.IsInfinity(values.BucklingVv))) {
         MinorBuckling = new Ratio(values.BucklingVv, RatioUnit.DecimalFraction);
       }
-      if (!double.IsNaN(values.BucklingLT)) {
+      if (!(double.IsNaN(values.BucklingLT) || double.IsInfinity(values.BucklingLT))) {
         LateralTorsionalBuckling = new Ratio(values.BucklingLT, RatioUnit.DecimalFraction);
       }
-      if (!double.IsNaN(values.BucklingTor)) {
+      if (!(double.IsNaN(values.BucklingTor) || double.IsInfinity(values.BucklingTor))) {
         TorsionalBuckling = new Ratio(values.BucklingTor, RatioUnit.DecimalFraction);
       }
-      if (!double.IsNaN(values.BucklingFT)) {
+      if (!(double.IsNaN(values.BucklingFT) || double.IsInfinity(values.BucklingFT))) {
         FlexuralBuckling = new Ratio(values.BucklingFT, RatioUnit.DecimalFraction);
       }
     }

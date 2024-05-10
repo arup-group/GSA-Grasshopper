@@ -6,7 +6,6 @@ using Xunit;
 namespace GsaGHTests.Components {
   [Collection("GrasshopperFixture collection")]
   public class ComponentsTests {
-
     [Theory]
     // Model
     [InlineData(typeof(CreateList), 1)]
@@ -72,6 +71,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SelectResult), 2)]
     [InlineData(typeof(SpringReactionForces), 3)]
     [InlineData(typeof(SteelDesignEffectiveLength), 2)]
+    [InlineData(typeof(SteelUtilisations), 1)]
     [InlineData(typeof(TotalLoadsAndReactions), 2)]
     // Display
     [InlineData(typeof(AssemblyResultDiagrams), 2)]
@@ -158,6 +158,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(SelectResult), "AnalysisCase", "Combination")]
     [InlineData(typeof(SpringReactionForces), "kN", "tf", 1)]
     [InlineData(typeof(SteelDesignEffectiveLength), "mm", "ft", 1)]
+    [InlineData(typeof(SteelUtilisations), "All", "Min FB")]
     [InlineData(typeof(TotalLoadsAndReactions), "kN", "tf")]
     [InlineData(typeof(Member1dDisplacements), "All", "Min |R|")]
     [InlineData(typeof(Member1dForcesAndMoments), "All", "Min |Myz|")]
