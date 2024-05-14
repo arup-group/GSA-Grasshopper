@@ -9,7 +9,6 @@ using Xunit;
 namespace GsaGHTests.Components.Analysis {
   [Collection("GrasshopperFixture collection")]
   public class AnalysisTaskInfoTests {
-
     public static GH_OasysComponent ComponentMother() {
       var comp = new AnalysisTaskInfo();
       comp.CreateAttributes();

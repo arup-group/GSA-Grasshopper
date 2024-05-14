@@ -11,10 +11,10 @@ namespace GsaGHTests.Components.Analysis {
       var comp = new CreateAnalysisTask();
       comp.CreateAttributes();
 
-      ComponentTestHelper.SetInput(comp, "my Task", 0);
+      ComponentTestHelper.SetInput(comp, "my Task", 1);
       var output = (GsaAnalysisCaseGoo)ComponentTestHelper.GetOutput(
         CreateAnalysisCaseTests.ComponentMother());
-      ComponentTestHelper.SetInput(comp, output, 1);
+      ComponentTestHelper.SetInput(comp, output, 2);
 
       return comp;
     }
