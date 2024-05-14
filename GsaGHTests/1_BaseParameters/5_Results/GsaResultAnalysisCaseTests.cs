@@ -10,14 +10,14 @@ namespace GsaGHTests.Parameters {
     public static GsaResult AnalysisCaseResult(string file, int caseId) {
       var apiModel = new GsaAPI.Model(file);
       var model = new GsaModel(apiModel);
-      ReadOnlyDictionary<int, AnalysisCaseResult> analysisCaseResults = model.Model.Results();
+      ReadOnlyDictionary<int, AnalysisCaseResult> analysisCaseResults = model.ApiModel.Results();
       return new GsaResult(model, analysisCaseResults[caseId], caseId);
     }
 
     public static GsaResult CombinationCaseResult(string file, int caseId, IEnumerable<int> permutations = null) {
       var apiModel = new GsaAPI.Model(file);
       var model = new GsaModel(apiModel);
-      ReadOnlyDictionary<int, CombinationCaseResult> combinationCaseResults = model.Model.CombinationCaseResults();
+      ReadOnlyDictionary<int, CombinationCaseResult> combinationCaseResults = model.ApiModel.CombinationCaseResults();
       if (permutations == null) {
         permutations = new List<int>() { 1 };
       }

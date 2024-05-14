@@ -21,7 +21,7 @@ namespace GsaGHTests.Parameters.Results {
       SteelDesignEffectiveLengths resultSet = result.SteelDesignEffectiveLengths.ResultSubset(elementIds);
 
       // Assert 
-      var expectedIds = result.Model.Model.Elements(MemberList).Keys.OrderBy(x => x).ToList();
+      var expectedIds = result.Model.ApiModel.Elements(MemberList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
 
@@ -35,7 +35,7 @@ namespace GsaGHTests.Parameters.Results {
       SteelDesignEffectiveLengths resultSet = result.SteelDesignEffectiveLengths.ResultSubset(elementIds);
 
       // Assert 
-      var expectedIds = result.Model.Model.Elements(MemberList).Keys.OrderBy(x => x).ToList();
+      var expectedIds = result.Model.ApiModel.Elements(MemberList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
 

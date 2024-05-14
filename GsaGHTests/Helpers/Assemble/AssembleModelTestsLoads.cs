@@ -18,9 +18,9 @@ namespace GsaGHTests.Helpers.Export {
             load },
           null));
 
-      Assert.Empty(modelGoo.Value.Model.LoadCases());
-      Assert.Single(modelGoo.Value.Model.GravityLoads());
-      Assert.Equal(1, modelGoo.Value.Model.GravityLoads()[0].Case);
+      Assert.Empty(modelGoo.Value.ApiModel.LoadCases());
+      Assert.Single(modelGoo.Value.ApiModel.GravityLoads());
+      Assert.Equal(1, modelGoo.Value.ApiModel.GravityLoads()[0].Case);
     }
 
     [Fact]
@@ -33,9 +33,9 @@ namespace GsaGHTests.Helpers.Export {
             load },
           null));
 
-      Assert.Empty(modelGoo.Value.Model.LoadCases());
-      Assert.Single(modelGoo.Value.Model.BeamLoads());
-      Assert.Equal(1, modelGoo.Value.Model.BeamLoads()[0].Case);
+      Assert.Empty(modelGoo.Value.ApiModel.LoadCases());
+      Assert.Single(modelGoo.Value.ApiModel.BeamLoads());
+      Assert.Equal(1, modelGoo.Value.ApiModel.BeamLoads()[0].Case);
     }
 
     [Fact]
@@ -48,9 +48,9 @@ namespace GsaGHTests.Helpers.Export {
             load },
           null));
 
-      Assert.Empty(modelGoo.Value.Model.LoadCases());
-      Assert.Single(modelGoo.Value.Model.BeamThermalLoads());
-      Assert.Equal(1, modelGoo.Value.Model.BeamThermalLoads()[0].Case);
+      Assert.Empty(modelGoo.Value.ApiModel.LoadCases());
+      Assert.Single(modelGoo.Value.ApiModel.BeamThermalLoads());
+      Assert.Equal(1, modelGoo.Value.ApiModel.BeamThermalLoads()[0].Case);
     }
 
     [Fact]
@@ -63,9 +63,9 @@ namespace GsaGHTests.Helpers.Export {
             load },
           null));
 
-      Assert.Empty(modelGoo.Value.Model.LoadCases());
-      Assert.Single(modelGoo.Value.Model.FaceLoads());
-      Assert.Equal(1, modelGoo.Value.Model.FaceLoads()[0].Case);
+      Assert.Empty(modelGoo.Value.ApiModel.LoadCases());
+      Assert.Single(modelGoo.Value.ApiModel.FaceLoads());
+      Assert.Equal(1, modelGoo.Value.ApiModel.FaceLoads()[0].Case);
     }
 
     [Fact]
@@ -78,9 +78,9 @@ namespace GsaGHTests.Helpers.Export {
             load },
           null));
 
-      Assert.Empty(modelGoo.Value.Model.LoadCases());
-      Assert.Single(modelGoo.Value.Model.FaceThermalLoads());
-      Assert.Equal(1, modelGoo.Value.Model.FaceThermalLoads()[0].Case);
+      Assert.Empty(modelGoo.Value.ApiModel.LoadCases());
+      Assert.Single(modelGoo.Value.ApiModel.FaceThermalLoads());
+      Assert.Equal(1, modelGoo.Value.ApiModel.FaceThermalLoads()[0].Case);
     }
 
     [Fact]
@@ -93,9 +93,9 @@ namespace GsaGHTests.Helpers.Export {
             load },
           null));
 
-      Assert.Empty(modelGoo.Value.Model.LoadCases());
-      Assert.Single(modelGoo.Value.Model.NodeLoads(GsaAPI.NodeLoadType.NODE_LOAD));
-      Assert.Equal(1, modelGoo.Value.Model.NodeLoads(GsaAPI.NodeLoadType.NODE_LOAD)[0].Case);
+      Assert.Empty(modelGoo.Value.ApiModel.LoadCases());
+      Assert.Single(modelGoo.Value.ApiModel.NodeLoads(GsaAPI.NodeLoadType.NODE_LOAD));
+      Assert.Equal(1, modelGoo.Value.ApiModel.NodeLoads(GsaAPI.NodeLoadType.NODE_LOAD)[0].Case);
     }
 
     [Fact]
@@ -110,9 +110,9 @@ namespace GsaGHTests.Helpers.Export {
             load },
           null));
 
-      Assert.Empty(modelGoo.Value.Model.LoadCases());
-      Assert.Single(modelGoo.Value.Model.GravityLoads());
-      Assert.Equal(4, modelGoo.Value.Model.GravityLoads()[0].Case);
+      Assert.Empty(modelGoo.Value.ApiModel.LoadCases());
+      Assert.Single(modelGoo.Value.ApiModel.GravityLoads());
+      Assert.Equal(4, modelGoo.Value.ApiModel.GravityLoads()[0].Case);
     }
 
     [Fact]
@@ -127,9 +127,9 @@ namespace GsaGHTests.Helpers.Export {
             load },
           null));
 
-      Assert.Empty(modelGoo.Value.Model.LoadCases());
-      Assert.Single(modelGoo.Value.Model.NodeLoads(GsaAPI.NodeLoadType.NODE_LOAD));
-      Assert.Equal(4, modelGoo.Value.Model.NodeLoads(GsaAPI.NodeLoadType.NODE_LOAD)[0].Case);
+      Assert.Empty(modelGoo.Value.ApiModel.LoadCases());
+      Assert.Single(modelGoo.Value.ApiModel.NodeLoads(GsaAPI.NodeLoadType.NODE_LOAD));
+      Assert.Equal(4, modelGoo.Value.ApiModel.NodeLoads(GsaAPI.NodeLoadType.NODE_LOAD)[0].Case);
     }
 
     [Fact]
@@ -144,12 +144,12 @@ namespace GsaGHTests.Helpers.Export {
             load },
           null));
 
-      Assert.Single(modelGoo.Value.Model.LoadCases());
-      Assert.NotNull(modelGoo.Value.Model.LoadCases()[4]);
-      Assert.Equal(GsaAPI.LoadCaseType.Dead, modelGoo.Value.Model.LoadCases()[4].CaseType);
-      Assert.Equal("dead", modelGoo.Value.Model.LoadCases()[4].Name);
-      Assert.Single(modelGoo.Value.Model.GravityLoads());
-      Assert.Equal(4, modelGoo.Value.Model.GravityLoads()[0].Case);
+      Assert.Single(modelGoo.Value.ApiModel.LoadCases());
+      Assert.NotNull(modelGoo.Value.ApiModel.LoadCases()[4]);
+      Assert.Equal(GsaAPI.LoadCaseType.Dead, modelGoo.Value.ApiModel.LoadCases()[4].CaseType);
+      Assert.Equal("dead", modelGoo.Value.ApiModel.LoadCases()[4].Name);
+      Assert.Single(modelGoo.Value.ApiModel.GravityLoads());
+      Assert.Equal(4, modelGoo.Value.ApiModel.GravityLoads()[0].Case);
     }
 
     [Fact]
@@ -164,12 +164,12 @@ namespace GsaGHTests.Helpers.Export {
             load },
           null));
 
-      Assert.Single(modelGoo.Value.Model.LoadCases());
-      Assert.NotNull(modelGoo.Value.Model.LoadCases()[4]);
-      Assert.Equal(GsaAPI.LoadCaseType.Dead, modelGoo.Value.Model.LoadCases()[4].CaseType);
-      Assert.Equal("dead", modelGoo.Value.Model.LoadCases()[4].Name);
-      Assert.Single(modelGoo.Value.Model.NodeLoads(GsaAPI.NodeLoadType.NODE_LOAD));
-      Assert.Equal(4, modelGoo.Value.Model.NodeLoads(GsaAPI.NodeLoadType.NODE_LOAD)[0].Case);
+      Assert.Single(modelGoo.Value.ApiModel.LoadCases());
+      Assert.NotNull(modelGoo.Value.ApiModel.LoadCases()[4]);
+      Assert.Equal(GsaAPI.LoadCaseType.Dead, modelGoo.Value.ApiModel.LoadCases()[4].CaseType);
+      Assert.Equal("dead", modelGoo.Value.ApiModel.LoadCases()[4].Name);
+      Assert.Single(modelGoo.Value.ApiModel.NodeLoads(GsaAPI.NodeLoadType.NODE_LOAD));
+      Assert.Equal(4, modelGoo.Value.ApiModel.NodeLoads(GsaAPI.NodeLoadType.NODE_LOAD)[0].Case);
     }
 
     [Fact]
@@ -185,7 +185,7 @@ namespace GsaGHTests.Helpers.Export {
           null));
 
       var steelExample = new GsaModel();
-      steelExample.Model.Open(GsaFile.SteelDesignSimple);
+      steelExample.ApiModel.Open(GsaFile.SteelDesignSimple);
 
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromModels(new List<GsaModelGoo>() {
@@ -194,11 +194,11 @@ namespace GsaGHTests.Helpers.Export {
         }));
 
 
-      Assert.Equal(2, modelGoo.Value.Model.LoadCases().Count);
-      Assert.Equal(GsaAPI.LoadCaseType.Dead, modelGoo.Value.Model.LoadCases()[1].CaseType);
-      Assert.Equal("DL", modelGoo.Value.Model.LoadCases()[1].Name);
-      Assert.Single(modelGoo.Value.Model.GravityLoads());
-      Assert.Equal(1, modelGoo.Value.Model.GravityLoads()[0].Case);
+      Assert.Equal(2, modelGoo.Value.ApiModel.LoadCases().Count);
+      Assert.Equal(GsaAPI.LoadCaseType.Dead, modelGoo.Value.ApiModel.LoadCases()[1].CaseType);
+      Assert.Equal("DL", modelGoo.Value.ApiModel.LoadCases()[1].Name);
+      Assert.Single(modelGoo.Value.ApiModel.GravityLoads());
+      Assert.Equal(1, modelGoo.Value.ApiModel.GravityLoads()[0].Case);
     }
 
     [Fact]
@@ -214,7 +214,7 @@ namespace GsaGHTests.Helpers.Export {
           null));
 
       var steelExample = new GsaModel();
-      steelExample.Model.Open(GsaFile.SteelDesignSimple);
+      steelExample.ApiModel.Open(GsaFile.SteelDesignSimple);
 
       OasysGH.Components.GH_OasysDropDownComponent assemblyComponent = CreateModelTest.CreateModelFromModels(new List<GsaModelGoo>() {
           new GsaModelGoo(steelExample),
@@ -223,11 +223,11 @@ namespace GsaGHTests.Helpers.Export {
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(assemblyComponent);
       Assert.Single(assemblyComponent.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
 
-      Assert.Equal(2, modelGoo.Value.Model.LoadCases().Count);
-      Assert.Equal(GsaAPI.LoadCaseType.Dead, modelGoo.Value.Model.LoadCases()[1].CaseType);
-      Assert.Equal("dead", modelGoo.Value.Model.LoadCases()[1].Name);
-      Assert.Single(modelGoo.Value.Model.GravityLoads());
-      Assert.Equal(1, modelGoo.Value.Model.GravityLoads()[0].Case);
+      Assert.Equal(2, modelGoo.Value.ApiModel.LoadCases().Count);
+      Assert.Equal(GsaAPI.LoadCaseType.Dead, modelGoo.Value.ApiModel.LoadCases()[1].CaseType);
+      Assert.Equal("dead", modelGoo.Value.ApiModel.LoadCases()[1].Name);
+      Assert.Single(modelGoo.Value.ApiModel.GravityLoads());
+      Assert.Equal(1, modelGoo.Value.ApiModel.GravityLoads()[0].Case);
     }
   }
 }

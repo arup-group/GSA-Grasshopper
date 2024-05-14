@@ -18,12 +18,12 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestCreateModelFromModel() {
       var original = new GsaModel();
-      original.Model.Open(GsaFile.SteelDesignSimple);
+      original.ApiModel.Open(GsaFile.SteelDesignSimple);
 
       var assembly = new ModelAssembly(original, null, null, null, null, null, null,
         LengthUnit.Meter, Length.Zero, false, null);
       var assembled = new GsaModel() {
-        Model = assembly.GetModel()
+        ApiModel = assembly.GetModel()
       };
 
       Duplicates.AreEqual(original, assembled, new List<string>() { "Guid" });
@@ -47,7 +47,7 @@ namespace GsaGHTests.Parameters {
     [InlineData(LengthUnit.Foot, 452027.734035)]
     public void TestGetBoundingBox(LengthUnit modelUnit, double expectedVolume) {
       var model = new GsaModel();
-      model.Model.Open(GsaFile.SteelDesignComplex);
+      model.ApiModel.Open(GsaFile.SteelDesignComplex);
       model.ModelUnit = modelUnit;
       BoundingBox bbox = model.BoundingBox;
 
@@ -58,10 +58,10 @@ namespace GsaGHTests.Parameters {
     public void TestSaveModel() {
       var m = new GsaModel();
       string file = GsaFile.SteelDesignSimple;
-      m.Model.Open(file);
+      m.ApiModel.Open(file);
 
       string tempfilename = Path.GetTempPath() + "GSA-Grasshopper_temp.gwb";
-      ReturnValue returnValue = m.Model.SaveAs(tempfilename);
+      ReturnValue returnValue = m.ApiModel.SaveAs(tempfilename);
 
       Assert.Same(ReturnValue.GS_OK.ToString(), returnValue.ToString());
     }
@@ -121,7 +121,7 @@ namespace GsaGHTests.Parameters {
       m.ModelUnit = LengthUnit.Foot;
       Assert.Equal(LengthUnit.Foot, m.ModelUnit);
 
-      Assert.Equal(LengthUnit.Foot, UnitMapping.GetUnit(m.Model.UiUnits().LengthLarge));
+      Assert.Equal(LengthUnit.Foot, UnitMapping.GetUnit(m.ApiModel.UiUnits().LengthLarge));
     }
   }
 }
