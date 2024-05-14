@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
@@ -20,7 +21,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateAnalysisTask;
-    private AnalysisTaskType _tasktype = AnalysisTaskType.Static;
+    private AnalysisTaskType _type = AnalysisTaskType.Static;
     private int _casesParamIndex = 2;
 
     public CreateAnalysisTask() : base(
@@ -30,36 +31,35 @@ namespace GsaGH.Components {
       Hidden = true;
     }
 
+    public override bool Read(GH_IReader reader) {
+      _casesParamIndex = reader.GetInt32("_casesParamIndex");
+      return base.Read(reader);
+    }
+
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
+
       if (i == 0) {
         switch (_selectedItems[0]) {
           case "Static":
-            StaticClicked();
+            _type = AnalysisTaskType.Static;
             break;
 
           case "Static P-delta":
-            StaticPDeltaClicked();
+            _type = AnalysisTaskType.StaticPDelta;
             break;
         }
-      } else if (i == 1) {
-        switch (_selectedItems[1]) {
-          case "Load case":
-          case "Result case":
-            StaticPDeltaClicked();
-            break;
 
-          default:
-            // do nothing
-            break;
-        }
+        UpdateDropdownItems();
       }
+
+      UpdateParameters();
 
       base.UpdateUI();
     }
 
     public override void VariableParameterMaintenance() {
-      switch (_tasktype) {
+      switch (_type) {
         case AnalysisTaskType.StaticPDelta:
           switch (_selectedItems[1]) {
             case "Own":
@@ -91,6 +91,11 @@ namespace GsaGH.Components {
           // do nothing
           break;
       }
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetInt32("_casesParamIndex", _casesParamIndex);
+      return base.Write(writer);
     }
 
     protected override void InitialiseDropdowns() {
@@ -130,7 +135,7 @@ namespace GsaGH.Components {
       int id = 0;
       da.GetData(0, ref id);
 
-      string name = _tasktype.ToString();
+      string name = _type.ToString();
       da.GetData(1, ref name);
 
       List<GsaAnalysisCase> cases = null;
@@ -164,7 +169,7 @@ namespace GsaGH.Components {
       }
 
       AnalysisTask task = null;
-      switch (_tasktype) {
+      switch (_type) {
         case AnalysisTaskType.Static:
           task = AnalysisTaskFactory.CreateStaticAnalysisTask(name);
           break;
@@ -190,7 +195,7 @@ namespace GsaGH.Components {
           break;
 
         default:
-          this.AddRuntimeWarning("It is currently not possible to create Analysis Tasks of type " + _tasktype);
+          this.AddRuntimeWarning("It is currently not possible to create Analysis Tasks of type " + _type);
           break;
       }
 
@@ -204,83 +209,75 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      _tasktype = (AnalysisTaskType)Enum.Parse(typeof(AnalysisTaskType), _selectedItems[0]);
+      switch (_selectedItems[0]) {
+        case "Static":
+          _type = AnalysisTaskType.Static;
+          break;
+
+        case "Static P-delta":
+          _type = AnalysisTaskType.StaticPDelta;
+          break;
+      }
+
       base.UpdateUIFromSelectedItems();
     }
 
-    private void StaticClicked() {
-      if (_tasktype == AnalysisTaskType.Static) {
-        return;
-      }
+    private void UpdateParameters() {
+      IGH_Param casesParam;
+      switch (_type) {
+        case AnalysisTaskType.Static:
+          casesParam = Params.Input[Params.Input.Count - 1];
 
-      _casesParamIndex = 2;
-
-      RecordUndoEvent("Static");
-      _tasktype = AnalysisTaskType.Static;
-
-      UpdateDropdowns();
-
-      IGH_Param casesParam = Params.Input[Params.Input.Count - 1];
-
-      while (Params.Input.Count > 2) {
-        Params.UnregisterInputParameter(Params.Input[2], true);
-      }
-
-      Params.RegisterInputParam(casesParam);
-    }
-
-    private void StaticPDeltaClicked() {
-      if (_tasktype != AnalysisTaskType.StaticPDelta) {
-        RecordUndoEvent("StaticPDelta");
-        _tasktype = AnalysisTaskType.StaticPDelta;
-
-        UpdateDropdowns();
-      }
-
-      IGH_Param casesParam = Params.Input[Params.Input.Count - 1];
-
-      while (Params.Input.Count > 2) {
-        Params.UnregisterInputParameter(Params.Input[2], true);
-      }
-
-      switch (_selectedItems[1]) {
-        case "Own":
-        default:
+          while (Params.Input.Count > 2) {
+            Params.UnregisterInputParameter(Params.Input[2], true);
+          }
           _casesParamIndex = 2;
+          Params.RegisterInputParam(casesParam);
+
           break;
 
-        case "Load case":
-          _casesParamIndex = 3;
-          Params.RegisterInputParam(new Param_String());
+        case AnalysisTaskType.StaticPDelta:
+          casesParam = Params.Input[Params.Input.Count - 1];
+
+          while (Params.Input.Count > 2) {
+            Params.UnregisterInputParameter(Params.Input[2], true);
+          }
+
+          switch (_selectedItems[1]) {
+            case "Own":
+            default:
+              _casesParamIndex = 2;
+              break;
+
+            case "Load case":
+              _casesParamIndex = 3;
+              Params.RegisterInputParam(new Param_String());
+              break;
+
+            case "Result case":
+              _casesParamIndex = 3;
+              Params.RegisterInputParam(new Param_Integer());
+              break;
+          }
+
+          Params.RegisterInputParam(casesParam);
+
           break;
 
-        case "Result case":
-          _casesParamIndex = 3;
-          Params.RegisterInputParam(new Param_Integer());
+        default:
           break;
       }
-
-      Params.RegisterInputParam(casesParam);
     }
 
-
-    private void ReDrawComponent() {
-      var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
-      base.CreateAttributes();
-      Attributes.Pivot = pivot;
-      Attributes.ExpireLayout();
-      Attributes.PerformLayout();
-    }
-
-    private void UpdateDropdowns() {
+    private void UpdateDropdownItems() {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      switch (_tasktype) {
+      switch (_type) {
         case AnalysisTaskType.StaticPDelta:
           _spacerDescriptions = new List<string>(new[] {
             "Solver",
-            "Case"
+            "P-delta Case"
           });
 
           _dropDownItems.Add(new List<string>() {
@@ -296,9 +293,7 @@ namespace GsaGH.Components {
           });
           _selectedItems.Add("Own");
 
-          ReDrawComponent();
           break;
-
 
         case AnalysisTaskType.Static:
         default:
@@ -312,9 +307,18 @@ namespace GsaGH.Components {
           });
 
           _selectedItems.Add("Static");
-          ReDrawComponent();
           break;
       }
+
+      ReDrawComponent();
+    }
+
+    private void ReDrawComponent() {
+      var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
+      base.CreateAttributes();
+      Attributes.Pivot = pivot;
+      Attributes.ExpireLayout();
+      Attributes.PerformLayout();
     }
   }
 }
