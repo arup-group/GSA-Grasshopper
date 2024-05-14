@@ -37,7 +37,7 @@ namespace GsaGHTests.Components.Analysis {
     public void GetTaskInfoFromModelTest() {
       var getModelAnalysis = new GetModelAnalysis();
       var model = new GsaModel();
-      model.Model.Open(GsaFile.SteelDesignSimple);
+      model.ApiModel.Open(GsaFile.SteelDesignSimple);
       ComponentTestHelper.SetInput(getModelAnalysis, new GsaModelGoo(model));
       var taskGoo = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(getModelAnalysis);
 

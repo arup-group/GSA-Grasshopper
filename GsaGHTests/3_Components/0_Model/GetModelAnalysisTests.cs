@@ -12,7 +12,7 @@ namespace GsaGHTests.Model {
       // Assemble
       var comp = new GetModelAnalysis();
       var model = new GsaModel();
-      model.Model.Open(GsaFile.SteelDesignSimple);
+      model.ApiModel.Open(GsaFile.SteelDesignSimple);
 
       // Act
       ComponentTestHelper.SetInput(comp, new GsaModelGoo(model));

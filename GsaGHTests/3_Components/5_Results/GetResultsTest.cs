@@ -104,7 +104,7 @@ namespace GsaGHTests.Components.Results {
         Definition = "1",
         Name = "myList"
       };
-      result.Model.Model.AddList(apiList);
+      result.Model.ApiModel.AddList(apiList);
 
       var comp = new Member1dDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -123,7 +123,7 @@ namespace GsaGHTests.Components.Results {
         Definition = "1",
         Name = "myList"
       };
-      result.Model.Model.AddList(apiList);
+      result.Model.ApiModel.AddList(apiList);
 
       var comp = new Member1dDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -142,7 +142,7 @@ namespace GsaGHTests.Components.Results {
         Definition = "1",
         Name = string.Empty
       };
-      result.Model.Model.AddList(apiList);
+      result.Model.ApiModel.AddList(apiList);
 
       var comp = new Member1dDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));

@@ -92,7 +92,7 @@ namespace GsaGH.Components {
       GsaModelGoo modelGoo = null;
       da.GetData(0, ref modelGoo);
 
-      Model model = modelGoo.Value.Model;
+      Model model = modelGoo.Value.ApiModel;
       List<GsaLoadCaseGoo> cases = GsaLoadFactory.CreateLoadCasesFromApi(model);
       List<GsaLoadGoo> gravity = GsaLoadFactory.CreateGravityLoadsFromApi(model);
       List<GsaLoadGoo> node = GsaLoadFactory.CreateNodeLoadsFromApi(model);

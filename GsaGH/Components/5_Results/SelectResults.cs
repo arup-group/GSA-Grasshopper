@@ -246,7 +246,7 @@ namespace GsaGH.Components {
       switch (_resultType) {
         case CaseType.AnalysisCase:
           if (_analysisCaseResults == null) {
-            _analysisCaseResults = _gsaModel.Model.Results();
+            _analysisCaseResults = _gsaModel.ApiModel.Results();
             if (_analysisCaseResults == null || _analysisCaseResults.Count == 0) {
               this.AddRuntimeError("No Analysis Case Results exist in Model");
               return;
@@ -267,7 +267,7 @@ namespace GsaGH.Components {
 
         case CaseType.CombinationCase:
           if (_combinationCaseResults == null) {
-            _combinationCaseResults = _gsaModel.Model.CombinationCaseResults();
+            _combinationCaseResults = _gsaModel.ApiModel.CombinationCaseResults();
             if (_combinationCaseResults == null || _combinationCaseResults.Count == 0) {
               this.AddRuntimeError("No Combination Case Results exist in Model");
               return;
@@ -281,7 +281,7 @@ namespace GsaGH.Components {
 
           ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> tempNodeCombResult
             = _combinationCaseResults[_caseId]
-             .NodeDisplacement(_gsaModel.Model.Nodes().Keys.First().ToString());
+             .NodeDisplacement(_gsaModel.ApiModel.Nodes().Keys.First().ToString());
           int nP = tempNodeCombResult[tempNodeCombResult.Keys.First()].Count;
           if (_permutationIDs.Count == 1 && _permutationIDs[0] == -1) {
             _permutationIDs = Enumerable.Range(1, nP).ToList();
@@ -385,7 +385,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      _combinationCaseResults ??= _gsaModel.Model.CombinationCaseResults();
+      _combinationCaseResults ??= _gsaModel.ApiModel.CombinationCaseResults();
 
       if (_combinationCaseResults.Count == 0) {
         return;
@@ -398,7 +398,7 @@ namespace GsaGH.Components {
 
       ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> tempNodeCombResult
         = _combinationCaseResults[_caseId]
-         .NodeDisplacement(_gsaModel.Model.Nodes().Keys.First().ToString());
+         .NodeDisplacement(_gsaModel.ApiModel.Nodes().Keys.First().ToString());
       int nP = tempNodeCombResult[tempNodeCombResult.Keys.First()].Count;
       var permutationsInCase = Enumerable.Range(1, nP).ToList();
       if (_dropDownItems.Count < 3) {

@@ -126,7 +126,7 @@ namespace GsaGH.Components {
       switch (resultType) {
         case CaseType.AnalysisCase:
           if (_analysisCaseResults == null) {
-            _analysisCaseResults = model.Model.Results();
+            _analysisCaseResults = model.ApiModel.Results();
             if (_analysisCaseResults == null || _analysisCaseResults.Count == 0) {
               this.AddRuntimeError("No Analysis Case Results exist in Model");
               return;
@@ -148,7 +148,7 @@ namespace GsaGH.Components {
 
         case CaseType.CombinationCase:
           if (_combinationCaseResults == null) {
-            _combinationCaseResults = model.Model.CombinationCaseResults();
+            _combinationCaseResults = model.ApiModel.CombinationCaseResults();
             if (_combinationCaseResults == null || _combinationCaseResults.Count == 0) {
               this.AddRuntimeError("No Combination Case Results exist in Model");
               return;
@@ -161,7 +161,7 @@ namespace GsaGH.Components {
           }
 
           if (_tempNodeId == 0) {
-            _tempNodeId = model.Model.Nodes().Keys.First();
+            _tempNodeId = model.ApiModel.Nodes().Keys.First();
           }
 
           ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> tempNodeCombResult
