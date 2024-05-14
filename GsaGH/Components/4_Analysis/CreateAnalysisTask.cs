@@ -22,6 +22,7 @@ namespace GsaGH.Components {
       = new Dictionary<string, AnalysisTaskType> {
         { "Static", AnalysisTaskType.Static },
         { "Static P-delta", AnalysisTaskType.StaticPDelta },
+        { "Footfall", AnalysisTaskType.Footfall },
       };
 
     public override Guid ComponentGuid => new Guid("581601cc-c0bc-47fe-ada5-b821327a4409");
@@ -47,8 +48,7 @@ namespace GsaGH.Components {
       _selectedItems[i] = _dropDownItems[i][j];
 
       if (i == 0) {
-        _type = _solverTypes[_selectedItems[i]];
-
+        _type = _solverTypes[_selectedItems[0]];
         UpdateDropdownItems();
       }
 
@@ -190,6 +190,28 @@ namespace GsaGH.Components {
           }
           break;
 
+        case AnalysisTaskType.Footfall:
+          string excitationNodes = "All";
+          NumberOfFootfalls numberofFootfalls = null;
+          WeightingOption frequencyWeightingCurve = WeightingOption.Wg;
+          var excitationForces = new ExcitationForces();
+          DampingOption dampingOption = null;
+          
+          var parameter = new FootfallAnalysisTaskParameter() {
+            ModalAnalysisTaskId = 1,
+            ExcitationMethod = ExcitationMethod.SelfExcitation,
+            ResponseNodes = "",
+            ExcitationNodes = excitationNodes,
+            //NumberofFootfalls = numberofFootfalls,
+            WalkerMass = 76,
+            ResponseDirection = ResponseDirection.Z,
+            FrequencyWeightingCurve = frequencyWeightingCurve,
+            ExcitationForces = excitationForces,
+            //DampingOption = dampingOption,
+          };
+          task = AnalysisTaskFactory.CreateFootfallAnalysisTask(name, parameter);
+          break;
+
         default:
           this.AddRuntimeWarning("It is currently not possible to create Analysis Tasks of type " + _type);
           break;
@@ -221,7 +243,6 @@ namespace GsaGH.Components {
           }
           _casesParamIndex = 2;
           Params.RegisterInputParam(casesParam);
-
           break;
 
         case AnalysisTaskType.StaticPDelta:
@@ -249,7 +270,6 @@ namespace GsaGH.Components {
           }
 
           Params.RegisterInputParam(casesParam);
-
           break;
 
         default:
@@ -277,6 +297,25 @@ namespace GsaGH.Components {
             "Result case"
           });
           _selectedItems.Add("Own");
+
+          break;
+
+        case AnalysisTaskType.Footfall:
+          _spacerDescriptions = new List<string>(new[] {
+            "Solver",
+            "Method"
+          });
+
+          _dropDownItems.Add(_solverTypes.Keys.ToList());
+          _selectedItems.Add(_dropDownItems[0][2]);
+
+          _dropDownItems.Add(new List<string>() {
+            "Self excitation",
+            "Rigorous excitation",
+            "Rigorous excitation",
+            "Fast excitation"
+          });
+          _selectedItems.Add("Self");
 
           break;
 
