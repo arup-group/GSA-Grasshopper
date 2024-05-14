@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
@@ -17,6 +18,12 @@ namespace GsaGH.Components {
   ///   Component to create a GSA Analysis Task
   /// </summary>
   public class CreateAnalysisTask : GH_OasysDropDownComponent {
+    internal static readonly IReadOnlyDictionary<string, AnalysisTaskType> _solverTypes
+      = new Dictionary<string, AnalysisTaskType> {
+        { "Static", AnalysisTaskType.Static },
+        { "Static P-delta", AnalysisTaskType.StaticPDelta },
+      };
+
     public override Guid ComponentGuid => new Guid("581601cc-c0bc-47fe-ada5-b821327a4409");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -40,15 +47,7 @@ namespace GsaGH.Components {
       _selectedItems[i] = _dropDownItems[i][j];
 
       if (i == 0) {
-        switch (_selectedItems[0]) {
-          case "Static":
-            _type = AnalysisTaskType.Static;
-            break;
-
-          case "Static P-delta":
-            _type = AnalysisTaskType.StaticPDelta;
-            break;
-        }
+        _type = _solverTypes[_selectedItems[i]];
 
         UpdateDropdownItems();
       }
@@ -106,11 +105,8 @@ namespace GsaGH.Components {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(new List<string>() {
-        "Static",
-        "Static P-delta",
-      });
-      _selectedItems.Add("Static");
+      _dropDownItems.Add(_solverTypes.Keys.ToList());
+      _selectedItems.Add(_dropDownItems[0].First());
 
       _isInitialised = true;
     }
@@ -209,15 +205,7 @@ namespace GsaGH.Components {
     }
 
     protected override void UpdateUIFromSelectedItems() {
-      switch (_selectedItems[0]) {
-        case "Static":
-          _type = AnalysisTaskType.Static;
-          break;
-
-        case "Static P-delta":
-          _type = AnalysisTaskType.StaticPDelta;
-          break;
-      }
+      _type = _solverTypes[_selectedItems[0]];
 
       base.UpdateUIFromSelectedItems();
     }
@@ -280,11 +268,8 @@ namespace GsaGH.Components {
             "P-delta Case"
           });
 
-          _dropDownItems.Add(new List<string>() {
-            "Static",
-            "Static P-delta",
-          });
-          _selectedItems.Add("Static P-delta");
+          _dropDownItems.Add(_solverTypes.Keys.ToList());
+          _selectedItems.Add(_dropDownItems[0][1]);
 
           _dropDownItems.Add(new List<string>() {
             "Own",
@@ -301,12 +286,8 @@ namespace GsaGH.Components {
             "Solver",
           });
 
-          _dropDownItems.Add(new List<string>() {
-            "Static",
-            "Static P-delta",
-          });
-
-          _selectedItems.Add("Static");
+          _dropDownItems.Add(_solverTypes.Keys.ToList());
+          _selectedItems.Add(_dropDownItems[0][0]);
           break;
       }
 
