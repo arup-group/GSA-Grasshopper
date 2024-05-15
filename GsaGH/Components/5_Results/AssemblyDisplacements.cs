@@ -82,19 +82,19 @@ namespace GsaGH.Components {
       string note = ResultNotes.NoteAssemblyResults;
 
       pManager.AddGenericParameter("Translation X [" + unitAbbreviation + "]", "Ux",
-        "Translation in Local Assembly X-direction." + note, GH_ParamAccess.tree);
+        "Translation in Local Assembly X-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translation Y [" + unitAbbreviation + "]", "Uy",
-        "Translation in Local Assembly Y-direction." + note, GH_ParamAccess.tree);
+        "Translation in Local Assembly Y-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translation Z [" + unitAbbreviation + "]", "Uz",
-        "Translation in Local Assembly Z-direction." + note, GH_ParamAccess.tree);
+        "Translation in Local Assembly Z-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Translation |XYZ| [" + unitAbbreviation + "]", "|U|",
         "Combined |XYZ| Translation." + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotation XX [rad]", "Rxx",
-        "Rotation around Local Assembly X-axis." + note, GH_ParamAccess.tree);
+        "Rotation around Local Assembly X-axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotation YY [rad]", "Ryy",
-        "Rotation around Local Assembly Y-axis." + note, GH_ParamAccess.tree);
+        "Rotation around Local Assembly Y-axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotation ZZ [rad]", "Rzz",
-        "Rotation around Local Assembly Z-axis." + note, GH_ParamAccess.tree);
+        "Rotation around Local Assembly Z-axis" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Rotation |XYZ| [rad]", "|R|",
         "Combined |XXYYZZ| Rotation." + note, GH_ParamAccess.tree);
     }

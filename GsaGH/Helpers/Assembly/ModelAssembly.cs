@@ -238,7 +238,7 @@ namespace GsaGH.Helpers.Assembly {
         ReadOnlyDictionary<int, AnalysisTask> existingTasks = _model.AnalysisTasks();
         foreach (GsaAnalysisTask task in analysisTasks) {
           if (!existingTasks.Keys.Contains(task.Id)) {
-            task.Id = _model.AddAnalysisTask();
+            task.Id = _model.AddAnalysisTask(task.ApiTask);
           }
 
           if (task.Cases == null || task.Cases.Count == 0) {

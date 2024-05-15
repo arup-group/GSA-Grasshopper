@@ -139,15 +139,12 @@ namespace GsaGH.Helpers {
       gooloads.AddRange(GsaLoadFactory.CreateBeamThermalLoadsFromApi(appendModel.ApiModel));
       gooloads.AddRange(GsaLoadFactory.CreateFaceLoadsFromApi(appendModel.ApiModel));
       gooloads.AddRange(GsaLoadFactory.CreateFaceThermalLoadsFromApi(appendModel.ApiModel));
-
-      IReadOnlyDictionary<int, GridSurface> srfDict = appendModel.ApiModel.GridSurfaces();
-      IReadOnlyDictionary<int, GridPlane> plnDict = appendModel.ApiModel.GridPlanes();
-
       gooloads.AddRange(GsaLoadFactory.CreateGridPointLoadsFromApi(appendModel.ApiModel, LengthUnit.Meter));
       gooloads.AddRange(GsaLoadFactory.CreateGridLineLoadsFromApi(appendModel.ApiModel, LengthUnit.Meter));
       gooloads.AddRange(GsaLoadFactory.CreateGridAreaLoadsFromApi(appendModel.ApiModel, LengthUnit.Meter));
       var loads = gooloads.Select(n => n.Value).ToList();
 
+      IReadOnlyDictionary<int, GridSurface> srfDict = appendModel.ApiModel.GridSurfaces();
       var gpsgoo = srfDict.Keys.Select(key => new GsaGridPlaneSurfaceGoo(
            GsaLoadFactory.CreateGridPlaneSurfaceFromApi(appendModel.ApiModel, key, LengthUnit.Meter))).ToList();
       var gps = gpsgoo.Select(n => n.Value).ToList();

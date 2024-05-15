@@ -24,8 +24,8 @@ namespace GsaGHTests.Model {
       Assert.NotNull(taskGoo);
       Assert.Equal(1, taskGoo.Value.Id);
       Assert.Equal(2, taskGoo.Value.Cases.Count);
-      Assert.Equal("Task 1", taskGoo.Value.Name);
-      Assert.Equal(AnalysisTaskType.Static, taskGoo.Value.Type);
+      Assert.Equal("Task 1", taskGoo.Value.ApiTask.Name);
+      Assert.Equal((int)AnalysisTaskType.Static, taskGoo.Value.ApiTask.Type);
 
       Assert.NotNull(caseGoo);
       Assert.Equal(1, caseGoo.Value.Id);

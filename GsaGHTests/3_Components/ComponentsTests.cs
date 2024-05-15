@@ -82,6 +82,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(ContourNodeResults), 2)]
     [InlineData(typeof(ReactionForceDiagrams), 1)]
     [InlineData(typeof(ResultDiagrams), 2)]
+    [InlineData(typeof(CreateAnalysisTask_OBSOLETE), 1)]
     public void WhenInitialiseDropdowns_ThenDropDownItemsCount_ShouldBeValid(
       Type t, int expectedListCount) {
       var obj = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
@@ -135,7 +136,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(LoadProperties), "kN", "kipf")]
     // Analysis
     [InlineData(typeof(AnalyseModel), "m", "ft")]
-    [InlineData(typeof(CreateAnalysisTask), "Static", "Static")]
+    [InlineData(typeof(CreateAnalysisTask_OBSOLETE), "Static", "Static")]
     // Results
     [InlineData(typeof(BeamDisplacements), "All", "Min |R|")]
     [InlineData(typeof(BeamForcesAndMoments), "All", "Min |Myz|")]
