@@ -8,7 +8,6 @@ using GsaGH.Helpers;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
-using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;

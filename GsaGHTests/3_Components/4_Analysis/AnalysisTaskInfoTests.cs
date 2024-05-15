@@ -34,7 +34,7 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal("1.4L1 + 0.8L3", output1.Value.Definition);
       Assert.Equal("my Case", output1.Value.Name);
       Assert.Equal("Static", output2.Value);
-      Assert.Equal(0, output3.Value);
+      Assert.Equal(1, output3.Value);
     }
 
     [Fact]
