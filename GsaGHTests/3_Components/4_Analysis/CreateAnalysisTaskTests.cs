@@ -49,8 +49,8 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(1, output.Value.Id);
       Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal((int)AnalysisTaskType.StaticPDelta, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Warning, comp.RuntimeMessageLevel);
-      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Equal(GH_RuntimeMessageLevel.Remark, comp.RuntimeMessageLevel);
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
     [Fact]
@@ -69,8 +69,8 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(1, output.Value.Id);
       Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal((int)AnalysisTaskType.StaticPDelta, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Warning, comp.RuntimeMessageLevel);
-      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Equal(GH_RuntimeMessageLevel.Remark, comp.RuntimeMessageLevel);
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
     [Fact]
@@ -89,8 +89,8 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(1, output.Value.Id);
       Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal((int)AnalysisTaskType.StaticPDelta, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Warning, comp.RuntimeMessageLevel);
-      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Equal(GH_RuntimeMessageLevel.Remark, comp.RuntimeMessageLevel);
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
     //[Theory]
