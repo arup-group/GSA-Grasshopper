@@ -189,10 +189,6 @@ namespace GsaGH.Components {
               break;
           }
           break;
-
-        default:
-          this.AddRuntimeWarning("It is currently not possible to create Analysis Tasks of type " + _type);
-          break;
       }
 
       var gsaAnalysisTask = new GsaAnalysisTask() {
