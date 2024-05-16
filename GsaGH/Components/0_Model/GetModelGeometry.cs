@@ -697,7 +697,7 @@ namespace GsaGH.Components {
         GsaModelGoo modelGoo = null;
         data.GetData(0, ref modelGoo);
 
-        ReadOnlyDictionary<int, Node> nodes = modelGoo.Value.Model.Nodes();
+        ReadOnlyDictionary<int, Node> nodes = modelGoo.Value.ApiModel.Nodes();
         foreach (GsaAssemblyGoo assemblyGoo in results.Assemblies) {
           Assembly assembly = assemblyGoo.Value.ApiAssembly;
           var preview = new AssemblyPreview(assembly, nodes[assembly.Topology1], nodes[assembly.Topology2], nodes[assembly.OrientationNode]);
