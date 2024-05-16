@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -10,6 +11,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.Grahics;
 using GsaGH.Parameters;
@@ -36,6 +38,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.AssemblyResultDiagrams;
+    private ConcurrentBag<AssemblyPreview> _assemblyPreviews = new ConcurrentBag<AssemblyPreview>();
 
     private string _case = string.Empty;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
@@ -61,6 +64,14 @@ namespace GsaGH.Components {
       endPoint.Transform(t);
 
       return endPoint;
+    }
+
+    public override void DrawViewportWires(IGH_PreviewArgs args) {
+      base.DrawViewportWires(args);
+
+      foreach (AssemblyPreview preview in _assemblyPreviews) {
+        args.Display.DrawLines(preview.Outlines, Colours.Element1d);
+      }
     }
 
     public override bool Read(GH_IReader reader) {
@@ -305,6 +316,12 @@ namespace GsaGH.Components {
         significantDigits, color);
 
       ((IGH_PreviewObject)Params.Output[1]).Hidden = !showAnnotations;
+
+      ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
+      foreach (Assembly assembly in result.Model.Model.Assemblies().Values) {
+        var preview = new AssemblyPreview(assembly, nodes[assembly.Topology1], nodes[assembly.Topology2], nodes[assembly.OrientationNode]);
+        _assemblyPreviews.Add(preview);
+      }
 
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);

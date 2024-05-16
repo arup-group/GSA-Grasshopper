@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ using GH_IO.Serialization;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
+using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.Import;
@@ -20,6 +23,7 @@ using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
+using Rhino.Commands;
 using Rhino.Display;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -64,6 +68,7 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.List;
     private ConcurrentBag<GsaNodeGoo> _supportNodes;
+    private ConcurrentBag<AssemblyPreview> _assemblyPreviews = new ConcurrentBag<AssemblyPreview>();
     private bool _showSupports = true;
     private SolveResults _results;
 
@@ -98,6 +103,7 @@ namespace GsaGH.Components {
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
       base.DrawViewportMeshes(args);
+
       if (Attributes.Selected) {
         if (_cachedDisplayMeshWithoutParent != null) {
           foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
@@ -122,6 +128,10 @@ namespace GsaGH.Components {
             args.Display.DrawMeshShaded(mesh, Colours.Element2dFaceSelected);
           }
         }
+      }
+
+      foreach (AssemblyPreview preview in _assemblyPreviews) {
+        args.Display.DrawMeshShaded(preview.Mesh, Colours.Element2dFaceSelected);
       }
     }
 
@@ -166,6 +176,10 @@ namespace GsaGH.Components {
 
       if (_supportNodes == null) {
         return;
+      }
+
+      foreach (AssemblyPreview preview in _assemblyPreviews) {
+        args.Display.DrawLines(preview.Outlines, Colours.Element1d);
       }
 
       foreach (GsaNodeGoo node in _supportNodes) {
@@ -234,7 +248,7 @@ namespace GsaGH.Components {
       ReadDropDownComponents(ref reader, ref _dropDownItems, ref _selectedItems,
         ref _spacerDescriptions);
       _isInitialised = true;
-      UpdateUiFrom_selectedItems();
+      UpdateUiFromSelectedItems();
       return base.Read(reader);
     }
 
@@ -251,13 +265,13 @@ namespace GsaGH.Components {
       OnDisplayExpired(true);
     }
 
-    public void UpdateUiFrom_selectedItems() {
+    public void UpdateUiFromSelectedItems() {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       CreateAttributes();
       UpdateUi();
     }
 
-    void IGH_VariableParameterComponent.VariableParameterMaintenance() {
+    public void VariableParameterMaintenance() {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
       int i = 0;
@@ -394,8 +408,8 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      pManager.AddParameter(new GsaNodeParameter(), "Nodes in [" + unitAbbreviation + "]", "No", "Nodes from GSA Model",
-        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaNodeParameter(), "Nodes in [" + unitAbbreviation + "]", "No",
+        "Nodes from GSA Model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaElement1dParameter(), "1D Elements in [" + unitAbbreviation + "]", "E1D",
         "1D Elements (Analysis Layer) from GSA Model imported to selected unit",
         GH_ParamAccess.list);
@@ -679,7 +693,17 @@ namespace GsaGH.Components {
         }
       }
 
-      if (!(results.Assemblies is null) || results.Assemblies.Count == 0) {
+      if (!results.Assemblies.IsNullOrEmpty()) {
+        GsaModelGoo modelGoo = null;
+        data.GetData(0, ref modelGoo);
+
+        ReadOnlyDictionary<int, Node> nodes = modelGoo.Value.Model.Nodes();
+        foreach (GsaAssemblyGoo assemblyGoo in results.Assemblies) {
+          Assembly assembly = assemblyGoo.Value.ApiAssembly;
+          var preview = new AssemblyPreview(assembly, nodes[assembly.Topology1], nodes[assembly.Topology2], nodes[assembly.OrientationNode]);
+          _assemblyPreviews.Add(preview);
+        }
+
         data.SetDataList(7, results.Assemblies.OrderBy(item => item.Value.Id));
       }
     }
