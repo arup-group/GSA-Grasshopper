@@ -317,9 +317,10 @@ namespace GsaGH.Components {
 
       ((IGH_PreviewObject)Params.Output[1]).Hidden = !showAnnotations;
 
+      _assemblyPreviews = new ConcurrentBag<AssemblyPreview>();
       ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
       foreach (Assembly assembly in result.Model.Model.Assemblies().Values) {
-        var preview = new AssemblyPreview(assembly, nodes[assembly.Topology1], nodes[assembly.Topology2], nodes[assembly.OrientationNode]);
+        var preview = new AssemblyPreview(assembly, nodes[assembly.Topology1], nodes[assembly.Topology2], nodes[assembly.OrientationNode], list.Definition);
         _assemblyPreviews.Add(preview);
       }
 

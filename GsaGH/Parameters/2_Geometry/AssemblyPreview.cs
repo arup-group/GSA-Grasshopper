@@ -17,7 +17,7 @@ namespace GsaGH.Parameters {
     public Mesh Mesh { get; set; }
     public IEnumerable<Line> Outlines { get; set; }
 
-    internal AssemblyPreview(Assembly assembly, Node topology1, Node topology2, Node orientationNode) {
+    internal AssemblyPreview(Assembly assembly, Node topology1, Node topology2, Node orientationNode, string definition = "all") {
       var model = new Model();
       model.AddNode(topology1);
       model.AddNode(topology2);
@@ -54,7 +54,7 @@ namespace GsaGH.Parameters {
 
       var spec = new GraphicSpecification() {
         Entities = new EntityList() {
-          Definition = "all",
+          Definition = definition,
           Name = "Assembly",
           Type = GsaAPI.EntityType.Assembly
         }
