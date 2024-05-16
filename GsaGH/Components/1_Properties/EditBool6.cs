@@ -27,12 +27,12 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaBool6Parameter(), GsaBool6Goo.Name, GsaBool6Goo.NickName,
         GsaBool6Goo.Description + " to get or set information for. Leave blank to create a new "
         + GsaBool6Goo.Name, GH_ParamAccess.item);
-      pManager.AddBooleanParameter("X", "X", "Release or restrain for translation in X-direction", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Y", "Y", "Release or restrain for translation in Y-direction", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Z", "Z", "Release or restrain for translation in Z-direction", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("XX", "XX", "Release or restrain for rotation around X-axis", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("YY", "YY", "Release or restrain for rotation around Y-axis", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("ZZ", "ZZ", "Release or restrain for rotation around Z-axis", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("X", "X", "Release or restraint for translation in X-direction", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Y", "Y", "Release or restraint for translation in Y-direction", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Z", "Z", "Release or restraint for translation in Z-direction", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("XX", "XX", "Release or restraint for rotation around X-axis", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("YY", "YY", "Release or restraint for rotation around Y-axis", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("ZZ", "ZZ", "Release or restraint for rotation around Z-axis", GH_ParamAccess.item);
       for (int i = 0; i < pManager.ParamCount; i++) {
         pManager[i].Optional = true;
       }
@@ -41,12 +41,12 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaBool6Parameter(), GsaBool6Goo.Name, GsaBool6Goo.NickName,
         GsaBool6Goo.Description + " with applied changes.", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("X", "X", "Release or restrain for translation in the X-direction.", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Y", "Y", "Release or restrain for translation in the Y-direction.", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("Z", "Z", "Release or restrain for translation in the Z-direction.", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("XX", "XX", "Release or restrain for rotation around the X-axis.", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("YY", "YY", "Release or restrain for rotation around the Y-axis.", GH_ParamAccess.item);
-      pManager.AddBooleanParameter("ZZ", "ZZ", "Release or restrain for rotation around the Z-axis.", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("X", "X", "Release or restrain for translation in X-direction", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Y", "Y", "Release or restrain for translation in Y-direction", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("Z", "Z", "Release or restrain for translation in Z-direction", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("XX", "XX", "Release or restrain for rotation around X-axis", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("YY", "YY", "Release or restrain for rotation around Y-axis", GH_ParamAccess.item);
+      pManager.AddBooleanParameter("ZZ", "ZZ", "Release or restrain for rotation around Z-axis", GH_ParamAccess.item);
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {

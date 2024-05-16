@@ -283,7 +283,7 @@ namespace GsaGH.Components {
       var diagramLines = new List<GsaDiagramGoo>();
       var diagramAnnotations = new List<GsaAnnotationGoo>();
 
-      GraphicDrawResult diagramResults = result.Model.Model.GetDiagrams(graphic);
+      GraphicDrawResult diagramResults = result.Model.ApiModel.GetDiagrams(graphic);
       ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
 
       Color color = Color.Empty;

@@ -466,9 +466,9 @@ namespace GsaGH.Components {
       bool enveloped = Inputs.IsResultCaseEnveloped(this, result, ref _case, _envelopeType);
       List<int> permutations = result.SelectedPermutationIds;
       assemblyList = Inputs.GetAssemblyListDefinition(this, da, 1, result.Model);
-      ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements();
-      ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
-      ReadOnlyDictionary<int, Assembly> assemblies = result.Model.Model.Assemblies();
+      ReadOnlyDictionary<int, Element> elems = result.Model.ApiModel.Elements();
+      ReadOnlyDictionary<int, Node> nodes = result.Model.ApiModel.Nodes();
+      ReadOnlyDictionary<int, Assembly> assemblies = result.Model.ApiModel.Assemblies();
 
       ReadOnlyCollection<int> assemblyIds = result.AssemblyIds(assemblyList);
 

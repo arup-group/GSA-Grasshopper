@@ -76,7 +76,7 @@ namespace GsaGHTests.Model {
 
       // test that items have been set into API model
       var output = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      GsaAPI.UiUnits units = output.Value.Model.UiUnits();
+      GsaAPI.UiUnits units = output.Value.ApiModel.UiUnits();
       Assert.Equal("CentimeterPerSecondSquared", units.Acceleration.ToString());
       Assert.Equal("Degree", units.Angle.ToString());
       Assert.Equal("Megajoule", units.Energy.ToString());

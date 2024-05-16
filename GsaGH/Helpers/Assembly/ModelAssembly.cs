@@ -238,7 +238,7 @@ namespace GsaGH.Helpers.Assembly {
         ReadOnlyDictionary<int, AnalysisTask> existingTasks = _model.AnalysisTasks();
         foreach (GsaAnalysisTask task in analysisTasks) {
           if (!existingTasks.Keys.Contains(task.Id)) {
-            task.Id = _model.AddAnalysisTask();
+            task.Id = _model.AddAnalysisTask(task.ApiTask);
           }
 
           if (task.Cases == null || task.Cases.Count == 0) {
@@ -591,7 +591,7 @@ namespace GsaGH.Helpers.Assembly {
 
     private void SetupModel(GsaModel model, LengthUnit unit) {
       model ??= new GsaModel();
-      _model = model.Model;
+      _model = model.ApiModel;
       _gsaModel = model;
       _unit = unit;
       _model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_unit);
@@ -623,8 +623,8 @@ namespace GsaGH.Helpers.Assembly {
       _glassMaterials = GetStandardMaterialDictionary<GlassMaterial>(model.Materials.GlassMaterials);
       _fabricMaterials = GetStandardMaterialDictionary<FabricMaterial>(model.Materials.FabricMaterials);
       _customMaterials = GetCustomMaterialDictionary(model.Materials.AnalysisMaterials);
-      _concreteDesignCode = model.Model.ConcreteDesignCode();
-      _steelDesignCode = model.Model.SteelDesignCode();
+      _concreteDesignCode = model.ApiModel.ConcreteDesignCode();
+      _steelDesignCode = model.ApiModel.SteelDesignCode();
       GetGsaGhMaterialsDictionary(model.Materials);
 
       CheckIfModelIsEmpty();

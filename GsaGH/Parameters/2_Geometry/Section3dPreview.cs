@@ -58,12 +58,12 @@ namespace GsaGH.Parameters {
 
     public Section3dPreview(GsaResult res, string elementList, double scale) {
       GraphicSpecification spec = ResultSpec(res, elementList, scale);
-      CreateGraphics(res.Model.Model, spec);
+      CreateGraphics(res.Model.ApiModel, spec);
     }
 
     internal Section3dPreview(GsaModel model, Layer layer) {
       GraphicSpecification spec = layer == Layer.Analysis ? AnalysisLayerSpec() : DesignLayerSpec();
-      CreateGraphics(model.Model, spec);
+      CreateGraphics(model.ApiModel, spec);
       Scale(model.ModelUnit);
     }
 

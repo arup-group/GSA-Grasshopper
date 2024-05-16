@@ -23,7 +23,7 @@ namespace GsaGHTests.Parameters.Results {
         = result.NodeResonantFootfalls.ResultSubset(nodeIds);
 
       // Assert node IDs
-      var expectedIds = result.Model.Model.Nodes(NodeList).Keys.OrderBy(x => x).ToList();
+      var expectedIds = result.Model.ApiModel.Nodes(NodeList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
 
       result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelFootfall, 17);
