@@ -33,6 +33,9 @@ namespace GsaGH.Components {
   /// </summary>
   public class GetModelGeometry : GH_OasysTaskCapableComponent<GetModelGeometry.SolveResults>,
     IGH_VariableParameterComponent {
+
+    // some comment
+
     public class SolveResults {
       internal ConcurrentBag<GsaAssemblyGoo> Assemblies { get; set; }
       internal ConcurrentBag<GsaNodeGoo> DisplaySupports { get; set; }
