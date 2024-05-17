@@ -85,6 +85,54 @@ namespace GsaGH.Components {
 
           break;
 
+        case AnalysisTaskType.Footfall:
+          Params.Input[2].NickName = "RN";
+          Params.Input[2].Name = "Response nodes";
+          Params.Input[2].Description = "Node list to define the nodes that the responses will be calculated in the analysis";
+          Params.Input[2].Access = GH_ParamAccess.item;
+          Params.Input[2].Optional = false;
+
+          int i = 3;
+          if (_selectedItems[1] != "Self excitation") {
+            Params.Input[i].NickName = "EN";
+            Params.Input[i].Name = "Excitation nodes";
+            Params.Input[i].Description = "Node list to define the nodes that will be excited for evaluation of the response of the response nodes";
+            Params.Input[i].Access = GH_ParamAccess.item;
+            Params.Input[i].Optional = false;
+          }
+
+          Params.Input[i++].NickName = "N";
+          Params.Input[i].Name = "Number of footfalls";
+          Params.Input[i].Description = "The number of footfalls to be considered in the analysis";
+          Params.Input[i].Access = GH_ParamAccess.item;
+          Params.Input[i].Optional = false;
+
+          Params.Input[i++].NickName = "W";
+          Params.Input[i].Name = "Walker";
+          Params.Input[i].Description = "The mass representing a sample walker";
+          Params.Input[i].Access = GH_ParamAccess.item;
+          Params.Input[i].Optional = false;
+
+          Params.Input[i++].NickName = "D";
+          Params.Input[i].Name = "Direction of responses";
+          Params.Input[i].Description = "The direction of response in the GSA global axis direction. It can be in Z (vertical), X, Y or XY plane (horizontal)";
+          Params.Input[i].Access = GH_ParamAccess.item;
+          Params.Input[i].Optional = false;
+
+          Params.Input[i++].NickName = "F";
+          Params.Input[i].Name = "Frequency weighting curve";
+          Params.Input[i].Description = "The Frequency Weighting Curve (FWC) is used in calculating the response factors. Standard and user defined curves can be used";
+          Params.Input[i].Access = GH_ParamAccess.item;
+          Params.Input[i].Optional = false;
+
+          Params.Input[i++].NickName = "EF";
+          Params.Input[i].Name = "Excitation forces (DLFs)";
+          Params.Input[i].Description = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)";
+          Params.Input[i].Access = GH_ParamAccess.item;
+          Params.Input[i].Optional = false;
+
+          break;
+
         case AnalysisTaskType.Static:
         default:
           // do nothing
@@ -191,23 +239,49 @@ namespace GsaGH.Components {
           break;
 
         case AnalysisTaskType.Footfall:
-          string excitationNodes = "All";
-          NumberOfFootfalls numberofFootfalls = null;
+
+          string responseNodes = string.Empty;
+          da.GetData(2, ref responseNodes);
+
+          int i = 2;
+          string excitationNodes = string.Empty;
+          if (_selectedItems[i++] == "Self excitation") {
+            da.GetData(i, ref excitationNodes);
+          }
+
+          int numberOfFootfalls = 0;
+          da.GetData(i, ref numberOfFootfalls);
+
+          switch (_selectedItems[1]) {
+            case "Self excitation ":
+              break; 
+
+            case "Rigorous excitation":
+              break;
+
+            case "Rigorous excitation?":
+              break;
+
+            case "Fast excitation":
+              break;
+          }
+
+          NumberOfFootfalls numberofFootfalls = new ConstantFootfallsForAllModes(numberOfFootfalls);
           WeightingOption frequencyWeightingCurve = WeightingOption.Wg;
           var excitationForces = new ExcitationForces();
-          DampingOption dampingOption = null;
-          
+          DampingOption dampingOption = new ConstantDampingOption();
+
           var parameter = new FootfallAnalysisTaskParameter() {
             ModalAnalysisTaskId = 1,
             ExcitationMethod = ExcitationMethod.SelfExcitation,
             ResponseNodes = "",
             ExcitationNodes = excitationNodes,
-            //NumberofFootfalls = numberofFootfalls,
+            NumberofFootfalls = numberofFootfalls,
             WalkerMass = 76,
             ResponseDirection = ResponseDirection.Z,
             FrequencyWeightingCurve = frequencyWeightingCurve,
             ExcitationForces = excitationForces,
-            //DampingOption = dampingOption,
+            DampingOption = dampingOption,
           };
           task = AnalysisTaskFactory.CreateFootfallAnalysisTask(name, parameter);
           break;
@@ -241,6 +315,7 @@ namespace GsaGH.Components {
           while (Params.Input.Count > 2) {
             Params.UnregisterInputParameter(Params.Input[2], true);
           }
+
           _casesParamIndex = 2;
           Params.RegisterInputParam(casesParam);
           break;
@@ -268,6 +343,38 @@ namespace GsaGH.Components {
               Params.RegisterInputParam(new Param_Integer());
               break;
           }
+
+          Params.RegisterInputParam(casesParam);
+          break;
+
+        case AnalysisTaskType.Footfall:
+          casesParam = Params.Input[Params.Input.Count - 1];
+
+          while (Params.Input.Count > 2) {
+            Params.UnregisterInputParameter(Params.Input[2], true);
+          }
+
+          // response nodes
+          Params.RegisterInputParam(new Param_String());
+
+          // excitation nodes
+          if (_selectedItems[1] != "Self excitation") {
+            _casesParamIndex = 9;
+            Params.RegisterInputParam(new Param_String());
+          } else {
+            _casesParamIndex = 8;
+          }
+
+          // number of footfalls
+          Params.RegisterInputParam(new Param_Integer());
+          // walker
+          Params.RegisterInputParam(new Param_Number());
+          // direction of responses
+          Params.RegisterInputParam(new Param_String());
+          // frequency weighting curve
+          Params.RegisterInputParam(new Param_String());
+          // excitation forces
+          Params.RegisterInputParam(new Param_String());
 
           Params.RegisterInputParam(casesParam);
           break;
@@ -312,10 +419,10 @@ namespace GsaGH.Components {
           _dropDownItems.Add(new List<string>() {
             "Self excitation",
             "Rigorous excitation",
-            "Rigorous excitation",
+            "Rigorous excitation?",
             "Fast excitation"
           });
-          _selectedItems.Add("Self");
+          _selectedItems.Add("Self excitation");
 
           break;
 
