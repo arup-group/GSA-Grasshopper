@@ -70,7 +70,7 @@ namespace GsaGH.Components {
       base.DrawViewportWires(args);
 
       foreach (AssemblyPreview preview in _assemblyPreviews) {
-        args.Display.DrawLines(preview.Outlines, Colours.Element1d);
+        args.Display.DrawLines(preview.Outlines, Colours.Assembly);
       }
     }
 
@@ -319,8 +319,9 @@ namespace GsaGH.Components {
 
       _assemblyPreviews = new ConcurrentBag<AssemblyPreview>();
       ReadOnlyDictionary<int, Node> nodes = result.Model.ApiModel.Nodes();
+      var gridPlanes = new ReadOnlyCollection<GridPlane>(result.Model.ApiModel.GridPlanes().Values.ToList());
       foreach (Assembly assembly in result.Model.ApiModel.Assemblies().Values) {
-        var preview = new AssemblyPreview(assembly, nodes[assembly.Topology1], nodes[assembly.Topology2], nodes[assembly.OrientationNode], list.Definition);
+        var preview = new AssemblyPreview(assembly, nodes[assembly.Topology1], nodes[assembly.Topology2], nodes[assembly.OrientationNode], gridPlanes, list.Definition);
         _assemblyPreviews.Add(preview);
       }
 

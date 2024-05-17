@@ -23,7 +23,6 @@ using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 using OasysUnits;
-using Rhino.Commands;
 using Rhino.Display;
 using Rhino.Geometry;
 using LengthUnit = OasysUnits.Units.LengthUnit;
@@ -129,10 +128,6 @@ namespace GsaGH.Components {
           }
         }
       }
-
-      foreach (AssemblyPreview preview in _assemblyPreviews) {
-        args.Display.DrawMeshShaded(preview.Mesh, Colours.Element2dFaceSelected);
-      }
     }
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
@@ -179,7 +174,7 @@ namespace GsaGH.Components {
       }
 
       foreach (AssemblyPreview preview in _assemblyPreviews) {
-        args.Display.DrawLines(preview.Outlines, Colours.Element1d);
+        args.Display.DrawLines(preview.Outlines, Colours.Assembly);
       }
 
       foreach (GsaNodeGoo node in _supportNodes) {
@@ -698,9 +693,10 @@ namespace GsaGH.Components {
         data.GetData(0, ref modelGoo);
 
         ReadOnlyDictionary<int, Node> nodes = modelGoo.Value.ApiModel.Nodes();
+        var gridPlanes = new ReadOnlyCollection<GridPlane>(modelGoo.Value.ApiModel.GridPlanes().Values.ToList());
         foreach (GsaAssemblyGoo assemblyGoo in results.Assemblies) {
           Assembly assembly = assemblyGoo.Value.ApiAssembly;
-          var preview = new AssemblyPreview(assembly, nodes[assembly.Topology1], nodes[assembly.Topology2], nodes[assembly.OrientationNode]);
+          var preview = new AssemblyPreview(assembly, nodes[assembly.Topology1], nodes[assembly.Topology2], nodes[assembly.OrientationNode], gridPlanes);
           _assemblyPreviews.Add(preview);
         }
 
