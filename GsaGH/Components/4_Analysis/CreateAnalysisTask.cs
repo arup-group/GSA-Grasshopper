@@ -92,40 +92,40 @@ namespace GsaGH.Components {
           Params.Input[2].Access = GH_ParamAccess.item;
           Params.Input[2].Optional = false;
 
-          int i = 3;
           if (_selectedItems[1] != "Self excitation") {
-            Params.Input[i].NickName = "EN";
-            Params.Input[i].Name = "Excitation nodes";
-            Params.Input[i].Description = "Node list to define the nodes that will be excited for evaluation of the response of the response nodes";
-            Params.Input[i].Access = GH_ParamAccess.item;
-            Params.Input[i].Optional = false;
+            Params.Input[3].NickName = "EN";
+            Params.Input[3].Name = "Excitation nodes";
+            Params.Input[3].Description = "Node list to define the nodes that will be excited for evaluation of the response of the response nodes";
+            Params.Input[3].Access = GH_ParamAccess.item;
+            Params.Input[3].Optional = false;
           }
 
-          Params.Input[i++].NickName = "N";
+          int i = _selectedItems[1] != "Self excitation" ? 4 : 3;
+          Params.Input[i].NickName = "N";
           Params.Input[i].Name = "Number of footfalls";
           Params.Input[i].Description = "The number of footfalls to be considered in the analysis";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
-          Params.Input[i++].NickName = "W";
+          Params.Input[++i].NickName = "W";
           Params.Input[i].Name = "Walker";
           Params.Input[i].Description = "The mass representing a sample walker";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
-          Params.Input[i++].NickName = "D";
+          Params.Input[++i].NickName = "D";
           Params.Input[i].Name = "Direction of responses";
           Params.Input[i].Description = "The direction of response in the GSA global axis direction. It can be in Z (vertical), X, Y or XY plane (horizontal)";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
-          Params.Input[i++].NickName = "F";
+          Params.Input[++i].NickName = "F";
           Params.Input[i].Name = "Frequency weighting curve";
           Params.Input[i].Description = "The Frequency Weighting Curve (FWC) is used in calculating the response factors. Standard and user defined curves can be used";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
-          Params.Input[i++].NickName = "EF";
+          Params.Input[++i].NickName = "EF";
           Params.Input[i].Name = "Excitation forces (DLFs)";
           Params.Input[i].Description = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)";
           Params.Input[i].Access = GH_ParamAccess.item;
@@ -196,7 +196,8 @@ namespace GsaGH.Components {
 
           if (ghTyp.Value is GsaAnalysisCaseGoo goo) {
             cases.Add(goo.Value.Duplicate());
-          } else {
+          }
+          else {
             string type = ghTyp.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", string.Empty);
             type = type.Replace("Goo", string.Empty);
@@ -254,7 +255,7 @@ namespace GsaGH.Components {
 
           switch (_selectedItems[1]) {
             case "Self excitation ":
-              break; 
+              break;
 
             case "Rigorous excitation":
               break;
@@ -361,7 +362,8 @@ namespace GsaGH.Components {
           if (_selectedItems[1] != "Self excitation") {
             _casesParamIndex = 9;
             Params.RegisterInputParam(new Param_String());
-          } else {
+          }
+          else {
             _casesParamIndex = 8;
           }
 
