@@ -15,7 +15,12 @@ namespace GsaGH.Parameters {
       model.AddNode(topology1);
       model.AddNode(topology2);
       model.AddNode(orientationNode);
-      model.AddGridPlanes(gridPlanes);
+
+      foreach (GridPlane plane in gridPlanes) {
+        if (plane.IsStoreyType) {
+          model.AddGridPlane(plane);
+        }
+      }
 
       Assembly temp = null;
       switch (assembly) {
@@ -50,6 +55,7 @@ namespace GsaGH.Parameters {
       temp.ExtentZ = assembly.ExtentZ;
 
       model.AddAssembly(temp);
+      model.SaveAs(assembly.Name + " test.gwb");
 
       var spec = new GraphicSpecification() {
         Entities = new EntityList() {
