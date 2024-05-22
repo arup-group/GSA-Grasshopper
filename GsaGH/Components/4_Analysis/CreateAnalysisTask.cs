@@ -60,6 +60,13 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       switch (_type) {
         case AnalysisTaskType.StaticPDelta:
+
+          Params.Input[_casesParamIndex].NickName = "ΣAs";
+          Params.Input[_casesParamIndex].Name = "Analysis Cases";
+          Params.Input[_casesParamIndex].Description = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)";
+          Params.Input[_casesParamIndex].Access = GH_ParamAccess.item;
+          Params.Input[_casesParamIndex].Optional = false;
+
           switch (_selectedItems[1]) {
             case "Own":
             default:
@@ -131,11 +138,28 @@ namespace GsaGH.Components {
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
+          Params.Input[++i].NickName = "T";
+          Params.Input[i].Name = "Modal Analysis Task";
+          Params.Input[i].Description = "Modal or Ritz analysis task is required to perform footfall analysis";
+          Params.Input[i].Access = GH_ParamAccess.item;
+          Params.Input[i].Optional = false;
+
+          Params.Input[++i].NickName = "DC";
+          Params.Input[i].Name = "Constant Damping";
+          Params.Input[i].Description = "The dynamic post-processing relies on damping to get a solution.";
+          Params.Input[i].Access = GH_ParamAccess.item;
+          Params.Input[i].Optional = false;
+
           break;
 
         case AnalysisTaskType.Static:
         default:
           // do nothing
+          Params.Input[_casesParamIndex].NickName = "ΣAs";
+          Params.Input[_casesParamIndex].Name = "Analysis Cases";
+          Params.Input[_casesParamIndex].Description = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)";
+          Params.Input[_casesParamIndex].Access = GH_ParamAccess.item;
+          Params.Input[_casesParamIndex].Optional = false;
           break;
       }
     }
@@ -268,6 +292,7 @@ namespace GsaGH.Components {
           }
 
           NumberOfFootfalls numberofFootfalls = new ConstantFootfallsForAllModes(numberOfFootfalls);
+          //var walkermass = new WalkerMass();
           WeightingOption frequencyWeightingCurve = WeightingOption.Wg;
           var excitationForces = new ExcitationForces();
           DampingOption dampingOption = new ConstantDampingOption();
@@ -308,21 +333,18 @@ namespace GsaGH.Components {
     }
 
     private void UpdateParameters() {
-      IGH_Param casesParam;
       switch (_type) {
         case AnalysisTaskType.Static:
-          casesParam = Params.Input[Params.Input.Count - 1];
 
           while (Params.Input.Count > 2) {
             Params.UnregisterInputParameter(Params.Input[2], true);
           }
 
           _casesParamIndex = 2;
-          Params.RegisterInputParam(casesParam);
+          Params.RegisterInputParam(new Param_GenericObject());
           break;
 
         case AnalysisTaskType.StaticPDelta:
-          casesParam = Params.Input[Params.Input.Count - 1];
 
           while (Params.Input.Count > 2) {
             Params.UnregisterInputParameter(Params.Input[2], true);
@@ -345,11 +367,11 @@ namespace GsaGH.Components {
               break;
           }
 
-          Params.RegisterInputParam(casesParam);
+          Params.RegisterInputParam(new Param_GenericObject());
           break;
 
         case AnalysisTaskType.Footfall:
-          casesParam = Params.Input[Params.Input.Count - 1];
+
 
           while (Params.Input.Count > 2) {
             Params.UnregisterInputParameter(Params.Input[2], true);
@@ -377,8 +399,11 @@ namespace GsaGH.Components {
           Params.RegisterInputParam(new Param_String());
           // excitation forces
           Params.RegisterInputParam(new Param_String());
+          // Modal analysis task
+          Params.RegisterInputParam(new Param_String());
+          //Damping Constant
+          Params.RegisterInputParam(new Param_Number());
 
-          Params.RegisterInputParam(casesParam);
           break;
 
         default:
