@@ -40,14 +40,17 @@ namespace GsaGH.Parameters {
       Model model = AssembleTempModel(elem);
       CreateGraphics(model, Layer.Analysis, DimensionType.OneDimensional);
     }
+
     public Section3dPreview(GsaElement2d elem) {
       Model model = AssembleTempModel(elem);
       CreateGraphics(model, Layer.Analysis, DimensionType.TwoDimensional);
     }
+
     public Section3dPreview(GsaMember1d mem) {
       Model model = AssembleTempModel(mem);
       CreateGraphics(model, Layer.Design, DimensionType.OneDimensional);
     }
+
     public Section3dPreview(GsaMember2d mem) {
       Model model = AssembleTempModel(mem);
       CreateGraphics(model, Layer.Design, DimensionType.TwoDimensional);
@@ -57,6 +60,7 @@ namespace GsaGH.Parameters {
       GraphicSpecification spec = ResultSpec(res, elementList, scale);
       CreateGraphics(res.Model.ApiModel, spec);
     }
+
     internal Section3dPreview(GsaModel model, Layer layer) {
       GraphicSpecification spec = layer == Layer.Analysis ? AnalysisLayerSpec() : DesignLayerSpec();
       CreateGraphics(model.ApiModel, spec);
@@ -68,6 +72,7 @@ namespace GsaGH.Parameters {
       CreateGraphics(model, spec);
       Scale(unit);
     }
+
     private Section3dPreview() { }
 
     public Section3dPreview Duplicate() {
@@ -77,8 +82,7 @@ namespace GsaGH.Parameters {
       };
     }
 
-    public void BakeGeometry(
-      ref GH_BakeUtility gH_BakeUtility, RhinoDoc doc, ObjectAttributes att) {
+    public void BakeGeometry(ref GH_BakeUtility gH_BakeUtility, RhinoDoc doc, ObjectAttributes att) {
       att ??= doc.CreateDefaultAttributes();
       att.ColorSource = ObjectColorSource.ColorFromObject;
       ObjectAttributes meshAtt = att.Duplicate();

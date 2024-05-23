@@ -17,6 +17,7 @@ namespace GsaGH.Helpers.Graphics {
     public static Brush AnnotationTextBright => Brushes.White;
     public static Brush AnnotationTextDark => Brushes.Black;
     public static Brush AnnotationTextDarkGrey => new SolidBrush(GsaDarkGrey);
+    public static Color Assembly => Color.FromArgb(255, 119, 158, 0);
     public static Color BorderColour => GsaLightGrey;
     public static Color ButtonBorderColour => GsaLightGrey;
     public static Brush ButtonColour => new SolidBrush(GsaDarkBlue);
