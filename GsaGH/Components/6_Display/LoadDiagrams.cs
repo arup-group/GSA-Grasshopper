@@ -297,7 +297,7 @@ namespace GsaGH.Components {
           StructuralScale = arrowScale,
         };
 
-        GraphicDrawResult diagramResults = _gsaModel.Model.GetDiagrams(graphic);
+        GraphicDrawResult diagramResults = _gsaModel.ApiModel.GetDiagrams(graphic);
         ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
 
         double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);

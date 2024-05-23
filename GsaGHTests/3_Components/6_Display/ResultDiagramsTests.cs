@@ -13,7 +13,7 @@ namespace GsaGHTests.Components.Display {
   public class ResultDiagramsTests {
   [Fact]
     public void CombinationCaseWithMultiplePermutationsMessageTests() {
-      var caseResult = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 2, new List<int>() { 1, 2, 3, });
+      GsaResult caseResult = GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 2, new List<int>() { 1, 2, 3, });
 
       var comp = new ResultDiagrams();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(caseResult));
@@ -27,9 +27,9 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     public void UpdateForceTest() {
       var comp = new ResultDiagrams();
-      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      comp.SetSelected(0, 0); // force
+      comp.SetSelected(0, 1); // Force
       comp.SetSelected(1, 0); // Axial force
       comp.UpdateForce("MN");
       comp.Params.Output[0].CollectData();
@@ -39,9 +39,9 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     public void UpdateStressTest() {
       var comp = new ResultDiagrams();
-      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      comp.SetSelected(0, 1); // stress
+      comp.SetSelected(0, 2); // Stress
       comp.UpdateStress("kPa");
       comp.Params.Output[0].CollectData();
       Assert.Equal("kPa", comp.Message);
@@ -50,11 +50,35 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     public void UpdateMomentTest() {
       var comp = new ResultDiagrams();
-      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      comp.SetSelected(0, 1); // Force
       comp.UpdateMoment("MN·m");
       comp.Params.Output[0].CollectData();
       Assert.Equal("MN·m", comp.Message);
+    }
+
+    [Fact]
+    public void UpdateLengthTest() {
+      var comp = new ResultDiagrams();
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      comp.SetSelected(0, 0); // Displacement
+      comp.UpdateLength("cm");
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("cm", comp.Message);
+    }
+
+    [Fact]
+    public void UpdateAngleTest() {
+      var comp = new ResultDiagrams();
+      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      comp.SetSelected(0, 0); // Displacement
+      comp.SetSelected(1, 4); 
+      comp.UpdateAngle("rad");
+      comp.Params.Output[0].CollectData();
+      Assert.Equal("rad", comp.Message);
     }
   }
 }

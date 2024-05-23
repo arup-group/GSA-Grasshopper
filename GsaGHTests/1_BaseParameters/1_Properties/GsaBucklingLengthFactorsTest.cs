@@ -22,10 +22,10 @@ namespace GsaGHTests.Parameters {
       var assembly = new ModelAssembly(m1d);
 
       var assembled = new GsaModel {
-        Model = assembly.GetModel()
+        ApiModel = assembly.GetModel()
       };
 
-      Member assembledMem1d = assembled.Model.Members()[1];
+      Member assembledMem1d = assembled.ApiModel.Members()[1];
 
       Assert.Equal(1.5, assembledMem1d.MomentAmplificationFactorStrongAxis);
       Assert.Equal(2.5, assembledMem1d.MomentAmplificationFactorWeakAxis);

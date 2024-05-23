@@ -596,8 +596,8 @@ namespace GsaGH.Components {
       bool enveloped = Inputs.IsResultCaseEnveloped(this, result, ref _case, _envelopeType);
       List<int> permutations = result.SelectedPermutationIds;
       elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
-      ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
-      ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
+      ReadOnlyDictionary<int, Element> elems = result.Model.ApiModel.Elements(elementlist);
+      ReadOnlyDictionary<int, Node> nodes = result.Model.ApiModel.Nodes();
       if (elems.Count == 0) {
         this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
         return;
@@ -641,7 +641,7 @@ namespace GsaGH.Components {
         case FoldMode.Displacement:
           IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> displacements = Quaternions.CoordinateTransformationTo(
             result.Element1dDisplacements.ResultSubset(elementIds, positionsCount).Subset,
-            Plane.WorldXY, result.Model.Model);
+            Plane.WorldXY, result.Model.ApiModel);
           Func<IDisplacement, IQuantity> displacementSelector = null;
           switch (_disp) {
             case DisplayValue.X:

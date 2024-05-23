@@ -209,14 +209,14 @@ namespace GsaGH.Components {
       // Assemble model
       var assembly = new ModelAssembly(model, lists, gridLines, geometry, properties, loading,
         analysis, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
-      model.Model = assembly.GetModel();
+      model.ApiModel = assembly.GetModel();
 
       // Run analysis
       if (_analysis) {
-        IReadOnlyDictionary<int, AnalysisTask> gsaTasks = model.Model.AnalysisTasks();
+        IReadOnlyDictionary<int, AnalysisTask> gsaTasks = model.ApiModel.AnalysisTasks();
         if (gsaTasks.Count < 1) {
           var task = new GsaAnalysisTask {
-            Id = model.Model.AddAnalysisTask(),
+            Id = model.ApiModel.AddAnalysisTask(),
           };
           task.CreateDefaultCases(model);
           if (task.Cases == null || task.Cases.Count == 0) {
@@ -227,10 +227,10 @@ namespace GsaGH.Components {
               " Model contained no Analysis Tasks. Default Task has been created containing " +
               "all cases found in model");
             foreach (GsaAnalysisCase ca in task.Cases) {
-              model.Model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Definition);
+              model.ApiModel.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Definition);
             }
 
-            gsaTasks = model.Model.AnalysisTasks();
+            gsaTasks = model.ApiModel.AnalysisTasks();
           }
         }
 
@@ -253,9 +253,9 @@ namespace GsaGH.Components {
           var errors = new List<string>();
 
           foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks) {
-            if (model.Model.Analyse(task.Key, out TaskReport report)) {
+            if (model.ApiModel.Analyse(task.Key, out TaskReport report)) {
               OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
-                model.Model.Elements().Count);
+                model.ApiModel.Elements().Count);
             } else {
               string message = "Analysis Task " + task.Key +
                 " failed with one or more errors. Check report output for details";

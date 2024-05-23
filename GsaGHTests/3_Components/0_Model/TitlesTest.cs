@@ -49,7 +49,7 @@ namespace GsaGHTests.Model {
 
       // test that items have been set into API model
       var output = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      GsaAPI.Titles titles = output.Value.Model.Titles();
+      GsaAPI.Titles titles = output.Value.ApiModel.Titles();
       Assert.Equal("123456-78", titles.JobNumber);
       Assert.Equal("KPN", titles.Initials);
       Assert.Equal("Test this Title", titles.Title);

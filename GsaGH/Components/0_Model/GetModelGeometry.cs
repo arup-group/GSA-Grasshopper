@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,8 @@ using GH_IO.Serialization;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
+using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.Import;
@@ -67,6 +70,7 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.List;
     private ConcurrentBag<GsaNodeGoo> _supportNodes;
+    private ConcurrentBag<AssemblyPreview> _assemblyPreviews = new ConcurrentBag<AssemblyPreview>();
     private bool _showSupports = true;
     private SolveResults _results;
 
@@ -101,6 +105,7 @@ namespace GsaGH.Components {
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
       base.DrawViewportMeshes(args);
+
       if (Attributes.Selected) {
         if (_cachedDisplayMeshWithoutParent != null) {
           foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
@@ -171,6 +176,10 @@ namespace GsaGH.Components {
         return;
       }
 
+      foreach (AssemblyPreview preview in _assemblyPreviews) {
+        args.Display.DrawLines(preview.Outlines, Colours.Assembly);
+      }
+
       foreach (GsaNodeGoo node in _supportNodes) {
         if (node.Value.Point.IsValid) {
           if (!Attributes.Selected) {
@@ -237,7 +246,7 @@ namespace GsaGH.Components {
       ReadDropDownComponents(ref reader, ref _dropDownItems, ref _selectedItems,
         ref _spacerDescriptions);
       _isInitialised = true;
-      UpdateUiFrom_selectedItems();
+      UpdateUiFromSelectedItems();
       return base.Read(reader);
     }
 
@@ -254,13 +263,13 @@ namespace GsaGH.Components {
       OnDisplayExpired(true);
     }
 
-    public void UpdateUiFrom_selectedItems() {
+    public void UpdateUiFromSelectedItems() {
       _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[0]);
       CreateAttributes();
       UpdateUi();
     }
 
-    void IGH_VariableParameterComponent.VariableParameterMaintenance() {
+    public void VariableParameterMaintenance() {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
       int i = 0;
@@ -397,8 +406,8 @@ namespace GsaGH.Components {
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       string unitAbbreviation = Length.GetAbbreviation(_lengthUnit);
 
-      pManager.AddParameter(new GsaNodeParameter(), "Nodes in [" + unitAbbreviation + "]", "No", "Nodes from GSA Model",
-        GH_ParamAccess.list);
+      pManager.AddParameter(new GsaNodeParameter(), "Nodes in [" + unitAbbreviation + "]", "No",
+        "Nodes from GSA Model", GH_ParamAccess.list);
       pManager.AddParameter(new GsaElement1dParameter(), "1D Elements in [" + unitAbbreviation + "]", "E1D",
         "1D Elements (Analysis Layer) from GSA Model imported to selected unit",
         GH_ParamAccess.list);
@@ -682,7 +691,18 @@ namespace GsaGH.Components {
         }
       }
 
-      if (!(results.Assemblies is null) || results.Assemblies.Count == 0) {
+      if (!results.Assemblies.IsNullOrEmpty()) {
+        GsaModelGoo modelGoo = null;
+        data.GetData(0, ref modelGoo);
+
+        ReadOnlyDictionary<int, Node> nodes = modelGoo.Value.ApiModel.Nodes();
+        var gridPlanes = new ReadOnlyCollection<GridPlane>(modelGoo.Value.ApiModel.GridPlanes().Values.ToList());
+        foreach (GsaAssemblyGoo assemblyGoo in results.Assemblies) {
+          Assembly assembly = assemblyGoo.Value.ApiAssembly;
+          var preview = new AssemblyPreview(assembly, nodes[assembly.Topology1], nodes[assembly.Topology2], nodes[assembly.OrientationNode], gridPlanes);
+          _assemblyPreviews.Add(preview);
+        }
+
         data.SetDataList(7, results.Assemblies.OrderBy(item => item.Value.Id));
       }
     }
@@ -704,7 +724,7 @@ namespace GsaGH.Components {
           switch (i) {
             case 0:
               _results.Nodes = Nodes.GetNodes(
-                nodeList.ToLower() == "all" ? model.ApiNodes : model.Model.Nodes(nodeList),
+                nodeList.ToLower() == "all" ? model.ApiNodes : model.ApiModel.Nodes(nodeList),
                 model.ModelUnit,
                 model.ApiAxis,
                 model.SpringProps);

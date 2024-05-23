@@ -199,7 +199,7 @@ namespace GsaGH.Components {
         Curve curve = null;
         GH_Convert.ToCurve(ghCurve, ref curve, GH_Conversion.Both);
 
-        if (curve.TryGetPolyline(out Polyline ln)) {
+        if (curve.TryGetPolyline(out Rhino.Geometry.Polyline ln)) {
           var controlPoints = new Point3dList(ln);
           gridlineload.Points = controlPoints;
 

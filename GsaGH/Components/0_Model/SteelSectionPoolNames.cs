@@ -83,12 +83,12 @@ namespace GsaGH.Components {
       }
 
       if (ids.Count > 0) {
-        model.Model.SetSteelSectionPools(new ReadOnlyDictionary<int, string>(sectionPools));
+        model.ApiModel.SetSteelSectionPools(new ReadOnlyDictionary<int, string>(sectionPools));
       }
 
       var tree = new DataTree<GsaSectionGoo>();
       ReadOnlyDictionary<int, GsaSectionGoo> sections = model.Sections;
-      ReadOnlyDictionary<int, string> modelSectionPools = model.Model.SteelSectionPools();
+      ReadOnlyDictionary<int, string> modelSectionPools = model.ApiModel.SteelSectionPools();
       foreach (int id in modelSectionPools.Keys) {
         var poolSections = new List<GsaSectionGoo>();
         foreach (GsaSectionGoo section in sections.Values) {

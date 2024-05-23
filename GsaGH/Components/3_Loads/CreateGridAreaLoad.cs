@@ -204,7 +204,7 @@ namespace GsaGH.Components {
         Curve[] edges = Curve.JoinCurves(edgeSegments);
         Curve curve = edges[0];
 
-        if (curve.TryGetPolyline(out Polyline polyline)) {
+        if (curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline)) {
           var ctrlPts = new Point3dList(polyline);
           gridareaload.Points = ctrlPts;
 

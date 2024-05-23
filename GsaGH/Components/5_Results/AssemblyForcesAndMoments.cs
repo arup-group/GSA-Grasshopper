@@ -105,26 +105,26 @@ namespace GsaGH.Components {
       string note = ResultNotes.NoteAssemblyResults;
 
       pManager.AddGenericParameter("Force X [" + forceunitAbbreviation + "]", "Fx",
-        "Assembly Axial Force in Local Element X-direction." + forcerule + note,
+        "Assembly Axial Force in Local Element X-direction" + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Y [" + forceunitAbbreviation + "]", "Fy",
-        "Assembly Shear Force in Local Element Y-direction." + forcerule + note,
+        "Assembly Shear Force in Local Element Y-direction" + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force Z [" + forceunitAbbreviation + "]", "Fz",
-        "Assembly Shear Force in Local Element Z-direction." + forcerule + note,
+        "Assembly Shear Force in Local Element Z-direction" + forcerule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Force |YZ| [" + forceunitAbbreviation + "]", "|Fyz|",
-        "Total |YZ| Assembly Shear Force." + note, GH_ParamAccess.tree);
+        "Total |YZ| Assembly Shear Force" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment XX [" + momentunitAbbreviation + "]", "Mxx",
-        "Assembly Torsional Moment around Local Element X-axis." + momentrule + note,
+        "Assembly Torsional Moment around Local Element X-axis" + momentrule + note,
         GH_ParamAccess.tree); pManager.AddGenericParameter("Moment YY [" + momentunitAbbreviation + "]", "Myy",
-        "Assembly Bending Moment around Local Element Y-axis." + momentrule + note,
+        "Assembly Bending Moment around Local Element Y-axis" + momentrule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment ZZ [" + momentunitAbbreviation + "]", "Mzz",
-        "Assembly Bending Moment around Local Element Z-axis." + momentrule + note,
+        "Assembly Bending Moment around Local Element Z-axis" + momentrule + note,
         GH_ParamAccess.tree);
       pManager.AddGenericParameter("Moment |YZ| [" + momentunitAbbreviation + "]", "|Myz|",
-        "Total |YYZZ| Assembly Bending Moment." + note, GH_ParamAccess.tree);
+        "Total |YYZZ| Assembly Bending Moment" + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {

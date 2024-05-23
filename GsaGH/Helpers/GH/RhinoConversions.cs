@@ -706,7 +706,7 @@ namespace GsaGH.Helpers.GH {
       edges.AddRange(inner);
 
       Point3dList ctrlPts;
-      if (edges[0].TryGetPolyline(out Polyline tempCrv)) {
+      if (edges[0].TryGetPolyline(out Rhino.Geometry.Polyline tempCrv)) {
         ctrlPts = new Point3dList(tempCrv);
       } else {
         Tuple<PolyCurve, Point3dList, List<string>> convertBadSrf

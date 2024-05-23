@@ -6,6 +6,7 @@ using Rhino.Collections;
 namespace GsaGH.Parameters {
   public class GsaGridAreaLoad : IGsaGridLoad {
     public GridAreaLoad ApiLoad { get; set; } = new GridAreaLoad();
+    public Polyline ApiPolyline { get; internal set; }
     public GsaGridPlaneSurface GridPlaneSurface { get; set; } = new GsaGridPlaneSurface();
     public GsaLoadCase LoadCase { get; set; }
     public ReferenceType ReferenceType => GridPlaneSurface._referenceType;
@@ -44,11 +45,22 @@ namespace GsaGH.Parameters {
         Points = Points,
       };
 
+      if(ApiPolyline != null) {
+        dup.ApiPolyline = DuplicateApiPolyline();
+      }
+
       if (LoadCase != null) {
         dup.LoadCase = LoadCase;
       }
 
       return dup;
+    }
+
+    private Polyline DuplicateApiPolyline() {
+      var polyline = new Polyline(ApiPolyline.Points) {
+        Name = ApiPolyline.Name
+      };
+      return polyline;
     }
   }
 }

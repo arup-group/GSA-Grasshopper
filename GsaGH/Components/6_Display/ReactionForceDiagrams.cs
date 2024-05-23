@@ -213,9 +213,9 @@ namespace GsaGH.Components {
       int permutation = result.SelectedPermutationIds == null
         ? 0 : result.SelectedPermutationIds[0] - 1;
 
-      ReadOnlyDictionary<int, Node> gsaFilteredNodes = result.Model.Model.Nodes(nodeList);
+      ReadOnlyDictionary<int, Node> gsaFilteredNodes = result.Model.ApiModel.Nodes(nodeList);
       ConcurrentDictionary<int, GsaNodeGoo> nodes = Nodes.GetNodeDictionary(gsaFilteredNodes,
-        lengthUnit, result.Model.Model.Axes());
+        lengthUnit, result.Model.ApiModel.Axes());
 
       double scale = 1;
       if (!da.GetData(5, ref scale)) {

@@ -19,7 +19,7 @@ namespace GsaGHTests.Helpers.GH {
     public void GetAnalysisFromTaskTest() {
       var getModelAnalysis = new GetModelAnalysis();
       var model = new GsaModel();
-      model.Model.Open(GsaFile.SteelDesignSimple);
+      model.ApiModel.Open(GsaFile.SteelDesignSimple);
       ComponentTestHelper.SetInput(getModelAnalysis, new GsaModelGoo(model));
       var taskGoo = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(getModelAnalysis);
       var comp = new CreateModel();
@@ -34,7 +34,7 @@ namespace GsaGHTests.Helpers.GH {
     public void GetAnalysisFromCombinationTest() {
       var getModelAnalysis = new GetModelAnalysis();
       var model = new GsaModel();
-      model.Model.Open(GsaFile.SteelDesignSimple);
+      model.ApiModel.Open(GsaFile.SteelDesignSimple);
       ComponentTestHelper.SetInput(getModelAnalysis, new GsaModelGoo(model));
       var combinationGoo = (GsaCombinationCaseGoo)ComponentTestHelper.GetOutput(getModelAnalysis, 2);
       var comp = new CreateModel();
@@ -49,7 +49,7 @@ namespace GsaGHTests.Helpers.GH {
     public void GetAnalysisFromAnalysisCaseErrorTest() {
       var getModelAnalysis = new GetModelAnalysis();
       var model = new GsaModel();
-      model.Model.Open(GsaFile.SteelDesignSimple);
+      model.ApiModel.Open(GsaFile.SteelDesignSimple);
       ComponentTestHelper.SetInput(getModelAnalysis, new GsaModelGoo(model));
       var analysisCaseGoo = (GsaAnalysisCaseGoo)ComponentTestHelper.GetOutput(getModelAnalysis, 1);
       var comp = new CreateModel();
@@ -210,7 +210,7 @@ namespace GsaGHTests.Helpers.GH {
     [Fact]
     public void GetModelFromModelTest() {
       var model = new GsaModel();
-      model.Model.Open(GsaFile.SteelDesignSimple);
+      model.ApiModel.Open(GsaFile.SteelDesignSimple);
       var goo = new GsaModelGoo(model);
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 0);
@@ -265,7 +265,7 @@ namespace GsaGHTests.Helpers.GH {
         Definition = "1",
         Name = "myList"
       };
-      result.Model.Model.AddList(apiList);
+      result.Model.ApiModel.AddList(apiList);
 
       var comp = new Member1dDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -284,7 +284,7 @@ namespace GsaGHTests.Helpers.GH {
         Definition = "1",
         Name = "myList"
       };
-      result.Model.Model.AddList(apiList);
+      result.Model.ApiModel.AddList(apiList);
 
       var comp = new Member1dDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -303,7 +303,7 @@ namespace GsaGHTests.Helpers.GH {
         Definition = "1",
         Name = string.Empty
       };
-      result.Model.Model.AddList(apiList);
+      result.Model.ApiModel.AddList(apiList);
 
       var comp = new Member1dDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -345,7 +345,7 @@ namespace GsaGHTests.Helpers.GH {
         Definition = "2",
         Name = "myList"
       };
-      result.Model.Model.AddList(apiList);
+      result.Model.ApiModel.AddList(apiList);
 
       var comp = new NodeDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -364,7 +364,7 @@ namespace GsaGHTests.Helpers.GH {
         Definition = "2",
         Name = "myList"
       };
-      result.Model.Model.AddList(apiList);
+      result.Model.ApiModel.AddList(apiList);
 
       var comp = new NodeDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -383,7 +383,7 @@ namespace GsaGHTests.Helpers.GH {
         Definition = "1",
         Name = string.Empty
       };
-      result.Model.Model.AddList(apiList);
+      result.Model.ApiModel.AddList(apiList);
 
       var comp = new NodeDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -437,7 +437,7 @@ namespace GsaGHTests.Helpers.GH {
         Definition = "1 2",
         Name = $"Children of '{listName}'"
       };
-      result.Model.Model.AddList(apiList);
+      result.Model.ApiModel.AddList(apiList);
 
       var comp = new BeamDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -458,7 +458,7 @@ namespace GsaGHTests.Helpers.GH {
         Definition = "1",
         Name = listName
       };
-      result.Model.Model.AddList(apiList);
+      result.Model.ApiModel.AddList(apiList);
 
       var comp = new BeamDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -480,8 +480,8 @@ namespace GsaGHTests.Helpers.GH {
         Definition = "2",
         Name = listName
       };
-      result.Model.Model.AddList(apiList);
-      result.Model.Model.AddMember(new Member());
+      result.Model.ApiModel.AddList(apiList);
+      result.Model.ApiModel.AddMember(new Member());
 
       var comp = new BeamDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -496,7 +496,7 @@ namespace GsaGHTests.Helpers.GH {
     [Fact]
     public void TestGetElementListDefinitionErrorFromMemberListNotInModel() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      result.Model.Model.AddMember(new Member());
+      result.Model.ApiModel.AddMember(new Member());
 
       var comp = new BeamDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -511,7 +511,7 @@ namespace GsaGHTests.Helpers.GH {
     [Fact]
     public void TestGetElementListDefinitionFromMemberListNotInModel() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      result.Model.Model.AddMember(new Member());
+      result.Model.ApiModel.AddMember(new Member());
 
       var comp = new BeamDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -527,7 +527,7 @@ namespace GsaGHTests.Helpers.GH {
     [Fact]
     public void TestGetElementOrMemberListFromString() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      result.Model.Model.AddMember(new Member());
+      result.Model.ApiModel.AddMember(new Member());
 
       var comp = new ResultDiagrams();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -540,7 +540,7 @@ namespace GsaGHTests.Helpers.GH {
     [Fact]
     public void TestGetElementOrMemberListFromElementList() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      result.Model.Model.AddMember(new Member());
+      result.Model.ApiModel.AddMember(new Member());
 
       var comp = new ResultDiagrams();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -554,7 +554,7 @@ namespace GsaGHTests.Helpers.GH {
     [Fact]
     public void TestGetElementOrMemberListFromMemberList() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      result.Model.Model.AddMember(new Member());
+      result.Model.ApiModel.AddMember(new Member());
 
       var comp = new ResultDiagrams();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -568,7 +568,7 @@ namespace GsaGHTests.Helpers.GH {
     [Fact]
     public void TestGetElementOrMemberListErrorFromNodeList() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      result.Model.Model.AddMember(new Member());
+      result.Model.ApiModel.AddMember(new Member());
 
       var comp = new ResultDiagrams();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));

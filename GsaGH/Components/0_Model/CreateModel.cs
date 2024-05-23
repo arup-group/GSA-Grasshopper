@@ -169,7 +169,7 @@ namespace GsaGH.Components {
       // Assemble model
       var assembly = new ModelAssembly(model, lists, gridLines, geometry, properties, loading,
         analysis, _lengthUnit, ToleranceMenu.Tolerance, _reMesh, this);
-      model.Model = assembly.GetModel();
+      model.ApiModel = assembly.GetModel();
 
       ToleranceMenu.UpdateMessage(this, _lengthUnit);
 

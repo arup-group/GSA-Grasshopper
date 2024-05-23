@@ -39,7 +39,7 @@ namespace GsaGHTests.Model {
       ComponentTestHelper.SetListInput(comp, new List<object>() { "Steel pool 1", "Steel pool 2", "Steel pool 4" }, 2);
 
       var output = (List<GsaModelGoo>)ComponentTestHelper.GetListOutput(comp, 0);
-      ReadOnlyDictionary<int, string> sectionPools = output[0].Value.Model.SteelSectionPools();
+      ReadOnlyDictionary<int, string> sectionPools = output[0].Value.ApiModel.SteelSectionPools();
       Assert.Equal("Steel pool 1", sectionPools[1]);
       Assert.Equal("Steel pool 2", sectionPools[2]);
       Assert.Equal("Steel pool 4", sectionPools[4]);

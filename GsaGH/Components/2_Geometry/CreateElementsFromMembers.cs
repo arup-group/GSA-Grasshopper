@@ -168,7 +168,7 @@ namespace GsaGH.Components {
       Model gsa = assembly.GetModel();
 
       var outModel = new GsaModel {
-        Model = gsa,
+        ApiModel = gsa,
         ModelUnit = _lengthUnit,
       };
 

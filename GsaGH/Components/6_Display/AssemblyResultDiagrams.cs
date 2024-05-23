@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -10,6 +11,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.Grahics;
 using GsaGH.Parameters;
@@ -29,13 +31,14 @@ using Line = GsaAPI.Line;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to get Assembly results
+  ///   Component to get Assembly result diagrams
   /// </summary>
   public class AssemblyResultDiagrams : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("1b059edf-69aa-4c54-bcd6-01e3def03ef1");
     public override GH_Exposure Exposure => GH_Exposure.tertiary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.AssemblyResultDiagrams;
+    private ConcurrentBag<AssemblyPreview> _assemblyPreviews = new ConcurrentBag<AssemblyPreview>();
 
     private string _case = string.Empty;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
@@ -61,6 +64,14 @@ namespace GsaGH.Components {
       endPoint.Transform(t);
 
       return endPoint;
+    }
+
+    public override void DrawViewportWires(IGH_PreviewArgs args) {
+      base.DrawViewportWires(args);
+
+      foreach (AssemblyPreview preview in _assemblyPreviews) {
+        args.Display.DrawLines(preview.Outlines, Colours.Assembly);
+      }
     }
 
     public override bool Read(GH_IReader reader) {
@@ -272,7 +283,7 @@ namespace GsaGH.Components {
       var diagramLines = new List<GsaDiagramGoo>();
       var diagramAnnotations = new List<GsaAnnotationGoo>();
 
-      GraphicDrawResult diagramResults = result.Model.Model.GetDiagrams(graphic);
+      GraphicDrawResult diagramResults = result.Model.ApiModel.GetDiagrams(graphic);
       ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
 
       Color color = Color.Empty;
@@ -305,6 +316,14 @@ namespace GsaGH.Components {
         significantDigits, color);
 
       ((IGH_PreviewObject)Params.Output[1]).Hidden = !showAnnotations;
+
+      _assemblyPreviews = new ConcurrentBag<AssemblyPreview>();
+      ReadOnlyDictionary<int, Node> nodes = result.Model.ApiModel.Nodes();
+      var gridPlanes = new ReadOnlyCollection<GridPlane>(result.Model.ApiModel.GridPlanes().Values.ToList());
+      foreach (Assembly assembly in result.Model.ApiModel.Assemblies().Values) {
+        var preview = new AssemblyPreview(assembly, nodes[assembly.Topology1], nodes[assembly.Topology2], nodes[assembly.OrientationNode], gridPlanes, list.Definition);
+        _assemblyPreviews.Add(preview);
+      }
 
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);

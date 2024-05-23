@@ -23,7 +23,7 @@ namespace GsaGHTests.Parameters.Results {
         = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert node IDs
-      var expectedIds = result.Model.Model.Nodes(NodeList).Keys.OrderBy(x => x).ToList();
+      var expectedIds = result.Model.ApiModel.Nodes(NodeList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
 
@@ -38,7 +38,7 @@ namespace GsaGHTests.Parameters.Results {
         = result.NodeDisplacements.ResultSubset(nodeIds);
 
       // Assert node IDs
-      var expectedIds = result.Model.Model.Nodes(NodeList).Keys.ToList();
+      var expectedIds = result.Model.ApiModel.Nodes(NodeList).Keys.ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
 
