@@ -35,42 +35,42 @@ namespace GsaGH.Parameters.Results {
       where T : IResultVector3InAxis<Q1> where Q1 : IQuantity {
       for (int i = 0; i < item.Count; i++) {
         if (item[i].X.Value > maxValue.X) {
-          maxValue.X = item[i].X.Value;
+          maxValue.X = (double)item[i].X.Value;
           maxKey.X = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Y.Value > maxValue.Y) {
-          maxValue.Y = item[i].Y.Value;
+          maxValue.Y = (double)item[i].Y.Value;
           maxKey.Y = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Z.Value > maxValue.Z) {
-          maxValue.Z = item[i].Z.Value;
+          maxValue.Z = (double)item[i].Z.Value;
           maxKey.Z = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Xyz.Value > maxValue.Xyz) {
-          maxValue.Xyz = item[i].Xyz.Value;
+          maxValue.Xyz = (double)item[i].Xyz.Value;
           maxKey.Xyz = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].X.Value < minValue.X) {
-          minValue.X = item[i].X.Value;
+          minValue.X = (double)item[i].X.Value;
           minKey.X = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Y.Value < minValue.Y) {
-          minValue.Y = item[i].Y.Value;
+          minValue.Y = (double)item[i].Y.Value;
           minKey.Y = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Z.Value < minValue.Z) {
-          minValue.Z = item[i].Z.Value;
+          minValue.Z = (double)item[i].Z.Value;
           minKey.Z = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Xyz.Value < minValue.Xyz) {
-          minValue.Xyz = item[i].Xyz.Value;
+          minValue.Xyz = (double)item[i].Xyz.Value;
           minKey.Xyz = new Entity2dExtremaKey(elementId, i, permutation);
         }
       }

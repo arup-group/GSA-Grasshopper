@@ -417,7 +417,7 @@ namespace GsaGH.Components {
 
       string text = string.Empty;
       if (forceValue != null) {
-        text = $"{Math.Round(forceValue.Value, significantDigits)} {Message}";
+        text = $"{Math.Round((double)forceValue.Value, significantDigits)} {Message}";
       }
 
       var annotation = new GsaAnnotationGoo(new GsaAnnotationDot(

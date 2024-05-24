@@ -63,82 +63,82 @@ namespace GsaGH.Parameters.Results {
       where T : IResultVector6<Q1, Q2> where Q1 : IQuantity where Q2 : IQuantity {
 
       if (item.X.Value > maxValue.X) {
-        maxValue.X = item.X.Value;
+        maxValue.X = (double)item.X.Value;
         maxKey.X = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Y.Value > maxValue.Y) {
-        maxValue.Y = item.Y.Value;
+        maxValue.Y = (double)item.Y.Value;
         maxKey.Y = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Z.Value > maxValue.Z) {
-        maxValue.Z = item.Z.Value;
+        maxValue.Z = (double)item.Z.Value;
         maxKey.Z = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Xyz.Value > maxValue.Xyz) {
-        maxValue.Xyz = item.Xyz.Value;
+        maxValue.Xyz = (double)item.Xyz.Value;
         maxKey.Xyz = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Xx.Value > maxValue.Xx) {
-        maxValue.Xx = item.Xx.Value;
+        maxValue.Xx = (double)item.Xx.Value;
         maxKey.Xx = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Yy.Value > maxValue.Yy) {
-        maxValue.Yy = item.Yy.Value;
+        maxValue.Yy = (double)item.Yy.Value;
         maxKey.Yy = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Zz.Value > maxValue.Zz) {
-        maxValue.Zz = item.Zz.Value;
+        maxValue.Zz = (double)item.Zz.Value;
         maxKey.Zz = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Xxyyzz.Value > maxValue.Xxyyzz) {
-        maxValue.Xxyyzz = item.Xxyyzz.Value;
+        maxValue.Xxyyzz = (double)item.Xxyyzz.Value;
         maxKey.Xxyyzz = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.X.Value < minValue.X) {
-        minValue.X = item.X.Value;
+        minValue.X = (double)item.X.Value;
         minKey.X = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Y.Value < minValue.Y) {
-        minValue.Y = item.Y.Value;
+        minValue.Y = (double)item.Y.Value;
         minKey.Y = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Z.Value < minValue.Z) {
-        minValue.Z = item.Z.Value;
+        minValue.Z = (double)item.Z.Value;
         minKey.Z = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Xyz.Value < minValue.Xyz) {
-        minValue.Xyz = item.Xyz.Value;
+        minValue.Xyz = (double)item.Xyz.Value;
         minKey.Xyz = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Xx.Value < minValue.Xx) {
-        minValue.Xx = item.Xx.Value;
+        minValue.Xx = (double)item.Xx.Value;
         minKey.Xx = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Yy.Value < minValue.Yy) {
-        minValue.Yy = item.Yy.Value;
+        minValue.Yy = (double)item.Yy.Value;
         minKey.Yy = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Zz.Value < minValue.Zz) {
-        minValue.Zz = item.Zz.Value;
+        minValue.Zz = (double)item.Zz.Value;
         minKey.Zz = new Entity0dExtremaKey(nodeId, permutation);
       }
 
       if (item.Xxyyzz.Value < minValue.Xxyyzz) {
-        minValue.Xxyyzz = item.Xxyyzz.Value;
+        minValue.Xxyyzz = (double)item.Xxyyzz.Value;
         minKey.Xxyyzz = new Entity0dExtremaKey(nodeId, permutation);
       }
     }

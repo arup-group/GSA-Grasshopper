@@ -736,8 +736,8 @@ namespace GsaGH.Components {
         significantDigits = (int)rounded[2];
       } else {
         if (enveloped) {
-          dmax = values.Values.Max().Value;
-          dmin = values.Values.Min().Value;
+          dmax = (double)values.Values.Max().Value;
+          dmin = (double)values.Values.Min().Value;
         }
 
         List<double> rounded = ResultHelper.SmartRounder((double)dmax, (double)dmin);
@@ -788,9 +788,9 @@ namespace GsaGH.Components {
         double tnorm = 0;
         float size = 0;
         if (t != null) {
-          tnorm = (2 * (t.Value - (double)dmin) / ((double)dmax - (double)dmin)) - 1;
-          size = t.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t.Value / dmax * scale)) :
-            Math.Max(2, (float)(Math.Abs(t.Value) / Math.Abs((double)dmin) * scale));
+          tnorm = (2 * ((double)t.Value - (double)dmin) / ((double)dmax - (double)dmin)) - 1;
+          size = t.Value >= 0 && dmax != 0 ? Math.Max(2, (float)((double)t.Value / dmax * scale)) :
+            Math.Max(2, (float)(Math.Abs((double)t.Value) / Math.Abs((double)dmin) * scale));
         }
         Color valcol = ghGradient.ColourAt(tnorm);
 

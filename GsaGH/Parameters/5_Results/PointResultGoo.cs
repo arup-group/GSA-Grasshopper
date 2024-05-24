@@ -37,7 +37,7 @@ namespace GsaGH.Parameters {
       }
 
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Number))) {
-        target = (TQ)(object)new GH_Number(Result.Value);
+        target = (TQ)(object)new GH_Number((double)Result.Value);
         return true;
       }
 

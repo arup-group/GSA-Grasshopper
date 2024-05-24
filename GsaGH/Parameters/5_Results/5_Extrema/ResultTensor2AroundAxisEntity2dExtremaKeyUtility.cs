@@ -35,51 +35,51 @@ namespace GsaGH.Parameters.Results {
       where T : IResultTensor2AroundAxis<Q> where Q : IQuantity {
       for (int i = 0; i < item.Count; i++) {
         if (item[i].Mx.Value > maxValue.Mx) {
-          maxValue.Mx = item[i].Mx.Value;
+          maxValue.Mx = (double)item[i].Mx.Value;
           maxKey.Mx = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].My.Value > maxValue.My) {
-          maxValue.My = item[i].My.Value;
+          maxValue.My = (double)item[i].My.Value;
           maxKey.My = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Mxy.Value > maxValue.Mxy) {
-          maxValue.Mxy = item[i].Mxy.Value;
+          maxValue.Mxy = (double)item[i].Mxy.Value;
           maxKey.Mxy = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].WoodArmerX.Value > maxValue.WoodArmerX) {
-          maxValue.WoodArmerX = item[i].WoodArmerX.Value;
+          maxValue.WoodArmerX = (double)item[i].WoodArmerX.Value;
           maxKey.WoodArmerX = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].WoodArmerY.Value > maxValue.WoodArmerY) {
-          maxValue.WoodArmerY = item[i].WoodArmerY.Value;
+          maxValue.WoodArmerY = (double)item[i].WoodArmerY.Value;
           maxKey.WoodArmerY = new Entity2dExtremaKey(elementId, i, permutation);
         }
         if (item[i].Mx.Value < minValue.Mx) {
-          minValue.Mx = item[i].Mx.Value;
+          minValue.Mx = (double)item[i].Mx.Value;
           minKey.Mx = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].My.Value < minValue.My) {
-          minValue.My = item[i].My.Value;
+          minValue.My = (double)item[i].My.Value;
           minKey.My = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Mxy.Value < minValue.Mxy) {
-          minValue.Mxy = item[i].Mxy.Value;
+          minValue.Mxy = (double)item[i].Mxy.Value;
           minKey.Mxy = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].WoodArmerX.Value < minValue.WoodArmerX) {
-          minValue.WoodArmerX = item[i].WoodArmerX.Value;
+          minValue.WoodArmerX = (double)item[i].WoodArmerX.Value;
           minKey.WoodArmerX = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].WoodArmerY.Value < minValue.WoodArmerY) {
-          minValue.WoodArmerY = item[i].WoodArmerY.Value;
+          minValue.WoodArmerY = (double)item[i].WoodArmerY.Value;
           minKey.WoodArmerY = new Entity2dExtremaKey(elementId, i, permutation);
         }
       }

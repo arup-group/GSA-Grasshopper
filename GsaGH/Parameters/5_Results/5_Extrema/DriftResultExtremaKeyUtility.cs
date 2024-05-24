@@ -44,32 +44,32 @@ namespace GsaGH.Parameters.Results {
      where T : IDrift<Q> where Q : IQuantity {
 
       if (item.X.Value > maxValue.X) {
-        maxValue.X = item.X.Value;
+        maxValue.X = (double)item.X.Value;
         maxKey.X = new Entity1dExtremaKey(assemblyId, position, permutation);
       }
 
       if (item.Y.Value > maxValue.Y) {
-        maxValue.Y = item.Y.Value;
+        maxValue.Y = (double)item.Y.Value;
         maxKey.Y = new Entity1dExtremaKey(assemblyId, position, permutation);
       }
 
       if (item.Xy.Value > maxValue.Xy) {
-        maxValue.Xy = item.Xy.Value;
+        maxValue.Xy = (double)item.Xy.Value;
         maxKey.Xy = new Entity1dExtremaKey(assemblyId, position, permutation);
       }
 
       if (item.X.Value < minValue.X) {
-        minValue.X = item.X.Value;
+        minValue.X = (double)item.X.Value;
         minKey.X = new Entity1dExtremaKey(assemblyId, position, permutation);
       }
 
       if (item.Y.Value < minValue.Y) {
-        minValue.Y = item.Y.Value;
+        minValue.Y = (double)item.Y.Value;
         minKey.Y = new Entity1dExtremaKey(assemblyId, position, permutation);
       }
 
       if (item.Xy.Value < minValue.Xy) {
-        minValue.Xy = item.Xy.Value;
+        minValue.Xy = (double)item.Xy.Value;
         minKey.Xy = new Entity1dExtremaKey(assemblyId, position, permutation);
       }
     }
