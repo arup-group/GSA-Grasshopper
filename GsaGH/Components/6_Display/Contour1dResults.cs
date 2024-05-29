@@ -976,8 +976,8 @@ namespace GsaGH.Components {
         significantDigits = (int)rounded[2];
       } else {
         if (enveloped) {
-          dmax = values.Values.Select(x => x.Max()).Max().Value;
-          dmin = values.Values.Select(x => x.Min()).Min().Value;
+          dmax = (double)values.Values.Select(x => x.Max()).Max().Value;
+          dmin = (double)values.Values.Select(x => x.Min()).Min().Value;
         }
 
         List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
@@ -1046,18 +1046,18 @@ namespace GsaGH.Components {
           }
 
           var segmentline = new Line(start, end);
-          double tnorm1 = (2 * (t1.Value - dmin) / (dmax - dmin)) - 1;
-          double tnorm2 = (2 * (t2.Value - dmin) / (dmax - dmin)) - 1;
+          double tnorm1 = (2 * ((double)t1.Value - dmin) / (dmax - dmin)) - 1;
+          double tnorm2 = (2 * ((double)t2.Value - dmin) / (dmax - dmin)) - 1;
           Color valcol1 = double.IsNaN(tnorm1) ? Color.Black : ghGradient.ColourAt(tnorm1);
           Color valcol2 = double.IsNaN(tnorm2) ? Color.Black : ghGradient.ColourAt(tnorm2);
-          float size1 = t1.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t1.Value / dmax * scale)) :
-            Math.Max(2, (float)(Math.Abs(t1.Value) / Math.Abs(dmin) * scale));
+          float size1 = t1.Value >= 0 && dmax != 0 ? Math.Max(2, (float)((double)t1.Value / dmax * scale)) :
+            Math.Max(2, (float)(Math.Abs((double)t1.Value) / Math.Abs(dmin) * scale));
           if (double.IsNaN(size1)) {
             size1 = 1;
           }
 
-          float size2 = t2.Value >= 0 && dmax != 0 ? Math.Max(2, (float)(t2.Value / dmax * scale)) :
-            Math.Max(2, (float)(Math.Abs(t2.Value) / Math.Abs(dmin) * scale));
+          float size2 = t2.Value >= 0 && dmax != 0 ? Math.Max(2, (float)((double)t2.Value / dmax * scale)) :
+            Math.Max(2, (float)(Math.Abs((double)t2.Value) / Math.Abs(dmin) * scale));
           if (double.IsNaN(size2)) {
             size2 = 1;
           }

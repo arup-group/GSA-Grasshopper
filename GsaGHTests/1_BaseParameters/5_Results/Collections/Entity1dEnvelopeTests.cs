@@ -36,7 +36,7 @@ namespace GsaGHTests.Parameters.Results {
         IEnumerable<int> positions = Enumerable.Range(0, positionsCount);
         foreach (int position in positions) {
           double expected = TestsResultHelper.Envelope(expectedP1[i], expectedP2[i++], envelope);
-          double actual = ResultHelper.RoundToSignificantDigits(values[elementId][position].Value, 4);
+          double actual = ResultHelper.RoundToSignificantDigits((double)values[elementId][position].Value, 4);
           Assert.Equal(expected, actual, 4);
         }
       }
@@ -64,7 +64,7 @@ namespace GsaGHTests.Parameters.Results {
         IEnumerable<int> positions = Enumerable.Range(0, positionsCount);
         foreach (int position in positions) {
           double expected = TestsResultHelper.Envelope(expectedP1[i], expectedP2[i++], envelope);
-          double actual = ResultHelper.RoundToSignificantDigits(values[elementId][position].Value, 4);
+          double actual = ResultHelper.RoundToSignificantDigits((double)values[elementId][position].Value, 4);
           Assert.Equal(expected, actual, 4);
         }
       }

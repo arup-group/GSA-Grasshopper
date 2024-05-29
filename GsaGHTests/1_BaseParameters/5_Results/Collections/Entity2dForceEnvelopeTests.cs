@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters.Results {
       foreach (int elementId in elementIds) {
         for (int vertex = 0; vertex < values[elementId].Count; vertex++) {
           double expected = TestsResultHelper.Envelope(expectedP1[i], expectedP2[i++], envelope);
-          double actual = ResultHelper.RoundToSignificantDigits(values[elementId][vertex].Value, 4);
+          double actual = ResultHelper.RoundToSignificantDigits((double)values[elementId][vertex].Value, 4);
           Assert.Equal(expected, actual, 4);
         }
       }

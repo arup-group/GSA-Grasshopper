@@ -34,22 +34,22 @@ namespace GsaGH.Parameters.Results {
       where T : IResultVector2<Q1> where Q1 : IQuantity {
       for (int i = 0; i < item.Count; i++) {
         if (item[i].Qx.Value > maxValue.Qx) {
-          maxValue.Qx = item[i].Qx.Value;
+          maxValue.Qx = (double)item[i].Qx.Value;
           maxKey.Qx = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Qy.Value > maxValue.Qy) {
-          maxValue.Qy = item[i].Qy.Value;
+          maxValue.Qy = (double)item[i].Qy.Value;
           maxKey.Qy = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Qx.Value < minValue.Qx) {
-          minValue.Qx = item[i].Qx.Value;
+          minValue.Qx = (double)item[i].Qx.Value;
           minKey.Qx = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Qy.Value < minValue.Qy) {
-          minValue.Qy = item[i].Qy.Value;
+          minValue.Qy = (double)item[i].Qy.Value;
           minKey.Qy = new Entity2dExtremaKey(elementId, i, permutation);
         }
       }

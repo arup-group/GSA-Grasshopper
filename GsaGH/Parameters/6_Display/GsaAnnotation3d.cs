@@ -47,7 +47,7 @@ namespace GsaGH.Parameters {
           var types = Quantity.Infos.Select(x => x.ValueType).ToList();
           foreach (Type type in types) {
             if (Quantity.TryParse(type, Value.Text, out IQuantity quantity)) {
-              target = (TQ)(object)new GH_Number(quantity.Value);
+              target = (TQ)(object)new GH_Number((double)quantity.Value);
               return true;
             }
           }

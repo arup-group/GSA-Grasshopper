@@ -522,8 +522,8 @@ namespace GsaGH.Components {
         significantDigits = (int)rounded[2];
       } else {
         if (enveloped) {
-          dmax = values.Values.Select(x => x.Max()).Max().Value;
-          dmin = values.Values.Select(x => x.Min()).Min().Value;
+          dmax = (double)values.Values.Select(x => x.Max()).Max().Value;
+          dmin = (double)values.Values.Select(x => x.Min()).Min().Value;
         }
 
         List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
@@ -582,7 +582,7 @@ namespace GsaGH.Components {
         }
 
         for (int i = 0; i < tempmesh.Vertices.Count; i++) {
-          double tnorm = (2 * (values[key][i].Value - dmin) / (dmax - dmin)) - 1;
+          double tnorm = (2 * ((double)values[key][i].Value - dmin) / (dmax - dmin)) - 1;
           Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
           tempmesh.VertexColors.Add(col);
           if (transformation == null) {
@@ -596,7 +596,7 @@ namespace GsaGH.Components {
 
         if (values[key].Count == 1) {
           // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
-          double tnorm = (2 * (values[key][0].Value - dmin) / (dmax - dmin)) - 1;
+          double tnorm = (2 * ((double)values[key][0].Value - dmin) / (dmax - dmin)) - 1;
           Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
           for (int i = 0; i < tempmesh.Vertices.Count; i++) {
             tempmesh.VertexColors.SetColor(i, col);

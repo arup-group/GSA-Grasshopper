@@ -56,7 +56,7 @@ namespace GsaGH.Parameters.Results {
             foreach (int permutation in permutations.Skip(1)) {
               var results = kvp.Value[permutation - 1].Results.Values.Select(selector).ToList();
               for (int position = 0; position < values.Count; position++) {
-                if (Math.Abs(results[position].Value) > values[position].Value) {
+                if (Math.Abs((double)results[position].Value) > values[position].Value) {
                   values[position] = results[position].Abs();
                 }
               }
@@ -67,7 +67,7 @@ namespace GsaGH.Parameters.Results {
             foreach (int permutation in permutations.Skip(1)) {
               var results = kvp.Value[permutation - 1].Results.Values.Select(selector).ToList();
               for (int position = 0; position < values.Count; position++) {
-                if (Math.Abs(results[position].Value) > Math.Abs(values[position].Value)) {
+                if (Math.Abs((double)results[position].Value) > Math.Abs((double)values[position].Value)) {
                   values[position] = results[position];
                 }
               }
