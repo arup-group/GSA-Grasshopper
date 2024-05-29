@@ -135,10 +135,10 @@ namespace GsaGH.Components {
         momentUnitsMenu,
       };
 
-      if (_lengthUnit == LengthUnit.Undefined) {
-        ToolStripMenuItem modelUnitsMenu = GenerateModelGeometryUnitsMenu("Model geometry");
-        toolStripItems.Insert(0, modelUnitsMenu);
-      }
+      //if (_lengthUnit == LengthUnit.Undefined) {
+      //  ToolStripMenuItem modelUnitsMenu = GenerateModelGeometryUnitsMenu("Model geometry");
+      //  toolStripItems.Insert(0, modelUnitsMenu);
+      //}
 
       unitsMenu.DropDownItems.AddRange(toolStripItems.ToArray());
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
@@ -428,16 +428,16 @@ namespace GsaGH.Components {
 
     private LengthUnit GetLengthUnit(GsaResult gsaResult) {
       LengthUnit lengthUnit = gsaResult.Model.ModelUnit;
-      bool isUndefined = lengthUnit == LengthUnit.Undefined;
+      //bool isUndefined = lengthUnit == LengthUnit.Undefined;
 
-      if (!isUndefined) {
-        return lengthUnit;
-      }
+      //if (!isUndefined) {
+      //  return lengthUnit;
+      //}
 
       lengthUnit = _lengthUnit;
-      this.AddRuntimeRemark("Model came straight out of GSA and we couldn't read the units. "
-        + "The geometry has been scaled to be in " + lengthUnit.ToString()
-        + ". This can be changed by right-clicking the component -> 'Select Units'");
+      //this.AddRuntimeRemark("Model came straight out of GSA and we couldn't read the units. "
+      //  + "The geometry has been scaled to be in " + lengthUnit.ToString()
+      //  + ". This can be changed by right-clicking the component -> 'Select Units'");
 
       return lengthUnit;
     }

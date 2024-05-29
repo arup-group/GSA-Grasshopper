@@ -27,9 +27,10 @@ namespace GsaGH.Helpers.GsaApi.Grahics {
       LengthUnit userLengthUnitIfModelUndefined, bool autoScale, double unitScaleFactor) {
       double lengthScaleFactor = 1;
       if (!autoScale) {
-        LengthUnit lengthUnit = model.ModelUnit == LengthUnit.Undefined
-        ? userLengthUnitIfModelUndefined
-        : model.ModelUnit;
+        LengthUnit lengthUnit = model.ModelUnit;
+        
+        //== LengthUnit.Undefined ? userLengthUnitIfModelUndefined
+        //: model.ModelUnit;
 
         lengthScaleFactor = UnitConverter.Convert(1, lengthUnit, Length.BaseUnit);
       }

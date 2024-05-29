@@ -88,7 +88,7 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(expectedIyz, iyz.Value.As(inertiaUnit), 6);
       Assert.Equal(expectedIuu, iuu.Value.As(inertiaUnit), 8);
       Assert.Equal(expectedIvv, ivv.Value.As(inertiaUnit), 9);
-      Assert.Equal(expectedAngle, angle.Value.Value, 6);
+      Assert.Equal(expectedAngle, (double)angle.Value.Value, 6);
 
       Assert.Equal(expectedKyy, kyy.Value, 6);
       Assert.Equal(expectedKzz, kzz.Value, 6);

@@ -139,7 +139,7 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     private double RoundTo4SigDigits(IQuantity quantity) {
-      return ResultHelper.RoundToSignificantDigits(quantity.Value, 4);
+      return ResultHelper.RoundToSignificantDigits((double)quantity.Value, 4);
     }
   }
 }

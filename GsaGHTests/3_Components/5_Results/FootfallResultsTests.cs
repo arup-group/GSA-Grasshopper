@@ -389,7 +389,7 @@ namespace GsaGHTests.Components.Results {
       // Assert values
       List<IQuantity> resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       for (int i = 0; i < resultSet.Count; i++) {
-        double value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
+        double value = ResultHelper.RoundToSignificantDigits((double)resultSet[i].Value, 4);
         Assert.Equal(expected[i], value);
       }
 
@@ -397,13 +397,13 @@ namespace GsaGHTests.Components.Results {
       comp.SetSelected(1, 6);
       resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       Assert.Single(resultSet);
-      Assert.Equal(expected.Max(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
+      Assert.Equal(expected.Max(), ResultHelper.RoundToSignificantDigits((double)resultSet[0].Value, 4));
 
       // Assert Min in set
       comp.SetSelected(1, 12);
       resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       Assert.Single(resultSet);
-      Assert.Equal(expected.Min(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
+      Assert.Equal(expected.Min(), ResultHelper.RoundToSignificantDigits((double)resultSet[0].Value, 4));
     }
 
     [Fact]
@@ -422,7 +422,7 @@ namespace GsaGHTests.Components.Results {
       // Assert values
       List<IQuantity> resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       for (int i = 0; i < resultSet.Count; i++) {
-        double value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
+        double value = ResultHelper.RoundToSignificantDigits((double)resultSet[i].Value, 4);
         Assert.Equal(expected[i], value);
       }
 
@@ -430,13 +430,13 @@ namespace GsaGHTests.Components.Results {
       comp.SetSelected(1, 6);
       resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       Assert.Single(resultSet);
-      Assert.Equal(expected.Max(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
+      Assert.Equal(expected.Max(), ResultHelper.RoundToSignificantDigits((double)resultSet[0].Value, 4));
 
       // Assert Min in set
       comp.SetSelected(1, 12);
       resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       Assert.Single(resultSet);
-      Assert.Equal(expected.Min(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
+      Assert.Equal(expected.Min(), ResultHelper.RoundToSignificantDigits((double)resultSet[0].Value, 4));
     }
   }
 }
