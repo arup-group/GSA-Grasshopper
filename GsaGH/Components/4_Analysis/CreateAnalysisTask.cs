@@ -122,31 +122,31 @@ namespace GsaGH.Components {
 
           Params.Input[++i].NickName = "D";
           Params.Input[i].Name = "Direction of responses";
-          Params.Input[i].Description = "The direction of response in the GSA global axis direction." + "\nInput either text string or a integer:" +"\n 1: Z (vertical)"+"\n 2: X" + "\n 3: Y" + "\n-1: XY (horizontal)";
+          Params.Input[i].Description = "The direction of response in the GSA global axis direction." + "\nInput either text string or a integer:" +"\n 1 : Z (vertical)"+"\n 2 : X" + "\n 3 : Y" + "\n-1 : XY (horizontal)";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
           Params.Input[++i].NickName = "F";
-          Params.Input[i].Name = "Frequency weighting curve";
-          Params.Input[i].Description = "The Frequency Weighting Curve (FWC) is used in calculating the response factors. Standard and user defined curves can be used" + "\nInput the corresponding integer:" + "\n1. Freq. Weighting(Wb)(BS6472-1: 2008)" + "\n2. Freq. Weighting(Wd)(BS6472-1: 2008)" + "\n3. Freq. Weighting(Wg)(BS6472: 1992)";
+          Params.Input[i].Name = "Frequency Weighting Curve";
+          Params.Input[i].Description = "The Frequency Weighting Curve (FWC) is used in calculating the response factors." + "\nInput the corresponding integer:" + "\n1 : (Freq. Weighting) Wb (BS6472-1:2008)" + "\n2 : (Freq. Weighting) Wd (BS6472-1:2008)" + "\n3 : (Freq. Weighting) Wg (BS6472:1992)";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
           Params.Input[++i].NickName = "EF";
           Params.Input[i].Name = "Excitation forces (DLFs)";
-          Params.Input[i].Description = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)"+"\nInput the corresponding integer:"+"\n1. Walking on floor(AISC SDGS11)" +"\n2. Walking on floor(AISC SDGS11 2nd ed)" + "\n3. Walking on floor(CCIP-016)" + "\n4. Walking on floor(SCI P354)" + "\n5. Walking on stair(AISC SDGS11 2nd ed)" + "\n6. Walking on stair(Arup)" + "\n7. Walking on stair(AISC SDGS11)" + "\n8. Running on floor (AISC SDGS11 2nd)";
+          Params.Input[i].Description = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)"+"\nInput the corresponding integer:"+"\n1 : Walking on floor (AISC SDGS11)" +"\n2 : Walking on floor (AISC SDGS11 2nd ed)" + "\n3 : Walking on floor (CCIP-016)" + "\n4 : Walking on floor (SCI P354)" + "\n5 : Walking on stair (AISC SDGS11 2nd ed)" + "\n6 : Walking on stair (Arup)" + "\n7 : Walking on stair (AISC SDGS11)" + "\n8 : Running on floor (AISC SDGS11 2nd)";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
           Params.Input[++i].NickName = "T";
           Params.Input[i].Name = "Modal Analysis Task";
-          Params.Input[i].Description = "Modal or Ritz analysis task is required to perform footfall analysis";
+          Params.Input[i].Description = "Modal or Ritz analysis task";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
           Params.Input[++i].NickName = "DC";
           Params.Input[i].Name = "Constant Damping";
-          Params.Input[i].Description = "The dynamic post-processing relies on damping to get a solution.";
+          Params.Input[i].Description = "Constant damping in percent";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
@@ -278,13 +278,13 @@ namespace GsaGH.Components {
           da.GetData(i, ref numberOfFootfalls);
 
           switch (_selectedItems[1]) {
-            case "Self excitation ":
+            case "Self excitation":
               break;
 
             case "Rigorous excitation":
               break;
 
-            case "Rigorous excitation?":
+            case "Fast rigorous exc.":
               break;
 
             case "Fast excitation":
@@ -446,7 +446,7 @@ namespace GsaGH.Components {
           _dropDownItems.Add(new List<string>() {
             "Self excitation",
             "Rigorous excitation",
-            "Rigorous excitation?",
+            "Fast Rigorous exc.",
             "Fast excitation"
           });
           _selectedItems.Add("Self excitation");
