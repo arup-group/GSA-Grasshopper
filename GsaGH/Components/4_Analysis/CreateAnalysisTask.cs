@@ -92,21 +92,27 @@ namespace GsaGH.Components {
           break;
 
         case AnalysisTaskType.Footfall:
-          Params.Input[2].NickName = "RN";
-          Params.Input[2].Name = "Response nodes";
-          Params.Input[2].Description = "Node list to define the nodes that the responses will be calculated in the analysis";
+          Params.Input[2].NickName = "T";
+          Params.Input[2].Name = "Modal analysis task";
+          Params.Input[2].Description = "Modal or Ritz analysis task";
           Params.Input[2].Access = GH_ParamAccess.item;
           Params.Input[2].Optional = false;
 
+          Params.Input[3].NickName = "RN";
+          Params.Input[3].Name = "Response nodes";
+          Params.Input[3].Description = "Node list to define the nodes that the responses will be calculated in the analysis";
+          Params.Input[3].Access = GH_ParamAccess.item;
+          Params.Input[3].Optional = true;
+
           if (_selectedItems[1] != "Self excitation") {
-            Params.Input[3].NickName = "EN";
-            Params.Input[3].Name = "Excitation nodes";
-            Params.Input[3].Description = "Node list to define the nodes that will be excited for evaluation of the response of the response nodes";
-            Params.Input[3].Access = GH_ParamAccess.item;
-            Params.Input[3].Optional = false;
+            Params.Input[4].NickName = "EN";
+            Params.Input[4].Name = "Excitation nodes";
+            Params.Input[4].Description = "Node list to define the nodes that will be excited for evaluation of the response of the response nodes";
+            Params.Input[4].Access = GH_ParamAccess.item;
+            Params.Input[4].Optional = true;
           }
 
-          int i = _selectedItems[1] != "Self excitation" ? 4 : 3;
+          int i = _selectedItems[1] != "Self excitation" ? 5 : 4;
           Params.Input[i].NickName = "N";
           Params.Input[i].Name = "Number of footfalls";
           Params.Input[i].Description = "The number of footfalls to be considered in the analysis";
@@ -134,12 +140,6 @@ namespace GsaGH.Components {
           Params.Input[++i].NickName = "EF";
           Params.Input[i].Name = "Excitation forces (DLFs)";
           Params.Input[i].Description = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)" + "\nInput the corresponding integer:" + "\n1 : Walking on floor (AISC SDGS11)" + "\n2 : Walking on floor (AISC SDGS11 2nd ed)" + "\n3 : Walking on floor (CCIP-016)" + "\n4 : Walking on floor (SCI P354)" + "\n5 : Walking on stair (AISC SDGS11 2nd ed)" + "\n6 : Walking on stair (Arup)" + "\n7 : Walking on stair (AISC SDGS11)" + "\n8 : Running on floor (AISC SDGS11 2nd)";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
-
-          Params.Input[++i].NickName = "T";
-          Params.Input[i].Name = "Modal Analysis Task";
-          Params.Input[i].Description = "Modal or Ritz analysis task";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
@@ -207,32 +207,34 @@ namespace GsaGH.Components {
 
       List<GsaAnalysisCase> cases = null;
       var ghTypes = new List<GH_ObjectWrapper>();
-      if (da.GetDataList(_casesParamIndex, ghTypes)) {
-        cases = new List<GsaAnalysisCase>();
-        for (int i = 0; i < ghTypes.Count; i++) {
-          GH_ObjectWrapper ghTyp = ghTypes[i];
-          if (ghTyp == null) {
-            Params.Owner.AddRuntimeWarning("Analysis Case input (index: " + i
-              + ") is null and has been ignored");
-            continue;
-          }
+      if (_type != AnalysisTaskType.Footfall) {
+        if (da.GetDataList(_casesParamIndex, ghTypes)) {
+          cases = new List<GsaAnalysisCase>();
+          for (int i = 0; i < ghTypes.Count; i++) {
+            GH_ObjectWrapper ghTyp = ghTypes[i];
+            if (ghTyp == null) {
+              Params.Owner.AddRuntimeWarning("Analysis Case input (index: " + i
+                + ") is null and has been ignored");
+              continue;
+            }
 
-          if (ghTyp.Value is GsaAnalysisCaseGoo goo) {
-            cases.Add(goo.Value.Duplicate());
-          } else {
-            string type = ghTyp.Value.GetType().ToString();
-            type = type.Replace("GsaGH.Parameters.", string.Empty);
-            type = type.Replace("Goo", string.Empty);
-            Params.Owner.AddRuntimeError("Unable to convert Analysis Case input parameter of type "
-              + type + " to GsaAnalysisCase");
-            return;
+            if (ghTyp.Value is GsaAnalysisCaseGoo goo) {
+              cases.Add(goo.Value.Duplicate());
+            } else {
+              string type = ghTyp.Value.GetType().ToString();
+              type = type.Replace("GsaGH.Parameters.", string.Empty);
+              type = type.Replace("Goo", string.Empty);
+              Params.Owner.AddRuntimeError("Unable to convert Analysis Case input parameter of type "
+                + type + " to GsaAnalysisCase");
+              return;
+            }
           }
         }
-      }
 
-      if (cases == null) {
-        this.AddRuntimeRemark(
-          "Default Task has been created; it will by default contain all cases found in model");
+        if (cases == null) {
+          this.AddRuntimeRemark(
+            "Default Task has been created; it will by default contain all cases found in model");
+        }
       }
 
       AnalysisTask task = null;
@@ -262,51 +264,152 @@ namespace GsaGH.Components {
           break;
 
         case AnalysisTaskType.Footfall:
+          int analysisTask = 0;
+          da.GetData(2, ref analysisTask);
 
-          string responseNodes = string.Empty;
-          da.GetData(2, ref responseNodes);
+          string responseNodes = "All";
+          da.GetData(3, ref responseNodes);
 
-          int i = 2;
-          string excitationNodes = string.Empty;
-          if (_selectedItems[i++] == "Self excitation") {
-            da.GetData(i, ref excitationNodes);
+          int i = 3;
+          string excitationNodes = "All";
+          if (_selectedItems[1] == "Self excitation") {
+            da.GetData(i++, ref excitationNodes);
           }
 
           int numberOfFootfalls = 0;
-          da.GetData(i, ref numberOfFootfalls);
+          da.GetData(i++, ref numberOfFootfalls);
 
-          switch (_selectedItems[1]) {
-            case "Self excitation":
-              break;
+          double walkerMass = 0;
+          da.GetData(i++, ref walkerMass);
 
-            case "Rigorous excitation":
-              break;
+          ResponseDirection direction = ResponseDirection.Z;
+          var ghTyp = new GH_ObjectWrapper();
+          if (da.GetData(i++, ref ghTyp)) {
+            switch (ghTyp.Value) {
+              case GH_Integer ghInt:
 
-            case "Fast rigorous exc.":
-              break;
+                switch (ghInt.Value) {
+                  case 1:
+                    direction = ResponseDirection.Z;
+                    break;
 
-            case "Fast excitation":
-              break;
+                  case 2:
+                    direction = ResponseDirection.X;
+                    break;
+
+                  case 3:
+                    direction = ResponseDirection.Y;
+                    break;
+
+                  case -1:
+                    direction = ResponseDirection.XY;
+                    break;
+                }
+                break;
+
+              case GH_String ghString:
+                switch (ghString.Value.ToUpper()) {
+                  case "Z":
+                    direction = ResponseDirection.Z;
+                    break;
+
+                  case "X":
+                    direction = ResponseDirection.X;
+                    break;
+
+                  case "Y":
+                    direction = ResponseDirection.Y;
+                    break;
+
+                  case "XY":
+                    direction = ResponseDirection.XY;
+                    break;
+                }
+                break;
+
+              default:
+                this.AddRuntimeError("Unable to convert response direction input");
+                return;
+            }
           }
 
-          NumberOfFootfalls numberofFootfalls = new ConstantFootfallsForAllModes(numberOfFootfalls);
-          //var walkermass = new WalkerMass();
+          int weightingOption = 0;
+          da.GetData(i++, ref weightingOption);
           WeightingOption frequencyWeightingCurve = WeightingOption.Wg;
+          switch (weightingOption) {
+            case 1:
+              frequencyWeightingCurve = WeightingOption.Wb;
+              break;
+
+            case 2:
+              frequencyWeightingCurve = WeightingOption.Wd;
+              break;
+
+            case 3:
+              frequencyWeightingCurve = WeightingOption.Wg;
+              break;
+
+            default:
+              this.AddRuntimeError("Unable to convert frequency weighting curve input");
+              return;
+          }
+
+          //int weightingOption = 0;
+          //da.GetData(i++, ref weightingOption);
+          //WeightingOption frequencyWeightingCurve = WeightingOption.Wg;
+          //switch (weightingOption) {
+          //  case 1:
+          //    frequencyWeightingCurve = WeightingOption.Wb;
+          //    break;
+
+          //  case 2:
+          //    frequencyWeightingCurve = WeightingOption.Wd;
+          //    break;
+
+          //  case 3:
+          //    frequencyWeightingCurve = WeightingOption.Wg;
+          //    break;
+
+          //  default:
+          //    this.AddRuntimeError("Unable to convert frequency weighting curve input");
+          //    return;
+          //}
+
+
+          NumberOfFootfalls numberofFootfalls = new ConstantFootfallsForAllModes(numberOfFootfalls);
           var excitationForces = new ExcitationForces();
           DampingOption dampingOption = new ConstantDampingOption();
 
           var parameter = new FootfallAnalysisTaskParameter() {
             ModalAnalysisTaskId = 1,
-            ExcitationMethod = ExcitationMethod.SelfExcitation,
-            ResponseNodes = "",
+            ResponseNodes = responseNodes,
             ExcitationNodes = excitationNodes,
             NumberofFootfalls = numberofFootfalls,
-            WalkerMass = 76,
-            ResponseDirection = ResponseDirection.Z,
+            WalkerMass = walkerMass,
+            ResponseDirection = direction,
             FrequencyWeightingCurve = frequencyWeightingCurve,
             ExcitationForces = excitationForces,
             DampingOption = dampingOption,
           };
+
+          switch (_selectedItems[1]) {
+            case "Self excitation":
+              parameter.ExcitationMethod = ExcitationMethod.SelfExcitation;
+              break;
+
+            case "Rigorous excitation":
+              parameter.ExcitationMethod = ExcitationMethod.FullExcitationRigorous;
+              break;
+
+            case "Fast rigorous exc.":
+              parameter.ExcitationMethod = ExcitationMethod.FullExcitationFastExcludingResponseNode;
+              break;
+
+            case "Fast excitation":
+              parameter.ExcitationMethod = ExcitationMethod.FullExcitationFast;
+              break;
+          }
+
           task = AnalysisTaskFactory.CreateFootfallAnalysisTask(name, parameter);
           break;
 
@@ -369,11 +472,12 @@ namespace GsaGH.Components {
           break;
 
         case AnalysisTaskType.Footfall:
-
-
           while (Params.Input.Count > 2) {
             Params.UnregisterInputParameter(Params.Input[2], true);
           }
+
+          // modal analysis task
+          Params.RegisterInputParam(new Param_Integer());
 
           // response nodes
           Params.RegisterInputParam(new Param_String());
@@ -391,16 +495,13 @@ namespace GsaGH.Components {
           // walker
           Params.RegisterInputParam(new Param_Number());
           // direction of responses
-          Params.RegisterInputParam(new Param_String());
+          Params.RegisterInputParam(new Param_GenericObject());
           // frequency weighting curve
-          Params.RegisterInputParam(new Param_String());
+          Params.RegisterInputParam(new Param_Integer());
           // excitation forces
-          Params.RegisterInputParam(new Param_String());
-          // Modal analysis task
-          Params.RegisterInputParam(new Param_String());
-          //Damping Constant
+          Params.RegisterInputParam(new Param_Integer());
+          // damping constant
           Params.RegisterInputParam(new Param_Number());
-
           break;
 
         default:
