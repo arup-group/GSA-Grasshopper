@@ -139,7 +139,16 @@ namespace GsaGH.Components {
 
           Params.Input[++i].NickName = "EF";
           Params.Input[i].Name = "Excitation forces (DLFs)";
-          Params.Input[i].Description = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)" + "\nInput the corresponding integer:" + "\n1 : Walking on floor (AISC SDGS11)" + "\n2 : Walking on floor (AISC SDGS11 2nd ed)" + "\n3 : Walking on floor (CCIP-016)" + "\n4 : Walking on floor (SCI P354)" + "\n5 : Walking on stair (AISC SDGS11 2nd ed)" + "\n6 : Walking on stair (Arup)" + "\n7 : Walking on stair (AISC SDGS11)" + "\n8 : Running on floor (AISC SDGS11 2nd)";
+          Params.Input[i].Description = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)" +
+            "\nInput the corresponding integer:" +
+            "\n1 : Walking on floor (AISC SDGS11)" +
+            "\n2 : Walking on floor (AISC SDGS11 2nd ed)" +
+            "\n3 : Walking on floor (CCIP-016)" +
+            "\n4 : Walking on floor (SCI P354)" +
+            "\n5 : Walking on stair (AISC SDGS11 2nd ed)" +
+            "\n6 : Walking on stair (Arup)" +
+            "\n7 : Walking on stair (SCI P354)" +
+            "\n8 : Running on floor (AISC SDGS11 2nd)";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
@@ -354,32 +363,49 @@ namespace GsaGH.Components {
               return;
           }
 
-          //int weightingOption = 0;
-          //da.GetData(i++, ref weightingOption);
-          //WeightingOption frequencyWeightingCurve = WeightingOption.Wg;
-          //switch (weightingOption) {
-          //  case 1:
-          //    frequencyWeightingCurve = WeightingOption.Wb;
-          //    break;
+          int excitationForceOption = 0;
+          da.GetData(i++, ref excitationForceOption);
+          ExcitationForces excitationForces;
+          switch (excitationForceOption) {
+            case 1: // walking on floor AISC
+              excitationForces = new WalkingOnFloorAISC();
+              break;
 
-          //  case 2:
-          //    frequencyWeightingCurve = WeightingOption.Wd;
-          //    break;
+            case 2: // walking on floor AISC 2nd ed
+              excitationForces = new WalkingOnFloorAISC2ndEdition();
+              break;
 
-          //  case 3:
-          //    frequencyWeightingCurve = WeightingOption.Wg;
-          //    break;
+            case 3: // walking on floor CCIP
+              excitationForces = new WalkingOnFloorCCIP();
+              break;
 
-          //  default:
-          //    this.AddRuntimeError("Unable to convert frequency weighting curve input");
-          //    return;
-          //}
+            case 4: // walking on floor SCI
+              excitationForces = new WalkingOnFloorSCI();
+              break;
 
+            case 5: // walking on stair AISC 2nd ed
+              excitationForces = new WalkingOnStairAISC2ndEdition();
+              break;
+
+            case 6: // walking on stair Arup
+              excitationForces = new WalkingOnStairArup();
+              break;
+
+            case 7: // walking on stair SCI
+              excitationForces = new WalkingOnStairSCI();
+              break;
+
+            case 8: // running on floor AISC 2nd ed
+              excitationForces = new RunningOnFloorAISC2ndEdition();
+              break;
+
+            default:
+              this.AddRuntimeError("Unable to convert excitation forces (DLFs) input");
+              return;
+          }
 
           NumberOfFootfalls numberofFootfalls = new ConstantFootfallsForAllModes(numberOfFootfalls);
-          var excitationForces = new ExcitationForces();
           DampingOption dampingOption = new ConstantDampingOption();
-
           var parameter = new FootfallAnalysisTaskParameter() {
             ModalAnalysisTaskId = 1,
             ResponseNodes = responseNodes,
