@@ -60,12 +60,11 @@ namespace GsaGH.Components {
     public override void VariableParameterMaintenance() {
       switch (_type) {
         case AnalysisTaskType.StaticPDelta:
-
           Params.Input[_casesParamIndex].NickName = "ΣAs";
           Params.Input[_casesParamIndex].Name = "Analysis Cases";
           Params.Input[_casesParamIndex].Description = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)";
-          Params.Input[_casesParamIndex].Access = GH_ParamAccess.item;
-          Params.Input[_casesParamIndex].Optional = false;
+          Params.Input[_casesParamIndex].Access = GH_ParamAccess.list;
+          Params.Input[_casesParamIndex].Optional = true;
 
           switch (_selectedItems[1]) {
             case "Own":
@@ -122,7 +121,7 @@ namespace GsaGH.Components {
 
           Params.Input[++i].NickName = "D";
           Params.Input[i].Name = "Direction of responses";
-          Params.Input[i].Description = "The direction of response in the GSA global axis direction." + "\nInput either text string or a integer:" +"\n 1 : Z (vertical)"+"\n 2 : X" + "\n 3 : Y" + "\n-1 : XY (horizontal)";
+          Params.Input[i].Description = "The direction of response in the GSA global axis direction." + "\nInput either text string or a integer:" + "\n 1 : Z (vertical)" + "\n 2 : X" + "\n 3 : Y" + "\n-1 : XY (horizontal)";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
@@ -134,7 +133,7 @@ namespace GsaGH.Components {
 
           Params.Input[++i].NickName = "EF";
           Params.Input[i].Name = "Excitation forces (DLFs)";
-          Params.Input[i].Description = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)"+"\nInput the corresponding integer:"+"\n1 : Walking on floor (AISC SDGS11)" +"\n2 : Walking on floor (AISC SDGS11 2nd ed)" + "\n3 : Walking on floor (CCIP-016)" + "\n4 : Walking on floor (SCI P354)" + "\n5 : Walking on stair (AISC SDGS11 2nd ed)" + "\n6 : Walking on stair (Arup)" + "\n7 : Walking on stair (AISC SDGS11)" + "\n8 : Running on floor (AISC SDGS11 2nd)";
+          Params.Input[i].Description = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)" + "\nInput the corresponding integer:" + "\n1 : Walking on floor (AISC SDGS11)" + "\n2 : Walking on floor (AISC SDGS11 2nd ed)" + "\n3 : Walking on floor (CCIP-016)" + "\n4 : Walking on floor (SCI P354)" + "\n5 : Walking on stair (AISC SDGS11 2nd ed)" + "\n6 : Walking on stair (Arup)" + "\n7 : Walking on stair (AISC SDGS11)" + "\n8 : Running on floor (AISC SDGS11 2nd)";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
@@ -158,8 +157,8 @@ namespace GsaGH.Components {
           Params.Input[_casesParamIndex].NickName = "ΣAs";
           Params.Input[_casesParamIndex].Name = "Analysis Cases";
           Params.Input[_casesParamIndex].Description = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)";
-          Params.Input[_casesParamIndex].Access = GH_ParamAccess.item;
-          Params.Input[_casesParamIndex].Optional = false;
+          Params.Input[_casesParamIndex].Access = GH_ParamAccess.list;
+          Params.Input[_casesParamIndex].Optional = true;
           break;
       }
     }
@@ -220,8 +219,7 @@ namespace GsaGH.Components {
 
           if (ghTyp.Value is GsaAnalysisCaseGoo goo) {
             cases.Add(goo.Value.Duplicate());
-          }
-          else {
+          } else {
             string type = ghTyp.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", string.Empty);
             type = type.Replace("Goo", string.Empty);
@@ -384,8 +382,7 @@ namespace GsaGH.Components {
           if (_selectedItems[1] != "Self excitation") {
             _casesParamIndex = 9;
             Params.RegisterInputParam(new Param_String());
-          }
-          else {
+          } else {
             _casesParamIndex = 8;
           }
 
