@@ -127,7 +127,7 @@ namespace GsaGH.Components {
 
           Params.Input[++i].NickName = "D";
           Params.Input[i].Name = "Direction of responses";
-          Params.Input[i].Description = "The direction of response in the GSA global axis direction." + "\nInput either text string or a integer:" + "\n 1 : Z (vertical)" + "\n 2 : X" + "\n 3 : Y" + "\n-1 : XY (horizontal)";
+          Params.Input[i].Description = "The direction of response in the GSA global axis direction." + "\nInput either text string or a integer:" + "\n 1 : Z (vertical)" + "\n 2 : X" + "\n 3 : Y" + "\n4 : XY (horizontal)";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
 
@@ -157,7 +157,6 @@ namespace GsaGH.Components {
           Params.Input[i].Description = "Constant damping in percent";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = false;
-
           break;
 
         case AnalysisTaskType.Static:
@@ -273,8 +272,8 @@ namespace GsaGH.Components {
           break;
 
         case AnalysisTaskType.Footfall:
-          int analysisTask = 0;
-          da.GetData(2, ref analysisTask);
+          int analysisTaskId = 0;
+          da.GetData(2, ref analysisTaskId);
 
           string responseNodes = "All";
           da.GetData(3, ref responseNodes);
@@ -291,48 +290,55 @@ namespace GsaGH.Components {
           double walkerMass = 0;
           da.GetData(i++, ref walkerMass);
 
-          ResponseDirection direction = ResponseDirection.Z;
+          ResponseDirection responseDirection = ResponseDirection.Y; // why do we need to initialize it here?
           var ghTyp = new GH_ObjectWrapper();
           if (da.GetData(i++, ref ghTyp)) {
             switch (ghTyp.Value) {
               case GH_Integer ghInt:
-
                 switch (ghInt.Value) {
                   case 1:
-                    direction = ResponseDirection.Z;
+                    responseDirection = ResponseDirection.Z;
                     break;
 
                   case 2:
-                    direction = ResponseDirection.X;
+                    responseDirection = ResponseDirection.X;
                     break;
 
                   case 3:
-                    direction = ResponseDirection.Y;
+                    responseDirection = ResponseDirection.Y;
                     break;
 
-                  case -1:
-                    direction = ResponseDirection.XY;
+                  case 4:
+                    responseDirection = ResponseDirection.XY;
                     break;
+
+                  default:
+                    this.AddRuntimeError("Unable to convert response direction input");
+                    return;
                 }
                 break;
 
               case GH_String ghString:
-                switch (ghString.Value.ToUpper()) {
+                switch (ghString.Value.Trim().ToUpper()) {
                   case "Z":
-                    direction = ResponseDirection.Z;
+                    responseDirection = ResponseDirection.Z;
                     break;
 
                   case "X":
-                    direction = ResponseDirection.X;
+                    responseDirection = ResponseDirection.X;
                     break;
 
                   case "Y":
-                    direction = ResponseDirection.Y;
+                    responseDirection = ResponseDirection.Y;
                     break;
 
                   case "XY":
-                    direction = ResponseDirection.XY;
+                    responseDirection = ResponseDirection.XY;
                     break;
+
+                  default:
+                    this.AddRuntimeError("Unable to convert response direction input");
+                    return;
                 }
                 break;
 
@@ -344,7 +350,7 @@ namespace GsaGH.Components {
 
           int weightingOption = 0;
           da.GetData(i++, ref weightingOption);
-          WeightingOption frequencyWeightingCurve = WeightingOption.Wg;
+          WeightingOption frequencyWeightingCurve;
           switch (weightingOption) {
             case 1:
               frequencyWeightingCurve = WeightingOption.Wb;
@@ -404,15 +410,20 @@ namespace GsaGH.Components {
               return;
           }
 
+          double damping = 0;
+          da.GetData(i++, ref damping);
+
           NumberOfFootfalls numberofFootfalls = new ConstantFootfallsForAllModes(numberOfFootfalls);
-          DampingOption dampingOption = new ConstantDampingOption();
+          DampingOption dampingOption = new ConstantDampingOption() {
+            ConstantDamping = damping
+          };
           var parameter = new FootfallAnalysisTaskParameter() {
-            ModalAnalysisTaskId = 1,
+            ModalAnalysisTaskId = analysisTaskId,
             ResponseNodes = responseNodes,
             ExcitationNodes = excitationNodes,
             NumberofFootfalls = numberofFootfalls,
             WalkerMass = walkerMass,
-            ResponseDirection = direction,
+            ResponseDirection = responseDirection,
             FrequencyWeightingCurve = frequencyWeightingCurve,
             ExcitationForces = excitationForces,
             DampingOption = dampingOption,
@@ -462,7 +473,6 @@ namespace GsaGH.Components {
     private void UpdateParameters() {
       switch (_type) {
         case AnalysisTaskType.Static:
-
           while (Params.Input.Count > 2) {
             Params.UnregisterInputParameter(Params.Input[2], true);
           }
@@ -472,7 +482,6 @@ namespace GsaGH.Components {
           break;
 
         case AnalysisTaskType.StaticPDelta:
-
           while (Params.Input.Count > 2) {
             Params.UnregisterInputParameter(Params.Input[2], true);
           }
