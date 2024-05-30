@@ -470,6 +470,7 @@ namespace GsaGH.Components {
 
     protected override void UpdateUIFromSelectedItems() {
       _type = _solverTypes[_selectedItems[0]];
+      UpdateParameters();
 
       base.UpdateUIFromSelectedItems();
     }
