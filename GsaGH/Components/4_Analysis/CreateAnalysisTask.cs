@@ -278,9 +278,9 @@ namespace GsaGH.Components {
           string responseNodes = "All";
           da.GetData(3, ref responseNodes);
 
-          int i = 3;
+          int i = 4;
           string excitationNodes = "All";
-          if (_selectedItems[1] == "Self excitation") {
+          if (_selectedItems[1] != "Self excitation") {
             da.GetData(i++, ref excitationNodes);
           }
 
@@ -320,18 +320,22 @@ namespace GsaGH.Components {
 
               case GH_String ghString:
                 switch (ghString.Value.Trim().ToUpper()) {
+                  case "1":
                   case "Z":
                     responseDirection = ResponseDirection.Z;
                     break;
 
+                  case "2":
                   case "X":
                     responseDirection = ResponseDirection.X;
                     break;
 
+                  case "3":
                   case "Y":
                     responseDirection = ResponseDirection.Y;
                     break;
 
+                  case "4":
                   case "XY":
                     responseDirection = ResponseDirection.XY;
                     break;
@@ -579,7 +583,7 @@ namespace GsaGH.Components {
           _dropDownItems.Add(new List<string>() {
             "Self excitation",
             "Rigorous excitation",
-            "Fast Rigorous exc.",
+            "Fast rigorous exc.",
             "Fast excitation"
           });
           _selectedItems.Add("Self excitation");
