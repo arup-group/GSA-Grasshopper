@@ -94,12 +94,12 @@ namespace GsaGHTests.Helpers.Export {
           Assert.Equal(apiNode.Position.Y, new Length(pt.Y, unit).Meters);
           Assert.Equal(apiNode.Position.Z, new Length(pt.Z, unit).Meters);
         }
-
-        int group = expected.ApiElements[i].Group;
+        var expectedElement = expected.ApiElements[i] as Element;
+        int group = expectedElement.Group;
         Assert.Equal(group, api.Group);
-        bool dummy = expected.ApiElements[i].IsDummy;
+        bool dummy = expectedElement.IsDummy;
         Assert.Equal(dummy, api.IsDummy);
-        string name = expected.ApiElements[i].Name;
+        string name = expectedElement.Name;
         Assert.Equal(name, api.Name);
         GsaOffset offset = expected.Offsets[i];
         Assert.Equal(offset.Z.Meters, api.Offset.Z);

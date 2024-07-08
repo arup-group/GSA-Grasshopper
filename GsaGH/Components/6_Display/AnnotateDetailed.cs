@@ -158,17 +158,29 @@ namespace GsaGH.Components {
               Point3dList points = e2d.Value.GetCenterPoints();
               int faceIndex = 0;
               for (int i = 0; i < e2d.Value.ApiElements.Count; i++) {
+                object genericElement = e2d.Value.ApiElements[i];
+                Color elementColor = Color.Black;
+                ElementType elementType = ElementType.BEAM;
+                if ((genericElement as Element) != null) {
+                  var element2d = genericElement as Element;
+                  elementColor = (Color)element2d.Colour;
+                  elementType = element2d.Type;
+                }
+                else {
+                  var element2d = genericElement as LoadPanelElement;
+                  elementColor = (Color)element2d.Colour;
+                }
                 if (_text3d) {
                   if (e2d.Value.Mesh.FaceNormals.Count == 0) {
                     e2d.Value.Mesh.RebuildNormals();
                   }
                   AddAnnotation3d(new Plane(points[i], e2d.Value.Mesh.FaceNormals[faceIndex]),
-                    CreateText(e2d, path, i), (Color)e2d.Value.ApiElements[i].Colour, size, path);
+                    CreateText(e2d, path, i), elementColor, size, path);
                 } else {
-                  AddAnnotationDot(points[i], CreateText(e2d, path, i), (Color)e2d.Value.ApiElements[i].Colour, size, path);
+                  AddAnnotationDot(points[i], CreateText(e2d, path, i), elementColor, size, path);
                 }
 
-                switch (e2d.Value.ApiElements[i].Type) {
+                switch (elementType) {
                   case ElementType.QUAD8:
                     faceIndex += 8;
                     break;
@@ -329,8 +341,17 @@ namespace GsaGH.Components {
       string mat = string.Empty;
       switch (goo) {
         case GsaElement2dGoo e2d:
+          object genericElement = e2d.Value.ApiElements[i];
+          if ((genericElement as Element) != null) {
+            var element2d = genericElement as Element;
+            name = GeometryToString(element2d.Name, element2d.Type);
+          }
+          else {
+            var element2d = genericElement as LoadPanelElement;
+            name = GeometryToString(element2d.Name, "Load Panel");
+          }
+
           id = e2d.Value.Ids[i];
-          name = GeometryToString(e2d.Value.ApiElements[i].Name, e2d.Value.ApiElements[i].Type);
           prop = Prop2dToString(e2d.Value.Prop2ds?[i]);
           mat = MaterialToString(e2d.Value.Prop2ds?[i].Material);
           break;

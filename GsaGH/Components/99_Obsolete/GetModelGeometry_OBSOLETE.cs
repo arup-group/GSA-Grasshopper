@@ -9,6 +9,7 @@ using GH_IO.Serialization;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.Import;
@@ -587,7 +588,15 @@ namespace GsaGH.Components {
         } else {
           var tree = new DataTree<GsaElement2dGoo>();
           foreach (GsaElement2dGoo element in results.Elem2ds) {
-            tree.Add(element, new GH_Path(element.Value.ApiElements.First().Property));
+            object genericElement = element.Value.ApiElements.First();
+            if ((genericElement as Element) != null) {
+              var element2d = genericElement as Element;
+              tree.Add(element, new GH_Path(element2d.Property));
+            }
+            else {
+              var element2d = genericElement as LoadPanelElement;
+              tree.Add(element, new GH_Path(element2d.Property));
+            }
           }
 
           data.SetDataTree(2, tree);
@@ -600,7 +609,16 @@ namespace GsaGH.Components {
           var element2dsNotShaded = new ConcurrentBag<GsaElement2dGoo>();
           Parallel.ForEach(results.Elem2ds, elem => {
             try {
-              int parent = elem.Value.ApiElements[0].ParentMember.Member;
+              int parent = 0;
+              object genericElement = elem.Value.ApiElements[0];
+              if ((genericElement as Element) != null) {
+                var element2d = genericElement as Element;
+                parent = element2d.ParentMember.Member;
+              }
+              else {
+                var element2d = genericElement as LoadPanelElement;
+                parent = element2d.ParentMember.Member;
+              }
               if (parent > 0 && member2dKeys.Contains(parent)) {
                 element2dsShaded.Add(elem);
               } else {

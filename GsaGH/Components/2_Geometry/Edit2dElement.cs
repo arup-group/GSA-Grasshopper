@@ -175,22 +175,23 @@ namespace GsaGH.Components {
         elem.CreateSection3dPreview();
       }
 
+      List<object> genericElements = elem.ApiElements;
       // #### outputs ####
       da.SetData(0, new GsaElement2dGoo(elem));
       da.SetDataList(1, elem.Ids);
       da.SetData(2, elem.Mesh);
       da.SetDataList(3, elem.Prop2ds == null ? null
         : new List<GsaProperty2dGoo>(elem.Prop2ds.Select(x => new GsaProperty2dGoo(x))));
-      da.SetDataList(4, elem.ApiElements.Select(x => x.Group));
-      da.SetDataList(5, elem.ApiElements.Select(x => x.Type));
+      da.SetDataList(4, ElementHelper.Group(genericElements));
+      da.SetDataList(5, ElementHelper.Type(genericElements));
       da.SetDataList(6,
         new List<GsaOffsetGoo>(elem.Offsets.Select(x => new GsaOffsetGoo(x))));
       da.SetDataList(7, elem.OrientationAngles.Select(x => x.Radians));
-      da.SetDataList(8, elem.ApiElements.Select(x => x.Name));
-      da.SetDataList(9, elem.ApiElements.Select(x => (Color)x.Colour));
-      da.SetDataList(10, elem.ApiElements.Select(x => x.IsDummy));
+      da.SetDataList(8, ElementHelper.Name(genericElements));
+      da.SetDataList(9, ElementHelper.Colour(genericElements));
+      da.SetDataList(10, ElementHelper.IsDummy(genericElements));
       try {
-        da.SetDataList(11, elem.ApiElements.Select(x => x.ParentMember.Member).ToList());
+        da.SetDataList(11, ElementHelper.ParentMember(genericElements));
       } catch (Exception) { }
       da.SetDataTree(12, elem.GetTopologyIDs());
     }

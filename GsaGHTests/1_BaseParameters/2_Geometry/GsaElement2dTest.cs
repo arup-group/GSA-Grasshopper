@@ -70,12 +70,13 @@ namespace GsaGHTests.Parameters {
       int chelid = 14;
       int chsecid = 3;
       for (int i = 0; i < elem.ApiElements.Count; i++) {
+        var element = elem.ApiElements[i] as Element;
         if (mesh.Faces[i].IsTriangle) {
-          Assert.True(elem.ApiElements[i].Type == ElementType.TRI3);
+          Assert.True(element.Type == ElementType.TRI3);
         }
 
         if (mesh.Faces[i].IsQuad) {
-          Assert.True(elem.ApiElements[i].Type == ElementType.QUAD4);
+          Assert.True(element.Type == ElementType.QUAD4);
         }
 
         Point3d mPt = mesh.Vertices[mesh.Faces[i].A];
@@ -96,7 +97,7 @@ namespace GsaGHTests.Parameters {
         Assert.Equal(mPt.Y, ePt.Y);
         Assert.Equal(mPt.Z, ePt.Z);
 
-        if (elem.ApiElements[i].Type == ElementType.QUAD4) {
+        if ((elem.ApiElements[i] as Element).Type == ElementType.QUAD4) {
           mPt = mesh.Vertices[mesh.Faces[i].D];
           ePt = elem.Topology[elem.TopoInt[i][3]]; // topology fourth pt
           Assert.Equal(mPt.X, ePt.X);
@@ -106,9 +107,9 @@ namespace GsaGHTests.Parameters {
 
         Assert.Equal(chelid++, elem.Ids[i]);
         Assert.Equal(chsecid, elem.Prop2ds[i].Id);
-        Assert.Equal(22, elem.ApiElements[i].Group);
-        Assert.True(elem.ApiElements[i].IsDummy);
-        Assert.Equal("Shahin", elem.ApiElements[i].Name);
+        Assert.Equal(22, element.Group);
+        Assert.True(element.IsDummy);
+        Assert.Equal("Shahin", element.Name);
         Assert.Equal(0.1, elem.Offsets[i].Z.Value);
       }
     }
@@ -159,12 +160,13 @@ namespace GsaGHTests.Parameters {
       }
 
       for (int i = 0; i < dup.ApiElements.Count; i++) {
+        var element = dup.ApiElements[i] as Element;
         if (mesh.Faces[i].IsTriangle) {
-          Assert.True(dup.ApiElements[i].Type == ElementType.TRI3);
+          Assert.True(element.Type == ElementType.TRI3);
         }
 
         if (mesh.Faces[i].IsQuad) {
-          Assert.True(dup.ApiElements[i].Type == ElementType.QUAD4);
+          Assert.True(element.Type == ElementType.QUAD4);
         }
 
         Point3d mPt = mesh.Vertices[mesh.Faces[i].A];
@@ -185,7 +187,7 @@ namespace GsaGHTests.Parameters {
         Assert.Equal(mPt.Y, ePt.Y);
         Assert.Equal(mPt.Z, ePt.Z);
 
-        if (dup.ApiElements[i].Type != ElementType.QUAD4) {
+        if (element.Type != ElementType.QUAD4) {
           continue;
         }
 
@@ -225,11 +227,12 @@ namespace GsaGHTests.Parameters {
       int checkId = 3;
       int checkSectId = 4;
       for (int i = 0; i < dup.ApiElements.Count; i++) {
+        var element = dup.ApiElements[i] as Element;
         Assert.Equal(checkId++, dup.Ids[i]);
         Assert.Equal(checkSectId++, dup.Prop2ds[i].Id);
-        Assert.Equal(2, dup.ApiElements[i].Group);
-        Assert.False(dup.ApiElements[i].IsDummy);
-        Assert.Equal("Esmaeil", dup.ApiElements[i].Name);
+        Assert.Equal(2, element.Group);
+        Assert.False(element.IsDummy);
+        Assert.Equal("Esmaeil", element.Name);
         Assert.Equal(-0.15, dup.Offsets[i].Z.Value);
       }
 
@@ -237,12 +240,13 @@ namespace GsaGHTests.Parameters {
       checkId = 15;
       checkSectId = 30;
       for (int i = 0; i < origi.ApiElements.Count; i++) {
+        var element = origi.ApiElements[i] as Element;
         // check other members are valid
         Assert.Equal(checkId++, origi.Ids[i]);
         Assert.Equal(checkSectId++, origi.Prop2ds[i].Id);
-        Assert.Equal(4, origi.ApiElements[i].Group);
-        Assert.True(origi.ApiElements[i].IsDummy);
-        Assert.Equal("Mani", origi.ApiElements[i].Name);
+        Assert.Equal(4, element.Group);
+        Assert.True(element.IsDummy);
+        Assert.Equal("Mani", element.Name);
         Assert.Equal(-0.17, origi.Offsets[i].Z.Value);
       }
     }
@@ -261,23 +265,25 @@ namespace GsaGHTests.Parameters {
     public void DuplicateApiObjectReturnsValidObjectForQuad4Type() {
       GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
 
-      List<Element> list = ele.DuplicateApiObjects();
+      List<object> list = ele.DuplicateApiObjects();
 
       Assert.NotNull(list);
       Assert.Equal(2, list.Count);
       for (int i = 0; i < list.Count; i++) {
-        Assert.Equal(ele.ApiElements[i].Type, list[i].Type);
-        Assert.Equal(ele.ApiElements[i].Topology, list[i].Topology);
-        Assert.Equal((Color)ele.ApiElements[i].Colour, (Color)list[i].Colour);
-        Assert.Equal(ele.ApiElements[i].Group, list[i].Group);
-        Assert.Equal(ele.ApiElements[i].IsDummy, list[i].IsDummy);
-        Assert.Equal(ele.ApiElements[i].Name, list[i].Name);
-        Assert.Equal(ele.ApiElements[i].Offset.ToString(), list[i].Offset.ToString());
-        Assert.Equal(ele.ApiElements[i].OrientationAngle, list[i].OrientationAngle);
-        Assert.Equal(ele.ApiElements[i].OrientationNode, list[i].OrientationNode);
-        Assert.Equal(ele.ApiElements[i].ParentMember?.Member, list[i].ParentMember?.Member);
-        Assert.Equal(ele.ApiElements[i].ParentMember?.Replica, list[i].ParentMember?.Replica);
-        Assert.Equal(ele.ApiElements[i].Property, list[i].Property);
+        var element = ele.ApiElements[i] as Element;
+        var elementOut = list[i] as Element;
+        Assert.Equal(element.Type, elementOut.Type);
+        Assert.Equal(element.Topology, elementOut.Topology);
+        Assert.Equal((Color)element.Colour, (Color)elementOut.Colour);
+        Assert.Equal(element.Group, elementOut.Group);
+        Assert.Equal(element.IsDummy, elementOut.IsDummy);
+        Assert.Equal(element.Name, elementOut.Name);
+        Assert.Equal(element.Offset.ToString(), elementOut.Offset.ToString());
+        Assert.Equal(element.OrientationAngle, elementOut.OrientationAngle);
+        Assert.Equal(element.OrientationNode, elementOut.OrientationNode);
+        Assert.Equal(element.ParentMember?.Member, elementOut.ParentMember?.Member);
+        Assert.Equal(element.ParentMember?.Replica, elementOut.ParentMember?.Replica);
+        Assert.Equal(element.Property, elementOut.Property);
       }
     }
 
@@ -290,8 +296,8 @@ namespace GsaGHTests.Parameters {
       Assert.NotNull(points);
       Assert.Equal(2, points.Count);
 
-      ele.ApiElements[0].Type = ElementType.QUAD8;
-      ele.ApiElements[1].Type = ElementType.QUAD8;
+      (ele.ApiElements[0] as Element).Type = ElementType.QUAD8;
+      (ele.ApiElements[1] as Element).Type = ElementType.QUAD8;
 
       Point3dList points2 = ele.GetCenterPoints();
 
@@ -324,8 +330,8 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void UpdateMeshColoursChangeColor() {
       GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
-      ele.ApiElements[0].Colour = Color.DarkCyan;
-      ele.ApiElements[1].Colour = Color.DarkBlue;
+      (ele.ApiElements[0] as Element).Colour = Color.DarkCyan;
+      (ele.ApiElements[1] as Element).Colour = Color.DarkBlue;
 
       Assert.Empty(ele.Mesh.VertexColors);
 
@@ -370,11 +376,11 @@ namespace GsaGHTests.Parameters {
       elem.ApiElements.SetMembers(dum);
       elem.ApiElements.SetMembers(nms);
       elem.ApiElements.SetMembers(off);
-
-      elem.ApiElements[0].Type = ElementType.QUAD4;
-      elem.ApiElements[0].Topology = new ReadOnlyCollection<int>(new List<int>(4) { 1, 2, 3, 4 });
-      elem.ApiElements[1].Type = ElementType.QUAD4;
-      elem.ApiElements[1].Topology = new ReadOnlyCollection<int>(new List<int>(4) { 4, 3, 2, 1 });
+      var feElement = elem.ApiElements[0] as Element;
+      feElement.Type = ElementType.QUAD4;
+      feElement.Topology = new ReadOnlyCollection<int>(new List<int>(4) { 1, 2, 3, 4 });
+      feElement.Type = ElementType.QUAD4;
+      feElement.Topology = new ReadOnlyCollection<int>(new List<int>(4) { 4, 3, 2, 1 });
       elem.ApiElements.RemoveRange(2, 20);
 
       return elem;

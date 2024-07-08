@@ -30,19 +30,30 @@ namespace GsaGH.Parameters {
     }
 
     internal static ConcurrentBag<GsaElement2dGoo> CreateElement2dFromApi(
-      ConcurrentDictionary<int, Element> elements, GsaModel model) {
+      ConcurrentDictionary<int, object> elements, GsaModel model) {
       ReadOnlyDictionary<int, Node> nodes = model.ApiNodes;
       ReadOnlyDictionary<int, Axis> axDict = model.ApiModel.Axes();
 
-      var sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, Element>>();
+      var sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, object>>();
       Parallel.ForEach(elements, elem => {
-        int parent = -elem.Value.ParentMember.Member;
-        if (parent == 0) {
-          parent = elem.Value.Property;
+        int parent = 0;
+        if ((elem.Value as Element) != null) {
+          var element2d = elem.Value as Element;
+          parent = -element2d.ParentMember.Member;
+          if (parent == 0) {
+            parent = element2d.Property;
+          }
+        }
+        else {
+          var element2d = elem.Value as LoadPanelElement;
+          parent = -element2d.ParentMember.Member;
+          if (parent == 0) {
+            parent = element2d.Property;
+          }
         }
 
         if (!sortedElements.ContainsKey(parent)) {
-          sortedElements.TryAdd(parent, new ConcurrentDictionary<int, Element>());
+          sortedElements.TryAdd(parent, new ConcurrentDictionary<int, object>());
         }
 
         sortedElements[parent][elem.Key] = elem.Value;
@@ -52,7 +63,7 @@ namespace GsaGH.Parameters {
 
       Parallel.For(0, sortedElements.Count, i => {
         int parentId = sortedElements.Keys.ElementAt(i);
-        ConcurrentDictionary<int, Element> elems = sortedElements[parentId];
+        ConcurrentDictionary<int, object> elems = sortedElements[parentId];
         var prop2Ds = new ConcurrentDictionary<int, GsaProperty2d>();
         var mList = new ConcurrentDictionary<int, Mesh>();
 
@@ -82,8 +93,8 @@ namespace GsaGH.Parameters {
           // revert back to list of meshes instead of the joined one
           foreach (int key in elems.Keys) {
             // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
-            elems.TryGetValue(key, out Element apiElem);
-            var apiElems = new ConcurrentDictionary<int, Element>();
+            elems.TryGetValue(key, out object apiElem);
+            var apiElems = new ConcurrentDictionary<int, object>();
             apiElems.TryAdd(key, apiElem);
             mList.TryGetValue(key, out Mesh mesh);
             prop2Ds.TryGetValue(key, out GsaProperty2d prop);
@@ -180,15 +191,24 @@ namespace GsaGH.Parameters {
       return elem3dGoos;
     }
 
-    internal static Mesh GetMeshFromApiElement2d(Element element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
-      ReadOnlyCollection<int> topo = element.Topology;
+    internal static Mesh GetMeshFromApiElement2d(object element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
 
-      if (topo.Count < 3 || element.Type == ElementType.THREE_D
-        || element.Type == ElementType.BRICK8 || element.Type == ElementType.WEDGE6
-        || element.Type == ElementType.PYRAMID5 || element.Type == ElementType.TETRA4) {
-        return null;
+      var topologyList = new List<int>();
+      if ((element as Element) != null) {
+        var element2d = element as Element;
+        topologyList = element2d.Topology.ToList();
+        if (element2d.Type == ElementType.BRICK8 || element2d.Type == ElementType.WEDGE6
+       || element2d.Type == ElementType.PYRAMID5 || element2d.Type == ElementType.TETRA4) {
+          return null;
+        }
+        topologyList = element2d.Topology.ToList();
       }
-
+      else {
+        var element2d = element as LoadPanelElement;
+        topologyList = element2d.Topology.ToList();
+      }
+      var topo = new ReadOnlyCollection<int>(topologyList);
+   
       var outMesh = new Mesh();
 
       foreach (int t in topo) {
@@ -277,7 +297,6 @@ namespace GsaGH.Parameters {
       Element element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
       ReadOnlyCollection<int> topo = element.Topology;
       var check3d = new List<bool> {
-        element.Type == ElementType.THREE_D,
         element.Type == ElementType.BRICK8,
         element.Type == ElementType.WEDGE6,
         element.Type == ElementType.PYRAMID5,

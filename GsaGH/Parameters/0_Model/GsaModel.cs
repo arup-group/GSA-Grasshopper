@@ -255,10 +255,19 @@ namespace GsaGH.Parameters {
       return lists;
     }
 
-    internal GsaProperty2d GetProp2d(Element e) {
-      return Prop2ds.TryGetValue(e.Property, out GsaProperty2dGoo prop)
-        ? prop.Value
-        : e.Property > 0 ? new GsaProperty2d(e.Property) : null;
+    internal GsaProperty2d GetProp2d(object element) {
+      if ((element as Element) != null) {
+        var element2d = element as Element;
+        return Prop2ds.TryGetValue(element2d.Property, out GsaProperty2dGoo prop)
+       ? prop.Value
+       : element2d.Property > 0 ? new GsaProperty2d(element2d.Property) : null;
+      }
+      else {
+        var element2d = element as LoadPanelElement;
+        return Prop2ds.TryGetValue(element2d.Property, out GsaProperty2dGoo prop)
+     ? prop.Value
+     : element2d.Property > 0 ? new GsaProperty2d(element2d.Property) : null;
+      }
     }
 
     internal GsaProperty2d GetProp2d(Member m) {

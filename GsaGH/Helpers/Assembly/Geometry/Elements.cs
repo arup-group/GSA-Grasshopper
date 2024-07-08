@@ -7,7 +7,7 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
-    private void AddElement(int id, Guid guid, Element apiElement, bool overwrite) {
+    private void AddElement(int id, Guid guid, object apiElement, bool overwrite) {
       if (id > 0) {
         _elements.SetValue(id, guid, apiElement, overwrite);
       } else {
@@ -48,24 +48,33 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertElement2d(GsaElement2d element2d) {
-      List<Element> apiElems = element2d.DuplicateApiObjects();
+      List<object> apiElems = element2d.DuplicateApiObjects();
       for (int i = 0; i < apiElems.Count; i++) {
-        Element apiMeshElement = apiElems[i];
         List<int> meshVertexIndex = element2d.TopoInt[i];
-
         var topo = new List<int>();
         foreach (int mesh in meshVertexIndex) {
           topo.Add(AddNode(element2d.Topology[mesh]));
         }
 
-        apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
+        int property = 0; 
         if (!element2d.Prop2ds.IsNullOrEmpty()) {
           GsaProperty2d prop = (i > element2d.Prop2ds.Count - 1) ? element2d.Prop2ds.Last() :
           element2d.Prop2ds[i];
-          apiMeshElement.Property = ConvertProp2d(prop);
+          property = ConvertProp2d(prop);
         }
-
-        AddElement(element2d.Ids[i], element2d.Guid, apiMeshElement, false);
+        object genericElement = apiElems[i];
+        if ((genericElement as Element) != null) {
+          var apiMeshElement = genericElement as Element;
+          apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
+          apiMeshElement.Property = property;
+          AddElement(element2d.Ids[i], element2d.Guid, apiMeshElement, false);
+        }
+        else {
+          var apiMeshElement = genericElement as LoadPanelElement;
+          apiMeshElement.Topology = new ReadOnlyCollection<int>(topo);
+          apiMeshElement.Property = property;
+          AddElement(element2d.Ids[i], element2d.Guid, apiMeshElement, false);
+        }
       }
     }
 

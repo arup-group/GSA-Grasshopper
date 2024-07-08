@@ -187,13 +187,6 @@ namespace GsaGH.Components {
         }
       }
 
-      var meshSize = (Length)Input.UnitNumber(this, da, 4, _lengthUnit, true);
-
-      Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> tuple
-        = GetElement2dFromBrep(brep, pts, nodes, crvs, elem1ds, mem1ds,
-          meshSize.As(_lengthUnit), _lengthUnit, ToleranceMenu.Tolerance);
-      GsaElement2d elem2d = tuple.Item1;
-
       var ghTyp = new GH_ObjectWrapper();
       var prop2d = new GsaProperty2d();
       if (da.GetData(3, ref ghTyp)) {
@@ -211,6 +204,13 @@ namespace GsaGH.Components {
       } else {
         prop2d.Id = 0;
       }
+
+      bool isLoadPanel = prop2d.ApiProp2d.Type == Property2D_Type.LOAD;
+      var meshSize = (Length)Input.UnitNumber(this, da, 4, _lengthUnit, true);
+      Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> tuple
+        = GetElement2dFromBrep(brep, isLoadPanel, pts, nodes, crvs, elem1ds, mem1ds,
+          meshSize.As(_lengthUnit), _lengthUnit, ToleranceMenu.Tolerance);
+      GsaElement2d elem2d = tuple.Item1;
 
       var prop2Ds = new List<GsaProperty2d>();
       for (int i = 0; i < elem2d.ApiElements.Count; i++) {
@@ -248,7 +248,7 @@ namespace GsaGH.Components {
     }
 
     private Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> GetElement2dFromBrep(
-      Brep brep, Point3dList points, List<GsaNode> nodes, List<Curve> curves,
+      Brep brep, bool isLoadPanel, Point3dList points, List<GsaNode> nodes, List<Curve> curves,
       List<GsaElement1d> elem1ds, List<GsaMember1d> mem1ds, double meshSize, LengthUnit unit,
       Length tolerance) {
       var gsaElement2D = new GsaElement2d();
@@ -266,8 +266,8 @@ namespace GsaGH.Components {
         = RhinoConversions.ConvertBrepToMesh(brep, points, nodes, curves, elem1ds, mem1ds, meshSize,
           unit, tolerance, meshMode2d);
       gsaElement2D.Mesh = tuple.Item1;
-      Tuple<List<Element>, Point3dList, List<List<int>>> convertMesh
-        = RhinoConversions.ConvertMeshToElem2d(gsaElement2D.Mesh, 0, true);
+      Tuple<List<object>, Point3dList, List<List<int>>> convertMesh
+      = RhinoConversions.ConvertMeshToElem2d(gsaElement2D.Mesh, isLoadPanel, true);
       gsaElement2D.ApiElements = convertMesh.Item1;
       gsaElement2D.Topology = convertMesh.Item2;
       gsaElement2D.TopoInt = convertMesh.Item3;
