@@ -14,6 +14,11 @@ namespace GsaGH.Helpers.Assembly {
       Parallel.ForEach(model.Elements(),
         item => relationships.GetOrAdd(item.Value.ParentMember.Member, new ConcurrentBag<int>())
          .Add(item.Key));
+
+      Parallel.ForEach(model.LoadPanelElements(),
+      item => relationships.GetOrAdd(item.Value.ParentMember.Member, new ConcurrentBag<int>())
+       .Add(item.Key));
+
       return relationships;
     }
 
