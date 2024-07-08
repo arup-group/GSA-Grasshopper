@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -22,7 +24,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Edit2dElement;
-    private AngleUnit _angleUnit = AngleUnit.Radian;
+    private OasysUnits.Units.AngleUnit _angleUnit = OasysUnits.Units.AngleUnit.Radian;
 
     public Edit2dElement() : base("Edit 2D Element", "Elem2dEdit", "Modify GSA 2D Element",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
@@ -30,7 +32,7 @@ namespace GsaGH.Components {
     protected override void BeforeSolveInstance() {
       base.BeforeSolveInstance();
       if (Params.Input[5] is Param_Number angleParameter) {
-        _angleUnit = angleParameter.UseDegrees ? AngleUnit.Degree : AngleUnit.Radian;
+        _angleUnit = angleParameter.UseDegrees ? OasysUnits.Units.AngleUnit.Degree : OasysUnits.Units.AngleUnit.Radian;
       }
     }
 
@@ -125,7 +127,8 @@ namespace GsaGH.Components {
           for (int i = 0; i < elem.ApiElements.Count; i++) {
             elem.Prop2ds.Add(prop2dGoos[0].Value);
           }
-        } else {
+        }
+        else {
           if (prop2dGoos.Count != elem.ApiElements.Count) {
             this.AddRuntimeWarning("PA input must either be a single Prop2d or a" +
               $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
@@ -174,24 +177,26 @@ namespace GsaGH.Components {
       if (Preview3dSection || elem.Section3dPreview != null) {
         elem.CreateSection3dPreview();
       }
-
+      // let d = (c as Dog) where d != null select d
       // #### outputs ####
+      List<object> genericElements = elem.ApiElements;
       da.SetData(0, new GsaElement2dGoo(elem));
       da.SetDataList(1, elem.Ids);
       da.SetData(2, elem.Mesh);
       da.SetDataList(3, elem.Prop2ds == null ? null
         : new List<GsaProperty2dGoo>(elem.Prop2ds.Select(x => new GsaProperty2dGoo(x))));
-      da.SetDataList(4, elem.ApiElements.Select(x => x.Group));
-      da.SetDataList(5, elem.ApiElements.Select(x => x.Type));
+      da.SetDataList(4, ElementHelper.Group(genericElements));
+      da.SetDataList(5, genericElements.OfType<Element>().Select(x => x.Type));
       da.SetDataList(6,
         new List<GsaOffsetGoo>(elem.Offsets.Select(x => new GsaOffsetGoo(x))));
       da.SetDataList(7, elem.OrientationAngles.Select(x => x.Radians));
-      da.SetDataList(8, elem.ApiElements.Select(x => x.Name));
-      da.SetDataList(9, elem.ApiElements.Select(x => (Color)x.Colour));
-      da.SetDataList(10, elem.ApiElements.Select(x => x.IsDummy));
+      da.SetDataList(8, ElementHelper.Name(genericElements));
+      da.SetDataList(9, ElementHelper.Colour(genericElements));
+      da.SetDataList(10, ElementHelper.IsDummy(genericElements));
       try {
-        da.SetDataList(11, elem.ApiElements.Select(x => x.ParentMember.Member).ToList());
-      } catch (Exception) { }
+        da.SetDataList(11, ElementHelper.ParentMember(genericElements));
+      }
+      catch (Exception) { }
       da.SetDataTree(12, elem.GetTopologyIDs());
     }
   }

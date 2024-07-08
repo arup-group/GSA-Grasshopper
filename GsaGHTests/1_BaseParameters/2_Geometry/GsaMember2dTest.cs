@@ -20,7 +20,7 @@ namespace GsaGHTests.Parameters {
         new Point3d(-1, 2, 0),
       };
       pts.Add(pts[0]);
-      var pol = new Polyline(pts);
+      var pol = new Rhino.Geometry.Polyline(pts);
       Brep brep = Brep.CreatePlanarBreps(pol.ToNurbsCurve(), 0.001)[0];
 
       var inclpts = new Point3dList();
@@ -69,7 +69,7 @@ namespace GsaGHTests.Parameters {
         new Point3d(4, 2, 0),
       };
       pts.Add(pts[0]);
-      var pol = new Polyline(pts);
+      var pol = new Rhino.Geometry.Polyline(pts);
       Brep brep = Brep.CreatePlanarBreps(pol.ToNurbsCurve(), 0.001)[0];
 
       var inclpts = new Point3dList {
@@ -127,7 +127,7 @@ namespace GsaGHTests.Parameters {
         new Point3d(2, 4, 0),
       };
       pts2.Add(pts2[0]);
-      var pol2 = new Polyline(pts2);
+      var pol2 = new Rhino.Geometry.Polyline(pts2);
       Brep brep2 = Brep.CreatePlanarBreps(pol2.ToNurbsCurve(), 0.001)[0];
 
       original.UpdateGeometry(brep2);

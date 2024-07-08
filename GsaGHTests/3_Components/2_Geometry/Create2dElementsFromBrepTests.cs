@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using GsaAPI;
 using GsaGH.Components;
 using GsaGH.Parameters;
@@ -75,10 +76,11 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(230, e2d.Value.Mesh.Faces.Count);
 
       for (int i = 0; i < e2d.Value.Mesh.Faces.Count; i++) {
+        var element = e2d.Value.ApiElements[i] as Element;
         if (e2d.Value.Mesh.Faces[i].IsTriangle) {
-          Assert.Equal(ElementType.TRI6, e2d.Value.ApiElements[i].Type);
+          Assert.Equal(ElementType.TRI6, element.Type);
         } else {
-          Assert.Equal(ElementType.QUAD8, e2d.Value.ApiElements[i].Type);
+          Assert.Equal(ElementType.QUAD8, element.Type);
         }
       }
     }
@@ -93,10 +95,11 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(240, e2d.Value.Mesh.Faces.Count);
 
       for (int i = 0; i < e2d.Value.Mesh.Faces.Count; i++) {
+        var element = e2d.Value.ApiElements[i] as Element;
         if (e2d.Value.Mesh.Faces[i].IsTriangle) {
-          Assert.Equal(ElementType.TRI6, e2d.Value.ApiElements[i].Type);
+          Assert.Equal(ElementType.TRI6, element.Type);
         } else {
-          Assert.Equal(ElementType.QUAD8, e2d.Value.ApiElements[i].Type);
+          Assert.Equal(ElementType.QUAD8, element.Type);
         }
       }
 
@@ -119,7 +122,8 @@ namespace GsaGHTests.Components.Geometry {
       Assert.NotNull(e2d);
       Assert.Equal(230, e2d.Value.Ids.Count);
       Assert.Equal(230, e2d.Value.Mesh.Faces.Count);
-      foreach (Element elem in e2d.Value.ApiElements) {
+      foreach (Element elem in e2d.Value.ApiElements.Cast<Element>()) {
+        var element = elem as Element;
         Assert.Equal(ElementType.TRI6, elem.Type);
       }
     }
@@ -138,7 +142,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.NotNull(e2d);
       Assert.Equal(96, e2d.Value.Ids.Count);
       Assert.Equal(96, e2d.Value.Mesh.Faces.Count);
-      foreach (Element elem in e2d.Value.ApiElements) {
+      foreach (Element elem in e2d.Value.ApiElements.Cast<Element>()) {
         Assert.Equal(ElementType.QUAD8, elem.Type);
       }
     }

@@ -57,11 +57,7 @@ namespace GsaGH.Helpers.GsaApi {
 
     internal static readonly Dictionary<string, ElementType> _elementTypeMapping
       = new Dictionary<string, ElementType>() {
-        {
-          "New", ElementType.NEW
-        }, {
-          "Undefined", ElementType.UNDEF
-        }, {
+         {
           "Bar", ElementType.BAR
         }, {
           "Beam", ElementType.BEAM
@@ -97,20 +93,6 @@ namespace GsaGH.Helpers.GsaApi {
           "Damper", ElementType.DAMPER
         }, {
           "Pyramid-5", ElementType.PYRAMID5
-        }, {
-          "Last Type", ElementType.LAST_TYPE
-        }, {
-          "1D", ElementType.ONE_D
-        }, {
-          "2D", ElementType.TWO_D
-        }, {
-          "3D", ElementType.THREE_D
-        }, {
-          "1D Section", ElementType.ONE_D_SECT
-        }, {
-          "2D Finite Element", ElementType.TWO_D_FE
-        }, {
-          "2D Load", ElementType.TWO_D_LOAD
         },
       };
 

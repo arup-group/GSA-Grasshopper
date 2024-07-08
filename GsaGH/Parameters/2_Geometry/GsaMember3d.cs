@@ -25,7 +25,7 @@ namespace GsaGH.Parameters {
     public Guid Guid { get; private set; } = Guid.NewGuid();
     public Mesh SolidMesh { get; private set; }
     public List<Line> PreviewEdgeLines { get; private set; }
-    public List<Polyline> PreviewHiddenLines { get; private set; }
+    public List<Rhino.Geometry.Polyline> PreviewHiddenLines { get; private set; }
     public Point3dList PreviewPts { get; private set; }
     public GsaProperty3d Prop3d { get; set; }
 
@@ -138,7 +138,7 @@ namespace GsaGH.Parameters {
         SolidMesh.FaceNormals.ComputeFaceNormals();
       }
 
-      PreviewHiddenLines = new List<Polyline>();
+      PreviewHiddenLines = new List<Rhino.Geometry.Polyline>();
       PreviewEdgeLines = new List<Line>();
       for (int i = 0; i < alledges.Count; i++) {
         int[] faceId = alledges.GetConnectedFaces(i);
@@ -149,7 +149,7 @@ namespace GsaGH.Parameters {
         if (!vec1.Equals(vec2) || faceId.Length > 2) {
           PreviewEdgeLines.Add(alledges.EdgeLine(i));
         } else {
-          var hidden = new Polyline {
+          var hidden = new Rhino.Geometry.Polyline {
             alledges.EdgeLine(i).PointAt(0),
             alledges.EdgeLine(i).PointAt(1),
           };

@@ -11,6 +11,7 @@ using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
+using OasysGH.UI;
 using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
@@ -24,16 +25,15 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   /// </summary>
   public class GsaElement2d {
-    public List<Element> ApiElements { get; internal set; }
+    public List<object> ApiElements { get; internal set; }
     public List<int> Ids { get; set; } = new List<int>();
     public Guid Guid { get; private set; } = Guid.NewGuid();
     public Mesh Mesh { get; set; } = new Mesh();
     public List<List<int>> TopoInt { get; internal set; }
     public Point3dList Topology { get; internal set; }
-    public List<GsaOffset> Offsets => ApiElements.Select(
-      e => new GsaOffset(e.Offset.X1, e.Offset.X2, e.Offset.Y, e.Offset.Z)).ToList();
-    public List<Angle> OrientationAngles => ApiElements.Select(
-      e => new Angle(e.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian)).ToList();
+
+    public List<GsaOffset> Offsets => ElementHelper.GsaGhOffset(ApiElements);
+    public List<Angle> OrientationAngles => ElementHelper.OasysOrientationAngle(ApiElements);
     public List<GsaProperty2d> Prop2ds { get; set; }
     public Section3dPreview Section3dPreview { get; private set; }
 
@@ -41,19 +41,20 @@ namespace GsaGH.Parameters {
     /// Empty constructor instantiating a list of new API objects
     /// </summary>
     public GsaElement2d() {
-      ApiElements = new List<Element>();
+      ApiElements = new List<object>();
     }
 
     /// <summary>
     /// Create new instance by casting from a Mesh
     /// </summary>
     /// <param name="mesh"></param>
-    public GsaElement2d(Mesh mesh) {
+    /// <param name="isLoadPanel"></param>
+    public GsaElement2d(Mesh mesh, bool isLoadPanel = false) {
       Mesh = mesh.DuplicateMesh();
       Mesh.Compact();
       Mesh.Vertices.CombineIdentical(true, false);
-      Tuple<List<Element>, Point3dList, List<List<int>>> convertMesh
-        = RhinoConversions.ConvertMeshToElem2d(mesh, 0);
+      Tuple<List<object>, Point3dList, List<List<int>>> convertMesh
+        = RhinoConversions.ConvertMeshToElem2d(mesh, isLoadPanel);
       ApiElements = convertMesh.Item1;
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
@@ -78,7 +79,7 @@ namespace GsaGH.Parameters {
     /// Create a new instance from an API object from an existing model
     /// </summary>
     internal GsaElement2d(
-      ConcurrentDictionary<int, Element> elements, Mesh mesh, ConcurrentDictionary<int, GsaProperty2d> prop2ds) {
+      ConcurrentDictionary<int, object> elements, Mesh mesh, ConcurrentDictionary<int, GsaProperty2d> prop2ds) {
       Mesh = mesh;
       Topology = new Point3dList(mesh.Vertices.ToPoint3dArray());
       TopoInt = RhinoConversions.ConvertMeshToElem2d(Mesh);
@@ -93,36 +94,50 @@ namespace GsaGH.Parameters {
       Section3dPreview = new Section3dPreview(this);
     }
 
-    public List<Element> DuplicateApiObjects() {
+    public List<object> DuplicateApiObjects() {
       if (ApiElements.IsNullOrEmpty()) {
         return ApiElements;
       }
 
-      var elems = new List<Element>();
+      var elems = new List<object>();
       for (int i = 0; i < ApiElements.Count; i++) {
-        elems.Add(new Element() {
-          Group = ApiElements[i].Group,
-          IsDummy = ApiElements[i].IsDummy,
-          Name = ApiElements[i].Name.ToString(),
-          OrientationNode = ApiElements[i].OrientationNode,
-          OrientationAngle = ApiElements[i].OrientationAngle,
-          ParentMember = ApiElements[i].ParentMember,
-          Property = ApiElements[i].Property,
-          Type = ApiElements[i].Type,
-          Topology = new ReadOnlyCollection<int>(ApiElements[i].Topology.ToList()),
-        });
-
-        elems[i].Offset.X1 = ApiElements[i].Offset.X1;
-        elems[i].Offset.X2 = ApiElements[i].Offset.X2;
-        elems[i].Offset.Y = ApiElements[i].Offset.Y;
-        elems[i].Offset.Z = ApiElements[i].Offset.Z;
-
-        // workaround to handle that Color is non-nullable type
-        if ((Color)ApiElements[i].Colour != Color.FromArgb(0, 0, 0)) {
-          elems[i].Colour = ApiElements[i].Colour;
+        object genericElement = ApiElements[i];
+        if ((genericElement as Element) != null) {
+          var element2d = genericElement as Element;
+          var feElement = new Element() {
+            Group = element2d.Group,
+            IsDummy = element2d.IsDummy,
+            Name = element2d.Name.ToString(),
+            OrientationNode = element2d.OrientationNode,
+            OrientationAngle = element2d.OrientationAngle,
+            ParentMember = element2d.ParentMember,
+            Property = element2d.Property,
+            Type = element2d.Type,
+            Topology = new ReadOnlyCollection<int>(element2d.Topology.ToList()),
+            Offset = element2d.Offset,
+          };
+          if ((Color)element2d.Colour != Color.FromArgb(0, 0, 0)) {
+            feElement.Colour = element2d.Colour;
+          }
+          elems.Add(feElement);
+        }
+        else {
+          var element2d = genericElement as LoadPanelElement;
+          var laodPanel = new LoadPanelElement() {
+            Group = element2d.Group,
+            IsDummy = element2d.IsDummy,
+            Name = element2d.Name.ToString(),
+            OrientationAngle = element2d.OrientationAngle,
+            ParentMember = element2d.ParentMember,
+            Property = element2d.Property,
+            Topology = new ReadOnlyCollection<int>(element2d.Topology.ToList()),
+          };
+          if ((Color)element2d.Colour != Color.FromArgb(0, 0, 0)) {
+            laodPanel.Colour = element2d.Colour;
+          }
+          elems.Add(laodPanel);
         }
       }
-
       return elems;
     }
 
@@ -130,11 +145,16 @@ namespace GsaGH.Parameters {
       var points = new Point3dList();
       int faceIndex = 0;
       for (int i = 0; i < ApiElements.Count; i++) {
-
         Point3d pt = Mesh.Faces.GetFaceCenter(faceIndex);
         int index = 0;
+        ElementType elementType = ElementType.BEAM;
+        object genericElement = ApiElements[i];
+        if ((genericElement as Element) != null) {
+          var element2d = genericElement as Element;
+          elementType = element2d.Type;
+        }
 
-        switch (ApiElements[i].Type) {
+        switch (elementType) {
           case ElementType.QUAD8:
             index = TopoInt[i][0];
             pt = Mesh.Vertices[Mesh.Faces[faceIndex].C];
@@ -160,7 +180,15 @@ namespace GsaGH.Parameters {
       var topos = new DataTree<int>();
       for (int i = 0; i < ApiElements.Count; i++) {
         if (ApiElements[i] != null) {
-          topos.AddRange(ApiElements[i].Topology.ToList(), new GH_Path(Ids[i]));
+          object genericElement = ApiElements[i];
+          if ((genericElement as Element) != null) {
+            var element2d = genericElement as Element;
+            topos.AddRange(element2d.Topology.ToList(), new GH_Path(Ids[i]));
+          }
+          else {
+            var element2d = genericElement as LoadPanelElement;
+            topos.AddRange(element2d.Topology.ToList(), new GH_Path(Ids[i]));
+          }
         }
       }
 
@@ -171,16 +199,29 @@ namespace GsaGH.Parameters {
       if (!Mesh.IsValid) {
         return "Null";
       }
+      string type = "";
+      object genericElement = ApiElements.First();
+      if ((genericElement as Element) != null) {
+        var element2d = genericElement as Element;
+        type = Mappings._elementTypeMapping.FirstOrDefault(
+        x => x.Value == element2d.Type).Key;
+      }
 
-      string type = Mappings._elementTypeMapping.FirstOrDefault(
-        x => x.Value == ApiElements.First().Type).Key;
       string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
       return string.Join(" ", type, info).TrimSpaces();
     }
 
     public void UpdateMeshColours() {
       for (int i = 0; i < ApiElements.Count; i++) {
-        Mesh.VertexColors.SetColor(i, (Color)ApiElements[i].Colour);
+        object genericElement = ApiElements[i];
+        if ((genericElement as Element) != null) {
+          var element2d = genericElement as Element;
+          Mesh.VertexColors.SetColor(i, (Color)element2d.Colour);
+        }
+        else {
+          var element2d = genericElement as LoadPanelElement;
+          Mesh.VertexColors.SetColor(i, (Color)element2d.Colour);
+        }
       }
     }
   }

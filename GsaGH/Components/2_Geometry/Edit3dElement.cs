@@ -117,26 +117,26 @@ namespace GsaGH.Components {
       // 3 Group
       var ghGrps = new List<GH_Integer>();
       if (da.GetDataList(3, ghGrps)) {
-        elem.ApiElements.SetMembers(ghGrps.Select(x => x.Value).ToList());
+        elem.ApiElements.Cast<object>().ToList().SetMembers(ghGrps.Select(x => x.Value).ToList());
       }
 
       // 4 name
       var ghnm = new List<GH_String>();
       if (da.GetDataList(4, ghnm)) {
-        elem.ApiElements.SetMembers(ghnm.Select(x => x.Value).ToList());
+        elem.ApiElements.Cast<object>().ToList().SetMembers(ghnm.Select(x => x.Value).ToList());
       }
 
       // 5 Colour
       var ghcols = new List<GH_Colour>();
       if (da.GetDataList(5, ghcols)) {
-        elem.ApiElements.SetMembers(ghcols.Select(x => x.Value).ToList());
+        elem.ApiElements.Cast<object>().ToList().SetMembers(ghcols.Select(x => x.Value).ToList());
         elem.UpdateMeshColours();
       }
 
       // 6 Dummy
       var ghdummies = new List<GH_Boolean>();
       if (da.GetDataList(6, ghdummies)) {
-        elem.ApiElements.SetMembers(ghdummies.Select(x => x.Value).ToList());
+        elem.ApiElements.Cast<object>().ToList().SetMembers(ghdummies.Select(x => x.Value).ToList());
       }
 
       da.SetData(0, new GsaElement3dGoo(elem));

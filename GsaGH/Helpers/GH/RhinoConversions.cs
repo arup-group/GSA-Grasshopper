@@ -30,7 +30,8 @@ namespace GsaGH.Helpers.GH {
         if (topoType != null & topoType[i + 1] == "A") {
           crvs.Append(new Arc(topology[i], topology[i + 1], topology[i + 2]));
           i++;
-        } else {
+        }
+        else {
           crvs.Append(new Line(topology[i], topology[i + 1]));
         }
       }
@@ -254,8 +255,19 @@ namespace GsaGH.Helpers.GH {
       }
 
       List<GsaNode> outNodes = null;
+      int member = 0;
       if (!nodes.IsNullOrEmpty()) {
-        Member mem2d = model.Members()[elem2dgoo[0].Value.ApiElements[0].ParentMember.Member];
+        object genricElement = elem2dgoo[0].Value.ApiElements[0];
+        if ((genricElement as Element) != null) {
+          var element2d = genricElement as Element;
+          member = element2d.ParentMember.Member;
+        }
+        else {
+          var element2d = genricElement as LoadPanelElement;
+          member = element2d.ParentMember.Member;
+        }
+
+        Member mem2d = model.Members()[member];
         List<int> topoInts = Topology.Topology_detangler(mem2d.Topology).Item4;
         int add = points?.Count ?? 0;
         outNodes = new List<GsaNode>();
@@ -349,7 +361,8 @@ namespace GsaGH.Helpers.GH {
 
         polyCurve = new PolyCurve();
         polyCurve.Append(curve);
-      } else {
+      }
+      else {
         if (tolerance < 0) {
           tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
         }
@@ -380,7 +393,8 @@ namespace GsaGH.Helpers.GH {
 
           crvType.Add("");
           point3ds.Add(segments[segments.Length - 1].PointAtEnd);
-        } else {
+        }
+        else {
           crvType.Add("");
           crvType.Add("");
 
@@ -476,17 +490,16 @@ namespace GsaGH.Helpers.GH {
       return topoInts;
     }
 
-    public static Tuple<List<Element>, Point3dList, List<List<int>>> ConvertMeshToElem2d(
-      Mesh mesh, int prop = 0, bool createQuadraticElements = false) {
-      var elems = new List<Element>();
+    public static Tuple<List<object>, Point3dList, List<List<int>>> ConvertMeshToElem2d(
+      Mesh mesh, bool isLoadPanel, bool createQuadraticElements = false) {
+      var elems = new List<object>();
       var topoPts = new Point3dList(mesh.Vertices.ToPoint3dArray());
       var topoInts = new List<List<int>>();
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
 
       foreach (MeshNgon ngon in ngons) {
-        var elem = new Element();
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
-
+        ElementType elementType = ElementType.QUAD4;
         switch (topo.Count) {
           case 3 when createQuadraticElements: {
               var pt3 = new Point3d((topoPts[topo[0]].X + topoPts[topo[1]].X) / 2,
@@ -505,12 +518,12 @@ namespace GsaGH.Helpers.GH {
               topo.Add(topoPts.Count);
               topoPts.Add(pt5);
 
-              elem.Type = ElementType.TRI6;
+              elementType = ElementType.TRI6;
               topoInts.Add(topo);
               break;
             }
           case 3:
-            elem.Type = ElementType.TRI3;
+            elementType = ElementType.TRI3;
             topoInts.Add(topo);
             break;
 
@@ -536,17 +549,17 @@ namespace GsaGH.Helpers.GH {
               topo.Add(topoPts.Count);
               topoPts.Add(pt6);
 
-              elem.Type = ElementType.QUAD8;
+              elementType = ElementType.QUAD8;
               topoInts.Add(topo);
               break;
             }
           case 4:
-            elem.Type = ElementType.QUAD4;
+            elementType = ElementType.QUAD4;
             topoInts.Add(topo);
             break;
 
           case 6: {
-              elem.Type = ElementType.TRI6;
+              elementType = ElementType.TRI6;
               var topo6 = new List<int> {
               topo[0],
               topo[2],
@@ -559,7 +572,7 @@ namespace GsaGH.Helpers.GH {
               break;
             }
           case 8: {
-              elem.Type = ElementType.QUAD8;
+              elementType = ElementType.QUAD8;
               var topo8 = new List<int> {
               topo[0],
               topo[2],
@@ -578,12 +591,16 @@ namespace GsaGH.Helpers.GH {
               throw new Exception($" Unable to create 2D element from mesh face with {topo.Count} verticies");
             }
         }
+        if(isLoadPanel) {
+          elems.Add(new LoadPanelElement());
+        }
+        else {
+          elems.Add(new Element { Type= elementType});
+        }
 
-        elem.Property = prop;
-        elems.Add(elem);
       }
 
-      return new Tuple<List<Element>, Point3dList, List<List<int>>>(elems, topoPts, topoInts);
+      return new Tuple<List<object>, Point3dList, List<List<int>>>(elems, topoPts, topoInts);
     }
 
     public static Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>>
@@ -599,28 +616,14 @@ namespace GsaGH.Helpers.GH {
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
         var faces = ngon.FaceIndexList().Select(u => (int)u).ToList();
         topoInts.Add(topo);
-        switch ((topo.Count, faces.Count)) {
-          case (4, 4):
-            elem.Type = ElementType.TETRA4;
-            break;
-
-          case (5, 5):
-            elem.Type = ElementType.PYRAMID5;
-            break;
-
-          case (6, 5):
-            elem.Type = ElementType.WEDGE6;
-            break;
-
-          case (8, 6):
-            elem.Type = ElementType.BRICK8;
-            break;
-
-          default:
-            throw new ArgumentException("Mesh Ngon verticy and face count does match any known " +
-              "3D Element type");
-        }
-
+        elem.Type = (topo.Count, faces.Count) switch {
+          (4, 4) => ElementType.TETRA4,
+          (5, 5) => ElementType.PYRAMID5,
+          (6, 5) => ElementType.WEDGE6,
+          (8, 6) => ElementType.BRICK8,
+          _ => throw new ArgumentException("Mesh Ngon verticy and face count does match any known " +
+                        "3D Element type"),
+        };
         faceInts.Add(faces);
         elems.Add(elem);
       }
@@ -695,7 +698,8 @@ namespace GsaGH.Helpers.GH {
       foreach (BrepLoop brepLoop in brep.Loops) {
         if (brepLoop.LoopType == BrepLoopType.Outer) {
           outer = brepLoop.To3dCurve();
-        } else {
+        }
+        else {
           inner.Add(brepLoop.To3dCurve());
         }
       }
@@ -706,9 +710,10 @@ namespace GsaGH.Helpers.GH {
       edges.AddRange(inner);
 
       Point3dList ctrlPts;
-      if (edges[0].TryGetPolyline(out Polyline tempCrv)) {
+      if (edges[0].TryGetPolyline(out Rhino.Geometry.Polyline tempCrv)) {
         ctrlPts = new Point3dList(tempCrv);
-      } else {
+      }
+      else {
         Tuple<PolyCurve, Point3dList, List<string>> convertBadSrf
           = ConvertMem2dCrv(edges[0], tolerance);
         ctrlPts = convertBadSrf.Item2;
@@ -743,7 +748,8 @@ namespace GsaGH.Helpers.GH {
           if (inclCrvs[i].IsInPlane(plane,
             DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))) {
             inclCrvs[i] = Curve.ProjectToPlane(inclCrvs[i], plane);
-          } else {
+          }
+          else {
             //TODO - find intersection overlaps or points btw curve and plane: https://developer.rhino3d.com/api/RhinoCommon/html/T_Rhino_Geometry_Intersect_IntersectionEvent.htm
             break;
           }

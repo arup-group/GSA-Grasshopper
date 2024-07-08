@@ -44,7 +44,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void TestCreateProp2d() {
-      int axisProperty = 1;
+      int axisProperty = 0;
       string name = "mariam";
       string description = "awesome property";
       Property2D_Type type = Property2D_Type.LOAD;
@@ -62,7 +62,7 @@ namespace GsaGHTests.Parameters {
       var material = new GsaCustomMaterial(GsaMaterialTest.TestAnalysisMaterial(), 99);
       prop.Material = material;
 
-      Assert.Equal(1, prop.ApiProp2d.AxisProperty);
+      Assert.Equal(0, prop.ApiProp2d.AxisProperty);
       Assert.Equal(99, prop.Material.Id);
       Assert.Equal("Custom", prop.Material.MaterialType.ToString());
       Assert.Equal("mariam", prop.ApiProp2d.Name);
@@ -100,7 +100,7 @@ namespace GsaGHTests.Parameters {
       var dup = new GsaProperty2d(orig);
 
       orig.Id = 4;
-      orig.ApiProp2d.AxisProperty = 1;
+      orig.ApiProp2d.AxisProperty = 0;//always global
       orig.Material.Id = 99;
       orig.ApiProp2d.Name = "kris";
       orig.ApiProp2d.Description = "less cool property";
@@ -119,7 +119,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(ReferenceSurface.Bottom, dup.ApiProp2d.ReferenceSurface);
       Assert.Equal(-100, dup.AdditionalOffsetZ.As(LengthUnit.Millimeter));
 
-      Assert.Equal(1, orig.ApiProp2d.AxisProperty);
+      Assert.Equal(0, orig.ApiProp2d.AxisProperty);
       Assert.Equal(99, orig.Material.Id);
       Assert.Equal("Custom", orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.ApiProp2d.Name);

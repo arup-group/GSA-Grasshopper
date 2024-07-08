@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Forms;
 using Grasshopper.Kernel;
 using GsaAPI;
 using GsaAPI.Materials;
@@ -11,6 +12,7 @@ using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
+using OasysGH.Helpers;
 using OasysUnits;
 using OasysUnits.Units;
 using EntityType = GsaGH.Parameters.EntityType;
@@ -20,7 +22,7 @@ using LoadCase = GsaAPI.LoadCase;
 namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private GsaIntDictionary<Axis> _axes;
-    private GsaGuidIntListDictionary<Element> _elements;
+    private GsaGuidIntListDictionary<object> _elements;
     private GsaIntDictionary<GridLine> _gridLines;
     private GsaModel _gsaModel;
     private GsaGuidDictionary<EntityList> _lists;
@@ -127,8 +129,19 @@ namespace GsaGH.Helpers.Assembly {
       }
 
       // Set API Nodes, Elements and Members in model
+      var feElements = new Dictionary<int, Element>();
+      var loadPanels = new Dictionary<int, LoadPanelElement>();
+      foreach (KeyValuePair<int, object> kvp in _elements.ReadOnlyDictionary) {
+        if ((kvp.Value as Element) != null) {
+          feElements.Add(kvp.Key, kvp.Value as Element);
+        }
+        else {
+          loadPanels.Add(kvp.Key, kvp.Value as LoadPanelElement);
+        }
+      }
       _model.SetNodes(_nodes.ReadOnlyDictionary);
-      _model.SetElements(_elements.ReadOnlyDictionary);
+      _model.SetElements(new ReadOnlyDictionary<int, Element>(feElements));
+      _model.SetLoadPanelElements(new ReadOnlyDictionary<int, LoadPanelElement>(loadPanels));
       _model.SetMembers(_members.ReadOnlyDictionary);
 
       foreach (KeyValuePair<int, GsaAPI.Assembly> assembly in _assemblies.ReadOnlyDictionary) {
@@ -202,7 +215,8 @@ namespace GsaGH.Helpers.Assembly {
       foreach (int gridSurfaceId in _gridSurfaces.ReadOnlyDictionary.Keys) {
         try {
           _model.SetGridSurface(gridSurfaceId, _gridSurfaces.ReadOnlyDictionary[gridSurfaceId]);
-        } catch (ArgumentException e) {
+        }
+        catch (ArgumentException e) {
           ReportWarningFromAddingGridSurfacesOrList(
             e.Message, _gridSurfaces.ReadOnlyDictionary[gridSurfaceId].Name,
             "Grid Surface", owner);
@@ -212,7 +226,8 @@ namespace GsaGH.Helpers.Assembly {
       foreach (int listId in _lists.ReadOnlyDictionary.Keys) {
         try {
           _model.SetList(listId, _lists.ReadOnlyDictionary[listId]);
-        } catch (ArgumentException e) {
+        }
+        catch (ArgumentException e) {
           ReportWarningFromAddingGridSurfacesOrList(
             e.Message, _lists.ReadOnlyDictionary[listId].Name, "List", owner);
         }
@@ -267,7 +282,8 @@ namespace GsaGH.Helpers.Assembly {
         var apiCase = new CombinationCase(co.Name, co.Definition);
         if (co.Id > 0 && existing.ContainsKey(co.Id)) {
           existing[co.Id] = apiCase;
-        } else {
+        }
+        else {
           existing.Add(co.Id, apiCase);
         }
       }
@@ -305,7 +321,8 @@ namespace GsaGH.Helpers.Assembly {
 
             if (dt.Id > 0) {
               apiTasks.SetValue(dt.Id, steelDesignTask.ApiTask);
-            } else {
+            }
+            else {
               apiTasks.AddValue(steelDesignTask.ApiTask);
             }
             break;
@@ -317,12 +334,14 @@ namespace GsaGH.Helpers.Assembly {
         if (tasks.ContainsKey(i)) {
           try {
             _model.AddDesignTask(tasks[i]);
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             owner.AddRuntimeWarning(e.Message);
             _model.AddDesignTask(dummyTask);
             idsToBeDeleted.Add(i);
           }
-        } else {
+        }
+        else {
           _model.AddDesignTask(dummyTask);
           idsToBeDeleted.Add(i);
         }
@@ -422,7 +441,8 @@ namespace GsaGH.Helpers.Assembly {
           }
 
           _loadCases[loadCase.Id] = newCase;
-        } else {
+        }
+        else {
           _loadCases.Add(loadCase.Id, loadCase.DuplicateApiObject());
         }
       }
@@ -527,7 +547,8 @@ namespace GsaGH.Helpers.Assembly {
                 + Environment.NewLine + "This is likely to produce an undisarable mesh."
                 + Environment.NewLine + "Right-click the component to change the tolerance.");
             }
-          } catch (InvalidOperationException) {
+          }
+          catch (InvalidOperationException) {
             // if linq .Where returns an empty list (all mesh sizes are zero)
           }
 
@@ -546,7 +567,8 @@ namespace GsaGH.Helpers.Assembly {
               + Environment.NewLine
               + "This indicates that you have set a tolerance that is too low."
               + Environment.NewLine + "Right-click the component to change the tolerance.");
-          } else if (nodeSurvivalRate < warningSurvivalRate) {
+          }
+          else if (nodeSurvivalRate < warningSurvivalRate) {
             owner.AddRuntimeWarning(
               new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent)
                .ToString("g0").Replace(" ", string.Empty)
@@ -554,7 +576,8 @@ namespace GsaGH.Helpers.Assembly {
               + Environment.NewLine
               + "This indicates that you have set a tolerance that is too low."
               + Environment.NewLine + "Right-click the component to change the tolerance.");
-          } else if (nodeSurvivalRate < remarkSurvivalRate) {
+          }
+          else if (nodeSurvivalRate < remarkSurvivalRate) {
             owner.AddRuntimeRemark(
               new Ratio(1 - nodeSurvivalRate, RatioUnit.DecimalFraction).ToUnit(RatioUnit.Percent)
                .ToString("g0").Replace(" ", string.Empty)
@@ -596,12 +619,15 @@ namespace GsaGH.Helpers.Assembly {
       _unit = unit;
       _model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_unit);
       UiUnits units = _model.UiUnits();
+      var elements = _model.Elements().ToDictionary(item => item.Key, item => (object)item.Value);
+      var loadPanelelements = _model.LoadPanelElements().ToDictionary(item => item.Key, item => (object)item.Value);
+      elements = elements.Concat(loadPanelelements).GroupBy(x => x.Key)
+               .ToDictionary(x => x.Key, x => x.First().Value);
 
       _springProperties = new GsaGuidDictionary<SpringProperty>(_model.SpringProperties());
-
       _nodes = new GsaIntDictionary<Node>(model.ApiNodes);
       _axes = new GsaIntDictionary<Axis>(model.ApiAxis);
-      _elements = new GsaGuidIntListDictionary<Element>(_model.Elements());
+      _elements = new GsaGuidIntListDictionary<object>(elements);
       _members = new GsaGuidDictionary<Member>(_model.Members());
       _assemblies = new GsaGuidDictionary<GsaAPI.Assembly>(_model.Assemblies());
       _lists = new GsaGuidDictionary<EntityList>(_model.Lists());

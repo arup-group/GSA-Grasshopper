@@ -168,10 +168,20 @@ namespace GsaGH.Parameters {
         foreach (int id in elem.TopoInt[i]) {
           topo.Add(model.AddNode(ModelAssembly.NodeFromPoint(elem.Topology[id], unit)));
         };
-        Element element = elem.ApiElements[i];
-        element.Topology = new ReadOnlyCollection<int>(topo);
-        element.Property = model.AddProp2D(elem.Prop2ds[i].ApiProp2d);
-        model.AddElement(element);
+        object genericElement = elem.ApiElements[i];
+        if ((genericElement as Element) != null) {
+          var element = genericElement as Element;
+          element.Topology = new ReadOnlyCollection<int>(topo);
+          element.Property = model.AddProp2D(elem.Prop2ds[i].ApiProp2d);
+          model.AddElement(element);
+        }
+        else {
+          var element = genericElement as LoadPanelElement;
+          element.Topology = new ReadOnlyCollection<int>(topo);
+          element.Property = model.AddProp2D(elem.Prop2ds[i].ApiProp2d);
+          model.AddLoadPanelElement(element);
+        }
+       
       }
 
       return model;
