@@ -20,7 +20,7 @@ using LoadCase = GsaAPI.LoadCase;
 namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private GsaIntDictionary<Axis> _axes;
-    private GsaGuidIntListDictionary<Element> _elements;
+    private GsaGuidIntListDictionary<GSAElement> _elements;
     private GsaIntDictionary<GridLine> _gridLines;
     private GsaModel _gsaModel;
     private GsaGuidDictionary<EntityList> _lists;
@@ -127,8 +127,19 @@ namespace GsaGH.Helpers.Assembly {
       }
 
       // Set API Nodes, Elements and Members in model
+      var feElements = new Dictionary<int, Element>();
+      var loadPanels = new Dictionary<int, LoadPanelElement>();
+      foreach (KeyValuePair<int, GSAElement> kvp in _elements.ReadOnlyDictionary) {
+        if (kvp.Value.IsLoadPanel) {
+          loadPanels.Add(kvp.Key, kvp.Value.LoadPanelElelment);
+        }
+        else {
+          feElements.Add(kvp.Key, kvp.Value.Elelment);
+        }
+      }
       _model.SetNodes(_nodes.ReadOnlyDictionary);
-      _model.SetElements(_elements.ReadOnlyDictionary);
+      _model.SetElements(new ReadOnlyDictionary<int, Element>(feElements));
+      _model.SetLoadPanelElements(new ReadOnlyDictionary<int, LoadPanelElement>(loadPanels));
       _model.SetMembers(_members.ReadOnlyDictionary);
 
       foreach (KeyValuePair<int, GsaAPI.Assembly> assembly in _assemblies.ReadOnlyDictionary) {
@@ -597,11 +608,16 @@ namespace GsaGH.Helpers.Assembly {
       _model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_unit);
       UiUnits units = _model.UiUnits();
 
+      var elements = _model.Elements().ToDictionary(item => item.Key, item => new GSAElement(item.Value));
+      var loadPanelelements = _model.LoadPanelElements().ToDictionary(item => item.Key, item => new GSAElement(item.Value));
+      elements = elements.Concat(loadPanelelements).GroupBy(x => x.Key)
+               .ToDictionary(x => x.Key, x => x.First().Value);
+
       _springProperties = new GsaGuidDictionary<SpringProperty>(_model.SpringProperties());
 
       _nodes = new GsaIntDictionary<Node>(model.ApiNodes);
       _axes = new GsaIntDictionary<Axis>(model.ApiAxis);
-      _elements = new GsaGuidIntListDictionary<Element>(_model.Elements());
+      _elements = new GsaGuidIntListDictionary<GSAElement>(elements);
       _members = new GsaGuidDictionary<Member>(_model.Members());
       _assemblies = new GsaGuidDictionary<GsaAPI.Assembly>(_model.Assemblies());
       _lists = new GsaGuidDictionary<EntityList>(_model.Lists());

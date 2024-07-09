@@ -476,15 +476,16 @@ namespace GsaGH.Helpers.GH {
       return topoInts;
     }
 
-    public static Tuple<List<Element>, Point3dList, List<List<int>>> ConvertMeshToElem2d(
-      Mesh mesh, int prop = 0, bool createQuadraticElements = false) {
-      var elems = new List<Element>();
+    public static Tuple<List<GSAElement>, Point3dList, List<List<int>>> ConvertMeshToElem2d(
+      Mesh mesh, bool isLoadPanel, bool createQuadraticElements = false) {
+      var elems = new List<GSAElement>();
       var topoPts = new Point3dList(mesh.Vertices.ToPoint3dArray());
       var topoInts = new List<List<int>>();
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
 
       foreach (MeshNgon ngon in ngons) {
-        var elem = new Element();
+        object element2d = isLoadPanel ? (object)new LoadPanelElement() : (object)new Element();
+        var elem = new GSAElement(element2d);
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
 
         switch (topo.Count) {
@@ -578,12 +579,10 @@ namespace GsaGH.Helpers.GH {
               throw new Exception($" Unable to create 2D element from mesh face with {topo.Count} verticies");
             }
         }
-
-        elem.Property = prop;
         elems.Add(elem);
       }
 
-      return new Tuple<List<Element>, Point3dList, List<List<int>>>(elems, topoPts, topoInts);
+      return new Tuple<List<GSAElement>, Point3dList, List<List<int>>>(elems, topoPts, topoInts);
     }
 
     public static Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>>
@@ -599,28 +598,14 @@ namespace GsaGH.Helpers.GH {
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
         var faces = ngon.FaceIndexList().Select(u => (int)u).ToList();
         topoInts.Add(topo);
-        switch ((topo.Count, faces.Count)) {
-          case (4, 4):
-            elem.Type = ElementType.TETRA4;
-            break;
-
-          case (5, 5):
-            elem.Type = ElementType.PYRAMID5;
-            break;
-
-          case (6, 5):
-            elem.Type = ElementType.WEDGE6;
-            break;
-
-          case (8, 6):
-            elem.Type = ElementType.BRICK8;
-            break;
-
-          default:
-            throw new ArgumentException("Mesh Ngon verticy and face count does match any known " +
-              "3D Element type");
-        }
-
+        elem.Type = (topo.Count, faces.Count) switch {
+          (4, 4) => ElementType.TETRA4,
+          (5, 5) => ElementType.PYRAMID5,
+          (6, 5) => ElementType.WEDGE6,
+          (8, 6) => ElementType.BRICK8,
+          _ => throw new ArgumentException("Mesh Ngon verticy and face count does match any known " +
+                        "3D Element type"),
+        };
         faceInts.Add(faces);
         elems.Add(elem);
       }

@@ -100,7 +100,8 @@ namespace GsaGH.Parameters {
     public void DrawViewportWires(GH_PreviewWireArgs args) {
       if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
         args.Pipeline.DrawLines(Outlines, Colours.Element1d);
-      } else {
+      }
+      else {
         args.Pipeline.DrawLines(Outlines, Colours.Element1dSelected);
       }
     }
@@ -172,10 +173,16 @@ namespace GsaGH.Parameters {
         foreach (int id in elem.TopoInt[i]) {
           topo.Add(model.AddNode(ModelAssembly.NodeFromPoint(elem.Topology[id], unit)));
         };
-        Element element = elem.ApiElements[i];
+        GSAElement element = elem.ApiElements[i];
         element.Topology = new ReadOnlyCollection<int>(topo);
         element.Property = model.AddProp2D(elem.Prop2ds[i].ApiProp2d);
-        model.AddElement(element);
+        if (element.IsLoadPanel) {
+          model.AddLoadPanelElement(element.LoadPanelElelment);
+        }
+        else {
+          model.AddElement(element.Elelment);
+        }
+
       }
 
       return model;
@@ -245,7 +252,8 @@ namespace GsaGH.Parameters {
     private GraphicSpecification Specification(Layer layer, string definition, DimensionType type) {
       if (layer == Layer.Analysis) {
         return AnalysisLayerSpec(definition, type);
-      } else {
+      }
+      else {
         return DesignLayerSpec(definition, type);
       }
     }

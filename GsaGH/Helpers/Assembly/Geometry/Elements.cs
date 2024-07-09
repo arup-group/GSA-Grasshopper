@@ -7,10 +7,11 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
-    private void AddElement(int id, Guid guid, Element apiElement, bool overwrite) {
+    private void AddElement(int id, Guid guid, GSAElement apiElement, bool overwrite) {
       if (id > 0) {
         _elements.SetValue(id, guid, apiElement, overwrite);
-      } else {
+      }
+      else {
         _elements.AddValue(guid, apiElement);
       }
     }
@@ -29,11 +30,12 @@ namespace GsaGH.Helpers.Assembly {
 
       if (element1d.ApiElement.Type != ElementType.SPRING) {
         apiElement.Property = ConvertSection(element1d.Section);
-      } else {
+      }
+      else {
         apiElement.Property = ConvertSpringProp(element1d.SpringProperty);
       }
 
-      AddElement(element1d.Id, element1d.Guid, apiElement, true);
+      AddElement(element1d.Id, element1d.Guid, new GSAElement(apiElement), true);
     }
 
     private void ConvertElement1ds(List<GsaElement1d> element1ds) {
@@ -48,9 +50,9 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertElement2d(GsaElement2d element2d) {
-      List<Element> apiElems = element2d.DuplicateApiObjects();
+      List<GSAElement> apiElems = element2d.DuplicateApiObjects();
       for (int i = 0; i < apiElems.Count; i++) {
-        Element apiMeshElement = apiElems[i];
+        GSAElement apiMeshElement = apiElems[i];
         List<int> meshVertexIndex = element2d.TopoInt[i];
 
         var topo = new List<int>();
@@ -99,7 +101,7 @@ namespace GsaGH.Helpers.Assembly {
           apiMeshElement.Property = ConvertProp3d(prop);
         }
 
-        AddElement(element3d.Ids[i], element3d.Guid, apiMeshElement, false);
+        AddElement(element3d.Ids[i], element3d.Guid, new GSAElement(apiMeshElement), false);
       }
     }
 

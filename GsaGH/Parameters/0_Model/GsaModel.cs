@@ -255,7 +255,7 @@ namespace GsaGH.Parameters {
       return lists;
     }
 
-    internal GsaProperty2d GetProp2d(Element e) {
+    internal GsaProperty2d GetProp2d(GSAElement e) {
       return Prop2ds.TryGetValue(e.Property, out GsaProperty2dGoo prop)
         ? prop.Value
         : e.Property > 0 ? new GsaProperty2d(e.Property) : null;

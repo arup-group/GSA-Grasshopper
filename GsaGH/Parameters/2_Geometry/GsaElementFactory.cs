@@ -30,11 +30,11 @@ namespace GsaGH.Parameters {
     }
 
     internal static ConcurrentBag<GsaElement2dGoo> CreateElement2dFromApi(
-      ConcurrentDictionary<int, Element> elements, GsaModel model) {
+      ConcurrentDictionary<int, GSAElement> elements, GsaModel model) {
       ReadOnlyDictionary<int, Node> nodes = model.ApiNodes;
       ReadOnlyDictionary<int, Axis> axDict = model.ApiModel.Axes();
 
-      var sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, Element>>();
+      var sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, GSAElement>>();
       Parallel.ForEach(elements, elem => {
         int parent = -elem.Value.ParentMember.Member;
         if (parent == 0) {
@@ -42,7 +42,7 @@ namespace GsaGH.Parameters {
         }
 
         if (!sortedElements.ContainsKey(parent)) {
-          sortedElements.TryAdd(parent, new ConcurrentDictionary<int, Element>());
+          sortedElements.TryAdd(parent, new ConcurrentDictionary<int, GSAElement>());
         }
 
         sortedElements[parent][elem.Key] = elem.Value;
@@ -52,7 +52,7 @@ namespace GsaGH.Parameters {
 
       Parallel.For(0, sortedElements.Count, i => {
         int parentId = sortedElements.Keys.ElementAt(i);
-        ConcurrentDictionary<int, Element> elems = sortedElements[parentId];
+        ConcurrentDictionary<int, GSAElement> elems = sortedElements[parentId];
         var prop2Ds = new ConcurrentDictionary<int, GsaProperty2d>();
         var mList = new ConcurrentDictionary<int, Mesh>();
 
@@ -82,8 +82,8 @@ namespace GsaGH.Parameters {
           // revert back to list of meshes instead of the joined one
           foreach (int key in elems.Keys) {
             // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
-            elems.TryGetValue(key, out Element apiElem);
-            var apiElems = new ConcurrentDictionary<int, Element>();
+            elems.TryGetValue(key, out GSAElement apiElem);
+            var apiElems = new ConcurrentDictionary<int, GSAElement>();
             apiElems.TryAdd(key, apiElem);
             mList.TryGetValue(key, out Mesh mesh);
             prop2Ds.TryGetValue(key, out GsaProperty2d prop);
@@ -180,11 +180,10 @@ namespace GsaGH.Parameters {
       return elem3dGoos;
     }
 
-    internal static Mesh GetMeshFromApiElement2d(Element element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
+    internal static Mesh GetMeshFromApiElement2d(GSAElement element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
       ReadOnlyCollection<int> topo = element.Topology;
 
-      if (topo.Count < 3 || element.Type == ElementType.THREE_D
-        || element.Type == ElementType.BRICK8 || element.Type == ElementType.WEDGE6
+      if (topo.Count < 3 || element.Type == ElementType.BRICK8 || element.Type == ElementType.WEDGE6
         || element.Type == ElementType.PYRAMID5 || element.Type == ElementType.TETRA4) {
         return null;
       }
@@ -277,7 +276,6 @@ namespace GsaGH.Parameters {
       Element element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
       ReadOnlyCollection<int> topo = element.Topology;
       var check3d = new List<bool> {
-        element.Type == ElementType.THREE_D,
         element.Type == ElementType.BRICK8,
         element.Type == ElementType.WEDGE6,
         element.Type == ElementType.PYRAMID5,
