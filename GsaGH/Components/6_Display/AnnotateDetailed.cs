@@ -409,7 +409,12 @@ namespace GsaGH.Components {
       string s = string.Empty;
       s += name;
       AddSeparator(ref s);
-      s += type.ToString().ToPascalCase();
+      if(type.ToString() == GSAElement.LoadPanelType.ToString()) {
+        s += "Load Panel";
+      }
+      else {
+        s += type.ToString().ToPascalCase();
+      }
       return s.Trim();
     }
 
