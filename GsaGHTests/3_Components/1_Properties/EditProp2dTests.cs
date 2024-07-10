@@ -104,7 +104,7 @@ namespace GsaGHTests.Properties {
       ComponentTestHelper.SetInput(comp, new GH_Integer(49), 1);
       ComponentTestHelper.SetInput(comp, "name", 2);
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 3);
-      ComponentTestHelper.SetInput(comp, new GH_Integer(7), 4);
+      ComponentTestHelper.SetInput(comp, new GH_Integer(0), 4);
       ComponentTestHelper.SetInput(comp, new GH_String("Load"), 5);
       ComponentTestHelper.SetInput(comp, new GH_UnitNumber(new Length(40, LengthUnit.Centimeter)), 7);
       ComponentTestHelper.SetInput(comp, new GH_Integer(2), 8); // Bottom
@@ -117,7 +117,7 @@ namespace GsaGHTests.Properties {
       Assert.Equal(49, prop2dGoo.Value.Id);
       Assert.Equal("name", prop2dGoo.Value.ApiProp2d.Name);
       Assert.Equal(ColorRGBA.White, (Color)prop2dGoo.Value.ApiProp2d.Colour);
-      Assert.Equal(7, prop2dGoo.Value.ApiProp2d.AxisProperty);
+      Assert.Equal(0, prop2dGoo.Value.ApiProp2d.AxisProperty);
       Assert.Equal(Property2D_Type.LOAD, prop2dGoo.Value.ApiProp2d.Type);
       Assert.Equal(40, prop2dGoo.Value.Thickness.As(LengthUnit.Centimeter), 6);
       Assert.Equal(ReferenceSurface.Bottom, prop2dGoo.Value.ApiProp2d.ReferenceSurface);
@@ -145,7 +145,7 @@ namespace GsaGHTests.Properties {
       Assert.Equal(49, id.Value);
       Assert.Equal("name", name.Value);
       Assert.Equal(ColorRGBA.White, colour.Value);
-      Assert.Equal(7, axis.Value);
+      Assert.Equal(0, axis.Value);
       Assert.Equal("Load Panel", type.Value);
       Assert.Equal(new Length(10, LengthUnit.Millimeter), offset.Value);
       Assert.Equal(ReferenceSurface.Bottom, referenceSurface.Value);
