@@ -53,6 +53,7 @@ namespace GsaGH.Parameters {
 
     public Section3dPreview(GsaMember2d mem) {
       Model model = AssembleTempModel(mem);
+      model.SaveAs("C:\\fd\\fd1.gwb");
       CreateGraphics(model, Layer.Design, DimensionType.TwoDimensional);
     }
 

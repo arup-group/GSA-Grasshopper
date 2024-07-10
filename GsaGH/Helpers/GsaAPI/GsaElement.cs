@@ -13,7 +13,7 @@ using System.Collections.ObjectModel;
 namespace GsaAPI {
 
   public class GSAElement {
-    public static ElementType LoadPanelType = (ElementType)(-1000);
+    public static int LOAD_PANEL_TYPE = -1000;
     private GSAElement() { }
     public GSAElement(object element) {
       if ((element as Element) != null) {
@@ -201,7 +201,7 @@ namespace GsaAPI {
     public ElementType Type {
       get {
         if (IsLoadPanel) {
-          return LoadPanelType;
+          return (ElementType)LOAD_PANEL_TYPE;
         }
         else {
           return Elelment.Type;

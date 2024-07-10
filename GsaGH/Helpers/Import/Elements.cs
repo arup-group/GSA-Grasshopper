@@ -18,8 +18,9 @@ namespace GsaGH.Helpers.Import {
       var elem3dDict = new ConcurrentDictionary<int, Element>();
       ReadOnlyDictionary<int, GsaAPI.Assembly> aDict = model.ApiModel.Assemblies(); 
       ReadOnlyDictionary<int, Element> eDict = model.ApiModel.Elements(elementList);
-
-      Parallel.ForEach(eDict, item => {
+      ReadOnlyDictionary<int, LoadPanelElement> loadPanels = model.ApiModel.LoadPanelElements(elementList);
+      Parallel.ForEach(loadPanels, item => elem2dDict.TryAdd(item.Key, new GSAElement(item.Value)));
+        Parallel.ForEach(eDict, item => {
         int elemDimension = 1; // default assume 1D element
         ElementType type = item.Value.Type;
         switch (type) {

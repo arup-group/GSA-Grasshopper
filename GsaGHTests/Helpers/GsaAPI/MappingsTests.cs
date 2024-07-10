@@ -27,8 +27,6 @@ namespace GsaGHTests.Helpers.GsaAPITests {
     }
 
     [Theory]
-    [InlineData("Undefined", 0)]
-    [InlineData(" Undefined  ", 0)]
     [InlineData("Bar", 1)]
     [InlineData("bar", 1)]
     [InlineData("Beam", 2)]

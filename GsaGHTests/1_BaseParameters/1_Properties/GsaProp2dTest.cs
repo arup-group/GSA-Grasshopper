@@ -50,7 +50,7 @@ namespace GsaGHTests.Parameters {
       string description = "awesome property";
       Property2D_Type type = Property2D_Type.LOAD;
       //load panel must be in global axis
-      Assert.Throws<Exception>(() => new GsaProperty2d {
+      Assert.Throws<ArgumentException>(() => new GsaProperty2d {
         ApiProp2d = new Prop2D() {
           Type = type,
           AxisProperty = axisProperty,
