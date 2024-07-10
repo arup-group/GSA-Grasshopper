@@ -40,8 +40,12 @@ namespace GsaGH.Components {
 
       GsaProperty2dGoo prop2dGoo = null;
       bool prop2dAssigned = da.GetData(1, ref prop2dGoo);
-      Prop2D apiProperty2d = prop2dGoo.Value.ApiProp2d;
-      bool isLoadPanel = prop2dAssigned && apiProperty2d != null && apiProperty2d.Type == Property2D_Type.LOAD;
+      bool isLoadPanel = false;
+      if (prop2dAssigned && prop2dGoo.Value.ApiProp2d != null) {
+        Prop2D apiProperty2d = prop2dGoo.Value.ApiProp2d;
+        isLoadPanel = apiProperty2d.Type == Property2D_Type.LOAD;
+      }
+
       var elem = new GsaElement2d(ghmesh.Value, isLoadPanel);
       if (prop2dAssigned) {
         var prop2Ds = new List<GsaProperty2d>();
