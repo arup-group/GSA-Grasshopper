@@ -32,7 +32,7 @@ namespace GsaGH.Parameters {
     public Mesh Mesh { get; set; } = new Mesh();
     public List<List<int>> TopoInt { get; internal set; }
     public Point3dList Topology { get; internal set; }
-    public List<GsaOffset> Offsets => ApiElements.Select(
+    public List<GsaOffset> Offsets => ApiElements.Where(x => x.IsLoadPanel == false).Select(
       e => new GsaOffset(e.Offset.X1, e.Offset.X2, e.Offset.Y, e.Offset.Z)).ToList();
     public List<Angle> OrientationAngles => ApiElements.Select(
       e => new Angle(e.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian)).ToList();

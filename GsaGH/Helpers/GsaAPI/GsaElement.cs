@@ -12,6 +12,9 @@ using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
 using System.Runtime.Remoting.Lifetime;
 namespace GsaAPI {
+  public enum GSAElementType {
+
+  }
 
   public class GSAElement {
     public static int LoadPanelType = -1000;
@@ -121,7 +124,7 @@ namespace GsaAPI {
     public Offset Offset {
       get {
         if (IsLoadPanel) {
-          return new Element().Offset;
+          throw new ArgumentException("Offset is not applicable for load panels");
         }
         else {
           return Element.Offset;
@@ -131,6 +134,7 @@ namespace GsaAPI {
         if (!IsLoadPanel) {
           Element.Offset = value;
         }
+        else { throw new ArgumentException("Offset is not applicable for load panels"); }
       }
     }
 
@@ -156,7 +160,7 @@ namespace GsaAPI {
     public int OrientationNode {
       get {
         if (IsLoadPanel) {
-          return 0;
+          throw new ArgumentException("Orientation angle is not applicable for load panels");
         }
         else {
           return Element.OrientationNode;
@@ -166,6 +170,7 @@ namespace GsaAPI {
         if (!IsLoadPanel) {
           Element.OrientationNode = value;
         }
+        else { throw new ArgumentException("Orientation angle is not applicable for load panels"); }
       }
     }
 

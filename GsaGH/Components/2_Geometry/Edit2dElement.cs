@@ -183,7 +183,7 @@ namespace GsaGH.Components {
       da.SetDataList(3, elem.Prop2ds == null ? null
         : new List<GsaProperty2dGoo>(elem.Prop2ds.Select(x => new GsaProperty2dGoo(x))));
       da.SetDataList(4, elem.ApiElements.Select(x => x.Group));
-      da.SetDataList(5, elem.ApiElements.Select(x => x.Type));
+      da.SetDataList(5, elem.ApiElements.Select(x => x.TypeAsString()));
       da.SetDataList(6,
         new List<GsaOffsetGoo>(elem.Offsets.Select(x => new GsaOffsetGoo(x))));
       da.SetDataList(7, elem.OrientationAngles.Select(x => x.Radians));
