@@ -13,9 +13,9 @@ namespace GsaGH.Helpers.Import {
     internal ConcurrentBag<GsaElement3dGoo> Element3ds { get; private set; }
 
     internal Elements(GsaModel model, string elementList = "All") {
-      var elem1dDict = new ConcurrentDictionary<int, Element>();
+      var elem1dDict = new ConcurrentDictionary<int, GSAElement>();
       var elem2dDict = new ConcurrentDictionary<int, GSAElement>();
-      var elem3dDict = new ConcurrentDictionary<int, Element>();
+      var elem3dDict = new ConcurrentDictionary<int, GSAElement>();
       ReadOnlyDictionary<int, GsaAPI.Assembly> aDict = model.ApiModel.Assemblies(); 
       ReadOnlyDictionary<int, Element> eDict = model.ApiModel.Elements(elementList);
       ReadOnlyDictionary<int, LoadPanelElement> loadPanels = model.ApiModel.LoadPanelElements(elementList);
@@ -41,7 +41,7 @@ namespace GsaGH.Helpers.Import {
 
         switch (elemDimension) {
           case 1:
-            elem1dDict.TryAdd(item.Key, item.Value);
+            elem1dDict.TryAdd(item.Key, new GSAElement(item.Value));
 
             break;
 
@@ -50,7 +50,7 @@ namespace GsaGH.Helpers.Import {
             break;
 
           case 3:
-            elem3dDict.TryAdd(item.Key, item.Value);
+            elem3dDict.TryAdd(item.Key, new GSAElement(item.Value));
             break;
         }
       });

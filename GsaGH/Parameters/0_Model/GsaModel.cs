@@ -267,7 +267,7 @@ namespace GsaGH.Parameters {
         : m.Property > 0 ? new GsaProperty2d(m.Property) : null;
     }
 
-    internal GsaProperty3d GetProp3d(Element e) {
+    internal GsaProperty3d GetProp3d(GSAElement e) {
       return Prop3ds.TryGetValue(e.Property, out GsaProperty3dGoo prop)
         ? prop.Value
         : e.Property > 0 ? new GsaProperty3d(e.Property) : null;
@@ -279,7 +279,7 @@ namespace GsaGH.Parameters {
         : m.Property > 0 ? new GsaProperty3d(m.Property) : null;
     }
 
-    internal GsaSection GetSection(Element e) {
+    internal GsaSection GetSection(GSAElement e) {
       return Sections.TryGetValue(e.Property, out GsaSectionGoo section)
         ? section.Value
         : e.Property > 0 ? new GsaSection(e.Property) : null;
@@ -291,7 +291,7 @@ namespace GsaGH.Parameters {
         : m.Property > 0 ? new GsaSection(m.Property) : null;
     }
 
-    internal GsaSpringProperty GetSpringProperty(Element m) {
+    internal GsaSpringProperty GetSpringProperty(GSAElement m) {
       return SpringProps.TryGetValue(m.Property, out GsaSpringPropertyGoo prop)
         ? prop.Value
         : m.Property > 0 ? new GsaSpringProperty(m.Property) : null;

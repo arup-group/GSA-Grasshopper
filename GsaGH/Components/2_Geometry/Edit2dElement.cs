@@ -125,7 +125,8 @@ namespace GsaGH.Components {
           for (int i = 0; i < elem.ApiElements.Count; i++) {
             elem.Prop2ds.Add(prop2dGoos[0].Value);
           }
-        } else {
+        }
+        else {
           if (prop2dGoos.Count != elem.ApiElements.Count) {
             this.AddRuntimeWarning("PA input must either be a single Prop2d or a" +
               $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
@@ -191,7 +192,8 @@ namespace GsaGH.Components {
       da.SetDataList(10, elem.ApiElements.Select(x => x.IsDummy));
       try {
         da.SetDataList(11, elem.ApiElements.Select(x => x.ParentMember.Member).ToList());
-      } catch (Exception) { }
+      }
+      catch (Exception) { }
       da.SetDataTree(12, elem.GetTopologyIDs());
     }
   }

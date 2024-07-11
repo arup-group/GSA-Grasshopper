@@ -93,7 +93,10 @@ namespace GsaGH.Helpers.GsaApi {
           "Damper", ElementType.DAMPER
         }, {
           "Pyramid-5", ElementType.PYRAMID5
-        }, 
+        },
+        {
+          "Load Panel", (ElementType)GSAElement.LoadPanelType
+        },
       };
 
     internal static readonly Dictionary<string, MatType> _materialTypeMapping

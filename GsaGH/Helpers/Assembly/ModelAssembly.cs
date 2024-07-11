@@ -134,7 +134,7 @@ namespace GsaGH.Helpers.Assembly {
           loadPanels.Add(kvp.Key, kvp.Value.LoadPanelElelment);
         }
         else {
-          feElements.Add(kvp.Key, kvp.Value.Elelment);
+          feElements.Add(kvp.Key, kvp.Value.Element);
         }
       }
       _model.SetNodes(_nodes.ReadOnlyDictionary);

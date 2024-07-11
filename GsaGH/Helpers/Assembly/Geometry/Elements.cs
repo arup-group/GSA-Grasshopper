@@ -17,7 +17,7 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertElement1d(GsaElement1d element1d) {
-      Element apiElement = element1d.DuplicateApiObject();
+      GSAElement apiElement = element1d.DuplicateApiObject();
       var topo = new List<int> {
         AddNode(element1d.Line.PointAtStart),
         AddNode(element1d.Line.PointAtEnd),
@@ -35,7 +35,7 @@ namespace GsaGH.Helpers.Assembly {
         apiElement.Property = ConvertSpringProp(element1d.SpringProperty);
       }
 
-      AddElement(element1d.Id, element1d.Guid, new GSAElement(apiElement), true);
+      AddElement(element1d.Id, element1d.Guid, apiElement, true);
     }
 
     private void ConvertElement1ds(List<GsaElement1d> element1ds) {
@@ -85,9 +85,9 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertElement3d(GsaElement3d element3d) {
-      List<Element> apiElems = element3d.DuplicateApiObjects();
+      List<GSAElement> apiElems = element3d.DuplicateApiObjects();
       for (int i = 0; i < apiElems.Count; i++) {
-        Element apiMeshElement = apiElems[i];
+        GSAElement apiMeshElement = apiElems[i];
         List<int> meshVertexIndex = element3d.TopoInt[i];
         var topo = new List<int>();
         foreach (int mesh in meshVertexIndex) {
@@ -101,7 +101,7 @@ namespace GsaGH.Helpers.Assembly {
           apiMeshElement.Property = ConvertProp3d(prop);
         }
 
-        AddElement(element3d.Ids[i], element3d.Guid, new GSAElement(apiMeshElement), false);
+        AddElement(element3d.Ids[i], element3d.Guid, apiMeshElement, false);
       }
     }
 

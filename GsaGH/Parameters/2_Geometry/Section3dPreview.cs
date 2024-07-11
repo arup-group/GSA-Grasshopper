@@ -142,10 +142,10 @@ namespace GsaGH.Parameters {
         model.AddNode(ModelAssembly.NodeFromPoint(elem.Line.Line.From, unit)),
         model.AddNode(ModelAssembly.NodeFromPoint(elem.Line.Line.To, unit))
       };
-      Element elem1d = elem.DuplicateApiObject();
+      GSAElement elem1d = elem.DuplicateApiObject();
       elem1d.Topology = new ReadOnlyCollection<int>(topo);
       elem1d.Property = model.AddSection(elem.Section.ApiSection);
-      model.AddElement(elem1d);
+      model.AddElement(elem1d.Element);
       return model;
     }
 
@@ -180,7 +180,7 @@ namespace GsaGH.Parameters {
           model.AddLoadPanelElement(element.LoadPanelElelment);
         }
         else {
-          model.AddElement(element.Elelment);
+          model.AddElement(element.Element);
         }
 
       }

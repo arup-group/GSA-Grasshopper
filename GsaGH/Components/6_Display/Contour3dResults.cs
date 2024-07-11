@@ -541,7 +541,7 @@ namespace GsaGH.Components {
       verticies.AsParallel().AsOrdered();
 
       Parallel.ForEach(elems.Keys, key => {
-        Element element = elems[key];
+        GSAElement element = new GSAElement(elems[key]);
         if (element.Topology.Count < 5) {
           return;
         }

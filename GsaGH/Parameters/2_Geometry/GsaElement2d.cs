@@ -103,9 +103,8 @@ namespace GsaGH.Parameters {
 
       var elems = new List<GSAElement>();
       for (int i = 0; i < ApiElements.Count; i++) {
-        object duplicateElement = ApiElements[i].IsLoadPanel ? (object)new LoadPanelElement() : (object)new Element();
         GSAElement element2d = ApiElements[i];
-        var element = new GSAElement(duplicateElement) {
+        GSAElement element = ApiElements[i].IsLoadPanel ? new GSAElement(new LoadPanelElement()) : new GSAElement(new Element()) {
           Group = element2d.Group,
           IsDummy = element2d.IsDummy,
           Name = element2d.Name.ToString(),
@@ -117,6 +116,7 @@ namespace GsaGH.Parameters {
           Topology = new ReadOnlyCollection<int>(element2d.Topology.ToList()),
           Offset = element2d.Offset,
         };
+
         if ((Color)element2d.Colour != Color.FromArgb(0, 0, 0)) {
           element.Colour = element2d.Colour;
         }

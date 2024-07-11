@@ -30,7 +30,8 @@ namespace GsaGH.Helpers.GH {
         if (topoType != null & topoType[i + 1] == "A") {
           crvs.Append(new Arc(topology[i], topology[i + 1], topology[i + 2]));
           i++;
-        } else {
+        }
+        else {
           crvs.Append(new Line(topology[i], topology[i + 1]));
         }
       }
@@ -349,7 +350,8 @@ namespace GsaGH.Helpers.GH {
 
         polyCurve = new PolyCurve();
         polyCurve.Append(curve);
-      } else {
+      }
+      else {
         if (tolerance < 0) {
           tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
         }
@@ -380,7 +382,8 @@ namespace GsaGH.Helpers.GH {
 
           crvType.Add("");
           point3ds.Add(segments[segments.Length - 1].PointAtEnd);
-        } else {
+        }
+        else {
           crvType.Add("");
           crvType.Add("");
 
@@ -484,8 +487,8 @@ namespace GsaGH.Helpers.GH {
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
 
       foreach (MeshNgon ngon in ngons) {
-        object element2d = isLoadPanel ? (object)new LoadPanelElement() : (object)new Element();
-        var elem = new GSAElement(element2d);
+
+        GSAElement elem = isLoadPanel ? new GSAElement(new LoadPanelElement()) : new GSAElement(new Element());
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
 
         switch (topo.Count) {
@@ -585,16 +588,16 @@ namespace GsaGH.Helpers.GH {
       return new Tuple<List<GSAElement>, Point3dList, List<List<int>>>(elems, topoPts, topoInts);
     }
 
-    public static Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>>
+    public static Tuple<List<GSAElement>, Point3dList, List<List<int>>, List<List<int>>>
       ConvertMeshToElem3d(Mesh mesh) {
-      var elems = new List<Element>();
+      var elems = new List<GSAElement>();
       var topoPts = new List<Point3d>(mesh.Vertices.ToPoint3dArray());
       var topoInts = new List<List<int>>();
       var faceInts = new List<List<int>>();
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
 
       foreach (MeshNgon ngon in ngons) {
-        var elem = new Element();
+        var elem = new GSAElement(new Element());
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
         var faces = ngon.FaceIndexList().Select(u => (int)u).ToList();
         topoInts.Add(topo);
@@ -610,7 +613,7 @@ namespace GsaGH.Helpers.GH {
         elems.Add(elem);
       }
 
-      return new Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>>(elems,
+      return new Tuple<List<GSAElement>, Point3dList, List<List<int>>, List<List<int>>>(elems,
         new Point3dList(topoPts), topoInts, faceInts);
     }
 
@@ -680,7 +683,8 @@ namespace GsaGH.Helpers.GH {
       foreach (BrepLoop brepLoop in brep.Loops) {
         if (brepLoop.LoopType == BrepLoopType.Outer) {
           outer = brepLoop.To3dCurve();
-        } else {
+        }
+        else {
           inner.Add(brepLoop.To3dCurve());
         }
       }
@@ -693,7 +697,8 @@ namespace GsaGH.Helpers.GH {
       Point3dList ctrlPts;
       if (edges[0].TryGetPolyline(out Rhino.Geometry.Polyline tempCrv)) {
         ctrlPts = new Point3dList(tempCrv);
-      } else {
+      }
+      else {
         Tuple<PolyCurve, Point3dList, List<string>> convertBadSrf
           = ConvertMem2dCrv(edges[0], tolerance);
         ctrlPts = convertBadSrf.Item2;
@@ -728,7 +733,8 @@ namespace GsaGH.Helpers.GH {
           if (inclCrvs[i].IsInPlane(plane,
             DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))) {
             inclCrvs[i] = Curve.ProjectToPlane(inclCrvs[i], plane);
-          } else {
+          }
+          else {
             //TODO - find intersection overlaps or points btw curve and plane: https://developer.rhino3d.com/api/RhinoCommon/html/T_Rhino_Geometry_Intersect_IntersectionEvent.htm
             break;
           }
