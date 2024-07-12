@@ -25,6 +25,22 @@ namespace GsaGHTests.Properties {
     }
 
     [Fact]
+    public void LoadPanelPropertyIfNotInGlobalAxisWillThrowRunTimeWarning() {
+      var prop2d = new GsaProperty2d();
+      prop2d.ApiProp2d.Type= Property2D_Type.LOAD;
+
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, new GsaProperty2dGoo(prop2d), 0);
+      ComponentTestHelper.SetInput(comp, new GH_Integer((int)GsaAPI.StandardAxis.Local), 4);
+      var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
+      Assert.Null(id);
+      Assert.Contains( "One runtime warning", comp.InstanceDescription);
+      ComponentTestHelper.SetInput(comp, new GH_Integer((int)GsaAPI.StandardAxis.Global), 4);
+      id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
+      Assert.Equal(1, id.Value);
+    }
+
+    [Fact]
     public void GetValuesFromExistingComponent() {
       var prop2d = new GsaProperty2d(new Length(400, LengthUnit.Millimeter));
 
