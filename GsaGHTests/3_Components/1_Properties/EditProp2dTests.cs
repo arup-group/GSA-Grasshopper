@@ -35,9 +35,11 @@ namespace GsaGHTests.Properties {
       var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
       Assert.Null(id);
       Assert.Contains( "One runtime warning", comp.InstanceDescription);
+
+      comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, new GH_Integer((int)GsaAPI.StandardAxis.Global), 4);
       id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
-      Assert.Equal(1, id.Value);
+      Assert.Equal((int)GsaAPI.StandardAxis.Global, id.Value);
     }
 
     [Fact]
