@@ -12,15 +12,17 @@ using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
 using System.Runtime.Remoting.Lifetime;
 namespace GsaAPI {
-  public enum GSAElementType {
-
-  }
-
   public class GSAElement {
     public static int LoadPanelType = -1000;
     private GSAElement() { }
-    public GSAElement(Element element) { Element = element; IsLoadPanel = false; }
-    public GSAElement(LoadPanelElement element) { LoadPanelElelment = element; IsLoadPanel = true; }
+    public GSAElement(Element element) {
+      Element = element;
+      IsLoadPanel = false;
+    }
+    public GSAElement(LoadPanelElement element) {
+      LoadPanelElelment = element;
+      IsLoadPanel = true;
+    }
 
     public bool IsLoadPanel { get; }
     public LoadPanelElement LoadPanelElelment { get; }
