@@ -162,7 +162,7 @@ namespace GsaAPI {
     public int OrientationNode {
       get {
         if (IsLoadPanel) {
-          throw new ArgumentException("Orientation angle is not applicable for load panels");
+          throw new ArgumentException("Orientation node is not applicable for load panels");
         }
         else {
           return Element.OrientationNode;
@@ -172,7 +172,7 @@ namespace GsaAPI {
         if (!IsLoadPanel) {
           Element.OrientationNode = value;
         }
-        else { throw new ArgumentException("Orientation angle is not applicable for load panels"); }
+        else { throw new ArgumentException("Orientation node is not applicable for load panels"); }
       }
     }
 
