@@ -695,7 +695,7 @@ namespace GsaGH.Components {
           switch (i) {
             case 0:
               _results.Nodes = Nodes.GetNodes(
-                nodeList.ToLower() == "all" ? model.ApiNodes : model.Model.Nodes(nodeList),
+                nodeList.ToLower() == "all" ? model.ApiNodes : model.ApiModel.Nodes(nodeList),
                 model.ModelUnit,
                 model.ApiAxis,
                 model.SpringProps);

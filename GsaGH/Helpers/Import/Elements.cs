@@ -13,13 +13,14 @@ namespace GsaGH.Helpers.Import {
     internal ConcurrentBag<GsaElement3dGoo> Element3ds { get; private set; }
 
     internal Elements(GsaModel model, string elementList = "All") {
-      var elem1dDict = new ConcurrentDictionary<int, Element>();
-      var elem2dDict = new ConcurrentDictionary<int, Element>();
-      var elem3dDict = new ConcurrentDictionary<int, Element>();
-      ReadOnlyDictionary<int, GsaAPI.Assembly> aDict = model.Model.Assemblies(); 
-      ReadOnlyDictionary<int, Element> eDict = model.Model.Elements(elementList);
-
-      Parallel.ForEach(eDict, item => {
+      var elem1dDict = new ConcurrentDictionary<int, GSAElement>();
+      var elem2dDict = new ConcurrentDictionary<int, GSAElement>();
+      var elem3dDict = new ConcurrentDictionary<int, GSAElement>();
+      ReadOnlyDictionary<int, GsaAPI.Assembly> aDict = model.ApiModel.Assemblies(); 
+      ReadOnlyDictionary<int, Element> eDict = model.ApiModel.Elements(elementList);
+      ReadOnlyDictionary<int, LoadPanelElement> loadPanels = model.ApiModel.LoadPanelElements(elementList);
+      Parallel.ForEach(loadPanels, item => elem2dDict.TryAdd(item.Key, new GSAElement(item.Value)));
+        Parallel.ForEach(eDict, item => {
         int elemDimension = 1; // default assume 1D element
         ElementType type = item.Value.Type;
         switch (type) {
@@ -27,9 +28,6 @@ namespace GsaGH.Helpers.Import {
           case ElementType.TRI6:
           case ElementType.QUAD4:
           case ElementType.QUAD8:
-          case ElementType.TWO_D:
-          case ElementType.TWO_D_FE:
-          case ElementType.TWO_D_LOAD:
             elemDimension = 2;
             break;
 
@@ -37,23 +35,22 @@ namespace GsaGH.Helpers.Import {
           case ElementType.WEDGE6:
           case ElementType.PYRAMID5:
           case ElementType.TETRA4:
-          case ElementType.THREE_D:
             elemDimension = 3;
             break;
         }
 
         switch (elemDimension) {
           case 1:
-            elem1dDict.TryAdd(item.Key, item.Value);
+            elem1dDict.TryAdd(item.Key, new GSAElement(item.Value));
 
             break;
 
           case 2:
-            elem2dDict.TryAdd(item.Key, item.Value);
+            elem2dDict.TryAdd(item.Key, new GSAElement(item.Value));
             break;
 
           case 3:
-            elem3dDict.TryAdd(item.Key, item.Value);
+            elem3dDict.TryAdd(item.Key, new GSAElement(item.Value));
             break;
         }
       });

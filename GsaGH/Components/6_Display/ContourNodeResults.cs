@@ -450,7 +450,7 @@ namespace GsaGH.Components {
       bool enveloped = Inputs.IsResultCaseEnveloped(this, result, ref _case, _envelopeType);
       List<int> permutations = result.SelectedPermutationIds;
       nodeList = Inputs.GetNodeListDefinition(this, da, 1, result.Model);
-      ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes(nodeList);
+      ReadOnlyDictionary<int, Node> nodes = result.Model.ApiModel.Nodes(nodeList);
       if (nodes.Count == 0) {
         this.AddRuntimeError($"Model contains no results for nodes in list '{nodeList}'");
         return;

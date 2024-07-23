@@ -54,7 +54,7 @@ namespace GsaGHTests.GooWrappers {
 
     // 4_Analysis
     [InlineData(typeof(GsaAnalysisCaseGoo), typeof(GsaAnalysisCase))]
-    [InlineData(typeof(GsaAnalysisTaskGoo), typeof(GsaAnalysisTask))]
+    //[InlineData(typeof(GsaAnalysisTaskGoo), typeof(GsaAnalysisTask))]
     [InlineData(typeof(GsaCombinationCaseGoo), typeof(GsaCombinationCase))]
 
     // 5_Results

@@ -10,6 +10,7 @@ using Rhino.Collections;
 using Rhino.Geometry;
 using Xunit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
+using Polyline = Rhino.Geometry.Polyline;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -260,7 +261,7 @@ namespace GsaGHTests.Parameters {
     public void DuplicateApiObjectReturnsValidObjectForQuad4Type() {
       GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
 
-      List<Element> list = ele.DuplicateApiObjects();
+      List<GSAElement> list = ele.DuplicateApiObjects();
 
       Assert.NotNull(list);
       Assert.Equal(2, list.Count);

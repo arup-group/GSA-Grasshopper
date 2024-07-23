@@ -125,7 +125,8 @@ namespace GsaGH.Components {
           for (int i = 0; i < elem.ApiElements.Count; i++) {
             elem.Prop2ds.Add(prop2dGoos[0].Value);
           }
-        } else {
+        }
+        else {
           if (prop2dGoos.Count != elem.ApiElements.Count) {
             this.AddRuntimeWarning("PA input must either be a single Prop2d or a" +
               $"{Environment.NewLine}list matching the number of elements ({elem.ApiElements.Count})");
@@ -182,7 +183,7 @@ namespace GsaGH.Components {
       da.SetDataList(3, elem.Prop2ds == null ? null
         : new List<GsaProperty2dGoo>(elem.Prop2ds.Select(x => new GsaProperty2dGoo(x))));
       da.SetDataList(4, elem.ApiElements.Select(x => x.Group));
-      da.SetDataList(5, elem.ApiElements.Select(x => x.Type));
+      da.SetDataList(5, elem.ApiElements.Select(x => x.TypeAsString()));
       da.SetDataList(6,
         new List<GsaOffsetGoo>(elem.Offsets.Select(x => new GsaOffsetGoo(x))));
       da.SetDataList(7, elem.OrientationAngles.Select(x => x.Radians));
@@ -191,7 +192,8 @@ namespace GsaGH.Components {
       da.SetDataList(10, elem.ApiElements.Select(x => x.IsDummy));
       try {
         da.SetDataList(11, elem.ApiElements.Select(x => x.ParentMember.Member).ToList());
-      } catch (Exception) { }
+      }
+      catch (Exception) { }
       da.SetDataTree(12, elem.GetTopologyIDs());
     }
   }

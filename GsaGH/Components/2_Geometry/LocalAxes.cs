@@ -79,10 +79,10 @@ namespace GsaGH.Components {
             if (axes == null) {
               var assembly = new ModelAssembly(member);
               var model = new GsaModel {
-                Model = assembly.GetModel()
+                ApiModel = assembly.GetModel()
               };
 
-              axes = new Parameters.LocalAxes(model.Model.MemberDirectionCosine(1));
+              axes = new Parameters.LocalAxes(model.ApiModel.MemberDirectionCosine(1));
               this.AddRuntimeWarning(
                 "Members´s local axes might deviate from the local axes in the assembled GSA model.");
             }
@@ -102,10 +102,10 @@ namespace GsaGH.Components {
             if (axes == null) {
               var assembly = new ModelAssembly(element);
               var model = new GsaModel() {
-                Model = assembly.GetModel()
+                ApiModel = assembly.GetModel()
               };
 
-              axes = new Parameters.LocalAxes(model.Model.ElementDirectionCosine(1));
+              axes = new Parameters.LocalAxes(model.ApiModel.ElementDirectionCosine(1));
               this.AddRuntimeWarning(
                 "Element´s local axes might deviate from the local axes in the assembled GSA model.");
             }

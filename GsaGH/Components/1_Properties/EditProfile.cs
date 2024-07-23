@@ -33,7 +33,7 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Profile", "Pf", "Profile to edit", GH_ParamAccess.item);
       pManager.AddAngleParameter("Orientation Angle", "⭮A",
-        "Set Profile Orientation Angle in counter-clockwise direction.", GH_ParamAccess.item);
+        "Set Profile Orientation Angle in counter-clockwise direction", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Reflect Horizontal", "Ry",
         "True to reflect the profile about the local y-axis", GH_ParamAccess.item, false);
       pManager.AddBooleanParameter("Reflect Vertical", "Rz",

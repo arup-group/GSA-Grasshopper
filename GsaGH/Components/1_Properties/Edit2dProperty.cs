@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
 using GH_IO.Serialization;
 using Grasshopper.Kernel;
@@ -205,6 +206,11 @@ namespace GsaGH.Components {
             prop.LocalAxis = pln;
           }
         } else if (GH_Convert.ToInt32(ghPlaneOrInt.Value, out int axis, GH_Conversion.Both)) {
+          
+          if(prop.ApiProp2d.Type==Property2D_Type.LOAD && axis != 0) {
+            AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, $"Load panel property should be in global axis(Ax = 0)");
+            return;
+          }
           prop.ApiProp2d.AxisProperty = axis;
         }
       }

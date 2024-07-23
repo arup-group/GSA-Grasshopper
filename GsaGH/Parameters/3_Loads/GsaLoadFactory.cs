@@ -14,9 +14,11 @@ namespace GsaGH.Parameters {
     ///   Method to import Load Cases from a GSA model.
     ///   Will output a list of GsaLoadCase.
     /// </summary>
-    /// <param name="loadCases"></param>
+    /// <param name="model"></param>
     /// <returns></returns>
-    internal static List<GsaLoadCaseGoo> CreateLoadCasesFromApi(ReadOnlyDictionary<int, LoadCase> loadCases) {
+    internal static List<GsaLoadCaseGoo> CreateLoadCasesFromApi(Model model) {
+      ReadOnlyDictionary<int, LoadCase> loadCases = model.LoadCases();
+
       var cases = new List<GsaLoadCaseGoo>();
       foreach (KeyValuePair<int, LoadCase> kvp in loadCases) {
         cases.Add(new GsaLoadCaseGoo(new GsaLoadCase(kvp.Key, loadCases)));
@@ -29,11 +31,12 @@ namespace GsaGH.Parameters {
     ///   Method to import Beam Loads from a GSA model.
     ///   Will output a list of GsaLoads.
     /// </summary>
-    /// <param name="beamLoads">Collection of beams loads to be imported</param>
-    /// <param name="loadCases"></param>
+    /// <param name="model"></param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> CreateBeamLoadsFromApi(
-      ReadOnlyCollection<BeamLoad> beamLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
+    internal static List<GsaLoadGoo> CreateBeamLoadsFromApi(Model model) {
+      ReadOnlyCollection<BeamLoad> beamLoads = model.BeamLoads();
+      ReadOnlyDictionary<int, LoadCase> loadCases = model.LoadCases();
+
       var loads = new List<GsaLoadGoo>();
       foreach (BeamLoad apiLoad in beamLoads) {
         var load = new GsaBeamLoad {
@@ -51,11 +54,12 @@ namespace GsaGH.Parameters {
     ///   Method to import Beam Thermal Loads from a GSA model.
     ///   Will output a list of GsaLoads.
     /// </summary>
-    /// <param name="beamThermalLoads">Collection of beam thermal loads to be imported</param>
-    /// <param name="loadCases"></param>
+    /// <param name="model"></param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> CreateBeamThermalLoadsFromApi(
-      ReadOnlyCollection<BeamThermalLoad> beamThermalLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
+    internal static List<GsaLoadGoo> CreateBeamThermalLoadsFromApi(Model model) {
+      ReadOnlyCollection<BeamThermalLoad> beamThermalLoads = model.BeamThermalLoads();
+      ReadOnlyDictionary<int, LoadCase> loadCases = model.LoadCases();
+
       var loads = new List<GsaLoadGoo>();
       foreach (BeamThermalLoad apiLoad in beamThermalLoads) {
         var load = new GsaBeamThermalLoad {
@@ -73,11 +77,12 @@ namespace GsaGH.Parameters {
     ///   Method to import Face Loads from a GSA model.
     ///   Will output a list of GsaLoads.
     /// </summary>
-    /// <param name="faceLoads">Collection of Face loads to be imported</param>
-    /// <param name="loadCases"></param>
+    /// <param name="model"></param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> CreateFaceLoadsFromApi(ReadOnlyCollection<FaceLoad> faceLoads,
-      ReadOnlyDictionary<int, LoadCase> loadCases) {
+    internal static List<GsaLoadGoo> CreateFaceLoadsFromApi(Model model) {
+      ReadOnlyCollection<FaceLoad> faceLoads = model.FaceLoads();
+      ReadOnlyDictionary<int, LoadCase> loadCases = model.LoadCases();
+
       var loads = new List<GsaLoadGoo>();
       foreach (FaceLoad apiLoad in faceLoads) {
         var load = new GsaFaceLoad {
@@ -95,11 +100,12 @@ namespace GsaGH.Parameters {
     ///   Method to import Face Thermal Loads from a GSA model.
     ///   Will output a list of GsaLoads.
     /// </summary>
-    /// <param name="faceThermalLoads">Collection of Face Thermal loads to be imported</param>
-    /// <param name="loadCases"></param>
+    /// <param name="model"></param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> CreateFaceThermalLoadsFromApi(
-      ReadOnlyCollection<FaceThermalLoad> faceThermalLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
+    internal static List<GsaLoadGoo> CreateFaceThermalLoadsFromApi(Model model) {
+      ReadOnlyCollection<FaceThermalLoad> faceThermalLoads = model.FaceThermalLoads();
+      ReadOnlyDictionary<int, LoadCase> loadCases = model.LoadCases();
+
       var loads = new List<GsaLoadGoo>();
       foreach (FaceThermalLoad apiLoad in faceThermalLoads) {
         var load = new GsaFaceThermalLoad {
@@ -117,11 +123,12 @@ namespace GsaGH.Parameters {
     ///   Method to import Gravity Loads from a GSA model.
     ///   Will output a list of GsaLoadsGoo.
     /// </summary>
-    /// <param name="gravityLoads">Collection of gravity loads to import</param>
-    /// <param name="loadCases"></param>
+    /// <param name="model"></param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> CreateGravityLoadsFromApi(
-      ReadOnlyCollection<GravityLoad> gravityLoads, ReadOnlyDictionary<int, LoadCase> loadCases) {
+    internal static List<GsaLoadGoo> CreateGravityLoadsFromApi(Model model) {
+      ReadOnlyCollection<GravityLoad> gravityLoads = model.GravityLoads();
+      ReadOnlyDictionary<int, LoadCase> loadCases = model.LoadCases();
+
       var loads = new List<GsaLoadGoo>();
       foreach (GravityLoad apiLoad in gravityLoads) {
         var load = new GsaGravityLoad {
@@ -139,30 +146,32 @@ namespace GsaGH.Parameters {
     ///   Method to import Grid Area Loads from a GSA model.
     ///   Will output a list of GsaLoads.
     /// </summary>
-    /// <param name="areaLoads">Collection of Grid Area loads to be imported</param>
-    /// <param name="srfDict">Grid Surface Dictionary</param>
-    /// <param name="plnDict">Grid Plane Dictionary</param>
-    /// <param name="axDict">Axes Dictionary</param>
-    /// <param name="loadCases"></param>
+    /// <param name="model"></param>
     /// <param name="unit"></param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> CreateGridAreaLoadsFromApi(
-      ReadOnlyCollection<GridAreaLoad> areaLoads, IReadOnlyDictionary<int, GridSurface> srfDict,
-      IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict,
-      ReadOnlyDictionary<int, LoadCase> loadCases, LengthUnit unit) {
+    internal static List<GsaLoadGoo> CreateGridAreaLoadsFromApi(Model model, LengthUnit unit) {
+      ReadOnlyCollection<GridAreaLoad> areaLoads = model.GridAreaLoads();
+      IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
+      IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
+      IReadOnlyDictionary<int, Axis> axDict = model.Axes();
+      ReadOnlyDictionary<int, LoadCase> loadCases = model.LoadCases();
+      ReadOnlyDictionary<int, GsaAPI.Polyline> polylines = model.Polylines();
+
       var loads = new List<GsaLoadGoo>();
       foreach (GridAreaLoad gridAreaLoad in areaLoads) {
         var load = new GsaGridAreaLoad {
           ApiLoad = gridAreaLoad,
-          GridPlaneSurface
-            = CreateGridPlaneSurfaceFromApi(srfDict, plnDict, axDict, gridAreaLoad.GridSurface, unit)
+          GridPlaneSurface = CreateGridPlaneSurfaceFromApi(model, gridAreaLoad.GridSurface, unit)
         };
 
-        if (gridAreaLoad.PolyLineDefinition != string.Empty
-          && gridAreaLoad.PolyLineDefinition.Contains('(')
-          && load.GridPlaneSurface != null) {
-          load.Points = GridLoadHelper.ConvertPoints(
-            gridAreaLoad.PolyLineDefinition.ToString(), unit, load.GridPlaneSurface.Plane);
+        if (load.GridPlaneSurface != null) {
+          if (gridAreaLoad.PolyLineDefinition != string.Empty && gridAreaLoad.PolyLineDefinition.Contains('(')) {
+            load.Points = GridLoadHelper.ConvertPoints(gridAreaLoad.PolyLineDefinition.ToString(), unit, load.GridPlaneSurface.Plane);
+          } else if (polylines.ContainsKey(gridAreaLoad.PolyLineReference)) {
+            GsaAPI.Polyline polyline = polylines[gridAreaLoad.PolyLineReference];
+            load.Points = GridLoadHelper.ConvertPoints(polyline.Points, unit, load.GridPlaneSurface.Plane);
+            load.ApiPolyline = polyline;
+          }
         }
 
         load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
@@ -176,30 +185,33 @@ namespace GsaGH.Parameters {
     ///   Method to import Grid Line Loads from a GSA model.
     ///   Will output a list of GsaLoads.
     /// </summary>
-    /// <param name="lineLoads">Collection of Grid Line loads to be imported</param>
-    /// <param name="srfDict">Grid Surface Dictionary</param>
-    /// <param name="plnDict">Grid Plane Dictionary</param>
-    /// <param name="axDict">Axes Dictionary</param>
-    /// <param name="loadCases"></param>
+    /// <param name="model"></param>
     /// <param name="unit"></param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> CreateGridLineLoadsFromApi(
-      ReadOnlyCollection<GridLineLoad> lineLoads, IReadOnlyDictionary<int, GridSurface> srfDict,
-      IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict,
-      ReadOnlyDictionary<int, LoadCase> loadCases, LengthUnit unit) {
+    internal static List<GsaLoadGoo> CreateGridLineLoadsFromApi(Model model, LengthUnit unit) {
+      ReadOnlyCollection<GridLineLoad> lineLoads = model.GridLineLoads();
+      ReadOnlyCollection<GridAreaLoad> areaLoads = model.GridAreaLoads();
+      IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
+      IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
+      IReadOnlyDictionary<int, Axis> axDict = model.Axes();
+      ReadOnlyDictionary<int, LoadCase> loadCases = model.LoadCases();
+      ReadOnlyDictionary<int, GsaAPI.Polyline> polylines = model.Polylines();
+
       var loads = new List<GsaLoadGoo>();
       foreach (GridLineLoad gridLineLoad in lineLoads) {
         var load = new GsaGridLineLoad {
           ApiLoad = gridLineLoad,
-          GridPlaneSurface
-            = CreateGridPlaneSurfaceFromApi(srfDict, plnDict, axDict, gridLineLoad.GridSurface, unit)
+          GridPlaneSurface = CreateGridPlaneSurfaceFromApi(model, gridLineLoad.GridSurface, unit)
         };
 
-        if (gridLineLoad.PolyLineDefinition != string.Empty
-          && gridLineLoad.PolyLineDefinition.Contains('(')
-          && load.GridPlaneSurface != null) {
-          load.Points = GridLoadHelper.ConvertPoints(
-          gridLineLoad.PolyLineDefinition.ToString(), unit, load.GridPlaneSurface.Plane);
+        if (load.GridPlaneSurface != null) {
+          if (gridLineLoad.PolyLineDefinition != string.Empty && gridLineLoad.PolyLineDefinition.Contains('(')) {
+            load.Points = GridLoadHelper.ConvertPoints(gridLineLoad.PolyLineDefinition.ToString(), unit, load.GridPlaneSurface.Plane);
+          } else if (polylines.ContainsKey(gridLineLoad.PolyLineReference)) {
+            GsaAPI.Polyline polyline = polylines[gridLineLoad.PolyLineReference];
+            load.Points = GridLoadHelper.ConvertPoints(polyline.Points, unit, load.GridPlaneSurface.Plane);
+            load.ApiPolyline = polyline;
+          }
         }
 
         load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
@@ -217,15 +229,17 @@ namespace GsaGH.Parameters {
     ///   Only Grid Surface ID is required, the others will be found by ref
     ///   Will output a new GsaGridPlaneSurface.
     /// </summary>
-    /// <param name="srfDict">Grid Surface Dictionary</param>
-    /// <param name="plnDict">Grid Plane Dictionary</param>
-    /// <param name="axDict">Axes Dictionary</param>
+    /// <param name="model"></param>
     /// <param name="gridSrfId">ID/Key/number of Grid Surface in GSA model to convert</param>
     /// <param name="unit"></param>
     /// <returns></returns>
-    internal static GsaGridPlaneSurface CreateGridPlaneSurfaceFromApi(
-      IReadOnlyDictionary<int, GridSurface> srfDict, IReadOnlyDictionary<int, GridPlane> plnDict,
-      IReadOnlyDictionary<int, Axis> axDict, int gridSrfId, LengthUnit unit) {
+    internal static GsaGridPlaneSurface CreateGridPlaneSurfaceFromApi(Model model, int gridSrfId, LengthUnit unit) {
+      ReadOnlyCollection<GridAreaLoad> areaLoads = model.GridAreaLoads();
+      IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
+      IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
+      IReadOnlyDictionary<int, Axis> axDict = model.Axes();
+      ReadOnlyDictionary<int, LoadCase> loadCases = model.LoadCases();
+
       if (srfDict.Count == 0 || !srfDict.TryGetValue(gridSrfId, out GridSurface gs)) {
         return null;
       }
@@ -268,23 +282,23 @@ namespace GsaGH.Parameters {
     ///   Method to import Grid Point Loads from a GSA model.
     ///   Will output a list of GsaLoads.
     /// </summary>
-    /// <param name="pointLoads">Collection of Grid Point loads to be imported</param>
-    /// <param name="srfDict">Grid Surface Dictionary</param>
-    /// <param name="plnDict">Grid Plane Dictionary</param>
-    /// <param name="axDict">Axes Dictionary</param>
-    /// <param name="loadCases"></param>
+    /// <param name="model"></param>
     /// <param name="unit"></param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> CreateGridPointLoadsFromApi(
-      ReadOnlyCollection<GridPointLoad> pointLoads, IReadOnlyDictionary<int, GridSurface> srfDict,
-      IReadOnlyDictionary<int, GridPlane> plnDict, IReadOnlyDictionary<int, Axis> axDict,
-      ReadOnlyDictionary<int, LoadCase> loadCases, LengthUnit unit) {
+    internal static List<GsaLoadGoo> CreateGridPointLoadsFromApi(Model model, LengthUnit unit) {
+      ReadOnlyCollection<GridPointLoad> pointLoads = model.GridPointLoads();
+      ReadOnlyCollection<GridAreaLoad> areaLoads = model.GridAreaLoads();
+      IReadOnlyDictionary<int, GridSurface> srfDict = model.GridSurfaces();
+      IReadOnlyDictionary<int, GridPlane> plnDict = model.GridPlanes();
+      IReadOnlyDictionary<int, Axis> axDict = model.Axes();
+      ReadOnlyDictionary<int, LoadCase> loadCases = model.LoadCases();
+
       var loads = new List<GsaLoadGoo>();
       foreach (GridPointLoad gridPointLoad in pointLoads) {
         var load = new GsaGridPointLoad {
           ApiLoad = gridPointLoad,
-          GridPlaneSurface
-            = CreateGridPlaneSurfaceFromApi(srfDict, plnDict, axDict, gridPointLoad.GridSurface, unit), };
+          GridPlaneSurface = CreateGridPlaneSurfaceFromApi(model, gridPointLoad.GridSurface, unit)
+        };
 
         if (unit != LengthUnit.Meter) {
           load.ApiLoad.X = new Length(load.ApiLoad.X, LengthUnit.Meter).As(unit);
@@ -305,10 +319,11 @@ namespace GsaGH.Parameters {
     ///   requeres the entire model to be inputted to this method.
     ///   Will output a list of GsaLoads.
     /// </summary>
-    /// <param name="model">GSA model containing node loads</param>
-    /// <param name="loadCases"></param>
+    /// <param name="model"></param>
     /// <returns></returns>
-    internal static List<GsaLoadGoo> CreateNodeLoadsFromApi(Model model, ReadOnlyDictionary<int, LoadCase> loadCases) {
+    internal static List<GsaLoadGoo> CreateNodeLoadsFromApi(Model model) {
+      ReadOnlyDictionary<int, LoadCase> loadCases = model.LoadCases();
+
       var loads = new List<GsaLoadGoo>();
 
       // NodeLoads come in varioys types, depending on GsaAPI.NodeLoadType:

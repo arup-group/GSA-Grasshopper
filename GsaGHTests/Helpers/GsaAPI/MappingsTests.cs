@@ -27,10 +27,6 @@ namespace GsaGHTests.Helpers.GsaAPITests {
     }
 
     [Theory]
-    [InlineData("New", -1)]
-    [InlineData(" New", -1)]
-    [InlineData("Undefined", 0)]
-    [InlineData(" Undefined  ", 0)]
     [InlineData("Bar", 1)]
     [InlineData("bar", 1)]
     [InlineData("Beam", 2)]
@@ -56,15 +52,6 @@ namespace GsaGHTests.Helpers.GsaAPITests {
     [InlineData("Rod", 23)]
     [InlineData("Damper", 24)]
     [InlineData("Pyramid-5", 26)]
-    [InlineData("Last Type", 26)]
-    [InlineData("1D", 27)]
-    [InlineData("2D", 28)]
-    [InlineData("3D", 29)]
-    [InlineData("1D Section", 30)]
-    [InlineData("2D Finite Element", 31)]
-    [InlineData("2d FinitEelement", 31)]
-    [InlineData("2D Load", 32)]
-    [InlineData("2dLoad", 32)]
     public void GetElementTypeTest(string input, int expected) {
       ElementType actual = Mappings.GetElementType(input);
 

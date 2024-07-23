@@ -566,8 +566,8 @@ namespace GsaGH.Components {
       bool enveloped = Inputs.IsResultCaseEnveloped(this, result, ref _case, _envelopeType);
       List<int> permutations = result.SelectedPermutationIds;
       elementlist = Inputs.GetElementListDefinition(this, da, 1, result.Model);
-      ReadOnlyDictionary<int, Element> elems = result.Model.Model.Elements(elementlist);
-      ReadOnlyDictionary<int, Node> nodes = result.Model.Model.Nodes();
+      ReadOnlyDictionary<int, Element> elems = result.Model.ApiModel.Elements(elementlist);
+      ReadOnlyDictionary<int, Node> nodes = result.Model.ApiModel.Nodes();
 
       if (elems.Count == 0) {
         this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
@@ -831,7 +831,7 @@ namespace GsaGH.Components {
       LengthUnit lengthUnit = result.Model.ModelUnit;
 
       Parallel.ForEach(elems.Keys, key => {
-        Element element = elems[key];
+        var element = new GSAElement( elems[key]);
         if (element.Topology.Count < 3) {
           return;
         }

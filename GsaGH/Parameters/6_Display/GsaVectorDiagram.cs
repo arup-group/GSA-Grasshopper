@@ -28,6 +28,7 @@ namespace GsaGH.Parameters {
     internal GsaVectorDiagram(Point3d anchor, Vector3d direction, bool doubleArrow, Color color) {
       AnchorPoint = anchor;
       Direction = direction;
+      _doubleArrow = doubleArrow;
 
       DisplayLine = CreateReactionForceLine(anchor, direction);
       Value = direction;

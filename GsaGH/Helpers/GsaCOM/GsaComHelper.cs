@@ -32,7 +32,7 @@ namespace GsaGH.Helpers {
       guid = model.Guid;
       tempPath = Path.GetTempPath() + guid.ToString() + ".gwb";
 
-      model.Model.SaveAs(tempPath);
+      model.ApiModel.SaveAs(tempPath);
 
       gsa.Open(tempPath);
       gsa.SetLocale(Locale.LOC_EN_GB);
@@ -43,7 +43,7 @@ namespace GsaGH.Helpers {
       ComAuto gsa = GsaComObject.Instance;
       gsa.SaveAs(tempPath);
       var gsaGh = new GsaModel();
-      gsaGh.Model.Open(tempPath);
+      gsaGh.ApiModel.Open(tempPath);
 
       return gsaGh;
     }
