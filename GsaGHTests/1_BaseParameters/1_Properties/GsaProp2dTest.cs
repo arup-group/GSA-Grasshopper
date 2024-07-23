@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Parameters;
@@ -48,13 +49,25 @@ namespace GsaGHTests.Parameters {
       string name = "mariam";
       string description = "awesome property";
       Property2D_Type type = Property2D_Type.LOAD;
-
-      var prop = new GsaProperty2d {
+      //load panel must be in global axis
+      Assert.Throws<ArgumentException>(() => new GsaProperty2d {
         ApiProp2d = new Prop2D() {
+          Type = type,
           AxisProperty = axisProperty,
           Name = name,
           Description = description,
+          SupportType = SupportType.ThreeEdges,
+          ReferenceEdge = 2,
+        },
+      });
+
+      axisProperty = 0;
+      var prop = new GsaProperty2d {
+        ApiProp2d = new Prop2D() {
           Type = type,
+          AxisProperty = axisProperty,
+          Name = name,
+          Description = description,
           SupportType = SupportType.ThreeEdges,
           ReferenceEdge = 2,
         },
@@ -62,7 +75,7 @@ namespace GsaGHTests.Parameters {
       var material = new GsaCustomMaterial(GsaMaterialTest.TestAnalysisMaterial(), 99);
       prop.Material = material;
 
-      Assert.Equal(1, prop.ApiProp2d.AxisProperty);
+      Assert.Equal(0, prop.ApiProp2d.AxisProperty);
       Assert.Equal(99, prop.Material.Id);
       Assert.Equal("Custom", prop.Material.MaterialType.ToString());
       Assert.Equal("mariam", prop.ApiProp2d.Name);
@@ -100,7 +113,7 @@ namespace GsaGHTests.Parameters {
       var dup = new GsaProperty2d(orig);
 
       orig.Id = 4;
-      orig.ApiProp2d.AxisProperty = 1;
+      orig.ApiProp2d.AxisProperty = 0;
       orig.Material.Id = 99;
       orig.ApiProp2d.Name = "kris";
       orig.ApiProp2d.Description = "less cool property";
@@ -119,7 +132,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(ReferenceSurface.Bottom, dup.ApiProp2d.ReferenceSurface);
       Assert.Equal(-100, dup.AdditionalOffsetZ.As(LengthUnit.Millimeter));
 
-      Assert.Equal(1, orig.ApiProp2d.AxisProperty);
+      Assert.Equal(0, orig.ApiProp2d.AxisProperty);
       Assert.Equal(99, orig.Material.Id);
       Assert.Equal("Custom", orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.ApiProp2d.Name);

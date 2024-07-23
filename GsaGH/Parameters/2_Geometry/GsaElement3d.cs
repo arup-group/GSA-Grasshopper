@@ -21,7 +21,7 @@ namespace GsaGH.Parameters {
   /// 
   /// </summary>
   public class GsaElement3d {
-    public List<Element> ApiElements { get; internal set; }
+    public List<GSAElement> ApiElements { get; internal set; }
     public List<int> Ids { get; set; } = new List<int>();
     public Guid Guid { get; private set; } = Guid.NewGuid();
     public Mesh NgonMesh { get; internal set; } = new Mesh();
@@ -44,7 +44,7 @@ namespace GsaGH.Parameters {
     /// Empty constructor instantiating a list of new API objects
     /// </summary>
     public GsaElement3d() {
-      ApiElements = new List<Element>();
+      ApiElements = new List<GSAElement>();
     }
 
     /// <summary>
@@ -54,13 +54,14 @@ namespace GsaGH.Parameters {
     public GsaElement3d(Mesh mesh) {
       if (mesh.IsClosed) {
         NgonMesh = mesh;
-      } else {
+      }
+      else {
         Mesh m = mesh.DuplicateMesh();
         m.FillHoles();
         NgonMesh = m;
       }
 
-      Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>> convertMesh
+      Tuple<List<GSAElement>, Point3dList, List<List<int>>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem3d(mesh);
       ApiElements = convertMesh.Item1;
       Topology = convertMesh.Item2;
@@ -86,10 +87,10 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaElement3d(ConcurrentDictionary<int, Element> elements, Mesh mesh,
+    internal GsaElement3d(ConcurrentDictionary<int, GSAElement> elements, Mesh mesh,
       ConcurrentDictionary<int, GsaProperty3d> prop3ds) {
       NgonMesh = mesh;
-      Tuple<List<Element>, Point3dList, List<List<int>>, List<List<int>>> convertMesh
+      Tuple<List<GSAElement>, Point3dList, List<List<int>>, List<List<int>>> convertMesh
         = RhinoConversions.ConvertMeshToElem3d(mesh);
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
@@ -102,14 +103,14 @@ namespace GsaGH.Parameters {
       UpdateMeshColours();
     }
 
-    public List<Element> DuplicateApiObjects() {
+    public List<GSAElement> DuplicateApiObjects() {
       if (ApiElements.IsNullOrEmpty()) {
         return ApiElements;
       }
 
-      var elems = new List<Element>();
+      var elems = new List<GSAElement>();
       for (int i = 0; i < ApiElements.Count; i++) {
-        elems.Add(new Element() {
+        elems.Add(new GSAElement(new Element()) {
           Group = ApiElements[i].Group,
           IsDummy = ApiElements[i].IsDummy,
           Name = ApiElements[i].Name.ToString(),

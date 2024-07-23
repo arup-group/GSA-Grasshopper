@@ -20,7 +20,7 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   /// </summary>
   public class GsaElement1d {
-    public Element ApiElement { get; internal set; }
+    public GSAElement ApiElement { get; internal set; }
     public int Id { get; set; } = 0;
     public Guid Guid { get; private set; } = Guid.NewGuid();
     public LineCurve Line { get; internal set; } = new LineCurve();
@@ -54,9 +54,9 @@ namespace GsaGH.Parameters {
     /// Empty constructor instantiating a new API object
     /// </summary>
     public GsaElement1d() {
-      ApiElement = new Element {
+      ApiElement = new GSAElement(new Element {
         Type = ElementType.BEAM,
-      };
+      });
     }
 
     /// <summary>
@@ -65,9 +65,9 @@ namespace GsaGH.Parameters {
     /// <param name="line"></param>
     public GsaElement1d(LineCurve line) {
       Id = Id;
-      ApiElement = new Element {
+      ApiElement = new GSAElement(new Element {
         Type = ElementType.BEAM,
-      };
+      });
       Line = line;
       UpdateReleasesPreview();
     }
@@ -90,7 +90,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaElement1d(KeyValuePair<int, Element> element, IReadOnlyDictionary<int, Node> nodes,
+    internal GsaElement1d(KeyValuePair<int, GSAElement> element, IReadOnlyDictionary<int, Node> nodes,
       GsaSection section, ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
       Id = element.Key;
       ApiElement = element.Value;
@@ -109,7 +109,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaElement1d(KeyValuePair<int, Element> element, IReadOnlyDictionary<int, Node> nodes,
+    internal GsaElement1d(KeyValuePair<int, GSAElement> element, IReadOnlyDictionary<int, Node> nodes,
       GsaSpringProperty springProperty, ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
       Id = element.Key;
       ApiElement = element.Value;
@@ -129,7 +129,7 @@ namespace GsaGH.Parameters {
       Section3dPreview = new Section3dPreview(this);
     }
 
-    public Element DuplicateApiObject() {
+    public GSAElement DuplicateApiObject() {
       var elem = new Element {
         Group = ApiElement.Group,
         IsDummy = ApiElement.IsDummy,
@@ -154,7 +154,7 @@ namespace GsaGH.Parameters {
         elem.Colour = ApiElement.Colour;
       }
 
-      return elem;
+      return new GSAElement(elem);
     }
 
     public override string ToString() {
@@ -164,7 +164,8 @@ namespace GsaGH.Parameters {
       if (Section != null) {
         property = Section.Id > 0 ? $"PB{Section.Id}"
         : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
-      } else if (SpringProperty != null) {
+      }
+      else if (SpringProperty != null) {
         property = SpringProperty.Id > 0 ? $"SP{SpringProperty.Id}"
         : SpringProperty.ApiProperty != null ? SpringProperty.ApiProperty.Name : string.Empty;
       }
@@ -181,7 +182,8 @@ namespace GsaGH.Parameters {
         crv.Append(Line);
         ReleasePreview = new ReleasePreview(crv,
           ApiElement.OrientationAngle * Math.PI / 180.0, s, e);
-      } else {
+      }
+      else {
         ReleasePreview = new ReleasePreview();
       }
     }
