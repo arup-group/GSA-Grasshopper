@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 
 namespace GsaGH.Parameters.Results {
-
   /// <summary>
   /// <para>A Result is used to select Cases from an analysed <see cref="GsaModel"/> and extract the values for post-processing or visualisation.</para>
   /// <para>The following result types can be extracted if they are present in the model:
