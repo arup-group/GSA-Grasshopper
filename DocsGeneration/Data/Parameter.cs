@@ -131,7 +131,6 @@ namespace DocsGeneration.Data {
                 text = xmlDocuOfMethod.InnerXml
               .Replace("<summary>", string.Empty).Replace("</summary>", string.Empty);
               }
-            
               string cleanStr = Regex.Replace(text, @"\s+", " ");
               return cleanStr.Trim();
             }
