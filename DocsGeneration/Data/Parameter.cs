@@ -126,8 +126,12 @@ namespace DocsGeneration.Data {
               string path = "T:" + valueType.FullName;
               XmlNode xmlDocuOfMethod = GsaGhDll.GsaGhXml.SelectSingleNode(
                   "//member[@name='" + path + "']");
-              string text = xmlDocuOfMethod.InnerXml
-                .Replace("<summary>", string.Empty).Replace("</summary>", string.Empty);
+              string text = "";
+              if (xmlDocuOfMethod!=null) {
+                text = xmlDocuOfMethod.InnerXml
+              .Replace("<summary>", string.Empty).Replace("</summary>", string.Empty);
+              }
+            
               string cleanStr = Regex.Replace(text, @"\s+", " ");
               return cleanStr.Trim();
             }

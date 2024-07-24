@@ -35,7 +35,11 @@ namespace DocsGeneration.MarkDowns.Helpers {
       string name = parameter.ParameterType.Replace(" (List)", string.Empty);
       name = name.Replace(" (Tree)", string.Empty);
       name = name.Replace(" ", string.Empty);
+      if (name.ToLower().Contains("loadvalueorfactor") || name.ToLower().Contains("loadvalue")) {
+        name = "Load";
+      }
       name = $"{name}Param";
+    
       iconNames.Add(name);
       // ![Material](./images/gsagh/MaterialParam.png)
       return $"![{name}]({iconPath}{name}.png)";
