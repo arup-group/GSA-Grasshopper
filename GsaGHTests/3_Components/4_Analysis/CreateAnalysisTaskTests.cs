@@ -124,7 +124,7 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(0, (int)parameter.ExcitationMethod);
       Assert.Equal(2, parameter.ModalAnalysisTaskId);
       Assert.Equal("all", parameter.ResponseNodes);
-      Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberofFootfalls).NumberOfFootFalls);
+      Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberOfFootfalls).NumberOfFootfalls);
       Assert.Equal(76.5, parameter.WalkerMass);
       Assert.Equal(expectedResponsDirection, (int)parameter.ResponseDirection);
       Assert.Equal(weightingCurve * -1, (int)parameter.FrequencyWeightingCurve);
@@ -164,7 +164,7 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(0, (int)parameter.ExcitationMethod);
       Assert.Equal(2, parameter.ModalAnalysisTaskId);
       Assert.Equal("all", parameter.ResponseNodes);
-      Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberofFootfalls).NumberOfFootFalls);
+      Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberOfFootfalls).NumberOfFootfalls);
       Assert.Equal(76.5, parameter.WalkerMass);
       Assert.Equal(expectedResponsDirection, (int)parameter.ResponseDirection);
       Assert.Equal(weightingCurve * -1, (int)parameter.FrequencyWeightingCurve);
@@ -202,7 +202,7 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(2, parameter.ModalAnalysisTaskId);
       Assert.Equal("all", parameter.ResponseNodes);
       Assert.Equal("all", parameter.ExcitationNodes);
-      Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberofFootfalls).NumberOfFootFalls);
+      Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberOfFootfalls).NumberOfFootfalls);
       Assert.Equal(76.5, parameter.WalkerMass);
       Assert.Equal(1, (int)parameter.ResponseDirection);
       Assert.Equal(-2, (int)parameter.FrequencyWeightingCurve);
@@ -240,7 +240,7 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(2, parameter.ModalAnalysisTaskId);
       Assert.Equal("all", parameter.ResponseNodes);
       Assert.Equal("all", parameter.ExcitationNodes);
-      Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberofFootfalls).NumberOfFootFalls);
+      Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberOfFootfalls).NumberOfFootfalls);
       Assert.Equal(76.5, parameter.WalkerMass);
       Assert.Equal(1, (int)parameter.ResponseDirection);
       Assert.Equal(-2, (int)parameter.FrequencyWeightingCurve);
@@ -278,7 +278,7 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(2, parameter.ModalAnalysisTaskId);
       Assert.Equal("all", parameter.ResponseNodes);
       Assert.Equal("all", parameter.ExcitationNodes);
-      Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberofFootfalls).NumberOfFootFalls);
+      Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberOfFootfalls).NumberOfFootfalls);
       Assert.Equal(76.5, parameter.WalkerMass);
       Assert.Equal(1, (int)parameter.ResponseDirection);
       Assert.Equal(-2, (int)parameter.FrequencyWeightingCurve);
