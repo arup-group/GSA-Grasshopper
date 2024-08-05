@@ -831,7 +831,7 @@ namespace GsaGH.Components {
       LengthUnit lengthUnit = result.Model.ModelUnit;
 
       Parallel.ForEach(elems.Keys, key => {
-        Element element = elems[key];
+        var element = new GSAElement( elems[key]);
         if (element.Topology.Count < 3) {
           return;
         }

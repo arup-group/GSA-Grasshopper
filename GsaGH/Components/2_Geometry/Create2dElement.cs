@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -36,10 +37,17 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       GH_Mesh ghmesh = null;
       da.GetData(0, ref ghmesh);
-      var elem = new GsaElement2d(ghmesh.Value);
 
       GsaProperty2dGoo prop2dGoo = null;
-      if (da.GetData(1, ref prop2dGoo)) {
+      bool prop2dAssigned = da.GetData(1, ref prop2dGoo);
+      bool isLoadPanel = false;
+      if (prop2dAssigned && prop2dGoo.Value.ApiProp2d != null) {
+        Prop2D apiProperty2d = prop2dGoo.Value.ApiProp2d;
+        isLoadPanel = apiProperty2d.Type == Property2D_Type.LOAD;
+      }
+
+      var elem = new GsaElement2d(ghmesh.Value, isLoadPanel);
+      if (prop2dAssigned) {
         var prop2Ds = new List<GsaProperty2d>();
         for (int i = 0; i < elem.ApiElements.Count; i++) {
           prop2Ds.Add(prop2dGoo.Value);

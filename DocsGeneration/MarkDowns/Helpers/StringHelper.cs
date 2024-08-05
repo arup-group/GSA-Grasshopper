@@ -65,6 +65,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
     private static string ConvertSummaryToMarkup(string str) {
       str = str.Replace("</para>", "\n\n").Replace("<para>", string.Empty);
       str = str.Replace("IGsaLoad", "GsaLoad");
+      str = str.Replace("IGsaResult", "GsaResult");
       str = str.Replace("IGsaGridLoad", "GsaGridLoad");
       str = str.Replace("IGsaStandardMaterial", "GsaStandardMaterial");
       str = str.Replace("IGsaAnnotation", "GsaAnnotation");

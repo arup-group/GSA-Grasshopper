@@ -86,7 +86,8 @@ namespace GsaGH.Components {
       _selectedItems[i] = _dropDownItems[i][j];
       if (j == 0) {
         _text3d = false;
-      } else {
+      }
+      else {
         _text3d = true;
       }
     }
@@ -164,7 +165,8 @@ namespace GsaGH.Components {
                   }
                   AddAnnotation3d(new Plane(points[i], e2d.Value.Mesh.FaceNormals[faceIndex]),
                     CreateText(e2d, path, i), (Color)e2d.Value.ApiElements[i].Colour, size, path);
-                } else {
+                }
+                else {
                   AddAnnotationDot(points[i], CreateText(e2d, path, i), (Color)e2d.Value.ApiElements[i].Colour, size, path);
                 }
 
@@ -191,7 +193,8 @@ namespace GsaGH.Components {
                     new Plane(e3d.Value.NgonMesh.Ngons.GetNgonCenter(i), Vector3d.ZAxis),
                     CreateText(e3d, path, i),
                     (Color)e3d.Value.ApiElements[i].Colour, size, path);
-                } else {
+                }
+                else {
                   AddAnnotationDot(
                     e3d.Value.NgonMesh.Ngons.GetNgonCenter(i),
                     CreateText(e3d, path, i),
@@ -206,7 +209,8 @@ namespace GsaGH.Components {
                   CreateLocalAxis(e1d.Value.Line),
                   CreateText(e1d, path),
                   (Color)e1d.Value.ApiElement.Colour, size, path);
-              } else {
+              }
+              else {
                 AddAnnotationDot(
                   e1d.Value.Line.PointAtNormalizedLength(0.5),
                   CreateText(e1d, path),
@@ -220,7 +224,8 @@ namespace GsaGH.Components {
                   CreateLocalAxis(m1d.Value.PolyCurve),
                   CreateText(m1d, path),
                   (Color)m1d.Value.ApiMember.Colour, size, path);
-              } else {
+              }
+              else {
                 AddAnnotationDot(
                   m1d.Value.PolyCurve.PointAtNormalizedLength(0.5),
                   CreateText(m1d, path),
@@ -237,7 +242,8 @@ namespace GsaGH.Components {
                   pln,
                   CreateText(m2d, path),
                   (Color)m2d.Value.ApiMember.Colour, size, path);
-              } else {
+              }
+              else {
                 AddAnnotationDot(
                   pl.CenterPoint(),
                   CreateText(m2d, path),
@@ -250,7 +256,8 @@ namespace GsaGH.Components {
                   m3d.Value.SolidMesh.GetBoundingBox(false).Center,
                   CreateText(m3d, path),
                   (Color)m3d.Value.ApiMember.Colour, size, path);
-              } else {
+              }
+              else {
                 AddAnnotationDot(
                   m3d.Value.SolidMesh.GetBoundingBox(false).Center,
                   CreateText(m3d, path),
@@ -330,35 +337,35 @@ namespace GsaGH.Components {
       switch (goo) {
         case GsaElement2dGoo e2d:
           id = e2d.Value.Ids[i];
-          name = GeometryToString(e2d.Value.ApiElements[i].Name, e2d.Value.ApiElements[i].Type);
+          name = GeometryToString(e2d.Value.ApiElements[i].Name, e2d.Value.ApiElements[i].TypeAsString());
           prop = Prop2dToString(e2d.Value.Prop2ds?[i]);
           mat = MaterialToString(e2d.Value.Prop2ds?[i].Material);
           break;
 
         case GsaElement3dGoo e3d:
           id = e3d.Value.Ids[i];
-          name = GeometryToString(e3d.Value.ApiElements[i].Name, e3d.Value.ApiElements[i].Type);
+          name = GeometryToString(e3d.Value.ApiElements[i].Name, e3d.Value.ApiElements[i].TypeAsString());
           prop = Prop3dToString(e3d.Value.Prop3ds?[i]);
           mat = MaterialToString(e3d.Value.Prop3ds?[i].Material);
           break;
 
         case GsaElement1dGoo e1d:
           id = e1d.Value.Id;
-          name = GeometryToString(e1d.Value.ApiElement.Name, e1d.Value.ApiElement.Type);
+          name = GeometryToString(e1d.Value.ApiElement.Name, e1d.Value.ApiElement.TypeAsString());
           prop = SectionToString(e1d.Value.Section);
           mat = MaterialToString(e1d.Value.Section?.Material);
           break;
 
         case GsaMember1dGoo m1d:
           id = m1d.Value.Id;
-          name = GeometryToString(m1d.Value.ApiMember.Name, m1d.Value.ApiMember.Type);
+          name = GeometryToString(m1d.Value.ApiMember.Name, m1d.Value.ApiMember.TypeAsString());
           prop = SectionToString(m1d.Value.Section);
           mat = MaterialToString(m1d.Value.Section?.Material);
           break;
 
         case GsaMember2dGoo m2d:
           id = m2d.Value.Id;
-          name = GeometryToString(m2d.Value.ApiMember.Name, m2d.Value.ApiMember.Type);
+          name = GeometryToString(m2d.Value.ApiMember.Name, m2d.Value.ApiMember.TypeAsString());
           prop = Prop2dToString(m2d.Value.Prop2d);
           mat = MaterialToString(m2d.Value.Prop2d?.Material);
           break;
