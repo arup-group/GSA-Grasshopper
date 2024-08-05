@@ -119,7 +119,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.NotNull(e2d);
       Assert.Equal(230, e2d.Value.Ids.Count);
       Assert.Equal(230, e2d.Value.Mesh.Faces.Count);
-      foreach (Element elem in e2d.Value.ApiElements) {
+      foreach (GSAElement elem in e2d.Value.ApiElements) {
         Assert.Equal(ElementType.TRI6, elem.Type);
       }
     }
@@ -138,7 +138,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.NotNull(e2d);
       Assert.Equal(96, e2d.Value.Ids.Count);
       Assert.Equal(96, e2d.Value.Mesh.Faces.Count);
-      foreach (Element elem in e2d.Value.ApiElements) {
+      foreach (GSAElement elem in e2d.Value.ApiElements) {
         Assert.Equal(ElementType.QUAD8, elem.Type);
       }
     }

@@ -7,16 +7,17 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
-    private void AddElement(int id, Guid guid, Element apiElement, bool overwrite) {
+    private void AddElement(int id, Guid guid, GSAElement apiElement, bool overwrite) {
       if (id > 0) {
         _elements.SetValue(id, guid, apiElement, overwrite);
-      } else {
+      }
+      else {
         _elements.AddValue(guid, apiElement);
       }
     }
 
     private void ConvertElement1d(GsaElement1d element1d) {
-      Element apiElement = element1d.DuplicateApiObject();
+      GSAElement apiElement = element1d.DuplicateApiObject();
       var topo = new List<int> {
         AddNode(element1d.Line.PointAtStart),
         AddNode(element1d.Line.PointAtEnd),
@@ -29,7 +30,8 @@ namespace GsaGH.Helpers.Assembly {
 
       if (element1d.ApiElement.Type != ElementType.SPRING) {
         apiElement.Property = ConvertSection(element1d.Section);
-      } else {
+      }
+      else {
         apiElement.Property = ConvertSpringProp(element1d.SpringProperty);
       }
 
@@ -48,9 +50,9 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertElement2d(GsaElement2d element2d) {
-      List<Element> apiElems = element2d.DuplicateApiObjects();
+      List<GSAElement> apiElems = element2d.DuplicateApiObjects();
       for (int i = 0; i < apiElems.Count; i++) {
-        Element apiMeshElement = apiElems[i];
+        GSAElement apiMeshElement = apiElems[i];
         List<int> meshVertexIndex = element2d.TopoInt[i];
 
         var topo = new List<int>();
@@ -83,9 +85,9 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertElement3d(GsaElement3d element3d) {
-      List<Element> apiElems = element3d.DuplicateApiObjects();
+      List<GSAElement> apiElems = element3d.DuplicateApiObjects();
       for (int i = 0; i < apiElems.Count; i++) {
-        Element apiMeshElement = apiElems[i];
+        GSAElement apiMeshElement = apiElems[i];
         List<int> meshVertexIndex = element3d.TopoInt[i];
         var topo = new List<int>();
         foreach (int mesh in meshVertexIndex) {

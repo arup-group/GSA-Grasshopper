@@ -20,8 +20,8 @@ namespace IntegrationTests.Parameters {
       var valOut = (GH_Mesh)param.VolatileData.get_Branch(0)[0];
       Mesh mesh = valOut.Value;
       Assert.NotNull(mesh);
-      Assert.Equal(3444, mesh.Vertices.Count);
-      Assert.Equal(4714, mesh.Faces.Count);
+      Assert.Equal(3452, mesh.Vertices.Count);
+      Assert.Equal(4722, mesh.Faces.Count);
     }
 
     [Fact]
@@ -42,8 +42,8 @@ namespace IntegrationTests.Parameters {
       var valOut = (GH_Mesh)param.VolatileData.get_Branch(0)[0];
       Mesh mesh = valOut.Value;
       Assert.NotNull(mesh);
-      Assert.Equal(964, mesh.Vertices.Count);
-      Assert.Equal(2124, mesh.Faces.Count);
+      Assert.Equal(972, mesh.Vertices.Count);
+      Assert.Equal(2132, mesh.Faces.Count);
     }
 
     [Fact]

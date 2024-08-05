@@ -7,7 +7,7 @@ namespace GsaGH.Parameters {
   /// <summary>
   /// Assemblies can be thought of as a *super element* as they define an entity formed from a collection of elements or members. Assemblies are a convenient post-processing entity, such as the cut section forces, rather than being an analysis entity. Typical uses of assemblies include: cores, where the core is modelled with 2D finite elements; trusses, where the truss is modelled with top and bottom chords and bracing. In both these cases the assembly is identified by a list of included elements. 
   /// Unlike the analysis elements, an assembly does not have a clearly define orientation and location of reference point so these must be defined explicitly.
-  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-assembly/index.html">Assemblies</see> to read more.</para>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-assembly.html">Assemblies</see> to read more.</para>
   /// </summary>
   public class GsaAssembly {
     public Guid Guid { get; set; } = Guid.NewGuid();

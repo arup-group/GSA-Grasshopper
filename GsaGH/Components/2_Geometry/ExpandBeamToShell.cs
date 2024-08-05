@@ -135,10 +135,10 @@ namespace GsaGH.Components {
             if (axes == null) {
               var assembly = new ModelAssembly(member);
               var model = new GsaModel {
-                Model = assembly.GetModel()
+                ApiModel = assembly.GetModel()
               };
 
-              axes = new Parameters.LocalAxes(model.Model.MemberDirectionCosine(1));
+              axes = new Parameters.LocalAxes(model.ApiModel.MemberDirectionCosine(1));
             }
 
             crv = member.PolyCurve.DuplicatePolyCurve();
@@ -167,10 +167,10 @@ namespace GsaGH.Components {
             if (axes == null) {
               var assembly = new ModelAssembly(element);
               var model = new GsaModel() {
-                Model = assembly.GetModel()
+                ApiModel = assembly.GetModel()
               };
 
-              axes = new Parameters.LocalAxes(model.Model.ElementDirectionCosine(1));
+              axes = new Parameters.LocalAxes(model.ApiModel.ElementDirectionCosine(1));
             }
 
             crv = new LineCurve(element.Line.PointAtStart, element.Line.PointAtEnd);

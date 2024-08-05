@@ -55,7 +55,7 @@ namespace GsaGH.Components {
       da.GetData(0, ref modelGoo);
       int taskId = 0;
       ReadOnlyDictionary<int, SteelDesignTask> steelDesignTasks =
-          modelGoo.Value.Model.SteelDesignTasks();
+          modelGoo.Value.ApiModel.SteelDesignTasks();
       if (steelDesignTasks.Count == 0) {
         this.AddRuntimeError("Model contains no design tasks");
         return;
@@ -83,7 +83,7 @@ namespace GsaGH.Components {
       TaskReport report = null;
 
       if (check) {
-        newModel = modelGoo.Value.Model;
+        newModel = modelGoo.Value.ApiModel;
         newModel.Check(taskId, out report);
         logs.Add(report.Log);
         notes.AddRange(report.Notes);
@@ -102,7 +102,7 @@ namespace GsaGH.Components {
           errors.Add($"Task {taskId}: {message}");
         }
       } else {
-        newModel = modelGoo.Value.Model.Clone();
+        newModel = modelGoo.Value.ApiModel.Clone();
         List<int> analysisTaskIds = GetDependentAnalysisTasksFromDesignTask(newModel, taskId);
         string memberList = steelDesignTasks[taskId].ListDefinition;
         List<int> initialSectionIds = GetMemberSectionIds(newModel, memberList);

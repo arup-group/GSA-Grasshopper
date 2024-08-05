@@ -5,18 +5,7 @@ using GsaAPI;
 using GsaGH.Helpers;
 
 namespace GsaGH.Parameters.Results {
-  /// <summary>
-  /// <para>A Result is used to select Cases from an analysed <see cref="GsaModel"/> and extract the values for post-processing or visualisation.</para>
-  /// <para>The following result types can be extracted if they are present in the model:
-  /// <list type="bullet">
-  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#noderesult">Node Results</see>: `Displacement` and `Reaction`.</description></item>
-  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element1dresult">1D Element Results</see>: `Displacement`, `Force` and `StrainEnergyDensity`.</description></item>
-  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element2dresult">2D Element Results</see>: `Displacement`, `Force`, `Moment`, `Shear` and `Stress`.</description></item>
-  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#element3dresult">3D Element Results</see>: `Displacement` and `Stress`.</description></item>
-  /// <item><description><see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/result-classes.html#globalresult">Global Results</see>: `Frequency`, `LoadFactor`, `ModalGeometricStiffness`, `ModalMass`, `ModalStiffness`, `TotalLoad`, `TotalReaction`, `Mode`, `EffectiveInertia`, `EffectiveMass` and `Eigenvalue`.</description></item>
-  /// </list></para>
-  /// <para>All result values from the <see href="https://docs.oasys-software.com/structural/gsa/references/dotnet-api/introduction.html">.NET API</see> have been wrapped in <see href="https://docs.oasys-software.com/structural/gsa/references/gsagh/gsagh-unitnumber-parameter.html">Unit Number</see> and can be converted into different measures on the fly. The Result parameter caches the result values.</para>
-  /// </summary>
+ 
   public class GsaResult : IGsaResult {
     public int CaseId { get; set; }
     public int Permutations { get; set; } = 0;
@@ -100,7 +89,7 @@ namespace GsaGH.Parameters.Results {
         Type = GsaAPI.EntityType.Node,
         Name = "node",
       };
-      return Model.Model.ExpandList(entityList);
+      return Model.ApiModel.ExpandList(entityList);
     }
 
     internal ReadOnlyCollection<int> ElementIds(string elementList, int dimension) {
@@ -124,7 +113,7 @@ namespace GsaGH.Parameters.Results {
         Type = GsaAPI.EntityType.Element,
         Name = "elem",
       };
-      return Model.Model.ExpandList(entityList);
+      return Model.ApiModel.ExpandList(entityList);
     }
 
     internal ReadOnlyCollection<int> MemberIds(string memberList) {
@@ -133,13 +122,13 @@ namespace GsaGH.Parameters.Results {
         Type = GsaAPI.EntityType.Member,
         Name = "mem",
       };
-      return Model.Model.ExpandList(entityList);
+      return Model.ApiModel.ExpandList(entityList);
     }
 
     internal ReadOnlyCollection<int> AssemblyIds(string assemblyList) {
       assemblyList = assemblyList.Trim();
       if (assemblyList.ToLower() == "all") {
-        ReadOnlyDictionary<int, Assembly> assemblies = Model.Model.Assemblies();
+        ReadOnlyDictionary<int, Assembly> assemblies = Model.ApiModel.Assemblies();
         return new ReadOnlyCollection<int>(assemblies.Keys.ToList());
       }
 
@@ -148,7 +137,7 @@ namespace GsaGH.Parameters.Results {
         Type = GsaAPI.EntityType.Undefined,
         Name = "as",
       };
-      return Model.Model.ExpandList(entityList);
+      return Model.ApiModel.ExpandList(entityList);
     }
 
     private void InitialiseAnalysisCaseResults(GsaModel model, AnalysisCaseResult result, int caseId) {
@@ -170,7 +159,7 @@ namespace GsaGH.Parameters.Results {
       Element3dStresses = new Element3dStressCache(result);
 
       NodeDisplacements = new NodeDisplacementCache(result);
-      NodeReactionForces = new NodeReactionForceCache(result, model?.Model);
+      NodeReactionForces = new NodeReactionForceCache(result, model?.ApiModel);
       NodeSpringForces = new NodeSpringForceCache(result);
       NodeResonantFootfalls = new NodeResonantFootfallCache(result);
       NodeTransientFootfalls = new NodeTransientFootfallCache(result);
@@ -193,15 +182,15 @@ namespace GsaGH.Parameters.Results {
       Model = model;
       CaseType = CaseType.AnalysisCase;
       CaseId = caseId;
-      if (model?.Model?.Results()?.ContainsKey(caseId) != true) {
+      if (model?.ApiModel?.Results()?.ContainsKey(caseId) != true) {
         return;
       }
-      CaseName = model.Model.AnalysisCaseName(CaseId);
+      CaseName = model.ApiModel.AnalysisCaseName(CaseId);
     }
 
     private void InitialiseCombinationsCaseResults(
       GsaModel model, CombinationCaseResult result, int caseId, IEnumerable<int> permutations) {
-      ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> temp = result.NodeDisplacement(model.Model.Nodes().Keys.First().ToString());
+      ReadOnlyDictionary<int, ReadOnlyCollection<Double6>> temp = result.NodeDisplacement(model.ApiModel.Nodes().Keys.First().ToString());
       Permutations = temp[temp.Keys.First()].Count;
 
       Element1dAverageStrainEnergyDensities = new Element1dAverageStrainEnergyDensityCache(result);
@@ -221,7 +210,7 @@ namespace GsaGH.Parameters.Results {
       Element3dStresses = new Element3dStressCache(result);
 
       NodeDisplacements = new NodeDisplacementCache(result);
-      NodeReactionForces = new NodeReactionForceCache(result, model?.Model);
+      NodeReactionForces = new NodeReactionForceCache(result, model?.ApiModel);
       NodeSpringForces = new NodeSpringForceCache(result);
 
       Member1dDisplacements = new Member1dDisplacementCache(result);
@@ -241,8 +230,8 @@ namespace GsaGH.Parameters.Results {
       CaseType = CaseType.CombinationCase;
       CaseId = caseId;
       SelectedPermutationIds = permutations?.ToList();
-      if (model?.Model?.CombinationCases()?.ContainsKey(caseId) == true) {
-        CaseName = model.Model.CombinationCases()[CaseId].Name;
+      if (model?.ApiModel?.CombinationCases()?.ContainsKey(caseId) == true) {
+        CaseName = model.ApiModel.CombinationCases()[CaseId].Name;
       }
     }
   }

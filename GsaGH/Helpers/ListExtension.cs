@@ -45,7 +45,7 @@ namespace GsaGH.Helpers {
       return duplicates;
     }
 
-    public static void SetMembers<T>(this List<Element> value, IList<T> list) {
+    public static void SetMembers<T>(this List<GSAElement> value, IList<T> list) {
       if (value.IsNullOrEmpty()) {
         throw new ArgumentException(
           $"Unable to set new {list.GetType().Name} members in Element list as it is null or " +
@@ -82,7 +82,8 @@ namespace GsaGH.Helpers {
               value[i].Offset.X2 = offsets[i].X2.Meters;
               value[i].Offset.Y = offsets[i].Y.Meters;
               value[i].Offset.Z = offsets[i].Z.Meters;
-            } else {
+            }
+            else {
               value[i].Offset.X1 = offsets.Last().X1.Meters;
               value[i].Offset.X2 = offsets.Last().X2.Meters;
               value[i].Offset.Y = offsets.Last().Y.Meters;

@@ -80,11 +80,11 @@ namespace GsaGH.Components {
       string note = ResultNotes.NoteAssemblyResults;
 
       pManager.AddGenericParameter("Drift X [" + unitAbbreviation + "]", "Dx",
-        "Drift in Local Assembly X-direction." + note, GH_ParamAccess.tree);
+        "Drift in Local Assembly X-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Drift Y [" + unitAbbreviation + "]", "Dy",
-        "Drift in Local Assembly Y-direction." + note, GH_ParamAccess.tree);
+        "Drift in Local Assembly Y-direction" + note, GH_ParamAccess.tree);
       pManager.AddGenericParameter("Drift XY [" + unitAbbreviation + "]", "In-plane",
-        "Drift in Local Assembly XY-plane." + note, GH_ParamAccess.tree);
+        "Drift in Local Assembly XY-plane" + note, GH_ParamAccess.tree);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {

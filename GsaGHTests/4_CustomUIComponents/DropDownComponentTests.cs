@@ -85,6 +85,7 @@ namespace GsaGHTests.CustomComponent {
     [InlineData(typeof(LoadDiagrams), true)]
     [InlineData(typeof(ReactionForceDiagrams))]
     [InlineData(typeof(ResultDiagrams))]
+    [InlineData(typeof(CreateAnalysisTask_OBSOLETE))]
     public void ToggleDropDownsTest(Type t, bool ignoreSpacerDescriptionCount = false) {
       var comp = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
       OasysDropDownComponentTestHelper.ChangeDropDownTest(comp, ignoreSpacerDescriptionCount);

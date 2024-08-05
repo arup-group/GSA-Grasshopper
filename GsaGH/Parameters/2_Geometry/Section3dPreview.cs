@@ -40,14 +40,17 @@ namespace GsaGH.Parameters {
       Model model = AssembleTempModel(elem);
       CreateGraphics(model, Layer.Analysis, DimensionType.OneDimensional);
     }
+
     public Section3dPreview(GsaElement2d elem) {
       Model model = AssembleTempModel(elem);
       CreateGraphics(model, Layer.Analysis, DimensionType.TwoDimensional);
     }
+
     public Section3dPreview(GsaMember1d mem) {
       Model model = AssembleTempModel(mem);
       CreateGraphics(model, Layer.Design, DimensionType.OneDimensional);
     }
+
     public Section3dPreview(GsaMember2d mem) {
       Model model = AssembleTempModel(mem);
       CreateGraphics(model, Layer.Design, DimensionType.TwoDimensional);
@@ -55,11 +58,12 @@ namespace GsaGH.Parameters {
 
     public Section3dPreview(GsaResult res, string elementList, double scale) {
       GraphicSpecification spec = ResultSpec(res, elementList, scale);
-      CreateGraphics(res.Model.Model, spec);
+      CreateGraphics(res.Model.ApiModel, spec);
     }
+
     internal Section3dPreview(GsaModel model, Layer layer) {
       GraphicSpecification spec = layer == Layer.Analysis ? AnalysisLayerSpec() : DesignLayerSpec();
-      CreateGraphics(model.Model, spec);
+      CreateGraphics(model.ApiModel, spec);
       Scale(model.ModelUnit);
     }
 
@@ -68,6 +72,7 @@ namespace GsaGH.Parameters {
       CreateGraphics(model, spec);
       Scale(unit);
     }
+
     private Section3dPreview() { }
 
     public Section3dPreview Duplicate() {
@@ -77,8 +82,7 @@ namespace GsaGH.Parameters {
       };
     }
 
-    public void BakeGeometry(
-      ref GH_BakeUtility gH_BakeUtility, RhinoDoc doc, ObjectAttributes att) {
+    public void BakeGeometry(ref GH_BakeUtility gH_BakeUtility, RhinoDoc doc, ObjectAttributes att) {
       att ??= doc.CreateDefaultAttributes();
       att.ColorSource = ObjectColorSource.ColorFromObject;
       ObjectAttributes meshAtt = att.Duplicate();
@@ -96,7 +100,8 @@ namespace GsaGH.Parameters {
     public void DrawViewportWires(GH_PreviewWireArgs args) {
       if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
         args.Pipeline.DrawLines(Outlines, Colours.Element1d);
-      } else {
+      }
+      else {
         args.Pipeline.DrawLines(Outlines, Colours.Element1dSelected);
       }
     }
@@ -137,10 +142,10 @@ namespace GsaGH.Parameters {
         model.AddNode(ModelAssembly.NodeFromPoint(elem.Line.Line.From, unit)),
         model.AddNode(ModelAssembly.NodeFromPoint(elem.Line.Line.To, unit))
       };
-      Element elem1d = elem.DuplicateApiObject();
+      GSAElement elem1d = elem.DuplicateApiObject();
       elem1d.Topology = new ReadOnlyCollection<int>(topo);
       elem1d.Property = model.AddSection(elem.Section.ApiSection);
-      model.AddElement(elem1d);
+      model.AddElement(elem1d.Element);
       return model;
     }
 
@@ -168,10 +173,16 @@ namespace GsaGH.Parameters {
         foreach (int id in elem.TopoInt[i]) {
           topo.Add(model.AddNode(ModelAssembly.NodeFromPoint(elem.Topology[id], unit)));
         };
-        Element element = elem.ApiElements[i];
+        GSAElement element = elem.ApiElements[i];
         element.Topology = new ReadOnlyCollection<int>(topo);
         element.Property = model.AddProp2D(elem.Prop2ds[i].ApiProp2d);
-        model.AddElement(element);
+        if (element.IsLoadPanel) {
+          model.AddLoadPanelElement(element.LoadPanelElelment);
+        }
+        else {
+          model.AddElement(element.Element);
+        }
+
       }
 
       return model;
@@ -241,7 +252,8 @@ namespace GsaGH.Parameters {
     private GraphicSpecification Specification(Layer layer, string definition, DimensionType type) {
       if (layer == Layer.Analysis) {
         return AnalysisLayerSpec(definition, type);
-      } else {
+      }
+      else {
         return DesignLayerSpec(definition, type);
       }
     }

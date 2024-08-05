@@ -120,7 +120,7 @@ namespace GsaGH.Parameters {
 
     public List<int> ExpandListDefinition() {
       if (_model != null) {
-        return _model.Model.ExpandList(GetApiList()).ToList();
+        return _model.ApiModel.ExpandList(GetApiList()).ToList();
       }
 
       var m = new Model();
@@ -447,13 +447,13 @@ namespace GsaGH.Parameters {
       switch (EntityType) {
         case EntityType.Node:
           _nodes = Nodes.GetNodes(
-            _model.Model.Nodes(Definition), unit, _model.Model.Axes(), _model.SpringProps);
+            _model.ApiModel.Nodes(Definition), unit, _model.ApiModel.Axes(), _model.SpringProps);
           break;
 
         case EntityType.Element:
           var elementLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
-          foreach (int id in _model.Model.Elements(Definition).Keys) {
-            elementLocalAxesDict.Add(id, _model.Model.ElementDirectionCosine(id));
+          foreach (int id in _model.ApiModel.Elements(Definition).Keys) {
+            elementLocalAxesDict.Add(id, _model.ApiModel.ElementDirectionCosine(id));
           }
           // TO-DO: GSA-6773: add way to get properties/materials by list
           _properties.materials = new List<GsaMaterialGoo>();
@@ -469,8 +469,8 @@ namespace GsaGH.Parameters {
 
         case EntityType.Member:
           var memberLocalAxesDict = new Dictionary<int, ReadOnlyCollection<double>>();
-          foreach (int id in _model.Model.Members(Definition).Keys) {
-            memberLocalAxesDict.Add(id, _model.Model.MemberDirectionCosine(id));
+          foreach (int id in _model.ApiModel.Members(Definition).Keys) {
+            memberLocalAxesDict.Add(id, _model.ApiModel.MemberDirectionCosine(id));
           }
           // TO-DO: GSA-6773: add way to get properties/materials by list
           _properties.materials = new List<GsaMaterialGoo>();
@@ -490,7 +490,7 @@ namespace GsaGH.Parameters {
             Name = Name,
             Definition = Definition
           };
-          _cases = _model.Model.ExpandList(tempApiList).ToList();
+          _cases = _model.ApiModel.ExpandList(tempApiList).ToList();
           break;
 
         case EntityType.Undefined:
