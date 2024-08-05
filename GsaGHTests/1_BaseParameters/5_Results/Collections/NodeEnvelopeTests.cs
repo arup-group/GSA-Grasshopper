@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters.Results {
       int i = 0;
       foreach (int nodeId in nodeIds) {
         double expected = TestsResultHelper.Envelope(expectedP1[i], expectedP2[i++], envelope);
-        double actual = ResultHelper.RoundToSignificantDigits(values[nodeId].Value, 4);
+        double actual = ResultHelper.RoundToSignificantDigits((double)values[nodeId].Value, 4);
         Assert.Equal(expected, actual, 4);
       }
     }
@@ -67,7 +67,7 @@ namespace GsaGHTests.Parameters.Results {
       int i = 0;
       foreach (int nodeId in nodeIds) {
         double expected = TestsResultHelper.Envelope(expectedP1[i], expectedP2[i++], envelope);
-        double actual = ResultHelper.RoundToSignificantDigits(values[nodeId].Value, 4);
+        double actual = ResultHelper.RoundToSignificantDigits((double)values[nodeId].Value, 4);
         Assert.Equal(expected, actual, 4);
       }
     }

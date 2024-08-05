@@ -27,16 +27,16 @@ namespace GsaGH.Parameters.Results {
       Force x = Force.Zero;
       Force y = Force.Zero;
       Force z = Force.Zero;
-      if (X == null && Y == null && Z == null) {
+      if (X is null && Y is null && Z is null) {
         Xyz = null;
       } else {
-        if (X != null) {
+        if (X is not null) {
           x = (Force)X;
         }
-        if (Y != null) {
+        if (Y is not null) {
           y = (Force)Y;
         }
-        if (Z != null) {
+        if (Z is not null) {
           z = (Force)Z;
         }
         Xyz = QuantityUtility.PythagoreanQuadruple(x, y, z);

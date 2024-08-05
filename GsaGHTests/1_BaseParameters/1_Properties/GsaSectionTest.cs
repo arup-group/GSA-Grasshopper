@@ -72,21 +72,21 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("mariam", sect.ApiSection.Name);
       Assert.Equal(4, sect.ApiSection.Pool);
       Assert.Equal(BasicOffset.TopRight, sect.ApiSection.BasicOffset);
-      Assert.Equal(new Length(1, LengthUnit.Centimeter), sect.AdditionalOffsetY);
-      Assert.Equal(new Length(2, LengthUnit.Centimeter), sect.AdditionalOffsetZ);
+      Assert.Equal(new Length(0.01, LengthUnit.Meter), sect.AdditionalOffsetY);
+      Assert.Equal(new Length(0.02, LengthUnit.Meter), sect.AdditionalOffsetZ);
     }
 
     [Fact]
     public void TestCreateSectionProfile() {
       string profile = "STD R 15 20";
-      double myarea = 15 * 20;
-      var areaExpected = new Area(myarea, AreaUnit.SquareMillimeter);
+      double myarea = 1.5 * 2.0;
+      var areaExpected = new Area(myarea, AreaUnit.SquareCentimeter);
 
       var sect = new GsaSection(profile) {
         Id = 15
       };
 
-      Assert.Equal(areaExpected, sect.SectionProperties.Area);
+      Assert.Equal(areaExpected.Value, sect.SectionProperties.Area.Value, 6);
       Assert.Equal(15, sect.Id);
     }
 
@@ -135,16 +135,16 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("mariam", dup.ApiSection.Name);
       Assert.Equal(12, dup.ApiSection.Pool);
       Assert.Equal(BasicOffset.BottomLeft, dup.ApiSection.BasicOffset);
-      Assert.Equal(new Length(-1, LengthUnit.Foot), dup.AdditionalOffsetY);
-      Assert.Equal(new Length(-2, LengthUnit.Foot), dup.AdditionalOffsetZ);
+      Assert.Equal(-1, dup.AdditionalOffsetY.Feet);
+      Assert.Equal(-2, dup.AdditionalOffsetZ.Feet);
 
       Assert.Equal(4, orig.Material.Id);
       Assert.Equal("Custom", orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.ApiSection.Name);
       Assert.Equal(99, orig.ApiSection.Pool);
       Assert.Equal(BasicOffset.TopLeft, orig.ApiSection.BasicOffset);
-      Assert.Equal(new Length(1, LengthUnit.Centimeter), orig.AdditionalOffsetY);
-      Assert.Equal(new Length(2, LengthUnit.Centimeter), orig.AdditionalOffsetZ);
+      Assert.Equal(new Length(0.01, LengthUnit.Meter), orig.AdditionalOffsetY);
+      Assert.Equal(new Length(0.02, LengthUnit.Meter), orig.AdditionalOffsetZ);
     }
   }
 }

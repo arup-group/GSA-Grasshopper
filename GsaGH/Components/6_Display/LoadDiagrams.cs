@@ -257,14 +257,14 @@ namespace GsaGH.Components {
 
       LengthUnit lengthUnit = _gsaModel.ModelUnit;
       _undefinedModelLengthUnit = false;
-      if (lengthUnit == LengthUnit.Undefined) {
-        lengthUnit = _lengthUnit;
-        _undefinedModelLengthUnit = true;
-        this.AddRuntimeRemark(
-          $"Model came straight out of GSA and we couldn't read the units. " +
-          $"The geometry has been scaled to be in {lengthUnit}. " +
-          $"This can be changed by right-clicking the component -> 'Select Units'");
-      }
+      //if (lengthUnit == LengthUnit.Undefined) {
+      //  lengthUnit = _lengthUnit;
+      //  _undefinedModelLengthUnit = true;
+      //  this.AddRuntimeRemark(
+      //    $"Model came straight out of GSA and we couldn't read the units. " +
+      //    $"The geometry has been scaled to be in {lengthUnit}. " +
+      //    $"This can be changed by right-clicking the component -> 'Select Units'");
+      //}
 
       bool showAnnotations = true;
       da.GetData(3, ref showAnnotations);

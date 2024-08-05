@@ -82,10 +82,7 @@ namespace GsaGH.Parameters.Results {
     }
 
     public double? OverallAs(RatioUnit unit) {
-      if (Overall != null) {
-        return ((Ratio)Overall).As(unit);
-      }
-      return null;
+      return Overall?.As(unit);
     }
   }
 }

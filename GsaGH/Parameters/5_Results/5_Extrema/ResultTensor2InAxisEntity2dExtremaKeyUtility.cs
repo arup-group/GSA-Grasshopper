@@ -35,32 +35,32 @@ namespace GsaGH.Parameters.Results {
       where T : IResultTensor2InAxis<Q> where Q : IQuantity {
       for (int i = 0; i < item.Count; i++) {
         if (item[i].Nx.Value > maxValue.Nx) {
-          maxValue.Nx = item[i].Nx.Value;
+          maxValue.Nx = (double)item[i].Nx.Value;
           maxKey.Nx = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Ny.Value > maxValue.Ny) {
-          maxValue.Ny = item[i].Ny.Value;
+          maxValue.Ny = (double)item[i].Ny.Value;
           maxKey.Ny = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Nxy.Value > maxValue.Nxy) {
-          maxValue.Nxy = item[i].Nxy.Value;
+          maxValue.Nxy = (double)item[i].Nxy.Value;
           maxKey.Nxy = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Nx.Value < minValue.Nx) {
-          minValue.Nx = item[i].Nx.Value;
+          minValue.Nx = (double)item[i].Nx.Value;
           minKey.Nx = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Ny.Value < minValue.Ny) {
-          minValue.Ny = item[i].Ny.Value;
+          minValue.Ny = (double)item[i].Ny.Value;
           minKey.Ny = new Entity2dExtremaKey(elementId, i, permutation);
         }
 
         if (item[i].Nxy.Value < minValue.Nxy) {
-          minValue.Nxy = item[i].Nxy.Value;
+          minValue.Nxy = (double)item[i].Nxy.Value;
           minKey.Nxy = new Entity2dExtremaKey(elementId, i, permutation);
         }
       }

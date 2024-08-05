@@ -23,12 +23,12 @@ namespace GsaGHTests.Model {
       var quanity2 = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 1, new GH_Path(2), 0);
 
       // Assert
-      Assert.Equal(26.54, quanity1.Value.Value, 2);
-      Assert.Equal(9.46, quanity2.Value.Value, 2);
+      Assert.Equal(26.54, (double)quanity1.Value.Value, 2);
+      Assert.Equal(9.46, (double)quanity2.Value.Value, 2);
 
       comp.SetSelected(0, 1); // design layer
       var quanity3 = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 1, new GH_Path(1), 0, true);
-      Assert.Equal(26.54 + 9.46, quanity3.Value.Value, 2);
+      Assert.Equal(26.54 + 9.46, (double)quanity3.Value.Value, 2);
     }
   }
 }
