@@ -3,14 +3,13 @@
     <TargetFramework>net48</TargetFramework>
     <PlatformTarget>x64</PlatformTarget>
     <Platforms>x64</Platforms>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Rhino.Inside" Version="7.0.0" />
     <PackageReference Include="xunit" Version="2.7.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.8">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.8"/>
+    <PackageReference Include="System.Resources.Extensions" Version="4.6.0"/>
     <PackageReference Include="coverlet.collector" Version="6.0.2">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -24,11 +23,11 @@
 
   <ItemGroup>
     <Reference Include="GsaAPI">
-      <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.2\GsaAPI.dll</HintPath>
+      <HintPath>c:\Program Files\Oasys\GSA 10.2\GsaAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Interop.Gsa_10_2">
-      <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.2\Interop.Gsa_10_2.dll</HintPath>
+      <HintPath>c:\Program Files\Oasys\GSA 10.2\Interop.Gsa_10_2.dll</HintPath>
     </Reference>
   </ItemGroup>
 
