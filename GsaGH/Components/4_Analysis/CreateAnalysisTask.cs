@@ -425,7 +425,7 @@ namespace GsaGH.Components {
             ModalAnalysisTaskId = analysisTaskId,
             ResponseNodes = responseNodes,
             ExcitationNodes = excitationNodes,
-            NumberofFootfalls = numberofFootfalls,
+            NumberOfFootfalls = numberofFootfalls,
             WalkerMass = walkerMass,
             ResponseDirection = responseDirection,
             FrequencyWeightingCurve = frequencyWeightingCurve,
