@@ -13,7 +13,7 @@
     <Version>1.4.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
 	   <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9</LangVersion>
     <Description>Official Oasys GSA Grasshopper Plugin
 
 The plugin requires a licensed version of Gsa to load.
