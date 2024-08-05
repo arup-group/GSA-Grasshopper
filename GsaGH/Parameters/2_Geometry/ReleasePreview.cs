@@ -17,7 +17,7 @@ namespace GsaGH.Parameters {
       PreviewGreenLines = new List<Line>();
       PreviewRedLines = new List<Line>();
 
-      if (start == null | end == null) {
+      if (start == null || end == null) {
         return;
       }
 

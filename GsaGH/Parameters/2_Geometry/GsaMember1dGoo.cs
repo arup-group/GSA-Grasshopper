@@ -84,14 +84,14 @@ namespace GsaGH.Parameters {
           for (int i = 0; i < pts.Count; i++) {
             // this is a workaround to change colour between selected and not
             if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
-              if (i == 0 | i == pts.Count - 1) {
+              if (i == 0 || i == pts.Count - 1) {
                 // draw first point bigger
                 args.Pipeline.DrawPoint(pts[i], PointStyle.RoundSimple, 2, Colours.Member1dNode);
               } else {
                 args.Pipeline.DrawPoint(pts[i], PointStyle.RoundSimple, 1, Colours.Member1dNode);
               }
             } else {
-              if (i == 0 | i == pts.Count - 1) {
+              if (i == 0 || i == pts.Count - 1) {
                 // draw first point bigger
                 args.Pipeline.DrawPoint(pts[i], PointStyle.RoundControlPoint, 2,
                   Colours.Member1dNodeSelected);

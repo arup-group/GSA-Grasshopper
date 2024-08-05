@@ -77,7 +77,7 @@ namespace GsaGH.Components {
 
       Param_String end1 = End1Restraint();
       Param_String end2 = End2Restraint();
-      if (Params.Input.Count != 7 & Params.Input.Count != 4) {
+      if (Params.Input.Count != 7 && Params.Input.Count != 4) {
         end1 = (Param_String)Params.Input[0];
         end2 = (Param_String)Params.Input[1];
       }

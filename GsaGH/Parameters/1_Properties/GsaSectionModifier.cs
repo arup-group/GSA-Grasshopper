@@ -23,7 +23,7 @@ namespace GsaGH.Parameters {
             DefaultUnits.SectionAreaUnit);
       set {
         if (value.QuantityInfo.UnitType != typeof(AreaUnit)
-          & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
+          && value.QuantityInfo.UnitType != typeof(RatioUnit)) {
           throw new ArgumentException("AreaModifier must be either Area or Ratio");
         }
 
@@ -43,7 +43,7 @@ namespace GsaGH.Parameters {
             .ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       set {
         if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit)
-          & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
+          && value.QuantityInfo.UnitType != typeof(RatioUnit)) {
           throw new ArgumentException("I11Modifier must be either AreaMomentOfInertia or Ratio");
         }
 
@@ -64,7 +64,7 @@ namespace GsaGH.Parameters {
               .ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       set {
         if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit)
-          & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
+          && value.QuantityInfo.UnitType != typeof(RatioUnit)) {
           throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
         }
 
@@ -103,7 +103,7 @@ namespace GsaGH.Parameters {
              .ToUnit(DefaultUnits.SectionAreaMomentOfInertiaUnit);
       set {
         if (value.QuantityInfo.UnitType != typeof(AreaMomentOfInertiaUnit)
-          & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
+          && value.QuantityInfo.UnitType != typeof(RatioUnit)) {
           throw new ArgumentException("I22Modifier must be either AreaMomentOfInertia or Ratio");
         }
 
@@ -162,7 +162,7 @@ namespace GsaGH.Parameters {
             VolumePerLengthUnit.CubicMeterPerMeter).ToUnit(DefaultUnits.VolumePerLengthUnit);
       set {
         if (value.QuantityInfo.UnitType != typeof(VolumePerLengthUnit)
-          & value.QuantityInfo.UnitType != typeof(RatioUnit)) {
+          && value.QuantityInfo.UnitType != typeof(RatioUnit)) {
           throw new ArgumentException("VolumeModifier must be either VolumePerLength or Ratio");
         }
 

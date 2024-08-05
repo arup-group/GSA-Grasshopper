@@ -27,7 +27,7 @@ namespace GsaGH.Helpers.GH {
       var crvs = new PolyCurve();
 
       for (int i = 0; i < topology.Count - 1; i++) {
-        if (topoType != null & topoType[i + 1] == "A") {
+        if (topoType != null && topoType[i + 1] == "A") {
           crvs.Append(new Arc(topology[i], topology[i + 1], topology[i + 2]));
           i++;
         }
