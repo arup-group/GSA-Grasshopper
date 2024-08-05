@@ -261,7 +261,7 @@ namespace GsaGHTests.Parameters {
     public void DuplicateApiObjectReturnsValidObjectForQuad4Type() {
       GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
 
-      List<Element> list = ele.DuplicateApiObjects();
+      List<GSAElement> list = ele.DuplicateApiObjects();
 
       Assert.NotNull(list);
       Assert.Equal(2, list.Count);

@@ -127,7 +127,7 @@ namespace DocsGeneration.Data {
               XmlNode xmlDocuOfMethod = GsaGhDll.GsaGhXml.SelectSingleNode(
                   "//member[@name='" + path + "']");
               string text = xmlDocuOfMethod.InnerXml
-                .Replace("<summary>", string.Empty).Replace("</summary>", string.Empty);
+              .Replace("<summary>", string.Empty).Replace("</summary>", string.Empty);
               string cleanStr = Regex.Replace(text, @"\s+", " ");
               return cleanStr.Trim();
             }
@@ -156,7 +156,8 @@ namespace DocsGeneration.Data {
             parameters.Add(param);
             Console.WriteLine($"Added {param.Name} parameter");
           }
-        } catch (Exception) {
+        }
+        catch (Exception) {
           continue;
         }
       }

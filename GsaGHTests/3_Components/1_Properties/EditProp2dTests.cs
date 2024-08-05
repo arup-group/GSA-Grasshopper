@@ -25,6 +25,24 @@ namespace GsaGHTests.Properties {
     }
 
     [Fact]
+    public void LoadPanelPropertyIfNotInGlobalAxisWillThrowRunTimeWarning() {
+      var prop2d = new GsaProperty2d();
+      prop2d.ApiProp2d.Type= Property2D_Type.LOAD;
+
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, new GsaProperty2dGoo(prop2d), 0);
+      ComponentTestHelper.SetInput(comp, new GH_Integer((int)GsaAPI.StandardAxis.Local), 4);
+      var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
+      Assert.Null(id);
+      Assert.Contains( "One runtime warning", comp.InstanceDescription);
+
+      comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, new GH_Integer((int)GsaAPI.StandardAxis.Global), 4);
+      id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
+      Assert.Equal((int)GsaAPI.StandardAxis.Global, id.Value);
+    }
+
+    [Fact]
     public void GetValuesFromExistingComponent() {
       var prop2d = new GsaProperty2d(new Length(400, LengthUnit.Millimeter));
 
@@ -104,7 +122,7 @@ namespace GsaGHTests.Properties {
       ComponentTestHelper.SetInput(comp, new GH_Integer(49), 1);
       ComponentTestHelper.SetInput(comp, "name", 2);
       ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 3);
-      ComponentTestHelper.SetInput(comp, new GH_Integer(7), 4);
+      ComponentTestHelper.SetInput(comp, new GH_Integer(0), 4);
       ComponentTestHelper.SetInput(comp, new GH_String("Load"), 5);
       ComponentTestHelper.SetInput(comp, new GH_UnitNumber(new Length(40, LengthUnit.Centimeter)), 7);
       ComponentTestHelper.SetInput(comp, new GH_Integer(2), 8); // Bottom
@@ -117,7 +135,7 @@ namespace GsaGHTests.Properties {
       Assert.Equal(49, prop2dGoo.Value.Id);
       Assert.Equal("name", prop2dGoo.Value.ApiProp2d.Name);
       Assert.Equal(ColorRGBA.White, (Color)prop2dGoo.Value.ApiProp2d.Colour);
-      Assert.Equal(7, prop2dGoo.Value.ApiProp2d.AxisProperty);
+      Assert.Equal(0, prop2dGoo.Value.ApiProp2d.AxisProperty);
       Assert.Equal(Property2D_Type.LOAD, prop2dGoo.Value.ApiProp2d.Type);
       Assert.Equal(40, prop2dGoo.Value.Thickness.As(LengthUnit.Centimeter), 6);
       Assert.Equal(ReferenceSurface.Bottom, prop2dGoo.Value.ApiProp2d.ReferenceSurface);
@@ -145,7 +163,7 @@ namespace GsaGHTests.Properties {
       Assert.Equal(49, id.Value);
       Assert.Equal("name", name.Value);
       Assert.Equal(ColorRGBA.White, colour.Value);
-      Assert.Equal(7, axis.Value);
+      Assert.Equal(0, axis.Value);
       Assert.Equal("Load Panel", type.Value);
       Assert.Equal(new Length(10, LengthUnit.Millimeter), offset.Value);
       Assert.Equal(ReferenceSurface.Bottom, referenceSurface.Value);
