@@ -13,13 +13,13 @@ tab_width = 1
 
 # New line preferences
 end_of_line = lf
-insert_final_newline = true:error
+insert_final_newline = true
 
 #### .NET Coding Conventions ####
 
 # Organize usings
-dotnet_separate_import_directive_groups = true:error
-dotnet_sort_system_directives_first = true:error
+dotnet_separate_import_directive_groups = true
+dotnet_sort_system_directives_first = true
 file_header_template = unset
 
 # this. and Me. preferences
@@ -48,7 +48,7 @@ dotnet_style_explicit_tuple_names = true:error
 dotnet_style_namespace_match_folder = true:error
 dotnet_style_null_propagation = true:error
 dotnet_style_object_initializer = true:error
-dotnet_style_operator_placement_when_wrapping = beginning_of_line:error
+dotnet_style_operator_placement_when_wrapping = beginning_of_line
 dotnet_style_prefer_auto_properties = true:error
 dotnet_style_prefer_compound_assignment = true:error
 dotnet_style_prefer_conditional_expression_over_assignment = true:suggestion
@@ -139,45 +139,45 @@ csharp_style_allow_embedded_statements_on_same_line_experimental = true:error
 #### C# Formatting Rules ####
 
 # New line preferences
-csharp_new_line_before_open_brace = none:error
-csharp_new_line_before_catch = false:error
-csharp_new_line_before_else = false:error
-csharp_new_line_before_finally = false:error
-csharp_new_line_before_members_in_anonymous_types = false:error
-csharp_new_line_before_members_in_object_initializers = false:error
-csharp_new_line_between_query_expression_clauses = false:error
+csharp_new_line_before_open_brace = none
+csharp_new_line_before_catch = false
+csharp_new_line_before_else = false
+csharp_new_line_before_finally = false
+csharp_new_line_before_members_in_anonymous_types = false
+csharp_new_line_before_members_in_object_initializers = false
+csharp_new_line_between_query_expression_clauses = false
 
 # Indentation preferences
-csharp_indent_block_contents = true:error
-csharp_indent_braces = false:error
-csharp_indent_case_contents = true:error
-csharp_indent_case_contents_when_block = true:error
-csharp_indent_labels = one_less_than_current:error
-csharp_indent_switch_labels = true:error
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+csharp_indent_case_contents = true
+csharp_indent_case_contents_when_block = true
+csharp_indent_labels = no_change
+csharp_indent_switch_labels = true
 
 # Space preferences
-csharp_space_after_cast = false:error
-csharp_space_after_colon_in_inheritance_clause = true:error
-csharp_space_after_comma = true:error
-csharp_space_after_dot = false:error
-csharp_space_after_keywords_in_control_flow_statements = true:error
-csharp_space_after_semicolon_in_for_statement = true:error
-csharp_space_around_binary_operators = before_and_after:error
-csharp_space_around_declaration_statements = false:error
-csharp_space_before_colon_in_inheritance_clause = true:error
-csharp_space_before_comma = false:error
-csharp_space_before_dot = false:error
-csharp_space_before_open_square_brackets = false:error
-csharp_space_before_semicolon_in_for_statement = false:error
-csharp_space_between_empty_square_brackets = false:error
-csharp_space_between_method_call_empty_parameter_list_parentheses = false:error
-csharp_space_between_method_call_name_and_opening_parenthesis = false:error
-csharp_space_between_method_call_parameter_list_parentheses = false:error
-csharp_space_between_method_declaration_empty_parameter_list_parentheses = false:error
-csharp_space_between_method_declaration_name_and_open_parenthesis = false:error
-csharp_space_between_method_declaration_parameter_list_parentheses = false:error
-csharp_space_between_parentheses = false:error
-csharp_space_between_square_brackets = false:error
+csharp_space_after_cast = false
+csharp_space_after_colon_in_inheritance_clause = true
+csharp_space_after_comma = true
+csharp_space_after_dot = false
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_after_semicolon_in_for_statement = true
+csharp_space_around_binary_operators = before_and_after
+csharp_space_around_declaration_statements = false
+csharp_space_before_colon_in_inheritance_clause = true
+csharp_space_before_comma = false
+csharp_space_before_dot = false
+csharp_space_before_open_square_brackets = false
+csharp_space_before_semicolon_in_for_statement = false
+csharp_space_between_empty_square_brackets = false
+csharp_space_between_method_call_empty_parameter_list_parentheses = false
+csharp_space_between_method_call_name_and_opening_parenthesis = false
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+csharp_space_between_method_declaration_name_and_open_parenthesis = false
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+csharp_space_between_parentheses = false
+csharp_space_between_square_brackets = false
 
 # Wrapping preferences
 csharp_preserve_single_line_blocks = true
@@ -345,3 +345,5 @@ resharper_place_field_attribute_on_same_line = if_owner_is_single_line
 resharper_place_linq_into_on_new_line = false
 resharper_remove_blank_lines_near_braces_in_declarations = false
 resharper_alignment_tab_fill_style = use_spaces
+dotnet_style_prefer_collection_expression = when_types_loosely_match:suggestion
+csharp_style_prefer_primary_constructors = true:suggestion
