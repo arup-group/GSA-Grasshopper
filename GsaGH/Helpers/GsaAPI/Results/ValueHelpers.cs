@@ -5,14 +5,14 @@ using System.Linq;
 namespace GsaGH.Helpers.GsaApi {
   internal static partial class ResultHelper {
 
-    internal static double RoundToSignificantDigits(double d, int digits) {
-      if (d == 0.0) {
+    internal static double RoundToSignificantDigits(double? d, int digits) {
+      if (d == 0.0 || d == null) {
         return 0.0;
       }
 
-      double leftSideNumbers = Math.Floor(Math.Log10(Math.Abs(d))) + 1;
+      double leftSideNumbers = Math.Floor(Math.Log10(Math.Abs(d.Value))) + 1;
       double scale = Math.Pow(10, leftSideNumbers);
-      double result = scale * Math.Round(d / scale, digits, MidpointRounding.AwayFromZero);
+      double result = scale * Math.Round(d.Value / scale, digits, MidpointRounding.AwayFromZero);
 
       if ((int)leftSideNumbers >= digits) {
         return Math.Round(result, 0, MidpointRounding.AwayFromZero);
