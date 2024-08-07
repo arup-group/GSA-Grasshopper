@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
+
 using Grasshopper;
 using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
+
 using GsaGH.Properties;
 
 namespace GsaGH.Graphics.Menu {

@@ -2,16 +2,22 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
+
 using GsaAPI;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
+
 using OasysUnits;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
@@ -421,18 +427,13 @@ namespace GsaGH.Components {
     }
 
     private EffectiveLengthAttribute EffectiveLengthAttribute(IQuantity quantity) {
-      switch (quantity) {
-        case Length length:
-          return new EffectiveLengthAttribute(EffectiveLengthOptionType.Absolute,
-            length.Meters);
-
-        case Ratio ratio:
-          return new EffectiveLengthAttribute(EffectiveLengthOptionType.Relative,
-            ratio.DecimalFractions);
-
-        default:
-          return null;
-      }
+      return quantity switch {
+        Length length => new EffectiveLengthAttribute(EffectiveLengthOptionType.Absolute,
+                    length.Meters),
+        Ratio ratio => new EffectiveLengthAttribute(EffectiveLengthOptionType.Relative,
+                    ratio.DecimalFractions),
+        _ => null,
+      };
     }
   }
 }

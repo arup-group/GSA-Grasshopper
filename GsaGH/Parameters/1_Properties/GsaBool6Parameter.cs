@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Drawing;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
+
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
@@ -92,17 +95,12 @@ namespace GsaGH.Parameters {
       };
     }
     private bool ConvertChar(char rel) {
-      switch (rel) {
-        case 'r':
-          return false;
-
-        case 'f':
-          return true;
-
-        default:
-          throw new ArgumentException(
-            $"Unable to convert string to Bool6, character {rel} not recognised");
-      }
+      return rel switch {
+        'r' => false,
+        'f' => true,
+        _ => throw new ArgumentException(
+                    $"Unable to convert string to Bool6, character {rel} not recognised"),
+      };
     }
   }
 }

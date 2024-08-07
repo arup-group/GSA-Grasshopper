@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
+
 using OasysUnits;
 
 namespace GsaGHTests.Parameters.Results {

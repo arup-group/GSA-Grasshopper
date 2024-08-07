@@ -1,8 +1,13 @@
 ﻿using System.Collections.Generic;
+
 using Grasshopper.Kernel;
+
 using GsaAPI;
+
 using GsaGH.Helpers.Graphics;
+
 using Rhino.Geometry;
+
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {

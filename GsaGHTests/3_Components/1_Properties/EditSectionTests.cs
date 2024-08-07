@@ -1,13 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using OasysUnits;
+
 using Xunit;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Components.Properties {

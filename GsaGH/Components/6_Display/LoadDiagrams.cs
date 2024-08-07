@@ -6,23 +6,31 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using GH_IO.Serialization;
+
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.Grahics;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
+
 using Rhino.Geometry;
+
 using DiagramType = GsaAPI.DiagramType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;

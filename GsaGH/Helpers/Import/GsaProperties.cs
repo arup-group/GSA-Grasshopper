@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Import {
@@ -12,7 +13,7 @@ namespace GsaGH.Helpers.Import {
     internal GsaProperties() { }
 
     internal bool IsNullOrEmpty() {
-      return Materials.IsNullOrEmpty() & Property2ds.IsNullOrEmpty() & Property3ds.IsNullOrEmpty() & Sections.IsNullOrEmpty() & SpringProperties.IsNullOrEmpty() ;
+      return Materials.IsNullOrEmpty() & Property2ds.IsNullOrEmpty() & Property3ds.IsNullOrEmpty() & Sections.IsNullOrEmpty() & SpringProperties.IsNullOrEmpty();
     }
   }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using DocsGeneration.Data.Helpers;
+
 using Grasshopper.Kernel;
 
 namespace DocsGeneration.Data {

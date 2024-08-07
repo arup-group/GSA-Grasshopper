@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+
 using Grasshopper.Kernel;
+
 using GsaAPI;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 

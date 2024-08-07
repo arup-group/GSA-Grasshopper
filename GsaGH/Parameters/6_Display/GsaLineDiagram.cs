@@ -1,7 +1,10 @@
 ﻿using System.Drawing;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers.Import;
+
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {

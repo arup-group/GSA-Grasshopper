@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Xunit;
+
 using AssemblyDriftIndices = GsaGH.Components.AssemblyDriftIndices;
 
 namespace GsaGHTests.Components.Results {
@@ -85,7 +91,7 @@ namespace GsaGHTests.Components.Results {
 
       List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
-      // Assert 
+      // Assert
       double min = output.Min().As(RatioUnit.DecimalFraction);
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }

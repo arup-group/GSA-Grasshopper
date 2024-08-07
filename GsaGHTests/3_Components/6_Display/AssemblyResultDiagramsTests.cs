@@ -1,9 +1,11 @@
 ﻿using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Display {
@@ -39,7 +41,7 @@ namespace GsaGHTests.Components.Display {
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       comp.SetSelected(0, 3); // Force
       comp.SetSelected(1, 4); // Moment Myy
-      comp.UpdateMoment("MN·m"); 
+      comp.UpdateMoment("MN·m");
       comp.Params.Output[0].CollectData();
       Assert.Equal("MN·m", comp.Message);
     }

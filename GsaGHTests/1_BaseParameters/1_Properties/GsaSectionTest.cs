@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Xunit;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Parameters {

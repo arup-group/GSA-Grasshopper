@@ -1,11 +1,16 @@
 ﻿using System;
+
 using GsaAPI;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
+
 using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Loads {

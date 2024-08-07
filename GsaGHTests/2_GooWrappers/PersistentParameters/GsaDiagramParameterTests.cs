@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Parameters;
+
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
