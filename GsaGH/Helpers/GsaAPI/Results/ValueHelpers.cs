@@ -5,9 +5,14 @@ using System.Linq;
 namespace GsaGH.Helpers.GsaApi {
   internal static partial class ResultHelper {
 
-    internal static double RoundToSignificantDigits(double? d, int digits) {
-      if (d == 0.0 || d == null) {
-        return 0.0;
+    internal static double? RoundToSignificantDigits(double? d, int digits) {
+      
+      switch (d) {
+          case null: return null;
+          case double.NaN: return double.NaN;
+          case double.NegativeInfinity: return double.NegativeInfinity;
+          case double.PositiveInfinity: return double.PositiveInfinity;
+          case 0.0: return 0.0;
       }
 
       double leftSideNumbers = Math.Floor(Math.Log10(Math.Abs(d.Value))) + 1;
@@ -24,7 +29,7 @@ namespace GsaGH.Helpers.GsaApi {
 
     internal static List<double> SmartRounder(double max, double min) {
       var roundedvals = new List<double>();
-      if (max == 0 & min == 0) {
+      if ((max == 0) & (min == 0)) {
         roundedvals.Add(0.000000000001);
         roundedvals.Add(-0.000000000001);
         roundedvals.Add(0);
