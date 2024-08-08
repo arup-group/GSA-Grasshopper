@@ -11,20 +11,24 @@ namespace GsaGH.Parameters.Results {
     public ReadOnlyCollection<int> ElementIds { get; internal set; }
 
     internal SubSpan(GsaAPI.SubSpan values) {
-      if (!double.IsNaN(values.StartPosition)) {
+      if (!IsNotANumber(values.StartPosition)) {
           StartPosition = new Length(values.StartPosition, LengthUnit.Meter);
       }
-      if (!double.IsNaN(values.EndPosition)) {
+      if (!IsNotANumber(values.EndPosition)) {
           EndPosition = new Length(values.EndPosition, LengthUnit.Meter);
       }
-      if (!double.IsNaN(values.EffectiveLength)) {
+      if (!IsNotANumber(values.EffectiveLength)) {
           EffectiveLength = new Length(values.EffectiveLength, LengthUnit.Meter);
       }
-      if (!double.IsNaN(values.SlendernessRatio)) {
+      if (!IsNotANumber(values.SlendernessRatio)) {
           SlendernessRatio = new Ratio(values.SlendernessRatio, RatioUnit.DecimalFraction);
       }
         
       ElementIds = values.ElementIds;
+    }
+
+    private static bool IsNotANumber(double? value) {
+        return value.HasValue && (double.IsNaN(value.Value) || double.IsInfinity(value.Value));
     }
   }
 }
