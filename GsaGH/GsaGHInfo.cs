@@ -113,7 +113,7 @@ namespace GsaGH {
       // this is a temporary fix for TDA
       // needs more investigation!
       if (Assembly.GetEntryAssembly() != null && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
-        Assembly.LoadFile(pluginPath + @"\Microsoft.Data.Sqlite.dll");
+        Assembly.LoadFile(PluginPath + @"\Microsoft.Data.Sqlite.dll");
       }
 
       Instances.CanvasCreated += MenuLoad.OnStartup;
