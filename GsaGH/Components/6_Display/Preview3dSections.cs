@@ -2,17 +2,21 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units;
+
 using OasysUnits;
 
 namespace GsaGH.Components {

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using System.Reflection;
+
 using Grasshopper.Kernel;
+
 using Rhino.Display;
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.Helpers {

@@ -1,8 +1,11 @@
 ﻿using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Components.Properties;
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Analysis {

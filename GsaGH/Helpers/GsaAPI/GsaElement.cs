@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
 using System.IO;
+using System.Runtime.Remoting.Lifetime;
 using System.Xml.Linq;
+
 using GsaAPI;
+
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
-using OasysUnits;
-using System.Drawing;
-using AngleUnit = OasysUnits.Units.AngleUnit;
+
 using Newtonsoft.Json.Linq;
-using System.Collections.ObjectModel;
-using System.Runtime.Remoting.Lifetime;
+
+using OasysUnits;
+
+using AngleUnit = OasysUnits.Units.AngleUnit;
 namespace GsaAPI {
   public class GSAElement {
     public static int LoadPanelType = -1000;
@@ -32,16 +37,14 @@ namespace GsaAPI {
       get {
         if (IsLoadPanel) {
           return LoadPanelElelment.Name;
-        }
-        else {
+        } else {
           return Element.Name;
         }
       }
       set {
         if (IsLoadPanel) {
           LoadPanelElelment.Name = value;
-        }
-        else {
+        } else {
           Element.Name = value;
         }
       }
@@ -51,16 +54,14 @@ namespace GsaAPI {
       get {
         if (IsLoadPanel) {
           return LoadPanelElelment.Property;
-        }
-        else {
+        } else {
           return Element.Property;
         }
       }
       set {
         if (IsLoadPanel) {
           LoadPanelElelment.Property = value;
-        }
-        else {
+        } else {
           Element.Property = value;
         }
       }
@@ -70,16 +71,14 @@ namespace GsaAPI {
       get {
         if (IsLoadPanel) {
           return LoadPanelElelment.Group;
-        }
-        else {
+        } else {
           return Element.Group;
         }
       }
       set {
         if (IsLoadPanel) {
           LoadPanelElelment.Group = value;
-        }
-        else {
+        } else {
           Element.Group = value;
         }
       }
@@ -89,16 +88,14 @@ namespace GsaAPI {
       get {
         if (IsLoadPanel) {
           return LoadPanelElelment.ParentMember;
-        }
-        else {
+        } else {
           return Element.ParentMember;
         }
       }
       set {
         if (IsLoadPanel) {
           LoadPanelElelment.ParentMember = value;
-        }
-        else {
+        } else {
           Element.ParentMember = value;
         }
       }
@@ -108,16 +105,14 @@ namespace GsaAPI {
       get {
         if (IsLoadPanel) {
           return LoadPanelElelment.IsDummy;
-        }
-        else {
+        } else {
           return Element.IsDummy;
         }
       }
       set {
         if (IsLoadPanel) {
           LoadPanelElelment.IsDummy = value;
-        }
-        else {
+        } else {
           Element.IsDummy = value;
         }
       }
@@ -127,16 +122,14 @@ namespace GsaAPI {
       get {
         if (IsLoadPanel) {
           throw new ArgumentException("Offset is not applicable for load panels");
-        }
-        else {
+        } else {
           return Element.Offset;
         }
       }
       set {
         if (!IsLoadPanel) {
           Element.Offset = value;
-        }
-        else { throw new ArgumentException("Offset is not applicable for load panels"); }
+        } else { throw new ArgumentException("Offset is not applicable for load panels"); }
       }
     }
 
@@ -144,16 +137,14 @@ namespace GsaAPI {
       get {
         if (IsLoadPanel) {
           return LoadPanelElelment.OrientationAngle;
-        }
-        else {
+        } else {
           return Element.OrientationAngle;
         }
       }
       set {
         if (IsLoadPanel) {
           LoadPanelElelment.OrientationAngle = value;
-        }
-        else {
+        } else {
           Element.OrientationAngle = value;
         }
       }
@@ -163,16 +154,14 @@ namespace GsaAPI {
       get {
         if (IsLoadPanel) {
           throw new ArgumentException("Orientation node is not applicable for load panels");
-        }
-        else {
+        } else {
           return Element.OrientationNode;
         }
       }
       set {
         if (!IsLoadPanel) {
           Element.OrientationNode = value;
-        }
-        else { throw new ArgumentException("Orientation node is not applicable for load panels"); }
+        } else { throw new ArgumentException("Orientation node is not applicable for load panels"); }
       }
     }
 
@@ -180,16 +169,14 @@ namespace GsaAPI {
       get {
         if (IsLoadPanel) {
           return LoadPanelElelment.Topology;
-        }
-        else {
+        } else {
           return Element.Topology;
         }
       }
       set {
         if (IsLoadPanel) {
           LoadPanelElelment.Topology = value;
-        }
-        else {
+        } else {
           Element.Topology = value;
         }
       }
@@ -199,8 +186,7 @@ namespace GsaAPI {
       get {
         if (IsLoadPanel) {
           return (ElementType)LoadPanelType;
-        }
-        else {
+        } else {
           return Element.Type;
         }
       }
@@ -215,16 +201,14 @@ namespace GsaAPI {
       get {
         if (IsLoadPanel) {
           return LoadPanelElelment.Colour;
-        }
-        else {
+        } else {
           return Element.Colour;
         }
       }
       set {
         if (IsLoadPanel) {
           LoadPanelElelment.Colour = value;
-        }
-        else {
+        } else {
           Element.Colour = value;
         }
       }
@@ -233,40 +217,35 @@ namespace GsaAPI {
     public Bool6 Release(int iTopology) {
       if (IsLoadPanel) {
         throw new ArgumentException("releases is not applicable for load panels");
-      }
-      else {
+      } else {
         return Element.Release(iTopology);
       }
     }
     public void SetRelease(int iTopology, Bool6 release) {
       if (IsLoadPanel) {
         throw new ArgumentException("releases is not applicable for load panels");
-      }
-      else {
+      } else {
         Element.SetRelease(iTopology, release);
       }
     }
     public EndRelease GetEndRelease(int iTopology) {
       if (IsLoadPanel) {
         throw new ArgumentException("releases is not applicable for load panels");
-      }
-      else {
+      } else {
         return Element.GetEndRelease(iTopology);
       }
     }
     public void SetEndRelease(int iTopology, EndRelease endRelease) {
       if (IsLoadPanel) {
         throw new ArgumentException("releases is not applicable for load panels");
-      }
-      else {
+      } else {
         Element.SetEndRelease(iTopology, endRelease);
       }
     }
     public string TypeAsString() {
       if (IsLoadPanel) {
         return "Load Panel";
-      }
-      else {
+      } else {
         return Element.TypeAsString();
       }
     }
@@ -274,5 +253,3 @@ namespace GsaAPI {
   }
 
 }
-
-

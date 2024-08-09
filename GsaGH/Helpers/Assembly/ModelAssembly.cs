@@ -3,16 +3,21 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using Grasshopper.Kernel;
+
 using GsaAPI;
 using GsaAPI.Materials;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using LoadCase = GsaAPI.LoadCase;
@@ -132,8 +137,7 @@ namespace GsaGH.Helpers.Assembly {
       foreach (KeyValuePair<int, GSAElement> kvp in _elements.ReadOnlyDictionary) {
         if (kvp.Value.IsLoadPanel) {
           loadPanels.Add(kvp.Key, kvp.Value.LoadPanelElelment);
-        }
-        else {
+        } else {
           feElements.Add(kvp.Key, kvp.Value.Element);
         }
       }
@@ -460,7 +464,7 @@ namespace GsaGH.Helpers.Assembly {
 
     private void ConvertProperties(List<GsaMaterial> materials, List<GsaSection> sections,
       List<GsaProperty2d> prop2Ds, List<GsaProperty3d> prop3Ds, List<GsaSpringProperty> springProps) {
-      // in case existing model has not been modified continue, otherwise delete results 
+      // in case existing model has not been modified continue, otherwise delete results
       if (!materials.IsNullOrEmpty() || !sections.IsNullOrEmpty() || !prop2Ds.IsNullOrEmpty() ||
         !prop3Ds.IsNullOrEmpty() || !springProps.IsNullOrEmpty()) {
         _deleteResults = true;

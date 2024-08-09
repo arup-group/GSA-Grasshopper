@@ -3,9 +3,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using OasysUnits;
+
 using Rhino.Collections;
 using Rhino.Geometry;
 
@@ -82,8 +86,7 @@ namespace GsaGH.Helpers {
               value[i].Offset.X2 = offsets[i].X2.Meters;
               value[i].Offset.Y = offsets[i].Y.Meters;
               value[i].Offset.Z = offsets[i].Z.Meters;
-            }
-            else {
+            } else {
               value[i].Offset.X1 = offsets.Last().X1.Meters;
               value[i].Offset.X2 = offsets.Last().X2.Meters;
               value[i].Offset.Y = offsets.Last().Y.Meters;

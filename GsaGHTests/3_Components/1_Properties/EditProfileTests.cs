@@ -1,8 +1,13 @@
 ﻿using Grasshopper.Kernel.Types;
+
 using GsaGH.Components;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Rhino;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Properties {

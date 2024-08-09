@@ -1,12 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Model;
+
 using OasysUnits;
+
 using Rhino.Geometry;
+
 using Xunit;
+
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;

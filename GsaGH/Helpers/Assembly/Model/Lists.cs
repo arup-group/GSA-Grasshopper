@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
+
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Helpers.Assembly {

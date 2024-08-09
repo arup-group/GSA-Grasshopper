@@ -1,6 +1,9 @@
 ﻿using Grasshopper.Kernel.Types;
+
 using GsaGH.Components;
+
 using GsaGHTests.Helpers;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {

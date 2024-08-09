@@ -24,7 +24,7 @@ namespace GsaGH.Helpers.GsaApi {
 
     internal static List<double> SmartRounder(double max, double min) {
       var roundedvals = new List<double>();
-      if (max == 0 & min == 0) {
+      if (max == 0 && min == 0) {
         roundedvals.Add(0.000000000001);
         roundedvals.Add(-0.000000000001);
         roundedvals.Add(0);

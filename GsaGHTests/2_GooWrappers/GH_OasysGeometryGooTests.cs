@@ -1,8 +1,12 @@
 ﻿using System.Drawing;
+
 using Grasshopper.Kernel;
+
 using OasysGH.Parameters;
+
 using Rhino.Display;
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {

@@ -1,9 +1,13 @@
 ﻿using System.IO;
 using System.Reflection;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Parameters;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Xunit;
 
 namespace IntegrationTests.Parameters {

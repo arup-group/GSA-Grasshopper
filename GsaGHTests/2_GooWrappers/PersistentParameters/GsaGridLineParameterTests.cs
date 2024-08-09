@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
 using GsaGHTests.Model;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {

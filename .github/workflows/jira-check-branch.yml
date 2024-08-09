@@ -18,6 +18,6 @@ jobs:
       - uses: arup-group/actions-composite-oasys-jira-check/branch@main
         if: startsWith( github.ref, 'refs/heads/release') == false
         with:
-          valid-branch-names: task|test|bugfix|feature|hotfix|epic
+          valid-branch-names: task|test|bugfix|feature|hotfix|epic|feat
           jira-username: automation@arup.com
           jira-password: ${{ secrets.JIRA_PASSWORD }}

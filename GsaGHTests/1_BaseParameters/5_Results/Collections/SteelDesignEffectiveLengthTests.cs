@@ -1,8 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
@@ -20,7 +23,7 @@ namespace GsaGHTests.Parameters.Results {
       ReadOnlyCollection<int> elementIds = result.ElementIds(MemberList, 1);
       SteelDesignEffectiveLengths resultSet = result.SteelDesignEffectiveLengths.ResultSubset(elementIds);
 
-      // Assert 
+      // Assert
       var expectedIds = result.Model.ApiModel.Elements(MemberList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
@@ -34,7 +37,7 @@ namespace GsaGHTests.Parameters.Results {
       ReadOnlyCollection<int> elementIds = result.ElementIds(MemberList, 1);
       SteelDesignEffectiveLengths resultSet = result.SteelDesignEffectiveLengths.ResultSubset(elementIds);
 
-      // Assert 
+      // Assert
       var expectedIds = result.Model.ApiModel.Elements(MemberList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
@@ -48,7 +51,7 @@ namespace GsaGHTests.Parameters.Results {
       ReadOnlyCollection<int> elementIds = result.ElementIds(MemberList, 1);
       SteelDesignEffectiveLengths resultSet = result.SteelDesignEffectiveLengths.ResultSubset(elementIds);
 
-      // Assert 
+      // Assert
       ISteelDesignEffectiveLength effectiveLengths = resultSet.Subset[1][0];
 
       Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MemberLength.Value, 4));

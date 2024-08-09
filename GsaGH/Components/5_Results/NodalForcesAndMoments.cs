@@ -3,22 +3,27 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
+
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using MomentUnit = OasysUnits.Units.MomentUnit;
 

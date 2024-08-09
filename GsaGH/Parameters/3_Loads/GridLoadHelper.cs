@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
+
 using GsaAPI;
+
 using OasysUnits;
+
 using Rhino.Collections;
 using Rhino.Geometry;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {

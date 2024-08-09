@@ -1,9 +1,14 @@
 ﻿using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using OasysUnits.Units;
+
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {

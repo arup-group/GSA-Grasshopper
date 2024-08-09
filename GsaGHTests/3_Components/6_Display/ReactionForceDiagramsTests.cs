@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
+
 using GsaGH;
 using GsaGH.Components;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Display {

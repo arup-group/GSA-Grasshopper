@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Grasshopper.Kernel;
+
 using GsaAPI;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
+
 using OasysUnits;
+
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Helpers.Assembly {

@@ -1,7 +1,10 @@
 ﻿using GsaAPI;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {

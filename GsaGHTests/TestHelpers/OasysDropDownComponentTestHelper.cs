@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+
 using Grasshopper.Kernel;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.Helpers {

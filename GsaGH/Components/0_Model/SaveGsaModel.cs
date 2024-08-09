@@ -3,19 +3,25 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.UI;
+
 using Rhino.UI;
 
 namespace GsaGH.Components {

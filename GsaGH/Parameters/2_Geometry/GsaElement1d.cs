@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.Import;
+
 using OasysUnits;
+
 using Rhino.Geometry;
+
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
@@ -164,8 +169,7 @@ namespace GsaGH.Parameters {
       if (Section != null) {
         property = Section.Id > 0 ? $"PB{Section.Id}"
         : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
-      }
-      else if (SpringProperty != null) {
+      } else if (SpringProperty != null) {
         property = SpringProperty.Id > 0 ? $"SP{SpringProperty.Id}"
         : SpringProperty.ApiProperty != null ? SpringProperty.ApiProperty.Name : string.Empty;
       }
@@ -182,8 +186,7 @@ namespace GsaGH.Parameters {
         crv.Append(Line);
         ReleasePreview = new ReleasePreview(crv,
           ApiElement.OrientationAngle * Math.PI / 180.0, s, e);
-      }
-      else {
+      } else {
         ReleasePreview = new ReleasePreview();
       }
     }

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using GsaGH.Helpers.GH;
+
 using Rhino.Collections;
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.Helpers.GH {

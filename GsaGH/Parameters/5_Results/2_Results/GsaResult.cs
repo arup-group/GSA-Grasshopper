@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 
 namespace GsaGH.Parameters.Results {
- 
+
   public class GsaResult : IGsaResult {
     public int CaseId { get; set; }
     public int Permutations { get; set; } = 0;

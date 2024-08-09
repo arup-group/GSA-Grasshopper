@@ -1,10 +1,16 @@
 ﻿using System.Collections.Generic;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Xunit;
+
 using static GsaGHTests.Helpers.Export.AssembleModelTests;
 
 namespace GsaGHTests.Model {

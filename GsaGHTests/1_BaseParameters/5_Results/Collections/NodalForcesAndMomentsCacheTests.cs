@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using GsaGH.Components;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
@@ -36,7 +39,7 @@ namespace GsaGHTests.Parameters.Results {
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
       GsaGH.Parameters.Results.NodalForcesAndMoments resultSet = result.NodalForcesAndMoments.ResultSubset(nodeIds);
 
-      // Assert 
+      // Assert
       var expectedIds = result.Model.ApiModel.Nodes(NodeList).Keys.ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
@@ -59,12 +62,12 @@ namespace GsaGHTests.Parameters.Results {
       ReadOnlyCollection<int> nodeIds = result.NodeIds(NodeList);
       GsaGH.Parameters.Results.NodalForcesAndMoments resultSet = result.NodalForcesAndMoments.ResultSubset(nodeIds);
 
-      // Assert 
+      // Assert
       IDictionary<int, IReactionForce> forces = resultSet.Subset[442][0];
       Assert.Equal(4, forces.Count);
 
       List<double> perm = TestsResultHelper.ResultsHelper(forces, component);
-      for (int i = 0; i<forces.Count; i++) {
+      for (int i = 0; i < forces.Count; i++) {
         Assert.Equal(expected[i], perm[i], 1);
       }
     }
@@ -88,7 +91,7 @@ namespace GsaGHTests.Parameters.Results {
       GsaGH.Parameters.Results.NodalForcesAndMoments resultSet
         = result.NodalForcesAndMoments.ResultSubset(nodeIds);
 
-      // Assert 
+      // Assert
       IDictionary<int, IReactionForce> forces = resultSet.Subset[442][0];
       Assert.Equal(4, forces.Count);
 

@@ -1,11 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+
 using GsaAPI;
 using GsaAPI.Materials;
+
 using GsaGH.Parameters;
+
 using OasysUnits;
+
 using Rhino.Geometry;
+
 using Xunit;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Helpers.Export {

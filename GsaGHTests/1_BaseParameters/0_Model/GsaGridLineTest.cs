@@ -1,9 +1,15 @@
 ﻿using System;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using Rhino.Geometry;
+
 using Xunit;
+
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGHTests.Parameters {

@@ -1,7 +1,10 @@
 ﻿using GsaGH.Components;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
 using OasysGH.Parameters;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Properties {

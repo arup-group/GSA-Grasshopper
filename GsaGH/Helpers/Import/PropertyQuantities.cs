@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Rhino.Geometry;
 
 namespace GsaGH.Helpers.Import {
@@ -107,7 +111,7 @@ namespace GsaGH.Helpers.Import {
           return;
         }
 
-        if(member.Value.Brep == null) {
+        if (member.Value.Brep == null) {
           owner.AddRuntimeWarning("Invalid topology for member " + member.Value.Id);
           return;
         }

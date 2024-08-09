@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
+
 using OasysUnits;
+
 using Rhino.Collections;
 using Rhino.Geometry;
 using Rhino.Geometry.Collections;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 using Polyline = Rhino.Geometry.Polyline;

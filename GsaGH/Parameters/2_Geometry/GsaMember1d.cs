@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
+
 using OasysUnits;
+
 using Rhino.Collections;
 using Rhino.Geometry;
+
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 

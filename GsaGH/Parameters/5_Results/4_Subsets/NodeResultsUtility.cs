@@ -4,10 +4,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters.Results {

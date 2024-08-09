@@ -1,9 +1,14 @@
 ﻿using System;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Xunit;
+
 using static GsaAPI.GridSurface;
 
 namespace GsaGHTests.Components.Loads {

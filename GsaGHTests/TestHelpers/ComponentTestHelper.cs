@@ -1,14 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using OasysGH.Parameters;
+
 using OasysUnits;
+
 using Rhino.Geometry;
 
 namespace GsaGHTests.Helpers {

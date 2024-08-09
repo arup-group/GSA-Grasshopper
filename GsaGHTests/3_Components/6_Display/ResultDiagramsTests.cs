@@ -1,17 +1,21 @@
 ﻿using System.Collections.Generic;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Display {
   [Collection("GrasshopperFixture collection")]
   public class ResultDiagramsTests {
-  [Fact]
+    [Fact]
     public void CombinationCaseWithMultiplePermutationsMessageTests() {
       GsaResult caseResult = GsaResultTests.CombinationCaseResult(GsaFile.SteelDesignComplex, 2, new List<int>() { 1, 2, 3, });
 
@@ -75,7 +79,7 @@ namespace GsaGHTests.Components.Display {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       comp.SetSelected(0, 0); // Displacement
-      comp.SetSelected(1, 4); 
+      comp.SetSelected(1, 4);
       comp.UpdateAngle("rad");
       comp.Params.Output[0].CollectData();
       Assert.Equal("rad", comp.Message);

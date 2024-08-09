@@ -1,12 +1,16 @@
 ﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters;
+
 using OasysGH.UI;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Display {

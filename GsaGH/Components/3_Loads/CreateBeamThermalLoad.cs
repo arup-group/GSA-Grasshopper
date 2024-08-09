@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
+
 using EntityType = GsaGH.Parameters.EntityType;
 using TemperatureUnit = OasysUnits.Units.TemperatureUnit;
 

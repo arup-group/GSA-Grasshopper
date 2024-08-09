@@ -1,7 +1,11 @@
 ﻿using System;
+
 using GsaGH.Components;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.CustomComponent {

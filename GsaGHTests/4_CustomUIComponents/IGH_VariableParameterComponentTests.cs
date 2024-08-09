@@ -1,6 +1,9 @@
 ﻿using System;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.CustomComponent {

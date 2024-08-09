@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
+
 using Rhino.Collections;
 using Rhino.Geometry;
 

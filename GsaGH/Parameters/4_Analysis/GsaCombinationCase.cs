@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Combination cases are similar to analysis cases but differ in two respects: 
+  /// Combination cases are similar to analysis cases but differ in two respects:
   /// <list type="bullet">
   /// <item><description>Results for combination cases are inferred from analysis case results and not calculated explicitly.</description></item>
   /// <item><description>Combination cases can be enveloping cases, as described in <see href="https://docs.oasys-software.com/structural/gsa/references/envelopingingsa.html">Enveloping</see> in GSA.</description></item>

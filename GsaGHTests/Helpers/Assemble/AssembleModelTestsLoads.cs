@@ -1,9 +1,14 @@
 ﻿using System.Collections.Generic;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Model;
+
 using OasysGH.Components;
+
 using Xunit;
+
 using LoadCaseType = GsaGH.Parameters.LoadCaseType;
 
 namespace GsaGHTests.Helpers.Export {

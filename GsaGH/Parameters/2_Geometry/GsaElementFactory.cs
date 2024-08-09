@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+
 using GsaAPI;
+
 using GsaGH.Helpers.Import;
+
 using Rhino.Geometry;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
@@ -182,17 +186,17 @@ namespace GsaGH.Parameters {
 
     internal static Mesh GetMeshFromApiElement2d(GSAElement element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
       ReadOnlyCollection<int> topo = element.Topology;
-      if(topo.Count < 3) {
+      if (topo.Count < 3) {
         return null;
       }
 
-      if(!element.IsLoadPanel) {
+      if (!element.IsLoadPanel) {
         if (element.Type == ElementType.BRICK8 || element.Type == ElementType.WEDGE6
         || element.Type == ElementType.PYRAMID5 || element.Type == ElementType.TETRA4) {
           return null;
         }
       }
-      
+
       var outMesh = new Mesh();
 
       foreach (int t in topo) {

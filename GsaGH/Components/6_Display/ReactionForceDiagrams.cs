@@ -6,24 +6,32 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Rhino.Geometry;
+
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
@@ -84,7 +92,7 @@ namespace GsaGH.Components {
 
       return endPoint;
     }
-    
+
     public override void CreateAttributes() {
       if (!_isInitialised) {
         InitialiseDropdowns();

@@ -1,9 +1,13 @@
 ﻿using System.IO;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.Model {
@@ -27,9 +31,9 @@ namespace GsaGHTests.Model {
     public void SaveGsaModelTest(string filename) {
       string path = Path.GetTempPath() + filename;
       string expectedPath = Path.GetTempPath() + (path.EndsWith("gwc") ? "GSA-Grasshopper3.gwb" : filename);
-      
+
       // clean up existing files
-      if(File.Exists(expectedPath) ) {
+      if (File.Exists(expectedPath)) {
         File.Delete(expectedPath);
       }
 

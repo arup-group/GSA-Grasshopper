@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using Xunit;
+
 using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 

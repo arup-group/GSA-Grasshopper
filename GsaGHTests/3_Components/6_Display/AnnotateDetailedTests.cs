@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+
 using GsaGH.Components;
+
 using OasysGH.UI;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Display {

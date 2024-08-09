@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
+
 using OasysGH.Parameters;
+
 using Rhino;
 using Rhino.DocObjects;
 using Rhino.Geometry;
@@ -33,7 +37,7 @@ namespace GsaGH.Parameters {
     protected override GsaElement2dGoo PreferredCast(object data) {
       var mesh = new Mesh();
       if (GH_Convert.ToMesh(data, ref mesh, GH_Conversion.Both)) {
-        return new GsaElement2dGoo(new GsaElement2d(mesh,false));
+        return new GsaElement2dGoo(new GsaElement2d(mesh, false));
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Element2d");
