@@ -23,8 +23,8 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyDriftIndices resultSet = result.AssemblyDriftIndices.ResultSubset(new Collection<int>() { 2 });
 
       // Assert 
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max, 1E-6);
+      double? max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max.Value, 1E-6);
     }
 
     [Theory]
@@ -40,8 +40,8 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyDriftIndices resultSet = result.AssemblyDriftIndices.ResultSubset(new Collection<int>() { 2 });
 
       // Assert
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max, 1E-5);
+      double? max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max.Value, 1E-5);
     }
 
     [Theory]
@@ -57,8 +57,8 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyDriftIndices resultSet = result.AssemblyDriftIndices.ResultSubset(new Collection<int>() { 2 });
 
       // Assert
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min, 1E-6);
+      double? min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min.Value, 1E-6);
     }
 
     [Theory]
@@ -74,8 +74,8 @@ namespace GsaGHTests.Parameters.Results {
       AssemblyDriftIndices resultSet = result.AssemblyDriftIndices.ResultSubset(new Collection<int>() { 2 });
 
       // Assert
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min, 1E-6);
+      double? min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min.Value, 1E-6);
     }
 
     [Theory]
@@ -96,8 +96,8 @@ namespace GsaGHTests.Parameters.Results {
 
       int position = 0;
       foreach (DriftIndex drift in driftQuantity[0].Results.Values) {
-        double x = TestsResultHelper.ResultsHelper(drift, component);
-        Assert.Equal(expected[position++], x, 1E-6);
+        double? x = TestsResultHelper.ResultsHelper(drift, component);
+        Assert.Equal(expected[position++], x.Value, 1E-6);
       }
     }
 
@@ -119,8 +119,8 @@ namespace GsaGHTests.Parameters.Results {
 
       int position = 0;
       foreach (DriftIndex drift in driftQuantity[0].Results.Values) {
-        double x = TestsResultHelper.ResultsHelper(drift, component);
-        Assert.Equal(expected[position++], x, 1E-5);
+        double? x = TestsResultHelper.ResultsHelper(drift, component);
+        Assert.Equal(expected[position++], x.Value, 1E-5);
       }
     }
 

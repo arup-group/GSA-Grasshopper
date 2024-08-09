@@ -56,8 +56,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element2dShearForces.ResultSubset(elementIds);
 
       // Assert Max in set
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      double? max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max.Value);
     }
 
     [Theory]
@@ -74,8 +74,8 @@ namespace GsaGHTests.Parameters.Results {
       IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
         = result.Element2dShearForces.ResultSubset(elementIds);
       // Assert Max in set
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      double? max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max.Value);
     }
 
     [Theory]
@@ -91,8 +91,8 @@ namespace GsaGHTests.Parameters.Results {
       IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> resultSet
         = result.Element2dShearForces.ResultSubset(elementIds);
       // Assert Max in set
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      double? min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min.Value);
     }
 
     [Theory]
@@ -110,8 +110,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element2dShearForces.ResultSubset(elementIds);
 
       // Assert Max in set
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      double? min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min.Value);
     }
 
     [Theory]
@@ -133,8 +133,8 @@ namespace GsaGHTests.Parameters.Results {
 
         Assert.Single(shearQuantity);
         foreach (IShear2d shear2d in shearQuantity[0].Results()) {
-          double x = TestsResultHelper.ResultsHelper(shear2d, component);
-          Assert.Equal(expected[i++], x);
+          double? x = TestsResultHelper.ResultsHelper(shear2d, component);
+          Assert.Equal(expected[i++], x.Value);
         }
       }
     }
@@ -160,8 +160,8 @@ namespace GsaGHTests.Parameters.Results {
         Assert.Equal(2, shearQuantity.Count);
 
         foreach (IShear2d shear2d in shearQuantity[0].Results()) {
-          double perm1 = TestsResultHelper.ResultsHelper(shear2d, component);
-          Assert.Equal(expectedP1[i++], perm1);
+          double? perm1 = TestsResultHelper.ResultsHelper(shear2d, component);
+          Assert.Equal(expectedP1[i++], perm1.Value);
         }
       }
 
@@ -171,8 +171,8 @@ namespace GsaGHTests.Parameters.Results {
 
 
         foreach (IShear2d shear2d in shearQuantity[1].Results()) {
-          double perm2 = TestsResultHelper.ResultsHelper(shear2d, component);
-          Assert.Equal(expectedP2[i++], perm2);
+          double? perm2 = TestsResultHelper.ResultsHelper(shear2d, component);
+          Assert.Equal(expectedP2[i++], perm2.Value);
         }
       }
     }

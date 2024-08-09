@@ -59,8 +59,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element3dStresses.ResultSubset(elementIds);
 
       // Assert Max in set
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      double? max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max.Value);
     }
 
     [Theory]
@@ -83,8 +83,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element3dStresses.ResultSubset(elementIds);
 
       // Assert Max in set
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      double? max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max.Value);
     }
 
     [Theory]
@@ -105,8 +105,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element3dStresses.ResultSubset(elementIds);
 
       // Assert Max in set
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      double? min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min.Value);
     }
 
     [Theory]
@@ -129,8 +129,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element3dStresses.ResultSubset(elementIds);
 
       // Assert Max in set
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      double? min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min.Value);
     }
 
     [Theory]
@@ -157,8 +157,8 @@ namespace GsaGHTests.Parameters.Results {
 
         Assert.Single(stressQuantity);
         foreach (IStress stress in stressQuantity[0].Results()) {
-          double x = TestsResultHelper.ResultsHelper(stress, component);
-          Assert.Equal(expected[i++], x);
+          double? x = TestsResultHelper.ResultsHelper(stress, component);
+          Assert.Equal(expected[i++], x.Value);
         }
       }
     }
@@ -190,8 +190,8 @@ namespace GsaGHTests.Parameters.Results {
         Assert.Equal(2, stressQuantity.Count);
 
         foreach (IStress stress in stressQuantity[0].Results()) {
-          double perm1 = TestsResultHelper.ResultsHelper(stress, component);
-          Assert.Equal(expectedP1[i++], perm1);
+          double? perm1 = TestsResultHelper.ResultsHelper(stress, component);
+          Assert.Equal(expectedP1[i++], perm1.Value);
         }
       }
 
@@ -200,8 +200,8 @@ namespace GsaGHTests.Parameters.Results {
         IList<IMeshQuantity<IStress>> stressQuantity = resultSet.Subset[id];
 
         foreach (IStress stress in stressQuantity[1].Results()) {
-          double perm2 = TestsResultHelper.ResultsHelper(stress, component);
-          Assert.Equal(expectedP2[i++], perm2);
+          double? perm2 = TestsResultHelper.ResultsHelper(stress, component);
+          Assert.Equal(expectedP2[i++], perm2.Value);
         }
       }
     }

@@ -231,9 +231,8 @@ namespace GsaGHTests.Components.Results {
 
       // Assert result values
       int i = 0;
-      foreach (IQuantity value in output) {
-        double x = ResultHelper.RoundToSignificantDigits(value.As(Unit(component)), 4);
-        Assert.Equal(expected[i++], x);
+      foreach (double? x in output.Select(value => ResultHelper.RoundToSignificantDigits(value.As(Unit(component)), 4))) {
+          Assert.Equal(expected[i++], x);
       }
     }
 
@@ -261,7 +260,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert result values
       for (int i = 0; i < output.Count; i++) {
-        double perm = ResultHelper.RoundToSignificantDigits(output[i].As(Unit(component)), 4);
+        double? perm = ResultHelper.RoundToSignificantDigits(output[i].As(Unit(component)), 4);
         Assert.Equal(expectedP1[i], perm);
       }
 
@@ -270,7 +269,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert result values
       for (int i = 0; i < output.Count; i++) {
-        double perm = ResultHelper.RoundToSignificantDigits(output[i].As(Unit(component)), 4);
+        double? perm = ResultHelper.RoundToSignificantDigits(output[i].As(Unit(component)), 4);
         Assert.Equal(expectedP2[i], perm);
       }
     }

@@ -58,8 +58,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
       // Assert Max in set
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      double? max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max.Value);
     }
 
     [Theory]
@@ -79,8 +79,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
       // Assert Max in set
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      double? max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max.Value);
     }
 
     [Theory]
@@ -99,8 +99,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
       // Assert Max in set
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      double? min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min.Value);
     }
 
     [Theory]
@@ -120,8 +120,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element2dDisplacements.ResultSubset(elementIds);
 
       // Assert Max in set
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      double? min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min.Value);
     }
 
     [Theory]
@@ -146,8 +146,8 @@ namespace GsaGHTests.Parameters.Results {
 
         Assert.Single(displacementQuantity);
         foreach (IDisplacement displacement in displacementQuantity[0].Results()) {
-          double x = TestsResultHelper.ResultsHelper(displacement, component);
-          Assert.Equal(expected[i++], x);
+          double? x = TestsResultHelper.ResultsHelper(displacement, component);
+          Assert.Equal(expected[i++], x.Value);
         }
       }
     }
@@ -177,8 +177,8 @@ namespace GsaGHTests.Parameters.Results {
         Assert.Equal(2, displacementQuantity.Count);
 
         foreach (IDisplacement displacement in displacementQuantity[0].Results()) {
-          double perm1 = TestsResultHelper.ResultsHelper(displacement, component);
-          Assert.Equal(expectedP1[i++], perm1);
+          double? perm1 = TestsResultHelper.ResultsHelper(displacement, component);
+          Assert.Equal(expectedP1[i++], perm1.Value);
         }
       }
 
@@ -188,8 +188,8 @@ namespace GsaGHTests.Parameters.Results {
 
 
         foreach (IDisplacement displacement in displacementQuantity[1].Results()) {
-          double perm2 = TestsResultHelper.ResultsHelper(displacement, component);
-          Assert.Equal(expectedP2[i++], perm2);
+          double? perm2 = TestsResultHelper.ResultsHelper(displacement, component);
+          Assert.Equal(expectedP2[i++], perm2.Value);
         }
       }
     }

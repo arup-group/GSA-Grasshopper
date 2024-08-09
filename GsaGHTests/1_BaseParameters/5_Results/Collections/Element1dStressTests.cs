@@ -63,8 +63,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element1dStresses.ResultSubset(elementIds, 4);
 
       // Assert Max in set
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      double? max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max.Value);
     }
 
     [Theory]
@@ -89,8 +89,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element1dStresses.ResultSubset(elementIds, 4);
 
       // Assert Max in set
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      double? max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max.Value);
     }
 
     [Theory]
@@ -114,8 +114,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element1dStresses.ResultSubset(elementIds, 4);
 
       // Assert Max in set
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      double? min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min.Value);
     }
 
     [Theory]
@@ -140,8 +140,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element1dStresses.ResultSubset(elementIds, 4);
 
       // Assert Max in set
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      double? min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min.Value);
     }
 
     [Theory]
@@ -175,8 +175,8 @@ namespace GsaGHTests.Parameters.Results {
         var positions = Enumerable.Range(0, positionsCount).Select(
         k => (double)k / (positionsCount - 1)).ToList();
         foreach (double position in positions) {
-          double x = TestsResultHelper.ResultsHelper(stressQuantity[0].Results[position], component);
-          Assert.Equal(expected[i++], x);
+          double? x = TestsResultHelper.ResultsHelper(stressQuantity[0].Results[position], component);
+          Assert.Equal(expected[i++], x.Value);
         }
       }
     }
@@ -214,10 +214,10 @@ namespace GsaGHTests.Parameters.Results {
         var positions = Enumerable.Range(0, positionsCount).Select(
         k => (double)k / (positionsCount - 1)).ToList();
         foreach (double position in positions) {
-          double perm1 = TestsResultHelper.ResultsHelper(displacementQuantity[0].Results[position], component);
-          Assert.Equal(expectedP1[i], perm1);
-          double perm2 = TestsResultHelper.ResultsHelper(displacementQuantity[1].Results[position], component);
-          Assert.Equal(expectedP2[i++], perm2);
+          double? perm1 = TestsResultHelper.ResultsHelper(displacementQuantity[0].Results[position], component);
+          Assert.Equal(expectedP1[i], perm1.Value);
+          double? perm2 = TestsResultHelper.ResultsHelper(displacementQuantity[1].Results[position], component);
+          Assert.Equal(expectedP2[i++], perm2.Value);
         }
       }
     }

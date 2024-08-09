@@ -6,13 +6,24 @@ namespace GsaGHTests.Helpers.GsaApi {
   public class ValueHelpersTests {
     [Theory]
     [InlineData(1.23456789, 4, "1.235")]
-    [InlineData(123456, 4, "123500")]
     [InlineData(0.000123456, 4, "0.0001235")]
     [InlineData(-1.23456789, 4, "-1.235")]
-    [InlineData(-123456, 4, "-123500")]
     [InlineData(-0.000123456, 4, "-0.0001235")]
-    public void RoundToSignificantDigitsTest(double value, int digits, string expected) {
-      double d = ResultHelper.RoundToSignificantDigits(value, digits);
+    [InlineData(0.0, 4, "0")]
+    [InlineData(null, 4, "")]
+    [InlineData(double.NaN, 4, "NaN")]
+    [InlineData(double.NegativeInfinity, 4, "-∞")]
+    [InlineData(double.PositiveInfinity, 4, "∞")]
+    public void RoundToSignificantDigitsTest(double? value, int digits, string expected) {
+      double? d = ResultHelper.RoundToSignificantDigits(value, digits);
+      Assert.Equal(expected, d.ToString());
+    }
+
+    [Theory]
+    [InlineData(-123456, 4, "-123500")]
+    [InlineData(123456, 4, "123500")]
+    public void RoundToSignificantDigitsForIntTest(int? value, int digits, string expected) {
+      double? d = ResultHelper.RoundToSignificantDigits(value, digits);
       Assert.Equal(expected, d.ToString());
     }
 

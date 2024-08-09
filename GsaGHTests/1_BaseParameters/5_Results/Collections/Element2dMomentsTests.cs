@@ -59,8 +59,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert Max in set
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      double? max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max.Value);
     }
 
     [Theory]
@@ -81,8 +81,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert Max in set
-      double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      double? max = TestsResultHelper.ResultsHelper(resultSet, component, true);
+      Assert.Equal(expected, max.Value);
     }
 
     [Theory]
@@ -102,8 +102,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert Max in set
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      double? min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min.Value);
     }
 
     [Theory]
@@ -124,8 +124,8 @@ namespace GsaGHTests.Parameters.Results {
         = result.Element2dMoments.ResultSubset(elementIds);
 
       // Assert Max in set
-      double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      double? min = TestsResultHelper.ResultsHelper(resultSet, component, false);
+      Assert.Equal(expected, min.Value);
     }
 
     [Theory]
@@ -151,8 +151,8 @@ namespace GsaGHTests.Parameters.Results {
 
         Assert.Single(momentQuantity);
         foreach (IMoment2d moment2d in momentQuantity[0].Results()) {
-          double x = TestsResultHelper.ResultsHelper(moment2d, component);
-          Assert.Equal(expected[i++], x);
+          double? x = TestsResultHelper.ResultsHelper(moment2d, component);
+          Assert.Equal(expected[i++], x.Value);
         }
       }
     }
@@ -182,8 +182,8 @@ namespace GsaGHTests.Parameters.Results {
         Assert.Equal(2, momentQuantity.Count);
 
         foreach (IMoment2d moment2d in momentQuantity[0].Results()) {
-          double perm1 = TestsResultHelper.ResultsHelper(moment2d, component);
-          Assert.Equal(expectedP1[i++], perm1);
+          double? perm1 = TestsResultHelper.ResultsHelper(moment2d, component);
+          Assert.Equal(expectedP1[i++], perm1.Value);
         }
       }
 
@@ -193,8 +193,8 @@ namespace GsaGHTests.Parameters.Results {
 
 
         foreach (IMoment2d moment2d in momentQuantity[1].Results()) {
-          double perm2 = TestsResultHelper.ResultsHelper(moment2d, component);
-          Assert.Equal(expectedP2[i++], perm2);
+          double? perm2 = TestsResultHelper.ResultsHelper(moment2d, component);
+          Assert.Equal(expectedP2[i++], perm2.Value);
         }
       }
     }

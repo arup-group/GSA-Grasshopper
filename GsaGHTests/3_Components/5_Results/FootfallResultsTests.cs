@@ -83,7 +83,7 @@ namespace GsaGHTests.Components.Results {
       // Assert values
       var resultSet = (IList<GH_Number>)ComponentTestHelper.GetListOutput(comp, 0);
       for (int i = 0; i < resultSet.Count; i++) {
-        double value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
+        double? value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
         Assert.Equal(expected[i], value);
       }
 
@@ -116,7 +116,7 @@ namespace GsaGHTests.Components.Results {
       // Assert values
       var resultSet = (IList<GH_Number>)ComponentTestHelper.GetListOutput(comp, 0);
       for (int i = 0; i < resultSet.Count; i++) {
-        double value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
+        double? value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
         Assert.Equal(expected[i], value);
       }
 
@@ -152,10 +152,10 @@ namespace GsaGHTests.Components.Results {
       List<IQuantity> resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 2);
       Assert.Equal(resultSetPeak.Count, resultSetRMS.Count);
       for (int i = 0; i < resultSetPeak.Count; i++) {
-        double peak = ResultHelper.RoundToSignificantDigits(
+        double? peak = ResultHelper.RoundToSignificantDigits(
           resultSetPeak[i].As(SpeedUnit.MeterPerSecond), 4);
         Assert.Equal(expectedPeak[i], peak);
-        double rms = ResultHelper.RoundToSignificantDigits(
+        double? rms = ResultHelper.RoundToSignificantDigits(
           resultSetRMS[i].As(SpeedUnit.MeterPerSecond), 4);
         Assert.Equal(expectedRMS[i], rms);
       }
@@ -212,10 +212,10 @@ namespace GsaGHTests.Components.Results {
       List<IQuantity> resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 2);
       Assert.Equal(resultSetPeak.Count, resultSetRMS.Count);
       for (int i = 0; i < resultSetPeak.Count; i++) {
-        double peak = ResultHelper.RoundToSignificantDigits(
+        double? peak = ResultHelper.RoundToSignificantDigits(
           resultSetPeak[i].As(SpeedUnit.MeterPerSecond), 4);
         Assert.Equal(expectedPeak[i], peak);
-        double rms = ResultHelper.RoundToSignificantDigits(
+        double? rms = ResultHelper.RoundToSignificantDigits(
           resultSetRMS[i].As(SpeedUnit.MeterPerSecond), 4);
         Assert.Equal(expectedRMS[i], rms);
       }
@@ -272,10 +272,10 @@ namespace GsaGHTests.Components.Results {
       List<IQuantity> resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 4);
       Assert.Equal(resultSetPeak.Count, resultSetRMS.Count);
       for (int i = 0; i < resultSetPeak.Count; i++) {
-        double peak = ResultHelper.RoundToSignificantDigits(
+        double? peak = ResultHelper.RoundToSignificantDigits(
           resultSetPeak[i].As(AccelerationUnit.MeterPerSecondSquared), 4);
         Assert.Equal(expectedPeak[i], peak);
-        double rms = ResultHelper.RoundToSignificantDigits(
+        double? rms = ResultHelper.RoundToSignificantDigits(
           resultSetRMS[i].As(AccelerationUnit.MeterPerSecondSquared), 4);
         Assert.Equal(expectedRMS[i], rms);
       }
@@ -332,10 +332,10 @@ namespace GsaGHTests.Components.Results {
       List<IQuantity> resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 4);
       Assert.Equal(resultSetPeak.Count, resultSetRMS.Count);
       for (int i = 0; i < resultSetPeak.Count; i++) {
-        double peak = ResultHelper.RoundToSignificantDigits(
+        double? peak = ResultHelper.RoundToSignificantDigits(
           resultSetPeak[i].As(AccelerationUnit.MeterPerSecondSquared), 4);
         Assert.Equal(expectedPeak[i], peak);
-        double rms = ResultHelper.RoundToSignificantDigits(
+        double? rms = ResultHelper.RoundToSignificantDigits(
           resultSetRMS[i].As(AccelerationUnit.MeterPerSecondSquared), 4);
         Assert.Equal(expectedRMS[i], rms);
       }
@@ -389,7 +389,7 @@ namespace GsaGHTests.Components.Results {
       // Assert values
       List<IQuantity> resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       for (int i = 0; i < resultSet.Count; i++) {
-        double value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
+        double? value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
         Assert.Equal(expected[i], value);
       }
 
@@ -422,7 +422,7 @@ namespace GsaGHTests.Components.Results {
       // Assert values
       List<IQuantity> resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       for (int i = 0; i < resultSet.Count; i++) {
-        double value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
+        double? value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
         Assert.Equal(expected[i], value);
       }
 
