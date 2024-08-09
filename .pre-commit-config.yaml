@@ -14,8 +14,9 @@ repos:
     - id: dotnet-test-coverage
       name: Run dotnet tests with coverage
       entry: powershell.exe -NoProfile -ExecutionPolicy Bypass -File coverage.ps1
-      stages: [pre-push]
+      stages: [pre-commit]
       language: system
+      pass_filenames: false
 
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v3.13.0
