@@ -6,11 +6,11 @@ using OasysUnits;
 
 namespace GsaGHTests.Parameters.Results {
   public static class TestsResultHelper {
-    public static double Envelope(double? x, double? y, EnvelopeMethod envelope) {
+    public static double? Envelope(double? x, double? y, EnvelopeMethod envelope) {
       return Envelope((double)x, (double)y, envelope);
     }
 
-    public static double Envelope(double x, double y, EnvelopeMethod envelope) {
+    public static double? Envelope(double x, double y, EnvelopeMethod envelope) {
       double value = 0;
       switch (envelope) {
         case EnvelopeMethod.Maximum:
@@ -37,7 +37,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(value, 4);
     }
 
-    public static double ResultsHelper(IEntity0dResultSubset<IInternalForce,
+    public static double? ResultsHelper(IEntity0dResultSubset<IInternalForce,
       ResultVector6<Entity0dExtremaKey>> result, ResultVector6 component, bool max) {
       double d = 0;
       ResultVector6<Entity0dExtremaKey> extrema = max ? result.Max : result.Min;
@@ -78,7 +78,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(IInternalForce result, ResultVector6 component) {
+    public static double? ResultsHelper(IInternalForce result, ResultVector6 component) {
       double d = 0;
       switch (component) {
         case ResultVector6.X:
@@ -237,7 +237,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits((double)d, 4);
     }
 
-    public static double ResultsHelper(
+    public static double? ResultsHelper(
       IEntity0dResultSubset<IDisplacement, ResultVector6<Entity0dExtremaKey>> result,
       ResultVector6 component, bool max) {
       double d = 0;
@@ -279,7 +279,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(IDisplacement result, ResultVector6 component) {
+    public static double? ResultsHelper(IDisplacement result, ResultVector6 component) {
       double d = 0;
       switch (component) {
         case ResultVector6.X:
@@ -318,7 +318,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(Drift result, DriftResultVector component) {
+    public static double? ResultsHelper(Drift result, DriftResultVector component) {
       double d = 0;
       switch (component) {
         case DriftResultVector.X:
@@ -337,7 +337,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(DriftIndex result, DriftResultVector component) {
+    public static double? ResultsHelper(DriftIndex result, DriftResultVector component) {
       double d = 0;
       switch (component) {
         case DriftResultVector.X:
@@ -356,7 +356,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(ITranslation result, ResultVector6 component) {
+    public static double? ResultsHelper(ITranslation result, ResultVector6 component) {
       double d = 0;
       switch (component) {
         case ResultVector6.X:
@@ -379,7 +379,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(IStress result, ResultTensor3 component) {
+    public static double? ResultsHelper(IStress result, ResultTensor3 component) {
       double d = 0;
       switch (component) {
         case ResultTensor3.Xx:
@@ -410,7 +410,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(IStress1dDerived result, ResultDerivedStress1d component) {
+    public static double? ResultsHelper(IStress1dDerived result, ResultDerivedStress1d component) {
       double d = 0;
       switch (component) {
         case ResultDerivedStress1d.ShearY:
@@ -433,7 +433,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(IStress1d result, ResultStress1d component) {
+    public static double? ResultsHelper(IStress1d result, ResultStress1d component) {
       double d = 0;
       switch (component) {
         case ResultStress1d.Axial:
@@ -476,7 +476,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(
+    public static double? ResultsHelper(
       IEntity1dResultSubset<IDisplacement, ResultVector6<Entity1dExtremaKey>> result,
       ResultVector6 component, bool max) {
       double d = 0;
@@ -518,7 +518,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(
+    public static double? ResultsHelper(
       IEntity1dResultSubset<IInternalForce, ResultVector6<Entity1dExtremaKey>> result,
       ResultVector6 component, bool max) {
       double d = 0;
@@ -560,7 +560,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(
+    public static double? ResultsHelper(
       IEntity1dResultSubset<IStress1dDerived, ResultDerivedStress1d<Entity1dExtremaKey>> result,
       ResultDerivedStress1d component, bool max) {
       double d = 0;
@@ -586,7 +586,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(
+    public static double? ResultsHelper(
       IEntity1dResultSubset<IStress1d, ResultStress1d<Entity1dExtremaKey>> result,
       ResultStress1d component, bool max) {
       double d = 0;
@@ -632,7 +632,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(
+    public static double? ResultsHelper(
       IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>> result,
       ResultVector6 component, bool max) {
       double d = 0;
@@ -674,7 +674,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(
+    public static double? ResultsHelper(
       IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>> result,
       ResultVector6 component, bool max) {
       double d = 0;
@@ -700,7 +700,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(
+    public static double? ResultsHelper(
       IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> result,
       ResultTensor2InAxis component, bool max) {
       double d = 0;
@@ -722,7 +722,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(
+    public static double? ResultsHelper(
       IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> result,
       ResultTensor2AroundAxis component, bool max) {
       double d = 0;
@@ -750,7 +750,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(
+    public static double? ResultsHelper(
       IMeshResultSubset<IMeshQuantity<IShear2d>, IShear2d, ResultVector2<Entity2dExtremaKey>> result,
       ResultVector2 component, bool max) {
       double d = 0;
@@ -768,7 +768,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(IForce2d result, ResultTensor2InAxis component) {
+    public static double? ResultsHelper(IForce2d result, ResultTensor2InAxis component) {
       double d = 0;
       switch (component) {
         case ResultTensor2InAxis.Nx:
@@ -787,7 +787,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(IMoment2d result, ResultTensor2AroundAxis component) {
+    public static double? ResultsHelper(IMoment2d result, ResultTensor2AroundAxis component) {
       double d = 0;
       switch (component) {
         case ResultTensor2AroundAxis.Mx:
@@ -812,7 +812,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(IShear2d result, ResultVector2 component) {
+    public static double? ResultsHelper(IShear2d result, ResultVector2 component) {
       double d = 0;
       switch (component) {
         case ResultVector2.Qx:
@@ -827,7 +827,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(
+    public static double? ResultsHelper(
       IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> result,
       ResultTensor3 component, bool max) {
       double d = 0;
@@ -861,7 +861,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(AssemblyDisplacements result, ResultVector6 component, bool max) {
+    public static double? ResultsHelper(AssemblyDisplacements result, ResultVector6 component, bool max) {
       double d = 0;
       ResultVector6<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
@@ -901,7 +901,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(AssemblyDrifts result, DriftResultVector component, bool max) {
+    public static double? ResultsHelper(AssemblyDrifts result, DriftResultVector component, bool max) {
       double d = 0;
       DriftResultVector<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
@@ -921,7 +921,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(AssemblyDriftIndices result, DriftResultVector component, bool max) {
+    public static double? ResultsHelper(AssemblyDriftIndices result, DriftResultVector component, bool max) {
       double d = 0;
       DriftResultVector<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {
@@ -941,7 +941,7 @@ namespace GsaGHTests.Parameters.Results {
       return ResultHelper.RoundToSignificantDigits(d, 4);
     }
 
-    public static double ResultsHelper(AssemblyForcesAndMoments result, ResultVector6 component, bool max) {
+    public static double? ResultsHelper(AssemblyForcesAndMoments result, ResultVector6 component, bool max) {
       double d = 0;
       ResultVector6<Entity1dExtremaKey> extrema = max ? result.Max : result.Min;
       switch (component) {

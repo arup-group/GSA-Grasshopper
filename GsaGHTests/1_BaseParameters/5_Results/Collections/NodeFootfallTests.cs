@@ -44,7 +44,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert values
       for (int i = 0; i < nodeIds.Count; i++) {
-        double value = ResultHelper.RoundToSignificantDigits(
+        double? value = ResultHelper.RoundToSignificantDigits(
           resultSet.Subset[nodeIds[i]][0].MaximumResponseFactor, 4);
         Assert.Equal(expected[i], value);
       }
@@ -52,7 +52,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert Max in set
       Entity0dExtremaKey key = resultSet.Max.MaximumResponseFactor;
       IFootfall extrema = resultSet.GetExtrema(key);
-      double max = ResultHelper.RoundToSignificantDigits(extrema.MaximumResponseFactor, 4);
+      double? max = ResultHelper.RoundToSignificantDigits(extrema.MaximumResponseFactor, 4);
       Assert.Equal(expected.Max(), max);
     }
 
@@ -69,7 +69,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert values
       for (int i = 0; i < nodeIds.Count; i++) {
-        double value = ResultHelper.RoundToSignificantDigits(
+          double? value = ResultHelper.RoundToSignificantDigits(
           resultSet.Subset[nodeIds[i]][0].MaximumResponseFactor, 4);
         Assert.Equal(expected[i], value);
       }
@@ -77,7 +77,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert Max in set
       Entity0dExtremaKey key = resultSet.Max.MaximumResponseFactor;
       IFootfall extrema = resultSet.GetExtrema(key);
-      double max = ResultHelper.RoundToSignificantDigits(extrema.MaximumResponseFactor, 4);
+      double? max = ResultHelper.RoundToSignificantDigits(extrema.MaximumResponseFactor, 4);
       Assert.Equal(expected.Max(), max);
     }
 
@@ -94,10 +94,10 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expectedPeak = NodeFootfallResonantA16.PeakVelocity();
       List<double> expectedRMS = NodeFootfallResonantA16.RMSVelocity();
       for (int i = 0; i < nodeIds.Count; i++) {
-        double peak = ResultHelper.RoundToSignificantDigits(
+          double? peak = ResultHelper.RoundToSignificantDigits(
           resultSet.Subset[nodeIds[i]][0].PeakVelocity.Value, 4);
         Assert.Equal(expectedPeak[i], peak);
-        double rms = ResultHelper.RoundToSignificantDigits(
+        double? rms = ResultHelper.RoundToSignificantDigits(
           resultSet.Subset[nodeIds[i]][0].RmsVelocity.Value, 4);
         Assert.Equal(expectedRMS[i], rms);
       }
@@ -105,7 +105,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert Max in set
       Entity0dExtremaKey key = resultSet.Max.PeakVelocity;
       IFootfall extrema = resultSet.GetExtrema(key);
-      double max = ResultHelper.RoundToSignificantDigits(extrema.PeakVelocity.Value, 4);
+      double? max = ResultHelper.RoundToSignificantDigits(extrema.PeakVelocity.Value, 4);
       Assert.Equal(expectedPeak.Max(), max);
 
       key = resultSet.Max.RmsVelocity;
@@ -127,10 +127,10 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expectedPeak = NodeFootfallTransientA17.PeakVelocity();
       List<double> expectedRMS = NodeFootfallTransientA17.RMSVelocity();
       for (int i = 0; i < nodeIds.Count; i++) {
-        double peak = ResultHelper.RoundToSignificantDigits(
+          double? peak = ResultHelper.RoundToSignificantDigits(
           resultSet.Subset[nodeIds[i]][0].PeakVelocity.Value, 4);
         Assert.Equal(expectedPeak[i], peak);
-        double rms = ResultHelper.RoundToSignificantDigits(
+        double? rms = ResultHelper.RoundToSignificantDigits(
           resultSet.Subset[nodeIds[i]][0].RmsVelocity.Value, 4);
         Assert.Equal(expectedRMS[i], rms);
       }
@@ -138,7 +138,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert Max in set
       Entity0dExtremaKey key = resultSet.Max.PeakVelocity;
       IFootfall extrema = resultSet.GetExtrema(key);
-      double max = ResultHelper.RoundToSignificantDigits(extrema.PeakVelocity.Value, 4);
+      double? max = ResultHelper.RoundToSignificantDigits(extrema.PeakVelocity.Value, 4);
       Assert.Equal(expectedPeak.Max(), max);
 
       key = resultSet.Max.RmsVelocity;
@@ -160,10 +160,10 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expectedPeak = NodeFootfallResonantA16.PeakAcceleration();
       List<double> expectedRMS = NodeFootfallResonantA16.RMSAcceleration();
       for (int i = 0; i < nodeIds.Count; i++) {
-        double peak = ResultHelper.RoundToSignificantDigits(
+          double? peak = ResultHelper.RoundToSignificantDigits(
           resultSet.Subset[nodeIds[i]][0].PeakAcceleration.Value, 4);
         Assert.Equal(expectedPeak[i], peak);
-        double rms = ResultHelper.RoundToSignificantDigits(
+        double? rms = ResultHelper.RoundToSignificantDigits(
           resultSet.Subset[nodeIds[i]][0].RmsAcceleration.Value, 4);
         Assert.Equal(expectedRMS[i], rms);
       }
@@ -171,7 +171,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert Max in set
       Entity0dExtremaKey key = resultSet.Max.PeakVelocity;
       IFootfall extrema = resultSet.GetExtrema(key);
-      double max = ResultHelper.RoundToSignificantDigits(extrema.PeakAcceleration.Value, 4);
+      double? max = ResultHelper.RoundToSignificantDigits(extrema.PeakAcceleration.Value, 4);
       Assert.Equal(expectedPeak.Max(), max);
 
       key = resultSet.Max.RmsVelocity;
@@ -193,10 +193,10 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expectedPeak = NodeFootfallTransientA17.PeakAcceleration();
       List<double> expectedRMS = NodeFootfallTransientA17.RMSAcceleration();
       for (int i = 0; i < nodeIds.Count; i++) {
-        double peak = ResultHelper.RoundToSignificantDigits(
+        double? peak = ResultHelper.RoundToSignificantDigits(
           resultSet.Subset[nodeIds[i]][0].PeakAcceleration.Value, 4);
         Assert.Equal(expectedPeak[i], peak);
-        double rms = ResultHelper.RoundToSignificantDigits(
+        double? rms = ResultHelper.RoundToSignificantDigits(
           resultSet.Subset[nodeIds[i]][0].RmsAcceleration.Value, 4);
         Assert.Equal(expectedRMS[i], rms);
       }
@@ -204,7 +204,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert Max in set
       Entity0dExtremaKey key = resultSet.Max.PeakAcceleration;
       IFootfall extrema = resultSet.GetExtrema(key);
-      double max = ResultHelper.RoundToSignificantDigits(extrema.PeakAcceleration.Value, 4);
+      double? max = ResultHelper.RoundToSignificantDigits(extrema.PeakAcceleration.Value, 4);
       Assert.Equal(expectedPeak.Max(), max);
 
       key = resultSet.Max.RmsAcceleration;
@@ -226,7 +226,7 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expectedFrequency = NodeFootfallResonantA16.CriticalFrequency();
       List<int> expectedNode = NodeFootfallResonantA16.CriticalNode();
       for (int i = 0; i < nodeIds.Count; i++) {
-        double frequency = ResultHelper.RoundToSignificantDigits(
+          double? frequency = ResultHelper.RoundToSignificantDigits(
           resultSet.Subset[nodeIds[i]][0].CriticalFrequency.Value, 4);
         Assert.Equal(expectedFrequency[i], frequency);
         int node = resultSet.Subset[nodeIds[i]][0].CriticalNode;
@@ -236,7 +236,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert Max in set
       Entity0dExtremaKey key = resultSet.Max.CriticalFrequency;
       IFootfall extrema = resultSet.GetExtrema(key);
-      double max = ResultHelper.RoundToSignificantDigits(extrema.CriticalFrequency.Value, 4);
+      double? max = ResultHelper.RoundToSignificantDigits(extrema.CriticalFrequency.Value, 4);
       Assert.Equal(expectedFrequency.Max(), max);
     }
 
@@ -253,7 +253,7 @@ namespace GsaGHTests.Parameters.Results {
       List<double> expectedFrequency = NodeFootfallTransientA17.CriticalFrequency();
       List<int> expectedNode = NodeFootfallTransientA17.CriticalNode();
       for (int i = 0; i < nodeIds.Count; i++) {
-        double frequency = ResultHelper.RoundToSignificantDigits(
+          double? frequency = ResultHelper.RoundToSignificantDigits(
           resultSet.Subset[nodeIds[i]][0].CriticalFrequency.Value, 4);
         Assert.Equal(expectedFrequency[i], frequency);
         int node = resultSet.Subset[nodeIds[i]][0].CriticalNode;
@@ -263,7 +263,7 @@ namespace GsaGHTests.Parameters.Results {
       // Assert Max in set
       Entity0dExtremaKey key = resultSet.Max.CriticalFrequency;
       IFootfall extrema = resultSet.GetExtrema(key);
-      double max = ResultHelper.RoundToSignificantDigits(extrema.CriticalFrequency.Value, 4);
+      double? max = ResultHelper.RoundToSignificantDigits(extrema.CriticalFrequency.Value, 4);
       Assert.Equal(expectedFrequency.Max(), max);
     }
   }

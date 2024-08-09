@@ -232,9 +232,9 @@ namespace GsaGHTests.Components.Results {
         var positions = Enumerable.Range(0, positionsCount)
          .Select(k => (double)k / (positionsCount - 1)).ToList();
         foreach (double position in positions) {
-          double x = TestsResultHelper.ResultsHelper(displacementQuantity[0].Results[position],
+          double? x = TestsResultHelper.ResultsHelper(displacementQuantity[0].Results[position],
             component);
-          Assert.Equal(expected[i++], x);
+          Assert.Equal(expected[i++], x.Value);
         }
       }
     }
@@ -271,9 +271,9 @@ namespace GsaGHTests.Components.Results {
         var positions = Enumerable.Range(0, positionsCount)
          .Select(k => (double)k / (positionsCount - 1)).ToList();
         foreach (double position in positions) {
-          double perm1
+          double? perm1
             = TestsResultHelper.ResultsHelper(displacementQuantity[0].Results[position], component);
-          Assert.Equal(expectedP1[i++], perm1);
+          Assert.Equal(expectedP1[i++], perm1.Value);
         }
       }
     }
