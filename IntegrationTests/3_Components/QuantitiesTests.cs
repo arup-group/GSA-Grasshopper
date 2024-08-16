@@ -1,10 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Components;
+
 using Xunit;
 
 namespace IntegrationTests.Components {

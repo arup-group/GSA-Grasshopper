@@ -1,10 +1,15 @@
 ﻿using System;
+
 using GsaAPI;
+
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
+
 using OasysUnits.Units;
+
 using Xunit;
+
 using AccelerationUnit = OasysUnits.Units.AccelerationUnit;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using EnergyUnit = OasysUnits.Units.EnergyUnit;

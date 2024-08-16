@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
+
 using OasysUnits;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters.Results {

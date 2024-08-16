@@ -1,10 +1,16 @@
 ﻿using System.Drawing;
+
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.GooWrappers;
+
 using Rhino.Geometry;
 using Rhino.Geometry.Morphs;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters {

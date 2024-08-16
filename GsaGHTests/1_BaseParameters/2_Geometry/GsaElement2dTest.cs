@@ -1,14 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+
 using Grasshopper;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using Rhino.Collections;
 using Rhino.Geometry;
+
 using Xunit;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Polyline = Rhino.Geometry.Polyline;
 
