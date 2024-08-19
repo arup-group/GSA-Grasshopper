@@ -300,7 +300,12 @@ namespace GsaGH.Parameters {
 
     public void SetProperty(GsaProperty2d property) {
       Prop2d = property;
-      ApiMember.Type2D = property.ApiProp2d.Type == Property2D_Type.LOAD ? AnalysisOrder.LOAD_PANEL : AnalysisOrder.LINEAR;
+      if (property.ApiProp2d == null) {
+        return;
+      }
+
+      ApiMember.Type2D = property.ApiProp2d.Type == Property2D_Type.LOAD ?
+        AnalysisOrder.LOAD_PANEL : AnalysisOrder.LINEAR;
     }
   }
 }

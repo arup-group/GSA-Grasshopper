@@ -14,6 +14,13 @@ namespace GsaGHTests.Parameters {
     }
 
     [Fact]
+    public void ShouldBypassThisSettingWhenCreatingPropertyById() {
+      var property = new GsaProperty2d(0);
+      _member.SetProperty(property);
+      Assert.True(true);
+    }
+
+    [Fact]
     public void CreateLoadPanelMember2dShouldChangeTheAnalysisType() {
       var property = new GsaProperty2d {
         ApiProp2d = {
