@@ -46,6 +46,8 @@ namespace GsaGH.Components {
         { SupportType.TwoAdjacentEdges, "Two adjacent edges" },
         { SupportType.OneEdge, "One edge" },
         { SupportType.Cantilever, "Cantilever" },
+         { SupportType.OneWay, "One-way" },
+        { SupportType.TwoWay, "Two-way" },
       };
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private Prop2dType _mode = Prop2dType.Shell;
@@ -177,29 +179,34 @@ namespace GsaGH.Components {
               try {
                 if (GH_Convert.ToInt32(ghReferenceSurface.Value, out int reference, GH_Conversion.Both)) {
                   prop.ApiProp2d.ReferenceSurface = (ReferenceSurface)reference;
-                } else if (GH_Convert.ToString(ghReferenceSurface, out string value, GH_Conversion.Both)) {
+                }
+                else if (GH_Convert.ToString(ghReferenceSurface, out string value, GH_Conversion.Both)) {
                   prop.ApiProp2d.ReferenceSurface = (ReferenceSurface)Enum.Parse(typeof(ReferenceSurface), value, ignoreCase: true);
                 }
-              } catch {
+              }
+              catch {
                 this.AddRuntimeError("Unable to convert input " + ghReferenceSurface.Value +
                   " to a Reference Surface (Middle = 0, Top = 1, Bottom = 2)");
                 return;
               }
-            } else {
+            }
+            else {
               prop.ApiProp2d.ReferenceSurface = ReferenceSurface.Middle;
             }
 
             prop.AdditionalOffsetZ = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
           }
         }
-      } else {
+      }
+      else {
         prop.ApiProp2d.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
         if (prop.ApiProp2d.SupportType != SupportType.Auto && prop.ApiProp2d.SupportType != SupportType.AllEdges) {
           int referenceEdge = 0;
           if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0
             && referenceEdge <= 4) {
             prop.ApiProp2d.ReferenceEdge = referenceEdge;
-          } else {
+          }
+          else {
             this.AddRuntimeWarning("Input RE failed to collect data");
           }
         }
@@ -213,7 +220,8 @@ namespace GsaGH.Components {
 
       if (mode == Prop2dType.LoadPanel) {
         _supportTypeIndex = _supportDropDown.ToList().FindIndex(x => x.Value == _selectedItems[1]);
-      } else if (mode != Prop2dType.Fabric) {
+      }
+      else if (mode != Prop2dType.Fabric) {
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
       }
 

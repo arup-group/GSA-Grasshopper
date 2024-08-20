@@ -29,6 +29,7 @@ namespace GsaGH.Parameters {
     public List<GSAElement> ApiElements { get; internal set; }
     public List<int> Ids { get; set; } = new List<int>();
     public Guid Guid { get; private set; } = Guid.NewGuid();
+    public Rhino.Geometry.Polyline PolyLine { get; set; } = new Rhino.Geometry.Polyline();
     public Mesh Mesh { get; set; } = new Mesh();
     public List<List<int>> TopoInt { get; internal set; }
     public Point3dList Topology { get; internal set; }
@@ -64,12 +65,36 @@ namespace GsaGH.Parameters {
     }
 
     /// <summary>
+    /// Create new instance by casting from a Polyline
+    /// </summary>
+    /// <param name="polyline"></param>
+    public GsaElement2d(Rhino.Geometry.Polyline polyline) {
+      PolyLine = polyline.Duplicate();
+      ApiElements = new List<GSAElement> {
+        new GSAElement(new LoadPanelElement())
+      };
+      Topology = new Point3dList(polyline.ToArray());
+
+      var topo = new List<int>();
+      int index = 0;
+      foreach (Point3d p in polyline.ToList()) {
+        topo.Add(index++);
+      }
+
+      TopoInt = new List<List<int>> {
+        topo
+      };
+      Ids = new List<int>(new int[1]);
+    }
+
+    /// <summary>
     /// Create a duplicate instance from another instance
     /// </summary>
     /// <param name="other"></param>
     public GsaElement2d(GsaElement2d other) {
       Ids = other.Ids;
       Mesh = (Mesh)other.Mesh.DuplicateShallow();
+      PolyLine = other.PolyLine.Duplicate();
       ApiElements = other.DuplicateApiObjects();
       Topology = other.Topology?.Duplicate();
       TopoInt = other.TopoInt;

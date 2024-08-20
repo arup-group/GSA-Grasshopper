@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Drawing;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Components;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 using OasysGH;
+using Rhino.Geometry;
+using Rhino.Render.ChangeQueue;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -24,7 +27,7 @@ namespace GsaGH.Components {
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddMeshParameter("Mesh", "M", "Mesh to create GSA Element", GH_ParamAccess.item);
+      pManager.AddGeometryParameter("Geometry", "G", "Geometry of type mesh and polyline to create GSA Element", GH_ParamAccess.item);
       pManager.AddParameter(new GsaProperty2dParameter());
       pManager[1].Optional = true;
       pManager.HideParameter(0);
@@ -35,8 +38,9 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GH_Mesh ghmesh = null;
-      da.GetData(0, ref ghmesh);
+
+      IGH_Goo geometry_parameter = null;
+      da.GetData(0, ref geometry_parameter);
 
       GsaProperty2dGoo prop2dGoo = null;
       bool prop2dAssigned = da.GetData(1, ref prop2dGoo);
@@ -46,7 +50,30 @@ namespace GsaGH.Components {
         isLoadPanel = apiProperty2d.Type == Property2D_Type.LOAD;
       }
 
-      var elem = new GsaElement2d(ghmesh.Value, isLoadPanel);
+      GsaElement2d elem = null;
+      switch (geometry_parameter) {
+        case GH_Mesh mesh:
+          elem = new GsaElement2d(mesh.Value, isLoadPanel);
+          break;
+        case GH_Curve curve:
+          if (!isLoadPanel) {
+            throw new ArgumentException("Specify mesh geometry as the input parameter to create a 2D element.");
+          }
+          if (curve.Value.TryGetPolyline(out Rhino.Geometry.Polyline polyline)) {
+            if (polyline.ToArray().Length < 3) {
+              throw new ArgumentException("A minimum of three points are required to create a 2D element.");
+            }
+            elem = new GsaElement2d(polyline);
+          }
+          else {
+            throw new ArgumentException("Unable to retrieve polylines from the given curve");
+          }
+          break;
+        default: {
+            throw new ArgumentException("Input geometry is not supported to create a 2D element.");
+          }
+      }
+
       if (prop2dAssigned) {
         var prop2Ds = new List<GsaProperty2d>();
         for (int i = 0; i < elem.ApiElements.Count; i++) {
