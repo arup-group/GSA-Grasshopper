@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Security.Cryptography;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Components;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
+
 using Rhino.Geometry;
 using Rhino.Render.ChangeQueue;
 
@@ -69,7 +73,7 @@ namespace GsaGH.Components {
         default:
           break;
       }
-      
+
       if (isProp2dAssigned) {
         var prop2Ds = new List<GsaProperty2d>();
         for (int i = 0; i < elem.ApiElements.Count; i++) {

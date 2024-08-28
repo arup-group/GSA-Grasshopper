@@ -1,8 +1,11 @@
-﻿using Grasshopper.Kernel.Types;
-using GsaGH.Parameters;
-using Rhino.Geometry;
-using System;
+﻿using System;
 using System.Runtime.Remoting.Messaging;
+
+using Grasshopper.Kernel.Types;
+
+using GsaGH.Parameters;
+
+using Rhino.Geometry;
 
 namespace GsaGH.Helpers {
 
@@ -25,8 +28,7 @@ namespace GsaGH.Helpers {
                 if (polyline.ToArray().Length < 3) {
                   return "A minimum of three points are required to create a 2D load panel";
                 }
-              }
-              else {
+              } else {
                 return "Polyline could not be extracted from the given curve geometry";
               }
             }

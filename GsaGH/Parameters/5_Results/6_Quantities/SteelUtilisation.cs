@@ -1,4 +1,5 @@
 ﻿using GsaAPI;
+
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -23,7 +24,7 @@ namespace GsaGH.Parameters.Results {
       if (!(double.IsNaN(values.Overall) || double.IsInfinity(values.Overall))) {
         Overall = new Ratio(values.Overall, RatioUnit.DecimalFraction);
       }
-      if (!(double.IsNaN(values.LocalCombined) ||double.IsInfinity(values.LocalCombined))) {
+      if (!(double.IsNaN(values.LocalCombined) || double.IsInfinity(values.LocalCombined))) {
         LocalCombined = new Ratio(values.LocalCombined, RatioUnit.DecimalFraction);
       }
       if (!(double.IsNaN(values.BucklingCombined) || double.IsInfinity(values.BucklingCombined))) {

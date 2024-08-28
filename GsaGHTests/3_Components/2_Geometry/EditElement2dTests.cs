@@ -1,14 +1,23 @@
 ﻿using System.Drawing;
+
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using OasysUnits;
+
 using Rhino.Collections;
 using Rhino.Geometry;
+
 using Xunit;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 
@@ -40,7 +49,7 @@ namespace GsaGHTests.Components.Geometry {
       var fe2dLoadPanel = new GsaElement2d(mesh);
 
       GH_OasysComponent feComponet = ComponentMother();
-    
+
       ComponentTestHelper.SetInput(feComponet, new GsaElement2dGoo(fe2dElement), 0);
       ComponentTestHelper.SetInput(feComponet, new GsaOffsetGoo(new GsaOffset(1, 2, 3, 4)), 4);
       var offset = (GsaOffsetGoo)ComponentTestHelper.GetOutput(feComponet, 6);

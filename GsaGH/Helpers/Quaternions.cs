@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using Rhino.Geometry;
 
 namespace GsaGH.Helpers {

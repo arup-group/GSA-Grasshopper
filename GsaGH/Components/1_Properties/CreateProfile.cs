@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 

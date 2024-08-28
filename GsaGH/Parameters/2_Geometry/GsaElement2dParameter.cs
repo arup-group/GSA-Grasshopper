@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
+
 using OasysGH.Parameters;
+
 using Rhino;
 using Rhino.DocObjects;
 using Rhino.Geometry;
@@ -47,8 +51,7 @@ namespace GsaGH.Parameters {
       foreach (GsaElement2dGoo goo in m_data.AllData(true).Cast<GsaElement2dGoo>()) {
         if (goo.Value.IsLoadPanel) {
           gH_BakeUtility.BakeObject(new GH_Curve(goo.Value.Curve), att, doc);
-        }
-        else {
+        } else {
           gH_BakeUtility.BakeObject(new GH_Mesh(goo.Value.Mesh), att, doc);
         }
         goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);

@@ -1,8 +1,12 @@
 ﻿using System;
+
 using Grasshopper.Kernel;
+
 using GsaGH;
 using GsaGH.Components;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.Components {

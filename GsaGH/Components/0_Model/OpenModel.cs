@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
+
 using GsaAPI;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.UI;
+
 using Rhino.UI;
 
 namespace GsaGH.Components {

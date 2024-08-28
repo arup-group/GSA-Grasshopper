@@ -1,16 +1,24 @@
 ﻿using System.Linq;
+
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Components.Properties;
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Rhino.Collections;
 using Rhino.Geometry;
-using Rhino.Render.ChangeQueue;
+
 using Xunit;
+
+
 
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
@@ -31,8 +39,7 @@ namespace GsaGHTests.Components.Geometry {
         var polyline = new Rhino.Geometry.Polyline(points);
         ComponentTestHelper.SetInput(
           comp, polyline.ToPolylineCurve(), 0);
-      }
-      else {
+      } else {
         var mesh = new Rhino.Geometry.Mesh();
         mesh.Vertices.Add(new Point3d(0, 0, 0));
         mesh.Vertices.Add(new Point3d(1, 0, 0));
@@ -91,8 +98,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.GetOutput(comp);
       if ((isCurve && isLoadPanel) || (!isCurve && !isLoadPanel)) {
         Assert.DoesNotContain("One runtime error", comp.InstanceDescription);
-      }
-      else {
+      } else {
         Assert.Contains("One runtime error", comp.InstanceDescription);
       }
     }

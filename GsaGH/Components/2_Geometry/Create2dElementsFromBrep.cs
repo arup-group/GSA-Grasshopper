@@ -3,22 +3,29 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
-using GsaGH.Helpers;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
+
 using Rhino.Collections;
 using Rhino.Geometry;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
@@ -146,11 +153,9 @@ namespace GsaGH.Components {
           var pt = new Point3d();
           if (ghObjectWrapper.Value is GsaNodeGoo nodeGoo) {
             nodes.Add(new GsaNode(nodeGoo.Value));
-          }
-          else if (GH_Convert.ToPoint3d(ghObjectWrapper.Value, ref pt, GH_Conversion.Both)) {
+          } else if (GH_Convert.ToPoint3d(ghObjectWrapper.Value, ref pt, GH_Conversion.Both)) {
             pts.Add(new Point3d(pt));
-          }
-          else {
+          } else {
             string type = ghObjectWrapper.Value.GetType().ToString();
             type = type.Replace("GsaGH.Parameters.", string.Empty);
             type = type.Replace("Goo", string.Empty);
@@ -179,8 +184,7 @@ namespace GsaGH.Components {
             default: {
                 if (GH_Convert.ToCurve(ghType.Value, ref crv, GH_Conversion.Both)) {
                   crvs.Add(crv.DuplicateCurve());
-                }
-                else {
+                } else {
                   this.AddRuntimeError($"Unable to convert incl. Curve/Mem1D input parameter of type "
                     + $"{ghType.GetTypeName()} to curve or 1D Member");
                 }
@@ -196,19 +200,16 @@ namespace GsaGH.Components {
       if (da.GetData(3, ref ghTyp)) {
         if (ghTyp.Value is GsaProperty2dGoo prop2DGoo) {
           prop2d = prop2DGoo.Value;
-        }
-        else {
+        } else {
           if (GH_Convert.ToInt32(ghTyp.Value, out int idd, GH_Conversion.Both)) {
             prop2d.Id = idd;
-          }
-          else {
+          } else {
             this.AddRuntimeError(
               "Unable to convert PA input to a 2D Property of reference integer");
             return;
           }
         }
-      }
-      else {
+      } else {
         prop2d.Id = 0;
       }
 

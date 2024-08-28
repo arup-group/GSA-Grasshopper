@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.UI;
+
 using Rhino;
 using Rhino.DocObjects;
 

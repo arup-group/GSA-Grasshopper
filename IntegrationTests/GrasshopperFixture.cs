@@ -1,13 +1,20 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+
 using Grasshopper.Plugin;
+
 using GsaGH.Helpers;
+
 using Interop.Gsa_10_2;
+
 using OasysGH.Units;
+
 using Rhino;
 using Rhino.Runtime.InProcess;
+
 using RhinoInside;
+
 using Xunit;
 
 namespace IntegrationTests {

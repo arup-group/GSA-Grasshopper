@@ -1,6 +1,6 @@
 # Example Files
 
-This folder contains a number of example files for GSA-Grasshopper plugin. 
+This folder contains a number of example files for GSA-Grasshopper plugin.
 
 ## Samples
 
@@ -12,7 +12,7 @@ GsaGH is based on GsaAPI, feel free to copy the code from this repo or check out
 
 ## Unit tests
 
-All files in this folder and subfolders forms part of the GsaGH project's unit testing ('Integration Tests'). The files are run and verified as part of all new releases. 
+All files in this folder and subfolders forms part of the GsaGH project's unit testing ('Integration Tests'). The files are run and verified as part of all new releases.
 
 ![tests](https://github.com/arup-group/GSA-Grasshopper/assets/25223248/9001e00f-37a2-4860-b8ec-4714b2b232d0)
 

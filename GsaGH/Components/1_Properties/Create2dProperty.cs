@@ -2,21 +2,27 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
@@ -84,8 +90,7 @@ namespace GsaGH.Components {
       if (property2d != null) {
         return property2d.SupportType != SupportType.Auto && property2d.SupportType != SupportType.AllEdges
           && property2d.SupportType != SupportType.OneWay && property2d.SupportType != SupportType.TwoWay;
-      }
-      else {
+      } else {
         return _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
           && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges)
            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.OneWay)
@@ -191,34 +196,29 @@ namespace GsaGH.Components {
               try {
                 if (GH_Convert.ToInt32(ghReferenceSurface.Value, out int reference, GH_Conversion.Both)) {
                   prop.ApiProp2d.ReferenceSurface = (ReferenceSurface)reference;
-                }
-                else if (GH_Convert.ToString(ghReferenceSurface, out string value, GH_Conversion.Both)) {
+                } else if (GH_Convert.ToString(ghReferenceSurface, out string value, GH_Conversion.Both)) {
                   prop.ApiProp2d.ReferenceSurface = (ReferenceSurface)Enum.Parse(typeof(ReferenceSurface), value, ignoreCase: true);
                 }
-              }
-              catch {
+              } catch {
                 this.AddRuntimeError("Unable to convert input " + ghReferenceSurface.Value +
                   " to a Reference Surface (Middle = 0, Top = 1, Bottom = 2)");
                 return;
               }
-            }
-            else {
+            } else {
               prop.ApiProp2d.ReferenceSurface = ReferenceSurface.Middle;
             }
 
             prop.AdditionalOffsetZ = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
           }
         }
-      }
-      else {
+      } else {
         prop.ApiProp2d.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
         if (IsLegacySupportEdge(prop.ApiProp2d)) {
           int referenceEdge = 0;
           if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0
             && referenceEdge <= 4) {
             prop.ApiProp2d.ReferenceEdge = referenceEdge;
-          }
-          else {
+          } else {
             this.AddRuntimeWarning("Input RE failed to collect data");
           }
         }
@@ -232,8 +232,7 @@ namespace GsaGH.Components {
 
       if (mode == Prop2dType.LoadPanel) {
         _supportTypeIndex = _supportDropDown.ToList().FindIndex(x => x.Value == _selectedItems[1]);
-      }
-      else if (mode != Prop2dType.Fabric) {
+      } else if (mode != Prop2dType.Fabric) {
         _lengthUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), _selectedItems[1]);
       }
 

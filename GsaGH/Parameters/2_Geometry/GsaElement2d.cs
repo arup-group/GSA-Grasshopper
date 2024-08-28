@@ -7,19 +7,22 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography;
+
 using Grasshopper;
 using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.Import;
-using Newtonsoft.Json.Linq;
+
 using OasysUnits;
+
 using Rhino.Collections;
 using Rhino.Geometry;
+
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -182,8 +185,7 @@ namespace GsaGH.Parameters {
         if (ApiElements[i].IsLoadPanel) {
           Curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
           points.Add(polyline.CenterPoint());
-        }
-        else {
+        } else {
           Point3d pt = Mesh.Faces.GetFaceCenter(faceIndex);
           int index = 0;
 
@@ -228,8 +230,7 @@ namespace GsaGH.Parameters {
           return "P" + polyline.Count;
         }
         return "Null";
-      }
-      else {
+      } else {
         if (!Mesh.IsValid) {
           return "Null";
         }

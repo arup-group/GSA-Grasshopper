@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+
 using GsaAPI;
+
 using GsaGH.Helpers.Import;
+
 using Rhino.Geometry;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
@@ -19,8 +23,7 @@ namespace GsaGH.Parameters {
           var elem = new GsaElement1d(
             item, model.ApiNodes, springProperty, model.ApiElementLocalAxes[item.Key], model.ModelUnit);
           elem1dGoos.Add(new GsaElement1dGoo(elem));
-        }
-        else {
+        } else {
           GsaSection section = model.GetSection(item.Value);
           var elem = new GsaElement1d(
             item, model.ApiNodes, section, model.ApiElementLocalAxes[item.Key], model.ModelUnit);
@@ -128,8 +131,7 @@ namespace GsaGH.Parameters {
             var singleelement2D = new GsaElement2d(apiElems, mesh, propList);
             elem2dGoos.Add(new GsaElement2dGoo(singleelement2D));
           }
-        }
-        else {
+        } else {
           // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
           var element2D = new GsaElement2d(elems, m, prop2Ds);
 
@@ -208,8 +210,7 @@ namespace GsaGH.Parameters {
             var singleelement3D = new GsaElement3d(apiElems, mesh, propList);
             elem3dGoos.Add(new GsaElement3dGoo(singleelement3D));
           }
-        }
-        else {
+        } else {
           // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
           var element3D = new GsaElement3d(elems, m, prop3Ds);
           elem3dGoos.Add(new GsaElement3dGoo(element3D));

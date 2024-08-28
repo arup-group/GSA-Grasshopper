@@ -5,21 +5,29 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
+
 using Rhino.Geometry;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {

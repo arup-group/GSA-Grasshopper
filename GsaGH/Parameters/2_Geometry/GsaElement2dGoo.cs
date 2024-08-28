@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
+
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.Graphics;
+
 using OasysGH;
 using OasysGH.Parameters;
+
 using Rhino.Collections;
 using Rhino.Geometry;
 
@@ -30,8 +33,7 @@ namespace GsaGH.Parameters {
             target = (TQ)(object)new GH_Curve(Value.Curve);
             return true;
           }
-        }
-        else {
+        } else {
           if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
             target = (TQ)(object)new GH_Mesh(Value.Mesh);
             return true;
@@ -52,8 +54,7 @@ namespace GsaGH.Parameters {
             ? Colours.Element2dFaceLP : Colours.Element2dFaceSelectedLP);
           }
         }
-      }
-      else {
+      } else {
         if (Value.Mesh != null) {
           args.Pipeline.DrawMeshShaded(Value?.Mesh,
           args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)
@@ -77,8 +78,7 @@ namespace GsaGH.Parameters {
             args.Pipeline.DrawBrepWires(brep, args.Color == Color.FromArgb(255, 150, 0, 0) ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, -1);
           }
         }
-      }
-      else {
+      } else {
         if (CentralSettings.PreviewMeshEdges == false || Value.Mesh == null) {
           return;
         }
@@ -99,8 +99,7 @@ namespace GsaGH.Parameters {
       }
       if (Value.IsLoadPanel) {
         return Value.Curve;
-      }
-      else {
+      } else {
         return Value.Mesh;
       }
 
@@ -115,8 +114,7 @@ namespace GsaGH.Parameters {
         Curve m = Value.Curve.DuplicateCurve();
         xmorph.Morph(m);
         elem.Curve = m;
-      }
-      else {
+      } else {
         Mesh m = Value.Mesh.DuplicateMesh();
         xmorph.Morph(m);
         elem.Mesh = m;
@@ -138,8 +136,7 @@ namespace GsaGH.Parameters {
         Curve m = Value.Curve.DuplicateCurve();
         m.Transform(xform);
         elem.Curve = m;
-      }
-      else {
+      } else {
         Mesh m = Value.Mesh.DuplicateMesh();
         m.Transform(xform);
         elem.Mesh = m;

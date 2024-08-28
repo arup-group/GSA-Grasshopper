@@ -7,28 +7,33 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using GH_IO.Serialization;
+
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Geometry.Delaunay;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
-using Rhino;
+
 using Rhino.Display;
 using Rhino.Geometry;
-using Rhino.Geometry.Collections;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {
@@ -131,8 +136,7 @@ namespace GsaGH.Components {
             args.Display.DrawMeshShaded(mesh, Colours.Element2dFace);
           }
         }
-      }
-      else {
+      } else {
 
         if (_cachedDisplayCurveWithoutParent != null) {
           foreach (Brep brep in _cachedDisplayCurveWithoutParent) {
@@ -182,8 +186,7 @@ namespace GsaGH.Components {
           foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
             args.Display.DrawMeshWires(mesh, Colours.Element2dEdgeSelected, 2);
           }
-        }
-        else {
+        } else {
           foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
             args.Display.DrawMeshWires(mesh, Colours.Element2dEdge, 1);
           }
@@ -195,8 +198,7 @@ namespace GsaGH.Components {
           foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
             args.Display.DrawMeshWires(mesh, Colours.Element2dEdgeSelected, 2);
           }
-        }
-        else {
+        } else {
           foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
             args.Display.DrawMeshWires(mesh, Colours.Element2dEdge, 1);
           }
@@ -210,8 +212,7 @@ namespace GsaGH.Components {
               args.Display.DrawBrepWires(brep, Colours.Element2dEdgeSelected, -1);
             }
           }
-        }
-        else {
+        } else {
           foreach (Brep brep in _cachedDisplayCurveWithoutParent) {
             if (brep != null) {
               args.Display.DrawBrepWires(brep, Colours.Element2dEdge, -1);
@@ -234,13 +235,11 @@ namespace GsaGH.Components {
             if ((Color)node.Value.ApiNode.Colour != Color.FromArgb(0, 0, 0)) {
               args.Display.DrawPoint(node.Value.Point, PointStyle.RoundSimple, 3,
                 (Color)node.Value.ApiNode.Colour);
-            }
-            else {
+            } else {
               Color col = Colours.Node;
               args.Display.DrawPoint(node.Value.Point, PointStyle.RoundSimple, 3, col);
             }
-          }
-          else {
+          } else {
             args.Display.DrawPoint(node.Value.Point, PointStyle.RoundControlPoint, 3,
               Colours.NodeSelected);
           }
@@ -254,8 +253,7 @@ namespace GsaGH.Components {
               if (node.Value.SupportPreview.Text != null) {
                 args.Display.Draw3dText(node.Value.SupportPreview.Text, Colours.Support);
               }
-            }
-            else {
+            } else {
               if (node.Value.SupportPreview.SupportSymbol != null) {
                 args.Display.DrawBrepShaded(node.Value.SupportPreview.SupportSymbol, Colours.SupportSymbolSelected);
               }
@@ -360,8 +358,7 @@ namespace GsaGH.Components {
 
           dropDownItems.Add(tempcontent);
         }
-      }
-      else {
+      } else {
         throw new Exception("Component doesnt have 'dropdown' content stored");
       }
 
@@ -590,8 +587,7 @@ namespace GsaGH.Components {
 
         if (_mode == FoldMode.List) {
           data.SetDataList(4, results.Mem1ds.OrderBy(item => item.Value.Id));
-        }
-        else {
+        } else {
           var tree = new DataTree<GsaMember1dGoo>();
           foreach (GsaMember1dGoo element in results.Mem1ds) {
             tree.Add(element, new GH_Path(element.Value.Section.Id));
@@ -611,8 +607,7 @@ namespace GsaGH.Components {
 
         if (_mode == FoldMode.List) {
           data.SetDataList(1, results.Elem1ds.OrderBy(item => item.Value.Id));
-        }
-        else {
+        } else {
           var tree = new DataTree<GsaElement1dGoo>();
           foreach (GsaElement1dGoo element in results.Elem1ds) {
             tree.Add(element, new GH_Path(element.Value.Section.Id));
@@ -637,8 +632,7 @@ namespace GsaGH.Components {
 
         if (_mode == FoldMode.List) {
           data.SetDataList(5, results.Mem2ds.OrderBy(item => item.Value.Id));
-        }
-        else {
+        } else {
           var tree = new DataTree<GsaMember2dGoo>();
           foreach (GsaMember2dGoo element in results.Mem2ds) {
             tree.Add(element, new GH_Path(element.Value.Prop2d.Id));
@@ -655,8 +649,7 @@ namespace GsaGH.Components {
       if (!(results.Elem2ds is null) || results.Elem2ds.Count == 0) {
         if (_mode == FoldMode.List) {
           data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.Ids.First()));
-        }
-        else {
+        } else {
           var tree = new DataTree<GsaElement2dGoo>();
           foreach (GsaElement2dGoo element in results.Elem2ds) {
             tree.Add(element, new GH_Path(element.Value.ApiElements.First().Property));
@@ -676,21 +669,17 @@ namespace GsaGH.Components {
               if (parent > 0 && member2dKeys.Contains(parent)) {
                 if (elem.Value.IsLoadPanel) {
                   _cachedDisplayCurveWithParent.AddRange(elem.Value.PlanerBrep);
-                }
-                else {
+                } else {
                   element2dsShaded.Add(elem);
                 }
-              }
-              else {
+              } else {
                 if (elem.Value.IsLoadPanel) {
                   _cachedDisplayCurveWithoutParent.AddRange(elem.Value.PlanerBrep);
-                }
-                else {
+                } else {
                   element2dsNotShaded.Add(elem);
                 }
               }
-            }
-            catch (Exception) {
+            } catch (Exception) {
               element2dsNotShaded.Add(elem);
             }
           });
@@ -716,8 +705,7 @@ namespace GsaGH.Components {
 
         if (_mode == FoldMode.List) {
           data.SetDataList(6, results.Mem3ds.OrderBy(item => item.Value.Id));
-        }
-        else {
+        } else {
           var tree = new DataTree<GsaMember3dGoo>();
           foreach (GsaMember3dGoo element in results.Mem3ds) {
             tree.Add(element, new GH_Path(element.Value.Prop3d.Id));
@@ -732,8 +720,7 @@ namespace GsaGH.Components {
       if (!(results.Elem3ds is null) || results.Elem3ds.Count == 0) {
         if (_mode == FoldMode.List) {
           data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.Ids.First()));
-        }
-        else {
+        } else {
           var tree = new DataTree<GsaElement3dGoo>();
           foreach (GsaElement3dGoo element in results.Elem3ds) {
             tree.Add(element, new GH_Path(element.Value.ApiElements.First().Property));
@@ -750,12 +737,10 @@ namespace GsaGH.Components {
               int parent = elem.Value.ApiElements[0].ParentMember.Member;
               if (parent > 0 && member3dKeys.Contains(parent)) {
                 element3dsShaded.Add(elem);
-              }
-              else {
+              } else {
                 element3dsNotShaded.Add(elem);
               }
-            }
-            catch (Exception) {
+            } catch (Exception) {
               element3dsNotShaded.Add(elem);
             }
           });
@@ -823,8 +808,7 @@ namespace GsaGH.Components {
               break;
           }
         });
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         this.AddRuntimeWarning(e.InnerException?.Message);
       }
 
@@ -870,8 +854,7 @@ namespace GsaGH.Components {
         ((IGH_PreviewObject)Params.Output[4]).Hidden = false;
         ((IGH_PreviewObject)Params.Output[5]).Hidden = false;
         ((IGH_PreviewObject)Params.Output[6]).Hidden = false;
-      }
-      else {
+      } else {
         // set all to hidden
         _showSupports = false;
         for (int i = 0; i < Params.Output.Count - 1; i++) {

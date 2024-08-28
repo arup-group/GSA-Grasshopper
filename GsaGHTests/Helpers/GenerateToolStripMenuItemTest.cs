@@ -1,6 +1,9 @@
 ﻿using System.Windows.Forms;
+
 using GsaGH.Helpers.GH;
+
 using OasysGH.Units.Helpers;
+
 using Xunit;
 
 namespace GsaGHTests.Helpers {

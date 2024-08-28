@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+
 using Grasshopper.GUI.Gradient;
+
 using GsaAPI;
+
 using Rhino.Display;
 
 namespace GsaGH.Helpers.Graphics {
@@ -67,7 +70,7 @@ namespace GsaGH.Helpers.Graphics {
       get {
         var material = new DisplayMaterial {
           Diffuse = Color.FromArgb(50, 195, 218, 219),
-          Transparency =0.1,
+          Transparency = 0.1,
         };
         return material;
       }
@@ -77,7 +80,7 @@ namespace GsaGH.Helpers.Graphics {
       get {
         var material = new DisplayMaterial {
           Diffuse = Color.FromArgb(50, 195, 218, 219),
-          Transparency =0.2,
+          Transparency = 0.2,
         };
         return material;
       }
@@ -175,29 +178,19 @@ namespace GsaGH.Helpers.Graphics {
     public static Color VoidCutter => Color.FromArgb(255, 200, 0, 0);
 
     public static Color ElementType(ElementType elementType) {
-      switch ((int)elementType) {
-        case 1: return Color.FromArgb(255, 72, 99, 254);
-
-        case 2: return Color.FromArgb(255, 95, 190, 180);
-
-        case 23: return Color.FromArgb(255, 39, 52, 147);
-
-        case 3: return Color.FromArgb(255, 73, 101, 101);
-
-        case 21: return Color.FromArgb(255, 200, 81, 45);
-
-        case 20: return Color.FromArgb(255, 192, 67, 255);
-
-        case 9: return Color.FromArgb(255, 178, 178, 178);
-
-        case 10: return Color.FromArgb(255, 32, 32, 32);
-
-        case 24: return Color.FromArgb(255, 51, 82, 82);
-
-        case 19: return Color.FromArgb(255, 155, 18, 214);
-
-        default: return Color.FromArgb(255, 95, 190, 180);
-      }
+      return (int)elementType switch {
+        1 => Color.FromArgb(255, 72, 99, 254),
+        2 => Color.FromArgb(255, 95, 190, 180),
+        23 => Color.FromArgb(255, 39, 52, 147),
+        3 => Color.FromArgb(255, 73, 101, 101),
+        21 => Color.FromArgb(255, 200, 81, 45),
+        20 => Color.FromArgb(255, 192, 67, 255),
+        9 => Color.FromArgb(255, 178, 178, 178),
+        10 => Color.FromArgb(255, 32, 32, 32),
+        24 => Color.FromArgb(255, 51, 82, 82),
+        19 => Color.FromArgb(255, 155, 18, 214),
+        _ => Color.FromArgb(255, 95, 190, 180),
+      };
     }
 
     public static DisplayMaterial FaceCustom(Color colour) {
