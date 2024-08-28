@@ -37,7 +37,7 @@ namespace GsaGHTests.Components.Geometry {
         MeshingParameters.DefaultAnalysisMesh, 0.001);
 
       var fe2dElement = new GsaElement2d(mesh);
-      var fe2dLoadPanel = new GsaElement2d(mesh,true);
+      var fe2dLoadPanel = new GsaElement2d(mesh);
 
       GH_OasysComponent feComponet = ComponentMother();
     

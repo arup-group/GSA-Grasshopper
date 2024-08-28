@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Security.Cryptography;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Components;
 using Grasshopper.Kernel.Types;
 using GsaAPI;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -39,42 +41,36 @@ namespace GsaGH.Components {
 
     protected override void SolveInstance(IGH_DataAccess da) {
 
-      IGH_Goo geometry_parameter = null;
-      da.GetData(0, ref geometry_parameter);
+      IGH_Goo geometryParameter = null;
+      da.GetData(0, ref geometryParameter);
 
       GsaProperty2dGoo prop2dGoo = null;
-      bool prop2dAssigned = da.GetData(1, ref prop2dGoo);
+      bool isProp2dAssigned = da.GetData(1, ref prop2dGoo);
       bool isLoadPanel = false;
-      if (prop2dAssigned && prop2dGoo.Value.ApiProp2d != null) {
+      if (isProp2dAssigned && prop2dGoo.Value.ApiProp2d != null) {
         Prop2D apiProperty2d = prop2dGoo.Value.ApiProp2d;
         isLoadPanel = apiProperty2d.Type == Property2D_Type.LOAD;
       }
 
-      GsaElement2d elem = null;
-      switch (geometry_parameter) {
-        case GH_Mesh mesh:
-          elem = new GsaElement2d(mesh.Value, isLoadPanel);
-          break;
-        case GH_Curve curve:
-          if (!isLoadPanel) {
-            throw new ArgumentException("Specify mesh geometry as the input parameter to create a 2D element.");
-          }
-          if (curve.Value.TryGetPolyline(out Rhino.Geometry.Polyline polyline)) {
-            if (polyline.ToArray().Length < 3) {
-              throw new ArgumentException("A minimum of three points are required to create a 2D element.");
-            }
-            elem = new GsaElement2d(polyline);
-          }
-          else {
-            throw new ArgumentException("Unable to retrieve polylines from the given curve");
-          }
-          break;
-        default: {
-            throw new ArgumentException("Input geometry is not supported to create a 2D element.");
-          }
+      string exceptionMessage = InvalidGeometryForProperty.GetMessage(geometryParameter, isLoadPanel, isProp2dAssigned);
+      if (!string.IsNullOrEmpty(exceptionMessage)) {
+        this.AddRuntimeError(exceptionMessage);
+        return;
       }
 
-      if (prop2dAssigned) {
+      GsaElement2d elem = null;
+      switch (geometryParameter) {
+        case GH_Mesh mesh:
+          elem = new GsaElement2d(mesh.Value);
+          break;
+        case GH_Curve curve:
+          elem = new GsaElement2d(curve.Value);
+          break;
+        default:
+          break;
+      }
+      
+      if (isProp2dAssigned) {
         var prop2Ds = new List<GsaProperty2d>();
         for (int i = 0; i < elem.ApiElements.Count; i++) {
           prop2Ds.Add(prop2dGoo.Value);

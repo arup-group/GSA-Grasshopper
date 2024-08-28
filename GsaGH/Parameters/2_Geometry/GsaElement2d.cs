@@ -2,17 +2,21 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using Grasshopper;
 using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Types;
 using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.Import;
+using Newtonsoft.Json.Linq;
 using OasysUnits;
 using Rhino.Collections;
 using Rhino.Geometry;
@@ -29,7 +33,7 @@ namespace GsaGH.Parameters {
     public List<GSAElement> ApiElements { get; internal set; }
     public List<int> Ids { get; set; } = new List<int>();
     public Guid Guid { get; private set; } = Guid.NewGuid();
-    public Rhino.Geometry.Polyline PolyLine { get; set; } = new Rhino.Geometry.Polyline();
+    public Curve Curve { get; set; } = new PolylineCurve();
     public Mesh Mesh { get; set; } = new Mesh();
     public List<List<int>> TopoInt { get; internal set; }
     public Point3dList Topology { get; internal set; }
@@ -39,6 +43,8 @@ namespace GsaGH.Parameters {
       e => new Angle(e.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian)).ToList();
     public List<GsaProperty2d> Prop2ds { get; set; }
     public Section3dPreview Section3dPreview { get; private set; }
+    public List<Brep> PlanerBrep => Brep.CreatePlanarBreps(Curve, Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance).ToList();
+    public bool IsLoadPanel => (ApiElements != null) && (ApiElements.FirstOrDefault() != null) && ApiElements.FirstOrDefault().IsLoadPanel;
 
     /// <summary>
     /// Empty constructor instantiating a list of new API objects
@@ -51,13 +57,12 @@ namespace GsaGH.Parameters {
     /// Create new instance by casting from a Mesh
     /// </summary>
     /// <param name="mesh"></param>
-    /// <param name="isLoadPanel"></param>
-    public GsaElement2d(Mesh mesh, bool isLoadPanel = false) {
+    public GsaElement2d(Mesh mesh) {
       Mesh = mesh.DuplicateMesh();
       Mesh.Compact();
       Mesh.Vertices.CombineIdentical(true, false);
       Tuple<List<GSAElement>, Point3dList, List<List<int>>> convertMesh
-        = RhinoConversions.ConvertMeshToElem2d(mesh, isLoadPanel);
+        = RhinoConversions.ConvertMeshToElem2d(mesh, false);
       ApiElements = convertMesh.Item1;
       Topology = convertMesh.Item2;
       TopoInt = convertMesh.Item3;
@@ -67,20 +72,18 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create new instance by casting from a Polyline
     /// </summary>
-    /// <param name="polyline"></param>
-    public GsaElement2d(Rhino.Geometry.Polyline polyline) {
-      PolyLine = polyline.Duplicate();
+    /// <param name="curve"></param>
+    public GsaElement2d(Curve curve) {
+      Curve = curve.DuplicateCurve();
       ApiElements = new List<GSAElement> {
         new GSAElement(new LoadPanelElement())
       };
+      curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
       Topology = new Point3dList(polyline.ToArray());
-
       var topo = new List<int>();
-      int index = 0;
       foreach (Point3d p in polyline.ToList()) {
-        topo.Add(index++);
+        topo.Add(polyline.ToList().IndexOf(p));
       }
-
       TopoInt = new List<List<int>> {
         topo
       };
@@ -94,7 +97,7 @@ namespace GsaGH.Parameters {
     public GsaElement2d(GsaElement2d other) {
       Ids = other.Ids;
       Mesh = (Mesh)other.Mesh.DuplicateShallow();
-      PolyLine = other.PolyLine.Duplicate();
+      Curve = other.Curve.DuplicateCurve();
       ApiElements = other.DuplicateApiObjects();
       Topology = other.Topology?.Duplicate();
       TopoInt = other.TopoInt;
@@ -117,6 +120,27 @@ namespace GsaGH.Parameters {
       }
     }
 
+    /// <summary>
+    /// Create a new instance from an API object from an existing model
+    /// </summary>
+    internal GsaElement2d(GSAElement element, Curve curve, GsaProperty2d prop2d) {
+      Curve = curve;
+      ApiElements = new List<GSAElement>() { element };
+      curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
+      Topology = new Point3dList(polyline.ToArray());
+      var topo = new List<int>();
+      foreach (Point3d p in polyline.ToList()) {
+        topo.Add(polyline.ToList().IndexOf(p));
+      }
+      TopoInt = new List<List<int>> {
+        topo
+      };
+      Ids = new List<int>(new int[1]);
+      if (prop2d != null) {
+        Prop2ds = new List<GsaProperty2d>() { prop2d };
+      }
+    }
+
     public void CreateSection3dPreview() {
       Section3dPreview = new Section3dPreview(this);
     }
@@ -129,7 +153,7 @@ namespace GsaGH.Parameters {
       var elems = new List<GSAElement>();
       for (int i = 0; i < ApiElements.Count; i++) {
         GSAElement element2d = ApiElements[i];
-        GSAElement element = ApiElements[i].IsLoadPanel ? new GSAElement(new LoadPanelElement()) : new GSAElement(new Element()) {
+        GSAElement element = element2d.IsLoadPanel ? new GSAElement(new LoadPanelElement()) : new GSAElement(new Element()) {
           Group = element2d.Group,
           IsDummy = element2d.IsDummy,
           Name = element2d.Name.ToString(),
@@ -155,27 +179,34 @@ namespace GsaGH.Parameters {
       int faceIndex = 0;
       for (int i = 0; i < ApiElements.Count; i++) {
 
-        Point3d pt = Mesh.Faces.GetFaceCenter(faceIndex);
-        int index = 0;
+        if (ApiElements[i].IsLoadPanel) {
+          Curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
+          points.Add(polyline.CenterPoint());
+        }
+        else {
+          Point3d pt = Mesh.Faces.GetFaceCenter(faceIndex);
+          int index = 0;
 
-        switch (ApiElements[i].Type) {
-          case ElementType.QUAD8:
-            index = TopoInt[i][0];
-            pt = Mesh.Vertices[Mesh.Faces[faceIndex].C];
-            faceIndex += 8;
-            break;
+          switch (ApiElements[i].Type) {
+            case ElementType.QUAD8:
+              index = TopoInt[i][0];
+              pt = Mesh.Vertices[Mesh.Faces[faceIndex].C];
+              faceIndex += 8;
+              break;
 
-          case ElementType.TRI6:
-            pt = Mesh.Faces.GetFaceCenter(faceIndex + 4);
-            faceIndex += 4;
-            break;
+            case ElementType.TRI6:
+              pt = Mesh.Faces.GetFaceCenter(faceIndex + 4);
+              faceIndex += 4;
+              break;
 
-          default:
-            faceIndex++;
-            break;
+            default:
+              faceIndex++;
+              break;
+          }
+          points.Add(pt);
         }
 
-        points.Add(pt);
+
       }
       return points;
     }
@@ -192,14 +223,21 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      if (!Mesh.IsValid) {
+      if (IsLoadPanel) {
+        if (Curve != null && Curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline)) {
+          return "P" + polyline.Count;
+        }
         return "Null";
       }
-
-      string type = Mappings._elementTypeMapping.FirstOrDefault(
-        x => x.Value == ApiElements.First().Type).Key;
-      string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
-      return string.Join(" ", type, info).TrimSpaces();
+      else {
+        if (!Mesh.IsValid) {
+          return "Null";
+        }
+        string type = Mappings._elementTypeMapping.FirstOrDefault(
+       x => x.Value == ApiElements.First().Type).Key;
+        string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
+        return string.Join(" ", type, info).TrimSpaces();
+      }
     }
 
     public void UpdateMeshColours() {

@@ -379,5 +379,35 @@ namespace GsaGHTests.Parameters {
 
       return elem;
     }
+
+    private GsaElement2d CreateLoadPanel() {
+      var pts = new Point3dList {
+       new Point3d(0, 0, 0),
+       new Point3d(2, 0, 0),
+       new Point3d(2, 2, 0),
+       new Point3d(0, 2, 0),
+     };
+      pts.Add(pts[0]);
+      var pol = new Polyline(pts);
+
+      var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
+        MeshingParameters.DefaultAnalysisMesh, 0.001);
+      var elem = new GsaElement2d(pol.ToPolylineCurve());
+      return elem;
+    }
+
+    [Fact]
+    public void GetCenterPointsReturnsValidPointsForLoadPanel() {
+      GsaElement2d ele = CreateLoadPanel();
+
+      Point3dList points = ele.GetCenterPoints();
+
+      Assert.NotNull(points);
+      Assert.Single(points);
+      Assert.Equal(1, points[0].X);
+      Assert.Equal(1, points[0].Y);
+      Assert.Equal(0, points[0].Y);
+
+    }
   }
 }

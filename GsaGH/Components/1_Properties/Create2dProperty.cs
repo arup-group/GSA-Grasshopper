@@ -80,11 +80,23 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
+    private bool IsLegacySupportEdge(Prop2D property2d = null) {
+      if (property2d != null) {
+        return property2d.SupportType != SupportType.Auto && property2d.SupportType != SupportType.AllEdges
+          && property2d.SupportType != SupportType.OneWay && property2d.SupportType != SupportType.TwoWay;
+      }
+      else {
+        return _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
+          && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges)
+           && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.OneWay)
+           && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.TwoWay);
+      }
+    }
+
     public override void VariableParameterMaintenance() {
       switch (_mode) {
         case Prop2dType.LoadPanel:
-          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
-            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges)) {
+          if (IsLegacySupportEdge()) {
             SetReferenceEdgeInputAt(0);
           }
           return;
@@ -200,7 +212,7 @@ namespace GsaGH.Components {
       }
       else {
         prop.ApiProp2d.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
-        if (prop.ApiProp2d.SupportType != SupportType.Auto && prop.ApiProp2d.SupportType != SupportType.AllEdges) {
+        if (IsLegacySupportEdge(prop.ApiProp2d)) {
           int referenceEdge = 0;
           if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0
             && referenceEdge <= 4) {
@@ -339,8 +351,7 @@ namespace GsaGH.Components {
           break;
 
         case Prop2dType.LoadPanel:
-          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
-            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges)) {
+          if (IsLegacySupportEdge()) {
             Params.RegisterInputParam(new Param_Integer());
           }
           break;

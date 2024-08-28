@@ -7,26 +7,44 @@ using GsaGHTests.Helpers;
 using OasysGH.Components;
 using OasysUnits;
 using OasysUnits.Units;
+using Rhino.Collections;
 using Rhino.Geometry;
+using Rhino.Render.ChangeQueue;
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class CreateElement2dTests {
 
-    public static GH_OasysComponent ComponentMother() {
+    public static GH_OasysComponent ComponentMother(bool isCurve = false, bool isLoadPanel = false) {
       var comp = new Create2dElement();
+
       comp.CreateAttributes();
-      var mesh = new Mesh();
-      mesh.Vertices.Add(new Point3d(0, 0, 0));
-      mesh.Vertices.Add(new Point3d(1, 0, 0));
-      mesh.Vertices.Add(new Point3d(1, 1, 0));
-      mesh.Vertices.Add(new Point3d(0, 1, 0));
-      mesh.Faces.AddFace(0, 1, 2, 3);
-      ComponentTestHelper.SetInput(
-        comp, mesh, 0);
+      if (isCurve) {
+        var points = new Point3dList {
+        new Point3d(0, 0, 0),
+        new Point3d(1, 0, 0),
+        new Point3d(1, 1, 0),
+        new Point3d(0, 1, 0),
+      };
+        points.Add(points[0]);
+        var polyline = new Rhino.Geometry.Polyline(points);
+        ComponentTestHelper.SetInput(
+          comp, polyline.ToPolylineCurve(), 0);
+      }
+      else {
+        var mesh = new Rhino.Geometry.Mesh();
+        mesh.Vertices.Add(new Point3d(0, 0, 0));
+        mesh.Vertices.Add(new Point3d(1, 0, 0));
+        mesh.Vertices.Add(new Point3d(1, 1, 0));
+        mesh.Vertices.Add(new Point3d(0, 1, 0));
+        mesh.Faces.AddFace(0, 1, 2, 3);
+        ComponentTestHelper.SetInput(
+          comp, mesh, 0);
+      }
+
       ComponentTestHelper.SetInput(comp,
-       ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(false)), 1);
+       ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(isLoadPanel)), 1);
 
       return comp;
     }
@@ -62,5 +80,22 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(expected.Y, actual.Y, 11);
       Assert.Equal(expected.Z, actual.Z, 11);
     }
+
+    [Theory]
+    [InlineData(true, true)]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public void WillThrowExceptionIfProp2dIsNotCompatible(bool isCurve, bool isLoadPanel) {
+      GH_OasysComponent comp = ComponentMother(isCurve, isLoadPanel);
+      ComponentTestHelper.GetOutput(comp);
+      if ((isCurve && isLoadPanel) || (!isCurve && !isLoadPanel)) {
+        Assert.DoesNotContain("One runtime error", comp.InstanceDescription);
+      }
+      else {
+        Assert.Contains("One runtime error", comp.InstanceDescription);
+      }
+    }
+
   }
 }
