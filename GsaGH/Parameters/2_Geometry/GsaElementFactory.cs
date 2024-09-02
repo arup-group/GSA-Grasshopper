@@ -95,7 +95,6 @@ namespace GsaGH.Parameters {
         ConcurrentDictionary<int, GSAElement> elems = sortedElements[parentId];
         var prop2Ds = new ConcurrentDictionary<int, GsaProperty2d>();
         var mList = new ConcurrentDictionary<int, Mesh>();
-        var polylineList = new ConcurrentDictionary<int, Rhino.Geometry.Polyline>();
         Parallel.For(0, elems.Count, j => {
           int elementId = elems.Keys.ElementAt(j);
           Mesh faceMesh = GetMeshFromApiElement2d(elems[elementId], nodes, model.ModelUnit);

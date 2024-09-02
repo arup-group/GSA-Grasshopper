@@ -45,19 +45,20 @@ namespace GsaGH.Parameters {
     }
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
-      if (Value == null) { return; }
-      double tolerance = Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
+      if (Value == null) {
+        return;
+      }
       if (Value.IsLoadPanel) {
         if (Value.Curve != null) {
           foreach (Brep brep in Value.PlanerBrep) {
-            args.Pipeline.DrawBrepShaded(brep, args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)
+            args.Pipeline.DrawBrepShaded(brep, args.Material.Diffuse == Colours.EntityIsNotSelected
             ? Colours.Element2dFaceLP : Colours.Element2dFaceSelectedLP);
           }
         }
       } else {
         if (Value.Mesh != null) {
           args.Pipeline.DrawMeshShaded(Value?.Mesh,
-          args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)
+          args.Material.Diffuse == Colours.EntityIsNotSelected
             ? Colours.Element2dFace : Colours.Element2dFaceSelected);
         }
       }
@@ -66,23 +67,25 @@ namespace GsaGH.Parameters {
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
 
-      if (Value == null) { return; }
+      if (Value == null) {
+        return;
+      }
       double tolerance = Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
       Value.Section3dPreview?.DrawViewportWires(args);
       if (Value.Section3dPreview != null) {
-        args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, args.Color == Color.FromArgb(255, 150, 0, 0) ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, 1);
+        args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, 1);
       }
       if (Value.IsLoadPanel) {
         if (Value.Curve != null) {
           foreach (Brep brep in Value.PlanerBrep) {
-            args.Pipeline.DrawBrepWires(brep, args.Color == Color.FromArgb(255, 150, 0, 0) ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, -1);
+            args.Pipeline.DrawBrepWires(brep, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, -1);
           }
         }
       } else {
         if (CentralSettings.PreviewMeshEdges == false || Value.Mesh == null) {
           return;
         }
-        args.Pipeline.DrawMeshWires(Value.Mesh, args.Color == Color.FromArgb(255, 150, 0, 0) ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, 1);
+        args.Pipeline.DrawMeshWires(Value.Mesh, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, 1);
       }
     }
 

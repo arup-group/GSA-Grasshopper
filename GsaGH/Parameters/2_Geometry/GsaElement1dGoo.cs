@@ -66,7 +66,7 @@ namespace GsaGH.Parameters {
 
       if (Value.Line != null) {
         // this is a workaround to change colour between selected and not
-        if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+        if (args.Color == Colours.EntityIsNotSelected) {
           if (Value.ApiElement.IsDummy) {
             args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd,
               Colours.Dummy1D);

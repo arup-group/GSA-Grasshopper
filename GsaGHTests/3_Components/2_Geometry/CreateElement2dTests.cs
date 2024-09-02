@@ -40,7 +40,7 @@ namespace GsaGHTests.Components.Geometry {
         ComponentTestHelper.SetInput(
           comp, polyline.ToPolylineCurve(), 0);
       } else {
-        var mesh = new Rhino.Geometry.Mesh();
+        var mesh = new Mesh();
         mesh.Vertices.Add(new Point3d(0, 0, 0));
         mesh.Vertices.Add(new Point3d(1, 0, 0));
         mesh.Vertices.Add(new Point3d(1, 1, 0));

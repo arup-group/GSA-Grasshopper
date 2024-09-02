@@ -660,7 +660,6 @@ namespace GsaGH.Components {
 
         if (!((IGH_PreviewObject)Params.Output[5]).Hidden) {
           member2dKeys = results.Mem2ds.Select(item => item.Value.Id).ToList();
-          double tolerance = Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
           var element2dsShaded = new ConcurrentBag<GsaElement2dGoo>();
           var element2dsNotShaded = new ConcurrentBag<GsaElement2dGoo>();
           Parallel.ForEach(results.Elem2ds, elem => {

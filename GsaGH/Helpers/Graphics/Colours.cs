@@ -15,6 +15,7 @@ namespace GsaGH.Helpers.Graphics {
   /// </summary>
   [ExcludeFromCodeCoverage]
   public class Colours {
+    public static Color EntityIsNotSelected => Colours.EntityIsNotSelected;
     public static Brush ActiveBrush => new SolidBrush(ActiveColour);
     public static Color ActiveColour => GsaDarkBlue;
     public static Brush AnnotationTextBright => Brushes.White;

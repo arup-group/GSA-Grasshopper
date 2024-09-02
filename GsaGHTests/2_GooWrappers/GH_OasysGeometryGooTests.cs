@@ -2,6 +2,8 @@
 
 using Grasshopper.Kernel;
 
+using GsaGH.Helpers.Graphics;
+
 using OasysGH.Parameters;
 
 using Rhino.Display;
@@ -21,7 +23,7 @@ namespace GsaGHTests.GooWrappers {
       Grasshopper.CentralSettings.PreviewMeshEdges = true;
       MeshingParameters mp = grasshopperDocument.PreviewCurrentMeshParameters();
       var notSelectedMaterial = new DisplayMaterial {
-        Diffuse = Color.FromArgb(255, 150, 0, 0),
+        Diffuse = Colours.EntityIsNotSelected,
         Emission = Color.FromArgb(50, 190, 190, 190),
         Transparency = 0.1,
       };
@@ -35,7 +37,7 @@ namespace GsaGHTests.GooWrappers {
       var selectedMeshArgs = new GH_PreviewMeshArgs(rhinoViewPort, displayPipeline, selectedMaterial, mp);
 
       var notSelectedWireArgs = new GH_PreviewWireArgs(
-        rhinoViewPort, displayPipeline, Color.FromArgb(255, 150, 0, 0), 3);
+        rhinoViewPort, displayPipeline, Colours.EntityIsNotSelected, 3);
       var selectedWireArgs = new GH_PreviewWireArgs(
         rhinoViewPort, displayPipeline, Color.FromArgb(255, 150, 0, 1), 3);
 
