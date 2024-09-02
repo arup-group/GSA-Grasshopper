@@ -118,7 +118,6 @@ namespace GsaGH.Components {
       base.DrawViewportMeshes(args);
 
       if (Attributes.Selected) {
-
         if (_cachedDisplayCurveWithoutParent != null) {
           foreach (Brep brep in _cachedDisplayCurveWithoutParent) {
             args.Display.DrawBrepShaded(brep, Colours.Element2dFaceLP);
@@ -685,7 +684,6 @@ namespace GsaGH.Components {
 
           _cachedDisplayMeshWithParent.AddRange(element2dsShaded.Select(e => e.Value.Mesh));
           _cachedDisplayMeshWithoutParent.AddRange(element2dsNotShaded.Select(e => e.Value.Mesh));
-
         }
       }
 

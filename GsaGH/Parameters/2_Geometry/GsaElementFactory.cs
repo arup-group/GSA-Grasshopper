@@ -327,6 +327,7 @@ namespace GsaGH.Parameters {
         }
       }
       points.Add(points[0]);
+      
       return new PolylineCurve(points);
     }
 

@@ -2,13 +2,13 @@
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
-
 using GsaGH.Helpers.Graphics;
 
 using OasysGH;
 using OasysGH.Parameters;
 
 using Rhino.Geometry;
+
 namespace GsaGH.Parameters {
   /// <summary>
   /// Goo wrapper class, makes sure <see cref="GsaGridLine" /> can be used in Grasshopper.

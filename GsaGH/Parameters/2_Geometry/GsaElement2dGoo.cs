@@ -66,11 +66,9 @@ namespace GsaGH.Parameters {
     }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
-
       if (Value == null) {
         return;
       }
-      double tolerance = Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
       Value.Section3dPreview?.DrawViewportWires(args);
       if (Value.Section3dPreview != null) {
         args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, 1);
@@ -105,7 +103,6 @@ namespace GsaGH.Parameters {
       } else {
         return Value.Mesh;
       }
-
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {

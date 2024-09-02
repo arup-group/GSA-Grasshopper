@@ -207,8 +207,6 @@ namespace GsaGH.Parameters {
           }
           points.Add(pt);
         }
-
-
       }
       return points;
     }

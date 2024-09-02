@@ -406,7 +406,6 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void GetCenterPointsReturnsValidPointsForLoadPanel() {
       GsaElement2d ele = CreateLoadPanel();
-
       Point3dList points = ele.GetCenterPoints();
 
       Assert.NotNull(points);
@@ -414,7 +413,6 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(1, points[0].X);
       Assert.Equal(1, points[0].Y);
       Assert.Equal(0, points[0].Y);
-
     }
   }
 }

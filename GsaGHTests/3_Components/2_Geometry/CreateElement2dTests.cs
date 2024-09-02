@@ -18,8 +18,6 @@ using Rhino.Geometry;
 
 using Xunit;
 
-
-
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class CreateElement2dTests {
@@ -102,6 +100,5 @@ namespace GsaGHTests.Components.Geometry {
         Assert.Contains("One runtime error", comp.InstanceDescription);
       }
     }
-
   }
 }

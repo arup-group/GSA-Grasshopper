@@ -44,7 +44,6 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-
       IGH_Goo geometryParameter = null;
       da.GetData(0, ref geometryParameter);
 
