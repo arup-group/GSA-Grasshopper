@@ -238,6 +238,9 @@ namespace GsaGH.Components {
             case 2:
               mem.ApiMember.Type2D = AnalysisOrder.RIGID_DIAPHRAGM;
               break;
+            case 3:
+              mem.ApiMember.Type2D = AnalysisOrder.LOAD_PANEL;
+              break;
           }
         } else {
           try {
