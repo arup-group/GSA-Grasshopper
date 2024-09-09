@@ -191,7 +191,7 @@ namespace GsaGH.Components {
       var deltaT = new CoefficientOfThermalExpansion(
         material.AnalysisMaterial.CoefficientOfThermalExpansion,
         CoefficientOfThermalExpansionUnit
-         .InverseDegreeCelsius); //create unit from SI as API is in SI units
+         .PerDegreeCelsius); //create unit from SI as API is in SI units
       CoefficientOfThermalExpansionUnit temp
         = UnitsHelper.GetCoefficientOfThermalExpansionUnit(_temperatureUnit);
       deltaT = new CoefficientOfThermalExpansion(deltaT.As(temp), temp);

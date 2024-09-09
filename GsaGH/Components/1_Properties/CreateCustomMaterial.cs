@@ -163,14 +163,14 @@ namespace GsaGH.Components {
       da.GetData(3, ref poisson);
 
       CoefficientOfThermalExpansionUnit thermalExpansionUnit
-        = CoefficientOfThermalExpansionUnit.InverseDegreeCelsius;
+        = CoefficientOfThermalExpansionUnit.PerDegreeCelsius;
       switch (_temperatureUnit) {
         case TemperatureUnit.DegreeFahrenheit:
-          thermalExpansionUnit = CoefficientOfThermalExpansionUnit.InverseDegreeFahrenheit;
+          thermalExpansionUnit = CoefficientOfThermalExpansionUnit.PerDegreeFahrenheit;
           break;
 
         case TemperatureUnit.Kelvin:
-          thermalExpansionUnit = CoefficientOfThermalExpansionUnit.InverseKelvin;
+          thermalExpansionUnit = CoefficientOfThermalExpansionUnit.PerKelvin;
           break;
       }
 
@@ -179,7 +179,7 @@ namespace GsaGH.Components {
         PoissonsRatio = poisson,
         Density = Input.UnitNumber(this, da, 4, _densityUnit).As(DensityUnit.KilogramPerCubicMeter),
         CoefficientOfThermalExpansion = Input.UnitNumber(this, da, 5, thermalExpansionUnit, true)
-        .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
+        .As(CoefficientOfThermalExpansionUnit.PerDegreeCelsius),
         Name = name,
       };
 

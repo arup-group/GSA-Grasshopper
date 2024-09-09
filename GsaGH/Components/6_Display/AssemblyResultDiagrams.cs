@@ -278,7 +278,7 @@ namespace GsaGH.Components {
 
       double unitScale = ComputeUnitScale(autoScale);
       double computedScale
-        = GraphicsScalar.ComputeScale(result.Model, scale, lengthUnit, autoScale, unitScale);
+        = GraphicsScalar.ComputeScale(result.Model, scale, autoScale, unitScale);
       var graphic = new DiagramSpecification() {
         ListDefinition = list.Definition,
         ListType = list.Type,
