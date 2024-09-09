@@ -53,7 +53,7 @@ namespace GsaGHTests.Properties {
 
     [Fact]
     public void GetValuesFromExistingComponent() {
-      var prop2d = new GsaProperty2d(new Length(400.0, LengthUnit.Millimeter));
+      var prop2d = new GsaProperty2d(new Length(400, LengthUnit.Millimeter));
 
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, new GsaProperty2dGoo(prop2d), 0);
