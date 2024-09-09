@@ -216,14 +216,14 @@ namespace GsaGHTests.Components.Results {
     }
 
     [Theory]
-    //[InlineData(ResultVector6.X)]
-    //[InlineData(ResultVector6.Y)]
-    //[InlineData(ResultVector6.Z)]
-    //[InlineData(ResultVector6.Xyz)]
+    [InlineData(ResultVector6.X)]
+    [InlineData(ResultVector6.Y)]
+    [InlineData(ResultVector6.Z)]
+    [InlineData(ResultVector6.Xyz)]
     [InlineData(ResultVector6.Xx)]
-    //[InlineData(ResultVector6.Yy)]
-    //[InlineData(ResultVector6.Zz)]
-    //[InlineData(ResultVector6.Xxyyzz)]
+    [InlineData(ResultVector6.Yy)]
+    [InlineData(ResultVector6.Zz)]
+    [InlineData(ResultVector6.Xxyyzz)]
     public void NodeReactionForceValuesFromAnalysisCaseTest(ResultVector6 component) {
       // Assemble
       var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
