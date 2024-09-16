@@ -35,15 +35,17 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Edit2dMember;
     private AngleUnit _angleUnit = AngleUnit.Radian;
     private readonly Dictionary<int, string> _elementTypeMapping = new Dictionary<int, string> {
-      {
-        0, "Linear - Tri3/Quad4 Elements (default)"
-      }, {
-        1, "Quadratic - Tri6/Quad8 Elements"
-      }, {
-        2, "Rigid Diaphragm"
-      }, {
-        3, "Load Panel"
-      }
+      { 0, "Linear - Tri3/Quad4 Elements (default)" },
+      { 1, "Quadratic - Tri6/Quad8 Elements" },
+      { 2, "Rigid Diaphragm" },
+      { 3, "Load Panel" }
+    };
+    private Dictionary<int, string> _memberTypeMapping = new Dictionary<int, string> {
+      { 1, "Generic 2D (default)" },
+      { 4, "Slab" },
+      { 5, "Wall" },
+      { 7, "Ribbed Slab" },
+      { 12, "Void-cutter" }
     };
 
     public Edit2dMember() : base("Edit 2D Member", "Mem2dEdit", "Modify GSA 2D Member", CategoryName.Name(),
@@ -91,15 +93,16 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaProperty2dParameter(), "2D Property", "PA", "Set new 2D Property.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member2d Group", "Gr", "Set Member 2d Group", GH_ParamAccess.item);
-      pManager.AddTextParameter("Member Type", "mT",
-        "Set 2D Member Type" + Environment.NewLine + "Default is 1: Generic 2D - Accepted inputs are:"
-        + Environment.NewLine + "4: Slab" + Environment.NewLine + "5: Wall" + Environment.NewLine + "7: Ribbed Slab"
-        + Environment.NewLine + "12: Void-cutter", GH_ParamAccess.item);
+
+      // Member Type
+      string memberTypeOptions = TextFormatHelper.FormatNumberedList(_memberTypeMapping);
+      string memberTypeDescription
+        = $"Set 2D Member Type{Environment.NewLine}Accepted inputs are:{Environment.NewLine}{memberTypeOptions}";
+      pManager.AddTextParameter("Member Type", "mT", memberTypeDescription, GH_ParamAccess.item);
 
       // Element Type
       string elementTypeOptions = TextFormatHelper.FormatNumberedList(_elementTypeMapping);
-      string elementTypeDescription
-        = $"Set Member 2D Analysis Element Type{Environment.NewLine}"
+      string elementTypeDescription = $"Set Member 2D Analysis Element Type{Environment.NewLine}"
         + $"Accepted inputs are:{Environment.NewLine}{elementTypeOptions}";
       pManager.AddTextParameter("2D Element Type", "eT", elementTypeDescription, GH_ParamAccess.item);
 
