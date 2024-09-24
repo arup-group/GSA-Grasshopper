@@ -180,7 +180,19 @@ namespace GsaGH.Components {
           break;
       }
 
-      if (_mode != Prop2dType.LoadPanel) {
+      if (_mode == Prop2dType.LoadPanel) {
+        prop.ApiProp2d.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
+        if (IsLegacySupportEdge(prop.ApiProp2d)) {
+          this.AddRuntimeWarning($"You are using a legacy support type ({prop.ApiProp2d.SupportType} for Load Panel."
+            + $"\nThis will be removed in future versions. Please use OneWay or TwoWay instead.");
+          int referenceEdge = 0;
+          if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0 && referenceEdge <= 4) {
+            prop.ApiProp2d.ReferenceEdge = referenceEdge;
+          } else {
+            this.AddRuntimeWarning("Input RE failed to collect data");
+          }
+        }
+      } else {
         prop.ApiProp2d.AxisProperty = 0;
 
         if (_mode != Prop2dType.Fabric) {
@@ -210,16 +222,6 @@ namespace GsaGH.Components {
             }
 
             prop.AdditionalOffsetZ = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
-          }
-        }
-      } else {
-        prop.ApiProp2d.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
-        if (IsLegacySupportEdge(prop.ApiProp2d)) {
-          int referenceEdge = 0;
-          if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0 && referenceEdge <= 4) {
-            prop.ApiProp2d.ReferenceEdge = referenceEdge;
-          } else {
-            this.AddRuntimeWarning("Input RE failed to collect data");
           }
         }
       }
