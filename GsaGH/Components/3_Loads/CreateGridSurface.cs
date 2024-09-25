@@ -215,11 +215,6 @@ namespace GsaGH.Components {
         }
       }
 
-      var gs = new GsaAPI.GridSurface(name);
-      if (idSet) {
-        gs.GridPlane = gps.GridSurface.GridPlane;
-      }
-
       var ghInteger = new GH_Integer();
       if (da.GetData(1, ref ghInteger)) {
         GH_Convert.ToInt32(ghInteger, out int id, GH_Conversion.Both);
@@ -240,6 +235,7 @@ namespace GsaGH.Components {
                 || value.Value.EntityType == EntityType.Member) {
                 gps._refList = value.Value;
                 gps._referenceType = ReferenceType.List;
+                gps.GridSurface.Elements = value.Value.Definition;
               } else {
                 this.AddRuntimeWarning(
                   "List must be of type Element or Member to apply to beam loading");
@@ -332,6 +328,13 @@ namespace GsaGH.Components {
           }
         }
       }
+
+      //update grid sirface
+      var gs = new GsaAPI.GridSurface(name);
+      if (idSet) {
+        gs.GridPlane = gps.GridSurface.GridPlane;
+      }
+      gs.Elements = gps.GridSurface.Elements;
 
       switch (_mode) {
         case FoldMode.OneDimensionalOneWay:

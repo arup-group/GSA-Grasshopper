@@ -118,5 +118,34 @@ namespace GsaGHTests.Components.Loads {
       comp.Params.Output[0].CollectData();
       Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
     }
+
+    [Fact]
+    public void GridSurfaceListInputIsParsedCorrectly_GSAGH543() {
+      GH_OasysDropDownComponent comp = ComponentMother();
+
+      var gridPlane
+        = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(
+          CreateGridPlaneTests.ComponentMother());
+
+      ComponentTestHelper.SetInput(comp, gridPlane, 0);
+      ComponentTestHelper.SetInput(comp, 42, 1);
+      ComponentTestHelper.SetInput(comp, "G6", 2);
+      ComponentTestHelper.SetInput(comp, "test", 3);
+      ComponentTestHelper.SetInput(comp, 99, 4);
+      ComponentTestHelper.SetInput(comp, Math.PI, 5);
+
+      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
+      GsaGridPlaneSurface gridSurface = output.Value;
+
+      Assert.Equal("G6", gridSurface.GridSurface.Elements);
+      Assert.Equal(42, gridSurface.GridPlaneId);
+      Assert.Equal("10", gridSurface.Elevation);
+      Assert.Equal("test", gridSurface.GridPlane.Name);
+      Assert.Equal(42, gridSurface.GridSurfaceId);
+      Assert.Equal("test", gridSurface.GridSurface.Name);
+      Assert.Equal("99", gridSurface.Tolerance);
+      Assert.Equal(Span_Type.ONE_WAY, gridSurface.GridSurface.SpanType);
+      Assert.Equal(180, gridSurface.GridSurface.Direction);
+    }
   }
 }
