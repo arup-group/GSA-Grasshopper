@@ -23,7 +23,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to open an existing GSA model
   /// </summary>
-  public class OpenModel : GH_OasysDropDownComponent {
+  public class OpenModel : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("10bb2aac-504e-4054-9708-5053fbca61fc");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -36,9 +36,6 @@ namespace GsaGH.Components {
     }
 
     public override void CreateAttributes() {
-      if (!_isInitialised) {
-        InitialiseDropdowns();
-      }
       m_attributes = new ButtonComponentAttributes(this, "Open", OpenFile, "Open GSA file");
     }
 
@@ -82,12 +79,6 @@ namespace GsaGH.Components {
       ExpireSolution(true);
     }
 
-    public override void SetSelected(int i, int j) { }
-
-    protected override void InitialiseDropdowns() {
-      _isInitialised = true;
-    }
-
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Filename and path", "File",
         "GSA model to open and work with." + Environment.NewLine
@@ -99,7 +90,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaModelParameter());
     }
 
-    protected override void SolveInternal(IGH_DataAccess da) {
+    protected override void SolveInstance(IGH_DataAccess da) {
       var model = new Model();
       string fileName = string.Empty;
       da.GetData(0, ref fileName);
