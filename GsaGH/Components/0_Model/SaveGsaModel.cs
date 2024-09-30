@@ -28,7 +28,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to save a GSA model
   /// </summary>
-  public class SaveGsaModel : GH_OasysComponent {
+  public class SaveGsaModel : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("e9989dce-717e-47ea-992c-e22d718e9ebb");
     public override GH_Exposure Exposure => GH_Exposure.primary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -43,9 +43,14 @@ namespace GsaGH.Components {
     }
 
     public override void CreateAttributes() {
+      if (!_isInitialised) {
+        InitialiseDropdowns();
+      }
       m_attributes = new ThreeButtonComponentAttributes(this, "Save", "Save As", "Open in GSA",
         SaveButtonClick, SaveAsButtonClick, OpenGsaExe, true, "Save GSA file");
     }
+
+    public override void SetSelected(int i, int j) { }
 
     public override bool Read(GH_IReader reader) {
       bool flag = base.Read(reader);
@@ -57,6 +62,10 @@ namespace GsaGH.Components {
       saveInput.PersistentData.Clear();
       saveInput.PersistentData.Append(new GH_Boolean(true));
       return flag;
+    }
+
+    protected override void InitialiseDropdowns() {
+      _isInitialised = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -71,7 +80,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaModelParameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var ghTyp = new GH_ObjectWrapper();
       Message = string.Empty;
       if (!da.GetData(0, ref ghTyp)) {

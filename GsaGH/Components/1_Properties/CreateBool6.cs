@@ -18,7 +18,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to create a new Bool6
   /// </summary>
-  public class CreateBool6 : GH_OasysComponent {
+  public class CreateBool6 : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("1d5f7b92-57a2-4c53-a8c7-419f066a7430");
     public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
@@ -37,6 +37,9 @@ namespace GsaGH.Components {
     }
 
     public override void CreateAttributes() {
+      if (!_isInitialised) {
+        InitialiseDropdowns();
+      }
       var bool6 = new List<List<bool>>() {
         new List<bool>() {
           _x,
@@ -80,9 +83,10 @@ namespace GsaGH.Components {
       _xx = bool6[0][3];
       _yy = bool6[0][4];
       _zz = bool6[0][5];
-      CreateAttributes();
+      base.UpdateUI();
     }
 
+    public override void SetSelected(int i, int j) { }
 
     public override bool Write(GH_IWriter writer) {
       writer.SetBoolean("x", _x);
@@ -93,6 +97,10 @@ namespace GsaGH.Components {
       writer.SetBoolean("zz", _zz);
 
       return base.Write(writer);
+    }
+
+    protected override void InitialiseDropdowns() {
+      _isInitialised = true;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -115,7 +123,7 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaBool6Parameter());
     }
 
-    protected override void SolveInstance(IGH_DataAccess da) {
+    protected override void SolveInternal(IGH_DataAccess da) {
       var uiSet = new GsaBool6(_x, _y, _z, _xx, _yy, _zz);
       var bool6 = new GsaBool6(uiSet);
 
