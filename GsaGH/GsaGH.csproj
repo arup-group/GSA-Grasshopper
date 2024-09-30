@@ -45,7 +45,7 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="OasysGH" Version="1.2.3" />
+    <PackageReference Include="OasysGH" Version="1.2.4" />
     <PackageReference Include="OasysUnits" Version="1.2.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
