@@ -11,7 +11,7 @@ namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
   public class CreateBool6Tests {
 
-    public static GH_OasysDropDownComponent ComponentMother() {
+    public static GH_OasysComponent ComponentMother() {
       var comp = new CreateBool6();
       comp.CreateAttributes();
 
@@ -27,7 +27,7 @@ namespace GsaGHTests.Components.Properties {
 
     [Fact]
     public void CreateComponent() {
-      GH_OasysDropDownComponent comp = ComponentMother();
+      GH_OasysComponent comp = ComponentMother();
 
       var output = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp);
       Assert.True(output.Value.X);
