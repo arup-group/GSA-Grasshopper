@@ -36,10 +36,10 @@ namespace GsaGHTests.Components.Properties {
     public void StandardMaterialsSurviveRoundTrip() {
       var createMaterialComponent = (CreateMaterial)ComponentMother();
 
-      for (int i = 0; i < createMaterialComponent._dropDownItems.Count; i++) {
+      for (int i = 0; i < createMaterialComponent.DropDownItems.Count; i++) {
         createMaterialComponent.SetSelected(i, 0);
 
-        for (int j = 0; j < createMaterialComponent._dropDownItems[i].Count; j++) {
+        for (int j = 0; j < createMaterialComponent.DropDownItems[i].Count; j++) {
           createMaterialComponent.SetSelected(i, j);
           var material
             = (GsaMaterialGoo)ComponentTestHelper.GetOutput(createMaterialComponent, 0);

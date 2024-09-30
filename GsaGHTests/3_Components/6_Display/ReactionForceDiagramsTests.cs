@@ -174,16 +174,16 @@ namespace GsaGHTests.Components.Display {
       var obj = new ReactionForceDiagrams();
       obj.CreateAttributes();
 
-      Assert.NotNull(obj._spacerDescriptions);
-      Assert.NotNull(obj._dropDownItems);
-      Assert.NotNull(obj._selectedItems);
-      Assert.True(obj._isInitialised);
+      Assert.NotNull(obj.SpacerDescriptions);
+      Assert.NotNull(obj.DropDownItems);
+      Assert.NotNull(obj.SelectedItems);
+      Assert.True(obj.IsInitialised);
     }
 
     [Fact]
     private void WhenInitialiseDropdowns_ThenDropDownItems_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();
-      obj.InitialiseDropdowns();
+
 
       var expectedValues = new List<List<string>> {
         new List<string> {
@@ -197,34 +197,34 @@ namespace GsaGHTests.Components.Display {
           "Resolved |M|",
         },
       };
-      Assert.Equal(expectedValues, obj._dropDownItems);
+      Assert.Equal(expectedValues, obj.DropDownItems);
     }
 
     [Fact]
     private void WhenInitialiseDropdowns_ThenIsInitialisedValue_ShouldBeTrue() {
       var obj = new ReactionForceDiagrams();
-      obj.InitialiseDropdowns();
 
-      Assert.True(obj._isInitialised);
+
+      Assert.True(obj.IsInitialised);
     }
 
     [Fact]
     private void WhenInitialiseDropdowns_ThenSelectedItems_ShouldBeSetTo() {
       var obj = new ReactionForceDiagrams();
-      obj.InitialiseDropdowns();
+
 
       var expectedValues = new List<string> {
         "Resolved |F|",
       };
-      Assert.Equal(expectedValues, obj._selectedItems);
+      Assert.Equal(expectedValues, obj.SelectedItems);
     }
 
     [Fact]
     private void WhenInitialiseDropdowns_ThenSpacerDescription_ShouldBeSet() {
       var obj = new ReactionForceDiagrams();
-      obj.InitialiseDropdowns();
 
-      Assert.Equal(obj._spacerDescriptions, new List<string>() {
+
+      Assert.Equal(obj.SpacerDescriptions, new List<string>() {
         "Component",
       });
     }
@@ -232,14 +232,14 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     private void WhenSetSelected_ThenSelectedItems_ShouldBeValid() {
       var obj = new ReactionForceDiagrams();
-      string defaultValue = obj._dropDownItems[0][3];
-      string expectedValue = obj._dropDownItems[0][0];
+      string defaultValue = obj.DropDownItems[0][3];
+      string expectedValue = obj.DropDownItems[0][0];
 
-      Assert.Equal(obj._selectedItems[0], defaultValue);
+      Assert.Equal(obj.SelectedItems[0], defaultValue);
 
       obj.SetSelected(0, 0);
 
-      Assert.Equal(obj._selectedItems[0], expectedValue);
+      Assert.Equal(obj.SelectedItems[0], expectedValue);
     }
   }
 }
