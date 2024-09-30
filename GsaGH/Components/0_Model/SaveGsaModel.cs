@@ -43,6 +43,9 @@ namespace GsaGH.Components {
     }
 
     public override void CreateAttributes() {
+      if (!_isInitialised) {
+        InitialiseDropdowns();
+      }
       m_attributes = new ThreeButtonComponentAttributes(this, "Save", "Save As", "Open in GSA",
         SaveButtonClick, SaveAsButtonClick, OpenGsaExe, true, "Save GSA file");
     }
@@ -61,7 +64,9 @@ namespace GsaGH.Components {
       return flag;
     }
 
-    protected override void InitialiseDropdowns() { }
+    protected override void InitialiseDropdowns() {
+      _isInitialised = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model to save",

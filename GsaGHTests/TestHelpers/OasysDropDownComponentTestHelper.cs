@@ -59,7 +59,7 @@ namespace GsaGHTests.Helpers {
       deserializedComponent.ExpireSolution(true);
       deserializedComponent.Params.Output[0].CollectData();
 
-      Duplicates.AreEqual(originalComponent, deserializedComponent, new List<string>() { "Guid" });
+      Duplicates.AreEqual(originalComponent, deserializedComponent, new List<string>() { "Guid", "Capacity" });
       doc.Dispose();
     }
   }

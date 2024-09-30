@@ -36,6 +36,9 @@ namespace GsaGH.Components {
     }
 
     public override void CreateAttributes() {
+      if (!_isInitialised) {
+        InitialiseDropdowns();
+      }
       m_attributes = new ButtonComponentAttributes(this, "Open", OpenFile, "Open GSA file");
     }
 
@@ -81,7 +84,9 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) { }
 
-    protected override void InitialiseDropdowns() { }
+    protected override void InitialiseDropdowns() {
+      _isInitialised = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Filename and path", "File",
