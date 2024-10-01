@@ -1,8 +1,12 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Components;
+
 using OasysUnits.Units;
+
 using Xunit;
 
 namespace GsaGHTests.Model {

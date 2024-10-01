@@ -1,6 +1,9 @@
 ﻿using System;
+
 using GsaAPI;
+
 using GsaGH.Parameters.Enums;
+
 using Rhino.Collections;
 
 namespace GsaGH.Parameters {

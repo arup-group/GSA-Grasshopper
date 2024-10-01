@@ -1,6 +1,9 @@
 ﻿using System;
+
 using GsaGH.Components;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.Components {
@@ -86,9 +89,9 @@ namespace GsaGHTests.Components {
     public void WhenInitialiseDropdowns_ThenDropDownItemsCount_ShouldBeValid(
       Type t, int expectedListCount) {
       var obj = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
-      obj.InitialiseDropdowns();
 
-      Assert.Equal(expectedListCount, obj._dropDownItems.Count);
+
+      Assert.Equal(expectedListCount, obj.DropDownItems.Count);
     }
 
     [Theory]
@@ -99,9 +102,9 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateSupport))]
     public void WhenInitialiseDropdowns_ThenDropDownItems_ShouldBeNull(Type t) {
       var obj = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
-      obj.InitialiseDropdowns();
 
-      Assert.Null(obj._dropDownItems);
+
+      Assert.Null(obj.DropDownItems);
     }
 
     [Theory]
@@ -166,13 +169,13 @@ namespace GsaGHTests.Components {
     public void WhenSetSelected_ThenSelectedItems_ShouldBeValid(
       Type t, string defaultValue, string firstValue, int index = 0) {
       var obj = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
-      obj.InitialiseDropdowns();
 
-      Assert.Equal(obj._selectedItems[index].ToString(), defaultValue, true, true, true);
 
-      obj.SetSelected(index, obj._dropDownItems[index].Count - 1);
+      Assert.Equal(obj.SelectedItems[index].ToString(), defaultValue, true, true, true);
 
-      Assert.Equal(obj._selectedItems[index].ToString(), firstValue, true, true, true);
+      obj.SetSelected(index, obj.DropDownItems[index].Count - 1);
+
+      Assert.Equal(obj.SelectedItems[index].ToString(), firstValue, true, true, true);
     }
   }
 }

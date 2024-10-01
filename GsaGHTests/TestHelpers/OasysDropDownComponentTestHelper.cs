@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+
 using Grasshopper.Kernel;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.Helpers {
@@ -10,20 +13,20 @@ namespace GsaGHTests.Helpers {
 
     public static void ChangeDropDownTest(
       GH_OasysDropDownComponent comp, bool ignoreSpacerDescriptionsCount = false) {
-      Assert.True(comp._isInitialised);
+      Assert.True(comp.IsInitialised);
       if (!ignoreSpacerDescriptionsCount) {
-        Assert.Equal(comp._dropDownItems.Count, comp._spacerDescriptions.Count);
+        Assert.Equal(comp.DropDownItems.Count, comp.SpacerDescriptions.Count);
       }
 
-      Assert.Equal(comp._dropDownItems.Count, comp._selectedItems.Count);
+      Assert.Equal(comp.DropDownItems.Count, comp.SelectedItems.Count);
 
-      for (int i = 0; i < comp._dropDownItems.Count; i++) {
+      for (int i = 0; i < comp.DropDownItems.Count; i++) {
         comp.SetSelected(i, 0);
 
-        for (int j = 0; j < comp._dropDownItems[i].Count; j++) {
+        for (int j = 0; j < comp.DropDownItems[i].Count; j++) {
           comp.SetSelected(i, j);
           TestDeserialize(comp);
-          Assert.Equal(comp._selectedItems[i], comp._dropDownItems[i][j]);
+          Assert.Equal(comp.SelectedItems[i], comp.DropDownItems[i][j]);
         }
       }
     }
@@ -56,7 +59,7 @@ namespace GsaGHTests.Helpers {
       deserializedComponent.ExpireSolution(true);
       deserializedComponent.Params.Output[0].CollectData();
 
-      Duplicates.AreEqual(originalComponent, deserializedComponent, new List<string>() { "Guid" });
+      Duplicates.AreEqual(originalComponent, deserializedComponent, new List<string>() { "Guid", "Capacity" });
       doc.Dispose();
     }
   }

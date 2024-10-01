@@ -1,10 +1,14 @@
 ﻿using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
 using OasysGH.Parameters;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Xunit;
 
 namespace GsaGHTests.Properties {

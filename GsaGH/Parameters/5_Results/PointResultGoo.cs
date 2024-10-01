@@ -1,7 +1,10 @@
 ﻿using System.Drawing;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using OasysUnits;
+
 using Rhino.Display;
 using Rhino.Geometry;
 

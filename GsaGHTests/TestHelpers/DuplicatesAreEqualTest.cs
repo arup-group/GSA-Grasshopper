@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
 using Xunit;
 
 namespace GsaGHTests.Helpers {
@@ -97,7 +98,7 @@ namespace GsaGHTests.Helpers {
                 using (IEnumerator<object> enumeratorA = enumerableA.GetEnumerator()) {
                   while (enumeratorA.MoveNext()) {
                     Assert.True(enumeratorB.MoveNext());
-                    AreEqual(enumeratorA.Current, enumeratorB.Current);
+                    AreEqual(enumeratorA.Current, enumeratorB.Current, excluded);
                   }
                 }
               }
@@ -121,7 +122,6 @@ namespace GsaGHTests.Helpers {
 
       return true;
     }
-
     private static bool IsExcluded(PropertyInfo info, List<string> excluded) {
       if (excluded == null) {
         return false;

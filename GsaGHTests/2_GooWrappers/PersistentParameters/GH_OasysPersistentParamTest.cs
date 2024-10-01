@@ -1,6 +1,9 @@
 ﻿using System;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Parameters;
+
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {

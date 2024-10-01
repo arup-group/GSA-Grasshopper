@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -186,7 +191,7 @@ namespace GsaGH.Components {
       var deltaT = new CoefficientOfThermalExpansion(
         material.AnalysisMaterial.CoefficientOfThermalExpansion,
         CoefficientOfThermalExpansionUnit
-         .InverseDegreeCelsius); //create unit from SI as API is in SI units
+         .PerDegreeCelsius); //create unit from SI as API is in SI units
       CoefficientOfThermalExpansionUnit temp
         = UnitsHelper.GetCoefficientOfThermalExpansionUnit(_temperatureUnit);
       deltaT = new CoefficientOfThermalExpansion(deltaT.As(temp), temp);

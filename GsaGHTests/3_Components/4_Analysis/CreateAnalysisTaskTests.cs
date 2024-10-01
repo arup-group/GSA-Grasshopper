@@ -1,10 +1,16 @@
 ﻿using System;
+
 using Grasshopper.Kernel;
+
 using GsaAPI;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Analysis {
@@ -93,6 +99,21 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(GH_RuntimeMessageLevel.Remark, comp.RuntimeMessageLevel);
       Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
+
+    //[Theory]
+    //[InlineData(3)]
+    //[InlineData(8)]
+    //public void ChangeUnitExceptionsEquationTest(int analysisTaskType) {
+    //  var comp = new CreateFaceLoad();
+    //  comp.CreateAttributes();
+    //  comp.SetSelected(0, 3); // Equation
+    //  ComponentTestHelper.SetInput(comp, "All", 1);
+    //  ComponentTestHelper.SetInput(comp, "myLoad", 2);
+    //  ComponentTestHelper.SetInput(comp, "4*x+7*y-z", 7);
+    //  comp.SetSelected(1, i);
+    //  Assert.Throws<ArgumentOutOfRangeException>(() => ComponentTestHelper.GetOutput(comp));
+    //  Assert.Equal(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error, comp.RuntimeMessageLevel);
+    //}
 
     [Theory]
     [InlineData("Z", 1, 1, 1, typeof(WalkingOnFloorAISC))]
@@ -287,20 +308,5 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal((int)AnalysisTaskType.Footfall, output.Value.ApiTask.Type);
       Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
     }
-
-    //[Theory]
-    //[InlineData(3)]
-    //[InlineData(8)]
-    //public void ChangeUnitExceptionsEquationTest(int analysisTaskType) {
-    //  var comp = new CreateFaceLoad();
-    //  comp.CreateAttributes();
-    //  comp.SetSelected(0, 3); // Equation
-    //  ComponentTestHelper.SetInput(comp, "All", 1);
-    //  ComponentTestHelper.SetInput(comp, "myLoad", 2);
-    //  ComponentTestHelper.SetInput(comp, "4*x+7*y-z", 7);
-    //  comp.SetSelected(1, i);
-    //  Assert.Throws<ArgumentOutOfRangeException>(() => ComponentTestHelper.GetOutput(comp));
-    //  Assert.Equal(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error, comp.RuntimeMessageLevel);
-    //}
   }
 }

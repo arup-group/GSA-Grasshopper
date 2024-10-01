@@ -2,11 +2,15 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+
 using Grasshopper.GUI;
 using Grasshopper.Kernel;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
+
 using OasysGH.Units;
+
 using OasysUnits;
 using OasysUnits.Units;
 

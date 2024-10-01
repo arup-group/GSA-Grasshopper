@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
+
 using GsaAPI;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.UI;
+
 using Rhino.UI;
 
 namespace GsaGH.Components {
@@ -31,6 +36,9 @@ namespace GsaGH.Components {
     }
 
     public override void CreateAttributes() {
+      if (!_isInitialised) {
+        InitialiseDropdowns();
+      }
       m_attributes = new ButtonComponentAttributes(this, "Open", OpenFile, "Open GSA file");
     }
 
@@ -76,7 +84,9 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) { }
 
-    protected override void InitialiseDropdowns() { }
+    protected override void InitialiseDropdowns() {
+      _isInitialised = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddTextParameter("Filename and path", "File",

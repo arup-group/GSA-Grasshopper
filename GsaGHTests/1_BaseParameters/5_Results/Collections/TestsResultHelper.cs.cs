@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
+
+using Newtonsoft.Json.Linq;
+
 using OasysUnits;
 
 namespace GsaGHTests.Parameters.Results {
@@ -163,68 +167,52 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     public static double? ResultsHelper(IReactionForce result, ResultVector6 component) {
-      double? d = 0;
+      double? d = null;
       switch (component) {
         case ResultVector6.X:
-          if (result.X == null) {
-            d = null;
-          } else {
+          if (result.X.HasValue && !double.IsNaN(result.X.Value.Value)) {
             d = ((Force)result.X).Kilonewtons;
           }
           break;
 
         case ResultVector6.Y:
-          if (result.Y == null) {
-            d = null;
-          } else {
+          if (result.Y.HasValue && !double.IsNaN(result.Y.Value.Value)) {
             d = ((Force)result.Y).Kilonewtons;
           }
           break;
 
         case ResultVector6.Z:
-          if (result.Z == null) {
-            d = null;
-          } else {
+          if (result.Z.HasValue && !double.IsNaN(result.Z.Value.Value)) {
             d = ((Force)result.Z).Kilonewtons;
           }
           break;
 
         case ResultVector6.Xyz:
-          if (result.Xyz == null) {
-            d = null;
-          } else {
+          if (result.Xyz.HasValue && !double.IsNaN(result.Xyz.Value.Value)) {
             d = ((Force)result.Xyz).Kilonewtons;
           }
           break;
 
         case ResultVector6.Xx:
-          if (result.Xx == null) {
-            d = null;
-          } else {
+          if (result.Xx.HasValue && !double.IsNaN(result.Xx.Value.Value)) {
             d = ((Moment)result.Xx).KilonewtonMeters;
           }
           break;
 
         case ResultVector6.Yy:
-          if (result.Yy == null) {
-            d = null;
-          } else {
+          if (result.Yy.HasValue && !double.IsNaN(result.Yy.Value.Value)) {
             d = ((Moment)result.Yy).KilonewtonMeters;
           }
           break;
 
         case ResultVector6.Zz:
-          if (result.Zz == null) {
-            d = null;
-          } else {
+          if (result.Zz.HasValue && !double.IsNaN(result.Zz.Value.Value)) {
             d = ((Moment)result.Zz).KilonewtonMeters;
           }
           break;
 
         case ResultVector6.Xxyyzz:
-          if (result.Xxyyzz == null) {
-            d = null;
-          } else {
+          if (result.Xxyyzz.HasValue && !double.IsNaN(result.Xxyyzz.Value.Value)) {
             d = ((Moment)result.Xxyyzz).KilonewtonMeters;
           }
           break;

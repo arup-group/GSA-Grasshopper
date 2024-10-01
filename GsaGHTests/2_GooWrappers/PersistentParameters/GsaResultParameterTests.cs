@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Linq;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
+
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
