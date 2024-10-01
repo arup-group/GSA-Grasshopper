@@ -5,20 +5,20 @@ using OasysUnits.Units;
 
 namespace GsaGH.Parameters.Results {
   public class SteelUtilisation : ISteelUtilisation {
-    public Ratio? Overall { get; internal set; } = null;
-    public Ratio? LocalCombined { get; internal set; } = null;
-    public Ratio? BucklingCombined { get; internal set; } = null;
-    public Ratio? LocalAxial { get; internal set; } = null;
-    public Ratio? LocalShearU { get; internal set; } = null;
-    public Ratio? LocalShearV { get; internal set; } = null;
-    public Ratio? LocalTorsion { get; internal set; } = null;
-    public Ratio? LocalMajorMoment { get; internal set; } = null;
-    public Ratio? LocalMinorMoment { get; internal set; } = null;
-    public Ratio? MajorBuckling { get; internal set; } = null;
-    public Ratio? MinorBuckling { get; internal set; } = null;
-    public Ratio? LateralTorsionalBuckling { get; internal set; } = null;
-    public Ratio? TorsionalBuckling { get; internal set; } = null;
-    public Ratio? FlexuralBuckling { get; internal set; } = null;
+    public Ratio? Overall { get; internal set; }
+    public Ratio? LocalCombined { get; internal set; }
+    public Ratio? BucklingCombined { get; internal set; }
+    public Ratio? LocalAxial { get; internal set; }
+    public Ratio? LocalShearU { get; internal set; }
+    public Ratio? LocalShearV { get; internal set; }
+    public Ratio? LocalTorsion { get; internal set; }
+    public Ratio? LocalMajorMoment { get; internal set; }
+    public Ratio? LocalMinorMoment { get; internal set; }
+    public Ratio? MajorBuckling { get; internal set; }
+    public Ratio? MinorBuckling { get; internal set; }
+    public Ratio? LateralTorsionalBuckling { get; internal set; }
+    public Ratio? TorsionalBuckling { get; internal set; }
+    public Ratio? FlexuralBuckling { get; internal set; }
 
     internal SteelUtilisation(SteelUtilisationResult values) {
       if (!double.IsNaN(values.Overall)) {
