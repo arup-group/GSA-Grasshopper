@@ -143,11 +143,6 @@ namespace GsaGH.Components {
         momentUnitsMenu,
       };
 
-      if (_lengthUnit == LengthUnit.Undefined) {
-        ToolStripMenuItem modelUnitsMenu = GenerateModelGeometryUnitsMenu("Model geometry");
-        toolStripItems.Insert(0, modelUnitsMenu);
-      }
-
       unitsMenu.DropDownItems.AddRange(toolStripItems.ToArray());
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
 
@@ -323,22 +318,6 @@ namespace GsaGH.Components {
       return forceUnitsMenu;
     }
 
-    private ToolStripMenuItem GenerateModelGeometryUnitsMenu(string menuTitle) {
-      var modelUnitsMenu = new ToolStripMenuItem(menuTitle) {
-        Enabled = true,
-      };
-      foreach (ToolStripMenuItem toolStripMenuItem in UnitsHelper
-       .GetFilteredAbbreviations(EngineeringUnits.Length).Select(unit
-          => new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
-            Checked = unit == Length.GetAbbreviation(_lengthUnit),
-            Enabled = true,
-          })) {
-        modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      return modelUnitsMenu;
-    }
-
     private ToolStripMenuItem GenerateMomentUnitsMenu(string menuTitle) {
       var momentUnitsMenu = new ToolStripMenuItem(menuTitle) {
         Enabled = true,
@@ -435,19 +414,7 @@ namespace GsaGH.Components {
     }
 
     private LengthUnit GetLengthUnit(GsaResult gsaResult) {
-      LengthUnit lengthUnit = gsaResult.Model.ModelUnit;
-      bool isUndefined = lengthUnit == LengthUnit.Undefined;
-
-      if (!isUndefined) {
-        return lengthUnit;
-      }
-
-      lengthUnit = _lengthUnit;
-      this.AddRuntimeRemark("Model came straight out of GSA and we couldn't read the units. "
-        + "The geometry has been scaled to be in " + lengthUnit.ToString()
-        + ". This can be changed by right-clicking the component -> 'Select Units'");
-
-      return lengthUnit;
+      return gsaResult.Model.ModelUnit;
     }
 
     private bool IsGhObjectValid(GH_ObjectWrapper ghObject) {

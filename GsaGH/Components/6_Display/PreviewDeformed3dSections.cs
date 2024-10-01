@@ -37,12 +37,17 @@ namespace GsaGH.Components {
       CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     public override void CreateAttributes() {
+      if (!_isInitialised) {
+        InitialiseDropdowns();
+      }
       m_attributes = new SliderComponentAttributes(this, SetVal, SetMaxMin, _defScale, _minValue, _maxValue, _noDigits,
         "Scale");
       _isInitialised = true;
     }
 
-    protected override void InitialiseDropdowns() { }
+    protected override void InitialiseDropdowns() {
+      _isInitialised = true;
+    }
 
     public override bool Read(GH_IReader reader) {
       _noDigits = reader.GetInt32("noDec");

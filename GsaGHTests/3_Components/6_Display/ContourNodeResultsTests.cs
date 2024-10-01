@@ -34,24 +34,24 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     public void DefaultDropSelectionsTest() {
       var comp = new ContourNodeResults();
-      Assert.Equal("Displacement", comp._selectedItems[0]);
-      Assert.Equal("Resolved |U|", comp._selectedItems[1]);
+      Assert.Equal("Displacement", comp.SelectedItems[0]);
+      Assert.Equal("Resolved |U|", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 1);
-      Assert.Equal("Reaction", comp._selectedItems[0]);
-      Assert.Equal("Resolved |F|", comp._selectedItems[1]);
+      Assert.Equal("Reaction", comp.SelectedItems[0]);
+      Assert.Equal("Resolved |F|", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 2);
-      Assert.Equal("SpringForce", comp._selectedItems[0]);
-      Assert.Equal("Resolved |F|", comp._selectedItems[1]);
+      Assert.Equal("SpringForce", comp.SelectedItems[0]);
+      Assert.Equal("Resolved |F|", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 3);
-      Assert.Equal("Footfall", comp._selectedItems[0]);
-      Assert.Equal("Resonant", comp._selectedItems[1]);
+      Assert.Equal("Footfall", comp.SelectedItems[0]);
+      Assert.Equal("Resonant", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 0);
-      Assert.Equal("Displacement", comp._selectedItems[0]);
-      Assert.Equal("Resolved |U|", comp._selectedItems[1]);
+      Assert.Equal("Displacement", comp.SelectedItems[0]);
+      Assert.Equal("Resolved |U|", comp.SelectedItems[1]);
     }
 
     [Fact]

@@ -55,25 +55,23 @@ namespace GsaGHTests.Parameters.Results {
       ISteelDesignEffectiveLength effectiveLengths = resultSet.Subset[1][0];
 
       Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MemberLength.Value, 4));
-
-      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(effectiveLengths.MajorAxisSubSpans[0].StartPosition.Value, 4));
-      Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MajorAxisSubSpans[0].EndPosition.Value, 4));
-      Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MajorAxisSubSpans[0].EffectiveLength.Value, 4));
-      Assert.Equal(39.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MajorAxisSubSpans[0].SlendernessRatio.Value, 4));
+      Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MajorAxisSubSpans[0].EndPosition.Value.Value, 4));
+      Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MajorAxisSubSpans[0].EffectiveLength.Value.Value, 4));
+      Assert.Equal(39.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MajorAxisSubSpans[0].SlendernessRatio.Value.Value, 4));
       Assert.Single(effectiveLengths.MajorAxisSubSpans[0].ElementIds);
       Assert.Equal(1, effectiveLengths.MajorAxisSubSpans[0].ElementIds[0]);
 
-      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(effectiveLengths.MinorAxisSubSpans[0].StartPosition.Value, 4));
-      Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MinorAxisSubSpans[0].EndPosition.Value, 4));
-      Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MinorAxisSubSpans[0].EffectiveLength.Value, 4));
-      Assert.Equal(175.0, ResultHelper.RoundToSignificantDigits(effectiveLengths.MinorAxisSubSpans[0].SlendernessRatio.Value, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(effectiveLengths.MinorAxisSubSpans[0].StartPosition.Value.Value, 4));
+      Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MinorAxisSubSpans[0].EndPosition.Value.Value, 4));
+      Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.MinorAxisSubSpans[0].EffectiveLength.Value.Value, 4));
+      Assert.Equal(175.0, ResultHelper.RoundToSignificantDigits(effectiveLengths.MinorAxisSubSpans[0].SlendernessRatio.Value.Value, 4));
       Assert.Single(effectiveLengths.MinorAxisSubSpans[0].ElementIds);
       Assert.Equal(1, effectiveLengths.MinorAxisSubSpans[0].ElementIds[0]);
 
-      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(effectiveLengths.LateralTorsionalSubSpans[0].StartPosition.Value, 4));
-      Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.LateralTorsionalSubSpans[0].EndPosition.Value, 4));
-      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(effectiveLengths.LateralTorsionalSubSpans[0].EffectiveLength.Value, 4));
-      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(effectiveLengths.LateralTorsionalSubSpans[0].SlendernessRatio.Value, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(effectiveLengths.LateralTorsionalSubSpans[0].StartPosition.Value.Value, 4));
+      Assert.Equal(7.5, ResultHelper.RoundToSignificantDigits(effectiveLengths.LateralTorsionalSubSpans[0].EndPosition.Value.Value, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(effectiveLengths.LateralTorsionalSubSpans[0].EffectiveLength.Value.Value, 4));
+      Assert.Equal(0.0, ResultHelper.RoundToSignificantDigits(effectiveLengths.LateralTorsionalSubSpans[0].SlendernessRatio.Value.Value, 4));
       Assert.Single(effectiveLengths.LateralTorsionalSubSpans[0].ElementIds);
       Assert.Equal(1, effectiveLengths.LateralTorsionalSubSpans[0].ElementIds[0]);
     }

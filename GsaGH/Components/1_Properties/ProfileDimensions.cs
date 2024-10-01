@@ -155,7 +155,7 @@ namespace GsaGH.Components {
       LengthUnit unit = LengthUnit.Millimeter;
       string[] type = parts[1].Split('(', ')');
       if (type.Length > 1) {
-        UnitParser parser = UnitParser.Default;
+        UnitParser parser = OasysUnitsSetup.Default.UnitParser;
         unit = parser.Parse<LengthUnit>(type[1]);
       }
 

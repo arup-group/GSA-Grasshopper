@@ -35,7 +35,7 @@ namespace GsaGH.Parameters.Results {
         }
 
         if (kvp.Value.Topology.Count > 2) {
-          list.Add(list.Average(list[0].Unit));
+          list.Add(Quantity.From(list.Average(x => x.As(list[0].Unit)), list[0].Unit));
         }
 
         vals.TryAdd(kvp.Key, list);
@@ -121,7 +121,7 @@ namespace GsaGH.Parameters.Results {
     internal static Ratio Envelope(this IEnumerable<Ratio?> subset, EnvelopeMethod envelopeType) {
       var val = new Ratio(0, RatioUnit.DecimalFraction);
       for (int i = 0; i < subset.Count(); i++) {
-        if (subset.ElementAt(i) != null) {
+        if (subset.ElementAt(i).HasValue) {
           val = (Ratio)subset.ElementAt(i);
           break;
         }
@@ -131,7 +131,7 @@ namespace GsaGH.Parameters.Results {
       switch (envelopeType) {
         case EnvelopeMethod.Maximum:
           for (int i = 1; i < subset.Count(); i++) {
-            if (subset.ElementAt(i) == null) {
+            if (!subset.ElementAt(i).HasValue) {
               continue;
             }
             if (((Ratio)subset.ElementAt(i)).As(unit) > val.As(unit)) {
@@ -142,7 +142,7 @@ namespace GsaGH.Parameters.Results {
 
         case EnvelopeMethod.Minimum:
           for (int i = 1; i < subset.Count(); i++) {
-            if (subset.ElementAt(i) == null) {
+            if (!subset.ElementAt(i).HasValue) {
               continue;
             }
             if (((Ratio)subset.ElementAt(i)).As(unit) < val.As(unit)) {
@@ -155,7 +155,7 @@ namespace GsaGH.Parameters.Results {
         case EnvelopeMethod.Absolute:
           val = val.Abs();
           for (int i = 1; i < subset.Count(); i++) {
-            if (subset.ElementAt(i) == null) {
+            if (!subset.ElementAt(i).HasValue) {
               continue;
             }
             if (Math.Abs(((Ratio)subset.ElementAt(i)).As(unit)) > val.As(unit)) {
@@ -167,7 +167,7 @@ namespace GsaGH.Parameters.Results {
 
         case EnvelopeMethod.SignedAbsolute:
           for (int i = 1; i < subset.Count(); i++) {
-            if (subset.ElementAt(i) == null) {
+            if (!subset.ElementAt(i).HasValue) {
               continue;
             }
             if (Math.Abs(((Ratio)subset.ElementAt(i)).As(unit)) > Math.Abs(val.As(unit))) {
