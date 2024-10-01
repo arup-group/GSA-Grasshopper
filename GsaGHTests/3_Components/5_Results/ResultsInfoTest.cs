@@ -1,9 +1,12 @@
 ﻿using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
 using GsaGHTests.Model;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Results {

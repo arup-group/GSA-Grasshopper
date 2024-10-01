@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
 using GsaGHTests.Model;
+
 using OasysGH.Components;
+
 using Rhino.Geometry;
+
 using Xunit;
+
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGHTests.GooWrappers {

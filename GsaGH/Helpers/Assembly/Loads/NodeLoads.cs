@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using Rhino.Geometry;
+
 using NodeLoadType = GsaGH.Parameters.NodeLoadType;
 
 namespace GsaGH.Helpers.Assembly {

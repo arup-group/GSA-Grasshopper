@@ -5,14 +5,19 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+
 using Grasshopper;
 using Grasshopper.Kernel;
+
 using GsaGH.Graphics.Menu;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Helpers;
+
 using Rhino;
+
 using Utility = OasysGH.Utility;
 
 namespace GsaGH {
@@ -50,7 +55,7 @@ namespace GsaGH {
   }
 
   public class AddReferencePriority : GH_AssemblyPriority {
-    public static string PluginPath => pluginPath ?? (pluginPath = TryFindPluginPath("GSA.gha"));
+    public static string PluginPath => pluginPath ??= TryFindPluginPath("GSA.gha");
     public static string InstallPath = InstallationFolder.GetPath;
     private static string pluginPath;
 

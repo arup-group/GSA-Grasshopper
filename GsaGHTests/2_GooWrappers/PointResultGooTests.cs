@@ -1,7 +1,11 @@
 ﻿using System.Drawing;
+
 using GsaGH.Parameters;
+
 using OasysUnits;
+
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {

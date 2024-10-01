@@ -1,7 +1,9 @@
 ﻿using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Display {
@@ -21,40 +23,40 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     public void DefaultDropSelectionsTest() {
       var comp = new LoadDiagrams();
-      Assert.Equal("All", comp._selectedItems[1]);
-      Assert.Equal(2, comp._selectedItems.Count);
+      Assert.Equal("All", comp.SelectedItems[1]);
+      Assert.Equal(2, comp.SelectedItems.Count);
 
       comp.SetSelected(1, 1);
-      Assert.Equal("Nodal", comp._selectedItems[1]);
-      Assert.Equal("All", comp._selectedItems[2]);
+      Assert.Equal("Nodal", comp.SelectedItems[1]);
+      Assert.Equal("All", comp.SelectedItems[2]);
 
       comp.SetSelected(1, 2);
-      Assert.Equal("Beam", comp._selectedItems[1]);
-      Assert.Equal("All", comp._selectedItems[2]);
+      Assert.Equal("Beam", comp.SelectedItems[1]);
+      Assert.Equal("All", comp.SelectedItems[2]);
 
       comp.SetSelected(1, 3);
-      Assert.Equal("2D", comp._selectedItems[1]);
-      Assert.Equal("All", comp._selectedItems[2]);
+      Assert.Equal("2D", comp.SelectedItems[1]);
+      Assert.Equal("All", comp.SelectedItems[2]);
 
       comp.SetSelected(1, 4);
-      Assert.Equal("3D", comp._selectedItems[1]);
-      Assert.Equal("All", comp._selectedItems[2]);
+      Assert.Equal("3D", comp.SelectedItems[1]);
+      Assert.Equal("All", comp.SelectedItems[2]);
 
       comp.SetSelected(1, 5);
-      Assert.Equal("Grid", comp._selectedItems[1]);
-      Assert.Equal("All", comp._selectedItems[2]);
+      Assert.Equal("Grid", comp.SelectedItems[1]);
+      Assert.Equal("All", comp.SelectedItems[2]);
 
       comp.SetSelected(1, 0);
-      Assert.Equal("All", comp._selectedItems[1]);
-      Assert.Equal(2, comp._selectedItems.Count);
+      Assert.Equal("All", comp.SelectedItems[1]);
+      Assert.Equal(2, comp.SelectedItems.Count);
     }
 
     [Fact]
     public void CaseIdDropdownPopulationTest() {
       LoadDiagrams comp = LoadDiagramNodeAndElement1dMother();
       var diagramGoo = (GsaDiagramGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal("L1", comp._selectedItems[0]);
-      Assert.Equal(19, comp._dropDownItems[0].Count);
+      Assert.Equal("L1", comp.SelectedItems[0]);
+      Assert.Equal(19, comp.DropDownItems[0].Count);
     }
 
     [Fact]

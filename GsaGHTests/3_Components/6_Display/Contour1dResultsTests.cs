@@ -1,13 +1,18 @@
 ﻿using System.Collections.Generic;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters;
+
 using OasysGH.UI;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Display {
@@ -29,32 +34,32 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     public void DefaultDropSelectionsTest() {
       var comp = new Contour1dResults();
-      Assert.Equal("Displacement", comp._selectedItems[0]);
-      Assert.Equal("Resolved |U|", comp._selectedItems[1]);
+      Assert.Equal("Displacement", comp.SelectedItems[0]);
+      Assert.Equal("Resolved |U|", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 1);
-      Assert.Equal("Force", comp._selectedItems[0]);
-      Assert.Equal("Moment Myy", comp._selectedItems[1]);
+      Assert.Equal("Force", comp.SelectedItems[0]);
+      Assert.Equal("Moment Myy", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 2);
-      Assert.Equal("Stress", comp._selectedItems[0]);
-      Assert.Equal("Combined, C1", comp._selectedItems[1]);
+      Assert.Equal("Stress", comp.SelectedItems[0]);
+      Assert.Equal("Combined, C1", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 3);
-      Assert.Equal("Derived Stress", comp._selectedItems[0]);
-      Assert.Equal("Von Mises", comp._selectedItems[1]);
+      Assert.Equal("Derived Stress", comp.SelectedItems[0]);
+      Assert.Equal("Von Mises", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 4);
-      Assert.Equal("Strain Energy", comp._selectedItems[0]);
-      Assert.Equal("Average", comp._selectedItems[1]);
+      Assert.Equal("Strain Energy", comp.SelectedItems[0]);
+      Assert.Equal("Average", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 5);
-      Assert.Equal("Footfall", comp._selectedItems[0]);
-      Assert.Equal("Resonant", comp._selectedItems[1]);
+      Assert.Equal("Footfall", comp.SelectedItems[0]);
+      Assert.Equal("Resonant", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 0);
-      Assert.Equal("Displacement", comp._selectedItems[0]);
-      Assert.Equal("Resolved |U|", comp._selectedItems[1]);
+      Assert.Equal("Displacement", comp.SelectedItems[0]);
+      Assert.Equal("Resolved |U|", comp.SelectedItems[1]);
     }
 
     [Fact]

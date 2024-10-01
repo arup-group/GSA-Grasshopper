@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+
 using GsaAPI;
 using GsaAPI.Materials;
+
 using GsaGH.Helpers.GsaApi;
 
 namespace GsaGH.Parameters {
@@ -40,54 +42,30 @@ namespace GsaGH.Parameters {
     }
 
     internal static GsaMaterial CreateMaterialFromApi(object standardMaterial, int id, Model model) {
-      GsaMaterial material;
-      switch (standardMaterial) {
-        case AluminiumMaterial aluminiumMaterial:
-          material = new GsaAluminiumMaterial(aluminiumMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
-            Id = id,
-          };
-          break;
-
-        case ConcreteMaterial concreteMaterial:
-          material = new GsaConcreteMaterial(concreteMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
-            Id = id,
-          };
-          break;
-
-        case FabricMaterial fabricMaterial:
-          material = new GsaFabricMaterial(fabricMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
-            Id = id,
-          };
-          break;
-
-        case FrpMaterial frpMaterial:
-          material = new GsaFrpMaterial(frpMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
-            Id = id,
-          };
-          break;
-
-        case GlassMaterial glassMaterial:
-          material = new GsaGlassMaterial(glassMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
-            Id = id,
-          };
-          break;
-
-        case SteelMaterial steelMaterial:
-          material = new GsaSteelMaterial(steelMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
-            Id = id,
-          };
-          break;
-
-        case TimberMaterial timberMaterial:
-          material = new GsaTimberMaterial(timberMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
-            Id = id,
-          };
-          break;
-
-        default:
-          throw new Exception($"{standardMaterial} is not a standard material");
-      }
-
+      GsaMaterial material = standardMaterial switch {
+        AluminiumMaterial aluminiumMaterial => new GsaAluminiumMaterial(aluminiumMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
+          Id = id,
+        },
+        ConcreteMaterial concreteMaterial => new GsaConcreteMaterial(concreteMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
+          Id = id,
+        },
+        FabricMaterial fabricMaterial => new GsaFabricMaterial(fabricMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
+          Id = id,
+        },
+        FrpMaterial frpMaterial => new GsaFrpMaterial(frpMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
+          Id = id,
+        },
+        GlassMaterial glassMaterial => new GsaGlassMaterial(glassMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
+          Id = id,
+        },
+        SteelMaterial steelMaterial => new GsaSteelMaterial(steelMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
+          Id = id,
+        },
+        TimberMaterial timberMaterial => new GsaTimberMaterial(timberMaterial, true, model.ConcreteDesignCode(), model.SteelDesignCode()) {
+          Id = id,
+        },
+        _ => throw new Exception($"{standardMaterial} is not a standard material"),
+      };
       List<string> gradeNames = GetGradeNames(material.MaterialType, model);
       if (!gradeNames.Contains(material.Name)) {
         material.IsUserDefined = true;

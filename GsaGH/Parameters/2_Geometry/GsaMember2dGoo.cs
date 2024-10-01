@@ -1,11 +1,16 @@
 ﻿using System.Drawing;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.Graphics;
+
 using OasysGH;
 using OasysGH.Parameters;
+
 using Rhino.Collections;
 using Rhino.Display;
 using Rhino.Geometry;
@@ -98,7 +103,7 @@ namespace GsaGH.Parameters {
         }
       }
 
-      if (Value.PolyCurve != null & Value.Brep == null) {
+      if (Value.PolyCurve != null && Value.Brep == null) {
         if (!selected) {
           if (Value.ApiMember.IsDummy) {
             args.Pipeline.DrawDottedPolyline(Value.Topology, Colours.Dummy1D, false);
@@ -134,7 +139,7 @@ namespace GsaGH.Parameters {
         Point3dList pts = Value.Topology;
         for (int i = 0; i < pts.Count; i++) {
           if (!selected) {
-            if (Value.Brep == null & (i == 0 | i == pts.Count - 1)) {
+            if (Value.Brep == null && (i == 0 || i == pts.Count - 1)) {
               // draw first point bigger
               args.Pipeline.DrawPoint(pts[i], PointStyle.RoundSimple, 3,
                 Value.ApiMember.IsDummy ? Colours.Dummy1D : Colours.Member1dNode);
@@ -143,7 +148,7 @@ namespace GsaGH.Parameters {
                 Value.ApiMember.IsDummy ? Colours.Dummy1D : Colours.Member1dNode);
             }
           } else {
-            if (Value.Brep == null & (i == 0 | i == pts.Count - 1)) {
+            if (Value.Brep == null && (i == 0 || i == pts.Count - 1)) {
               // draw first point bigger
               args.Pipeline.DrawPoint(pts[i], PointStyle.RoundControlPoint, 3,
                 Colours.Member1dNodeSelected);

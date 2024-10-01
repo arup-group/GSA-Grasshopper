@@ -4,9 +4,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
+
 using DocsGeneration.Data.Helpers;
 using DocsGeneration.Helpers;
+
 using Grasshopper.Kernel;
+
 using OasysUnits;
 
 namespace DocsGeneration.Data {
@@ -156,8 +159,7 @@ namespace DocsGeneration.Data {
             parameters.Add(param);
             Console.WriteLine($"Added {param.Name} parameter");
           }
-        }
-        catch (Exception) {
+        } catch (Exception) {
           continue;
         }
       }

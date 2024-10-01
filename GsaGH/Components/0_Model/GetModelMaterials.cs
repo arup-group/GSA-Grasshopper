@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 
