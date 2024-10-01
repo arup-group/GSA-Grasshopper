@@ -55,6 +55,8 @@ namespace GsaGH.Helpers.GsaApi {
           "Quadratic", AnalysisOrder.QUADRATIC
         }, {
           "Rigid Diaphragm", AnalysisOrder.RIGID_DIAPHRAGM
+        },{
+          "Load Panel", AnalysisOrder.LOAD_PANEL
         },
       };
 
