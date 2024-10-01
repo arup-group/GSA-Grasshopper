@@ -197,31 +197,31 @@ namespace GsaGHTests.Parameters.Results {
     };
     internal static List<double> LTEffectiveLength = new List<double>() {
       7071,
-      5000,
-      3000,
-      5000,
-      3000,
+      3625,
+      3100,
+      3500,
+      2100,
     };
     internal static List<double> LTEffectiveLengthEffectiveSpanRatio = new List<double>() {
-      1.0,
-      0.625,
-      0.375,
-      0.625,
-      0.375,
+      1.0   ,
+      0.4531,
+      0.3875,
+      0.4375,
+      0.2625,
     };
     internal static List<double> LTEffectiveLengthEffectiveSpanRatio2 = new List<double>() {
-      1,
-      1,
-      1,
-      1,
-      1,
+      1.0,
+      0.725,
+      1.033,
+      0.7,
+      0.7,
     };
     internal static List<double> LTSlendernessRatio = new List<double>() {
       217.1,
-      27.1,
-      16.26,
-      27.1,
-      16.26,
+      19.65,
+      16.8 ,
+      18.97,
+      11.38,
     };
   }
 }

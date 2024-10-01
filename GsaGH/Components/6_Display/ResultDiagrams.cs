@@ -250,13 +250,11 @@ namespace GsaGH.Components {
         autoScale = false;
       }
 
-      LengthUnit lengthUnit = result.Model.ModelUnit;
-
       DiagramType type = GetDiagramType();
 
       double unitScale = ComputeUnitScale(autoScale);
       double computedScale
-        = GraphicsScalar.ComputeScale(result.Model, scale, lengthUnit, autoScale, unitScale);
+        = GraphicsScalar.ComputeScale(result.Model, scale, autoScale, unitScale);
       var graphic = new DiagramSpecification() {
         ListDefinition = list.Definition,
         ListType = list.Type,
@@ -288,7 +286,7 @@ namespace GsaGH.Components {
         }
       }
 
-      double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
+      double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, result.Model.ModelUnit);
 
       foreach (Line item in linesFromModel) {
         if (isDisplacement) {

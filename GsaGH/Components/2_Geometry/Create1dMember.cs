@@ -43,6 +43,10 @@ namespace GsaGH.Components {
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void CreateAttributes() {
+      if (!_isInitialised) {
+        InitialiseDropdowns();
+      }
+
       var restraints = new List<List<bool>>() {
         new List<bool>() {
           _x1,
@@ -141,7 +145,9 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override void InitialiseDropdowns() { }
+    protected override void InitialiseDropdowns() {
+      _isInitialised = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddCurveParameter("Curve", "C",
