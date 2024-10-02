@@ -16,6 +16,7 @@ using Xunit;
 namespace GsaGHTests.Components.Analysis {
   [Collection("GrasshopperFixture collection")]
   public class CreateAnalysisTaskTests {
+
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateAnalysisTask();
       comp.CreateAttributes();
@@ -311,5 +312,18 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal((int)AnalysisTaskType.Footfall, output.Value.ApiTask.Type);
       Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
     }
+
+    [Fact]
+    public void FootfallInputWithExcitationTrueShouldIncludeExcitationNode() {
+      var footfallInputManager = new FootfallInputManager(true);
+      Assert.Contains(FootfallInputManager._excitationNodesAttributes, footfallInputManager.GetInputs());
+    }
+
+    [Fact]
+    public void FootfallInputWithExcitationFalseShouldNotIncludeExcitationNode() {
+      var footfallInputManager = new FootfallInputManager(false);
+      Assert.DoesNotContain(FootfallInputManager._excitationNodesAttributes, footfallInputManager.GetInputs());
+    }
   }
+
 }
