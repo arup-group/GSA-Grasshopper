@@ -45,8 +45,8 @@ namespace GsaGH.Components {
       Optional = true
     };
 
-    public CreateAnalysisTask() : base("Create " + GsaAnalysisTaskGoo.Name,
-      GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty), "Create a " + GsaAnalysisTaskGoo.Description,
+    public CreateAnalysisTask() : base($"Create {GsaAnalysisTaskGoo.Name}",
+      GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty), $"Create a {GsaAnalysisTaskGoo.Description}",
       CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;
     }
@@ -86,7 +86,6 @@ namespace GsaGH.Components {
           switch (_selectedItems[1]) {
             case "Own":
             default:
-              // do nothing
               break;
 
             case "Load case":
@@ -234,7 +233,7 @@ namespace GsaGH.Components {
           for (int i = 0; i < ghTypes.Count; i++) {
             GH_ObjectWrapper ghTyp = ghTypes[i];
             if (ghTyp == null) {
-              Params.Owner.AddRuntimeWarning("Analysis Case input (index: " + i + ") is null and has been ignored");
+              Params.Owner.AddRuntimeWarning($"Analysis Case input (index: {i}) is null and has been ignored");
               continue;
             }
 
@@ -244,8 +243,8 @@ namespace GsaGH.Components {
               string type = ghTyp.Value.GetType().ToString();
               type = type.Replace("GsaGH.Parameters.", string.Empty);
               type = type.Replace("Goo", string.Empty);
-              Params.Owner.AddRuntimeError("Unable to convert Analysis Case input parameter of type " + type
-                + " to GsaAnalysisCase");
+              Params.Owner.AddRuntimeError(
+                $"Unable to convert Analysis Case input parameter of type {type} to GsaAnalysisCase");
               return;
             }
           }
@@ -485,7 +484,7 @@ namespace GsaGH.Components {
           break;
 
         default:
-          this.AddRuntimeWarning("It is currently not possible to create Analysis Tasks of type " + _type);
+          this.AddRuntimeWarning($"It is currently not possible to create Analysis Tasks of type {_type}");
           break;
       }
 
