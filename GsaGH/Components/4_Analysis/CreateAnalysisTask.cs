@@ -7,6 +7,7 @@ using GH_IO.Serialization;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
+using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
 
 using GsaAPI;
@@ -36,6 +37,13 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateAnalysisTask;
     private AnalysisTaskType _type = AnalysisTaskType.Static;
     private int _casesParamIndex = 2;
+    private InputAttributes _analysisCaseInputAttributes = new InputAttributes() {
+      NickName = "ΣAs",
+      Name = "Analysis Cases",
+      Description = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)",
+      Access = GH_ParamAccess.list,
+      Optional = true
+    };
 
     public CreateAnalysisTask() : base("Create " + GsaAnalysisTaskGoo.Name,
       GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty), "Create a " + GsaAnalysisTaskGoo.Description,
@@ -61,15 +69,19 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
+    private void SetCaseInput(int index, InputAttributes inputAttributes) {
+      var ghParam = Params.Input[index];
+      ghParam.NickName = inputAttributes.NickName;
+      ghParam.Name = inputAttributes.Name;
+      ghParam.Description = inputAttributes.Description;
+      ghParam.Access = GH_ParamAccess.list;
+      ghParam.Optional = true;
+    }
+
     public override void VariableParameterMaintenance() {
       switch (_type) {
         case AnalysisTaskType.StaticPDelta:
-          Params.Input[_casesParamIndex].NickName = "ΣAs";
-          Params.Input[_casesParamIndex].Name = "Analysis Cases";
-          Params.Input[_casesParamIndex].Description
-            = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)";
-          Params.Input[_casesParamIndex].Access = GH_ParamAccess.list;
-          Params.Input[_casesParamIndex].Optional = true;
+          SetCaseInput(_casesParamIndex, _analysisCaseInputAttributes);
 
           switch (_selectedItems[1]) {
             case "Own":
@@ -167,16 +179,9 @@ namespace GsaGH.Components {
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = true;
           break;
-
         case AnalysisTaskType.Static:
         default:
-          // do nothing
-          Params.Input[_casesParamIndex].NickName = "ΣAs";
-          Params.Input[_casesParamIndex].Name = "Analysis Cases";
-          Params.Input[_casesParamIndex].Description
-            = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)";
-          Params.Input[_casesParamIndex].Access = GH_ParamAccess.list;
-          Params.Input[_casesParamIndex].Optional = true;
+          SetCaseInput(_casesParamIndex, _analysisCaseInputAttributes);
           break;
       }
     }
@@ -203,8 +208,8 @@ namespace GsaGH.Components {
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddIntegerParameter("Task ID", "ID", "The Task number of the Analysis Task", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Task Name", GH_ParamAccess.item);
-      pManager.AddGenericParameter("Analysis Cases", "ΣAs",
-        "List of GSA Analysis Cases (if left empty, all load cases in model will be added)", GH_ParamAccess.list);
+      pManager.AddGenericParameter(_analysisCaseInputAttributes.Name, _analysisCaseInputAttributes.NickName,
+        _analysisCaseInputAttributes.Description, GH_ParamAccess.list);
       pManager[0].Optional = true;
       pManager[1].Optional = true;
       pManager[2].Optional = true;
@@ -387,7 +392,7 @@ namespace GsaGH.Components {
 
           int weightingOption = 0;
           if (da.GetData(i++, ref weightingOption)) {
-            WeightingOption frequencyWeightingCurve = WeightingOption.Wg;
+            WeightingOption frequencyWeightingCurve;
             switch (weightingOption) {
               case 1:
                 frequencyWeightingCurve = WeightingOption.Wb;
@@ -636,5 +641,13 @@ namespace GsaGH.Components {
       Attributes.ExpireLayout();
       Attributes.PerformLayout();
     }
+  }
+
+  internal class InputAttributes {
+    public string NickName { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public GH_ParamAccess Access { get; set; }
+    public bool Optional { get; set; }
   }
 }
