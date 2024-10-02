@@ -37,10 +37,9 @@ namespace GsaGH.Components {
     private AnalysisTaskType _type = AnalysisTaskType.Static;
     private int _casesParamIndex = 2;
 
-    public CreateAnalysisTask() : base(
-      "Create " + GsaAnalysisTaskGoo.Name,
-      GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaAnalysisTaskGoo.Description, CategoryName.Name(), SubCategoryName.Cat4()) {
+    public CreateAnalysisTask() : base("Create " + GsaAnalysisTaskGoo.Name,
+      GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty), "Create a " + GsaAnalysisTaskGoo.Description,
+      CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;
     }
 
@@ -67,7 +66,8 @@ namespace GsaGH.Components {
         case AnalysisTaskType.StaticPDelta:
           Params.Input[_casesParamIndex].NickName = "ΣAs";
           Params.Input[_casesParamIndex].Name = "Analysis Cases";
-          Params.Input[_casesParamIndex].Description = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)";
+          Params.Input[_casesParamIndex].Description
+            = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)";
           Params.Input[_casesParamIndex].Access = GH_ParamAccess.list;
           Params.Input[_casesParamIndex].Optional = true;
 
@@ -105,14 +105,16 @@ namespace GsaGH.Components {
 
           Params.Input[3].NickName = "RN";
           Params.Input[3].Name = "Response nodes";
-          Params.Input[3].Description = "Node list to define the nodes that the responses will be calculated in the analysis";
+          Params.Input[3].Description
+            = "Node list to define the nodes that the responses will be calculated in the analysis";
           Params.Input[3].Access = GH_ParamAccess.item;
           Params.Input[3].Optional = true;
 
           if (_selectedItems[1] != "Self excitation") {
             Params.Input[4].NickName = "EN";
             Params.Input[4].Name = "Excitation nodes";
-            Params.Input[4].Description = "Node list to define the nodes that will be excited for evaluation of the response of the response nodes";
+            Params.Input[4].Description
+              = "Node list to define the nodes that will be excited for evaluation of the response of the response nodes";
             Params.Input[4].Access = GH_ParamAccess.item;
             Params.Input[4].Optional = true;
           }
@@ -132,28 +134,30 @@ namespace GsaGH.Components {
 
           Params.Input[++i].NickName = "D";
           Params.Input[i].Name = "Direction of responses";
-          Params.Input[i].Description = "The direction of response in the GSA global axis direction." + "\nInput either text string or a integer:" + "\n 1 : Z (vertical)" + "\n 2 : X" + "\n 3 : Y" + "\n4 : XY (horizontal)";
+          Params.Input[i].Description = "The direction of response in the GSA global axis direction."
+            + "\nInput either text string or a integer:" + "\n 1 : Z (vertical)" + "\n 2 : X" + "\n 3 : Y"
+            + "\n4 : XY (horizontal)";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = true;
 
           Params.Input[++i].NickName = "F";
           Params.Input[i].Name = "Frequency Weighting Curve";
-          Params.Input[i].Description = "The Frequency Weighting Curve (FWC) is used in calculating the response factors." + "\nInput the corresponding integer:" + "\n1 : (Freq. Weighting) Wb (BS6472-1:2008)" + "\n2 : (Freq. Weighting) Wd (BS6472-1:2008)" + "\n3 : (Freq. Weighting) Wg (BS6472:1992)";
+          Params.Input[i].Description
+            = "The Frequency Weighting Curve (FWC) is used in calculating the response factors."
+            + "\nInput the corresponding integer:" + "\n1 : (Freq. Weighting) Wb (BS6472-1:2008)"
+            + "\n2 : (Freq. Weighting) Wd (BS6472-1:2008)" + "\n3 : (Freq. Weighting) Wg (BS6472:1992)";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = true;
 
           Params.Input[++i].NickName = "EF";
           Params.Input[i].Name = "Excitation forces (DLFs)";
-          Params.Input[i].Description = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)" +
-            "\nInput the corresponding integer:" +
-            "\n1 : Walking on floor (AISC SDGS11)" +
-            "\n2 : Walking on floor (AISC SDGS11 2nd ed)" +
-            "\n3 : Walking on floor (CCIP-016)" +
-            "\n4 : Walking on floor (SCI P354)" +
-            "\n5 : Walking on stair (AISC SDGS11 2nd ed)" +
-            "\n6 : Walking on stair (Arup)" +
-            "\n7 : Walking on stair (SCI P354)" +
-            "\n8 : Running on floor (AISC SDGS11 2nd)";
+          Params.Input[i].Description
+            = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)"
+            + "\nInput the corresponding integer:" + "\n1 : Walking on floor (AISC SDGS11)"
+            + "\n2 : Walking on floor (AISC SDGS11 2nd ed)" + "\n3 : Walking on floor (CCIP-016)"
+            + "\n4 : Walking on floor (SCI P354)" + "\n5 : Walking on stair (AISC SDGS11 2nd ed)"
+            + "\n6 : Walking on stair (Arup)" + "\n7 : Walking on stair (SCI P354)"
+            + "\n8 : Running on floor (AISC SDGS11 2nd)";
           Params.Input[i].Access = GH_ParamAccess.item;
           Params.Input[i].Optional = true;
 
@@ -169,7 +173,8 @@ namespace GsaGH.Components {
           // do nothing
           Params.Input[_casesParamIndex].NickName = "ΣAs";
           Params.Input[_casesParamIndex].Name = "Analysis Cases";
-          Params.Input[_casesParamIndex].Description = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)";
+          Params.Input[_casesParamIndex].Description
+            = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)";
           Params.Input[_casesParamIndex].Access = GH_ParamAccess.list;
           Params.Input[_casesParamIndex].Optional = true;
           break;
@@ -196,12 +201,10 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddIntegerParameter("Task ID", "ID", "The Task number of the Analysis Task",
-        GH_ParamAccess.item);
+      pManager.AddIntegerParameter("Task ID", "ID", "The Task number of the Analysis Task", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Task Name", GH_ParamAccess.item);
       pManager.AddGenericParameter("Analysis Cases", "ΣAs",
-        "List of GSA Analysis Cases (if left empty, all load cases in model will be added)",
-        GH_ParamAccess.list);
+        "List of GSA Analysis Cases (if left empty, all load cases in model will be added)", GH_ParamAccess.list);
       pManager[0].Optional = true;
       pManager[1].Optional = true;
       pManager[2].Optional = true;
@@ -226,8 +229,7 @@ namespace GsaGH.Components {
           for (int i = 0; i < ghTypes.Count; i++) {
             GH_ObjectWrapper ghTyp = ghTypes[i];
             if (ghTyp == null) {
-              Params.Owner.AddRuntimeWarning("Analysis Case input (index: " + i
-                + ") is null and has been ignored");
+              Params.Owner.AddRuntimeWarning("Analysis Case input (index: " + i + ") is null and has been ignored");
               continue;
             }
 
@@ -237,16 +239,15 @@ namespace GsaGH.Components {
               string type = ghTyp.Value.GetType().ToString();
               type = type.Replace("GsaGH.Parameters.", string.Empty);
               type = type.Replace("Goo", string.Empty);
-              Params.Owner.AddRuntimeError("Unable to convert Analysis Case input parameter of type "
-                + type + " to GsaAnalysisCase");
+              Params.Owner.AddRuntimeError("Unable to convert Analysis Case input parameter of type " + type
+                + " to GsaAnalysisCase");
               return;
             }
           }
         }
 
         if (cases == null) {
-          this.AddRuntimeRemark(
-            "Default Task has been created; it will by default contain all cases found in model");
+          this.AddRuntimeRemark("Default Task has been created; it will by default contain all cases found in model");
         }
       } else {
         cases = new List<GsaAnalysisCase>();
@@ -272,15 +273,18 @@ namespace GsaGH.Components {
             case "Load case":
               string caseDescription = string.Empty;
               da.GetData(2, ref caseDescription);
-              task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name, new GeometricStiffnessFromLoadCase(caseDescription));
+              task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name,
+                new GeometricStiffnessFromLoadCase(caseDescription));
               break;
 
             case "Result case":
               int resultCase = 0;
               da.GetData(2, ref resultCase);
-              task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name, new GeometricStiffnessFromResultCase(resultCase));
+              task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name,
+                new GeometricStiffnessFromResultCase(resultCase));
               break;
           }
+
           break;
 
         case AnalysisTaskType.Footfall:
@@ -315,7 +319,6 @@ namespace GsaGH.Components {
             parameter.WalkerMass = walkerMass;
           }
 
-
           var ghTyp = new GH_ObjectWrapper();
           if (da.GetData(i++, ref ghTyp)) {
             ResponseDirection responseDirection = ResponseDirection.Z;
@@ -342,6 +345,7 @@ namespace GsaGH.Components {
                     this.AddRuntimeError("Unable to convert response direction input");
                     return;
                 }
+
                 break;
 
               case GH_String ghString:
@@ -370,12 +374,14 @@ namespace GsaGH.Components {
                     this.AddRuntimeError("Unable to convert response direction input");
                     return;
                 }
+
                 break;
 
               default:
                 this.AddRuntimeError("Unable to convert response direction input");
                 return;
             }
+
             parameter.ResponseDirection = responseDirection;
           }
 
@@ -399,6 +405,7 @@ namespace GsaGH.Components {
                 this.AddRuntimeError("Unable to convert frequency weighting curve input");
                 return;
             }
+
             parameter.FrequencyWeightingCurve = frequencyWeightingCurve;
           }
 
@@ -442,14 +449,13 @@ namespace GsaGH.Components {
                 this.AddRuntimeError("Unable to convert excitation forces (DLFs) input");
                 return;
             }
+
             parameter.ExcitationForces = excitationForces;
           }
 
           double damping = 0;
           if (da.GetData(i++, ref damping)) {
-            parameter.DampingOption = new ConstantDampingOption() {
-              ConstantDamping = damping
-            };
+            parameter.DampingOption = new ConstantDampingOption() { ConstantDamping = damping };
           }
 
           switch (_selectedItems[1]) {
@@ -563,8 +569,7 @@ namespace GsaGH.Components {
           Params.RegisterInputParam(new Param_Number());
           break;
 
-        default:
-          break;
+        default: break;
       }
     }
 

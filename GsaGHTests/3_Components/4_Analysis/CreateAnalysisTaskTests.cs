@@ -22,8 +22,7 @@ namespace GsaGHTests.Components.Analysis {
 
       ComponentTestHelper.SetInput(comp, 1, 0);
       ComponentTestHelper.SetInput(comp, "my Task", 1);
-      var output = (GsaAnalysisCaseGoo)ComponentTestHelper.GetOutput(
-        CreateAnalysisCaseTests.ComponentMother());
+      var output = (GsaAnalysisCaseGoo)ComponentTestHelper.GetOutput(CreateAnalysisCaseTests.ComponentMother());
       ComponentTestHelper.SetInput(comp, output, 2);
 
       return comp;
@@ -120,7 +119,9 @@ namespace GsaGHTests.Components.Analysis {
     [InlineData("X", 2, 2, 2, typeof(WalkingOnFloorAISC2ndEdition))]
     [InlineData("Y", 3, 3, 3, typeof(WalkingOnFloorCCIP))]
     [InlineData("XY", 1, 4, 4, typeof(WalkingOnFloorSCI))]
-    public void CreateFootfallSelfComponentTest1(string responseDirection, int weightingCurve, int excitationForces, int expectedResponsDirection, Type excitationForcesType) {
+    public void CreateFootfallSelfComponentTest1(
+      string responseDirection, int weightingCurve, int excitationForces, int expectedResponsDirection,
+      Type excitationForcesType) {
       var comp = new CreateAnalysisTask();
       comp.CreateAttributes();
 
@@ -160,7 +161,9 @@ namespace GsaGHTests.Components.Analysis {
     [InlineData(2, 3, 6, 2, typeof(WalkingOnStairArup))]
     [InlineData(3, 1, 7, 3, typeof(WalkingOnStairSCI))]
     [InlineData(4, 2, 8, 4, typeof(RunningOnFloorAISC2ndEdition))]
-    public void CreateFootfallSelfComponentTest2(int responseDirection, int weightingCurve, int excitationForces, int expectedResponsDirection, Type excitationForcesType) {
+    public void CreateFootfallSelfComponentTest2(
+      int responseDirection, int weightingCurve, int excitationForces, int expectedResponsDirection,
+      Type excitationForcesType) {
       var comp = new CreateAnalysisTask();
       comp.CreateAttributes();
 
