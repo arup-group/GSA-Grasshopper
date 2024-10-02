@@ -122,25 +122,25 @@ namespace GsaGH.Components {
           Params.Input[i].Name = "Number of footfalls";
           Params.Input[i].Description = "The number of footfalls to be considered in the analysis";
           Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          Params.Input[i].Optional = true;
 
           Params.Input[++i].NickName = "W";
           Params.Input[i].Name = "Walker";
           Params.Input[i].Description = "The mass representing a sample walker";
           Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          Params.Input[i].Optional = true;
 
           Params.Input[++i].NickName = "D";
           Params.Input[i].Name = "Direction of responses";
           Params.Input[i].Description = "The direction of response in the GSA global axis direction." + "\nInput either text string or a integer:" + "\n 1 : Z (vertical)" + "\n 2 : X" + "\n 3 : Y" + "\n4 : XY (horizontal)";
           Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          Params.Input[i].Optional = true;
 
           Params.Input[++i].NickName = "F";
           Params.Input[i].Name = "Frequency Weighting Curve";
           Params.Input[i].Description = "The Frequency Weighting Curve (FWC) is used in calculating the response factors." + "\nInput the corresponding integer:" + "\n1 : (Freq. Weighting) Wb (BS6472-1:2008)" + "\n2 : (Freq. Weighting) Wd (BS6472-1:2008)" + "\n3 : (Freq. Weighting) Wg (BS6472:1992)";
           Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          Params.Input[i].Optional = true;
 
           Params.Input[++i].NickName = "EF";
           Params.Input[i].Name = "Excitation forces (DLFs)";
@@ -155,13 +155,13 @@ namespace GsaGH.Components {
             "\n7 : Walking on stair (SCI P354)" +
             "\n8 : Running on floor (AISC SDGS11 2nd)";
           Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          Params.Input[i].Optional = true;
 
           Params.Input[++i].NickName = "DC";
           Params.Input[i].Name = "Constant Damping";
           Params.Input[i].Description = "Constant damping in percent";
           Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = false;
+          Params.Input[i].Optional = true;
           break;
 
         case AnalysisTaskType.Static:
@@ -248,6 +248,13 @@ namespace GsaGH.Components {
           this.AddRuntimeRemark(
             "Default Task has been created; it will by default contain all cases found in model");
         }
+      } else {
+        cases = new List<GsaAnalysisCase>();
+        var footfallAnalysisCase = new GsaAnalysisCase {
+          Name = name,
+          Definition = name
+        };
+        cases.Add(footfallAnalysisCase);
       }
 
       AnalysisTask task = null;
@@ -280,24 +287,38 @@ namespace GsaGH.Components {
           int analysisTaskId = 0;
           da.GetData(2, ref analysisTaskId);
 
+          var parameter = new FootfallAnalysisTaskParameter() {
+            ModalAnalysisTaskId = analysisTaskId,
+          };
+
           string responseNodes = "All";
-          da.GetData(3, ref responseNodes);
+          if (da.GetData(3, ref responseNodes)) {
+            parameter.ResponseNodes = responseNodes;
+          }
 
           int i = 4;
           string excitationNodes = "All";
           if (_selectedItems[1] != "Self excitation") {
-            da.GetData(i++, ref excitationNodes);
+            if (da.GetData(i++, ref excitationNodes)) {
+              parameter.ExcitationNodes = excitationNodes;
+            }
           }
 
           int numberOfFootfalls = 0;
-          da.GetData(i++, ref numberOfFootfalls);
+          if (da.GetData(i++, ref numberOfFootfalls)) {
+            NumberOfFootfalls numberofFootfalls = new ConstantFootfallsForAllModes(numberOfFootfalls);
+            parameter.NumberOfFootfalls = numberofFootfalls;
+          }
 
           double walkerMass = 0;
-          da.GetData(i++, ref walkerMass);
+          if (da.GetData(i++, ref walkerMass)) {
+            parameter.WalkerMass = walkerMass;
+          }
 
-          ResponseDirection responseDirection = ResponseDirection.Y; // why do we need to initialize it here?
+
           var ghTyp = new GH_ObjectWrapper();
           if (da.GetData(i++, ref ghTyp)) {
+            ResponseDirection responseDirection = ResponseDirection.Z;
             switch (ghTyp.Value) {
               case GH_Integer ghInt:
                 switch (ghInt.Value) {
@@ -355,88 +376,81 @@ namespace GsaGH.Components {
                 this.AddRuntimeError("Unable to convert response direction input");
                 return;
             }
+            parameter.ResponseDirection = responseDirection;
           }
 
           int weightingOption = 0;
-          da.GetData(i++, ref weightingOption);
-          WeightingOption frequencyWeightingCurve;
-          switch (weightingOption) {
-            case 1:
-              frequencyWeightingCurve = WeightingOption.Wb;
-              break;
+          if (da.GetData(i++, ref weightingOption)) {
+            WeightingOption frequencyWeightingCurve = WeightingOption.Wg;
+            switch (weightingOption) {
+              case 1:
+                frequencyWeightingCurve = WeightingOption.Wb;
+                break;
 
-            case 2:
-              frequencyWeightingCurve = WeightingOption.Wd;
-              break;
+              case 2:
+                frequencyWeightingCurve = WeightingOption.Wd;
+                break;
 
-            case 3:
-              frequencyWeightingCurve = WeightingOption.Wg;
-              break;
+              case 3:
+                frequencyWeightingCurve = WeightingOption.Wg;
+                break;
 
-            default:
-              this.AddRuntimeError("Unable to convert frequency weighting curve input");
-              return;
+              default:
+                this.AddRuntimeError("Unable to convert frequency weighting curve input");
+                return;
+            }
+            parameter.FrequencyWeightingCurve = frequencyWeightingCurve;
           }
 
           int excitationForceOption = 0;
-          da.GetData(i++, ref excitationForceOption);
-          ExcitationForces excitationForces;
-          switch (excitationForceOption) {
-            case 1: // walking on floor AISC
-              excitationForces = new WalkingOnFloorAISC();
-              break;
+          if (da.GetData(i++, ref excitationForceOption)) {
+            ExcitationForces excitationForces = null;
+            switch (excitationForceOption) {
+              case 1: // walking on floor AISC
+                excitationForces = new WalkingOnFloorAISC();
+                break;
 
-            case 2: // walking on floor AISC 2nd ed
-              excitationForces = new WalkingOnFloorAISC2ndEdition();
-              break;
+              case 2: // walking on floor AISC 2nd ed
+                excitationForces = new WalkingOnFloorAISC2ndEdition();
+                break;
 
-            case 3: // walking on floor CCIP
-              excitationForces = new WalkingOnFloorCCIP();
-              break;
+              case 3: // walking on floor CCIP
+                excitationForces = new WalkingOnFloorCCIP();
+                break;
 
-            case 4: // walking on floor SCI
-              excitationForces = new WalkingOnFloorSCI();
-              break;
+              case 4: // walking on floor SCI
+                excitationForces = new WalkingOnFloorSCI();
+                break;
 
-            case 5: // walking on stair AISC 2nd ed
-              excitationForces = new WalkingOnStairAISC2ndEdition();
-              break;
+              case 5: // walking on stair AISC 2nd ed
+                excitationForces = new WalkingOnStairAISC2ndEdition();
+                break;
 
-            case 6: // walking on stair Arup
-              excitationForces = new WalkingOnStairArup();
-              break;
+              case 6: // walking on stair Arup
+                excitationForces = new WalkingOnStairArup();
+                break;
 
-            case 7: // walking on stair SCI
-              excitationForces = new WalkingOnStairSCI();
-              break;
+              case 7: // walking on stair SCI
+                excitationForces = new WalkingOnStairSCI();
+                break;
 
-            case 8: // running on floor AISC 2nd ed
-              excitationForces = new RunningOnFloorAISC2ndEdition();
-              break;
+              case 8: // running on floor AISC 2nd ed
+                excitationForces = new RunningOnFloorAISC2ndEdition();
+                break;
 
-            default:
-              this.AddRuntimeError("Unable to convert excitation forces (DLFs) input");
-              return;
+              default:
+                this.AddRuntimeError("Unable to convert excitation forces (DLFs) input");
+                return;
+            }
+            parameter.ExcitationForces = excitationForces;
           }
 
           double damping = 0;
-          da.GetData(i++, ref damping);
-
-          NumberOfFootfalls numberofFootfalls = new ConstantFootfallsForAllModes(numberOfFootfalls);
-          DampingOption dampingOption = new ConstantDampingOption() {
-            ConstantDamping = damping
-          };
-          var parameter = new FootfallAnalysisTaskParameter() {
-            ModalAnalysisTaskId = analysisTaskId,
-            ResponseNodes = responseNodes,
-            ExcitationNodes = excitationNodes,
-            NumberOfFootfalls = numberofFootfalls,
-            WalkerMass = walkerMass,
-            ResponseDirection = responseDirection,
-            FrequencyWeightingCurve = frequencyWeightingCurve,
-            ExcitationForces = excitationForces,
-            DampingOption = dampingOption,
-          };
+          if (da.GetData(i++, ref damping)) {
+            parameter.DampingOption = new ConstantDampingOption() {
+              ConstantDamping = damping
+            };
+          }
 
           switch (_selectedItems[1]) {
             case "Self excitation":
