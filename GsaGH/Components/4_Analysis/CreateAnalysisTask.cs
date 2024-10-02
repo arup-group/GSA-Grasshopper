@@ -111,7 +111,7 @@ namespace GsaGH.Components {
           break;
 
         case AnalysisTaskType.Footfall:
-          var footFallManager = new FootfallInputManager(_selectedItems[1] == "Self excitation");
+          var footFallManager = new FootfallInputManager(_selectedItems[1] != "Self excitation");
           var attributes = footFallManager.GetInputs();
           for (int j = 0; j < attributes.Count; j++) {
             SetCaseInput(j + 2, attributes[j]);
