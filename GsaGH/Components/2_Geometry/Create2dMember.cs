@@ -33,11 +33,12 @@ namespace GsaGH.Components {
         "Mesh mode",
       });
 
-      _dropDownItems = new List<List<string>>(){
-        new List<string>(){
+      _dropDownItems = new List<List<string>>() {
+        new List<string>() {
           "Tri only",
           "Quad dominant",
-          "Quad only" }
+          "Quad only"
+        }
       };
       _selectedItems = new List<string> {
         _dropDownItems[0][1]
@@ -45,7 +46,6 @@ namespace GsaGH.Components {
 
       _isInitialised = true;
     }
-
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddBrepParameter("Brep", "B",
@@ -92,35 +92,35 @@ namespace GsaGH.Components {
         crvs = ghcrvs.Select(crv => crv.Value).ToList();
       }
 
-      var mem = new GsaMember2d(ghbrep.Value, crvs, points);
+      var member2d = new GsaMember2d(ghbrep.Value, crvs, points);
 
       GsaProperty2dGoo prop2dGoo = null;
       if (da.GetData(3, ref prop2dGoo)) {
-        mem.Prop2d = prop2dGoo.Value;
+        member2d.SetProperty(prop2dGoo.Value);
         if (Preview3dSection) {
-          mem.CreateSection3dPreview();
+          member2d.CreateSection3dPreview();
         }
       }
 
       double meshSize = 0;
       if (da.GetData(4, ref meshSize)) {
-        mem.ApiMember.MeshSize = meshSize;
+        member2d.ApiMember.MeshSize = meshSize;
       }
 
       bool internalOffset = false;
       if (da.GetData(5, ref internalOffset)) {
-        mem.ApiMember.AutomaticOffset.Internal = internalOffset;
+        member2d.ApiMember.AutomaticOffset.Internal = internalOffset;
       }
 
       if (_selectedItems[0] != _dropDownItems[0][1]) {
         if (_selectedItems[0] == _dropDownItems[0][0]) {
-          mem.ApiMember.MeshMode2d = GsaAPI.MeshMode2d.Tri;
+          member2d.ApiMember.MeshMode2d = GsaAPI.MeshMode2d.Tri;
         } else {
-          mem.ApiMember.MeshMode2d = GsaAPI.MeshMode2d.Quad;
+          member2d.ApiMember.MeshMode2d = GsaAPI.MeshMode2d.Quad;
         }
       }
 
-      da.SetData(0, new GsaMember2dGoo(mem));
+      da.SetData(0, new GsaMember2dGoo(member2d));
     }
 
     public override void SetSelected(int i, int j) {
