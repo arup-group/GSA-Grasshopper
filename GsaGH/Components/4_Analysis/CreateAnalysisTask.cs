@@ -7,7 +7,6 @@ using GH_IO.Serialization;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
-using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
 
 using GsaAPI;
@@ -37,12 +36,26 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.CreateAnalysisTask;
     private AnalysisTaskType _type = AnalysisTaskType.Static;
     private int _casesParamIndex = 2;
-    private InputAttributes _analysisCaseInputAttributes = new InputAttributes() {
+    private readonly InputAttributes _analysisCaseInputAttributes = new InputAttributes() {
       NickName = "ΣAs",
       Name = "Analysis Cases",
       Description = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)",
       Access = GH_ParamAccess.list,
       Optional = true
+    };
+    private readonly InputAttributes _loadCaseAttribute = new InputAttributes() {
+      NickName = "LC",
+      Name = "Load case",
+      Description = "Load case definition (e.g. 1.2L1 + 1.2L2)",
+      Access = GH_ParamAccess.item,
+      Optional = false
+    };
+    private readonly InputAttributes _resultCaseAttributes = new InputAttributes() {
+      NickName = "RC",
+      Name = "Result case",
+      Description = "The result case that forms the basis for the geometric stiffness",
+      Access = GH_ParamAccess.item,
+      Optional = false
     };
 
     public CreateAnalysisTask() : base($"Create {GsaAnalysisTaskGoo.Name}",
@@ -82,106 +95,147 @@ namespace GsaGH.Components {
       switch (_type) {
         case AnalysisTaskType.StaticPDelta:
           SetCaseInput(_casesParamIndex, _analysisCaseInputAttributes);
-
           switch (_selectedItems[1]) {
             case "Own":
             default:
               break;
-
             case "Load case":
-              Params.Input[2].NickName = "LC";
-              Params.Input[2].Name = "Load case";
-              Params.Input[2].Description = "Load case definition (e.g. 1.2L1 + 1.2L2)";
-              Params.Input[2].Access = GH_ParamAccess.item;
-              Params.Input[2].Optional = false;
+              SetCaseInput(2, _loadCaseAttribute);
               break;
-
             case "Result case":
-              Params.Input[2].NickName = "RC";
-              Params.Input[2].Name = "Result case";
-              Params.Input[2].Description = "The result case that forms the basis for the geometric stiffness";
-              Params.Input[2].Access = GH_ParamAccess.item;
-              Params.Input[2].Optional = false;
+              SetCaseInput(2, _resultCaseAttributes);
               break;
           }
 
           break;
 
         case AnalysisTaskType.Footfall:
-          Params.Input[2].NickName = "T";
-          Params.Input[2].Name = "Modal analysis task";
-          Params.Input[2].Description = "Modal or Ritz analysis task";
-          Params.Input[2].Access = GH_ParamAccess.item;
-          Params.Input[2].Optional = false;
-
-          Params.Input[3].NickName = "RN";
-          Params.Input[3].Name = "Response nodes";
-          Params.Input[3].Description
-            = "Node list to define the nodes that the responses will be calculated in the analysis";
-          Params.Input[3].Access = GH_ParamAccess.item;
-          Params.Input[3].Optional = true;
-
-          if (_selectedItems[1] != "Self excitation") {
-            Params.Input[4].NickName = "EN";
-            Params.Input[4].Name = "Excitation nodes";
-            Params.Input[4].Description
-              = "Node list to define the nodes that will be excited for evaluation of the response of the response nodes";
-            Params.Input[4].Access = GH_ParamAccess.item;
-            Params.Input[4].Optional = true;
+          var footFallManager = new FootfallInputManager(_selectedItems[1] == "Self excitation");
+          var attributes = footFallManager.GetInputs();
+          for (int j = 0; j < attributes.Count; j++) {
+            SetCaseInput(j + 2, attributes[j]);
           }
 
-          int i = _selectedItems[1] != "Self excitation" ? 5 : 4;
-          Params.Input[i].NickName = "N";
-          Params.Input[i].Name = "Number of footfalls";
-          Params.Input[i].Description = "The number of footfalls to be considered in the analysis";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = true;
-
-          Params.Input[++i].NickName = "W";
-          Params.Input[i].Name = "Walker";
-          Params.Input[i].Description = "The mass representing a sample walker";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = true;
-
-          Params.Input[++i].NickName = "D";
-          Params.Input[i].Name = "Direction of responses";
-          Params.Input[i].Description = "The direction of response in the GSA global axis direction."
-            + "\nInput either text string or a integer:" + "\n 1 : Z (vertical)" + "\n 2 : X" + "\n 3 : Y"
-            + "\n4 : XY (horizontal)";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = true;
-
-          Params.Input[++i].NickName = "F";
-          Params.Input[i].Name = "Frequency Weighting Curve";
-          Params.Input[i].Description
-            = "The Frequency Weighting Curve (FWC) is used in calculating the response factors."
-            + "\nInput the corresponding integer:" + "\n1 : (Freq. Weighting) Wb (BS6472-1:2008)"
-            + "\n2 : (Freq. Weighting) Wd (BS6472-1:2008)" + "\n3 : (Freq. Weighting) Wg (BS6472:1992)";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = true;
-
-          Params.Input[++i].NickName = "EF";
-          Params.Input[i].Name = "Excitation forces (DLFs)";
-          Params.Input[i].Description
-            = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)"
-            + "\nInput the corresponding integer:" + "\n1 : Walking on floor (AISC SDGS11)"
-            + "\n2 : Walking on floor (AISC SDGS11 2nd ed)" + "\n3 : Walking on floor (CCIP-016)"
-            + "\n4 : Walking on floor (SCI P354)" + "\n5 : Walking on stair (AISC SDGS11 2nd ed)"
-            + "\n6 : Walking on stair (Arup)" + "\n7 : Walking on stair (SCI P354)"
-            + "\n8 : Running on floor (AISC SDGS11 2nd)";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = true;
-
-          Params.Input[++i].NickName = "DC";
-          Params.Input[i].Name = "Constant Damping";
-          Params.Input[i].Description = "Constant damping in percent";
-          Params.Input[i].Access = GH_ParamAccess.item;
-          Params.Input[i].Optional = true;
           break;
         case AnalysisTaskType.Static:
         default:
           SetCaseInput(_casesParamIndex, _analysisCaseInputAttributes);
           break;
+      }
+    }
+
+    public interface IInputManager {
+      List<InputAttributes> GetInputs();
+    }
+
+    public class FootfallInputManager : IInputManager {
+      private readonly bool _selfExcitation;
+
+      private InputAttributes _modalAnalysisTaskAttributes = new InputAttributes() {
+        NickName = "T",
+        Name = "Modal analysis task",
+        Description = "Modal or Ritz analysis task",
+        Access = GH_ParamAccess.item,
+        Optional = false
+      };
+
+      private InputAttributes _responseNodesAttributes = new InputAttributes() {
+        NickName = "RN",
+        Name = "Response nodes",
+        Description = "Node list to define the nodes that the responses will be calculated in the analysis",
+        Access = GH_ParamAccess.item,
+        Optional = true
+      };
+      private InputAttributes _excitationNodesAttributes = new InputAttributes() {
+        NickName = "EN",
+        Name = "Excitation nodes",
+        Description
+          = "Node list to define the nodes that will be excited for evaluation of the response of the response nodes",
+        Access = GH_ParamAccess.item,
+        Optional = true
+      };
+      private InputAttributes _numberOfFootfallsAttributes = new InputAttributes() {
+        NickName = "NF",
+        Name = "Number of footfalls",
+        Description = "Number of footfalls to be considered in the analysis",
+        Access = GH_ParamAccess.item,
+        Optional = true
+      };
+
+      private readonly InputAttributes _walkerAttributes = new InputAttributes() {
+        NickName = "W",
+        Name = "Walker",
+        Description = "The mass representing a sample walker",
+        Access = GH_ParamAccess.item,
+        Optional = true
+      };
+
+      private readonly InputAttributes _responseDirectionAttributes = new InputAttributes() {
+        NickName = "D",
+        Name = "Direction of responses",
+        Description = "The direction of response in the GSA global axis direction."
+          + "\nInput either text string or a integer:" + "\n 1 : Z (vertical)" + "\n 2 : X" + "\n 3 : Y"
+          + "\n4 : XY (horizontal)",
+        Access = GH_ParamAccess.item,
+        Optional = true
+      };
+
+      private readonly InputAttributes _frequencyWeightingCurveAttributes = new InputAttributes() {
+        NickName = "F",
+        Name = "Frequency Weighting Curve",
+        Description = "The Frequency Weighting Curve (FWC) is used in calculating the response factors."
+          + "\nInput the corresponding integer:" + "\n1 : (Freq. Weighting) Wb (BS6472-1:2008)"
+          + "\n2 : (Freq. Weighting) Wd (BS6472-1:2008)" + "\n3 : (Freq. Weighting) Wg (BS6472:1992)",
+        Access = GH_ParamAccess.item,
+        Optional = true
+      };
+
+      private readonly InputAttributes _excitationForcesAttributes = new InputAttributes() {
+        NickName = "EF",
+        Name = "Excitation forces (DLFs)",
+        Description = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)"
+          + "\nInput the corresponding integer:" + "\n1 : Walking on floor (AISC SDGS11)"
+          + "\n2 : Walking on floor (AISC SDGS11 2nd ed)" + "\n3 : Walking on floor (CCIP-016)"
+          + "\n4 : Walking on floor (SCI P354)" + "\n5 : Walking on stair (AISC SDGS11 2nd ed)"
+          + "\n6 : Walking on stair (Arup)" + "\n7 : Walking on stair (SCI P354)"
+          + "\n8 : Running on floor (AISC SDGS11 2nd)",
+        Access = GH_ParamAccess.item,
+        Optional = true
+      };
+
+      private readonly InputAttributes _dampingAttributes = new InputAttributes() {
+        NickName = "DC",
+        Name = "Constant Damping",
+        Description = "Constant damping in percent",
+        Access = GH_ParamAccess.item,
+        Optional = true
+      };
+      public FootfallInputManager(bool selfExcitation) { _selfExcitation = selfExcitation; }
+
+      public List<InputAttributes> GetInputs() {
+        return FootfallAttributes(_selfExcitation);
+      }
+
+      private List<InputAttributes> FootfallAttributes(bool selfExcitation) {
+        var attributes = new List<InputAttributes>() {
+          _modalAnalysisTaskAttributes,
+          _responseNodesAttributes,
+        };
+
+        if (selfExcitation) {
+          attributes.Add(_excitationNodesAttributes);
+        }
+
+        InputAttributes[] further = {
+          _numberOfFootfallsAttributes,
+          _walkerAttributes,
+          _responseDirectionAttributes,
+          _frequencyWeightingCurveAttributes,
+          _excitationForcesAttributes,
+          _dampingAttributes
+        };
+        attributes.AddRange(further);
+        return attributes;
       }
     }
 
@@ -642,7 +696,7 @@ namespace GsaGH.Components {
     }
   }
 
-  internal class InputAttributes {
+  public class InputAttributes {
     public string NickName { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
