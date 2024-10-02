@@ -3,6 +3,7 @@ using System.Drawing;
 
 using GsaAPI;
 
+using GsaGH.Components;
 using GsaGH.Parameters;
 
 using Rhino.Collections;
@@ -14,6 +15,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 using Polyline = Rhino.Geometry.Polyline;
 
 namespace GsaGHTests.Parameters {
+
   [Collection("GrasshopperFixture collection")]
   public class GsaMember2dTest {
 
@@ -41,7 +43,8 @@ namespace GsaGHTests.Parameters {
       mem.ApiMember.MeshSize = 0.56;
       mem.ApiMember.Name = "meminem";
       mem.ApiMember.IsDummy = true;
-      mem.ApiMember.Type2D = AnalysisOrder.LINEAR;
+      mem.ApiMember.Type2D
+        = AnalysisOrder.LINEAR; // if prop2d == Load Panel -> AnalysisOrder.LoadPanel
       mem.ApiMember.Type = MemberType.SLAB;
 
       Assert.Equal(mem.Brep.Vertices[0].Location.X, mem.Topology[0].X);

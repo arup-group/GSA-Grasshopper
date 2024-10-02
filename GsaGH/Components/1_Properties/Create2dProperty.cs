@@ -60,6 +60,7 @@ namespace GsaGH.Components {
     public Create2dProperty() : base("Create 2D Property", "Prop2d", "Create a GSA 2D Property", CategoryName.Name(),
       SubCategoryName.Cat1()) {
       Hidden = true;
+
     }
 
     public override void SetSelected(int i, int j) {

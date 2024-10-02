@@ -12,6 +12,8 @@ using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Helpers.Import;
 
+using OasysGH.Units;
+
 using OasysUnits;
 
 using Rhino.Geometry;
@@ -80,6 +82,7 @@ namespace GsaGH.Parameters {
         Setup();
         _analysisLayerPreview = null;
         _designLayerPreview = null;
+
       }
     }
     internal ReadOnlyDictionary<int, GsaSectionGoo> Sections { get; private set; }
@@ -87,8 +90,9 @@ namespace GsaGH.Parameters {
     internal ReadOnlyDictionary<int, GsaProperty3dGoo> Prop3ds { get; private set; }
     internal ReadOnlyDictionary<int, GsaSpringPropertyGoo> SpringProps { get; private set; }
     private BoundingBox _boundingBox = BoundingBox.Empty;
-    private LengthUnit _lengthUnit = LengthUnit.Undefined;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Model _model = new Model();
+
     private Section3dPreview _analysisLayerPreview;
     private Section3dPreview _designLayerPreview;
 
@@ -137,10 +141,8 @@ namespace GsaGH.Parameters {
           }
         }
       }
-
-      if (ModelUnit != LengthUnit.Undefined) {
-        s += " [" + Length.GetAbbreviation(ModelUnit) + "]";
-      }
+      //unit
+      s += " [" + Length.GetAbbreviation(ModelUnit) + "]";
 
       return s;
     }
@@ -194,7 +196,7 @@ namespace GsaGH.Parameters {
       Parallel.ForEach(outNodes,
         node => pts.Add(Nodes.Point3dFromNode(node.Value, LengthUnit.Meter)));
 
-      if (ModelUnit == LengthUnit.Undefined || ModelUnit == LengthUnit.Meter) {
+      if (ModelUnit == LengthUnit.Meter) {
         return new BoundingBox(pts);
       }
 

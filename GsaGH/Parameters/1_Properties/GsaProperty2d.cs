@@ -187,7 +187,7 @@ namespace GsaGH.Parameters {
       if (description.Last() == ')') {
         // thickness could be written as "30.33(in)"
         string unitAbbreviation = description.Split('(', ')')[1];
-        LengthUnit unit = UnitParser.Default.Parse<LengthUnit>(unitAbbreviation);
+        LengthUnit unit = OasysUnitsSetup.Default.UnitParser.Parse<LengthUnit>(unitAbbreviation);
 
         double val = double.Parse(description.Split('(')[0],
           CultureInfo.InvariantCulture);

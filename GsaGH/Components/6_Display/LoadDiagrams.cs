@@ -63,7 +63,6 @@ namespace GsaGH.Components {
       "3D",
       "Grid",
     };
-    private bool _undefinedModelLengthUnit;
     private Guid _modelGuid = new Guid();
 
     public LoadDiagrams() : base("Load Diagrams", "LoadDiagram", "Displays GSA Load Diagram",
@@ -164,14 +163,6 @@ namespace GsaGH.Components {
         forceUnitsMenu,
       });
 
-      if (_undefinedModelLengthUnit) {
-        ToolStripMenuItem modelUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem(
-          "Model geometry", EngineeringUnits.Length, Length.GetAbbreviation(_lengthUnit),
-          UpdateModel);
-
-        unitsMenu.DropDownItems.Insert(0, modelUnitsMenu);
-      }
-
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
       menu.Items.Add(unitsMenu);
       Menu_AppendSeparator(menu);
@@ -263,17 +254,6 @@ namespace GsaGH.Components {
         autoScale = false;
       }
 
-      LengthUnit lengthUnit = _gsaModel.ModelUnit;
-      _undefinedModelLengthUnit = false;
-      if (lengthUnit == LengthUnit.Undefined) {
-        lengthUnit = _lengthUnit;
-        _undefinedModelLengthUnit = true;
-        this.AddRuntimeRemark(
-          $"Model came straight out of GSA and we couldn't read the units. " +
-          $"The geometry has been scaled to be in {lengthUnit}. " +
-          $"This can be changed by right-clicking the component -> 'Select Units'");
-      }
-
       bool showAnnotations = true;
       da.GetData(3, ref showAnnotations);
       ((IGH_PreviewObject)Params.Output[1]).Hidden = !showAnnotations;
@@ -286,7 +266,7 @@ namespace GsaGH.Components {
       double unitScale = ComputeUnitScale(autoScale);
       double unitScaleFactor = UnitConverter.Convert(1, Force.BaseUnit, _forceUnit);
       double computedScale
-        = GraphicsScalar.ComputeScale(_gsaModel, scale, _lengthUnit, autoScale, unitScale);
+        = GraphicsScalar.ComputeScale(_gsaModel, scale, autoScale, unitScale);
       var diagramLines = new ConcurrentBag<GsaDiagramGoo>();
       var diagramAnnotations = new ConcurrentBag<GsaAnnotationGoo>();
 
@@ -308,7 +288,7 @@ namespace GsaGH.Components {
         GraphicDrawResult diagramResults = _gsaModel.ApiModel.GetDiagrams(graphic);
         ReadOnlyCollection<Line> linesFromModel = diagramResults.Lines;
 
-        double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
+        double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, _gsaModel.ModelUnit);
         foreach (Line item in linesFromModel) {
           diagramLines.Add(new GsaDiagramGoo(
             new GsaLineDiagram(item, lengthScaleFactor, color)));
