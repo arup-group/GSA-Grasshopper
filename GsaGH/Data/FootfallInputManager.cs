@@ -1,17 +1,12 @@
 ﻿using System.Collections.Generic;
 
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
+
+using GsaGH.Helpers.GH;
 
 namespace GsaGH.Data {
-
-  public class InputAttributes {
-    public string NickName { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public GH_ParamAccess Access { get; set; }
-    public bool Optional { get; set; }
-  }
-
+  
   public interface IInputManager {
     List<InputAttributes> GetInputs();
   }
@@ -20,6 +15,7 @@ namespace GsaGH.Data {
     private readonly bool _selfExcitation;
 
     private readonly InputAttributes _modalAnalysisTaskAttributes = new InputAttributes() {
+      ParamType = typeof(Param_Integer),
       NickName = "T",
       Name = "Modal analysis task",
       Description = "Modal or Ritz analysis task",
@@ -28,6 +24,7 @@ namespace GsaGH.Data {
     };
 
     private readonly InputAttributes _responseNodesAttributes = new InputAttributes() {
+      ParamType = typeof(Param_String),
       NickName = "RN",
       Name = "Response nodes",
       Description = "Node list to define the nodes that the responses will be calculated in the analysis",
@@ -35,6 +32,7 @@ namespace GsaGH.Data {
       Optional = true
     };
     public static readonly InputAttributes _excitationNodesAttributes = new InputAttributes() {
+      ParamType = typeof(Param_String),
       NickName = "EN",
       Name = "Excitation nodes",
       Description
@@ -43,6 +41,7 @@ namespace GsaGH.Data {
       Optional = true
     };
     private readonly InputAttributes _numberOfFootfallsAttributes = new InputAttributes() {
+      ParamType = typeof(Param_Integer),
       NickName = "NF",
       Name = "Number of footfalls",
       Description = "Number of footfalls to be considered in the analysis",
@@ -51,6 +50,7 @@ namespace GsaGH.Data {
     };
 
     private readonly InputAttributes _walkerAttributes = new InputAttributes() {
+      ParamType = typeof(Param_Number),
       NickName = "W",
       Name = "Walker",
       Description = "The mass representing a sample walker",
@@ -59,6 +59,7 @@ namespace GsaGH.Data {
     };
 
     private readonly InputAttributes _responseDirectionAttributes = new InputAttributes() {
+      ParamType = typeof(Param_GenericObject),
       NickName = "D",
       Name = "Direction of responses",
       Description = "The direction of response in the GSA global axis direction."
@@ -69,6 +70,7 @@ namespace GsaGH.Data {
     };
 
     private readonly InputAttributes _frequencyWeightingCurveAttributes = new InputAttributes() {
+      ParamType = typeof(Param_Integer),
       NickName = "F",
       Name = "Frequency Weighting Curve",
       Description = "The Frequency Weighting Curve (FWC) is used in calculating the response factors."
@@ -79,6 +81,7 @@ namespace GsaGH.Data {
     };
 
     private readonly InputAttributes _excitationForcesAttributes = new InputAttributes() {
+      ParamType = typeof(Param_Integer),
       NickName = "EF",
       Name = "Excitation forces (DLFs)",
       Description = "This defines the way of the structure to be excited (the dynamic Load Factor to be used)"
@@ -92,6 +95,7 @@ namespace GsaGH.Data {
     };
 
     private readonly InputAttributes _dampingAttributes = new InputAttributes() {
+      ParamType = typeof(Param_Number),
       NickName = "DC",
       Name = "Constant Damping",
       Description = "Constant damping in percent",

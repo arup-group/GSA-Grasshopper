@@ -148,10 +148,10 @@ namespace GsaGH.Components {
       pManager.AddIntegerParameter("Task ID", "ID", "The Task number of the Analysis Task", GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Task Name", GH_ParamAccess.item);
       pManager.AddGenericParameter(_analysisCaseInputAttributes.Name, _analysisCaseInputAttributes.NickName,
-        _analysisCaseInputAttributes.Description, GH_ParamAccess.list);
+        _analysisCaseInputAttributes.Description, _analysisCaseInputAttributes.Access);
       pManager[0].Optional = true;
       pManager[1].Optional = true;
-      pManager[2].Optional = true;
+      pManager[2].Optional = _analysisCaseInputAttributes.Optional;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
