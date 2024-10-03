@@ -96,14 +96,15 @@ namespace GsaGH.Components {
       switch (_type) {
         case AnalysisTaskType.StaticPDelta:
           SetCaseInput(_casesParamIndex, _analysisCaseInputAttributes);
-          switch (_selectedItems[1]) {
-            case "Own":
-            default:
+          PDeltaCases selectedPDeltaCase = _pDeltaCases.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
+
+          switch (selectedPDeltaCase) {
+            case PDeltaCases.Own:
               break;
-            case "Load case":
+            case PDeltaCases.LoadCase: 
               SetCaseInput(2, _loadCaseAttribute);
               break;
-            case "Result case":
+            case PDeltaCases.ResultCase:
               SetCaseInput(2, _resultCaseAttributes);
               break;
           }
@@ -124,9 +125,7 @@ namespace GsaGH.Components {
           break;
       }
     }
-
     
-
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("_casesParamIndex", _casesParamIndex);
       return base.Write(writer);
@@ -211,19 +210,20 @@ namespace GsaGH.Components {
           break;
 
         case AnalysisTaskType.StaticPDelta:
-          switch (_selectedItems[1]) {
-            case "Own":
+          PDeltaCases selectedPDeltaCase = _pDeltaCases.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
+
+          switch (selectedPDeltaCase) {
+            case PDeltaCases.Own:
               task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name, new GeometricStiffnessFromOwnLoad());
               break;
-
-            case "Load case":
+            case PDeltaCases.LoadCase:
               string caseDescription = string.Empty;
               da.GetData(2, ref caseDescription);
               task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name,
                 new GeometricStiffnessFromLoadCase(caseDescription));
               break;
-
-            case "Result case":
+              break;
+            case PDeltaCases.ResultCase:
               int resultCase = 0;
               da.GetData(2, ref resultCase);
               task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name,
@@ -446,18 +446,17 @@ namespace GsaGH.Components {
             Params.UnregisterInputParameter(Params.Input[2], true);
           }
 
-          switch (_selectedItems[1]) {
-            case "Own":
-            default:
+          PDeltaCases selectedPDeltaCase = _pDeltaCases.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
+
+          switch (selectedPDeltaCase) {
+            case PDeltaCases.Own:
               _casesParamIndex = 2;
               break;
-
-            case "Load case":
+            case PDeltaCases.LoadCase:
               _casesParamIndex = 3;
               Params.RegisterInputParam(new Param_String());
               break;
-
-            case "Result case":
+            case PDeltaCases.ResultCase:
               _casesParamIndex = 3;
               Params.RegisterInputParam(new Param_Integer());
               break;
@@ -517,12 +516,8 @@ namespace GsaGH.Components {
           _dropDownItems.Add(_solverTypes.Keys.ToList());
           _selectedItems.Add(_dropDownItems[0][1]);
 
-          _dropDownItems.Add(new List<string>() {
-            "Own",
-            "Load case",
-            "Result case"
-          });
-          _selectedItems.Add("Own");
+          _dropDownItems.Add(_pDeltaCases.Values.ToList());
+          _selectedItems.Add(_pDeltaCases[PDeltaCases.Own]);
 
           break;
 
@@ -553,8 +548,20 @@ namespace GsaGH.Components {
 
       ReDrawComponent();
     }
-    
-    private Dictionary<ExcitationMethod, string> _excitationMethod = new Dictionary<ExcitationMethod, string> {
+
+    private enum PDeltaCases {
+      Own,
+      LoadCase,
+      ResultCase,
+    }
+
+    private readonly Dictionary<PDeltaCases, string> _pDeltaCases = new Dictionary<PDeltaCases, string> {
+      { PDeltaCases.Own, "Own" },
+      { PDeltaCases.LoadCase, "Load case" },
+      { PDeltaCases.ResultCase, "Result case" },
+    };
+
+    private readonly Dictionary<ExcitationMethod, string> _excitationMethod = new Dictionary<ExcitationMethod, string> {
       { ExcitationMethod.SelfExcitation, "Self excitation" },
       { ExcitationMethod.FullExcitationRigorous, "Rigorous excitation" },
       { ExcitationMethod.FullExcitationFastExcludingResponseNode, "Fast rigorous exc." },
