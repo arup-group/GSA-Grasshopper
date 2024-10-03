@@ -23,5 +23,12 @@ namespace GsaGH.Helpers.GH {
       parameters.RegisterOutputParam(newParam, id);
       parameters.Output[id].NewInstanceGuid(guid);
     }
+
+    public static void UnregisterInputsFrom(GH_ComponentParamServer parameters, int index)
+    {
+      while (parameters.Input.Count > index) {
+        parameters.UnregisterInputParameter(parameters.Input[index], true);
+      }
+    }
   }
 }

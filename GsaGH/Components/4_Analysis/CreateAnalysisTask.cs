@@ -99,8 +99,7 @@ namespace GsaGH.Components {
           PDeltaCases selectedPDeltaCase = _pDeltaCases.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
 
           switch (selectedPDeltaCase) {
-            case PDeltaCases.Own:
-              break;
+            case PDeltaCases.Own: break;
             case PDeltaCases.LoadCase:
               SetCaseInput(2, _loadCaseAttribute);
               break;
@@ -430,20 +429,15 @@ namespace GsaGH.Components {
     }
 
     private void UpdateParameters() {
+      UnregisterInputsOverTwo();
       switch (_type) {
         case AnalysisTaskType.Static:
-          while (Params.Input.Count > 2) {
-            Params.UnregisterInputParameter(Params.Input[2], true);
-          }
 
           _casesParamIndex = 2;
           Params.RegisterInputParam(new Param_GenericObject());
           break;
 
         case AnalysisTaskType.StaticPDelta:
-          while (Params.Input.Count > 2) {
-            Params.UnregisterInputParameter(Params.Input[2], true);
-          }
 
           PDeltaCases selectedPDeltaCase = _pDeltaCases.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
 
@@ -465,10 +459,6 @@ namespace GsaGH.Components {
           break;
 
         case AnalysisTaskType.Footfall:
-          while (Params.Input.Count > 2) {
-            Params.UnregisterInputParameter(Params.Input[2], true);
-          }
-
           // modal analysis task
           Params.RegisterInputParam(new Param_Integer());
 
@@ -496,10 +486,10 @@ namespace GsaGH.Components {
           // damping constant
           Params.RegisterInputParam(new Param_Number());
           break;
-
-        default: break;
       }
     }
+
+    private void UnregisterInputsOverTwo() { ReplaceParam.UnregisterInputsFrom(Params, 2); }
 
     private void UpdateDropdownItems() {
       _dropDownItems = new List<List<string>>();
@@ -567,6 +557,7 @@ namespace GsaGH.Components {
       Attributes.ExpireLayout();
       Attributes.PerformLayout();
     }
+
     private bool IsSelfExcitationSelected() { return _selectedItems[1] == "Self excitation"; }
   }
 }
