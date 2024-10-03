@@ -1,9 +1,9 @@
 default_stages: [pre-commit]
 
 repos:
-  - repo: local
-    hooks:
-
+  # - repo: local
+  #   hooks:
+  #
     # - id: dotnet-format
       # name: Format
       # entry: dotnet format --exclude-diagnostics --verify-no-changes --verbosity diagnostic

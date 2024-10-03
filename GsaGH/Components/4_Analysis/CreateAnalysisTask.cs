@@ -101,7 +101,7 @@ namespace GsaGH.Components {
           switch (selectedPDeltaCase) {
             case PDeltaCases.Own:
               break;
-            case PDeltaCases.LoadCase: 
+            case PDeltaCases.LoadCase:
               SetCaseInput(2, _loadCaseAttribute);
               break;
             case PDeltaCases.ResultCase:
@@ -125,7 +125,7 @@ namespace GsaGH.Components {
           break;
       }
     }
-    
+
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("_casesParamIndex", _casesParamIndex);
       return base.Write(writer);
@@ -221,7 +221,6 @@ namespace GsaGH.Components {
               da.GetData(2, ref caseDescription);
               task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name,
                 new GeometricStiffnessFromLoadCase(caseDescription));
-              break;
               break;
             case PDeltaCases.ResultCase:
               int resultCase = 0;
@@ -405,7 +404,7 @@ namespace GsaGH.Components {
           }
 
           parameter.ExcitationMethod = _excitationMethod.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
-          
+
           task = AnalysisTaskFactory.CreateFootfallAnalysisTask(name, parameter);
           break;
 
