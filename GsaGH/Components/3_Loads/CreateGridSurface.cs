@@ -107,10 +107,7 @@ namespace GsaGH.Components {
         case FoldMode.OneDimensionalTwoWay:
           Params.Input[5].NickName = "Exp";
           Params.Input[5].Name = "Load Expansion";
-          Params.Input[5].Description = "Load Expansion: " + Environment.NewLine
-            + "Accepted inputs are:" + Environment.NewLine + "0 : Corner (plane)"
-            + Environment.NewLine + "1 : Smooth (plane)" + Environment.NewLine + "2 : Plane"
-            + Environment.NewLine + "3 : Legacy";
+          Params.Input[5].Description = $"Load Expansion: {Environment.NewLine}Accepted inputs are:{Environment.NewLine}0 : Corner (plane){Environment.NewLine}1 : Smooth (plane){Environment.NewLine}2 : Plane{Environment.NewLine}3 : Legacy";
           Params.Input[5].Access = GH_ParamAccess.item;
           Params.Input[5].Optional = true;
 
@@ -155,11 +152,7 @@ namespace GsaGH.Components {
         "GSA Grid Surface ID. Setting this will replace any existing Grid Surfaces in GSA model",
         GH_ParamAccess.item, 0);
       pManager.AddGenericParameter("Loadable Objects", "El",
-        "Lists, Custom Materials, Properties, Elements or Members to which load should be expanded to (by default 'All'); either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string."
-        + Environment.NewLine + "Element list should take the form:" + Environment.NewLine
-        + " 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1)"
-        + Environment.NewLine
-        + "Refer to GSA help file for definition of lists and full vocabulary.",
+        $"Lists, Custom Materials, Properties, Elements or Members to which load should be expanded to (by default 'All'); either input Section, Prop2d, Prop3d, Element1d, Element2d, Member1d, Member2d or Member3d, or a text string.{Environment.NewLine}Element list should take the form:{Environment.NewLine} 1 11 to 20 step 2 P1 not (G1 to G6 step 3) P11 not (PA PB1 PS2 PM3 PA4 M1){Environment.NewLine}Refer to GSA help file for definition of lists and full vocabulary.",
         GH_ParamAccess.item);
       pManager.AddTextParameter("Name", "Na", "Grid Surface Name", GH_ParamAccess.item);
       pManager.AddGenericParameter("Tolerance in model units", "To",
@@ -250,7 +243,7 @@ namespace GsaGH.Components {
 
               if (value.Value.EntityType == EntityType.Member) {
                 this.AddRuntimeRemark(
-                  "Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+                  $"Member list applied to loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements.{Environment.NewLine}If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
               }
 
               break;
@@ -264,21 +257,21 @@ namespace GsaGH.Components {
               gps._refObjectGuid = value.Value.Guid;
               gps._referenceType = ReferenceType.MemberChildElements;
               this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+                $"Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements.{Environment.NewLine}If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
               break;
             }
           case GsaMember2dGoo value: {
               gps._refObjectGuid = value.Value.Guid;
               gps._referenceType = ReferenceType.MemberChildElements;
               this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+                $"Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements.{Environment.NewLine}If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
               break;
             }
           case GsaMember3dGoo value: {
               gps._refObjectGuid = value.Value.Guid;
               gps._referenceType = ReferenceType.MemberChildElements;
               this.AddRuntimeRemark(
-                "Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements." + Environment.NewLine + "If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
+                $"Member loading in GsaGH will automatically find child elements created from parent member with the load still being applied to elements.{Environment.NewLine}If you save the file and continue working in GSA please note that the member-loading relationship will be lost.");
               break;
             }
           case GsaMaterialGoo value: {
@@ -336,7 +329,6 @@ namespace GsaGH.Components {
         }
       }
 
-      //update grid sirface
       var gs = new GsaAPI.GridSurface(name);
       if (idSet) {
         gs.GridPlane = gps.GridSurface.GridPlane;
