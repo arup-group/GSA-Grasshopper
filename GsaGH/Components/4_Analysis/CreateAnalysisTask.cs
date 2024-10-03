@@ -125,7 +125,7 @@ namespace GsaGH.Components {
       }
     }
 
-    private bool HasSelfExcitation() { return _selectedItems[1] == "Self excitation"; }
+    
 
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("_casesParamIndex", _casesParamIndex);
@@ -248,7 +248,7 @@ namespace GsaGH.Components {
 
           int i = 4;
           string excitationNodes = "All";
-          if (_selectedItems[1] != "Self excitation") {
+          if (!HasSelfExcitation()) {
             if (da.GetData(i++, ref excitationNodes)) {
               parameter.ExcitationNodes = excitationNodes;
             }
@@ -582,6 +582,7 @@ namespace GsaGH.Components {
       Attributes.ExpireLayout();
       Attributes.PerformLayout();
     }
+    private bool HasSelfExcitation() { return _selectedItems[1] == "Self excitation"; }
   }
 }
 
