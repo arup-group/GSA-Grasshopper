@@ -219,7 +219,7 @@ namespace GsaGH.Components {
         this.AddRuntimeError("This component does not support creating a load panel");
         return;
       }
-      
+
       Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> tuple
         = GetElement2dFromBrep(brep, pts, nodes, crvs, elem1ds, mem1ds,
           meshSize.As(_lengthUnit), _lengthUnit, ToleranceMenu.Tolerance);
