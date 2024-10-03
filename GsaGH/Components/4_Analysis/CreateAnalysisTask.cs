@@ -505,13 +505,13 @@ namespace GsaGH.Components {
     private void UpdateDropdownItems() {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
+      _spacerDescriptions = new List<string>(new[] {
+        "Solver",
+      });
 
       switch (_type) {
         case AnalysisTaskType.StaticPDelta:
-          _spacerDescriptions = new List<string>(new[] {
-            "Solver",
-            "P-delta Case"
-          });
+          _spacerDescriptions.Add("P-delta Case");
 
           _dropDownItems.Add(_solverTypes.Keys.ToList());
           _selectedItems.Add(_dropDownItems[0][1]);
@@ -522,10 +522,7 @@ namespace GsaGH.Components {
           break;
 
         case AnalysisTaskType.Footfall:
-          _spacerDescriptions = new List<string>(new[] {
-            "Solver",
-            "Method"
-          });
+          _spacerDescriptions.Add("Method");
 
           _dropDownItems.Add(_solverTypes.Keys.ToList());
           _selectedItems.Add(_dropDownItems[0][2]);
@@ -537,10 +534,6 @@ namespace GsaGH.Components {
 
         case AnalysisTaskType.Static:
         default:
-          _spacerDescriptions = new List<string>(new[] {
-            "Solver",
-          });
-
           _dropDownItems.Add(_solverTypes.Keys.ToList());
           _selectedItems.Add(_dropDownItems[0][0]);
           break;
@@ -577,7 +570,4 @@ namespace GsaGH.Components {
     }
     private bool IsSelfExcitationSelected() { return _selectedItems[1] == "Self excitation"; }
   }
-}
-
-namespace GsaGH.Data {
 }
