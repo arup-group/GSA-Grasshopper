@@ -11,8 +11,8 @@ using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
-using GsaGH.Helpers.GH;
 using GsaGH.Data;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 
@@ -84,12 +84,12 @@ namespace GsaGH.Components {
     }
 
     private void SetCaseInput(int index, InputAttributes inputAttributes) {
-      var ghParam = Params.Input[index];
+      IGH_Param ghParam = Params.Input[index];
       ghParam.NickName = inputAttributes.NickName;
       ghParam.Name = inputAttributes.Name;
       ghParam.Description = inputAttributes.Description;
-      ghParam.Access = GH_ParamAccess.list;
-      ghParam.Optional = true;
+      ghParam.Access = inputAttributes.Access;
+      ghParam.Optional = inputAttributes.Optional;
     }
 
     public override void VariableParameterMaintenance() {
@@ -112,7 +112,7 @@ namespace GsaGH.Components {
 
         case AnalysisTaskType.Footfall:
           var footFallManager = new FootfallInputManager(_selectedItems[1] != "Self excitation");
-          var attributes = footFallManager.GetInputs();
+          List<InputAttributes> attributes = footFallManager.GetInputs();
           for (int j = 0; j < attributes.Count; j++) {
             SetCaseInput(j + 2, attributes[j]);
           }

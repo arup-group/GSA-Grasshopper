@@ -101,104 +101,129 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
-    //[Theory]
-    //[InlineData(3)]
-    //[InlineData(8)]
-    //public void ChangeUnitExceptionsEquationTest(int analysisTaskType) {
-    //  var comp = new CreateFaceLoad();
-    //  comp.CreateAttributes();
-    //  comp.SetSelected(0, 3); // Equation
-    //  ComponentTestHelper.SetInput(comp, "All", 1);
-    //  ComponentTestHelper.SetInput(comp, "myLoad", 2);
-    //  ComponentTestHelper.SetInput(comp, "4*x+7*y-z", 7);
-    //  comp.SetSelected(1, i);
-    //  Assert.Throws<ArgumentOutOfRangeException>(() => ComponentTestHelper.GetOutput(comp));
-    //  Assert.Equal(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error, comp.RuntimeMessageLevel);
-    //}
-
-    [Theory]
-    [InlineData("Z", 1, 1, 1, typeof(WalkingOnFloorAISC))]
-    [InlineData("X", 2, 2, 2, typeof(WalkingOnFloorAISC2ndEdition))]
-    [InlineData("Y", 3, 3, 3, typeof(WalkingOnFloorCCIP))]
-    [InlineData("XY", 1, 4, 4, typeof(WalkingOnFloorSCI))]
-    public void CreateFootfallSelfComponentTest1(
-      string responseDirection, int weightingCurve, int excitationForces, int expectedResponsDirection,
-      Type excitationForcesType) {
-      var comp = new CreateAnalysisTask();
-      comp.CreateAttributes();
-
-      comp.SetSelected(0, 2);
-      comp.SetSelected(1, 0);
-      ComponentTestHelper.SetInput(comp, 1, 0);
-      ComponentTestHelper.SetInput(comp, "my Task", 1);
-      ComponentTestHelper.SetInput(comp, 2, 2);
-      ComponentTestHelper.SetInput(comp, "All", 3);
-      ComponentTestHelper.SetInput(comp, 100, 4);
-      ComponentTestHelper.SetInput(comp, 76.5, 5);
-      ComponentTestHelper.SetInput(comp, responseDirection, 6);
-      ComponentTestHelper.SetInput(comp, weightingCurve, 7);
-      ComponentTestHelper.SetInput(comp, excitationForces, 8);
-      ComponentTestHelper.SetInput(comp, 2.2, 9);
-
-      var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(comp);
-      var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
-
-      Assert.Equal(1, output.Value.Id);
-      Assert.Equal("my Task", output.Value.ApiTask.Name);
-      Assert.Equal(0, (int)parameter.ExcitationMethod);
-      Assert.Equal(2, parameter.ModalAnalysisTaskId);
-      Assert.Equal("all", parameter.ResponseNodes);
-      Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberOfFootfalls).NumberOfFootfalls);
-      Assert.Equal(76.5, parameter.WalkerMass);
-      Assert.Equal(expectedResponsDirection, (int)parameter.ResponseDirection);
-      Assert.Equal(weightingCurve * -1, (int)parameter.FrequencyWeightingCurve);
-      Assert.Equal(excitationForcesType, parameter.ExcitationForces.GetType());
-      Assert.Equal(2.2, ((ConstantDampingOption)parameter.DampingOption).ConstantDamping);
-      Assert.Equal((int)AnalysisTaskType.Footfall, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
+    private static Type ExcitationForcesType(int excitationForceOption) {
+      switch (excitationForceOption) {
+        case 1:
+          return typeof(WalkingOnFloorAISC);
+        case 2:
+          return typeof(WalkingOnFloorAISC2ndEdition);
+        case 3:
+          return typeof(WalkingOnFloorCCIP);
+        case 4:
+          return typeof(WalkingOnFloorSCI);
+        case 5:
+          return typeof(WalkingOnStairAISC2ndEdition);
+        case 6:
+          return typeof(WalkingOnStairArup);
+        case 7:
+          return typeof(WalkingOnStairSCI);
+        case 8:
+          return typeof(RunningOnFloorAISC2ndEdition);
+        default:
+          throw new ArgumentException("Not correct option");
+      }
     }
 
-    [Theory]
-    [InlineData(1, 2, 5, 1, typeof(WalkingOnStairAISC2ndEdition))]
-    [InlineData(2, 3, 6, 2, typeof(WalkingOnStairArup))]
-    [InlineData(3, 1, 7, 3, typeof(WalkingOnStairSCI))]
-    [InlineData(4, 2, 8, 4, typeof(RunningOnFloorAISC2ndEdition))]
-    public void CreateFootfallSelfComponentTest2(
-      int responseDirection, int weightingCurve, int excitationForces, int expectedResponsDirection,
-      Type excitationForcesType) {
-      var comp = new CreateAnalysisTask();
-      comp.CreateAttributes();
-
-      comp.SetSelected(0, 2);
-      comp.SetSelected(1, 0);
-      ComponentTestHelper.SetInput(comp, 1, 0);
-      ComponentTestHelper.SetInput(comp, "my Task", 1);
-      ComponentTestHelper.SetInput(comp, 2, 2);
-      ComponentTestHelper.SetInput(comp, "All", 3);
-      ComponentTestHelper.SetInput(comp, 100, 4);
-      ComponentTestHelper.SetInput(comp, 76.5, 5);
-      ComponentTestHelper.SetInput(comp, responseDirection, 6);
-      ComponentTestHelper.SetInput(comp, weightingCurve, 7);
-      ComponentTestHelper.SetInput(comp, excitationForces, 8);
-      ComponentTestHelper.SetInput(comp, 2.2, 9);
-
-      var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(comp);
-      var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
-
-      Assert.Equal(1, output.Value.Id);
-      Assert.Equal("my Task", output.Value.ApiTask.Name);
-      Assert.Equal(0, (int)parameter.ExcitationMethod);
-      Assert.Equal(2, parameter.ModalAnalysisTaskId);
-      Assert.Equal("all", parameter.ResponseNodes);
-      Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberOfFootfalls).NumberOfFootfalls);
-      Assert.Equal(76.5, parameter.WalkerMass);
-      Assert.Equal(expectedResponsDirection, (int)parameter.ResponseDirection);
-      Assert.Equal(weightingCurve * -1, (int)parameter.FrequencyWeightingCurve);
-      Assert.Equal(excitationForcesType, parameter.ExcitationForces.GetType());
-      Assert.Equal(2.2, ((ConstantDampingOption)parameter.DampingOption).ConstantDamping);
-      Assert.Equal((int)AnalysisTaskType.Footfall, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
+    private static string ResponseDirection(int direction) {
+      switch (direction) {
+        case 1:
+          return "Z";
+        case 2:
+          return "X";
+        case 3:
+          return "Y";
+        case 4:
+          return "XY";
+        default:
+          throw new ArgumentException("Not correct option");
+      }
     }
+
+    private static ExcitationMethod ExcitationOption(int selectedIndex) {
+      switch (selectedIndex) {
+        case 0:
+          return ExcitationMethod.SelfExcitation;
+        case 1:
+          return ExcitationMethod.FullExcitationRigorous;
+        case 2:
+          return ExcitationMethod.FullExcitationFastExcludingResponseNode;
+        case 3:
+          return ExcitationMethod.FullExcitationFast;
+        default:
+          throw new ArgumentException("Not correct option");
+      }
+    }
+
+    [Fact]
+    public void CreateFootfallSelfComponentTest() {
+      int excitationSelectedIndex = 0;
+      foreach (int excitation in Enum.GetValues(typeof(ExcitationMethod))) {
+
+        foreach (int direction in Enum.GetValues(typeof(ResponseDirection))) {
+
+          for (int directionOption = 0; directionOption < 2; directionOption++) {
+
+            foreach (int weighingOption in Enum.GetValues(typeof(WeightingOption))) {
+
+              for (int excitationForce = 1; excitationForce < 9; excitationForce++) {
+
+                var comp = new CreateAnalysisTask();
+                comp.CreateAttributes();
+                comp.SetSelected(0, 2);
+                comp.SetSelected(1, excitationSelectedIndex);
+                ComponentTestHelper.SetInput(comp, 1, 0);
+                ComponentTestHelper.SetInput(comp, "my Task", 1);
+                ComponentTestHelper.SetInput(comp, 2, 2);
+                ComponentTestHelper.SetInput(comp, "All", 3);
+                int index = 4;
+                if (excitation > 0) {
+                  ComponentTestHelper.SetInput(comp, "1 2", 4);
+                  index++;
+                }
+                ComponentTestHelper.SetInput(comp, 100, index++);
+                ComponentTestHelper.SetInput(comp, 76.5, index++);
+                if (directionOption > 0) {
+                  ComponentTestHelper.SetInput(comp, ResponseDirection(direction), index++);
+                } else {
+                  ComponentTestHelper.SetInput(comp, direction, index++);
+                }
+
+                ComponentTestHelper.SetInput(comp, weighingOption * -1, index++);
+                ComponentTestHelper.SetInput(comp, excitationForce, index++);
+                ComponentTestHelper.SetInput(comp, 2.2, index++);
+
+                var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(comp);
+                var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
+
+                Assert.Equal(ExcitationOption(excitationSelectedIndex), parameter.ExcitationMethod);
+                Assert.Equal(1, output.Value.Id);
+                Assert.Equal("my Task", output.Value.ApiTask.Name);
+                Assert.Equal(2, parameter.ModalAnalysisTaskId);
+                Assert.Equal("all", parameter.ResponseNodes);
+                if (excitation > 1) {
+                  Assert.Equal("1 2", parameter.ExcitationNodes);
+                }
+                Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberOfFootfalls).NumberOfFootfalls);
+                Assert.Equal(76.5, parameter.WalkerMass);
+                Assert.Equal(direction, (int)parameter.ResponseDirection);
+                Assert.Equal(weighingOption, (int)parameter.FrequencyWeightingCurve);
+                Assert.Equal(ExcitationForcesType(excitationForce), parameter.ExcitationForces.GetType());
+                Assert.Equal(2.2, ((ConstantDampingOption)parameter.DampingOption).ConstantDamping);
+                Assert.Equal((int)AnalysisTaskType.Footfall, output.Value.ApiTask.Type);
+                Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
+
+              }
+
+            }
+
+          }
+
+        }
+        excitationSelectedIndex++;
+      }
+
+    }
+
 
     [Fact]
     public void CreateFootfallRigorousComponentTest() {

@@ -16,9 +16,9 @@ namespace GsaGHTests.Helpers {
         { 2, "Two" },
         { 3, "Three" }
       };
-      var result = TextFormatHelper.FormatNumberedList(elementTypeMapping);
-      var separator = Environment.NewLine;
-      var itemCount = result.Split(new[] { separator }, StringSplitOptions.None).Length;
+      string result = TextFormatHelper.FormatNumberedList(elementTypeMapping);
+      string separator = Environment.NewLine;
+      int itemCount = result.Split(new[] { separator }, StringSplitOptions.None).Length;
       Assert.Equal(3, itemCount);
     }
   }
