@@ -111,7 +111,7 @@ namespace GsaGH.Components {
           break;
 
         case AnalysisTaskType.Footfall:
-          var footFallManager = new FootfallInputManager(_selectedItems[1] != "Self excitation");
+          var footFallManager = new FootfallInputManager(!HasSelfExcitation());
           List<InputAttributes> attributes = footFallManager.GetInputs();
           for (int j = 0; j < attributes.Count; j++) {
             SetCaseInput(j + 2, attributes[j]);
@@ -124,6 +124,8 @@ namespace GsaGH.Components {
           break;
       }
     }
+
+    private bool HasSelfExcitation() { return _selectedItems[1] == "Self excitation"; }
 
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("_casesParamIndex", _casesParamIndex);
@@ -492,7 +494,7 @@ namespace GsaGH.Components {
           Params.RegisterInputParam(new Param_String());
 
           // excitation nodes
-          if (_selectedItems[1] != "Self excitation") {
+          if (!HasSelfExcitation()) {
             _casesParamIndex = 9;
             Params.RegisterInputParam(new Param_String());
           } else {

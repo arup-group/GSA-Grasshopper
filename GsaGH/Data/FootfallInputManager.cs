@@ -101,16 +101,16 @@ namespace GsaGH.Data {
     public FootfallInputManager(bool selfExcitation) { _selfExcitation = selfExcitation; }
 
     public List<InputAttributes> GetInputs() {
-      return FootfallAttributes(_selfExcitation);
+      return FootfallAttributes();
     }
 
-    private List<InputAttributes> FootfallAttributes(bool selfExcitation) {
+    private List<InputAttributes> FootfallAttributes() {
       var attributes = new List<InputAttributes>() {
         _modalAnalysisTaskAttributes,
         _responseNodesAttributes,
       };
 
-      if (selfExcitation) {
+      if (_selfExcitation) {
         attributes.Add(_excitationNodesAttributes);
       }
 
