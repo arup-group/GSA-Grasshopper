@@ -1,11 +1,13 @@
 ﻿using System;
 
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
 using GsaGH.Components;
 using GsaGH.Data;
+using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
@@ -103,54 +105,35 @@ namespace GsaGHTests.Components.Analysis {
 
     private static Type ExcitationForcesType(int excitationForceOption) {
       switch (excitationForceOption) {
-        case 1:
-          return typeof(WalkingOnFloorAISC);
-        case 2:
-          return typeof(WalkingOnFloorAISC2ndEdition);
-        case 3:
-          return typeof(WalkingOnFloorCCIP);
-        case 4:
-          return typeof(WalkingOnFloorSCI);
-        case 5:
-          return typeof(WalkingOnStairAISC2ndEdition);
-        case 6:
-          return typeof(WalkingOnStairArup);
-        case 7:
-          return typeof(WalkingOnStairSCI);
-        case 8:
-          return typeof(RunningOnFloorAISC2ndEdition);
-        default:
-          throw new ArgumentException("Not correct option");
+        case 1: return typeof(WalkingOnFloorAISC);
+        case 2: return typeof(WalkingOnFloorAISC2ndEdition);
+        case 3: return typeof(WalkingOnFloorCCIP);
+        case 4: return typeof(WalkingOnFloorSCI);
+        case 5: return typeof(WalkingOnStairAISC2ndEdition);
+        case 6: return typeof(WalkingOnStairArup);
+        case 7: return typeof(WalkingOnStairSCI);
+        case 8: return typeof(RunningOnFloorAISC2ndEdition);
+        default: throw new ArgumentException("Not correct option");
       }
     }
 
     private static string ResponseDirection(int direction) {
       switch (direction) {
-        case 1:
-          return "Z";
-        case 2:
-          return "X";
-        case 3:
-          return "Y";
-        case 4:
-          return "XY";
-        default:
-          throw new ArgumentException("Not correct option");
+        case 1: return "Z";
+        case 2: return "X";
+        case 3: return "Y";
+        case 4: return "XY";
+        default: throw new ArgumentException("Not correct option");
       }
     }
 
     private static ExcitationMethod ExcitationOption(int selectedIndex) {
       switch (selectedIndex) {
-        case 0:
-          return ExcitationMethod.SelfExcitation;
-        case 1:
-          return ExcitationMethod.FullExcitationRigorous;
-        case 2:
-          return ExcitationMethod.FullExcitationFastExcludingResponseNode;
-        case 3:
-          return ExcitationMethod.FullExcitationFast;
-        default:
-          throw new ArgumentException("Not correct option");
+        case 0: return ExcitationMethod.SelfExcitation;
+        case 1: return ExcitationMethod.FullExcitationRigorous;
+        case 2: return ExcitationMethod.FullExcitationFastExcludingResponseNode;
+        case 3: return ExcitationMethod.FullExcitationFast;
+        default: throw new ArgumentException("Not correct option");
       }
     }
 
@@ -158,15 +141,10 @@ namespace GsaGHTests.Components.Analysis {
     public void CreateFootfallSelfComponentTest() {
       int excitationSelectedIndex = 0;
       foreach (int excitation in Enum.GetValues(typeof(ExcitationMethod))) {
-
         foreach (int direction in Enum.GetValues(typeof(ResponseDirection))) {
-
           for (int directionOption = 0; directionOption < 2; directionOption++) {
-
             foreach (int weighingOption in Enum.GetValues(typeof(WeightingOption))) {
-
               for (int excitationForce = 1; excitationForce < 9; excitationForce++) {
-
                 var comp = new CreateAnalysisTask();
                 comp.CreateAttributes();
                 comp.SetSelected(0, 2);
@@ -180,6 +158,7 @@ namespace GsaGHTests.Components.Analysis {
                   ComponentTestHelper.SetInput(comp, "1 2", 4);
                   index++;
                 }
+
                 ComponentTestHelper.SetInput(comp, 100, index++);
                 ComponentTestHelper.SetInput(comp, 76.5, index++);
                 if (directionOption > 0) {
@@ -203,6 +182,7 @@ namespace GsaGHTests.Components.Analysis {
                 if (excitation > 1) {
                   Assert.Equal("1 2", parameter.ExcitationNodes);
                 }
+
                 Assert.Equal(100, ((ConstantFootfallsForAllModes)parameter.NumberOfFootfalls).NumberOfFootfalls);
                 Assert.Equal(76.5, parameter.WalkerMass);
                 Assert.Equal(direction, (int)parameter.ResponseDirection);
@@ -211,19 +191,14 @@ namespace GsaGHTests.Components.Analysis {
                 Assert.Equal(2.2, ((ConstantDampingOption)parameter.DampingOption).ConstantDamping);
                 Assert.Equal((int)AnalysisTaskType.Footfall, output.Value.ApiTask.Type);
                 Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
-
               }
-
             }
-
           }
-
         }
+
         excitationSelectedIndex++;
       }
-
     }
-
 
     [Fact]
     public void CreateFootfallRigorousComponentTest() {
@@ -351,5 +326,4 @@ namespace GsaGHTests.Components.Analysis {
       Assert.DoesNotContain(FootfallInputManager._excitationNodesAttributes, footfallInputManager.GetInputs());
     }
   }
-
 }

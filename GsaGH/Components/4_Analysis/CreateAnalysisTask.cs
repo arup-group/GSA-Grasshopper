@@ -171,20 +171,16 @@ namespace GsaGH.Components {
         if (da.GetDataList(_casesParamIndex, ghTypes)) {
           cases = new List<GsaAnalysisCase>();
           for (int i = 0; i < ghTypes.Count; i++) {
-            GH_ObjectWrapper ghTyp = ghTypes[i];
-            if (ghTyp == null) {
+            GH_ObjectWrapper ghTypeWrapper = ghTypes[i];
+            if (ghTypeWrapper == null) {
               Params.Owner.AddRuntimeWarning($"Analysis Case input (index: {i}) is null and has been ignored");
               continue;
             }
 
-            if (ghTyp.Value is GsaAnalysisCaseGoo goo) {
+            if (ghTypeWrapper.Value is GsaAnalysisCaseGoo goo) {
               cases.Add(goo.Value.Duplicate());
             } else {
-              string type = ghTyp.Value.GetType().ToString();
-              type = type.Replace("GsaGH.Parameters.", string.Empty);
-              type = type.Replace("Goo", string.Empty);
-              Params.Owner.AddRuntimeError(
-                $"Unable to convert Analysis Case input parameter of type {type} to GsaAnalysisCase");
+              UnsupportedValueError(ghTypeWrapper);
               return;
             }
           }
@@ -419,6 +415,12 @@ namespace GsaGH.Components {
       };
 
       da.SetData(0, new GsaAnalysisTaskGoo(gsaAnalysisTask));
+    }
+
+    private void UnsupportedValueError(GH_ObjectWrapper ghTypeWrapper) {
+      string type = ReplaceParam.UnsupportedValue(ghTypeWrapper);
+      Params.Owner.AddRuntimeError(
+        $"Unable to convert Analysis Case input parameter of type {type} to GsaAnalysisCase");
     }
 
     protected override void UpdateUIFromSelectedItems() {
