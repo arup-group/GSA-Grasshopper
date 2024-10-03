@@ -404,24 +404,8 @@ namespace GsaGH.Components {
             parameter.DampingOption = new ConstantDampingOption() { ConstantDamping = damping };
           }
 
-          switch (_selectedItems[1]) {
-            case "Self excitation":
-              parameter.ExcitationMethod = ExcitationMethod.SelfExcitation;
-              break;
-
-            case "Rigorous excitation":
-              parameter.ExcitationMethod = ExcitationMethod.FullExcitationRigorous;
-              break;
-
-            case "Fast rigorous exc.":
-              parameter.ExcitationMethod = ExcitationMethod.FullExcitationFastExcludingResponseNode;
-              break;
-
-            case "Fast excitation":
-              parameter.ExcitationMethod = ExcitationMethod.FullExcitationFast;
-              break;
-          }
-
+          parameter.ExcitationMethod = _excitationMethod.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
+          
           task = AnalysisTaskFactory.CreateFootfallAnalysisTask(name, parameter);
           break;
 
@@ -551,13 +535,8 @@ namespace GsaGH.Components {
           _dropDownItems.Add(_solverTypes.Keys.ToList());
           _selectedItems.Add(_dropDownItems[0][2]);
 
-          _dropDownItems.Add(new List<string>() {
-            "Self excitation",
-            "Rigorous excitation",
-            "Fast rigorous exc.",
-            "Fast excitation"
-          });
-          _selectedItems.Add("Self excitation");
+          _dropDownItems.Add(_excitationMethod.Values.ToList());
+          _selectedItems.Add(_excitationMethod[ExcitationMethod.SelfExcitation]);
 
           break;
 
@@ -574,6 +553,13 @@ namespace GsaGH.Components {
 
       ReDrawComponent();
     }
+    
+    private Dictionary<ExcitationMethod, string> _excitationMethod = new Dictionary<ExcitationMethod, string> {
+      { ExcitationMethod.SelfExcitation, "Self excitation" },
+      { ExcitationMethod.FullExcitationRigorous, "Rigorous excitation" },
+      { ExcitationMethod.FullExcitationFastExcludingResponseNode, "Fast rigorous exc." },
+      { ExcitationMethod.FullExcitationFast, "Fast excitation" },
+    };
 
     private void ReDrawComponent() {
       var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
