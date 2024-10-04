@@ -24,6 +24,13 @@ namespace GsaGH.Components {
   ///   Component to create a GSA Analysis Task
   /// </summary>
   public class CreateAnalysisTask : GH_OasysDropDownComponent {
+
+    private enum PDeltaCases {
+      Own,
+      LoadCase,
+      ResultCase,
+    }
+
     internal static readonly IReadOnlyDictionary<string, AnalysisTaskType> _solverTypes
       = new Dictionary<string, AnalysisTaskType> {
         { "Static", AnalysisTaskType.Static },
@@ -35,34 +42,53 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateAnalysisTask;
-    private AnalysisTaskType _type = AnalysisTaskType.Static;
-    private int _casesParamIndex = 2;
-    private readonly InputAttributes _analysisCaseInputAttributes = new InputAttributes() {
+
+    private readonly InputAttributes _analysisCaseInputAttributes = new InputAttributes {
       NickName = "ΣAs",
       Name = "Analysis Cases",
       Description = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)",
       Access = GH_ParamAccess.list,
-      Optional = true
+      Optional = true,
     };
-    private readonly InputAttributes _loadCaseAttribute = new InputAttributes() {
+
+    private readonly Dictionary<ExcitationMethod, string> _excitationMethod = new Dictionary<ExcitationMethod, string> {
+      { ExcitationMethod.SelfExcitation, "Self excitation" },
+      { ExcitationMethod.FullExcitationRigorous, "Rigorous excitation" },
+      { ExcitationMethod.FullExcitationFastExcludingResponseNode, "Fast rigorous exc." },
+      { ExcitationMethod.FullExcitationFast, "Fast excitation" },
+    };
+
+    private readonly InputAttributes _loadCaseAttribute = new InputAttributes {
       NickName = "LC",
       Name = "Load case",
       Description = "Load case definition (e.g. 1.2L1 + 1.2L2)",
       Access = GH_ParamAccess.item,
-      Optional = false
+      Optional = false,
     };
-    private readonly InputAttributes _resultCaseAttributes = new InputAttributes() {
+
+    private readonly Dictionary<PDeltaCases, string> _pDeltaCases = new Dictionary<PDeltaCases, string> {
+      { PDeltaCases.Own, "Own" },
+      { PDeltaCases.LoadCase, "Load case" },
+      { PDeltaCases.ResultCase, "Result case" },
+    };
+
+    private readonly InputAttributes _resultCaseAttributes = new InputAttributes {
       NickName = "RC",
       Name = "Result case",
       Description = "The result case that forms the basis for the geometric stiffness",
       Access = GH_ParamAccess.item,
-      Optional = false
+      Optional = false,
     };
+    private int _casesParamIndex = 2;
+
+    private readonly FootfallInputManager _footfallInputManager;
+    private AnalysisTaskType _type = AnalysisTaskType.Static;
 
     public CreateAnalysisTask() : base($"Create {GsaAnalysisTaskGoo.Name}",
       GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty), $"Create a {GsaAnalysisTaskGoo.Description}",
       CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;
+      _footfallInputManager = new FootfallInputManager(true);
     }
 
     public override bool Read(GH_IReader reader) {
@@ -83,44 +109,30 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    private void SetCaseInput(int index, InputAttributes inputAttributes) {
-      IGH_Param ghParam = Params.Input[index];
-      ghParam.NickName = inputAttributes.NickName;
-      ghParam.Name = inputAttributes.Name;
-      ghParam.Description = inputAttributes.Description;
-      ghParam.Access = inputAttributes.Access;
-      ghParam.Optional = inputAttributes.Optional;
-    }
-
     public override void VariableParameterMaintenance() {
       switch (_type) {
         case AnalysisTaskType.StaticPDelta:
-          SetCaseInput(_casesParamIndex, _analysisCaseInputAttributes);
+          SetInputAttributes(_casesParamIndex, _analysisCaseInputAttributes);
           PDeltaCases selectedPDeltaCase = _pDeltaCases.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
 
           switch (selectedPDeltaCase) {
             case PDeltaCases.Own: break;
             case PDeltaCases.LoadCase:
-              SetCaseInput(2, _loadCaseAttribute);
+              SetInputAttributes(2, _loadCaseAttribute);
               break;
             case PDeltaCases.ResultCase:
-              SetCaseInput(2, _resultCaseAttributes);
+              SetInputAttributes(2, _resultCaseAttributes);
               break;
           }
 
           break;
 
         case AnalysisTaskType.Footfall:
-          var footFallManager = new FootfallInputManager(!IsSelfExcitationSelected());
-          List<InputAttributes> attributes = footFallManager.GetInputs();
-          for (int j = 0; j < attributes.Count; j++) {
-            SetCaseInput(j + 2, attributes[j]);
-          }
-
+          SetFootfallInput();
           break;
         case AnalysisTaskType.Static:
         default:
-          SetCaseInput(_casesParamIndex, _analysisCaseInputAttributes);
+          SetInputAttributes(_casesParamIndex, _analysisCaseInputAttributes);
           break;
       }
     }
@@ -193,7 +205,7 @@ namespace GsaGH.Components {
         cases = new List<GsaAnalysisCase>();
         var footfallAnalysisCase = new GsaAnalysisCase {
           Name = name,
-          Definition = name
+          Definition = name,
         };
         cases.Add(footfallAnalysisCase);
       }
@@ -231,7 +243,7 @@ namespace GsaGH.Components {
           int analysisTaskId = 0;
           da.GetData(2, ref analysisTaskId);
 
-          var parameter = new FootfallAnalysisTaskParameter() {
+          var parameter = new FootfallAnalysisTaskParameter {
             ModalAnalysisTaskId = analysisTaskId,
           };
 
@@ -395,7 +407,9 @@ namespace GsaGH.Components {
 
           double damping = 0;
           if (da.GetData(i++, ref damping)) {
-            parameter.DampingOption = new ConstantDampingOption() { ConstantDamping = damping };
+            parameter.DampingOption = new ConstantDampingOption {
+              ConstantDamping = damping,
+            };
           }
 
           parameter.ExcitationMethod = _excitationMethod.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
@@ -408,19 +422,13 @@ namespace GsaGH.Components {
           break;
       }
 
-      var gsaAnalysisTask = new GsaAnalysisTask() {
+      var gsaAnalysisTask = new GsaAnalysisTask {
         Cases = cases,
         ApiTask = task,
-        Id = id
+        Id = id,
       };
 
       da.SetData(0, new GsaAnalysisTaskGoo(gsaAnalysisTask));
-    }
-
-    private void UnsupportedValueError(GH_ObjectWrapper ghTypeWrapper) {
-      string type = ReplaceParam.UnsupportedValue(ghTypeWrapper);
-      Params.Owner.AddRuntimeError(
-        $"Unable to convert Analysis Case input parameter of type {type} to GsaAnalysisCase");
     }
 
     protected override void UpdateUIFromSelectedItems() {
@@ -434,13 +442,11 @@ namespace GsaGH.Components {
       UnregisterInputsOverTwo();
       switch (_type) {
         case AnalysisTaskType.Static:
-
           _casesParamIndex = 2;
           Params.RegisterInputParam(new Param_GenericObject());
           break;
 
         case AnalysisTaskType.StaticPDelta:
-
           PDeltaCases selectedPDeltaCase = _pDeltaCases.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
 
           switch (selectedPDeltaCase) {
@@ -461,32 +467,20 @@ namespace GsaGH.Components {
           break;
 
         case AnalysisTaskType.Footfall:
-          // modal analysis task
-          Params.RegisterInputParam(new Param_Integer());
-
-          // response nodes
-          Params.RegisterInputParam(new Param_String());
-
-          // excitation nodes
+          Params.RegisterInputParam(FootfallInputManager._modalAnalysisTaskAttributes.ParamType);
+          Params.RegisterInputParam(FootfallInputManager._responseNodesAttributes.ParamType);
           if (!IsSelfExcitationSelected()) {
-            _casesParamIndex = 9;
             Params.RegisterInputParam(new Param_String());
-          } else {
-            _casesParamIndex = 8;
           }
 
-          // number of footfalls
-          Params.RegisterInputParam(new Param_Integer());
-          // walker
-          Params.RegisterInputParam(new Param_Number());
-          // direction of responses
-          Params.RegisterInputParam(new Param_GenericObject());
-          // frequency weighting curve
-          Params.RegisterInputParam(new Param_Integer());
-          // excitation forces
-          Params.RegisterInputParam(new Param_Integer());
-          // damping constant
-          Params.RegisterInputParam(new Param_Number());
+          Params.RegisterInputParam(FootfallInputManager._numberOfFootfallsAttributes.ParamType);
+          Params.RegisterInputParam(FootfallInputManager._walkerAttributes.ParamType);
+          Params.RegisterInputParam(FootfallInputManager._responseDirectionAttributes.ParamType);
+          Params.RegisterInputParam(FootfallInputManager._frequencyWeightingCurveAttributes.ParamType);
+          Params.RegisterInputParam(FootfallInputManager._excitationForcesAttributes.ParamType);
+          Params.RegisterInputParam(FootfallInputManager._dampingAttributes.ParamType);
+          _casesParamIndex = !IsSelfExcitationSelected() ? 9 : 8;
+
           break;
       }
     }
@@ -533,25 +527,6 @@ namespace GsaGH.Components {
       ReDrawComponent();
     }
 
-    private enum PDeltaCases {
-      Own,
-      LoadCase,
-      ResultCase,
-    }
-
-    private readonly Dictionary<PDeltaCases, string> _pDeltaCases = new Dictionary<PDeltaCases, string> {
-      { PDeltaCases.Own, "Own" },
-      { PDeltaCases.LoadCase, "Load case" },
-      { PDeltaCases.ResultCase, "Result case" },
-    };
-
-    private readonly Dictionary<ExcitationMethod, string> _excitationMethod = new Dictionary<ExcitationMethod, string> {
-      { ExcitationMethod.SelfExcitation, "Self excitation" },
-      { ExcitationMethod.FullExcitationRigorous, "Rigorous excitation" },
-      { ExcitationMethod.FullExcitationFastExcludingResponseNode, "Fast rigorous exc." },
-      { ExcitationMethod.FullExcitationFast, "Fast excitation" },
-    };
-
     private void ReDrawComponent() {
       var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
       base.CreateAttributes();
@@ -561,5 +536,38 @@ namespace GsaGH.Components {
     }
 
     private bool IsSelfExcitationSelected() { return _selectedItems[1] == "Self excitation"; }
+
+    private void SetInputAttributes(int index, InputAttributes inputAttributes) {
+      IGH_Param ghParam = Params.Input[index];
+      ghParam.NickName = inputAttributes.NickName;
+      ghParam.Name = inputAttributes.Name;
+      ghParam.Description = inputAttributes.Description;
+      ghParam.Access = inputAttributes.Access;
+      ghParam.Optional = inputAttributes.Optional;
+    }
+
+    private void UnsupportedValueError(GH_ObjectWrapper ghTypeWrapper) {
+      string type = ReplaceParam.UnsupportedValue(ghTypeWrapper);
+      Params.Owner.AddRuntimeError(
+        $"Unable to convert Analysis Case input parameter of type {type} to GsaAnalysisCase");
+    }
+
+    private void SetFootfallInput() {
+      List<InputAttributes> inputs = _footfallInputManager.GetInputsForSelfExcitation(!IsSelfExcitationSelected());
+      for (int j = 0; j < inputs.Count; j++) {
+        SetInputAttributes(j + 2, inputs[j]);
+      }
+    }
+
+    private void RegisterFootfallInput() {
+      bool isSelfExcitation = IsSelfExcitationSelected();
+      List<InputAttributes> inputs = _footfallInputManager.GetInputsForSelfExcitation(!isSelfExcitation);
+      for (int j = 0; j < inputs.Count; j++) {
+        IGH_Param type = inputs[j].ParamType;
+        Params.RegisterInputParam(type);
+      }
+
+      _casesParamIndex = !isSelfExcitation ? 9 : 8;
+    }
   }
 }

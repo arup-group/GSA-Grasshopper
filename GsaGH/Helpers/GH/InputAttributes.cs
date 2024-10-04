@@ -1,10 +1,8 @@
-﻿using System;
-
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 
 namespace GsaGH.Helpers.GH {
   public struct InputAttributes {
-    public Type ParamType;
+    public IGH_Param ParamType;
     public string NickName;
     public string Name;
     public string Description;

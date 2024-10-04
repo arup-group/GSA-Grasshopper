@@ -1,13 +1,11 @@
 ﻿using System;
 
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
 using GsaGH.Components;
 using GsaGH.Data;
-using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
@@ -317,13 +315,15 @@ namespace GsaGHTests.Components.Analysis {
     [Fact]
     public void FootfallInputWithExcitationTrueShouldIncludeExcitationNode() {
       var footfallInputManager = new FootfallInputManager(true);
-      Assert.Contains(FootfallInputManager._excitationNodesAttributes, footfallInputManager.GetInputs());
+      Assert.Contains(FootfallInputManager._excitationNodesAttributes,
+        footfallInputManager.GetInputsForSelfExcitation(true));
     }
 
     [Fact]
     public void FootfallInputWithExcitationFalseShouldNotIncludeExcitationNode() {
       var footfallInputManager = new FootfallInputManager(false);
-      Assert.DoesNotContain(FootfallInputManager._excitationNodesAttributes, footfallInputManager.GetInputs());
+      Assert.DoesNotContain(FootfallInputManager._excitationNodesAttributes,
+        footfallInputManager.GetInputsForSelfExcitation(false));
     }
   }
 }
