@@ -156,19 +156,32 @@ namespace GsaGH.Parameters {
       var elems = new List<GSAElement>();
       for (int i = 0; i < ApiElements.Count; i++) {
         GSAElement element2d = ApiElements[i];
-        GSAElement element = element2d.IsLoadPanel ? new GSAElement(new LoadPanelElement()) : new GSAElement(new Element()) {
-          Group = element2d.Group,
-          IsDummy = element2d.IsDummy,
-          Name = element2d.Name.ToString(),
-          OrientationNode = element2d.OrientationNode,
-          OrientationAngle = element2d.OrientationAngle,
-          ParentMember = element2d.ParentMember,
-          Property = element2d.Property,
-          Type = element2d.Type,
-          Topology = new ReadOnlyCollection<int>(element2d.Topology.ToList()),
-          Offset = element2d.Offset,
-        };
-
+        GSAElement element = null;
+        if (element2d.IsLoadPanel) {
+          element = new GSAElement(new LoadPanelElement()) {
+            Group = element2d.Group,
+            IsDummy = element2d.IsDummy,
+            Name = element2d.Name.ToString(),
+            OrientationAngle = element2d.OrientationAngle,
+            ParentMember = element2d.ParentMember,
+            Property = element2d.Property,
+            Type = element2d.Type,
+            Topology = new ReadOnlyCollection<int>(element2d.Topology.ToList()),
+          };
+        } else {
+          element = new GSAElement(new Element()) {
+            Group = element2d.Group,
+            IsDummy = element2d.IsDummy,
+            Name = element2d.Name.ToString(),
+            OrientationNode = element2d.OrientationNode,
+            OrientationAngle = element2d.OrientationAngle,
+            ParentMember = element2d.ParentMember,
+            Property = element2d.Property,
+            Type = element2d.Type,
+            Topology = new ReadOnlyCollection<int>(element2d.Topology.ToList()),
+            Offset = element2d.Offset,
+          };
+        }
         if ((Color)element2d.Colour != Color.FromArgb(0, 0, 0)) {
           element.Colour = element2d.Colour;
         }

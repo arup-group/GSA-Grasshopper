@@ -30,6 +30,13 @@ namespace GsaGHTests.Parameters {
       Duplicates.AreEqual(original, duplicate, new List<string>() {
         "Guid"
       });
+
+      GsaElement2d originalLoadPanel = CreateLoadPanel();
+      var duplicateLoadPanel = new GsaElement2d(originalLoadPanel);
+      Duplicates.AreEqual(originalLoadPanel, duplicateLoadPanel, new List<string>() {
+        "Guid", "Offset", "OrientationNode", "Release", "GetEndRelease"
+      });
+
     }
 
     [Fact]
@@ -254,14 +261,21 @@ namespace GsaGHTests.Parameters {
       }
     }
 
-    [Fact]
-    public void CreateSectionNotNull() {
-      GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
-      ele.CreateSection3dPreview();
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void CreateSectionNotNull(bool isLoadPanel) {
+      GsaElement2d element = null;
+      if (isLoadPanel) {
+        element = CreateLoadPanel();
+      } else {
+        element = CreateSampleElement2dWithQuad4Type();
+      }
+      element.CreateSection3dPreview();
 
-      Assert.NotNull(ele.Section3dPreview);
-      Assert.NotNull(ele.Section3dPreview.Outlines);
-      Assert.NotNull(ele.Section3dPreview.Mesh);
+      Assert.NotNull(element.Section3dPreview);
+      Assert.NotNull(element.Section3dPreview.Outlines);
+      Assert.NotNull(element.Section3dPreview.Mesh);
     }
 
     [Fact]
@@ -394,9 +408,31 @@ namespace GsaGHTests.Parameters {
        new Point3d(2, 2, 0),
        new Point3d(0, 2, 0),
      };
+
       pts.Add(pts[0]);
       var pol = new Polyline(pts);
       var elem = new GsaElement2d(pol.ToPolylineCurve());
+
+      int initialElementId = 14;
+      int sectionId = 3;
+      var groups = new List<int>();
+      var dummy = new List<bool>();
+      var names = new List<string>();
+      var off = new List<GsaOffset>();
+      elem.Prop2ds = new List<GsaProperty2d>();
+      for (int i = 0; i < elem.ApiElements.Count; i++) {
+        elem.Ids[i] = initialElementId++;
+        groups.Add(22);
+        dummy.Add(true);
+        names.Add("Shahin");
+        elem.Prop2ds.Add(new GsaProperty2d(sectionId) {
+          ApiProp2d = new Prop2D(),
+        });
+      }
+
+      elem.ApiElements.SetMembers(groups);
+      elem.ApiElements.SetMembers(dummy);
+      elem.ApiElements.SetMembers(names);
       return elem;
     }
 
