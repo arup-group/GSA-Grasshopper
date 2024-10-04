@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Grasshopper.Kernel;
 
@@ -6,6 +7,7 @@ using GsaAPI;
 
 using GsaGH.Components;
 using GsaGH.Data;
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
@@ -325,5 +327,24 @@ namespace GsaGHTests.Components.Analysis {
       Assert.DoesNotContain(FootfallInputManager._excitationNodesAttributes,
         footfallInputManager.GetInputsForSelfExcitation(false));
     }
+
+    [Fact]
+    public void SearchingForValuesInDictionaryShouldReturnExceptionForFailedSearch() {
+      var dictionary = new Dictionary<string, string> {
+        { "key1", "value1" },
+        { "key2", "value2" }
+      };
+      Assert.Throws<Exception>(() => dictionary.TryGetKeyFrom("value3"));
+    }
+
+    [Fact]
+    public void SearchingForExistingValuesShouldReturnTheKey() {
+      var dictionary = new Dictionary<string, string> {
+        { "key1", "value1" },
+        { "key2", "value2" }
+      };
+      Assert.Equal("key2", dictionary.TryGetKeyFrom("value2"));
+    }
+
   }
 }

@@ -12,6 +12,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 
 using GsaGH.Data;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -113,7 +114,7 @@ namespace GsaGH.Components {
       switch (_type) {
         case AnalysisTaskType.StaticPDelta:
           SetInputAttributes(_casesParamIndex, _analysisCaseInputAttributes);
-          PDeltaCases selectedPDeltaCase = _pDeltaCases.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
+          PDeltaCases selectedPDeltaCase = GetKeyFromMatchingValue(_selectedItems[1]);
 
           switch (selectedPDeltaCase) {
             case PDeltaCases.Own: break;
@@ -135,6 +136,10 @@ namespace GsaGH.Components {
           SetInputAttributes(_casesParamIndex, _analysisCaseInputAttributes);
           break;
       }
+    }
+
+    private PDeltaCases GetKeyFromMatchingValue(string valueToMatch) {
+      return _pDeltaCases.TryGetKeyFrom(valueToMatch);
     }
 
     public override bool Write(GH_IWriter writer) {
