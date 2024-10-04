@@ -37,7 +37,7 @@ namespace GsaGHTests.Helpers.Import {
     public void ImportElement2dTest() {
       var model = new GsaModel(ImportElementsMotherModel());
       var elements = new Elements(model);
-      GsaElement2d elem = elements.Element2ds.First().Value;
+      GsaElement2d elem = elements.Element2ds.Where(x => x.Value.IsLoadPanel == false).First().Value;
       Assert.Equal("EC2-1-1", elem.Prop2ds[0].Material.ConcreteDesignCodeName);
       Assert.Equal(200, elem.Prop2ds[0].Thickness.Millimeters);
       Duplicates.AreEqual(model.Materials.ConcreteMaterials[1], elem.Prop2ds[0].Material);
