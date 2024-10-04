@@ -278,65 +278,9 @@ namespace GsaGH.Components {
 
           var ghTyp = new GH_ObjectWrapper();
           if (da.GetData(i++, ref ghTyp)) {
-            ResponseDirection responseDirection = ResponseDirection.Z;
-            switch (ghTyp.Value) {
-              case GH_Integer ghInt:
-                switch (ghInt.Value) {
-                  case 1:
-                    responseDirection = ResponseDirection.Z;
-                    break;
-
-                  case 2:
-                    responseDirection = ResponseDirection.X;
-                    break;
-
-                  case 3:
-                    responseDirection = ResponseDirection.Y;
-                    break;
-
-                  case 4:
-                    responseDirection = ResponseDirection.XY;
-                    break;
-
-                  default:
-                    this.AddRuntimeError("Unable to convert response direction input");
-                    return;
-                }
-
-                break;
-
-              case GH_String ghString:
-                switch (ghString.Value.Trim().ToUpper()) {
-                  case "1":
-                  case "Z":
-                    responseDirection = ResponseDirection.Z;
-                    break;
-
-                  case "2":
-                  case "X":
-                    responseDirection = ResponseDirection.X;
-                    break;
-
-                  case "3":
-                  case "Y":
-                    responseDirection = ResponseDirection.Y;
-                    break;
-
-                  case "4":
-                  case "XY":
-                    responseDirection = ResponseDirection.XY;
-                    break;
-
-                  default:
-                    this.AddRuntimeError("Unable to convert response direction input");
-                    return;
-                }
-
-                break;
-
-              default:
-                this.AddRuntimeError("Unable to convert response direction input");
-                return;
+            if (!HasValidDirection(ghTyp, out ResponseDirection responseDirection)) {
+              UnableToConvertDirection();
+              return;
             }
 
             parameter.ResponseDirection = responseDirection;
@@ -434,6 +378,88 @@ namespace GsaGH.Components {
       };
 
       da.SetData(0, new GsaAnalysisTaskGoo(gsaAnalysisTask));
+    }
+
+    private bool HasValidDirection(GH_ObjectWrapper ghDirection, out ResponseDirection responseDirection) {
+      responseDirection = ResponseDirection.Z;
+      bool hasDirection = true;
+      switch (ghDirection.Value) {
+        case GH_Integer intDirection:
+          if (!HasDirectionFromInt(ref responseDirection, intDirection)) {
+            hasDirection = false;
+          }
+
+          break;
+
+        case GH_String stringDirection:
+          if (!HasDirectionFromString(ref responseDirection, stringDirection)) {
+            hasDirection = false;
+          }
+
+          break;
+
+        default:
+          hasDirection = false;
+          break;
+      }
+
+      return hasDirection;
+    }
+
+    private bool HasDirectionFromString(ref ResponseDirection responseDirection, GH_String ghString) {
+      switch (ghString.Value.Trim().ToUpper()) {
+        case "1":
+        case "Z":
+          responseDirection = ResponseDirection.Z;
+          break;
+
+        case "2":
+        case "X":
+          responseDirection = ResponseDirection.X;
+          break;
+
+        case "3":
+        case "Y":
+          responseDirection = ResponseDirection.Y;
+          break;
+
+        case "4":
+        case "XY":
+          responseDirection = ResponseDirection.XY;
+          break;
+
+        default: return false;
+      }
+
+      return true;
+    }
+
+    private bool HasDirectionFromInt(ref ResponseDirection responseDirection, GH_Integer ghInt) {
+      switch (ghInt.Value) {
+        case 1:
+          responseDirection = ResponseDirection.Z;
+          break;
+
+        case 2:
+          responseDirection = ResponseDirection.X;
+          break;
+
+        case 3:
+          responseDirection = ResponseDirection.Y;
+          break;
+
+        case 4:
+          responseDirection = ResponseDirection.XY;
+          break;
+
+        default: return false;
+      }
+
+      return true;
+    }
+
+    private void UnableToConvertDirection() {
+      this.AddRuntimeError("Unable to convert response direction input");
     }
 
     protected override void UpdateUIFromSelectedItems() {

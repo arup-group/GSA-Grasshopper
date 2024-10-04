@@ -69,8 +69,22 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
+    [Fact]
+    public void ShouldAddErrorForInvalidDirection() {
+      SetFootfall();
+      ComponentTestHelper.SetInput(_component, 2, 2);
+      ComponentTestHelper.SetInput(_component, GetInvalidList(),
+        FootfallInputManager._responseDirectionAttributes.Name);
+      ComponentTestHelper.ComputeOutput(_component);
+      Assert.True(_component.RuntimeMessages(GH_RuntimeMessageLevel.Error).Count > 0);
+    }
+
     private GsaAnalysisTaskGoo ComputeAndGetOutput() {
       return (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(_component);
+    }
+
+    private void ComputeOutput() {
+      ComponentTestHelper.ComputeOutput(_component);
     }
 
     [Fact]
