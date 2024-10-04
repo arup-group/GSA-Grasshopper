@@ -84,6 +84,7 @@ namespace GsaGH.Components {
 
     private readonly FootfallInputManager _footfallInputManager;
     private AnalysisTaskType _type = AnalysisTaskType.Static;
+    public const string _unableToConvertResponseDirectionInputMessage = "Unable to convert response direction input";
 
     public CreateAnalysisTask() : base($"Create {GsaAnalysisTaskGoo.Name}",
       GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty), $"Create a {GsaAnalysisTaskGoo.Description}",
@@ -459,7 +460,7 @@ namespace GsaGH.Components {
     }
 
     private void UnableToConvertDirection() {
-      this.AddRuntimeError("Unable to convert response direction input");
+      this.AddRuntimeError(_unableToConvertResponseDirectionInputMessage);
     }
 
     protected override void UpdateUIFromSelectedItems() {

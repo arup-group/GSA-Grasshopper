@@ -76,7 +76,34 @@ namespace GsaGHTests.Components.Analysis {
       ComponentTestHelper.SetInput(_component, GetInvalidList(),
         FootfallInputManager._responseDirectionAttributes.Name);
       ComponentTestHelper.ComputeOutput(_component);
-      Assert.True(_component.RuntimeMessages(GH_RuntimeMessageLevel.Error).Count > 0);
+      AssertInvalidDirectionError(_component);
+    }
+
+    private static void AssertInvalidDirectionError(CreateAnalysisTask component) {
+      IList<string> runtimeMessages = component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
+      Assert.True(runtimeMessages.Contains("Unable to convert response direction input"));
+    }
+
+    [Fact]
+    public void ShouldAddErrorForInvalidStringDirection() {
+      SetFootfall();
+      ComponentTestHelper.SetInput(_component, 2, 2);
+      ComponentTestHelper.SetInput(_component, new List<string>() { "AnInvalidString" },
+        FootfallInputManager._responseDirectionAttributes.Name);
+      ComponentTestHelper.ComputeOutput(_component);
+      AssertInvalidDirectionError(_component);
+    }
+
+    [Fact]
+    public void ShouldAddErrorForInvalidIntgerDirection() {
+      SetFootfall();
+      ComponentTestHelper.SetInput(_component, 2, 2);
+      var anInvalidString = 5;
+      ComponentTestHelper.SetInput(_component, new List<int>() { anInvalidString },
+        FootfallInputManager._responseDirectionAttributes.Name);
+      ComponentTestHelper.ComputeOutput(_component);
+      IList<string> runtimeMessages = _component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
+      AssertInvalidDirectionError(_component);
     }
 
     private GsaAnalysisTaskGoo ComputeAndGetOutput() {
