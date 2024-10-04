@@ -396,9 +396,6 @@ namespace GsaGHTests.Parameters {
      };
       pts.Add(pts[0]);
       var pol = new Polyline(pts);
-
-      var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
-        MeshingParameters.DefaultAnalysisMesh, 0.001);
       var elem = new GsaElement2d(pol.ToPolylineCurve());
       return elem;
     }
@@ -412,7 +409,7 @@ namespace GsaGHTests.Parameters {
       Assert.Single(points);
       Assert.Equal(1, points[0].X);
       Assert.Equal(1, points[0].Y);
-      Assert.Equal(0, points[0].Y);
+      Assert.Equal(0, points[0].Z);
     }
   }
 }

@@ -61,7 +61,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      GsaElement2d elem = null;
+      var elem = new GsaElement2d();
       switch (geometryParameter) {
         case GH_Mesh mesh:
           elem = new GsaElement2d(mesh.Value);
