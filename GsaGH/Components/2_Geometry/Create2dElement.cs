@@ -61,17 +61,11 @@ namespace GsaGH.Components {
         return;
       }
 
-      var elem = new GsaElement2d();
-      switch (geometryParameter) {
-        case GH_Mesh mesh:
-          elem = new GsaElement2d(mesh.Value);
-          break;
-        case GH_Curve curve:
-          elem = new GsaElement2d(curve.Value);
-          break;
-        default:
-          break;
-      }
+      GsaElement2d elem = geometryParameter switch {
+        GH_Mesh mesh => new GsaElement2d(mesh.Value),
+        GH_Curve curve => new GsaElement2d(curve.Value),
+        _ => new GsaElement2d(),
+      };
 
       if (isProp2dAssigned) {
         var prop2Ds = new List<GsaProperty2d>();

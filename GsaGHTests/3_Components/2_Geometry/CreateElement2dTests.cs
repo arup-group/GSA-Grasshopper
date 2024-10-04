@@ -22,9 +22,8 @@ namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class CreateElement2dTests {
 
-    public static GH_OasysComponent ComponentMother(bool isCurve = false, bool isLoadPanel = false) {
+    public static GH_OasysComponent ComponentMother(bool isCurve = false, bool propertyIsLoadPanelType = false) {
       var comp = new Create2dElement();
-
       comp.CreateAttributes();
       if (isCurve) {
         var points = new Point3dList {
@@ -47,17 +46,14 @@ namespace GsaGHTests.Components.Geometry {
         ComponentTestHelper.SetInput(
           comp, mesh, 0);
       }
-
       ComponentTestHelper.SetInput(comp,
-       ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(isLoadPanel)), 1);
-
+       ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(propertyIsLoadPanelType)), 1);
       return comp;
     }
 
     [Fact]
     public void CreateComponentTest() {
       GH_OasysComponent comp = ComponentMother();
-
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
       TestPoint3d(new Point3d(0, 0, 0), output.Value.Mesh.Vertices[0]);
       TestPoint3d(new Point3d(1, 0, 0), output.Value.Mesh.Vertices[1]);
@@ -66,18 +62,23 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(new Length(14, LengthUnit.Inch), output.Value.Prop2ds[0].Thickness);
     }
 
-    [Fact]
-    public void CreateComponentWithSection3dPreviewTest() {
-      var comp = (Section3dPreviewComponent)ComponentMother();
+    [Theory]
+    [InlineData(true, 4, 5)]
+    [InlineData(false, 10, 8)]
+    public void CreateComponentWithSection3dPreviewTest(bool isLoadPanel, int expectedVerticesCount, int expectedOutlineCount) {
+      var comp = (Section3dPreviewComponent)ComponentMother(isLoadPanel, isLoadPanel);
       comp.Preview3dSection = true;
       comp.ExpireSolution(true);
-
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(10, output.Value.Section3dPreview.Mesh.Vertices.Count);
-      Assert.Equal(8, output.Value.Section3dPreview.Outlines.Count());
-
-      var mesh = new GH_Mesh();
-      Assert.True(output.CastTo(ref mesh));
+      Assert.Equal(expectedVerticesCount, output.Value.Section3dPreview.Mesh.Vertices.Count);
+      Assert.Equal(expectedOutlineCount, output.Value.Section3dPreview.Outlines.Count());
+      if (isLoadPanel) {
+        var curve = new GH_Curve();
+        Assert.True(output.CastTo(ref curve));
+      } else {
+        var mesh = new GH_Mesh();
+        Assert.True(output.CastTo(ref mesh));
+      }
     }
 
     private void TestPoint3d(Point3d expected, Point3d actual) {
@@ -87,18 +88,12 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     [Theory]
-    [InlineData(true, true)]
-    [InlineData(false, false)]
     [InlineData(true, false)]
     [InlineData(false, true)]
     public void WillThrowExceptionIfProp2dIsNotCompatible(bool isCurve, bool isLoadPanel) {
       GH_OasysComponent comp = ComponentMother(isCurve, isLoadPanel);
       ComponentTestHelper.GetOutput(comp);
-      if ((isCurve && isLoadPanel) || (!isCurve && !isLoadPanel)) {
-        Assert.DoesNotContain("One runtime error", comp.InstanceDescription);
-      } else {
-        Assert.Contains("One runtime error", comp.InstanceDescription);
-      }
+      Assert.Contains("One runtime error", comp.InstanceDescription);
     }
   }
 }
