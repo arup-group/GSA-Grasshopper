@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
@@ -12,31 +13,34 @@ using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
 
-using OasysGH.Components;
-
 using Xunit;
 
 namespace GsaGHTests.Components.Analysis {
   [Collection("GrasshopperFixture collection")]
   public class CreateAnalysisTaskTests {
+    private readonly CreateAnalysisTask _component;
 
-    public static GH_OasysDropDownComponent ComponentMother() {
-      var comp = new CreateAnalysisTask();
-      comp.CreateAttributes();
+    public static CreateAnalysisTask CreateAnalysisTaskComponent() {
+      var component = new CreateAnalysisTask();
+      component.CreateAttributes();
 
-      ComponentTestHelper.SetInput(comp, 1, 0);
-      ComponentTestHelper.SetInput(comp, "my Task", 1);
-      var output = (GsaAnalysisCaseGoo)ComponentTestHelper.GetOutput(CreateAnalysisCaseTests.ComponentMother());
-      ComponentTestHelper.SetInput(comp, output, 2);
+      // Set minimum inputs
+      ComponentTestHelper.SetInput(component, 1, 0);
+      ComponentTestHelper.SetInput(component, "my Task", 1);
+      ComponentTestHelper.SetInput(component, GetDummyAnalysisCase(), 2);
 
-      return comp;
+      return component;
     }
+
+    private static GsaAnalysisCaseGoo GetDummyAnalysisCase() {
+      return (GsaAnalysisCaseGoo)ComponentTestHelper.GetOutput(CreateAnalysisCaseTests.ComponentMother());
+    }
+
+    public CreateAnalysisTaskTests() { _component = CreateAnalysisTaskComponent(); }
 
     [Fact]
     public void CreateStaticComponentTest() {
-      GH_OasysDropDownComponent comp = ComponentMother();
-
-      var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(comp);
+      var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(_component);
 
       Assert.Equal(1, output.Value.Id);
       Assert.Equal("my Task", output.Value.ApiTask.Name);
@@ -46,61 +50,89 @@ namespace GsaGHTests.Components.Analysis {
     }
 
     [Fact]
+    public void ShouldAddWarningForGhWrapperWithNullValue() {
+      SetToStatic();
+      ComponentTestHelper.SetListInput(_component, GetInvalidList(), 2);
+      _ = ComputeAndGetOutput();
+      Assert.True(_component.RuntimeMessages(GH_RuntimeMessageLevel.Warning).Count > 0);
+    }
+
+    private static List<object> GetInvalidList() {
+      return new List<object>() { new GH_ObjectWrapper() { Value = null } };
+    }
+
+    [Fact]
+    public void ShouldAddRemarkForMissingAnalysisCase() {
+      SetToStatic();
+      _ = ComputeAndGetOutput();
+      Assert.True(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark).Count > 0);
+    }
+
+    private GsaAnalysisTaskGoo ComputeAndGetOutput() {
+      return (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(_component);
+    }
+
+    [Fact]
     public void CreateStaticPDeltaComponentTest1() {
-      var comp = new CreateAnalysisTask();
-      comp.CreateAttributes();
+      SetToStaticPDelta();
 
-      comp.SetSelected(0, 1);
-      ComponentTestHelper.SetInput(comp, 1, 0);
-      ComponentTestHelper.SetInput(comp, "my Task", 1);
-
-      var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(comp);
+      var output = ComputeAndGetOutput();
 
       Assert.Equal(1, output.Value.Id);
       Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal((int)AnalysisTaskType.StaticPDelta, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Remark, comp.RuntimeMessageLevel);
-      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Equal(GH_RuntimeMessageLevel.Remark, _component.RuntimeMessageLevel);
+      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+    }
+
+    private void SetToStatic() {
+      _component.SetSelected(0, 0);
+    }
+
+    private void SetToStaticPDelta() {
+      _component.SetSelected(0, 1);
+    }
+
+    private void SetFootfall() {
+      _component.SetSelected(0, 2);
+    }
+
+    private void SetExcitationRigorous() {
+      _component.SetSelected(1, 1);
+    }
+
+    private void SetExcitationToFastAndRigorous() {
+      _component.SetSelected(1, 2);
     }
 
     [Fact]
     public void CreateStaticPDeltaComponentTest2() {
-      var comp = new CreateAnalysisTask();
-      comp.CreateAttributes();
+      SetToStaticPDelta();
+      SetExcitationRigorous();
+      ComponentTestHelper.SetInput(_component, "1.2L1 + 1.2L2", 2);
 
-      comp.SetSelected(0, 1);
-      comp.SetSelected(1, 1);
-      ComponentTestHelper.SetInput(comp, 1, 0);
-      ComponentTestHelper.SetInput(comp, "my Task", 1);
-      ComponentTestHelper.SetInput(comp, "1.2L1 + 1.2L2", 2);
-
-      var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(comp);
+      var output = ComputeAndGetOutput();
 
       Assert.Equal(1, output.Value.Id);
       Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal((int)AnalysisTaskType.StaticPDelta, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Remark, comp.RuntimeMessageLevel);
-      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Equal(GH_RuntimeMessageLevel.Remark, _component.RuntimeMessageLevel);
+      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
     [Fact]
     public void CreateStaticPDeltaComponentTest3() {
-      var comp = new CreateAnalysisTask();
-      comp.CreateAttributes();
+      SetToStaticPDelta();
+      SetExcitationToFastAndRigorous();
+      ComponentTestHelper.SetInput(_component, 2, 2);
 
-      comp.SetSelected(0, 1);
-      comp.SetSelected(1, 2);
-      ComponentTestHelper.SetInput(comp, 1, 0);
-      ComponentTestHelper.SetInput(comp, "my Task", 1);
-      ComponentTestHelper.SetInput(comp, 2, 2);
-
-      var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(comp);
+      var output = ComputeAndGetOutput();
 
       Assert.Equal(1, output.Value.Id);
       Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal((int)AnalysisTaskType.StaticPDelta, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Remark, comp.RuntimeMessageLevel);
-      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Equal(GH_RuntimeMessageLevel.Remark, _component.RuntimeMessageLevel);
+      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
     private static Type ExcitationForcesType(int excitationForceOption) {
@@ -145,33 +177,30 @@ namespace GsaGHTests.Components.Analysis {
           for (int directionOption = 0; directionOption < 2; directionOption++) {
             foreach (int weighingOption in Enum.GetValues(typeof(WeightingOption))) {
               for (int excitationForce = 1; excitationForce < 9; excitationForce++) {
-                var comp = new CreateAnalysisTask();
-                comp.CreateAttributes();
-                comp.SetSelected(0, 2);
-                comp.SetSelected(1, excitationSelectedIndex);
-                ComponentTestHelper.SetInput(comp, 1, 0);
-                ComponentTestHelper.SetInput(comp, "my Task", 1);
-                ComponentTestHelper.SetInput(comp, 2, 2);
-                ComponentTestHelper.SetInput(comp, "All", 3);
+                _component.CreateAttributes();
+                SetFootfall();
+                _component.SetSelected(1, excitationSelectedIndex);
+                ComponentTestHelper.SetInput(_component, 2, 2);
+                ComponentTestHelper.SetInput(_component, "All", 3);
                 int index = 4;
                 if (excitation > 0) {
-                  ComponentTestHelper.SetInput(comp, "1 2", 4);
+                  ComponentTestHelper.SetInput(_component, "1 2", 4);
                   index++;
                 }
 
-                ComponentTestHelper.SetInput(comp, 100, index++);
-                ComponentTestHelper.SetInput(comp, 76.5, index++);
+                ComponentTestHelper.SetInput(_component, 100, index++);
+                ComponentTestHelper.SetInput(_component, 76.5, index++);
                 if (directionOption > 0) {
-                  ComponentTestHelper.SetInput(comp, ResponseDirection(direction), index++);
+                  ComponentTestHelper.SetInput(_component, ResponseDirection(direction), index++);
                 } else {
-                  ComponentTestHelper.SetInput(comp, direction, index++);
+                  ComponentTestHelper.SetInput(_component, direction, index++);
                 }
 
-                ComponentTestHelper.SetInput(comp, weighingOption * -1, index++);
-                ComponentTestHelper.SetInput(comp, excitationForce, index++);
-                ComponentTestHelper.SetInput(comp, 2.2, index++);
+                ComponentTestHelper.SetInput(_component, weighingOption * -1, index++);
+                ComponentTestHelper.SetInput(_component, excitationForce, index++);
+                ComponentTestHelper.SetInput(_component, 2.2, index++);
 
-                var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(comp);
+                var output = ComputeAndGetOutput();
                 var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
                 Assert.Equal(ExcitationOption(excitationSelectedIndex), parameter.ExcitationMethod);
@@ -190,7 +219,7 @@ namespace GsaGHTests.Components.Analysis {
                 Assert.Equal(ExcitationForcesType(excitationForce), parameter.ExcitationForces.GetType());
                 Assert.Equal(2.2, ((ConstantDampingOption)parameter.DampingOption).ConstantDamping);
                 Assert.Equal((int)AnalysisTaskType.Footfall, output.Value.ApiTask.Type);
-                Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
+                Assert.Equal(GH_RuntimeMessageLevel.Blank, _component.RuntimeMessageLevel);
               }
             }
           }
@@ -202,24 +231,19 @@ namespace GsaGHTests.Components.Analysis {
 
     [Fact]
     public void CreateFootfallRigorousComponentTest() {
-      var comp = new CreateAnalysisTask();
-      comp.CreateAttributes();
+      SetFootfall();
+      SetExcitationRigorous();
+      ComponentTestHelper.SetInput(_component, 2, 2);
+      ComponentTestHelper.SetInput(_component, "All", 3);
+      ComponentTestHelper.SetInput(_component, "All", 4);
+      ComponentTestHelper.SetInput(_component, 100, 5);
+      ComponentTestHelper.SetInput(_component, 76.5, 6);
+      ComponentTestHelper.SetInput(_component, 1, 7);
+      ComponentTestHelper.SetInput(_component, 2, 8);
+      ComponentTestHelper.SetInput(_component, 3, 9);
+      ComponentTestHelper.SetInput(_component, 2.2, 10);
 
-      comp.SetSelected(0, 2);
-      comp.SetSelected(1, 1);
-      ComponentTestHelper.SetInput(comp, 1, 0);
-      ComponentTestHelper.SetInput(comp, "my Task", 1);
-      ComponentTestHelper.SetInput(comp, 2, 2);
-      ComponentTestHelper.SetInput(comp, "All", 3);
-      ComponentTestHelper.SetInput(comp, "All", 4);
-      ComponentTestHelper.SetInput(comp, 100, 5);
-      ComponentTestHelper.SetInput(comp, 76.5, 6);
-      ComponentTestHelper.SetInput(comp, 1, 7);
-      ComponentTestHelper.SetInput(comp, 2, 8);
-      ComponentTestHelper.SetInput(comp, 3, 9);
-      ComponentTestHelper.SetInput(comp, 2.2, 10);
-
-      var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(comp);
+      var output = ComputeAndGetOutput();
       var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
       Assert.Equal(1, output.Value.Id);
@@ -235,29 +259,24 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(typeof(WalkingOnFloorCCIP), parameter.ExcitationForces.GetType());
       Assert.Equal(2.2, ((ConstantDampingOption)parameter.DampingOption).ConstantDamping);
       Assert.Equal((int)AnalysisTaskType.Footfall, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
+      Assert.Equal(GH_RuntimeMessageLevel.Blank, _component.RuntimeMessageLevel);
     }
 
     [Fact]
     public void CreateFootfallFastComponentTest() {
-      var comp = new CreateAnalysisTask();
-      comp.CreateAttributes();
+      SetFootfall();
+      SetExcitationFast();
+      ComponentTestHelper.SetInput(_component, 2, 2);
+      ComponentTestHelper.SetInput(_component, "All", 3);
+      ComponentTestHelper.SetInput(_component, "All", 4);
+      ComponentTestHelper.SetInput(_component, 100, 5);
+      ComponentTestHelper.SetInput(_component, 76.5, 6);
+      ComponentTestHelper.SetInput(_component, 1, 7);
+      ComponentTestHelper.SetInput(_component, 2, 8);
+      ComponentTestHelper.SetInput(_component, 3, 9);
+      ComponentTestHelper.SetInput(_component, 2.2, 10);
 
-      comp.SetSelected(0, 2);
-      comp.SetSelected(1, 3);
-      ComponentTestHelper.SetInput(comp, 1, 0);
-      ComponentTestHelper.SetInput(comp, "my Task", 1);
-      ComponentTestHelper.SetInput(comp, 2, 2);
-      ComponentTestHelper.SetInput(comp, "All", 3);
-      ComponentTestHelper.SetInput(comp, "All", 4);
-      ComponentTestHelper.SetInput(comp, 100, 5);
-      ComponentTestHelper.SetInput(comp, 76.5, 6);
-      ComponentTestHelper.SetInput(comp, 1, 7);
-      ComponentTestHelper.SetInput(comp, 2, 8);
-      ComponentTestHelper.SetInput(comp, 3, 9);
-      ComponentTestHelper.SetInput(comp, 2.2, 10);
-
-      var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(comp);
+      var output = ComputeAndGetOutput();
       var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
       Assert.Equal(1, output.Value.Id);
@@ -273,29 +292,28 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(typeof(WalkingOnFloorCCIP), parameter.ExcitationForces.GetType());
       Assert.Equal(2.2, ((ConstantDampingOption)parameter.DampingOption).ConstantDamping);
       Assert.Equal((int)AnalysisTaskType.Footfall, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
+      Assert.Equal(GH_RuntimeMessageLevel.Blank, _component.RuntimeMessageLevel);
+    }
+
+    private void SetExcitationFast() {
+      _component.SetSelected(1, 3);
     }
 
     [Fact]
     public void CreateFootfallFastRigorousComponentTest() {
-      var comp = new CreateAnalysisTask();
-      comp.CreateAttributes();
+      SetFootfall();
+      _component.SetSelected(1, 2);
+      ComponentTestHelper.SetInput(_component, 2, 2);
+      ComponentTestHelper.SetInput(_component, "All", 3);
+      ComponentTestHelper.SetInput(_component, "All", 4);
+      ComponentTestHelper.SetInput(_component, 100, 5);
+      ComponentTestHelper.SetInput(_component, 76.5, 6);
+      ComponentTestHelper.SetInput(_component, 1, 7);
+      ComponentTestHelper.SetInput(_component, 2, 8);
+      ComponentTestHelper.SetInput(_component, 3, 9);
+      ComponentTestHelper.SetInput(_component, 2.2, 10);
 
-      comp.SetSelected(0, 2);
-      comp.SetSelected(1, 2);
-      ComponentTestHelper.SetInput(comp, 1, 0);
-      ComponentTestHelper.SetInput(comp, "my Task", 1);
-      ComponentTestHelper.SetInput(comp, 2, 2);
-      ComponentTestHelper.SetInput(comp, "All", 3);
-      ComponentTestHelper.SetInput(comp, "All", 4);
-      ComponentTestHelper.SetInput(comp, 100, 5);
-      ComponentTestHelper.SetInput(comp, 76.5, 6);
-      ComponentTestHelper.SetInput(comp, 1, 7);
-      ComponentTestHelper.SetInput(comp, 2, 8);
-      ComponentTestHelper.SetInput(comp, 3, 9);
-      ComponentTestHelper.SetInput(comp, 2.2, 10);
-
-      var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(comp);
+      var output = ComputeAndGetOutput();
       var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
       Assert.Equal(1, output.Value.Id);
@@ -311,7 +329,7 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(typeof(WalkingOnFloorCCIP), parameter.ExcitationForces.GetType());
       Assert.Equal(2.2, ((ConstantDampingOption)parameter.DampingOption).ConstantDamping);
       Assert.Equal((int)AnalysisTaskType.Footfall, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Blank, comp.RuntimeMessageLevel);
+      Assert.Equal(GH_RuntimeMessageLevel.Blank, _component.RuntimeMessageLevel);
     }
 
     [Fact]

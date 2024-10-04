@@ -190,7 +190,7 @@ namespace GsaGH.Components {
           for (int i = 0; i < ghTypes.Count; i++) {
             GH_ObjectWrapper ghTypeWrapper = ghTypes[i];
             if (ghTypeWrapper == null) {
-              Params.Owner.AddRuntimeWarning($"Analysis Case input (index: {i}) is null and has been ignored");
+              this.AddRuntimeWarning($"Analysis Case input (index: {i}) is null and has been ignored");
               continue;
             }
 
