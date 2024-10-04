@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Security.Cryptography;
 
 using Grasshopper.Kernel.Types;
 
@@ -94,6 +95,37 @@ namespace GsaGHTests.Components.Geometry {
       GH_OasysComponent comp = ComponentMother(isCurve, isLoadPanel);
       ComponentTestHelper.GetOutput(comp);
       Assert.Contains("One runtime error", comp.InstanceDescription);
+
+    }
+
+    [Fact]
+    public void InvalidPolylineToCreateLoadPanel() {
+      var comp = new Create2dElement();
+      comp.CreateAttributes();
+      var curve = new PolylineCurve();
+      curve.SetPoint(0, new Point3d(0, 0, 0));
+      curve.SetPoint(0, new Point3d(0, 1, 0));
+      ComponentTestHelper.SetInput(
+         comp, curve, 0);
+      ComponentTestHelper.SetInput(comp,
+       ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(true)), 1);
+      ComponentTestHelper.GetOutput(comp);
+      Assert.Contains("Polyline could not be extracted from the given curve geometry", comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error)[0]);
+
+    }
+
+    [Fact]
+    public void InvalidGeometryToCreateLoadPanel() {
+      var comp = new Create2dElement();
+      comp.CreateAttributes();
+      var curve = new Line(new Point3d(0, 0, 0), new Point3d(0, 1, 0));
+      ComponentTestHelper.SetInput(
+         comp, curve, 0);
+      ComponentTestHelper.SetInput(comp,
+       ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(true)), 1);
+      ComponentTestHelper.GetOutput(comp);
+      Assert.Contains("Input geometry is not supported to create a 2D element", comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error)[0]);
+
     }
   }
 }

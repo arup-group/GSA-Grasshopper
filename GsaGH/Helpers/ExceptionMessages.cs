@@ -23,12 +23,7 @@ namespace GsaGH.Helpers {
               if (!isLoadPanel) {
                 return "FE element require mesh geometry as the input parameter";
               }
-
-              if (curve.Value.TryGetPolyline(out Rhino.Geometry.Polyline polyline)) {
-                if (polyline.ToArray().Length < 3) {
-                  return "A minimum of three points are required to create a 2D load panel";
-                }
-              } else {
+              if (!curve.Value.TryGetPolyline(out Rhino.Geometry.Polyline polyline)) {
                 return "Polyline could not be extracted from the given curve geometry";
               }
             }
