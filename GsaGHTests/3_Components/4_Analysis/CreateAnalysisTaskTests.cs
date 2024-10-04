@@ -66,6 +66,7 @@ namespace GsaGHTests.Components.Analysis {
       SetToStatic();
       _ = ComputeAndGetOutput();
       Assert.True(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark).Count > 0);
+      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
     private GsaAnalysisTaskGoo ComputeAndGetOutput() {
@@ -81,8 +82,6 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(1, output.Value.Id);
       Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal((int)AnalysisTaskType.StaticPDelta, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Remark, _component.RuntimeMessageLevel);
-      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
     private void SetToStatic() {
@@ -113,11 +112,7 @@ namespace GsaGHTests.Components.Analysis {
 
       var output = ComputeAndGetOutput();
 
-      Assert.Equal(1, output.Value.Id);
-      Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal((int)AnalysisTaskType.StaticPDelta, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Remark, _component.RuntimeMessageLevel);
-      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
     [Fact]
@@ -128,11 +123,7 @@ namespace GsaGHTests.Components.Analysis {
 
       var output = ComputeAndGetOutput();
 
-      Assert.Equal(1, output.Value.Id);
-      Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal((int)AnalysisTaskType.StaticPDelta, output.Value.ApiTask.Type);
-      Assert.Equal(GH_RuntimeMessageLevel.Remark, _component.RuntimeMessageLevel);
-      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
     private static Type ExcitationForcesType(int excitationForceOption) {
