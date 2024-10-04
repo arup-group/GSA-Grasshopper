@@ -118,106 +118,34 @@ namespace GsaGH.Components {
       base.DrawViewportMeshes(args);
 
       if (Attributes.Selected) {
-        if (_cachedDisplayCurveWithoutParent != null) {
-          foreach (Brep brep in _cachedDisplayCurveWithoutParent) {
-            args.Display.DrawBrepShaded(brep, Colours.Element2dFaceLP);
-          }
-        }
-
-        if (_cachedDisplayMeshWithoutParent != null) {
-          foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
-            args.Display.DrawMeshShaded(mesh, Colours.Element2dFace);
-          }
-        }
-
-        if (_cachedDisplayNgonMeshWithoutParent != null) {
-          foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
-            args.Display.DrawMeshShaded(mesh, Colours.Element2dFace);
-          }
-        }
+        DrawGraphicMesh(args, _cachedDisplayCurveWithoutParent.Cast<GeometryBase>().ToList(), Colours.Element2dFaceLP);
+        DrawGraphicMesh(args, _cachedDisplayMeshWithoutParent.Cast<GeometryBase>().ToList(), Colours.Element2dFace);
+        DrawGraphicMesh(args, _cachedDisplayNgonMeshWithoutParent.Cast<GeometryBase>().ToList(), Colours.Element2dFace);
       } else {
 
-        if (_cachedDisplayCurveWithoutParent != null) {
-          foreach (Brep brep in _cachedDisplayCurveWithoutParent) {
-            args.Display.DrawBrepShaded(brep, Colours.Element2dFaceSelectedLP);
-          }
-        }
-
-        if (_cachedDisplayMeshWithoutParent != null) {
-          foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
-            args.Display.DrawMeshShaded(mesh, Colours.Element2dFaceSelected);
-          }
-        }
-
-        if (_cachedDisplayNgonMeshWithoutParent != null) {
-          foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
-            args.Display.DrawMeshShaded(mesh, Colours.Element2dFaceSelected);
-          }
-        }
+        DrawGraphicMesh(args, _cachedDisplayCurveWithoutParent.Cast<GeometryBase>().ToList(), Colours.Element2dFaceSelectedLP);
+        DrawGraphicMesh(args, _cachedDisplayMeshWithoutParent.Cast<GeometryBase>().ToList(), Colours.Element2dFaceSelected);
+        DrawGraphicMesh(args, _cachedDisplayNgonMeshWithoutParent.Cast<GeometryBase>().ToList(), Colours.Element2dFaceSelected);
       }
     }
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
 
-      if (_cachedDisplayCurveWithParent != null) {
-        foreach (Brep brep in _cachedDisplayCurveWithParent) {
-          if (brep != null) {
-            args.Display.DrawBrepWires(brep, Color.FromArgb(255, 229, 229, 229), -1);
-          }
-        }
-      }
+      DrawGraphicWire(args, _cachedDisplayCurveWithParent.Cast<GeometryBase>().ToList(), Colours.GsaLightGrey, 1);
+      DrawGraphicWire(args, _cachedDisplayMeshWithParent.Cast<GeometryBase>().ToList(), Colours.GsaLightGrey, 1);
+      DrawGraphicWire(args, _cachedDisplayNgonMeshWithParent.Cast<GeometryBase>().ToList(), Colours.GsaLightGrey, 1);
 
-      if (_cachedDisplayMeshWithParent != null) {
-        foreach (Mesh mesh in _cachedDisplayMeshWithParent) {
-          args.Display.DrawMeshWires(mesh, Color.FromArgb(255, 229, 229, 229), 1);
-        }
-      }
+      if (Attributes.Selected) {
+        DrawGraphicWire(args, _cachedDisplayMeshWithoutParent.Cast<GeometryBase>().ToList(), Colours.Element2dEdgeSelected, 2);
+        DrawGraphicWire(args, _cachedDisplayNgonMeshWithoutParent.Cast<GeometryBase>().ToList(), Colours.Element2dEdgeSelected, 2);
+        DrawGraphicWire(args, _cachedDisplayCurveWithoutParent.Cast<GeometryBase>().ToList(), Colours.Element2dEdgeSelected);
 
-      if (_cachedDisplayNgonMeshWithParent != null) {
-        foreach (Mesh mesh in _cachedDisplayNgonMeshWithParent) {
-          args.Display.DrawMeshWires(mesh, Color.FromArgb(255, 229, 229, 229), 1);
-        }
-      }
 
-      if (_cachedDisplayMeshWithoutParent != null) {
-        if (Attributes.Selected) {
-          foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
-            args.Display.DrawMeshWires(mesh, Colours.Element2dEdgeSelected, 2);
-          }
-        } else {
-          foreach (Mesh mesh in _cachedDisplayMeshWithoutParent) {
-            args.Display.DrawMeshWires(mesh, Colours.Element2dEdge, 1);
-          }
-        }
-      }
-
-      if (_cachedDisplayNgonMeshWithoutParent != null) {
-        if (Attributes.Selected) {
-          foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
-            args.Display.DrawMeshWires(mesh, Colours.Element2dEdgeSelected, 2);
-          }
-        } else {
-          foreach (Mesh mesh in _cachedDisplayNgonMeshWithoutParent) {
-            args.Display.DrawMeshWires(mesh, Colours.Element2dEdge, 1);
-          }
-        }
-      }
-
-      if (_cachedDisplayCurveWithoutParent != null) {
-        if (Attributes.Selected) {
-          foreach (Brep brep in _cachedDisplayCurveWithoutParent) {
-            if (brep != null) {
-              args.Display.DrawBrepWires(brep, Colours.Element2dEdgeSelected, -1);
-            }
-          }
-        } else {
-          foreach (Brep brep in _cachedDisplayCurveWithoutParent) {
-            if (brep != null) {
-              args.Display.DrawBrepWires(brep, Colours.Element2dEdge, -1);
-            }
-          }
-        }
+      } else {
+        DrawGraphicWire(args, _cachedDisplayMeshWithoutParent.Cast<GeometryBase>().ToList(), Colours.Element2dEdge, 1);
+        DrawGraphicWire(args, _cachedDisplayNgonMeshWithoutParent.Cast<GeometryBase>().ToList(), Colours.Element2dEdge, 1);
+        DrawGraphicWire(args, _cachedDisplayCurveWithoutParent.Cast<GeometryBase>().ToList(), Colours.Element2dEdge);
       }
 
       if (_supportNodes == null) {
@@ -875,5 +803,38 @@ namespace GsaGH.Components {
         ((IGH_PreviewObject)Params.Output[6]).Hidden = false;
       }
     }
+
+    private void DrawGraphicMesh(IGH_PreviewArgs args, List<GeometryBase> geometryEntities, DisplayMaterial material) {
+      foreach (GeometryBase entity in geometryEntities) {
+        if (entity != null) {
+          switch (entity) {
+            case Brep brep:
+              args.Display.DrawBrepShaded(brep, material);
+              break;
+            case Mesh mesh:
+              args.Display.DrawMeshShaded(mesh, material);
+              break;
+            default: break;
+          }
+        }
+      }
+    }
+
+    private void DrawGraphicWire(IGH_PreviewArgs args, List<GeometryBase> geometryEntities, Color colour, int wireDensity = -1) {
+      foreach (GeometryBase entity in geometryEntities) {
+        if (entity != null) {
+          switch (entity) {
+            case Brep brep:
+              args.Display.DrawBrepWires(brep, colour, wireDensity);
+              break;
+            case Mesh mesh:
+              args.Display.DrawMeshWires(mesh, colour, wireDensity);
+              break;
+            default: break;
+          }
+        }
+      }
+    }
+
   }
 }
