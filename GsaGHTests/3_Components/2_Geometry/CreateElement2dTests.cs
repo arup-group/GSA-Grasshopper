@@ -52,6 +52,26 @@ namespace GsaGHTests.Components.Geometry {
       return comp;
     }
 
+    public static GH_OasysComponent ComponentMotherLoadPanel(bool withCurve = true) {
+      var comp = new Create2dElement();
+      comp.CreateAttributes();
+      if (withCurve) {
+        var points = new Point3dList {
+        new Point3d(0, 0, 0),
+        new Point3d(1, 0, 0),
+        new Point3d(1, 1, 0),
+        new Point3d(0, 1, 0),
+      };
+        points.Add(points[0]);
+        var polyline = new Rhino.Geometry.Polyline(points);
+        ComponentTestHelper.SetInput(
+          comp, polyline.ToPolylineCurve(), 0);
+      }
+      ComponentTestHelper.SetInput(comp,
+       ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(true)), 1);
+      return comp;
+    }
+
     [Fact]
     public void CreateComponentTest() {
       GH_OasysComponent comp = ComponentMother();
@@ -100,15 +120,12 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void InvalidPolylineToCreateLoadPanel() {
-      var comp = new Create2dElement();
-      comp.CreateAttributes();
+      GH_OasysComponent comp = ComponentMotherLoadPanel(false);
       var curve = new PolylineCurve();
       curve.SetPoint(0, new Point3d(0, 0, 0));
       curve.SetPoint(0, new Point3d(0, 1, 0));
       ComponentTestHelper.SetInput(
          comp, curve, 0);
-      ComponentTestHelper.SetInput(comp,
-       ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(true)), 1);
       ComponentTestHelper.GetOutput(comp);
       Assert.Contains("Polyline could not be extracted from the given curve geometry", comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error)[0]);
 
@@ -116,13 +133,10 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void InvalidGeometryToCreateLoadPanel() {
-      var comp = new Create2dElement();
-      comp.CreateAttributes();
+      GH_OasysComponent comp = ComponentMotherLoadPanel(false);
       var curve = new Line(new Point3d(0, 0, 0), new Point3d(0, 1, 0));
       ComponentTestHelper.SetInput(
          comp, curve, 0);
-      ComponentTestHelper.SetInput(comp,
-       ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(true)), 1);
       ComponentTestHelper.GetOutput(comp);
       Assert.Contains("Input geometry is not supported to create a 2D element", comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error)[0]);
 

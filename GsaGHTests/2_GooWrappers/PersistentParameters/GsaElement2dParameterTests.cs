@@ -19,9 +19,11 @@ using Xunit;
 namespace GsaGHTests.GooWrappers {
   [Collection("GrasshopperFixture collection")]
   public class GsaElement2dParameterTests {
-    [Fact]
-    public void GsaElement2dParameterBakeTest() {
-      var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother();
+    [Theory]
+    [InlineData(true, 1)]
+    [InlineData(false, 10)]
+    public void GsaElement2dParameterBakeTest(bool isLoadpanel, int expectedObjectCount) {
+      var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(isLoadpanel, isLoadpanel);
       comp.Preview3dSection = true;
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
 
@@ -32,7 +34,7 @@ namespace GsaGHTests.GooWrappers {
       var guids = new List<Guid>();
       param.BakeGeometry(doc, guids);
       Assert.NotEmpty(guids);
-      Assert.Equal(10, doc.Objects.Count);
+      Assert.Equal(expectedObjectCount, doc.Objects.Count);
       doc.Dispose();
     }
 

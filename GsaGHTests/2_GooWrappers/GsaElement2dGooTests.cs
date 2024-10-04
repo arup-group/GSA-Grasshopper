@@ -6,6 +6,8 @@ using GsaGH.Parameters;
 using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
 
+using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
@@ -21,6 +23,16 @@ namespace GsaGHTests.GooWrappers {
       GH_OasysGeometryGooTests.DrawViewportMeshesAndWiresTest(output);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void GetGeometryTest(bool isLoadPanel) {
+      var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(isLoadPanel, isLoadPanel);
+      comp.Preview3dSection = true;
+      var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.NotNull(output.GetGeometry());
+    }
+
     [Fact]
     public void GsaElement2dGooCastToMeshTest() {
       var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother();
@@ -32,8 +44,7 @@ namespace GsaGHTests.GooWrappers {
 
     [Fact]
     public void GsaElement2dGooCastToCurveTest() {
-      bool isLoadPanel = true;
-      var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(isLoadPanel, isLoadPanel);
+      var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMotherLoadPanel();
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
       var curve = new GH_Curve();
       Assert.True(output.CastTo(ref curve));

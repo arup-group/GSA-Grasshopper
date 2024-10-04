@@ -53,8 +53,8 @@ namespace GsaGH.Parameters {
           gH_BakeUtility.BakeObject(new GH_Curve(goo.Value.Curve), att, doc);
         } else {
           gH_BakeUtility.BakeObject(new GH_Mesh(goo.Value.Mesh), att, doc);
+          goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
         }
-        goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
       }
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }
