@@ -46,7 +46,6 @@ namespace GsaGH.Parameters {
       e => new Angle(e.OrientationAngle, AngleUnit.Degree).ToUnit(AngleUnit.Radian)).ToList();
     public List<GsaProperty2d> Prop2ds { get; set; }
     public Section3dPreview Section3dPreview { get; private set; }
-    internal List<Brep> PlanerBrep => Brep.CreatePlanarBreps(Curve, Rhino.RhinoDoc.ActiveDoc != null ? Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance : 0.001).ToList();
     internal bool IsLoadPanel => (ApiElements != null) && (ApiElements.FirstOrDefault() != null) && ApiElements.FirstOrDefault().IsLoadPanel;
 
     /// <summary>

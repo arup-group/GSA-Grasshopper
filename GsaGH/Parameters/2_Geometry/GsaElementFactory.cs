@@ -36,42 +36,22 @@ namespace GsaGH.Parameters {
     internal static ConcurrentBag<GsaElement2dGoo> CreateLoadPanelElementFromApi(
   ConcurrentDictionary<int, GSAElement> elements, GsaModel model) {
       ReadOnlyDictionary<int, Node> nodes = model.ApiNodes;
-      ReadOnlyDictionary<int, Axis> axDict = model.ApiModel.Axes();
-      var sortedElements = new ConcurrentDictionary<int, GSAElement>();
-
-      Parallel.ForEach(elements, elem => {
-        if (elem.Value.IsLoadPanel) {
-          int parent = -elem.Value.ParentMember.Member;
-          if (parent == 0) {
-            parent = elem.Value.Property;
-          }
-
-          if (!sortedElements.ContainsKey(parent)) {
-            sortedElements.TryAdd(parent, elem.Value);
-          }
-        }
-      });
-
       var elem2dGoos = new ConcurrentBag<GsaElement2dGoo>();
-      Parallel.For(0, sortedElements.Count, i => {
-        int parentId = sortedElements.Keys.ElementAt(i);
-        GSAElement element = sortedElements[parentId];
-        GsaProperty2d prop2d = model.GetProp2d(element);
-        Curve polyline = GetPolylineFromApiElement2d(element, nodes, model.ModelUnit);
-        var element2D = new GsaElement2d(element, polyline, prop2d);
-        elem2dGoos.Add(new GsaElement2dGoo(element2D));
-
+      Parallel.ForEach(elements, elem => {
+        if(elem.Value.IsLoadPanel) {
+          GsaProperty2d prop2d = model.GetProp2d(elem.Value);
+          Curve polyline = GetPolylineFromApiElement2d(elem.Value, nodes, model.ModelUnit);
+          var element2D = new GsaElement2d(elem.Value, polyline, prop2d);
+          elem2dGoos.Add(new GsaElement2dGoo(element2D));
+        }
       });
 
       return elem2dGoos;
     }
 
-
     internal static ConcurrentBag<GsaElement2dGoo> CreateElement2dFromApi(
     ConcurrentDictionary<int, GSAElement> elements, GsaModel model) {
       ReadOnlyDictionary<int, Node> nodes = model.ApiNodes;
-      ReadOnlyDictionary<int, Axis> axDict = model.ApiModel.Axes();
-
       var sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, GSAElement>>();
       Parallel.ForEach(elements, elem => {
         if (!elem.Value.IsLoadPanel) {
@@ -137,7 +117,6 @@ namespace GsaGH.Parameters {
           elem2dGoos.Add(new GsaElement2dGoo(element2D));
         }
       });
-
       return new ConcurrentBag<GsaElement2dGoo>(elem2dGoos.Union(CreateLoadPanelElementFromApi(elements, model)));
     }
 

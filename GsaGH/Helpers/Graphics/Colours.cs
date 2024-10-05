@@ -81,7 +81,7 @@ namespace GsaGH.Helpers.Graphics {
       get {
         var material = new DisplayMaterial {
           Diffuse = Color.FromArgb(50, 195, 218, 219),
-          Transparency = 0.2,
+          Transparency = 0.4,
         };
         return material;
       }

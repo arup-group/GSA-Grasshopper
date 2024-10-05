@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Security.Cryptography;
 
 using Grasshopper;
 using Grasshopper.Kernel;
@@ -50,7 +51,8 @@ namespace GsaGH.Parameters {
       }
       if (Value.IsLoadPanel) {
         if (Value.Curve != null) {
-          foreach (Brep brep in Value.PlanerBrep) {
+          Brep[] PlanerBrep = Brep.CreatePlanarBreps(Value.Curve, Rhino.RhinoDoc.ActiveDoc != null ? Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance : 0.001);
+          foreach (Brep brep in PlanerBrep) {
             args.Pipeline.DrawBrepShaded(brep, args.Material.Diffuse == Colours.EntityIsNotSelected
             ? Colours.Element2dFaceLP : Colours.Element2dFaceSelectedLP);
           }
@@ -75,9 +77,7 @@ namespace GsaGH.Parameters {
       }
       if (Value.IsLoadPanel) {
         if (Value.Curve != null) {
-          foreach (Brep brep in Value.PlanerBrep) {
-            args.Pipeline.DrawBrepWires(brep, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, -1);
-          }
+          args.Pipeline.DrawCurve(Value.Curve, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, -1);
         }
       } else {
         if (CentralSettings.PreviewMeshEdges == false || Value.Mesh == null) {
