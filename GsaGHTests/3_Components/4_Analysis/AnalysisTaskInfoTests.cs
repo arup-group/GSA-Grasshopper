@@ -18,7 +18,7 @@ namespace GsaGHTests.Components.Analysis {
       comp.CreateAttributes();
 
       var output = (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(
-        CreateAnalysisTaskTests.ComponentMother());
+        CreateAnalysisTaskTests.CreateAnalysisTaskComponent());
       ComponentTestHelper.SetInput(comp, output);
 
       return comp;
