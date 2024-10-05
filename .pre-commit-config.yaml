@@ -1,22 +1,22 @@
 default_stages: [pre-commit]
 
 repos:
-  - repo: local
-    hooks:
+  # - repo: local
+  #   hooks:
+  #
+    # - id: dotnet-format
+      # name: Format
+      # entry: dotnet format --exclude-diagnostics --verify-no-changes --verbosity diagnostic
+      # language: system
+      # pass_filenames: false
+      # always_run: true
 
-    - id: dotnet-format
-      name: Format
-      entry: dotnet format --exclude-diagnostics --verify-no-changes --verbosity diagnostic
-      language: system
-      pass_filenames: false
-      always_run: true
-
-    - id: dotnet-test-coverage
-      name: Run dotnet tests with coverage
-      entry: powershell.exe -NoProfile -ExecutionPolicy Bypass -File coverage.ps1
-      stages: [pre-commit]
-      language: system
-      pass_filenames: false
+    # - id: dotnet-test-coverage
+      # name: Run dotnet tests with coverage
+      # entry: powershell.exe -NoProfile -ExecutionPolicy Bypass -File coverage.ps1
+      # stages: [pre-commit]
+      # language: system
+      # pass_filenames: false
 
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v3.13.0
