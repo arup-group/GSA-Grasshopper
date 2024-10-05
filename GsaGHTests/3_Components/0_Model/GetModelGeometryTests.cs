@@ -62,11 +62,13 @@ namespace GsaGHTests.Model {
       ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
-    [Fact]
-    public void GetModelGeometryElement2dDrawViewportMeshesAndWiresTest() {
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void GetModelGeometryElement2dDrawViewportMeshesAndWiresTest(bool isLoadPanel) {
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromGeometry(null, null, new List<GsaElement2dGoo>() {
-          (GsaElement2dGoo)ComponentTestHelper.GetOutput(CreateElement2dTests.ComponentMother()),
+          (GsaElement2dGoo)ComponentTestHelper.GetOutput(CreateElement2dTests.ComponentMother(isLoadPanel, isLoadPanel)),
         }, null, null, null, ModelUnit.M));
 
       var comp = new GetModelGeometry();
