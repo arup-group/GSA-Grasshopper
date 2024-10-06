@@ -28,11 +28,13 @@ namespace GsaGHTests.GooWrappers {
     }
 
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void GetGeometryTest(bool isLoadPanel) {
+    [InlineData(true, true)]
+    [InlineData(true,false)]
+    [InlineData(false,true)]
+    [InlineData(false, false)]
+    public void GetGeometryTest(bool isLoadPanel, bool preview3dSection) {
       var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(isLoadPanel, isLoadPanel);
-      comp.Preview3dSection = true;
+      comp.Preview3dSection = preview3dSection;
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
       Assert.NotNull(output.GetGeometry());
     }
@@ -75,6 +77,32 @@ namespace GsaGHTests.GooWrappers {
       morphed.Value.Curve.TryGetPolyline(out polyline);
       Assert.NotNull(morphed);
       Assert.Equal(1.5, morphed.Value.Curve.PointAt(1).X);
+    }
+
+    [Fact]
+    public void TransformCurveTest() {
+      var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(true,true);
+      var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
+      var transformed = (GsaElement2dGoo)output.Transform(Transform.Translation(1, 1, 1));
+      Assert.NotNull(transformed);
+      for(int i=0;i<4;i++) {
+        Assert.Equal(output.Value.Curve.PointAt(i).X + 1, transformed.Value.Curve.PointAt(i).X);
+        Assert.Equal(output.Value.Curve.PointAt(i).Y + 1, transformed.Value.Curve.PointAt(i).Y);
+        Assert.Equal(output.Value.Curve.PointAt(i).Z + 1, transformed.Value.Curve.PointAt(i).Z);
+      }
+    }
+
+    [Fact]
+    public void TransformMeshTest() {
+      var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother();
+      var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
+      var transformed = (GsaElement2dGoo)output.Transform(Transform.Translation(1, 1, 1));
+      Assert.NotNull(transformed);
+      for (int i = 0; i < output.Value.Mesh.Vertices.Count; i++) {
+        Assert.Equal(output.Value.Mesh.Vertices[i].X + 1, transformed.Value.Mesh.Vertices[i].X);
+        Assert.Equal(output.Value.Mesh.Vertices[i].Y + 1, transformed.Value.Mesh.Vertices[i].Y);
+        Assert.Equal(output.Value.Mesh.Vertices[i].Z + 1, transformed.Value.Mesh.Vertices[i].Z);
+      }
     }
   }
 }
