@@ -128,6 +128,7 @@ namespace GsaGH.Components {
             case PDeltaCases.ResultCase:
               SetInputAttributes(2, _resultCaseAttributes);
               break;
+            default: break;
           }
 
           break;
@@ -244,6 +245,7 @@ namespace GsaGH.Components {
               task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name,
                 new GeometricStiffnessFromResultCase(resultCase));
               break;
+            default: break;
           }
 
           break;
@@ -292,19 +294,17 @@ namespace GsaGH.Components {
 
           int weightingOption = 0;
           if (da.GetData(i++, ref weightingOption)) {
-            WeightingOption? frequencyWeightingCurve = GetFrequencyWeightningOption(weightingOption);
-            if (frequencyWeightingCurve == null) {
+            if (!HasValidFrequencyWeightningOption(weightingOption, out WeightingOption frequencyWeightingCurve)) {
               UnableToConvertWeightOption();
               return;
             }
 
-            parameter.FrequencyWeightingCurve = frequencyWeightingCurve.Value;
+            parameter.FrequencyWeightingCurve = frequencyWeightingCurve;
           }
 
           int excitationForceOption = 0;
           if (da.GetData(i++, ref excitationForceOption)) {
-            ExcitationForces excitationForces = GetExcitationForces(excitationForceOption);
-            if (excitationForces == null) {
+            if (!HasValidExcitationForces(excitationForceOption, out ExcitationForces excitationForces)) {
               UnableToConvertExcitationForces();
               return;
             }
@@ -338,8 +338,9 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaAnalysisTaskGoo(gsaAnalysisTask));
     }
 
-    private WeightingOption? GetFrequencyWeightningOption(int weightingOption) {
-      WeightingOption? frequencyWeightingCurve = null;
+    private static bool HasValidFrequencyWeightningOption(
+      int weightingOption, out WeightingOption frequencyWeightingCurve) {
+      bool hasValidFrequencyWeightning = true;
       switch (weightingOption) {
         case 1:
           frequencyWeightingCurve = WeightingOption.Wb;
@@ -352,14 +353,18 @@ namespace GsaGH.Components {
         case 3:
           frequencyWeightingCurve = WeightingOption.Wg;
           break;
-        default: break;
+
+        default:
+          frequencyWeightingCurve = WeightingOption.Wd;
+          hasValidFrequencyWeightning = false;
+          break;
       }
 
-      return frequencyWeightingCurve;
+      return hasValidFrequencyWeightning;
     }
 
-    private ExcitationForces GetExcitationForces(int excitationForceOption) {
-      ExcitationForces excitationForces = null;
+    private static bool HasValidExcitationForces(int excitationForceOption, out ExcitationForces excitationForces) {
+      bool hasValidValue = true;
       switch (excitationForceOption) {
         case 1: // walking on floor AISC
           excitationForces = new WalkingOnFloorAISC();
@@ -393,30 +398,25 @@ namespace GsaGH.Components {
           excitationForces = new RunningOnFloorAISC2ndEdition();
           break;
 
-        default: break;
+        default:
+          hasValidValue = false;
+          excitationForces = null;
+          break;
       }
 
-      return excitationForces;
+      return hasValidValue;
     }
 
-    private bool HasValidDirection(GH_ObjectWrapper ghDirection, out ResponseDirection responseDirection) {
-      responseDirection = ResponseDirection.Z;
-      bool hasDirection = true;
+    private static bool HasValidDirection(GH_ObjectWrapper ghDirection, out ResponseDirection responseDirection) {
+      bool hasDirection;
+      responseDirection = default;
       switch (ghDirection.Value) {
         case GH_Integer intDirection:
-          if (!HasDirectionFromInt(ref responseDirection, intDirection)) {
-            hasDirection = false;
-          }
-
+          hasDirection = HasDirectionFromString(out responseDirection, intDirection.Value.ToString());
           break;
-
         case GH_String stringDirection:
-          if (!HasDirectionFromString(ref responseDirection, stringDirection)) {
-            hasDirection = false;
-          }
-
+          hasDirection = HasDirectionFromString(out responseDirection, stringDirection.Value);
           break;
-
         default:
           hasDirection = false;
           break;
@@ -425,8 +425,8 @@ namespace GsaGH.Components {
       return hasDirection;
     }
 
-    private bool HasDirectionFromString(ref ResponseDirection responseDirection, GH_String ghString) {
-      switch (ghString.Value.Trim().ToUpper()) {
+    private static bool HasDirectionFromString(out ResponseDirection responseDirection, string ghString) {
+      switch (ghString.Trim().ToUpper()) {
         case "1":
         case "Z":
           responseDirection = ResponseDirection.Z;
@@ -447,31 +447,9 @@ namespace GsaGH.Components {
           responseDirection = ResponseDirection.XY;
           break;
 
-        default: return false;
-      }
-
-      return true;
-    }
-
-    private bool HasDirectionFromInt(ref ResponseDirection responseDirection, GH_Integer ghInt) {
-      switch (ghInt.Value) {
-        case 1:
+        default:
           responseDirection = ResponseDirection.Z;
-          break;
-
-        case 2:
-          responseDirection = ResponseDirection.X;
-          break;
-
-        case 3:
-          responseDirection = ResponseDirection.Y;
-          break;
-
-        case 4:
-          responseDirection = ResponseDirection.XY;
-          break;
-
-        default: return false;
+          return false;
       }
 
       return true;
@@ -519,6 +497,7 @@ namespace GsaGH.Components {
               _casesParamIndex = 3;
               Params.RegisterInputParam(new Param_Integer());
               break;
+            default: break;
           }
 
           Params.RegisterInputParam(new Param_GenericObject());
@@ -540,6 +519,7 @@ namespace GsaGH.Components {
           _casesParamIndex = !IsSelfExcitationSelected() ? 9 : 8;
 
           break;
+        default: break;
       }
     }
 
@@ -615,17 +595,6 @@ namespace GsaGH.Components {
       for (int j = 0; j < inputs.Count; j++) {
         SetInputAttributes(j + 2, inputs[j]);
       }
-    }
-
-    private void RegisterFootfallInput() {
-      bool isSelfExcitation = IsSelfExcitationSelected();
-      List<InputAttributes> inputs = _footfallInputManager.GetInputsForSelfExcitation(!isSelfExcitation);
-      for (int j = 0; j < inputs.Count; j++) {
-        IGH_Param type = inputs[j].ParamType;
-        Params.RegisterInputParam(type);
-      }
-
-      _casesParamIndex = !isSelfExcitation ? 9 : 8;
     }
   }
 }

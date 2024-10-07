@@ -58,7 +58,11 @@ namespace GsaGHTests.Components.Analysis {
     }
 
     private static List<object> GetInvalidList() {
-      return new List<object>() { new GH_ObjectWrapper() { Value = null } };
+      return new List<object>() {
+        new GH_ObjectWrapper() {
+          Value = null,
+        },
+      };
     }
 
     [Fact]
@@ -88,8 +92,9 @@ namespace GsaGHTests.Components.Analysis {
     public void ShouldAddErrorForInvalidStringDirection() {
       SetFootfall();
       ComponentTestHelper.SetInput(_component, 2, 2);
-      ComponentTestHelper.SetInput(_component, new List<string>() { "AnInvalidString" },
-        FootfallInputManager._responseDirectionAttributes.Name);
+      ComponentTestHelper.SetInput(_component, new List<string>() {
+        "AnInvalidString",
+      }, FootfallInputManager._responseDirectionAttributes.Name);
       ComponentTestHelper.ComputeOutput(_component);
       AssertInvalidDirectionError(_component);
     }
@@ -98,9 +103,10 @@ namespace GsaGHTests.Components.Analysis {
     public void ShouldAddErrorForInvalidIntgerDirection() {
       SetFootfall();
       ComponentTestHelper.SetInput(_component, 2, 2);
-      var anInvalidString = 5;
-      ComponentTestHelper.SetInput(_component, new List<int>() { anInvalidString },
-        FootfallInputManager._responseDirectionAttributes.Name);
+      int anInvalidString = 5;
+      ComponentTestHelper.SetInput(_component, new List<int>() {
+        anInvalidString,
+      }, FootfallInputManager._responseDirectionAttributes.Name);
       ComponentTestHelper.ComputeOutput(_component);
       IList<string> runtimeMessages = _component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
       AssertInvalidDirectionError(_component);
@@ -118,7 +124,7 @@ namespace GsaGHTests.Components.Analysis {
     public void CreateStaticPDeltaComponentTest1() {
       SetToStaticPDelta();
 
-      var output = ComputeAndGetOutput();
+      GsaAnalysisTaskGoo output = ComputeAndGetOutput();
 
       Assert.Equal(1, output.Value.Id);
       Assert.Equal("my Task", output.Value.ApiTask.Name);
@@ -151,7 +157,7 @@ namespace GsaGHTests.Components.Analysis {
       SetExcitationRigorous();
       ComponentTestHelper.SetInput(_component, "1.2L1 + 1.2L2", 2);
 
-      var output = ComputeAndGetOutput();
+      GsaAnalysisTaskGoo output = ComputeAndGetOutput();
 
       Assert.Equal((int)AnalysisTaskType.StaticPDelta, output.Value.ApiTask.Type);
     }
@@ -162,7 +168,7 @@ namespace GsaGHTests.Components.Analysis {
       SetExcitationToFastAndRigorous();
       ComponentTestHelper.SetInput(_component, 2, 2);
 
-      var output = ComputeAndGetOutput();
+      GsaAnalysisTaskGoo output = ComputeAndGetOutput();
 
       Assert.Equal((int)AnalysisTaskType.StaticPDelta, output.Value.ApiTask.Type);
     }
@@ -232,7 +238,7 @@ namespace GsaGHTests.Components.Analysis {
                 ComponentTestHelper.SetInput(_component, excitationForce, index++);
                 ComponentTestHelper.SetInput(_component, 2.2, index++);
 
-                var output = ComputeAndGetOutput();
+                GsaAnalysisTaskGoo output = ComputeAndGetOutput();
                 var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
                 Assert.Equal(ExcitationOption(excitationSelectedIndex), parameter.ExcitationMethod);
@@ -275,7 +281,7 @@ namespace GsaGHTests.Components.Analysis {
       ComponentTestHelper.SetInput(_component, 3, 9);
       ComponentTestHelper.SetInput(_component, 2.2, 10);
 
-      var output = ComputeAndGetOutput();
+      GsaAnalysisTaskGoo output = ComputeAndGetOutput();
       var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
       Assert.Equal(1, output.Value.Id);
@@ -308,7 +314,7 @@ namespace GsaGHTests.Components.Analysis {
       ComponentTestHelper.SetInput(_component, 3, 9);
       ComponentTestHelper.SetInput(_component, 2.2, 10);
 
-      var output = ComputeAndGetOutput();
+      GsaAnalysisTaskGoo output = ComputeAndGetOutput();
       var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
       Assert.Equal(1, output.Value.Id);
@@ -345,7 +351,7 @@ namespace GsaGHTests.Components.Analysis {
       ComponentTestHelper.SetInput(_component, 3, 9);
       ComponentTestHelper.SetInput(_component, 2.2, 10);
 
-      var output = ComputeAndGetOutput();
+      GsaAnalysisTaskGoo output = ComputeAndGetOutput();
       var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
       Assert.Equal(1, output.Value.Id);
@@ -382,7 +388,7 @@ namespace GsaGHTests.Components.Analysis {
     public void SearchingForValuesInDictionaryShouldReturnExceptionForFailedSearch() {
       var dictionary = new Dictionary<string, string> {
         { "key1", "value1" },
-        { "key2", "value2" }
+        { "key2", "value2" },
       };
       Assert.Throws<Exception>(() => dictionary.TryGetKeyFrom("value3"));
     }
@@ -391,7 +397,7 @@ namespace GsaGHTests.Components.Analysis {
     public void SearchingForExistingValuesShouldReturnTheKey() {
       var dictionary = new Dictionary<string, string> {
         { "key1", "value1" },
-        { "key2", "value2" }
+        { "key2", "value2" },
       };
       Assert.Equal("key2", dictionary.TryGetKeyFrom("value2"));
     }
