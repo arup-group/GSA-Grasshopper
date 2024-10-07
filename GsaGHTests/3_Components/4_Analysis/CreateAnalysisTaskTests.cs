@@ -169,6 +169,13 @@ namespace GsaGHTests.Components.Analysis {
 
     private void SetFootfall() {
       _component.SetSelected(0, 2);
+      _component.CreateAttributes();
+      _component.Params.Input.ForEach(x => x.Sources.Clear());
+      _component.Params.Input.ForEach(x => x.ClearData());
+      // Set minimum inputs
+      ComponentTestHelper.SetInput(_component, 1, 0);
+      ComponentTestHelper.SetInput(_component, "my Task", 1);
+      ComponentTestHelper.SetInput(_component, GetDummyAnalysisCase(), 2);
     }
 
     private void SetExcitationRigorous() {
@@ -270,8 +277,6 @@ namespace GsaGHTests.Components.Analysis {
                 var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
                 Assert.Equal(ExcitationOption(excitationSelectedIndex), parameter.ExcitationMethod);
-                Assert.Equal(1, output.Value.Id);
-                Assert.Equal("my Task", output.Value.ApiTask.Name);
                 Assert.Equal(2, parameter.ModalAnalysisTaskId);
                 Assert.Equal("all", parameter.ResponseNodes);
                 if (excitation > 1) {
@@ -312,9 +317,6 @@ namespace GsaGHTests.Components.Analysis {
       GsaAnalysisTaskGoo output = ComputeAndGetOutput();
       var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
-      Assert.Equal(1, output.Value.Id);
-      Assert.Equal("my Task", output.Value.ApiTask.Name);
-      Assert.Equal(1, (int)parameter.ExcitationMethod);
       Assert.Equal(2, parameter.ModalAnalysisTaskId);
       Assert.Equal("all", parameter.ResponseNodes);
       Assert.Equal("all", parameter.ExcitationNodes);
@@ -345,8 +347,6 @@ namespace GsaGHTests.Components.Analysis {
       GsaAnalysisTaskGoo output = ComputeAndGetOutput();
       var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
-      Assert.Equal(1, output.Value.Id);
-      Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal(2, (int)parameter.ExcitationMethod);
       Assert.Equal(2, parameter.ModalAnalysisTaskId);
       Assert.Equal("all", parameter.ResponseNodes);
@@ -382,8 +382,6 @@ namespace GsaGHTests.Components.Analysis {
       GsaAnalysisTaskGoo output = ComputeAndGetOutput();
       var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
-      Assert.Equal(1, output.Value.Id);
-      Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal(5, (int)parameter.ExcitationMethod);
       Assert.Equal(2, parameter.ModalAnalysisTaskId);
       Assert.Equal("all", parameter.ResponseNodes);

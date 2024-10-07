@@ -294,7 +294,7 @@ namespace GsaGH.Components {
 
           int weightingOption = 0;
           if (da.GetData(i++, ref weightingOption)) {
-            if (!HasValidFrequencyWeightningOption(weightingOption, out WeightingOption frequencyWeightingCurve)) {
+            if (!HasValidFrequencyWeightingOption(weightingOption, out WeightingOption frequencyWeightingCurve)) {
               UnableToConvertWeightOption();
               return;
             }
@@ -338,9 +338,9 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaAnalysisTaskGoo(gsaAnalysisTask));
     }
 
-    private static bool HasValidFrequencyWeightningOption(
+    private static bool HasValidFrequencyWeightingOption(
       int weightingOption, out WeightingOption frequencyWeightingCurve) {
-      bool hasValidFrequencyWeightning = true;
+      bool hasValidFrequencyWeighting = true;
       switch (weightingOption) {
         case 1:
           frequencyWeightingCurve = WeightingOption.Wb;
@@ -356,11 +356,11 @@ namespace GsaGH.Components {
 
         default:
           frequencyWeightingCurve = WeightingOption.Wd;
-          hasValidFrequencyWeightning = false;
+          hasValidFrequencyWeighting = false;
           break;
       }
 
-      return hasValidFrequencyWeightning;
+      return hasValidFrequencyWeighting;
     }
 
     private static bool HasValidExcitationForces(int excitationForceOption, out ExcitationForces excitationForces) {
