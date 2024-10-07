@@ -83,9 +83,37 @@ namespace GsaGHTests.Components.Analysis {
       AssertInvalidDirectionError(_component);
     }
 
+    [Fact]
+    public void ShouldAddErrorForInvalidFrequencyWeightingOption() {
+      SetFootfall();
+      ComponentTestHelper.SetInput(_component, 2, 2);
+      ComponentTestHelper.SetInput(_component, 4, FootfallInputManager._frequencyWeightingCurveAttributes.Name);
+      ComponentTestHelper.ComputeOutput(_component);
+      AssertInvalidFrequencyWeightningOptionError(_component);
+    }
+
+    [Fact]
+    public void ShouldAddErrorForInvalidExcitationForce() {
+      SetFootfall();
+      ComponentTestHelper.SetInput(_component, 2, 2);
+      ComponentTestHelper.SetInput(_component, 0, FootfallInputManager._excitationForcesAttributes.Name);
+      ComponentTestHelper.ComputeOutput(_component);
+      AssertInvalidExcitationForceError(_component);
+    }
+
     private static void AssertInvalidDirectionError(CreateAnalysisTask component) {
       IList<string> runtimeMessages = component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
-      Assert.True(runtimeMessages.Contains("Unable to convert response direction input"));
+      Assert.True(runtimeMessages.Contains(CreateAnalysisTask._unableToConvertResponseDirectionInputMessage));
+    }
+
+    private static void AssertInvalidFrequencyWeightningOptionError(CreateAnalysisTask component) {
+      IList<string> runtimeMessages = component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
+      Assert.True(runtimeMessages.Contains(CreateAnalysisTask._unableToConvertWeightOptionInputMessage));
+    }
+
+    private static void AssertInvalidExcitationForceError(CreateAnalysisTask component) {
+      IList<string> runtimeMessages = component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
+      Assert.True(runtimeMessages.Contains(CreateAnalysisTask._unableToConvertsExcitationForcesInputMessage));
     }
 
     [Fact]

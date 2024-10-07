@@ -412,10 +412,14 @@ namespace GsaGH.Components {
       responseDirection = default;
       switch (ghDirection.Value) {
         case GH_Integer intDirection:
+
           hasDirection = HasDirectionFromString(out responseDirection, intDirection.Value.ToString());
           break;
         case GH_String stringDirection:
           hasDirection = HasDirectionFromString(out responseDirection, stringDirection.Value);
+          break;
+        case GH_Number numberDirection:
+          hasDirection = HasDirectionFromString(out responseDirection, numberDirection.Value.ToString());
           break;
         default:
           hasDirection = false;
@@ -469,7 +473,7 @@ namespace GsaGH.Components {
 
     protected override void UpdateUIFromSelectedItems() {
       _type = _solverTypes[_selectedItems[0]];
-      UpdateParameters();
+      //UpdateParameters();
 
       base.UpdateUIFromSelectedItems();
     }
