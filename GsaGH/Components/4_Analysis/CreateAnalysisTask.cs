@@ -289,67 +289,21 @@ namespace GsaGH.Components {
 
           int weightingOption = 0;
           if (da.GetData(i++, ref weightingOption)) {
-            WeightingOption frequencyWeightingCurve;
-            switch (weightingOption) {
-              case 1:
-                frequencyWeightingCurve = WeightingOption.Wb;
-                break;
-
-              case 2:
-                frequencyWeightingCurve = WeightingOption.Wd;
-                break;
-
-              case 3:
-                frequencyWeightingCurve = WeightingOption.Wg;
-                break;
-
-              default:
-                this.AddRuntimeError("Unable to convert frequency weighting curve input");
-                return;
+            WeightingOption? frequencyWeightingCurve = GetFrequencyWeightningOption(weightingOption);
+            if (frequencyWeightingCurve == null) {
+              this.AddRuntimeError("Unable to convert frequency weighting curve input");
+              return;
             }
 
-            parameter.FrequencyWeightingCurve = frequencyWeightingCurve;
+            parameter.FrequencyWeightingCurve = frequencyWeightingCurve.Value;
           }
 
           int excitationForceOption = 0;
           if (da.GetData(i++, ref excitationForceOption)) {
-            ExcitationForces excitationForces = null;
-            switch (excitationForceOption) {
-              case 1: // walking on floor AISC
-                excitationForces = new WalkingOnFloorAISC();
-                break;
-
-              case 2: // walking on floor AISC 2nd ed
-                excitationForces = new WalkingOnFloorAISC2ndEdition();
-                break;
-
-              case 3: // walking on floor CCIP
-                excitationForces = new WalkingOnFloorCCIP();
-                break;
-
-              case 4: // walking on floor SCI
-                excitationForces = new WalkingOnFloorSCI();
-                break;
-
-              case 5: // walking on stair AISC 2nd ed
-                excitationForces = new WalkingOnStairAISC2ndEdition();
-                break;
-
-              case 6: // walking on stair Arup
-                excitationForces = new WalkingOnStairArup();
-                break;
-
-              case 7: // walking on stair SCI
-                excitationForces = new WalkingOnStairSCI();
-                break;
-
-              case 8: // running on floor AISC 2nd ed
-                excitationForces = new RunningOnFloorAISC2ndEdition();
-                break;
-
-              default:
-                this.AddRuntimeError("Unable to convert excitation forces (DLFs) input");
-                return;
+            ExcitationForces excitationForces = GetExcitationForces(excitationForceOption);
+            if (excitationForces == null) {
+              this.AddRuntimeError("Unable to convert excitation forces (DLFs) input");
+              return;
             }
 
             parameter.ExcitationForces = excitationForces;
@@ -379,6 +333,67 @@ namespace GsaGH.Components {
       };
 
       da.SetData(0, new GsaAnalysisTaskGoo(gsaAnalysisTask));
+    }
+
+    private WeightingOption? GetFrequencyWeightningOption(int weightingOption) {
+      WeightingOption? frequencyWeightingCurve = null;
+      switch (weightingOption) {
+        case 1:
+          frequencyWeightingCurve = WeightingOption.Wb;
+          break;
+
+        case 2:
+          frequencyWeightingCurve = WeightingOption.Wd;
+          break;
+
+        case 3:
+          frequencyWeightingCurve = WeightingOption.Wg;
+          break;
+        default: break;
+      }
+
+      return frequencyWeightingCurve;
+    }
+
+    private ExcitationForces GetExcitationForces(int excitationForceOption) {
+      ExcitationForces excitationForces = null;
+      switch (excitationForceOption) {
+        case 1: // walking on floor AISC
+          excitationForces = new WalkingOnFloorAISC();
+          break;
+
+        case 2: // walking on floor AISC 2nd ed
+          excitationForces = new WalkingOnFloorAISC2ndEdition();
+          break;
+
+        case 3: // walking on floor CCIP
+          excitationForces = new WalkingOnFloorCCIP();
+          break;
+
+        case 4: // walking on floor SCI
+          excitationForces = new WalkingOnFloorSCI();
+          break;
+
+        case 5: // walking on stair AISC 2nd ed
+          excitationForces = new WalkingOnStairAISC2ndEdition();
+          break;
+
+        case 6: // walking on stair Arup
+          excitationForces = new WalkingOnStairArup();
+          break;
+
+        case 7: // walking on stair SCI
+          excitationForces = new WalkingOnStairSCI();
+          break;
+
+        case 8: // running on floor AISC 2nd ed
+          excitationForces = new RunningOnFloorAISC2ndEdition();
+          break;
+
+        default: break;
+      }
+
+      return excitationForces;
     }
 
     private bool HasValidDirection(GH_ObjectWrapper ghDirection, out ResponseDirection responseDirection) {
