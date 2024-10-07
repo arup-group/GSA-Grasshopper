@@ -99,6 +99,7 @@ namespace GsaGHTests.Components.Analysis {
     [Theory]
     [InlineData("AnInvalidString")]
     [InlineData(5)]
+    [InlineData(5d)]
     [InlineData("5")]
     [InlineData(null)]
     public void ShouldAddErrorForInvalidDirection(object direction) {
