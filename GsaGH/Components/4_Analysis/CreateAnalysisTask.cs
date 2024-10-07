@@ -187,7 +187,45 @@ namespace GsaGH.Components {
       string name = _type.ToString();
       da.GetData(1, ref name);
 
-      List<GsaAnalysisCase> cases = null;
+      if (!GetAnalysisCases(da, name, out List<GsaAnalysisCase> cases)) {
+        return;
+      }
+
+      AnalysisTask task = null;
+      switch (_type) {
+        case AnalysisTaskType.Static:
+          task = AnalysisTaskFactory.CreateStaticAnalysisTask(name);
+          break;
+
+        case AnalysisTaskType.StaticPDelta:
+          task = CreateStaticPDeltaTask(da, task, name);
+
+          break;
+
+        case AnalysisTaskType.Footfall:
+          if (!CreateFootfallTask(da, name, out task)) {
+            return;
+          }
+
+          break;
+
+        default:
+          this.AddRuntimeWarning($"It is currently not possible to create Analysis Tasks of type {_type}");
+          break;
+      }
+
+      var gsaAnalysisTask = new GsaAnalysisTask {
+        Cases = cases,
+        ApiTask = task,
+        Id = id,
+      };
+
+      da.SetData(0, new GsaAnalysisTaskGoo(gsaAnalysisTask));
+    }
+
+    private bool GetAnalysisCases(IGH_DataAccess da, string name, out List<GsaAnalysisCase> cases)
+    {
+      cases = null;
       var ghTypes = new List<GH_ObjectWrapper>();
       if (_type != AnalysisTaskType.Footfall) {
         if (da.GetDataList(_casesParamIndex, ghTypes)) {
@@ -203,7 +241,7 @@ namespace GsaGH.Components {
               cases.Add(goo.Value.Duplicate());
             } else {
               UnsupportedValueError(ghTypeWrapper);
-              return;
+              return false;
             }
           }
         }
@@ -220,122 +258,109 @@ namespace GsaGH.Components {
         cases.Add(footfallAnalysisCase);
       }
 
-      AnalysisTask task = null;
-      switch (_type) {
-        case AnalysisTaskType.Static:
-          task = AnalysisTaskFactory.CreateStaticAnalysisTask(name);
+      return true;
+    }
+
+    private AnalysisTask CreateStaticPDeltaTask(IGH_DataAccess da, AnalysisTask task, string name)
+    {
+      PDeltaCases selectedPDeltaCase = _pDeltaCases.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
+
+      switch (selectedPDeltaCase) {
+        case PDeltaCases.Own:
+          task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name, new GeometricStiffnessFromOwnLoad());
           break;
-
-        case AnalysisTaskType.StaticPDelta:
-          PDeltaCases selectedPDeltaCase = _pDeltaCases.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
-
-          switch (selectedPDeltaCase) {
-            case PDeltaCases.Own:
-              task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name, new GeometricStiffnessFromOwnLoad());
-              break;
-            case PDeltaCases.LoadCase:
-              string caseDescription = string.Empty;
-              da.GetData(2, ref caseDescription);
-              task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name,
-                new GeometricStiffnessFromLoadCase(caseDescription));
-              break;
-            case PDeltaCases.ResultCase:
-              int resultCase = 0;
-              da.GetData(2, ref resultCase);
-              task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name,
-                new GeometricStiffnessFromResultCase(resultCase));
-              break;
-            default: break;
-          }
-
+        case PDeltaCases.LoadCase:
+          string caseDescription = string.Empty;
+          da.GetData(2, ref caseDescription);
+          task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name,
+            new GeometricStiffnessFromLoadCase(caseDescription));
           break;
-
-        case AnalysisTaskType.Footfall:
-          int analysisTaskId = 0;
-          da.GetData(2, ref analysisTaskId);
-
-          var parameter = new FootfallAnalysisTaskParameter {
-            ModalAnalysisTaskId = analysisTaskId,
-          };
-
-          string responseNodes = "All";
-          if (da.GetData(3, ref responseNodes)) {
-            parameter.ResponseNodes = responseNodes;
-          }
-
-          int i = 4;
-          string excitationNodes = "All";
-          if (!IsSelfExcitationSelected()) {
-            if (da.GetData(i++, ref excitationNodes)) {
-              parameter.ExcitationNodes = excitationNodes;
-            }
-          }
-
-          int numberOfFootfalls = 0;
-          if (da.GetData(i++, ref numberOfFootfalls)) {
-            NumberOfFootfalls numberofFootfalls = new ConstantFootfallsForAllModes(numberOfFootfalls);
-            parameter.NumberOfFootfalls = numberofFootfalls;
-          }
-
-          double walkerMass = 0;
-          if (da.GetData(i++, ref walkerMass)) {
-            parameter.WalkerMass = walkerMass;
-          }
-
-          var ghTyp = new GH_ObjectWrapper();
-          if (da.GetData(i++, ref ghTyp)) {
-            if (!HasValidDirection(ghTyp, out ResponseDirection responseDirection)) {
-              UnableToConvertDirection();
-              return;
-            }
-
-            parameter.ResponseDirection = responseDirection;
-          }
-
-          int weightingOption = 0;
-          if (da.GetData(i++, ref weightingOption)) {
-            if (!HasValidFrequencyWeightingOption(weightingOption, out WeightingOption frequencyWeightingCurve)) {
-              UnableToConvertWeightOption();
-              return;
-            }
-
-            parameter.FrequencyWeightingCurve = frequencyWeightingCurve;
-          }
-
-          int excitationForceOption = 0;
-          if (da.GetData(i++, ref excitationForceOption)) {
-            if (!HasValidExcitationForces(excitationForceOption, out ExcitationForces excitationForces)) {
-              UnableToConvertExcitationForces();
-              return;
-            }
-
-            parameter.ExcitationForces = excitationForces;
-          }
-
-          double damping = 0;
-          if (da.GetData(i++, ref damping)) {
-            parameter.DampingOption = new ConstantDampingOption {
-              ConstantDamping = damping,
-            };
-          }
-
-          parameter.ExcitationMethod = _excitationMethod.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
-
-          task = AnalysisTaskFactory.CreateFootfallAnalysisTask(name, parameter);
+        case PDeltaCases.ResultCase:
+          int resultCase = 0;
+          da.GetData(2, ref resultCase);
+          task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name,
+            new GeometricStiffnessFromResultCase(resultCase));
           break;
-
-        default:
-          this.AddRuntimeWarning($"It is currently not possible to create Analysis Tasks of type {_type}");
-          break;
+        default: break;
       }
 
-      var gsaAnalysisTask = new GsaAnalysisTask {
-        Cases = cases,
-        ApiTask = task,
-        Id = id,
+      return task;
+    }
+
+    private bool CreateFootfallTask(IGH_DataAccess da, string name, out AnalysisTask task) {
+      task = null;
+      int analysisTaskId = 0;
+      da.GetData(2, ref analysisTaskId);
+
+      var parameter = new FootfallAnalysisTaskParameter {
+        ModalAnalysisTaskId = analysisTaskId,
       };
 
-      da.SetData(0, new GsaAnalysisTaskGoo(gsaAnalysisTask));
+      string responseNodes = "All";
+      if (da.GetData(3, ref responseNodes)) {
+        parameter.ResponseNodes = responseNodes;
+      }
+
+      int i = 4;
+      string excitationNodes = "All";
+      if (!IsSelfExcitationSelected()) {
+        if (da.GetData(i++, ref excitationNodes)) {
+          parameter.ExcitationNodes = excitationNodes;
+        }
+      }
+
+      int numberOfFootfalls = 0;
+      if (da.GetData(i++, ref numberOfFootfalls)) {
+        NumberOfFootfalls numberofFootfalls = new ConstantFootfallsForAllModes(numberOfFootfalls);
+        parameter.NumberOfFootfalls = numberofFootfalls;
+      }
+
+      double walkerMass = 0;
+      if (da.GetData(i++, ref walkerMass)) {
+        parameter.WalkerMass = walkerMass;
+      }
+
+      var ghTyp = new GH_ObjectWrapper();
+      if (da.GetData(i++, ref ghTyp)) {
+        if (!HasValidDirection(ghTyp, out ResponseDirection responseDirection)) {
+          UnableToConvertDirection();
+          return false;
+        }
+
+        parameter.ResponseDirection = responseDirection;
+      }
+
+      int weightingOption = 0;
+      if (da.GetData(i++, ref weightingOption)) {
+        if (!HasValidFrequencyWeightingOption(weightingOption, out WeightingOption frequencyWeightingCurve)) {
+          UnableToConvertWeightOption();
+          return false;
+        }
+
+        parameter.FrequencyWeightingCurve = frequencyWeightingCurve;
+      }
+
+      int excitationForceOption = 0;
+      if (da.GetData(i++, ref excitationForceOption)) {
+        if (!HasValidExcitationForces(excitationForceOption, out ExcitationForces excitationForces)) {
+          UnableToConvertExcitationForces();
+          return false;
+        }
+
+        parameter.ExcitationForces = excitationForces;
+      }
+
+      double damping = 0;
+      if (da.GetData(i++, ref damping)) {
+        parameter.DampingOption = new ConstantDampingOption {
+          ConstantDamping = damping,
+        };
+      }
+
+      parameter.ExcitationMethod = _excitationMethod.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
+
+      task = AnalysisTaskFactory.CreateFootfallAnalysisTask(name, parameter);
+      return true;
     }
 
     private static bool HasValidFrequencyWeightingOption(
