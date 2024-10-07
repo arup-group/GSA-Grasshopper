@@ -80,15 +80,8 @@ namespace GsaGH.Parameters {
       ApiElements = new List<GSAElement> {
         new GSAElement(new LoadPanelElement())
       };
-      curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
-      Topology = new Point3dList(polyline.ToArray());
-      var topo = new List<int>();
-      foreach (Point3d p in polyline.ToList()) {
-        topo.Add(polyline.ToList().IndexOf(p));
-      }
-      TopoInt = new List<List<int>> {
-        topo
-      };
+      Topology = RhinoConversions.LoadPanelTopo(curve);
+      TopoInt = RhinoConversions.LoadPanelTopoIndices(curve);
       Ids = new List<int>(new int[1]);
     }
 
@@ -128,15 +121,8 @@ namespace GsaGH.Parameters {
     internal GsaElement2d(GSAElement element, Curve curve, GsaProperty2d prop2d) {
       Curve = curve;
       ApiElements = new List<GSAElement>() { element };
-      curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
-      Topology = new Point3dList(polyline.ToArray());
-      var topo = new List<int>();
-      foreach (Point3d p in polyline.ToList()) {
-        topo.Add(polyline.ToList().IndexOf(p));
-      }
-      TopoInt = new List<List<int>> {
-        topo
-      };
+      Topology = RhinoConversions.LoadPanelTopo(curve);
+      TopoInt = RhinoConversions.LoadPanelTopoIndices(curve);
       Ids = new List<int>(new int[1]);
       if (prop2d != null) {
         Prop2ds = new List<GsaProperty2d>() { prop2d };

@@ -779,5 +779,28 @@ namespace GsaGH.Helpers.GH {
       plane.Normal.Unitize();
       return new Plane(plane.Origin, plane.Normal);
     }
+
+    internal static Point3dList LoadPanelTopo(Curve curve) {
+      curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
+      var topology = new Point3dList();
+      foreach (Point3d item in polyline.ToArray()) {
+        if (!topology.Contains(item)) {
+          topology.Add(item);
+        }
+      }
+      return topology;
+    }
+
+    internal static List<List<int>> LoadPanelTopoIndices(Curve curve) {
+      curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
+      var topo = new List<int>();
+      foreach (Point3d p in polyline.ToList()) {
+        int index = polyline.ToList().IndexOf(p);
+        if (!topo.Contains(index)) {
+          topo.Add(index);
+        }
+      }
+      return new List<List<int>> { topo };
+    }
   }
 }

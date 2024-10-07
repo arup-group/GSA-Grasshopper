@@ -33,7 +33,7 @@ namespace GsaGH.Components {
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddGeometryParameter("Geometry", "G", "Geometry of type mesh and polyline to create GSA Element", GH_ParamAccess.item);
+      pManager.AddGeometryParameter("Geometry", "G", "Polyline extractable geometry to create load panels and mesh geometry to create FE elements", GH_ParamAccess.item);
       pManager.AddParameter(new GsaProperty2dParameter());
       pManager[1].Optional = true;
       pManager.HideParameter(0);
