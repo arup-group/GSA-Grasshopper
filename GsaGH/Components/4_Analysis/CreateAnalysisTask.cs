@@ -85,6 +85,9 @@ namespace GsaGH.Components {
     private readonly FootfallInputManager _footfallInputManager;
     private AnalysisTaskType _type = AnalysisTaskType.Static;
     public const string _unableToConvertResponseDirectionInputMessage = "Unable to convert response direction input";
+    public const string _unableToConvertWeightOptionInputMessage = "Unable to convert frequency weighting curve input";
+    public const string _unableToConvertsExcitationForcesInputMessage
+      = "Unable to convert excitation forces (DLFs) input";
 
     public CreateAnalysisTask() : base($"Create {GsaAnalysisTaskGoo.Name}",
       GsaAnalysisTaskGoo.NickName.Replace(" ", string.Empty), $"Create a {GsaAnalysisTaskGoo.Description}",
@@ -291,7 +294,7 @@ namespace GsaGH.Components {
           if (da.GetData(i++, ref weightingOption)) {
             WeightingOption? frequencyWeightingCurve = GetFrequencyWeightningOption(weightingOption);
             if (frequencyWeightingCurve == null) {
-              this.AddRuntimeError("Unable to convert frequency weighting curve input");
+              UnableToConvertWeightOption();
               return;
             }
 
@@ -302,7 +305,7 @@ namespace GsaGH.Components {
           if (da.GetData(i++, ref excitationForceOption)) {
             ExcitationForces excitationForces = GetExcitationForces(excitationForceOption);
             if (excitationForces == null) {
-              this.AddRuntimeError("Unable to convert excitation forces (DLFs) input");
+              UnableToConvertExcitationForces();
               return;
             }
 
@@ -476,6 +479,14 @@ namespace GsaGH.Components {
 
     private void UnableToConvertDirection() {
       this.AddRuntimeError(_unableToConvertResponseDirectionInputMessage);
+    }
+
+    private void UnableToConvertWeightOption() {
+      this.AddRuntimeError(_unableToConvertWeightOptionInputMessage);
+    }
+
+    private void UnableToConvertExcitationForces() {
+      this.AddRuntimeError(_unableToConvertsExcitationForcesInputMessage);
     }
 
     protected override void UpdateUIFromSelectedItems() {
