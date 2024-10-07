@@ -84,7 +84,7 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     [Theory]
-    [InlineData(true, 4, 5)]
+    [InlineData(true, 4, 6)]
     [InlineData(false, 10, 8)]
     public void CreateComponentWithSection3dPreviewTest(bool isLoadPanel, int expectedVerticesCount, int expectedOutlineCount) {
       var comp = (Section3dPreviewComponent)ComponentMother(isLoadPanel, isLoadPanel);
