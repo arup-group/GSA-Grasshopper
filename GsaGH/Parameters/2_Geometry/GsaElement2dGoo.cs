@@ -46,44 +46,42 @@ namespace GsaGH.Parameters {
     }
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
-      if (Value == null) {
-        return;
-      }
-      if (Value.IsLoadPanel) {
-        if (Value.Curve != null) {
-          Brep[] PlanerBrep = Brep.CreatePlanarBreps(Value.Curve, Rhino.RhinoDoc.ActiveDoc != null ? Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance : 0.001);
-          foreach (Brep brep in PlanerBrep) {
-            args.Pipeline.DrawBrepShaded(brep, args.Material.Diffuse == Colours.EntityIsNotSelected
-            ? Colours.Element2dFaceLP : Colours.Element2dFaceSelectedLP);
+      if (Value != null) {
+        if (Value.IsLoadPanel) {
+          if (Value.Curve != null) {
+            Brep[] PlanerBrep = Brep.CreatePlanarBreps(Value.Curve, Rhino.RhinoDoc.ActiveDoc != null ? Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance : 0.001);
+            foreach (Brep brep in PlanerBrep) {
+              args.Pipeline.DrawBrepShaded(brep, args.Material.Diffuse == Colours.EntityIsNotSelected
+              ? Colours.Element2dFaceLP : Colours.Element2dFaceSelectedLP);
+            }
+          }
+        } else {
+          if (Value.Mesh != null) {
+            args.Pipeline.DrawMeshShaded(Value?.Mesh,
+            args.Material.Diffuse == Colours.EntityIsNotSelected
+              ? Colours.Element2dFace : Colours.Element2dFaceSelected);
           }
         }
-      } else {
-        if (Value.Mesh != null) {
-          args.Pipeline.DrawMeshShaded(Value?.Mesh,
-          args.Material.Diffuse == Colours.EntityIsNotSelected
-            ? Colours.Element2dFace : Colours.Element2dFaceSelected);
-        }
+        Value?.Section3dPreview?.DrawViewportMeshes(args);
       }
-      Value?.Section3dPreview?.DrawViewportMeshes(args);
     }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
-      if (Value == null) {
-        return;
-      }
-      Value.Section3dPreview?.DrawViewportWires(args);
-      if (Value.Section3dPreview != null) {
-        args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, 1);
-      }
-      if (Value.IsLoadPanel) {
-        if (Value.Curve != null) {
-          args.Pipeline.DrawCurve(Value.Curve, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, -1);
+      if (Value != null) {
+        Value.Section3dPreview?.DrawViewportWires(args);
+        if (Value.Section3dPreview != null) {
+          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, 1);
         }
-      } else {
-        if (CentralSettings.PreviewMeshEdges == false || Value.Mesh == null) {
-          return;
+        if (Value.IsLoadPanel) {
+          if (Value.Curve != null) {
+            args.Pipeline.DrawCurve(Value.Curve, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, -1);
+          }
+        } else {
+          if (CentralSettings.PreviewMeshEdges == false || Value.Mesh == null) {
+            return;
+          }
+          args.Pipeline.DrawMeshWires(Value.Mesh, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, 1);
         }
-        args.Pipeline.DrawMeshWires(Value.Mesh, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, 1);
       }
     }
 

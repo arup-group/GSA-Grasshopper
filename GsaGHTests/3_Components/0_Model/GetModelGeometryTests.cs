@@ -185,5 +185,15 @@ namespace GsaGHTests.Model {
 
       Duplicates.AreEqual(originalComponent, deserializedComponent, new List<string>() { "Guid" });
     }
+
+    [Fact]
+    public void NoExceptionWhenAssignedModelIsNull() {
+      var comp = new GetModelGeometry();
+      var param = new GsaModelParameter();
+      param.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, null);
+      comp.Params.Input[0].AddSource(param);
+      ComponentTestHelper.ComputeOutput(comp);
+      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
   }
 }

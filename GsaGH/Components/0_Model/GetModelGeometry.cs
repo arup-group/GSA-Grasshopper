@@ -390,6 +390,10 @@ namespace GsaGH.Components {
         GsaModelGoo modelGoo = null;
         data.GetData(0, ref modelGoo);
 
+        if (modelGoo == null) {
+          return;
+        }
+
         bool nodeFilterHasInput = false;
         bool elementFilterHasInput = false;
         bool memberFilterHasInput = false;
@@ -440,6 +444,10 @@ namespace GsaGH.Components {
       if (!GetSolveResults(data, out SolveResults results)) {
         GsaModelGoo modelGoo = null;
         data.GetData(0, ref modelGoo);
+
+        if (modelGoo == null) {
+          return;
+        }
 
         GsaListGoo nodeListGoo = null;
         string nodeList = "all";
@@ -568,22 +576,14 @@ namespace GsaGH.Components {
         if (!((IGH_PreviewObject)Params.Output[5]).Hidden) {
           member2dKeys = results.Mem2ds.Select(item => item.Value.Id).ToList();
           Parallel.ForEach(results.Elem2ds, elem => {
-            try {
-              int parent = elem.Value.ApiElements[0].ParentMember.Member;
-              if (parent > 0 && member2dKeys.Contains(parent)) {
-                if (elem.Value.IsLoadPanel) {
-                  _cachedDisplayGeometryWithParent.Add(elem.Value.Curve);
-                } else {
-                  _cachedDisplayGeometryWithParent.Add(elem.Value.Mesh);
-                }
+            int parent = elem.Value.ApiElements[0].ParentMember.Member;
+            if (parent > 0 && member2dKeys.Contains(parent)) {
+              if (elem.Value.IsLoadPanel) {
+                _cachedDisplayGeometryWithParent.Add(elem.Value.Curve);
               } else {
-                if (elem.Value.IsLoadPanel) {
-                  _cachedDisplayGeometryWithoutParent.Add(elem.Value.Curve);
-                } else {
-                  _cachedDisplayGeometryWithoutParent.Add(elem.Value.Mesh);
-                }
+                _cachedDisplayGeometryWithParent.Add(elem.Value.Mesh);
               }
-            } catch (Exception) {
+            } else {
               if (elem.Value.IsLoadPanel) {
                 _cachedDisplayGeometryWithoutParent.Add(elem.Value.Curve);
               } else {
