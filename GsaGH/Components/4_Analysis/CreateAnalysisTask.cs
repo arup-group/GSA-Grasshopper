@@ -223,8 +223,7 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaAnalysisTaskGoo(gsaAnalysisTask));
     }
 
-    private bool GetAnalysisCases(IGH_DataAccess da, string name, out List<GsaAnalysisCase> cases)
-    {
+    private bool GetAnalysisCases(IGH_DataAccess da, string name, out List<GsaAnalysisCase> cases) {
       cases = null;
       var ghTypes = new List<GH_ObjectWrapper>();
       if (_type != AnalysisTaskType.Footfall) {
@@ -261,8 +260,7 @@ namespace GsaGH.Components {
       return true;
     }
 
-    private AnalysisTask CreateStaticPDeltaTask(IGH_DataAccess da, AnalysisTask task, string name)
-    {
+    private AnalysisTask CreateStaticPDeltaTask(IGH_DataAccess da, AnalysisTask task, string name) {
       PDeltaCases selectedPDeltaCase = _pDeltaCases.FirstOrDefault(x => x.Value.Equals(_selectedItems[1])).Key;
 
       switch (selectedPDeltaCase) {
@@ -615,8 +613,11 @@ namespace GsaGH.Components {
 
     private void UnsupportedValueError(GH_ObjectWrapper ghTypeWrapper) {
       string type = ReplaceParam.UnsupportedValue(ghTypeWrapper);
-      Params.Owner.AddRuntimeError(
-        $"Unable to convert Analysis Case input parameter of type {type} to GsaAnalysisCase");
+      Params.Owner.AddRuntimeError(GetAnalysisCaseErrorMessageForType(type));
+    }
+
+    internal static string GetAnalysisCaseErrorMessageForType(string type) {
+      return $"Unable to convert Analysis Case input parameter of type {type} to GsaAnalysisCase";
     }
 
     private void SetFootfallInput() {

@@ -56,6 +56,19 @@ namespace GsaGHTests.Components.Analysis {
     }
 
     [Fact]
+    public void ShouldAddErrorForInvalidValuesGsaAnalysisCase() {
+      SetToStatic();
+      ComponentTestHelper.SetListInput(_component, GetInvalidAnalysisCase(), 2);
+      _ = ComputeAndGetOutput();
+      string message = CreateAnalysisTask.GetAnalysisCaseErrorMessageForType(typeof(string).ToString());
+      AssertComponentContainsMessage(_component, message);
+    }
+
+    private static List<object> GetInvalidAnalysisCase() {
+      return new List<object> { new GH_ObjectWrapper { Value = "InvalidValue", }, };
+    }
+
+    [Fact]
     public void ShouldAddWarningForGhWrapperWithNullValue() {
       SetToStatic();
       ComponentTestHelper.SetListInput(_component, GetInvalidList(), 2);
