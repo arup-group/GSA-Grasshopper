@@ -17,8 +17,16 @@ using Xunit;
 
 namespace GsaGHTests.Components.Analysis {
   [Collection("GrasshopperFixture collection")]
-  public class CreateAnalysisTaskTests {
+  public class CreateAnalysisTaskTests : IDisposable {
     private readonly CreateAnalysisTask _component;
+
+    public CreateAnalysisTaskTests() { _component = CreateAnalysisTaskComponent(); }
+
+    public void Dispose() {
+      _component.CreateAttributes();
+      _component.Params.Input.ForEach(x => x.Sources.Clear());
+      _component.Params.Input.ForEach(x => x.ClearData());
+    }
 
     public static CreateAnalysisTask CreateAnalysisTaskComponent() {
       var component = new CreateAnalysisTask();
@@ -35,8 +43,6 @@ namespace GsaGHTests.Components.Analysis {
     private static GsaAnalysisCaseGoo GetDummyAnalysisCase() {
       return (GsaAnalysisCaseGoo)ComponentTestHelper.GetOutput(CreateAnalysisCaseTests.ComponentMother());
     }
-
-    public CreateAnalysisTaskTests() { _component = CreateAnalysisTaskComponent(); }
 
     [Fact]
     public void CreateStaticComponentTest() {
@@ -83,13 +89,27 @@ namespace GsaGHTests.Components.Analysis {
       AssertInvalidDirectionError(_component);
     }
 
+    private static void AssertInvalidDirectionError(CreateAnalysisTask component) {
+      string messageToLookFor = CreateAnalysisTask._unableToConvertResponseDirectionInputMessage;
+      AssertComponentContainsMessage(component, messageToLookFor);
+    }
+
+    private static void AssertComponentContainsMessage(CreateAnalysisTask component, string messageToLookFor) {
+      IList<string> runtimeMessages = component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
+      Assert.True(runtimeMessages.Contains(messageToLookFor));
+    }
+
     [Fact]
     public void ShouldAddErrorForInvalidFrequencyWeightingOption() {
       SetFootfall();
       ComponentTestHelper.SetInput(_component, 2, 2);
       ComponentTestHelper.SetInput(_component, 4, FootfallInputManager._frequencyWeightingCurveAttributes.Name);
       ComponentTestHelper.ComputeOutput(_component);
-      AssertInvalidFrequencyWeightningOptionError(_component);
+      AssertInvalidFrequencyWeightingOptionError(_component);
+    }
+
+    private static void AssertInvalidFrequencyWeightingOptionError(CreateAnalysisTask component) {
+      AssertComponentContainsMessage(component, CreateAnalysisTask._unableToConvertWeightOptionInputMessage);
     }
 
     [Fact]
@@ -101,19 +121,8 @@ namespace GsaGHTests.Components.Analysis {
       AssertInvalidExcitationForceError(_component);
     }
 
-    private static void AssertInvalidDirectionError(CreateAnalysisTask component) {
-      IList<string> runtimeMessages = component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
-      Assert.True(runtimeMessages.Contains(CreateAnalysisTask._unableToConvertResponseDirectionInputMessage));
-    }
-
-    private static void AssertInvalidFrequencyWeightningOptionError(CreateAnalysisTask component) {
-      IList<string> runtimeMessages = component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
-      Assert.True(runtimeMessages.Contains(CreateAnalysisTask._unableToConvertWeightOptionInputMessage));
-    }
-
     private static void AssertInvalidExcitationForceError(CreateAnalysisTask component) {
-      IList<string> runtimeMessages = component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
-      Assert.True(runtimeMessages.Contains(CreateAnalysisTask._unableToConvertsExcitationForcesInputMessage));
+      AssertComponentContainsMessage(component, CreateAnalysisTask._unableToConvertsExcitationForcesInputMessage);
     }
 
     [Fact]
@@ -128,7 +137,7 @@ namespace GsaGHTests.Components.Analysis {
     }
 
     [Fact]
-    public void ShouldAddErrorForInvalidIntgerDirection() {
+    public void ShouldAddErrorForInvalidIntegerDirection() {
       SetFootfall();
       ComponentTestHelper.SetInput(_component, 2, 2);
       int anInvalidString = 5;
@@ -136,16 +145,11 @@ namespace GsaGHTests.Components.Analysis {
         anInvalidString,
       }, FootfallInputManager._responseDirectionAttributes.Name);
       ComponentTestHelper.ComputeOutput(_component);
-      IList<string> runtimeMessages = _component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
       AssertInvalidDirectionError(_component);
     }
 
     private GsaAnalysisTaskGoo ComputeAndGetOutput() {
       return (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(_component);
-    }
-
-    private void ComputeOutput() {
-      ComponentTestHelper.ComputeOutput(_component);
     }
 
     [Fact]
@@ -169,13 +173,6 @@ namespace GsaGHTests.Components.Analysis {
 
     private void SetFootfall() {
       _component.SetSelected(0, 2);
-      _component.CreateAttributes();
-      _component.Params.Input.ForEach(x => x.Sources.Clear());
-      _component.Params.Input.ForEach(x => x.ClearData());
-      // Set minimum inputs
-      ComponentTestHelper.SetInput(_component, 1, 0);
-      ComponentTestHelper.SetInput(_component, "my Task", 1);
-      ComponentTestHelper.SetInput(_component, GetDummyAnalysisCase(), 2);
     }
 
     private void SetExcitationRigorous() {
