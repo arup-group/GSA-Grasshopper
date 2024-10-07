@@ -435,7 +435,6 @@ namespace GsaGH.Components {
       responseDirection = default;
       switch (ghDirection.Value) {
         case GH_Integer intDirection:
-
           hasDirection = HasDirectionFromString(out responseDirection, intDirection.Value.ToString());
           break;
         case GH_String stringDirection:

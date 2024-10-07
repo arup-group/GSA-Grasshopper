@@ -65,7 +65,11 @@ namespace GsaGHTests.Components.Analysis {
     }
 
     private static List<object> GetInvalidAnalysisCase() {
-      return new List<object> { new GH_ObjectWrapper { Value = "InvalidValue", }, };
+      return new List<object> {
+        new GH_ObjectWrapper {
+          Value = "InvalidValue",
+        },
+      };
     }
 
     [Fact]
@@ -92,12 +96,19 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
-    [Fact]
-    public void ShouldAddErrorForInvalidDirection() {
+    [Theory]
+    [InlineData("AnInvalidString")]
+    [InlineData(5)]
+    [InlineData("5")]
+    [InlineData(null)]
+    public void ShouldAddErrorForInvalidDirection(object direction) {
       SetFootfall();
       ComponentTestHelper.SetInput(_component, 2, 2);
-      ComponentTestHelper.SetInput(_component, GetInvalidList(),
-        FootfallInputManager._responseDirectionAttributes.Name);
+      ComponentTestHelper.SetInput(_component, new List<object>() {
+        new GH_ObjectWrapper() {
+          Value = direction,
+        },
+      }, FootfallInputManager._responseDirectionAttributes.Name);
       ComponentTestHelper.ComputeOutput(_component);
       AssertInvalidDirectionError(_component);
     }
