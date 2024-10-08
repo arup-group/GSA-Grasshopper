@@ -199,7 +199,6 @@ namespace GsaGH.Components {
 
         case AnalysisTaskType.StaticPDelta:
           task = CreateStaticPDeltaTask(da, task, name);
-
           break;
 
         case AnalysisTaskType.Footfall:
@@ -210,7 +209,7 @@ namespace GsaGH.Components {
           break;
 
         default:
-          this.AddRuntimeWarning($"It is currently not possible to create Analysis Tasks of type {_type}");
+          this.AddRuntimeWarning(GetAnalysisCaseErrorMessage(_type));
           break;
       }
 
@@ -433,20 +432,12 @@ namespace GsaGH.Components {
     private static bool HasValidDirection(GH_ObjectWrapper ghDirection, out ResponseDirection responseDirection) {
       bool hasDirection;
       responseDirection = default;
-      switch (ghDirection.Value) {
-        case GH_Integer intDirection:
-          hasDirection = HasDirectionFromString(out responseDirection, intDirection.Value.ToString());
-          break;
-        case GH_String stringDirection:
-          hasDirection = HasDirectionFromString(out responseDirection, stringDirection.Value);
-          break;
-        case GH_Number numberDirection:
-          hasDirection = HasDirectionFromString(out responseDirection, numberDirection.Value.ToString());
-          break;
-        default:
-          hasDirection = false;
-          break;
-      }
+      hasDirection = ghDirection.Value switch {
+        GH_Integer intDirection => HasDirectionFromString(out responseDirection, intDirection.Value.ToString()),
+        GH_String stringDirection => HasDirectionFromString(out responseDirection, stringDirection.Value),
+        GH_Number numberDirection => HasDirectionFromString(out responseDirection, numberDirection.Value.ToString()),
+        _ => false,
+      };
 
       return hasDirection;
     }
@@ -479,18 +470,6 @@ namespace GsaGH.Components {
       }
 
       return true;
-    }
-
-    private void UnableToConvertDirection() {
-      this.AddRuntimeError(_unableToConvertResponseDirectionInputMessage);
-    }
-
-    private void UnableToConvertWeightOption() {
-      this.AddRuntimeError(_unableToConvertWeightOptionInputMessage);
-    }
-
-    private void UnableToConvertExcitationForces() {
-      this.AddRuntimeError(_unableToConvertsExcitationForcesInputMessage);
     }
 
     protected override void UpdateUIFromSelectedItems() {
@@ -617,6 +596,22 @@ namespace GsaGH.Components {
 
     internal static string GetAnalysisCaseErrorMessageForType(string type) {
       return $"Unable to convert Analysis Case input parameter of type {type} to GsaAnalysisCase";
+    }
+
+    internal static string GetAnalysisCaseErrorMessage(AnalysisTaskType type) {
+      return $"It is currently not possible to create Analysis Tasks of type {type}";
+    }
+
+    private void UnableToConvertDirection() {
+      this.AddRuntimeError(_unableToConvertResponseDirectionInputMessage);
+    }
+
+    private void UnableToConvertWeightOption() {
+      this.AddRuntimeError(_unableToConvertWeightOptionInputMessage);
+    }
+
+    private void UnableToConvertExcitationForces() {
+      this.AddRuntimeError(_unableToConvertsExcitationForcesInputMessage);
     }
 
     private void SetFootfallInput() {

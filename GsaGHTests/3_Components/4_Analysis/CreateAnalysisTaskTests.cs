@@ -99,19 +99,48 @@ namespace GsaGHTests.Components.Analysis {
     [Theory]
     [InlineData("AnInvalidString")]
     [InlineData(5)]
-    [InlineData(5d)]
+    [InlineData(5.0d)]
     [InlineData("5")]
     [InlineData(null)]
     public void ShouldAddErrorForInvalidDirection(object direction) {
       SetFootfall();
       ComponentTestHelper.SetInput(_component, 2, 2);
-      ComponentTestHelper.SetInput(_component, new List<object>() {
-        new GH_ObjectWrapper() {
-          Value = direction,
-        },
-      }, FootfallInputManager._responseDirectionAttributes.Name);
+
+      GH_ObjectWrapper invalidData = GetInvalidInput(direction);
+
+      ComponentTestHelper.SetInput(_component, invalidData, FootfallInputManager._responseDirectionAttributes.Name);
       ComponentTestHelper.ComputeOutput(_component);
       AssertInvalidDirectionError(_component);
+    }
+
+    private GH_ObjectWrapper GetInvalidInput(object direction) {
+      switch (direction) {
+        case string s: return CreateGHString(s);
+        case int i: return CreateGHInteger(i);
+        case double d: return CreateGHNumber(d);
+        default:
+          return new GH_ObjectWrapper() {
+            Value = null,
+          };
+      }
+    }
+
+    private GH_ObjectWrapper CreateGHInteger(int value) {
+      return new GH_ObjectWrapper() {
+        Value = new GH_Integer(value),
+      };
+    }
+
+    private GH_ObjectWrapper CreateGHString(string value) {
+      return new GH_ObjectWrapper() {
+        Value = new GH_String(value),
+      };
+    }
+
+    private GH_ObjectWrapper CreateGHNumber(double value) {
+      return new GH_ObjectWrapper() {
+        Value = new GH_Number(value),
+      };
     }
 
     private static void AssertInvalidDirectionError(CreateAnalysisTask component) {
