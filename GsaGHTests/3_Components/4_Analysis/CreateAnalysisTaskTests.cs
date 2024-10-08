@@ -28,16 +28,28 @@ namespace GsaGHTests.Components.Analysis {
       _component.Params.Input.ForEach(x => x.ClearData());
     }
 
-    public static CreateAnalysisTask CreateAnalysisTaskComponent() {
+    public static CreateAnalysisTask CreateAnalysisTaskComponent(bool withCases = true) {
       var component = new CreateAnalysisTask();
       component.CreateAttributes();
 
       // Set minimum inputs
       ComponentTestHelper.SetInput(component, 1, 0);
       ComponentTestHelper.SetInput(component, "my Task", 1);
-      ComponentTestHelper.SetInput(component, GetDummyAnalysisCase(), 2);
+      if (withCases) {
+        ComponentTestHelper.SetInput(component, GetDummyAnalysisCase(), 2);
+      }
 
       return component;
+    }
+
+    [Fact]
+    public void CreateAnalysisTest() {
+      string remarkMsg = "Default Task has been created; it will by default contain all cases found in model";
+
+      CreateAnalysisTask component = CreateAnalysisTaskComponent(false);
+      ComponentTestHelper.ComputeOutput(component);
+
+      AssertComponentContainsMessage(component, remarkMsg, GH_RuntimeMessageLevel.Remark);
     }
 
     private static GsaAnalysisCaseGoo GetDummyAnalysisCase() {
@@ -147,8 +159,10 @@ namespace GsaGHTests.Components.Analysis {
       AssertComponentContainsMessage(component, messageToLookFor);
     }
 
-    private static void AssertComponentContainsMessage(CreateAnalysisTask component, string messageToLookFor) {
-      IList<string> runtimeMessages = component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
+    private static void AssertComponentContainsMessage(
+      CreateAnalysisTask component, string messageToLookFor,
+      GH_RuntimeMessageLevel level = GH_RuntimeMessageLevel.Error) {
+      IList<string> runtimeMessages = component.RuntimeMessages(level);
       Assert.True(runtimeMessages.Contains(messageToLookFor));
     }
 
