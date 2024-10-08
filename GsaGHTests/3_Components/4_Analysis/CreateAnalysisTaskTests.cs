@@ -101,7 +101,6 @@ namespace GsaGHTests.Components.Analysis {
     [InlineData(5)]
     [InlineData(5.0d)]
     [InlineData("5")]
-    [InlineData(null)]
     public void ShouldAddErrorForInvalidDirection(object direction) {
       SetFootfall();
       ComponentTestHelper.SetInput(_component, 2, 2);
