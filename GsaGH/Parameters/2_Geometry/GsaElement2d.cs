@@ -221,20 +221,23 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
+      string info = "";
       if (IsLoadPanel) {
-        if (Curve != null && Curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline)) {
-          return "P" + polyline.Count;
+        if (Curve == null || !Curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline)) {
+          return "Null";
         }
-        return "Null";
+        info = "P" + polyline.Count;
+
       } else {
         if (!Mesh.IsValid) {
           return "Null";
         }
-        string type = Mappings._elementTypeMapping.FirstOrDefault(
-       x => x.Value == ApiElements.First().Type).Key;
-        string info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
-        return string.Join(" ", type, info).TrimSpaces();
+        info = "N:" + Mesh.Vertices.Count + " E:" + ApiElements.Count;
       }
+      string type = Mappings._elementTypeMapping.FirstOrDefault(
+       x => x.Value == ApiElements.First().Type).Key;
+      return string.Join(" ", type, info).TrimSpaces();
+
     }
 
     public void UpdateMeshColours() {
