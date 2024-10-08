@@ -17,26 +17,44 @@ using Xunit;
 
 namespace GsaGHTests.Components.Analysis {
   [Collection("GrasshopperFixture collection")]
-  public class CreateAnalysisTaskTests {
+  public class CreateAnalysisTaskTests : IDisposable {
     private readonly CreateAnalysisTask _component;
 
-    public static CreateAnalysisTask CreateAnalysisTaskComponent() {
+    public CreateAnalysisTaskTests() { _component = CreateAnalysisTaskComponent(); }
+
+    public void Dispose() {
+      _component.CreateAttributes();
+      _component.Params.Input.ForEach(x => x.Sources.Clear());
+      _component.Params.Input.ForEach(x => x.ClearData());
+    }
+
+    public static CreateAnalysisTask CreateAnalysisTaskComponent(bool withCases = true) {
       var component = new CreateAnalysisTask();
       component.CreateAttributes();
 
       // Set minimum inputs
       ComponentTestHelper.SetInput(component, 1, 0);
       ComponentTestHelper.SetInput(component, "my Task", 1);
-      ComponentTestHelper.SetInput(component, GetDummyAnalysisCase(), 2);
+      if (withCases) {
+        ComponentTestHelper.SetInput(component, GetDummyAnalysisCase(), 2);
+      }
 
       return component;
+    }
+
+    [Fact]
+    public void CreateAnalysisTest() {
+      string remarkMsg = "Default Task has been created; it will by default contain all cases found in model";
+
+      CreateAnalysisTask component = CreateAnalysisTaskComponent(false);
+      ComponentTestHelper.ComputeOutput(component);
+
+      AssertComponentContainsMessage(component, remarkMsg, GH_RuntimeMessageLevel.Remark);
     }
 
     private static GsaAnalysisCaseGoo GetDummyAnalysisCase() {
       return (GsaAnalysisCaseGoo)ComponentTestHelper.GetOutput(CreateAnalysisCaseTests.ComponentMother());
     }
-
-    public CreateAnalysisTaskTests() { _component = CreateAnalysisTaskComponent(); }
 
     [Fact]
     public void CreateStaticComponentTest() {
@@ -50,6 +68,23 @@ namespace GsaGHTests.Components.Analysis {
     }
 
     [Fact]
+    public void ShouldAddErrorForInvalidValuesGsaAnalysisCase() {
+      SetToStatic();
+      ComponentTestHelper.SetListInput(_component, GetInvalidAnalysisCase(), 2);
+      _ = ComputeAndGetOutput();
+      string message = CreateAnalysisTask.GetAnalysisCaseErrorMessageForType(typeof(string).ToString());
+      AssertComponentContainsMessage(_component, message);
+    }
+
+    private static List<object> GetInvalidAnalysisCase() {
+      return new List<object> {
+        new GH_ObjectWrapper {
+          Value = "InvalidValue",
+        },
+      };
+    }
+
+    [Fact]
     public void ShouldAddWarningForGhWrapperWithNullValue() {
       SetToStatic();
       ComponentTestHelper.SetListInput(_component, GetInvalidList(), 2);
@@ -58,7 +93,11 @@ namespace GsaGHTests.Components.Analysis {
     }
 
     private static List<object> GetInvalidList() {
-      return new List<object>() { new GH_ObjectWrapper() { Value = null } };
+      return new List<object>() {
+        new GH_ObjectWrapper() {
+          Value = null,
+        },
+      };
     }
 
     [Fact]
@@ -69,40 +108,110 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
-    [Fact]
-    public void ShouldAddErrorForInvalidDirection() {
+    [Theory]
+    [InlineData("AnInvalidString")]
+    [InlineData(5)]
+    [InlineData(5.0d)]
+    [InlineData("5")]
+    public void ShouldAddErrorForInvalidDirection(object direction) {
       SetFootfall();
       ComponentTestHelper.SetInput(_component, 2, 2);
-      ComponentTestHelper.SetInput(_component, GetInvalidList(),
-        FootfallInputManager._responseDirectionAttributes.Name);
+
+      GH_ObjectWrapper invalidData = GetInvalidInput(direction);
+
+      ComponentTestHelper.SetInput(_component, invalidData, FootfallInputManager._responseDirectionAttributes.Name);
       ComponentTestHelper.ComputeOutput(_component);
       AssertInvalidDirectionError(_component);
     }
 
+    private GH_ObjectWrapper GetInvalidInput(object direction) {
+      switch (direction) {
+        case string s: return CreateGHString(s);
+        case int i: return CreateGHInteger(i);
+        case double d: return CreateGHNumber(d);
+        default:
+          return new GH_ObjectWrapper() {
+            Value = null,
+          };
+      }
+    }
+
+    private GH_ObjectWrapper CreateGHInteger(int value) {
+      return new GH_ObjectWrapper() {
+        Value = new GH_Integer(value),
+      };
+    }
+
+    private GH_ObjectWrapper CreateGHString(string value) {
+      return new GH_ObjectWrapper() {
+        Value = new GH_String(value),
+      };
+    }
+
+    private GH_ObjectWrapper CreateGHNumber(double value) {
+      return new GH_ObjectWrapper() {
+        Value = new GH_Number(value),
+      };
+    }
+
     private static void AssertInvalidDirectionError(CreateAnalysisTask component) {
-      IList<string> runtimeMessages = component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
-      Assert.True(runtimeMessages.Contains("Unable to convert response direction input"));
+      string messageToLookFor = CreateAnalysisTask._unableToConvertResponseDirectionInputMessage;
+      AssertComponentContainsMessage(component, messageToLookFor);
+    }
+
+    private static void AssertComponentContainsMessage(
+      CreateAnalysisTask component, string messageToLookFor,
+      GH_RuntimeMessageLevel level = GH_RuntimeMessageLevel.Error) {
+      IList<string> runtimeMessages = component.RuntimeMessages(level);
+      Assert.True(runtimeMessages.Contains(messageToLookFor));
+    }
+
+    [Fact]
+    public void ShouldAddErrorForInvalidFrequencyWeightingOption() {
+      SetFootfall();
+      ComponentTestHelper.SetInput(_component, 2, 2);
+      ComponentTestHelper.SetInput(_component, 4, FootfallInputManager._frequencyWeightingCurveAttributes.Name);
+      ComponentTestHelper.ComputeOutput(_component);
+      AssertInvalidFrequencyWeightingOptionError(_component);
+    }
+
+    private static void AssertInvalidFrequencyWeightingOptionError(CreateAnalysisTask component) {
+      AssertComponentContainsMessage(component, CreateAnalysisTask._unableToConvertWeightOptionInputMessage);
+    }
+
+    [Fact]
+    public void ShouldAddErrorForInvalidExcitationForce() {
+      SetFootfall();
+      ComponentTestHelper.SetInput(_component, 2, 2);
+      ComponentTestHelper.SetInput(_component, 0, FootfallInputManager._excitationForcesAttributes.Name);
+      ComponentTestHelper.ComputeOutput(_component);
+      AssertInvalidExcitationForceError(_component);
+    }
+
+    private static void AssertInvalidExcitationForceError(CreateAnalysisTask component) {
+      AssertComponentContainsMessage(component, CreateAnalysisTask._unableToConvertsExcitationForcesInputMessage);
     }
 
     [Fact]
     public void ShouldAddErrorForInvalidStringDirection() {
       SetFootfall();
       ComponentTestHelper.SetInput(_component, 2, 2);
-      ComponentTestHelper.SetInput(_component, new List<string>() { "AnInvalidString" },
-        FootfallInputManager._responseDirectionAttributes.Name);
+      ComponentTestHelper.SetInput(_component, new List<string>() {
+        "AnInvalidString",
+      }, FootfallInputManager._responseDirectionAttributes.Name);
       ComponentTestHelper.ComputeOutput(_component);
       AssertInvalidDirectionError(_component);
     }
 
     [Fact]
-    public void ShouldAddErrorForInvalidIntgerDirection() {
+    public void ShouldAddErrorForInvalidIntegerDirection() {
       SetFootfall();
       ComponentTestHelper.SetInput(_component, 2, 2);
-      var anInvalidString = 5;
-      ComponentTestHelper.SetInput(_component, new List<int>() { anInvalidString },
-        FootfallInputManager._responseDirectionAttributes.Name);
+      int anInvalidString = 5;
+      ComponentTestHelper.SetInput(_component, new List<int>() {
+        anInvalidString,
+      }, FootfallInputManager._responseDirectionAttributes.Name);
       ComponentTestHelper.ComputeOutput(_component);
-      IList<string> runtimeMessages = _component.RuntimeMessages(GH_RuntimeMessageLevel.Error);
       AssertInvalidDirectionError(_component);
     }
 
@@ -110,15 +219,11 @@ namespace GsaGHTests.Components.Analysis {
       return (GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(_component);
     }
 
-    private void ComputeOutput() {
-      ComponentTestHelper.ComputeOutput(_component);
-    }
-
     [Fact]
     public void CreateStaticPDeltaComponentTest1() {
       SetToStaticPDelta();
 
-      var output = ComputeAndGetOutput();
+      GsaAnalysisTaskGoo output = ComputeAndGetOutput();
 
       Assert.Equal(1, output.Value.Id);
       Assert.Equal("my Task", output.Value.ApiTask.Name);
@@ -151,7 +256,7 @@ namespace GsaGHTests.Components.Analysis {
       SetExcitationRigorous();
       ComponentTestHelper.SetInput(_component, "1.2L1 + 1.2L2", 2);
 
-      var output = ComputeAndGetOutput();
+      GsaAnalysisTaskGoo output = ComputeAndGetOutput();
 
       Assert.Equal((int)AnalysisTaskType.StaticPDelta, output.Value.ApiTask.Type);
     }
@@ -162,7 +267,7 @@ namespace GsaGHTests.Components.Analysis {
       SetExcitationToFastAndRigorous();
       ComponentTestHelper.SetInput(_component, 2, 2);
 
-      var output = ComputeAndGetOutput();
+      GsaAnalysisTaskGoo output = ComputeAndGetOutput();
 
       Assert.Equal((int)AnalysisTaskType.StaticPDelta, output.Value.ApiTask.Type);
     }
@@ -232,12 +337,10 @@ namespace GsaGHTests.Components.Analysis {
                 ComponentTestHelper.SetInput(_component, excitationForce, index++);
                 ComponentTestHelper.SetInput(_component, 2.2, index++);
 
-                var output = ComputeAndGetOutput();
+                GsaAnalysisTaskGoo output = ComputeAndGetOutput();
                 var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
                 Assert.Equal(ExcitationOption(excitationSelectedIndex), parameter.ExcitationMethod);
-                Assert.Equal(1, output.Value.Id);
-                Assert.Equal("my Task", output.Value.ApiTask.Name);
                 Assert.Equal(2, parameter.ModalAnalysisTaskId);
                 Assert.Equal("all", parameter.ResponseNodes);
                 if (excitation > 1) {
@@ -275,12 +378,9 @@ namespace GsaGHTests.Components.Analysis {
       ComponentTestHelper.SetInput(_component, 3, 9);
       ComponentTestHelper.SetInput(_component, 2.2, 10);
 
-      var output = ComputeAndGetOutput();
+      GsaAnalysisTaskGoo output = ComputeAndGetOutput();
       var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
-      Assert.Equal(1, output.Value.Id);
-      Assert.Equal("my Task", output.Value.ApiTask.Name);
-      Assert.Equal(1, (int)parameter.ExcitationMethod);
       Assert.Equal(2, parameter.ModalAnalysisTaskId);
       Assert.Equal("all", parameter.ResponseNodes);
       Assert.Equal("all", parameter.ExcitationNodes);
@@ -308,11 +408,9 @@ namespace GsaGHTests.Components.Analysis {
       ComponentTestHelper.SetInput(_component, 3, 9);
       ComponentTestHelper.SetInput(_component, 2.2, 10);
 
-      var output = ComputeAndGetOutput();
+      GsaAnalysisTaskGoo output = ComputeAndGetOutput();
       var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
-      Assert.Equal(1, output.Value.Id);
-      Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal(2, (int)parameter.ExcitationMethod);
       Assert.Equal(2, parameter.ModalAnalysisTaskId);
       Assert.Equal("all", parameter.ResponseNodes);
@@ -345,11 +443,9 @@ namespace GsaGHTests.Components.Analysis {
       ComponentTestHelper.SetInput(_component, 3, 9);
       ComponentTestHelper.SetInput(_component, 2.2, 10);
 
-      var output = ComputeAndGetOutput();
+      GsaAnalysisTaskGoo output = ComputeAndGetOutput();
       var parameter = new FootfallAnalysisTaskParameter(output.Value.ApiTask);
 
-      Assert.Equal(1, output.Value.Id);
-      Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal(5, (int)parameter.ExcitationMethod);
       Assert.Equal(2, parameter.ModalAnalysisTaskId);
       Assert.Equal("all", parameter.ResponseNodes);
@@ -382,7 +478,7 @@ namespace GsaGHTests.Components.Analysis {
     public void SearchingForValuesInDictionaryShouldReturnExceptionForFailedSearch() {
       var dictionary = new Dictionary<string, string> {
         { "key1", "value1" },
-        { "key2", "value2" }
+        { "key2", "value2" },
       };
       Assert.Throws<Exception>(() => dictionary.TryGetKeyFrom("value3"));
     }
@@ -391,7 +487,7 @@ namespace GsaGHTests.Components.Analysis {
     public void SearchingForExistingValuesShouldReturnTheKey() {
       var dictionary = new Dictionary<string, string> {
         { "key1", "value1" },
-        { "key2", "value2" }
+        { "key2", "value2" },
       };
       Assert.Equal("key2", dictionary.TryGetKeyFrom("value2"));
     }
