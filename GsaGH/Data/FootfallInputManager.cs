@@ -6,7 +6,7 @@ using Grasshopper.Kernel.Parameters;
 using GsaGH.Helpers.GH;
 
 namespace GsaGH.Data {
-  
+
   public interface IInputManager {
     List<InputAttributes> GetInputsForSelfExcitation(bool selfExcitation = true);
   }
@@ -109,11 +109,11 @@ namespace GsaGH.Data {
       _attributes = CreateInputAttributesList();
     }
 
-    public List<InputAttributes> GetInputsForSelfExcitation(bool selfExcitation = true) {
+    public List<InputAttributes> GetInputsForSelfExcitation(bool selfExcitation) {
       return FootfallAttributes(selfExcitation);
     }
 
-    private List<InputAttributes> FootfallAttributes(bool selfExcitation = true) {
+    private List<InputAttributes> FootfallAttributes(bool selfExcitation) {
       if (selfExcitation == _selfExcitation) {
         return _attributes;
       }
