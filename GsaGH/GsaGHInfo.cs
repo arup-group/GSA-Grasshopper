@@ -77,11 +77,11 @@ namespace GsaGH {
 
       SetSysEnv();
       if (!GhLoadingInstruction(out GH_LoadingInstruction ghLoadingInstruction)) {
-        return GH_LoadingInstruction.Abort;
+        return ghLoadingInstruction;
       }
 
       if (!Load(out string gsaVersion, out GH_LoadingInstruction priorityLoad)) {
-        return GH_LoadingInstruction.Abort;
+        return priorityLoad;
       }
 
       // this is a temporary fix for TDA
@@ -104,27 +104,24 @@ namespace GsaGH {
     }
 
     private static bool Load(out string gsaVersion, out GH_LoadingInstruction priorityLoad) {
-      priorityLoad = GH_LoadingInstruction.Proceed;
+      priorityLoad = GH_LoadingInstruction.Abort;
       gsaVersion = "-1";
       try {
         Assembly.LoadFile(InstallPath + GsaApiDll);
         FileVersionInfo gsaVers = FileVersionInfo(out gsaVersion);
-        if (!UpgradeVersionRequired(ref priorityLoad, gsaVers)) {
+        if (!UpgradeVersionRequired(out priorityLoad, gsaVers)) {
           return false;
         }
       } catch (Exception e) {
         ReadOnlyCollection<GH_AssemblyInfo> plugins = Instances.ComponentServer.Libraries;
         string loadedPlugins = LoadedPlugins(plugins);
-
         string message = NotLoadedPluginsErrorMessage(e, loadedPlugins);
         var exception = new Exception(message);
         var ghLoadingException = new GH_LoadingException(GsaApiDllLoading, exception);
         Instances.ComponentServer.LoadingExceptions.Add(ghLoadingException);
         PostHog.PluginLoaded(PluginInfo.Instance, message);
-        {
-          priorityLoad = GH_LoadingInstruction.Abort;
-          return false;
-        }
+        priorityLoad = GH_LoadingInstruction.Abort;
+        return false;
       }
 
       return true;
@@ -152,18 +149,17 @@ namespace GsaGH {
       return gsaVers;
     }
 
-    private static bool UpgradeVersionRequired(ref GH_LoadingInstruction priorityLoad, FileVersionInfo gsaVers) {
+    private static bool UpgradeVersionRequired(out GH_LoadingInstruction priorityLoad, FileVersionInfo gsaVers) {
       if (gsaVers.FileBuildPart >= GsaGhInfo.PatchVersion) {
+        priorityLoad = GH_LoadingInstruction.Proceed;
         return true;
       }
 
       Exception exceptionMsg = GetLoadingVersionException(out GH_LoadingException ghLoadingException);
       Instances.ComponentServer.LoadingExceptions.Add(ghLoadingException);
       PostHog.PluginLoaded(PluginInfo.Instance, exceptionMsg.Message);
-      {
-        priorityLoad = GH_LoadingInstruction.Abort;
-        return false;
-      }
+      priorityLoad = GH_LoadingInstruction.Abort;
+      return false;
     }
 
     private static Exception GetLoadingVersionException(out GH_LoadingException ghLoadingException) {
@@ -185,10 +181,8 @@ namespace GsaGH {
         var ghLoadingException = new GH_LoadingException(GsaApiDllLoading, exception);
         Instances.ComponentServer.LoadingExceptions.Add(ghLoadingException);
         PostHog.PluginLoaded(PluginInfo.Instance, exception.Message);
-        {
-          ghLoadingInstruction = GH_LoadingInstruction.Abort;
-          return false;
-        }
+        ghLoadingInstruction = GH_LoadingInstruction.Abort;
+        return false;
       }
 
       ghLoadingInstruction = GH_LoadingInstruction.Proceed;

@@ -15,6 +15,7 @@ namespace GsaGHTests {
       Assert.Equal(GsaGhInfo.Company, info.AuthorName);
       Assert.Contains(GsaGhInfo.Copyright, info.Description);
       Assert.Contains(GsaGhInfo.TermsConditions, info.Description);
+      Assert.Contains(GsaGhInfo.ProductName, info.Name);
       Assert.NotNull(info.Icon);
     }
 
