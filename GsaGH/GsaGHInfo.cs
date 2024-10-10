@@ -111,11 +111,14 @@ namespace GsaGH {
     private bool TryToLoadGsaDll() {
       try {
         Assembly.LoadFile(GsaApiDllFullPath);
-        var gsaInstalledVersion = FileVersionInfo.GetVersionInfo(GsaApiDllFullPath);
-        _GsaApiDllVersion
-          = $"{gsaInstalledVersion.FileMajorPart}.{gsaInstalledVersion.FileMinorPart}.{gsaInstalledVersion.FileBuildPart}";
-        if (!TryCalculateVersions(out int gsaApiDllVersionAsInt, out int gsaVersionNeededAsInt)
-          && CheckGsaUpdateIsRequired(gsaApiDllVersionAsInt, gsaVersionNeededAsInt)) {
+        SetGsaApiInstalledVersion();
+
+        if (!TryCalculateVersions(_GsaApiDllVersion, GsaGhInfo.GsaFullVersion, out int gsaApiDllVersionAsInt,
+          out int gsaVersionNeededAsInt)) {
+          return false;
+        }
+
+        if (CheckGsaUpdateIsRequired(gsaApiDllVersionAsInt, gsaVersionNeededAsInt)) {
           return false;
         }
       } catch (Exception e) {
@@ -128,6 +131,12 @@ namespace GsaGH {
       return true;
     }
 
+    private void SetGsaApiInstalledVersion() {
+      var gsaInstalledVersion = FileVersionInfo.GetVersionInfo(GsaApiDllFullPath);
+      _GsaApiDllVersion
+        = $"{gsaInstalledVersion.FileMajorPart}.{gsaInstalledVersion.FileMinorPart}.{gsaInstalledVersion.FileBuildPart}";
+    }
+
     private static string DisablePluginsErrorMessage(string errorMessage, string loadedPlugins) {
       return errorMessage + Environment.NewLine + Environment.NewLine
         + "This may be due to clash with other referenced dll files by one of these plugins that's already been loaded: "
@@ -136,9 +145,10 @@ namespace GsaGH {
         + "The plugin cannot be loaded.";
     }
 
-    private bool TryCalculateVersions(out int gsaApiDllVersionAsInt, out int gsaVersionNeededAsInt) {
-      if (!int.TryParse(_GsaApiDllVersion.Replace(".", string.Empty), out gsaApiDllVersionAsInt)
-        & !int.TryParse(GsaGhInfo.GsaFullVersion.Replace(".", string.Empty), out gsaVersionNeededAsInt)) {
+    private bool TryCalculateVersions(
+      string dll1Version, string dll2Version, out int dll1VersionAsInt, out int dll2VersionAsInt) {
+      if (!int.TryParse(dll1Version.Replace(".", string.Empty), out dll1VersionAsInt)
+        & !int.TryParse(dll2Version.Replace(".", string.Empty), out dll2VersionAsInt)) {
         { //maybe new error?
           LoadException(_GsaComputeVersionMessage, GsaVersionCannotBeReadMessage);
           return false;
@@ -178,7 +188,6 @@ namespace GsaGH {
     }
 
     private static bool CheckGsaApiExists() {
-      //if (File.Exists(Path.Combine(InstallPath, _PathSeparator, _GsaApiDllFileName))) {
       if (File.Exists(GsaApiDllFullPath)) {
         return true;
       }
@@ -233,6 +242,11 @@ namespace GsaGH {
         return Path.GetDirectoryName(path);
       }
 
+      CantFindPluginError(keyword, sDir);
+      return string.Empty;
+    }
+
+    private static void CantFindPluginError(string keyword, string sDir) {
       string message = "Error loading the file " + keyword
         + " from any Grasshopper plugin folders - check if the file exist." + Environment.NewLine
         + "The plugin cannot be loaded." + Environment.NewLine + "Folders (including subfolder) that was searched:"
@@ -240,12 +254,8 @@ namespace GsaGH {
       message = Folders.AssemblyFolders.Aggregate(message,
         (current, pluginFolder) => current + Environment.NewLine + pluginFolder.Folder);
 
-      var exception = new Exception(message);
-      var ghLoadingException
-        = new GH_LoadingException(GsaGhInfo.ProductName + ": " + keyword + " loading failed", exception);
-      Instances.ComponentServer.LoadingExceptions.Add(ghLoadingException);
-      PostHog.PluginLoaded(PluginInfo.Instance, message);
-      return string.Empty;
+      string exceptionName = GsaGhInfo.ProductName + ": " + keyword + " loading failed";
+      LoadException(exceptionName, message);
     }
   }
 
