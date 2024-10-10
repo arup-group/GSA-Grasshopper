@@ -33,7 +33,7 @@ namespace GsaGH {
     internal const string GrasshopperVersion = "1.4.0";
     internal static int GsaMajorVersion = 10;
     public static int GsaMinorVersion = 2;
-    internal static int GsaBuildVersion = 8;
+    internal static int GsaBuildVersion = 11;
     internal static string GsaMainVersion = $"{GsaMajorVersion}.{GsaMinorVersion}";
     internal static string GsaFullVersion = $"{GsaMajorVersion}.{GsaMinorVersion}.{GsaBuildVersion}";
     internal static string disclaimer = $"{PluginName} is pre-release and under active development, "
@@ -61,18 +61,17 @@ namespace GsaGH {
 
   public class AddReferencePriority : GH_AssemblyPriority {
     private const string _GsaApiDllFileName = "GsaAPI.dll";
-    private const string _PathSeparator = "\\";
     private const string _LoadingGsaApiMessage = "GSA: GsaAPI.dll loading";
     private const string _GsaUpgradeRequiredMessage = "GSA Version Error: Upgrade required";
     private const string _GsaComputeVersionMessage = "GSA Version Error: Cannot compute the version";
 
     public static string PluginPath => pluginPath ??= TryFindPluginPath("GSA.gha");
-    public static string InstallPath = InstallationFolder.GetPath;
+    public static string InstallPath => InstallationFolder.GetPath;
 
     private static string pluginPath;
+    private static string GsaApiDllFullPath => Path.Combine(InstallPath, _GsaApiDllFileName);
     private static readonly string GsaVersionCannotBeReadMessage
       = $"Please conntact with {GsaGhInfo.Company} to solve this error";
-    private static string GsaApiDllFullPath => Path.Combine(InstallPath, _PathSeparator, _GsaApiDllFileName);
     private static string MicrosoftDataSqliteDll => @"\Microsoft.Data.Sqlite.dll";
     // MESSAGES
     private static string GsaghRequiresGsaToBeInstalledMessage
@@ -85,7 +84,7 @@ namespace GsaGH {
     private string _GsaApiDllVersion;
 
     public override GH_LoadingInstruction PriorityLoad() {
-      if (string.IsNullOrEmpty(PluginPath)) {
+      if (string.IsNullOrEmpty(TryFindPluginPath("GSA.gha"))) {
         return GH_LoadingInstruction.Abort;
       }
 
@@ -179,6 +178,7 @@ namespace GsaGH {
     }
 
     private static bool CheckGsaApiExists() {
+      //if (File.Exists(Path.Combine(InstallPath, _PathSeparator, _GsaApiDllFileName))) {
       if (File.Exists(GsaApiDllFullPath)) {
         return true;
       }
@@ -211,7 +211,8 @@ namespace GsaGH {
         return Path.GetDirectoryName(path);
       }
 
-      string sDir = Path.Combine(path, "Grasshopper", "Libraries");
+      string sDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper",
+        "Libraries");
 
       string[] files = Directory.GetFiles(sDir, keyword, SearchOption.AllDirectories);
       if (files.Length > 0) {
@@ -232,27 +233,26 @@ namespace GsaGH {
         return Path.GetDirectoryName(path);
       }
 
-      string message = LoadingPluginFailedErrorMessage(keyword, sDir);
-      message = Folders.AssemblyFolders.Aggregate(message,
-        (current, pluginFolder) => current + Environment.NewLine + pluginFolder.Folder);
-      string exceptionName = GsaGhInfo.ProductName + ": " + keyword + " loading failed";
-      LoadException(exceptionName, message);
-      return string.Empty;
-    }
-
-    private static string LoadingPluginFailedErrorMessage(string keyword, string sDir) {
       string message = "Error loading the file " + keyword
         + " from any Grasshopper plugin folders - check if the file exist." + Environment.NewLine
         + "The plugin cannot be loaded." + Environment.NewLine + "Folders (including subfolder) that was searched:"
         + Environment.NewLine + sDir;
-      return message;
+      message = Folders.AssemblyFolders.Aggregate(message,
+        (current, pluginFolder) => current + Environment.NewLine + pluginFolder.Folder);
+
+      var exception = new Exception(message);
+      var ghLoadingException
+        = new GH_LoadingException(GsaGhInfo.ProductName + ": " + keyword + " loading failed", exception);
+      Instances.ComponentServer.LoadingExceptions.Add(ghLoadingException);
+      PostHog.PluginLoaded(PluginInfo.Instance, message);
+      return string.Empty;
     }
   }
 
   internal sealed class PluginInfo {
+    public static OasysPluginInfo Instance => lazy.Value;
     private static readonly Lazy<OasysPluginInfo> lazy = new Lazy<OasysPluginInfo>(()
       => new OasysPluginInfo(GsaGhInfo.ProductName, GsaGhInfo.PluginName, GsaGhInfo.GrasshopperVersion,
         GsaGhInfo.isBeta, "phc_QjmqOoe8GqTMi3u88ynRR3WWvrJA9zAaqcQS1FDVnJD"));
-    public static OasysPluginInfo Instance => lazy.Value;
   }
 }
