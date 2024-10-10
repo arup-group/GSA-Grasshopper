@@ -16,6 +16,9 @@ namespace GsaGHTests {
       Assert.Contains(GsaGhInfo.Copyright, info.Description);
       Assert.Contains(GsaGhInfo.TermsConditions, info.Description);
       Assert.Contains(GsaGhInfo.ProductName, info.Name);
+      Assert.Contains(GsaGhInfo.GsaMainVersion, $"{GsaGhInfo.GsaMajorVersion}.{GsaGhInfo.GsaMinorVersion}");
+      Assert.Contains(GsaGhInfo.GsaFullVersion,
+        $"{GsaGhInfo.GsaMajorVersion}.{GsaGhInfo.GsaMinorVersion}.{GsaGhInfo.GsaBuildVersion}");
       Assert.NotNull(info.Icon);
     }
 

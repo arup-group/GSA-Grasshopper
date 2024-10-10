@@ -32,7 +32,7 @@ namespace GsaGH {
       = "Oasys terms and conditions apply. See https://www.oasys-software.com/terms-conditions for details. ";
     internal const string GrasshopperVersion = "1.4.0";
     internal static int GsaMajorVersion = 10;
-    public static int GsaMinorVersion = 2;
+    internal static int GsaMinorVersion = 2;
     internal static int GsaBuildVersion = 11;
     internal static string GsaMainVersion = $"{GsaMajorVersion}.{GsaMinorVersion}";
     internal static string GsaFullVersion = $"{GsaMajorVersion}.{GsaMinorVersion}.{GsaBuildVersion}";
