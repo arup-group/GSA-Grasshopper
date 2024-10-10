@@ -65,13 +65,13 @@ namespace GsaGH {
     private const string _GsaUpgradeRequiredMessage = "GSA Version Error: Upgrade required";
     private const string _GsaComputeVersionMessage = "GSA Version Error: Cannot compute the version";
 
-    public static string PluginPath => pluginPath ??= TryFindPluginPath("GSA.gha");
-    public static string InstallPath => InstallationFolder.GetPath;
-
     private static string pluginPath;
-    private static string GsaApiDllFullPath => Path.Combine(InstallPath, _GsaApiDllFileName);
     private static readonly string GsaVersionCannotBeReadMessage
       = $"Please conntact with {GsaGhInfo.Company} to solve this error";
+
+    public static string PluginPath => pluginPath ??= TryFindPluginPath("GSA.gha");
+    public static string InstallPath => InstallationFolder.GetPath;
+    private static string GsaApiDllFullPath => Path.Combine(InstallPath, _GsaApiDllFileName);
     private static string MicrosoftDataSqliteDll => @"\Microsoft.Data.Sqlite.dll";
     // MESSAGES
     private static string GsaghRequiresGsaToBeInstalledMessage
@@ -145,7 +145,7 @@ namespace GsaGH {
         + "The plugin cannot be loaded.";
     }
 
-    private bool TryCalculateVersions(
+    public bool TryCalculateVersions(
       string dll1Version, string dll2Version, out int dll1VersionAsInt, out int dll2VersionAsInt) {
       if (!int.TryParse(dll1Version.Replace(".", string.Empty), out dll1VersionAsInt)
         & !int.TryParse(dll2Version.Replace(".", string.Empty), out dll2VersionAsInt)) {
@@ -178,7 +178,7 @@ namespace GsaGH {
       return loadedPlugins;
     }
 
-    private static bool CheckGsaUpdateIsRequired(int gsaApiDllVersion, int gsaVersionNeeded) {
+    public static bool CheckGsaUpdateIsRequired(int gsaApiDllVersion, int gsaVersionNeeded) {
       if (gsaApiDllVersion >= gsaVersionNeeded) {
         return false;
       }
@@ -187,7 +187,7 @@ namespace GsaGH {
       return true;
     }
 
-    private static bool CheckGsaApiExists() {
+    private bool CheckGsaApiExists() {
       if (File.Exists(GsaApiDllFullPath)) {
         return true;
       }
@@ -260,9 +260,9 @@ namespace GsaGH {
   }
 
   internal sealed class PluginInfo {
-    public static OasysPluginInfo Instance => lazy.Value;
     private static readonly Lazy<OasysPluginInfo> lazy = new Lazy<OasysPluginInfo>(()
       => new OasysPluginInfo(GsaGhInfo.ProductName, GsaGhInfo.PluginName, GsaGhInfo.GrasshopperVersion,
         GsaGhInfo.isBeta, "phc_QjmqOoe8GqTMi3u88ynRR3WWvrJA9zAaqcQS1FDVnJD"));
+    public static OasysPluginInfo Instance => lazy.Value;
   }
 }
