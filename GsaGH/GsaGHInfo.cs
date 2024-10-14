@@ -18,11 +18,21 @@ using OasysGH;
 
 using Rhino;
 
+using static GsaGH.GsaGhInfo;
+
 using PostHog = OasysGH.Helpers.PostHog;
 using Utility = OasysGH.Utility;
 
 namespace GsaGH {
   public class GsaGhInfo : GH_AssemblyInfo {
+    internal readonly struct GsaVersionRequired {
+      internal static readonly int MajorVersion = 10;
+      internal static readonly int MinorVersion = 2;
+      internal static readonly int BuildVersion = 14;
+      internal static readonly string MainVersion = $"{MajorVersion}.{MinorVersion}";
+      internal static readonly string FullVersion = $"{MajorVersion}.{MinorVersion}.{BuildVersion}";
+    }
+
     internal const string Company = "Oasys";
     internal const string Contact = "https://www.oasys-software.com/";
     internal const string Copyright = "Copyright © Oasys 1985 - 2024";
@@ -31,16 +41,12 @@ namespace GsaGH {
     internal const string TermsConditions
       = "Oasys terms and conditions apply. See https://www.oasys-software.com/terms-conditions for details. ";
     internal const string GrasshopperVersion = "1.4.0";
-    internal static int GsaMajorVersion = 10;
-    internal static int GsaMinorVersion = 2;
-    internal static int GsaBuildVersion = 11;
-    internal static string GsaMainVersion = $"{GsaMajorVersion}.{GsaMinorVersion}";
-    internal static string GsaFullVersion = $"{GsaMajorVersion}.{GsaMinorVersion}.{GsaBuildVersion}";
+
     internal static string disclaimer = $"{PluginName} is pre-release and under active development, "
       + "including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. "
       + "Future versions may contain breaking changes. Any files, results, or other types of output information created using "
       + $"{PluginName} should not be relied upon without thorough and independent checking. "
-      + $"{PluginName} {GrasshopperVersion} requires {ProductName} {GsaFullVersion} or higher installed.";
+      + $"{PluginName} {GrasshopperVersion} requires {ProductName} {GsaVersionRequired.FullVersion} or higher installed.";
     internal static Guid guid = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
     internal static bool isBeta = false;
     public override string AuthorContact => Contact;
@@ -49,8 +55,9 @@ namespace GsaGH {
       =>
         //Return a short string describing the purpose of this GHA library.
         $"Official Oasys {ProductName} Grasshopper Plugin {Environment.NewLine} {(isBeta ? disclaimer : string.Empty)}"
-        + Environment.NewLine + $"A licensed version of {ProductName} {GsaFullVersion} or later installed in "
-        + $@"C:\Program Files\Oasys\{ProductName} {GsaMainVersion}\ is required to use this plugin."
+        + Environment.NewLine
+        + $"A licensed version of {ProductName} {GsaVersionRequired.FullVersion} or later installed in "
+        + $@"C:\Program Files\Oasys\{ProductName} {GsaVersionRequired.MainVersion}\ is required to use this plugin."
         + Environment.NewLine + "Contact oasys@arup.com to request a free trial version." + Environment.NewLine
         + TermsConditions + Environment.NewLine + Copyright;
     public override Bitmap Icon => Resources.GSALogo;
@@ -67,7 +74,7 @@ namespace GsaGH {
 
     private static string pluginPath;
     private static readonly string GsaVersionCannotBeReadMessage
-      = $"Please conntact with {GsaGhInfo.Company} to solve this error";
+      = $"Please conntact with {Company} to solve this error";
 
     public static string PluginPath => pluginPath ??= TryFindPluginPath("GSA.gha");
     public static string InstallPath => InstallationFolder.GetPath;
@@ -75,12 +82,12 @@ namespace GsaGH {
     private static string MicrosoftDataSqliteDll => @"\Microsoft.Data.Sqlite.dll";
     // MESSAGES
     private static string GsaghRequiresGsaToBeInstalledMessage
-      => $"{GsaGhInfo.PluginName} requires {GsaGhInfo.ProductName} to be installed in {InstallPath}"
-        + $". Unable to find {_GsaApiDllFileName}. It looks like you haven't got {GsaGhInfo.ProductName} installed, or it may be installed in an unknown path. Please install or reinstall {GsaGhInfo.ProductName} in "
+      => $"{PluginName} requires {ProductName} to be installed in {InstallPath}"
+        + $". Unable to find {_GsaApiDllFileName}. It looks like you haven't got {ProductName} installed, or it may be installed in an unknown path. Please install or reinstall {ProductName} in "
         + InstallPath + ", restart Rhino and load Grasshopper again.";
     private static string GsaVersionMustBeUpdatedMessage
-      => "Version " + GsaGhInfo.GrasshopperVersion
-        + $" of GSA-Grasshopper requires {GsaGhInfo.GsaFullVersion} installed. Please upgrade {GsaGhInfo.ProductName}.";
+      => "Version " + GrasshopperVersion
+        + $" of GSA-Grasshopper requires {GsaVersionRequired.FullVersion} installed. Please upgrade {ProductName}.";
     private string _GsaApiDllVersion;
 
     public override GH_LoadingInstruction PriorityLoad() {
@@ -113,12 +120,7 @@ namespace GsaGH {
         Assembly.LoadFile(GsaApiDllFullPath);
         SetGsaApiInstalledVersion();
 
-        if (!TryCalculateVersions(_GsaApiDllVersion, GsaGhInfo.GsaFullVersion, out int gsaApiDllVersionAsInt,
-          out int gsaVersionNeededAsInt)) {
-          return false;
-        }
-
-        if (CheckGsaUpdateIsRequired(gsaApiDllVersionAsInt, gsaVersionNeededAsInt)) {
+        if (CheckGsaUpdateIsRequired(_GsaApiDllVersion, GsaVersionRequired.FullVersion)) {
           return false;
         }
       } catch (Exception e) {
@@ -166,8 +168,8 @@ namespace GsaGH {
 
     private static void SetInstances() {
       Instances.CanvasCreated += MenuLoad.OnStartup;
-      Instances.ComponentServer.AddCategorySymbolName(GsaGhInfo.ProductName, 'G');
-      Instances.ComponentServer.AddCategoryIcon(GsaGhInfo.ProductName, Resources.GSALogo);
+      Instances.ComponentServer.AddCategorySymbolName(ProductName, 'G');
+      Instances.ComponentServer.AddCategoryIcon(ProductName, Resources.GSALogo);
     }
 
     private static string LoadedPlugins() {
@@ -178,8 +180,13 @@ namespace GsaGH {
       return loadedPlugins;
     }
 
-    public static bool CheckGsaUpdateIsRequired(int gsaApiDllVersion, int gsaVersionNeeded) {
-      if (gsaApiDllVersion >= gsaVersionNeeded) {
+    public static bool CheckGsaUpdateIsRequired(string gsaApiDllVersion, string gsaVersionNeeded) {
+      string[] splittedGsaApiDllVer = gsaApiDllVersion.Split('.');
+      string[] splittedGsaVerNeeded = gsaVersionNeeded.Split('.');
+
+      if ((int.Parse(splittedGsaApiDllVer[0]) >= int.Parse(splittedGsaVerNeeded[0]))
+        & (int.Parse(splittedGsaApiDllVer[1]) >= int.Parse(splittedGsaVerNeeded[1]))
+        & (int.Parse(splittedGsaApiDllVer[2]) >= int.Parse(splittedGsaVerNeeded[2]))) {
         return false;
       }
 
@@ -214,7 +221,7 @@ namespace GsaGH {
     private static string TryFindPluginPath(string keyword) {
       // initially look in %appdata% folder where package manager will store the plugin
       string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-      path = Path.Combine(path, "McNeel", "Rhinoceros", "Packages", RhinoApp.ExeVersion + ".0", GsaGhInfo.ProductName);
+      path = Path.Combine(path, "McNeel", "Rhinoceros", "Packages", RhinoApp.ExeVersion + ".0", ProductName);
 
       if (!File.Exists(Path.Combine(path, keyword))) {
         return Path.GetDirectoryName(path);
@@ -254,15 +261,15 @@ namespace GsaGH {
       message = Folders.AssemblyFolders.Aggregate(message,
         (current, pluginFolder) => current + Environment.NewLine + pluginFolder.Folder);
 
-      string exceptionName = GsaGhInfo.ProductName + ": " + keyword + " loading failed";
+      string exceptionName = ProductName + ": " + keyword + " loading failed";
       LoadException(exceptionName, message);
     }
   }
 
   internal sealed class PluginInfo {
     private static readonly Lazy<OasysPluginInfo> lazy = new Lazy<OasysPluginInfo>(()
-      => new OasysPluginInfo(GsaGhInfo.ProductName, GsaGhInfo.PluginName, GsaGhInfo.GrasshopperVersion,
-        GsaGhInfo.isBeta, "phc_QjmqOoe8GqTMi3u88ynRR3WWvrJA9zAaqcQS1FDVnJD"));
+      => new OasysPluginInfo(ProductName, PluginName, GrasshopperVersion, isBeta,
+        "phc_QjmqOoe8GqTMi3u88ynRR3WWvrJA9zAaqcQS1FDVnJD"));
     public static OasysPluginInfo Instance => lazy.Value;
   }
 }
