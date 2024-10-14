@@ -809,24 +809,22 @@ private void DrawGraphicMesh(IGH_PreviewArgs args, ICollection<GeometryBase> geo
   }
 }
 
-    private void DrawGraphicWire(IGH_PreviewArgs args, List<GeometryBase> geometryEntities, Color colour, int wireDensity = -1) {
-      if (geometryEntities.IsNullOrEmpty()) {
-        return;
-      }
-      foreach (GeometryBase entity in geometryEntities) {
-        if (entity != null) {
-          switch (entity) {
-            case Curve curve:
-              args.Display.DrawCurve(curve, colour, wireDensity);
-              break;
-            case Mesh mesh:
-              args.Display.DrawMeshWires(mesh, colour, wireDensity);
-              break;
-            default: break;
-          }
-        }
-      }
+private static void DrawGraphicWire(IGH_PreviewArgs args, ICollection<GeometryBase> geometryEntities, Color colour, int wireDensity = -1) {
+  if (geometryEntities.IsNullOrEmpty()) {
+    return;
+  }
+  foreach (GeometryBase entity in geometryEntities.Where(entity => entity != null)) {
+    switch (entity) {
+      case Curve curve:
+        args.Display.DrawCurve(curve, colour, wireDensity);
+        break;
+      case Mesh mesh:
+        args.Display.DrawMeshWires(mesh, colour, wireDensity);
+        break;
+      default: break;
     }
+  }
+}
 
   }
 }
