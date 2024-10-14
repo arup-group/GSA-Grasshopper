@@ -57,19 +57,21 @@ namespace GsaGHTests.Components.Geometry {
       }
       ComponentTestHelper.SetInput(comp,
        ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(propertyIsLoadPanelType)), 1);
+      comp.Preview3dSection = true;
+      comp.ExpireSolution(true);
       return comp;
     }
 
     public static GH_OasysComponent ComponentMotherLoadPanel(bool setGeometry = true) {
-      var comp = new Create2dElement();
-      comp.CreateAttributes();
+      var component = new Create2dElement();
+      component.CreateAttributes();
       if (setGeometry) {
         ComponentTestHelper.SetInput(
-         comp, Get2dPolyline(), 0);
+         component, Get2dPolyline(), 0);
       }
-      ComponentTestHelper.SetInput(comp,
+      ComponentTestHelper.SetInput(component,
        ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(true)), 1);
-      return comp;
+      return component;
     }
 
     [Fact]
@@ -87,10 +89,8 @@ namespace GsaGHTests.Components.Geometry {
     [InlineData(true, 4, 6)]
     [InlineData(false, 10, 8)]
     public void CreateComponentWithSection3dPreviewTest(bool isLoadPanel, int expectedVerticesCount, int expectedOutlineCount) {
-      var comp = (Section3dPreviewComponent)ComponentMother(isLoadPanel, isLoadPanel);
-      comp.Preview3dSection = true;
-      comp.ExpireSolution(true);
-      var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
+      var component = (Section3dPreviewComponent)ComponentMother(isLoadPanel, isLoadPanel);
+      var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(component);
       Assert.Equal(expectedVerticesCount, output.Value.Section3dPreview.Mesh.Vertices.Count);
       Assert.Equal(expectedOutlineCount, output.Value.Section3dPreview.Outlines.Count());
       if (isLoadPanel) {

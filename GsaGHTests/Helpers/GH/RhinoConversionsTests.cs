@@ -6,6 +6,7 @@ using GsaAPI;
 using GsaGH.Helpers.GH;
 
 using Rhino.Collections;
+using GsaGHTests.Components.Geometry;
 using Rhino.Geometry;
 
 using Xunit;
@@ -62,33 +63,18 @@ namespace GsaGHTests.Helpers.GH {
 
     [Fact]
     public void ConvertCurveToLoadPanelTopoTest() {
-      var expectedPoints = new Point3dList {
-        new Point3d(0, 0, 0),
-        new Point3d(1, 0, 0),
-        new Point3d(1, 1, 0),
-        new Point3d(0, 1, 0),
-        new Point3d(0, 0, 0),
-      };
-      var curve = new Rhino.Geometry.Polyline(expectedPoints).ToPolylineCurve();
+      PolylineCurve curve = CreateElement2dTests.Get2dPolyline();
       Point3dList actualPoints = RhinoConversions.LoadPanelTopo(curve);
-      Assert.Equal(expectedPoints.Count-1, actualPoints.Count);
+      Assert.Equal(curve.PointCount - 1, actualPoints.Count);
       for (int i = 0; i < actualPoints.Count; i++) {
-        Assert.Equal(expectedPoints[i].X, actualPoints[i].X);
+        Assert.Equal(curve.PointAt(i).X, actualPoints[i].X);
       }
     }
 
     [Fact]
     public void ConvertCurveToLoadPanelIndexTest() {
-      var expectedPoints = new Point3dList {
-        new Point3d(0, 0, 0),
-        new Point3d(1, 0, 0),
-        new Point3d(1, 1, 0),
-        new Point3d(0, 1, 0),
-        new Point3d(0, 0, 0),
-      };
-      var curve = new Rhino.Geometry.Polyline(expectedPoints).ToPolylineCurve();
-      List<List<int>> loadPanelIndices = RhinoConversions.LoadPanelTopoIndices(curve);
-      foreach(List<int> Indices in loadPanelIndices) {
+      List<List<int>> loadPanelIndices = RhinoConversions.LoadPanelTopoIndices(CreateElement2dTests.Get2dPolyline());
+      foreach (List<int> Indices in loadPanelIndices) {
         Assert.Equal(4, Indices.Count);
         for (int i = 0; i < Indices.Count; i++) {
           Assert.Equal(i, Indices[i]);

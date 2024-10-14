@@ -23,40 +23,40 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(true, 1)]
     [InlineData(false, 10)]
     public void GsaElement2dParameterBakeTest(bool isLoadpanel, int expectedObjectCount) {
-      var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(isLoadpanel, isLoadpanel);
-      comp.Preview3dSection = true;
-      var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
+      var component = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(isLoadpanel, isLoadpanel);
+      component.Preview3dSection = true;
+      var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(component);
 
-      var param = new GsaElement2dParameter();
-      param.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, output);
+      var parameter = new GsaElement2dParameter();
+      parameter.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, output);
 
-      var doc = Rhino.RhinoDoc.CreateHeadless(null);
+      var document = Rhino.RhinoDoc.CreateHeadless(null);
       var guids = new List<Guid>();
-      param.BakeGeometry(doc, guids);
+      parameter.BakeGeometry(document, guids);
       Assert.NotEmpty(guids);
-      Assert.Equal(expectedObjectCount, doc.Objects.Count);
-      doc.Dispose();
+      Assert.Equal(expectedObjectCount, document.Objects.Count);
+      document.Dispose();
     }
 
     [Fact]
     public void GsaElement2dParameterPreferredCastTest() {
-      GH_OasysComponent comp = CreateElement2dTests.ComponentMother();
-      var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
+      GH_OasysComponent component = CreateElement2dTests.ComponentMother();
+      var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(component);
       Mesh m = output.Value.Mesh;
 
-      var param = new GsaElement2dParameter();
-      param.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, m);
+      var parameter = new GsaElement2dParameter();
+      parameter.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, m);
 
-      Assert.NotNull(param.VolatileData.AllData(false).First());
+      Assert.NotNull(parameter.VolatileData.AllData(false).First());
     }
 
     [Fact]
     public void GsaElement2dParameterPreferredCastErrorTest() {
       int i = 0;
-      var param = new GsaElement2dParameter();
-      param.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, i);
-      Assert.False(param.VolatileData.AllData(false).First().IsValid);
-      Assert.Single(param.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+      var parameter = new GsaElement2dParameter();
+      parameter.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, i);
+      Assert.False(parameter.VolatileData.AllData(false).First().IsValid);
+      Assert.Single(parameter.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
   }
 }

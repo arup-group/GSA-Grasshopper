@@ -12,8 +12,9 @@ using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 
 using Rhino.Collections;
-using Rhino.Geometry;
 using GsaGHTests.Components.Geometry;
+using Rhino.Geometry;
+
 using Xunit;
 
 using LengthUnit = OasysUnits.Units.LengthUnit;
