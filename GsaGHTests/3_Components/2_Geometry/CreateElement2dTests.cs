@@ -26,9 +26,9 @@ namespace GsaGHTests.Components.Geometry {
     static public PolylineCurve Get2dPolyline() {
       var points = new Point3dList {
         new Point3d(0, 0, 0),
-        new Point3d(0, 5, 0),
-        new Point3d(5, 5, 0),
-        new Point3d(5, 0, 0),
+        new Point3d(1, 0, 0),
+        new Point3d(1, 1, 0),
+        new Point3d(0, 1, 0),
       };
       points.Add(points[0]);
       var pol = new Polyline(points);

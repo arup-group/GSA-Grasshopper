@@ -405,8 +405,8 @@ namespace GsaGHTests.Parameters {
       Point3dList points = loadPanel.GetCenterPoints();
       Assert.NotNull(points);
       Assert.Single(points);
-      Assert.Equal(2.5, points[0].X);
-      Assert.Equal(2.5, points[0].Y);
+      Assert.Equal(0.5, points[0].X);
+      Assert.Equal(0.5, points[0].Y);
       Assert.Equal(0, points[0].Z);
     }
   }

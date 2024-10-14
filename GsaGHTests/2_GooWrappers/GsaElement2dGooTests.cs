@@ -73,8 +73,6 @@ namespace GsaGHTests.GooWrappers {
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
       var morph = new StretchSpaceMorph(new Point3d(0, 0, 0), new Point3d(2, 0, 0), 3);
       var morphed = (GsaElement2dGoo)output.Morph(morph);
-      var polyline = new Rhino.Geometry.Polyline();
-      morphed.Value.Curve.TryGetPolyline(out polyline);
       Assert.NotNull(morphed);
       Assert.Equal(1.5, morphed.Value.Curve.PointAt(1).X);
     }
