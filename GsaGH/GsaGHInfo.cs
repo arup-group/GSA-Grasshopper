@@ -147,19 +147,6 @@ namespace GsaGH {
         + "The plugin cannot be loaded.";
     }
 
-    public bool TryCalculateVersions(
-      string dll1Version, string dll2Version, out int dll1VersionAsInt, out int dll2VersionAsInt) {
-      if (!int.TryParse(dll1Version.Replace(".", string.Empty), out dll1VersionAsInt)
-        & !int.TryParse(dll2Version.Replace(".", string.Empty), out dll2VersionAsInt)) {
-        { //maybe new error?
-          LoadException(_GsaComputeVersionMessage, GsaVersionCannotBeReadMessage);
-          return false;
-        }
-      }
-
-      return true;
-    }
-
     private void SetPlugins() {
       Utility.InitialiseMainMenuUnitsAndDependentPluginsCheck();
       RhinoApp.Closing += GsaComHelper.Dispose;
