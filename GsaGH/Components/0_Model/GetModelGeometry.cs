@@ -783,27 +783,31 @@ namespace GsaGH.Components {
       }
     }
 
-    private void DrawGraphicMesh(IGH_PreviewArgs args, List<GeometryBase> geometryEntities) {
-      if (geometryEntities.IsNullOrEmpty()) {
-        return;
-      }
-      foreach (GeometryBase entity in geometryEntities) {
-        if (entity != null) {
-          switch (entity) {
-            case Curve curve:
-              Brep[] PlanerBrep = Brep.CreatePlanarBreps(curve, Rhino.RhinoDoc.ActiveDoc != null ? Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance : 0.001);
-              foreach (Brep brep in PlanerBrep) {
-                args.Display.DrawBrepShaded(brep, Attributes.Selected ? Colours.Element2dFaceSelectedLP : Colours.Element2dFaceLP);
-              }
-              break;
-            case Mesh mesh:
-              args.Display.DrawMeshShaded(mesh, Attributes.Selected ? Colours.Element2dFaceSelected : Colours.Element2dFace);
-              break;
-            default: break;
-          }
+private void DrawGraphicMesh(IGH_PreviewArgs args, ICollection<GeometryBase> geometryEntities) {
+  if (geometryEntities.IsNullOrEmpty()) {
+    return;
+  }
+
+  foreach (GeometryBase entity in geometryEntities.Where(entity => entity != null)) {
+    switch (entity) {
+      case Curve curve:
+        double tollerance = Rhino.RhinoDoc.ActiveDoc != null ? Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance :
+          0.001;
+        Brep[] PlanerBrep = Brep.CreatePlanarBreps(curve, tollerance);
+        foreach (Brep brep in PlanerBrep) {
+          DisplayMaterial displayMaterial = Attributes.Selected ? Colours.Element2dFaceSelectedLP : Colours.Element2dFaceLP;
+          args.Display.DrawBrepShaded(brep, displayMaterial);
         }
-      }
+        break;
+      case Mesh mesh:
+        DisplayMaterial dispMaterial
+          = Attributes.Selected ? Colours.Element2dFaceSelected : Colours.Element2dFace;
+        args.Display.DrawMeshShaded(mesh, dispMaterial);
+        break;
+      default: break;
     }
+  }
+}
 
     private void DrawGraphicWire(IGH_PreviewArgs args, List<GeometryBase> geometryEntities, Color colour, int wireDensity = -1) {
       if (geometryEntities.IsNullOrEmpty()) {
