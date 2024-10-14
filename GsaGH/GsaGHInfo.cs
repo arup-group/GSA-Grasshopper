@@ -70,12 +70,7 @@ namespace GsaGH {
     private const string _GsaApiDllFileName = "GsaAPI.dll";
     private const string _LoadingGsaApiMessage = "GSA: GsaAPI.dll loading";
     private const string _GsaUpgradeRequiredMessage = "GSA Version Error: Upgrade required";
-    private const string _GsaComputeVersionMessage = "GSA Version Error: Cannot compute the version";
-
     private static string pluginPath;
-    private static readonly string GsaVersionCannotBeReadMessage
-      = $"Please conntact with {Company} to solve this error";
-
     public static string PluginPath => pluginPath ??= TryFindPluginPath("GSA.gha");
     public static string InstallPath => InstallationFolder.GetPath;
     private static string GsaApiDllFullPath => Path.Combine(InstallPath, _GsaApiDllFileName);
