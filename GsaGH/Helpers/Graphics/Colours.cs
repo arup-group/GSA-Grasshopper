@@ -67,40 +67,23 @@ namespace GsaGH.Helpers.Graphics {
       }
     }
 
-    private static Color Element2dFaceColor = Color.FromArgb(50, 195, 218, 219);
+    private static Color Element2dFaceColorForLoadPanel = Color.FromArgb(50, 195, 218, 219);
 
-    public static DisplayMaterial Element2dFaceLP {
+    public static DisplayMaterial Element2dFaceLoadPanel {
       get {
         var material = new DisplayMaterial {
-          Diffuse = Element2dFaceColor ,
+          Diffuse = Element2dFaceColorForLoadPanel,
+          Emission = Color.FromArgb(50, 75, 218, 219),
           Transparency = 0.1,
         };
         return material;
       }
     }
 
-    public static DisplayMaterial Element2dFaceSelectedLP {
+    public static DisplayMaterial Element2dFaceSelectedLoadPanel {
       get {
         var material = new DisplayMaterial {
-          Diffuse = Element2dFaceColor ,
-          Transparency = 0.4,
-        };
-        return material;
-      }
-    }
-      get {
-        var material = new DisplayMaterial {
-          Diffuse = Color.FromArgb(50, 195, 218, 219),
-          Transparency = 0.1,
-        };
-        return material;
-      }
-    }
-
-    public static DisplayMaterial Element2dFaceSelectedLP {
-      get {
-        var material = new DisplayMaterial {
-          Diffuse = Color.FromArgb(50, 195, 218, 219),
+          Diffuse = Element2dFaceColorForLoadPanel,
           Transparency = 0.4,
         };
         return material;

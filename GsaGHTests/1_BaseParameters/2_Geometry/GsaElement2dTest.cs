@@ -13,13 +13,14 @@ using GsaGHTests.Helpers;
 
 using Rhino.Collections;
 using Rhino.Geometry;
-
+using GsaGHTests.Components.Geometry;
 using Xunit;
 
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Polyline = Rhino.Geometry.Polyline;
 
 namespace GsaGHTests.Parameters {
+
   [Collection("GrasshopperFixture collection")]
   public class GsaElement2dTests {
 
@@ -41,16 +42,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void TestCreateGsaElem2dFromMesh() {
-      var pts = new Point3dList {
-        new Point3d(-3, -4, 0),
-        new Point3d(5, -2, 0),
-        new Point3d(6, 7, 0),
-        new Point3d(-1, 2, 0),
-      };
-      pts.Add(pts[0]);
-      var pol = new Polyline(pts);
-
-      var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
+      var mesh = Mesh.CreateFromPlanarBoundary(CreateElement2dTests.Get2dPolyline(),
         MeshingParameters.DefaultAnalysisMesh, 0.001);
 
       var elem = new GsaElement2d(mesh);
@@ -81,8 +73,8 @@ namespace GsaGHTests.Parameters {
         Assert.Equal(mesh.Vertices[i].Z, elem.Topology[i].Z);
       }
 
-      int chelid = 14;
-      int chsecid = 3;
+      int checkElementId = 14;
+      int checkSectionId = 3;
       for (int i = 0; i < elem.ApiElements.Count; i++) {
         if (mesh.Faces[i].IsTriangle) {
           Assert.True(elem.ApiElements[i].Type == ElementType.TRI3);
@@ -118,8 +110,8 @@ namespace GsaGHTests.Parameters {
           Assert.Equal(mPt.Z, ePt.Z);
         }
 
-        Assert.Equal(chelid++, elem.Ids[i]);
-        Assert.Equal(chsecid, elem.Prop2ds[i].Id);
+        Assert.Equal(checkElementId++, elem.Ids[i]);
+        Assert.Equal(checkSectionId, elem.Prop2ds[i].Id);
         Assert.Equal(22, elem.ApiElements[i].Group);
         Assert.True(elem.ApiElements[i].IsDummy);
         Assert.Equal("Shahin", elem.ApiElements[i].Name);
@@ -129,16 +121,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void TestDuplicateElem2d() {
-      var pts = new Point3dList {
-        new Point3d(0, 0, 0),
-        new Point3d(0, 5, 0),
-        new Point3d(5, 5, 0),
-        new Point3d(5, 0, 0),
-      };
-      pts.Add(pts[0]);
-      var pol = new Polyline(pts);
-
-      var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
+      var mesh = Mesh.CreateFromPlanarBoundary(CreateElement2dTests.Get2dPolyline(),
         MeshingParameters.DefaultAnalysisMesh, 0.001);
 
       var origi = new GsaElement2d(mesh) {
@@ -339,7 +322,7 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void ToStringReturnsValidString() {
       GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
-      Assert.Equal("Quad-4 N:21 E:2", ele.ToString());
+      Assert.Equal("Quad-4 N:25 E:2", ele.ToString());
     }
 
     [Fact]
@@ -355,17 +338,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(Color.DarkCyan.ToArgb(), ele.Mesh.VertexColors[0].ToArgb());
       Assert.Equal(Color.DarkBlue.ToArgb(), ele.Mesh.VertexColors[1].ToArgb());
     }
-    private GsaElement2d CreateSampleElement2dWithQuad4Type() {
-      var pts = new Point3dList {
-       new Point3d(-3, -4, 0),
-       new Point3d(5, -2, 0),
-       new Point3d(6, 7, 0),
-       new Point3d(-1, 2, 0),
-     };
-      pts.Add(pts[0]);
-      var pol = new Polyline(pts);
 
-      var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
+    private GsaElement2d CreateSampleElement2dWithQuad4Type() {
+      var mesh = Mesh.CreateFromPlanarBoundary(CreateElement2dTests.Get2dPolyline(),
         MeshingParameters.DefaultAnalysisMesh, 0.001);
 
       var elem = new GsaElement2d(mesh);
@@ -396,55 +371,42 @@ namespace GsaGHTests.Parameters {
       elem.ApiElements[0].Topology = new ReadOnlyCollection<int>(new List<int>(4) { 1, 2, 3, 4 });
       elem.ApiElements[1].Type = ElementType.QUAD4;
       elem.ApiElements[1].Topology = new ReadOnlyCollection<int>(new List<int>(4) { 4, 3, 2, 1 });
-      elem.ApiElements.RemoveRange(2, 20);
+      elem.ApiElements.RemoveRange(2, elem.ApiElements.Count - 2);
 
       return elem;
     }
 
     private GsaElement2d CreateLoadPanel() {
-      var pts = new Point3dList {
-       new Point3d(0, 0, 0),
-       new Point3d(2, 0, 0),
-       new Point3d(2, 2, 0),
-       new Point3d(0, 2, 0),
-     };
-
-      pts.Add(pts[0]);
-      var pol = new Polyline(pts);
-      var elem = new GsaElement2d(pol.ToPolylineCurve());
-
+      var element = new GsaElement2d(CreateElement2dTests.Get2dPolyline());
       int initialElementId = 14;
       int sectionId = 3;
       var groups = new List<int>();
       var dummy = new List<bool>();
       var names = new List<string>();
-      var off = new List<GsaOffset>();
-      elem.Prop2ds = new List<GsaProperty2d>();
-      for (int i = 0; i < elem.ApiElements.Count; i++) {
-        elem.Ids[i] = initialElementId++;
+      element.Prop2ds = new List<GsaProperty2d>();
+      for (int i = 0; i < element.ApiElements.Count; i++) {
+        element.Ids[i] = initialElementId++;
         groups.Add(22);
         dummy.Add(true);
         names.Add("Shahin");
-        elem.Prop2ds.Add(new GsaProperty2d(sectionId) {
+        element.Prop2ds.Add(new GsaProperty2d(sectionId) {
           ApiProp2d = new Prop2D(),
         });
       }
-
-      elem.ApiElements.SetMembers(groups);
-      elem.ApiElements.SetMembers(dummy);
-      elem.ApiElements.SetMembers(names);
-      return elem;
+      element.ApiElements.SetMembers(groups);
+      element.ApiElements.SetMembers(dummy);
+      element.ApiElements.SetMembers(names);
+      return element;
     }
 
     [Fact]
     public void GetCenterPointsReturnsValidPointsForLoadPanel() {
-      GsaElement2d ele = CreateLoadPanel();
-      Point3dList points = ele.GetCenterPoints();
-
+      GsaElement2d loadPanel = CreateLoadPanel();
+      Point3dList points = loadPanel.GetCenterPoints();
       Assert.NotNull(points);
       Assert.Single(points);
-      Assert.Equal(1, points[0].X);
-      Assert.Equal(1, points[0].Y);
+      Assert.Equal(2.5, points[0].X);
+      Assert.Equal(2.5, points[0].Y);
       Assert.Equal(0, points[0].Z);
     }
   }

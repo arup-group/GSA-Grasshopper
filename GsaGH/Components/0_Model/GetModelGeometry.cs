@@ -69,10 +69,10 @@ namespace GsaGH.Components {
     public List<string> _spacerDescriptions;
     protected override Bitmap Icon => Resources.GetModelGeometry;
     private BoundingBox _boundingBox;
-    private List<GeometryBase> _cachedDisplayGeometryWithoutParent;
-    private List<GeometryBase> _cachedDisplayGeometryWithParent;
-    private List<GeometryBase> _cachedDisplayNgonMeshWithoutParent;
-    private List<GeometryBase> _cachedDisplayNgonMeshWithParent;
+    private ConcurrentBag<GeometryBase> _cachedDisplayGeometryWithoutParent;
+    private ConcurrentBag<GeometryBase> _cachedDisplayGeometryWithParent;
+    private ConcurrentBag<GeometryBase> _cachedDisplayNgonMeshWithoutParent;
+    private ConcurrentBag<GeometryBase> _cachedDisplayNgonMeshWithParent;
 
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private FoldMode _mode = FoldMode.List;
@@ -559,8 +559,8 @@ namespace GsaGH.Components {
         }
       }
 
-      _cachedDisplayGeometryWithParent = new List<GeometryBase>();
-      _cachedDisplayGeometryWithoutParent = new List<GeometryBase>();
+      _cachedDisplayGeometryWithParent = new ConcurrentBag<GeometryBase>();
+      _cachedDisplayGeometryWithoutParent = new ConcurrentBag<GeometryBase>();
       if (!(results.Elem2ds is null) || results.Elem2ds.Count == 0) {
         if (_mode == FoldMode.List) {
           data.SetDataList(2, results.Elem2ds.OrderBy(item => item.Value.Ids.First()));
@@ -619,8 +619,8 @@ namespace GsaGH.Components {
         }
       }
 
-      _cachedDisplayNgonMeshWithParent = new List<GeometryBase>();
-      _cachedDisplayNgonMeshWithoutParent = new List<GeometryBase>();
+      _cachedDisplayNgonMeshWithParent = new ConcurrentBag<GeometryBase>();
+      _cachedDisplayNgonMeshWithoutParent = new ConcurrentBag<GeometryBase>();
       if (!(results.Elem3ds is null) || results.Elem3ds.Count == 0) {
         if (_mode == FoldMode.List) {
           data.SetDataList(3, results.Elem3ds.OrderBy(item => item.Value.Ids.First()));
@@ -640,18 +640,14 @@ namespace GsaGH.Components {
             try {
               int parent = elem.Value.ApiElements[0].ParentMember.Member;
               if (parent > 0 && member3dKeys.Contains(parent)) {
-                element3dsShaded.Add(elem);
+                _cachedDisplayNgonMeshWithParent.Add(elem.Value.DisplayMesh);
               } else {
-                element3dsNotShaded.Add(elem);
+                _cachedDisplayNgonMeshWithoutParent.Add(elem.Value.DisplayMesh);
               }
             } catch (Exception) {
-              element3dsNotShaded.Add(elem);
+              _cachedDisplayNgonMeshWithoutParent.Add(elem.Value.DisplayMesh);
             }
           });
-          _cachedDisplayNgonMeshWithParent.AddRange(
-            element3dsShaded.Select(e => e.Value.DisplayMesh));
-          _cachedDisplayNgonMeshWithoutParent.AddRange(
-            element3dsNotShaded.Select(e => e.Value.DisplayMesh));
         }
       }
 
@@ -783,7 +779,7 @@ namespace GsaGH.Components {
       }
     }
 
-private void DrawGraphicMesh(IGH_PreviewArgs args, ICollection<GeometryBase> geometryEntities) {
+private void DrawGraphicMesh(IGH_PreviewArgs args, ConcurrentBag<GeometryBase> geometryEntities) {
   if (geometryEntities.IsNullOrEmpty()) {
     return;
   }
@@ -795,21 +791,21 @@ private void DrawGraphicMesh(IGH_PreviewArgs args, ICollection<GeometryBase> geo
           0.001;
         Brep[] PlanerBrep = Brep.CreatePlanarBreps(curve, tollerance);
         foreach (Brep brep in PlanerBrep) {
-          DisplayMaterial displayMaterial = Attributes.Selected ? Colours.Element2dFaceSelectedLP : Colours.Element2dFaceLP;
-          args.Display.DrawBrepShaded(brep, displayMaterial);
+          DisplayMaterial displayMaterialLoadPanel = Attributes.Selected ? Colours.Element2dFaceSelectedLoadPanel : Colours.Element2dFaceLoadPanel;
+          args.Display.DrawBrepShaded(brep, displayMaterialLoadPanel);
         }
         break;
       case Mesh mesh:
-        DisplayMaterial dispMaterial
+        DisplayMaterial displayMaterialFEA
           = Attributes.Selected ? Colours.Element2dFaceSelected : Colours.Element2dFace;
-        args.Display.DrawMeshShaded(mesh, dispMaterial);
+        args.Display.DrawMeshShaded(mesh, displayMaterialFEA);
         break;
       default: break;
     }
   }
 }
 
-private static void DrawGraphicWire(IGH_PreviewArgs args, ICollection<GeometryBase> geometryEntities, Color colour, int wireDensity = -1) {
+private static void DrawGraphicWire(IGH_PreviewArgs args, ConcurrentBag<GeometryBase> geometryEntities, Color colour, int wireDensity = -1) {
   if (geometryEntities.IsNullOrEmpty()) {
     return;
   }

@@ -58,7 +58,7 @@ namespace GsaGHTests.GooWrappers {
     }
 
     [Fact]
-    public void MorphMeshTest() {
+    public void StretchingASection3dShouldOutputAValidMesh() {
       var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother();
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
       var morph = new StretchSpaceMorph(new Point3d(0, 0, 0), new Point3d(2, 0, 0), 3);
@@ -68,7 +68,7 @@ namespace GsaGHTests.GooWrappers {
     }
 
     [Fact]
-    public void MorphCurveTest() {
+    public void StretchingASection3dShouldOutputAValidCurve() {
       var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMotherLoadPanel();
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
       var morph = new StretchSpaceMorph(new Point3d(0, 0, 0), new Point3d(2, 0, 0), 3);
@@ -80,7 +80,7 @@ namespace GsaGHTests.GooWrappers {
     }
 
     [Fact]
-    public void TransformCurveTest() {
+    public void TransformingASection3dShouldOutputAValidCurve() {
       var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(true,true);
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
       var transformed = (GsaElement2dGoo)output.Transform(Transform.Translation(1, 1, 1));
@@ -93,7 +93,7 @@ namespace GsaGHTests.GooWrappers {
     }
 
     [Fact]
-    public void TransformMeshTest() {
+    public void TransformingASection3dShouldOutputAValidMesh() {
       var comp = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother();
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp);
       var transformed = (GsaElement2dGoo)output.Transform(Transform.Translation(1, 1, 1));

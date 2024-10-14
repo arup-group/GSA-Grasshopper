@@ -52,7 +52,7 @@ namespace GsaGH.Parameters {
             Brep[] PlanerBrep = Brep.CreatePlanarBreps(Value.Curve, Rhino.RhinoDoc.ActiveDoc != null ? Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance : 0.001);
             foreach (Brep brep in PlanerBrep) {
               args.Pipeline.DrawBrepShaded(brep, args.Material.Diffuse == Colours.EntityIsNotSelected
-              ? Colours.Element2dFaceLP : Colours.Element2dFaceSelectedLP);
+              ? Colours.Element2dFaceLoadPanel : Colours.Element2dFaceSelectedLoadPanel);
             }
           }
         } else {

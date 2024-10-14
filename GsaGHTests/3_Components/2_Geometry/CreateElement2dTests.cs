@@ -21,51 +21,51 @@ using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
+
   public class CreateElement2dTests {
+    static public PolylineCurve Get2dPolyline() {
+      var points = new Point3dList {
+        new Point3d(0, 0, 0),
+        new Point3d(0, 5, 0),
+        new Point3d(5, 5, 0),
+        new Point3d(5, 0, 0),
+      };
+      points.Add(points[0]);
+      var pol = new Polyline(points);
+      return pol.ToPolylineCurve();
+    }
+
+    static public Mesh GetMesh() {
+      var mesh = new Mesh();
+      mesh.Vertices.Add(new Point3d(0, 0, 0));
+      mesh.Vertices.Add(new Point3d(1, 0, 0));
+      mesh.Vertices.Add(new Point3d(1, 1, 0));
+      mesh.Vertices.Add(new Point3d(0, 1, 0));
+      mesh.Faces.AddFace(0, 1, 2, 3);
+      return mesh;
+    }
 
     public static GH_OasysComponent ComponentMother(bool isCurve = false, bool propertyIsLoadPanelType = false) {
       var comp = new Create2dElement();
       comp.CreateAttributes();
       if (isCurve) {
-        var points = new Point3dList {
-        new Point3d(0, 0, 0),
-        new Point3d(1, 0, 0),
-        new Point3d(1, 1, 0),
-        new Point3d(0, 1, 0),
-      };
-        points.Add(points[0]);
-        var polyline = new Rhino.Geometry.Polyline(points);
         ComponentTestHelper.SetInput(
-          comp, polyline.ToPolylineCurve(), 0);
+          comp, Get2dPolyline(), 0);
       } else {
-        var mesh = new Mesh();
-        mesh.Vertices.Add(new Point3d(0, 0, 0));
-        mesh.Vertices.Add(new Point3d(1, 0, 0));
-        mesh.Vertices.Add(new Point3d(1, 1, 0));
-        mesh.Vertices.Add(new Point3d(0, 1, 0));
-        mesh.Faces.AddFace(0, 1, 2, 3);
         ComponentTestHelper.SetInput(
-          comp, mesh, 0);
+          comp, GetMesh(), 0);
       }
       ComponentTestHelper.SetInput(comp,
        ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(propertyIsLoadPanelType)), 1);
       return comp;
     }
 
-    public static GH_OasysComponent ComponentMotherLoadPanel(bool withCurve = true) {
+    public static GH_OasysComponent ComponentMotherLoadPanel(bool setGeometry = true) {
       var comp = new Create2dElement();
       comp.CreateAttributes();
-      if (withCurve) {
-        var points = new Point3dList {
-        new Point3d(0, 0, 0),
-        new Point3d(1, 0, 0),
-        new Point3d(1, 1, 0),
-        new Point3d(0, 1, 0),
-      };
-        points.Add(points[0]);
-        var polyline = new Rhino.Geometry.Polyline(points);
+      if (setGeometry) {
         ComponentTestHelper.SetInput(
-          comp, polyline.ToPolylineCurve(), 0);
+         comp, Get2dPolyline(), 0);
       }
       ComponentTestHelper.SetInput(comp,
        ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(true)), 1);
