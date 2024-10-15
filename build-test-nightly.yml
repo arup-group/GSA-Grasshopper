@@ -4,6 +4,10 @@ trigger:
   branches:
     include:
     - release/*
+  paths:
+    include:
+      - GsaGH/**
+      - GsaGHTests/**
 
 variables:
   - group: s3PushInstallers
@@ -87,11 +91,6 @@ jobs:
     dependsOn: SetupMachine
     condition: succeeded()
     pool: 'rhino-compute'
-    trigger:
-      paths:
-        include:
-          - GsaGH/**
-          - GsaGHTests/**
     workspace:
       clean: none
     steps:
