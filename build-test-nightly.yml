@@ -67,6 +67,10 @@ jobs:
         displayName: 'Register GSA COM'
         failOnStderr: false
 
+      - publish: $(Pipeline.Workspace)/gsa.msi
+        displayName: 'Publish MSI Installer as an Artifact'
+        artifact: GSAInstaller
+
 
   - job: RunUnitTests
     displayName: Run Unit Tests if GsaGH or GsaGHTests have changes
@@ -185,6 +189,12 @@ jobs:
     workspace:
       clean: none
     steps:
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifact: GSAInstaller
+          path: $(Pipeline.Workspace)  # Download it to the same workspace path
+        displayName: 'Download MSI Installer Artifact'
+
       - powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
         displayName: 'Delete orphan .ghlink files'
         condition: always()
