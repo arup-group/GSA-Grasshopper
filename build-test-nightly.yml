@@ -176,7 +176,7 @@ jobs:
 
   - job: UninstallAndClean
     displayName: Uninstall And Clean
-    dependsOn: *
+    dependsOn: [SetupMachine, RunUnitTests]
     condition: always()
     pool: 'rhino-compute'
     steps:
