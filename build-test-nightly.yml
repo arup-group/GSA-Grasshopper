@@ -61,7 +61,7 @@ jobs:
         displayName: 'list files'
 
       - powershell: |
-          $installerPath = $(Pipeline.Workspace)\gsa.msi
+          $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
           Write-output "Installer Path: ${installerPath}"
           Write-output "GSA Version:"
           if (!(Test-Path $installerPath.FullName)) {
