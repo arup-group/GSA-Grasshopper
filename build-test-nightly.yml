@@ -179,7 +179,8 @@ jobs:
     dependsOn: [SetupMachine, RunUnitTests]
     condition: always()
     pool: 'rhino-compute'
-    workspace: none
+    workspace:
+      clean: none
     steps:
       - powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
         displayName: 'Delete orphan .ghlink files'
