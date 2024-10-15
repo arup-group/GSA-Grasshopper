@@ -1,7 +1,7 @@
 # https://aka.ms/yaml
 
 trigger:
-- main
+  - dev
 
 variables:
   - group: s3PushInstallers

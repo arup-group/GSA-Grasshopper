@@ -3,7 +3,7 @@
 trigger:
   branches:
     include:
-    - release/*
+    - dev
 
 variables:
   - group: s3PushInstallers
