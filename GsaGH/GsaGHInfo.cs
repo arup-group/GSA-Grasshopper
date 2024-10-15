@@ -24,6 +24,16 @@ using PostHog = OasysGH.Helpers.PostHog;
 using Utility = OasysGH.Utility;
 
 namespace GsaGH {
+  public interface IAnalytics {
+    void PluginLoaded(OasysPluginInfo pluginInfo, string error = "");
+  }
+
+  public class PostHoGAnalytics : IAnalytics {
+    public void PluginLoaded(OasysPluginInfo pluginInfo, string error = "") {
+      PostHog.PluginLoaded(pluginInfo, error);
+    }
+  }
+
   public class GsaGhInfo : GH_AssemblyInfo {
     internal readonly struct GsaVersionRequired {
       internal static readonly int MajorVersion = 10;
@@ -84,6 +94,15 @@ namespace GsaGH {
       => "Version " + GrasshopperVersion
         + $" of GSA-Grasshopper requires {GsaVersionRequired.FullVersion} installed. Please upgrade {ProductName}.";
     private string _GsaApiDllVersion;
+    private readonly IAnalytics _analytics;
+    private readonly bool _underTest;
+
+    public AddReferencePriority() : this(new PostHoGAnalytics(), underTest: false) { }
+
+    internal AddReferencePriority(IAnalytics analytics, bool underTest) {
+      _analytics = analytics;
+      _underTest = underTest;
+    }
 
     public override GH_LoadingInstruction PriorityLoad() {
       if (string.IsNullOrEmpty(TryFindPluginPath("GSA.gha"))) {
@@ -101,8 +120,10 @@ namespace GsaGH {
 
       // this is a temporary fix for TDA
       // needs more investigation!
-      if (Assembly.GetEntryAssembly() != null && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
-        Assembly.LoadFile(PluginPath + MicrosoftDataSqliteDll);
+      if (!_underTest) {
+        if (Assembly.GetEntryAssembly() != null && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
+          Assembly.LoadFile(PluginPath + MicrosoftDataSqliteDll);
+        }
       }
 
       SetInstances();
@@ -144,7 +165,7 @@ namespace GsaGH {
     private void SetPlugins() {
       Utility.InitialiseMainMenuUnitsAndDependentPluginsCheck();
       RhinoApp.Closing += GsaComHelper.Dispose;
-      PostHog.PluginLoaded(PluginInfo.Instance, _GsaApiDllVersion);
+      _analytics.PluginLoaded(PluginInfo.Instance, _GsaApiDllVersion);
     }
 
     private static void SetInstances() {

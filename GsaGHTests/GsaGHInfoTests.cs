@@ -3,6 +3,8 @@ using System.Reflection;
 
 using GsaGH;
 
+using OasysGH;
+
 using Xunit;
 
 using static GsaGH.GsaGhInfo;
@@ -69,6 +71,21 @@ namespace GsaGHTests {
     [InlineData("1.1.3", "1.1.3")]
     public void CheckGsaUpdateIsRequiredShouldReturnFalseWhenNeededVersionIsLowerOrEqual(string ver1, string ver2) {
       Assert.False(AddReferencePriority.CheckGsaUpdateIsRequired(ver1, ver2));
+    }
+
+    [Fact]
+    public void ShouldHavePosthogSetupWhenWeLoad() {
+      var analyticsSpy = new AnalyticsSpy();
+      var addReferencePriority = new AddReferencePriority(analyticsSpy, true);
+      addReferencePriority.PriorityLoad();
+      Assert.True(analyticsSpy.loadedCalled);
+    }
+
+    class AnalyticsSpy: IAnalytics {
+
+      public bool loadedCalled = false;
+
+      public void PluginLoaded(OasysPluginInfo pluginInfo, string error = "") { loadedCalled = true; }
     }
   }
 }
