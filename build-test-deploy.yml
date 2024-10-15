@@ -54,6 +54,11 @@ steps:
   displayName: 'Register GSA COM'
   failOnStderr: false
 
+- powershell: |
+    ./cleanRegistry.ps1
+  displayName: 'Run Registry Cleaner'
+  failOnStderr: true
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
