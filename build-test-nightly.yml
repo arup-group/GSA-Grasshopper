@@ -50,6 +50,10 @@ jobs:
         failOnStderr: true
         displayName: 'rename file'
 
+      - publish: $(Pipeline.Workspace)/gsa.msi
+        displayName: 'Publish MSI Installer as an Artifact'
+        artifact: GSAInstaller
+
       - powershell: |
           Write-Output "Listing files in $(Pipeline.Workspace):"
           Get-ChildItem -Path $(Pipeline.Workspace) -Recurse
@@ -90,10 +94,6 @@ jobs:
           & 'C:\Program Files\Oasys\*\GSA.exe' /Register
         displayName: 'Register GSA COM'
         failOnStderr: false
-
-      - publish: $(Pipeline.Workspace)/gsa.msi
-        displayName: 'Publish MSI Installer as an Artifact'
-        artifact: GSAInstaller
 
 
   - job: RunUnitTests
