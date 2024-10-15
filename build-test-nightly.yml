@@ -88,7 +88,7 @@ jobs:
     condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), or(contains(variables['Build.SourceBranch'], 'GsaGH/'), contains(variables['Build.SourceBranch'], 'GsaGHTests/')))
     pool: 'rhino-compute'
     workspace:
-      clean: outputs
+      clean: none
     steps:
 
       - powershell: echo test
@@ -179,6 +179,7 @@ jobs:
     dependsOn: [SetupMachine, RunUnitTests]
     condition: always()
     pool: 'rhino-compute'
+    workspace: none
     steps:
       - powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
         displayName: 'Delete orphan .ghlink files'
