@@ -203,4 +203,3 @@ jobs:
           }
         condition: always()
         displayName: 'Uninstall Application'
-
