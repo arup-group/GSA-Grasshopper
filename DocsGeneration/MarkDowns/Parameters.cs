@@ -40,7 +40,7 @@ namespace DocsGeneration.MarkDowns {
           table.AddRow(new List<string>(){
             FileHelper.CreateIconLink(parameter),
             FileHelper.CreatePageLink(parameter),
-            parameter.Description.Replace("GSA ", string.Empty)
+            parameter.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty)
           });
         }
         text += table.Finalise();
