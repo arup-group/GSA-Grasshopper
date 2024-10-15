@@ -31,6 +31,9 @@ jobs:
           Move-Item -Path $(Pipeline.Workspace)\*Arup*.msi -Destination $(Pipeline.Workspace)\gsa.msi
         displayName: 'Download GSA nightly'
         failOnStderr: true
+      - powershell: |
+          ls -r gsa.msi
+        displayName: 'list files'
 
       - powershell: |
           $installerPath = $(Pipeline.Workspace)\gsa.msi
