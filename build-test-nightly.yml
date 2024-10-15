@@ -40,7 +40,7 @@ jobs:
         displayName: 'list files'
 
       - powershell: |
-            Move-Item -Path $(Pipeline.Workspace)\*Arup*.msi -Destination $(Pipeline.Workspace)\gsa.msi
+            Move-Item -Path $(Pipeline.Workspace)\Arup*.msi -Destination $(Pipeline.Workspace)\gsa.msi
         failOnStderr: true
         displayName: 'rename file'
 
