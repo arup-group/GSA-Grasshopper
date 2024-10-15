@@ -85,8 +85,13 @@ jobs:
   - job: RunUnitTests
     displayName: Run Unit Tests if GsaGH or GsaGHTests have changes
     dependsOn: SetupMachine
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), or(contains(variables['Build.SourceBranch'], 'GsaGH/'), contains(variables['Build.SourceBranch'], 'GsaGHTests/')))
+    condition: succeeded()
     pool: 'rhino-compute'
+    pr:
+      paths:
+        include:
+          - GsaGH/**
+          - GsaGHTests/**
     workspace:
       clean: none
     steps:
