@@ -37,7 +37,9 @@ namespace DocsGeneration.MarkDowns.Helpers {
       if (str.Contains("GSA ")) {
         StringSplitOptions opt = StringSplitOptions.None;
         string[] split = str.Split(new string[] { "GSA " }, opt);
-        str = split[0];
+        if (split.Length > 1) {
+          str = ApplyCorrectPunctuation(split[0], split[1]);
+        }
         for (int i = 1; i < split.Length; i++) {
           string[] parameterNameAndRest = split[i].Split(' ');
           string parmeterName = parameterNameAndRest[0];
@@ -60,6 +62,18 @@ namespace DocsGeneration.MarkDowns.Helpers {
       }
 
       return str;
+    }
+
+    public static string ApplyCorrectPunctuation(string left, string right) {
+      bool isA = left.EndsWith("a ");
+      right = right.ToLower();
+      if (right.StartsWith("a") || right.StartsWith("e") || right.StartsWith("i") || right.StartsWith("o") || right.StartsWith("u")) {
+        if (isA) {
+          left= left.TrimEnd().TrimEnd('a');
+          left += "an ";
+        }
+      }
+      return left;
     }
 
     private static string ConvertSummaryToMarkup(string str) {
