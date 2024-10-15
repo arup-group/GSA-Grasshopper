@@ -28,9 +28,22 @@ jobs:
       - powershell: |
           Get-ChildItem *.msi -Recurse | Remove-Item
           aws s3 cp s3://oasys-installer-store/GSA/nightly . --exclude "*" --include *Arup*.msi --recursive
-          Move-Item -Path $(Pipeline.Workspace)\*Arup*.msi -Destination $(Pipeline.Workspace)\gsa.msi
+          # Move-Item -Path $(Pipeline.Workspace)\*Arup*.msi -Destination $(Pipeline.Workspace)\gsa.msi
         displayName: 'Download GSA nightly'
         failOnStderr: true
+
+      - powershell: |
+            # List files in the workspace root for debugging
+            Write-Output "Listing files in $(Pipeline.Workspace):"
+            Get-ChildItem -Path $(Pipeline.Workspace) -Recurse
+        failOnStderr: true
+        displayName: 'list files'
+
+      - powershell: |
+            Move-Item -Path $(Pipeline.Workspace)\*Arup*.msi -Destination $(Pipeline.Workspace)\gsa.msi
+        failOnStderr: true
+        displayName: 'rename file'
+
       - powershell: |
             # List files in the workspace root for debugging
             Write-Output "Listing files in $(Pipeline.Workspace):"
