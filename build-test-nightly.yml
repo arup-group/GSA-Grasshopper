@@ -32,7 +32,10 @@ jobs:
         displayName: 'Download GSA nightly'
         failOnStderr: true
       - powershell: |
-          ls -r gsa.msi
+            # List files in the workspace root for debugging
+            Write-Output "Listing files in $(Pipeline.Workspace):"
+            Get-ChildItem -Path $(Pipeline.Workspace) -Recurse
+        failOnStderr: true
         displayName: 'list files'
 
       - powershell: |
