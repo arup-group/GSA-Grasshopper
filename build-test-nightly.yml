@@ -44,7 +44,7 @@ jobs:
             $msiFile = Get-ChildItem -Filter *.msi -Recurse | Select-Object -First 1
             # If a matching MSI file is found, rename and move it to the root of the workspace
             if ($msiFile) {
-               Move-Item -Path $msiFile.FullName -Destination "$(Pipeline.Workspace)\GSA.msi"
+               Move-Item -Path $msiFile.FullName -Destination "$(Pipeline.Workspace)\gsa.msi"
                Write-Output "MSI file moved and renamed to: $(Pipeline.Workspace)\gsa.msi"
             } else {
                Write-Output "No .msi file found."
