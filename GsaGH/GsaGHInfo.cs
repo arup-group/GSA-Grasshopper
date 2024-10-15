@@ -28,7 +28,7 @@ namespace GsaGH {
     internal readonly struct GsaVersionRequired {
       internal static readonly int MajorVersion = 10;
       internal static readonly int MinorVersion = 2;
-      internal static readonly int BuildVersion = 14;
+      internal static readonly int BuildVersion = 11;
       internal static readonly string MainVersion = $"{MajorVersion}.{MinorVersion}";
       internal static readonly string FullVersion = $"{MajorVersion}.{MinorVersion}.{BuildVersion}";
     }
