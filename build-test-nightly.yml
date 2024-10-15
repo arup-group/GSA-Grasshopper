@@ -33,7 +33,7 @@ jobs:
         failOnStderr: true
 
       - powershell: |
-          $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
+          $installerPath = $(Pipeline.Workspace)\gsa.msi
           Write-output "Installer Path: ${installerPath}"
           Write-output "GSA Version:"
           if (!(Test-Path $installerPath.FullName)) {
