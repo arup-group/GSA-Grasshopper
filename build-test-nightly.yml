@@ -107,7 +107,7 @@ jobs:
         inputs:
           testSelector: 'testImpact'  # Enables Test Impact Analysis
           testAssemblyVer2: |
-            **\bin\x64\Release\net48\*Tests.dll # Modify this pattern based on where your test assemblies are      
+            GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
           searchFolder: '$(System.DefaultWorkingDirectory)'
           runInParallel: false
           failOnStderr: true
