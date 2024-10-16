@@ -208,7 +208,7 @@ namespace GsaGHTests.Components.Geometry {
     public void RuntimeErrorWhenLoadpanelPropertyIsAssigned() {
       GH_OasysComponent comp = ComponentMother(true);
       ComponentTestHelper.GetOutput(comp);
-      Assert.Contains("This component does not support creating a load panel", comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error)[1]);
+      Assert.Contains(Create2dElementsFromBrep.DoesNotSupportLoadPanelErrorMessage, comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error)[1]);
     }
   }
 }
