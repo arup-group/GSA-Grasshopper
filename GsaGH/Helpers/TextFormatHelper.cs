@@ -7,7 +7,7 @@ namespace GsaGH.Helpers {
 
     public static string FormatNumberedList(Dictionary<int, string> elementTypeMapping) {
       return string.Join(Environment.NewLine,
-        elementTypeMapping.Select(x => $"{x.Key}: {x.Value}"));
+        elementTypeMapping.Select(x => $"ALPHA{x.Key}: {x.Value}"));
     }
   }
 }
