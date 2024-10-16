@@ -111,6 +111,7 @@ jobs:
           searchFolder: '$(System.DefaultWorkingDirectory)'
           runInParallel: false
           failOnStderr: true
+          runOnlyImpactedTests: true
       # **\bin\**\GsaReTests.dll  # Modify this pattern based on where your test assemblies are
       # - powershell: |
       #     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
