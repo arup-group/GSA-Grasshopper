@@ -103,15 +103,16 @@ jobs:
       - task: VisualStudioTestPlatformInstaller@1
         displayName: 'Install Test Platform'
 
-      - task: VSTest@2
+      - task: VSTest@3
         inputs:
           testSelector: 'testAssemblies'  # Enables Test Impact Analysis
           testAssemblyVer2: |
             GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
           searchFolder: '$(System.DefaultWorkingDirectory)'
-          runInParallel: false
-          failOnStderr: true
           runOnlyImpactedTests: true
+          runInParallel: true
+          failOnStderr: true
+          
       # **\bin\**\GsaReTests.dll  # Modify this pattern based on where your test assemblies are
       # - powershell: |
       #     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
