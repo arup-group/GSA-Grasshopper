@@ -15,7 +15,6 @@ variables:
   - name: configuration
     value: Release
 
-
 jobs:
   - job: SetupMachine
     displayName: Setup Machine with GSA Version
