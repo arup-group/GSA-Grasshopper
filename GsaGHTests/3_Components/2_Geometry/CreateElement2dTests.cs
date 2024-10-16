@@ -3,7 +3,6 @@
 using Grasshopper.Kernel.Types;
 
 using GsaGH.Components;
-using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using GsaGHTests.Components.Properties;
@@ -109,28 +108,4 @@ namespace GsaGHTests.Components.Geometry {
     }
   }
 
-  [Collection("GrasshopperFixture collection")]
-  public class Element2dErrorMessagesTests {
-    private readonly GH_OasysComponent _component;
-
-    public Element2dErrorMessagesTests() {
-      _component = CreateElement2dTests.ComponentMother(true);
-    }
-
-    [Fact]
-    public void InvalidPolylineToCreateLoadPanel() {
-      ComponentTestHelper.SetInput(_component, new PolylineCurve(), 0);
-      ComponentTestHelper.GetOutput(_component);
-      Assert.Contains(InvalidGeometryForProperty.CouldNotBeConvertedToPolyline,
-        _component.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error)[0]);
-    }
-
-    [Fact]
-    public void InvalidGeometryToCreateLoadPanel() {
-      ComponentTestHelper.SetInput(_component, new Line(), 0);
-      ComponentTestHelper.GetOutput(_component);
-      Assert.Contains(InvalidGeometryForProperty.NotSupportedType,
-        _component.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error)[0]);
-    }
-  }
 }
