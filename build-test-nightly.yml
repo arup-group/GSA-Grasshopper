@@ -32,13 +32,6 @@ jobs:
         failOnStderr: true
 
       - powershell: |
-          # List files in the workspace root for debugging
-          Write-Output "Listing files in $(Pipeline.Workspace):"
-          Get-ChildItem -Path $(Pipeline.Workspace) -Recurse
-        failOnStderr: true
-        displayName: 'list files'
-
-      - powershell: |
           $msiFile = Get-ChildItem -Filter *.msi -Recurse | Select-Object -First 1
           if ($msiFile) {
             Move-Item -Path $msiFile.FullName -Destination "$(Pipeline.Workspace)\gsa.msi"
@@ -52,12 +45,6 @@ jobs:
       - publish: $(Pipeline.Workspace)/gsa.msi
         displayName: 'Publish MSI Installer as an Artifact'
         artifact: GSAInstaller
-
-      - powershell: |
-          Write-Output "Listing files in $(Pipeline.Workspace):"
-          Get-ChildItem -Path $(Pipeline.Workspace) -Recurse
-        failOnStderr: true
-        displayName: 'list files'
 
       - powershell: |
           $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
@@ -91,37 +78,10 @@ jobs:
 
       - powershell: |
           & 'C:\Program Files\Oasys\*\GSA.exe' /Register
-        displayName: 'Register GSA COM'
+          displayName: 'Register GSA COM'
         failOnStderr: false
-
-
-  - job: CanaryTests
-    displayName: Run Minimal Tests for Quick Fail
-    dependsOn: SetupMachine
-    condition: succeeded()
-    pool: 'rhino-compute'
-    workspace:
-      clean: none
-    steps:
-
+      
       - task: NuGetToolInstaller@1
-
-      # - task: NuGetCommand@2
-      #   displayName: 'Restoring NuGet packages'
-      #   inputs:
-      #       command: 'restore'
-      #       restoreSolution: 'GsaGH.sln'
-      #
-      # - task: VSBuild@1
-      #   displayName: 'Building project in $(configuration)'
-      #   inputs:
-      #     solution: 'GsaGH.sln'
-      #     msbuildArgs: '/p:AppxBundlePlatforms="x64" /p:AppxPackageDir="$(build.artifactStagingDirectory)\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /m /nr:false /p:TreatWarningsAsErrors="true"'
-      #     platform: 'x64'
-      #     configuration: '$(configuration)'
-      #     clean: true
-      #   env:
-      #     MSBUILDDISABLENODEREUSE: 1
 
       - task: VisualStudioTestPlatformInstaller@1
         displayName: 'Install Test Platform'
@@ -132,18 +92,20 @@ jobs:
           testAssemblyVer2: |
             **\bin\**\*Tests.dll  # Modify this pattern based on where your test assemblies are
           searchFolder: '$(System.DefaultWorkingDirectory)'
-          runInParallel: true
+          runInParallel: false
+          failOnStderr: true
 
-  - job: RunUnitTests
-    displayName: Run Unit Tests if GsaGH or GsaGHTests have changes
-    dependsOn: [SetupMachine, CanaryTests]
-    condition: succeeded()
-    pool: 'rhino-compute'
-    workspace:
-      clean: none
-    steps:
 
-      - task: NuGetToolInstaller@1
+  # - job: RunUnitTests
+  #   displayName: Run Unit Tests if GsaGH or GsaGHTests have changes
+  #   dependsOn: [SetupMachine, CanaryTests]
+  #   condition: succeeded()
+  #   pool: 'rhino-compute'
+  #   workspace:
+  #     clean: none
+  #   steps:
+
+      # - task: NuGetToolInstaller@1
 
       - task: NuGetCommand@2
         displayName: 'Restoring NuGet packages'
@@ -161,7 +123,6 @@ jobs:
           clean: true
         env:
           MSBUILDDISABLENODEREUSE: 1
-
 
       - powershell: |
           dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
@@ -243,19 +204,19 @@ jobs:
 #   continueOnError: true
 #
 
-  - job: UninstallAndClean
-    displayName: Uninstall And Clean
-    dependsOn: [SetupMachine, RunUnitTests]
-    condition: always()
-    pool: 'rhino-compute'
-    workspace:
-      clean: none
-    steps:
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          artifact: GSAInstaller
-          path: $(Pipeline.Workspace)  # Download it to the same workspace path
-        displayName: 'Download MSI Installer Artifact'
+  # - job: UninstallAndClean
+  #   displayName: Uninstall And Clean
+  #   dependsOn: [SetupMachine, RunUnitTests]
+  #   condition: always()
+  #   pool: 'rhino-compute'
+  #   workspace:
+  #     clean: none
+  #   steps:
+      # - task: DownloadPipelineArtifact@2
+      #   inputs:
+      #     artifact: GSAInstaller
+      #     path: $(Pipeline.Workspace)  # Download it to the same workspace path
+      #   displayName: 'Download MSI Installer Artifact'
 
       - powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
         displayName: 'Delete orphan .ghlink files'
