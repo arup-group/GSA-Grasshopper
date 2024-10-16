@@ -202,37 +202,50 @@ namespace GsaGH {
 
     private static string TryFindPluginPath(string keyword) {
       // initially look in %appdata% folder where package manager will store the plugin
-      string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-      path = Path.Combine(path, "McNeel", "Rhinoceros", "Packages", RhinoApp.ExeVersion + ".0", ProductName);
-
-      if (!File.Exists(Path.Combine(path, keyword))) {
+      if (!McNeelPathExists(keyword, out string path)) {
         return Path.GetDirectoryName(path);
       }
 
-      string sDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper",
+      if (!LibrariesFilesExists(keyword, ref path, out string libraryPath)) {
+        return Path.GetDirectoryName(path);
+      }
+
+      if (PluginFilesExists(keyword, ref path)) {
+        return Path.GetDirectoryName(path);
+      }
+
+      CantFindPluginError(keyword, libraryPath);
+      return string.Empty;
+    }
+
+    private static bool McNeelPathExists(string keyword, out string path) {
+      path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+      path = Path.Combine(path, "McNeel", "Rhinoceros", "Packages", RhinoApp.ExeVersion + ".0", ProductName);
+
+      return File.Exists(Path.Combine(path, keyword));
+    }
+
+    private static bool LibrariesFilesExists(string keyword, ref string path, out string libraryPath) {
+      libraryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Grasshopper",
         "Libraries");
 
-      string[] files = Directory.GetFiles(sDir, keyword, SearchOption.AllDirectories);
+      string[] files = Directory.GetFiles(libraryPath, keyword, SearchOption.AllDirectories);
       if (files.Length > 0) {
         path = files[0].Replace(keyword, string.Empty);
       }
 
-      if (!File.Exists(Path.Combine(path, keyword))) {
-        return Path.GetDirectoryName(path);
-      }
+      return File.Exists(Path.Combine(path, keyword));
+    }
 
-      foreach (GH_AssemblyFolderInfo pluginFolder in Folders.AssemblyFolders) {
-        files = Directory.GetFiles(pluginFolder.Folder, keyword, SearchOption.AllDirectories);
-        if (files.Length <= 0) {
-          continue;
-        }
-
+    private static bool PluginFilesExists(string keyword, ref string path) {
+      foreach (string[] files in Folders.AssemblyFolders
+       .Select(pluginFolder => Directory.GetFiles(pluginFolder.Folder, keyword, SearchOption.AllDirectories))
+       .Where(files => files.Length > 0)) {
         path = files[0].Replace(keyword, string.Empty);
-        return Path.GetDirectoryName(path);
+        return true;
       }
 
-      CantFindPluginError(keyword, sDir);
-      return string.Empty;
+      return false;
     }
 
     private static void CantFindPluginError(string keyword, string sDir) {
