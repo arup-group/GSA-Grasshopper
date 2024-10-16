@@ -83,30 +83,6 @@ jobs:
       
       - task: NuGetToolInstaller@1
 
-      - task: VisualStudioTestPlatformInstaller@1
-        displayName: 'Install Test Platform'
-
-      - task: VSTest@2
-        inputs:
-          testSelector: 'testImpact'  # Enables Test Impact Analysis
-          testAssemblyVer2: |
-            **\bin\**\*Tests.dll  # Modify this pattern based on where your test assemblies are
-          searchFolder: '$(System.DefaultWorkingDirectory)'
-          runInParallel: false
-          failOnStderr: true
-
-
-  # - job: RunUnitTests
-  #   displayName: Run Unit Tests if GsaGH or GsaGHTests have changes
-  #   dependsOn: [SetupMachine, CanaryTests]
-  #   condition: succeeded()
-  #   pool: 'rhino-compute'
-  #   workspace:
-  #     clean: none
-  #   steps:
-
-      # - task: NuGetToolInstaller@1
-
       - task: NuGetCommand@2
         displayName: 'Restoring NuGet packages'
         inputs:
@@ -123,6 +99,18 @@ jobs:
           clean: true
         env:
           MSBUILDDISABLENODEREUSE: 1
+      
+      - task: VisualStudioTestPlatformInstaller@1
+        displayName: 'Install Test Platform'
+
+      - task: VSTest@2
+        inputs:
+          testSelector: 'testImpact'  # Enables Test Impact Analysis
+          testAssemblyVer2: |
+            **\bin\**\*Tests.dll  # Modify this pattern based on where your test assemblies are
+          searchFolder: '$(System.DefaultWorkingDirectory)'
+          runInParallel: false
+          failOnStderr: true
 
       - powershell: |
           dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
