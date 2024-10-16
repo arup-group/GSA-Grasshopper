@@ -105,7 +105,7 @@ jobs:
 
       - task: VSTest@2
         inputs:
-          testSelector: 'testImpact'  # Enables Test Impact Analysis
+          testSelector: 'testAssemblies'  # Enables Test Impact Analysis
           testAssemblyVer2: |
             GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
           searchFolder: '$(System.DefaultWorkingDirectory)'
