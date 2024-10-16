@@ -107,15 +107,15 @@ jobs:
         inputs:
           testSelector: 'testImpact'  # Enables Test Impact Analysis
           testAssemblyVer2: |
-            **\bin\**\*Tests.dll  # Modify this pattern based on where your test assemblies are
+            **\bin\x64\Release\net48\*Tests.dll # Modify this pattern based on where your test assemblies are      
           searchFolder: '$(System.DefaultWorkingDirectory)'
           runInParallel: false
           failOnStderr: true
-
-      - powershell: |
-          dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
-        displayName: Unit Tests
-        failOnStderr: true
+      # **\bin\**\GsaReTests.dll  # Modify this pattern based on where your test assemblies are
+      # - powershell: |
+      #     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
+      #   displayName: Unit Tests
+      #   failOnStderr: true
 
       - powershell: |
           if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
