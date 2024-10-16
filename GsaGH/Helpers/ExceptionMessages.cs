@@ -9,31 +9,39 @@ using Rhino.Geometry;
 
 namespace GsaGH.Helpers {
 
-  public class InvalidGeometryForProperty {
+  public static class InvalidGeometryForProperty {
+    public const string NotSupportedType = "Input geometry is not supported to create a 2D element";
+    public const string CouldNotBeConvertedToPolyline
+      = "Polyline could not be extracted from the given curve geometry";
+    public const string WrongGeometryTypeForAnalysis = "FE element require mesh geometry as the input parameter";
+    public const string WrongGeometryTypeForLoadPanel = "Load panel element require curve as the input parameter";
 
     public static string GetMessage(IGH_Goo inputParameter, bool isLoadPanel, bool isProp2dAssigned) {
       if (isProp2dAssigned) {
         switch (inputParameter) {
-          case GH_Mesh mesh:
+          case GH_Mesh _:
             if (isLoadPanel) {
-              return "Load panel element require curve as the input parameter";
+              return WrongGeometryTypeForLoadPanel;
             }
+
             break;
           case GH_Curve curve: {
-              if (!isLoadPanel) {
-                return "FE element require mesh geometry as the input parameter";
-              }
-              if (!curve.Value.TryGetPolyline(out Rhino.Geometry.Polyline polyline)) {
-                return "Polyline could not be extracted from the given curve geometry";
-              }
+            if (!isLoadPanel) {
+              return WrongGeometryTypeForAnalysis;
             }
+
+            if (!curve.Value.TryGetPolyline(out Polyline _)) {
+              return CouldNotBeConvertedToPolyline;
+            }
+          }
             break;
           default: {
-              return "Input geometry is not supported to create a 2D element";
-            }
+            return NotSupportedType;
+          }
         }
       }
-      return "";
+
+      return string.Empty;
     }
   }
 }

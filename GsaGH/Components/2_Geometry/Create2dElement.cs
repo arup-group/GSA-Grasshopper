@@ -29,11 +29,13 @@ namespace GsaGH.Components {
 
     protected override Bitmap Icon => Resources.Create2dElement;
 
-    public Create2dElement() : base("Create 2D Element", "Elem2D", "Create GSA 2D Element",
-      CategoryName.Name(), SubCategoryName.Cat2()) { }
+    public Create2dElement() : base("Create 2D Element", "Elem2D", "Create GSA 2D Element", CategoryName.Name(),
+      SubCategoryName.Cat2()) { }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddGeometryParameter("Geometry", "G", "Polyline extractable geometry to create load panels and mesh geometry to create FE elements", GH_ParamAccess.item);
+      pManager.AddGeometryParameter("Geometry", "G",
+        "Polyline extractable geometry to create load panels and mesh geometry to create FE elements",
+        GH_ParamAccess.item);
       pManager.AddParameter(new GsaProperty2dParameter());
       pManager[1].Optional = true;
       pManager.HideParameter(0);

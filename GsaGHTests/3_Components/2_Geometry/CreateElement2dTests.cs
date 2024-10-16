@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using System.Security.Cryptography;
 
 using Grasshopper.Kernel.Types;
 
 using GsaGH.Components;
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using GsaGHTests.Components.Properties;
@@ -21,9 +21,8 @@ using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
-
   public class CreateElement2dTests {
-    static public PolylineCurve Get2dPolyline() {
+    public static PolylineCurve Get2dPolyline() {
       var points = new Point3dList {
         new Point3d(0, 0, 0),
         new Point3d(1, 0, 0),
@@ -35,7 +34,7 @@ namespace GsaGHTests.Components.Geometry {
       return pol.ToPolylineCurve();
     }
 
-    static public Mesh GetMesh() {
+    public static Mesh GetMesh() {
       var mesh = new Mesh();
       mesh.Vertices.Add(new Point3d(0, 0, 0));
       mesh.Vertices.Add(new Point3d(1, 0, 0));
@@ -46,21 +45,20 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     public static GH_OasysComponent ComponentMother(bool isLoadPanel = false) {
-      return CreateElement2dTests.ComponentMother(isLoadPanel, isLoadPanel);
+      return ComponentMother(isLoadPanel, isLoadPanel);
     }
 
     public static GH_OasysComponent ComponentMother(bool isCurve, bool propertyIsLoadPanelType) {
       var comp = new Create2dElement();
       comp.CreateAttributes();
       if (isCurve) {
-        ComponentTestHelper.SetInput(
-          comp, Get2dPolyline(), 0);
+        ComponentTestHelper.SetInput(comp, Get2dPolyline(), 0);
       } else {
-        ComponentTestHelper.SetInput(
-          comp, GetMesh(), 0);
+        ComponentTestHelper.SetInput(comp, GetMesh(), 0);
       }
+
       ComponentTestHelper.SetInput(comp,
-       ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(propertyIsLoadPanelType)), 1);
+        ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(propertyIsLoadPanelType)), 1);
       comp.Preview3dSection = true;
       comp.ExpireSolution(true);
       return comp;
@@ -80,7 +78,8 @@ namespace GsaGHTests.Components.Geometry {
     [Theory]
     [InlineData(true, 4, 6)]
     [InlineData(false, 10, 8)]
-    public void CreateComponentWithSection3dPreviewTest(bool isLoadPanel, int expectedVerticesCount, int expectedOutlineCount) {
+    public void CreateComponentWithSection3dPreviewTest(
+      bool isLoadPanel, int expectedVerticesCount, int expectedOutlineCount) {
       var component = (Section3dPreviewComponent)ComponentMother(isLoadPanel);
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(component);
       Assert.Equal(expectedVerticesCount, output.Value.Section3dPreview.Mesh.Vertices.Count);
@@ -107,33 +106,31 @@ namespace GsaGHTests.Components.Geometry {
       GH_OasysComponent comp = ComponentMother(isCurve, isLoadPanel);
       ComponentTestHelper.GetOutput(comp);
       Assert.Contains("One runtime error", comp.InstanceDescription);
+    }
+  }
 
+  [Collection("GrasshopperFixture collection")]
+  public class Element2dErrorMessagesTests {
+    private readonly GH_OasysComponent _component;
+
+    public Element2dErrorMessagesTests() {
+      _component = CreateElement2dTests.ComponentMother(true);
     }
 
     [Fact]
     public void InvalidPolylineToCreateLoadPanel() {
-      bool isLoadPanel = true;
-      GH_OasysComponent comp = ComponentMother(isLoadPanel);
-      var curve = new PolylineCurve();
-      curve.SetPoint(0, new Point3d(0, 0, 0));
-      curve.SetPoint(0, new Point3d(0, 1, 0));
-      ComponentTestHelper.SetInput(
-         comp, curve, 0);
-      ComponentTestHelper.GetOutput(comp);
-      Assert.Contains("Polyline could not be extracted from the given curve geometry", comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error)[0]);
-
+      ComponentTestHelper.SetInput(_component, new PolylineCurve(), 0);
+      ComponentTestHelper.GetOutput(_component);
+      Assert.Contains(InvalidGeometryForProperty.CouldNotBeConvertedToPolyline,
+        _component.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error)[0]);
     }
 
     [Fact]
     public void InvalidGeometryToCreateLoadPanel() {
-      bool isLoadPanel = true;
-      GH_OasysComponent comp = ComponentMother(isLoadPanel);
-      var curve = new Line(new Point3d(0, 0, 0), new Point3d(0, 1, 0));
-      ComponentTestHelper.SetInput(
-         comp, curve, 0);
-      ComponentTestHelper.GetOutput(comp);
-      Assert.Contains("Input geometry is not supported to create a 2D element", comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error)[0]);
-
+      ComponentTestHelper.SetInput(_component, new Line(), 0);
+      ComponentTestHelper.GetOutput(_component);
+      Assert.Contains(InvalidGeometryForProperty.NotSupportedType,
+        _component.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error)[0]);
     }
   }
 }
