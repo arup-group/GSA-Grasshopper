@@ -47,25 +47,25 @@ namespace GsaGHTests.Parameters {
         MeshingParameters.DefaultAnalysisMesh, 0.001);
 
       var elem = new GsaElement2d(mesh);
-      int elid = 14;
-      int secid = 3;
-      var grps = new List<int>();
-      var dum = new List<bool>();
-      var nms = new List<string>();
+      int initialElementId = 14;
+      int initialSectionId = 3;
+      var groupId = new List<int>();
+      var dummy = new List<bool>();
+      var name = new List<string>();
       var off = new List<GsaOffset>();
       elem.Prop2ds = new List<GsaProperty2d>();
       for (int i = 0; i < elem.ApiElements.Count; i++) {
-        elem.Ids[i] = elid++;
-        grps.Add(22);
-        dum.Add(true);
-        nms.Add("Shahin");
+        elem.Ids[i] = initialElementId++;
+        groupId.Add(22);
+        dummy.Add(true);
+        name.Add("Shahin");
         off.Add(new GsaOffset(0, 0, 0, 0.1, LengthUnit.Meter));
-        elem.Prop2ds.Add(new GsaProperty2d(secid));
+        elem.Prop2ds.Add(new GsaProperty2d(initialSectionId));
       }
 
-      elem.ApiElements.SetMembers(grps);
-      elem.ApiElements.SetMembers(dum);
-      elem.ApiElements.SetMembers(nms);
+      elem.ApiElements.SetMembers(groupId);
+      elem.ApiElements.SetMembers(dummy);
+      elem.ApiElements.SetMembers(name);
       elem.ApiElements.SetMembers(off);
 
       for (int i = 0; i < elem.Topology.Count; i++) {
@@ -128,24 +128,24 @@ namespace GsaGHTests.Parameters {
       var origi = new GsaElement2d(mesh) {
         Prop2ds = new List<GsaProperty2d>()
       };
-      int elid = 3;
-      int secid = 4;
-      var grps = new List<int>();
-      var dum = new List<bool>();
-      var nms = new List<string>();
+      int initialElementId = 3;
+      int initialSectionId = 4;
+      var groupId = new List<int>();
+      var dummy = new List<bool>();
+      var name = new List<string>();
       var off = new List<GsaOffset>();
       for (int i = 0; i < origi.ApiElements.Count; i++) {
-        origi.Ids[i] = elid++;
-        origi.Prop2ds.Add(new GsaProperty2d(secid++));
-        grps.Add(2);
-        dum.Add(false);
-        nms.Add("Esmaeil");
+        origi.Ids[i] = initialElementId++;
+        origi.Prop2ds.Add(new GsaProperty2d(initialSectionId++));
+        groupId.Add(2);
+        dummy.Add(false);
+        name.Add("Esmaeil");
         off.Add(new GsaOffset(0, 0, 0, -0.15, LengthUnit.Meter));
       }
 
-      origi.ApiElements.SetMembers(grps);
-      origi.ApiElements.SetMembers(dum);
-      origi.ApiElements.SetMembers(nms);
+      origi.ApiElements.SetMembers(groupId);
+      origi.ApiElements.SetMembers(dummy);
+      origi.ApiElements.SetMembers(name);
       origi.ApiElements.SetMembers(off);
 
       var dup = new GsaElement2d(origi);
@@ -195,8 +195,8 @@ namespace GsaGHTests.Parameters {
       }
 
       // make some changes to original
-      elid = 15;
-      secid = 30;
+      initialElementId = 15;
+      initialSectionId = 30;
       var ids2 = new List<int>();
       var grps2 = new List<int>();
       var dum2 = new List<bool>();
@@ -204,12 +204,12 @@ namespace GsaGHTests.Parameters {
       var off2 = new List<GsaOffset>();
       var sects = new List<GsaProperty2d>();
       for (int i = 0; i < origi.ApiElements.Count; i++) {
-        ids2.Add(elid++);
+        ids2.Add(initialElementId++);
         grps2.Add(4);
         dum2.Add(true);
         nms2.Add("Mani");
         off2.Add(new GsaOffset(0, 0, 0, -0.17));
-        sects.Add(new GsaProperty2d(secid++));
+        sects.Add(new GsaProperty2d(initialSectionId++));
       }
 
       origi.Ids = ids2;
@@ -345,27 +345,27 @@ namespace GsaGHTests.Parameters {
         MeshingParameters.DefaultAnalysisMesh, 0.001);
 
       var elem = new GsaElement2d(mesh);
-      int elid = 14;
-      int secid = 3;
-      var grps = new List<int>();
-      var dum = new List<bool>();
-      var nms = new List<string>();
+      int initialElementId = 14;
+      int initialSectionId = 3;
+      var groupId = new List<int>();
+      var dummy = new List<bool>();
+      var name = new List<string>();
       var off = new List<GsaOffset>();
       elem.Prop2ds = new List<GsaProperty2d>();
       for (int i = 0; i < elem.ApiElements.Count; i++) {
-        elem.Ids[i] = elid++;
-        grps.Add(22);
-        dum.Add(true);
-        nms.Add("Shahin");
+        elem.Ids[i] = initialElementId++;
+        groupId.Add(22);
+        dummy.Add(true);
+        name.Add("Shahin");
         off.Add(new GsaOffset(0, 0, 0, 0.1, LengthUnit.Meter));
-        elem.Prop2ds.Add(new GsaProperty2d(secid) {
+        elem.Prop2ds.Add(new GsaProperty2d(initialSectionId) {
           ApiProp2d = new Prop2D(),
         });
       }
 
-      elem.ApiElements.SetMembers(grps);
-      elem.ApiElements.SetMembers(dum);
-      elem.ApiElements.SetMembers(nms);
+      elem.ApiElements.SetMembers(groupId);
+      elem.ApiElements.SetMembers(dummy);
+      elem.ApiElements.SetMembers(name);
       elem.ApiElements.SetMembers(off);
 
       elem.ApiElements[0].Type = ElementType.QUAD4;

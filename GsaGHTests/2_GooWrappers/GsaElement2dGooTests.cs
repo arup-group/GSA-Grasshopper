@@ -21,8 +21,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(true)]
     [InlineData(false)]
     public void GsaElement2dGooDrawViewportMeshesAndWiresTest(bool isLoadPanel) {
-      var component = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(isLoadPanel, isLoadPanel);
-      component.Preview3dSection = true;
+      var component = CreateElement2dTests.ComponentMother(isLoadPanel);
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(component);
       GH_OasysGeometryGooTests.DrawViewportMeshesAndWiresTest(output);
     }
@@ -33,7 +32,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(false,true)]
     [InlineData(false, false)]
     public void GetGeometryTest(bool isLoadPanel, bool preview3dSection) {
-      var component = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(isLoadPanel, isLoadPanel);
+      var component = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(isLoadPanel);
       component.Preview3dSection = preview3dSection;
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(component);
       Assert.NotNull(output.GetGeometry());
@@ -50,7 +49,7 @@ namespace GsaGHTests.GooWrappers {
 
     [Fact]
     public void GsaElement2dGooCastToCurveTest() {
-      var component = (Section3dPreviewComponent)CreateElement2dTests.ComponentMotherLoadPanel();
+      var component = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(true);
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(component);
       var curve = new GH_Curve();
       Assert.True(output.CastTo(ref curve));
@@ -69,7 +68,7 @@ namespace GsaGHTests.GooWrappers {
 
     [Fact]
     public void StretchingASection3dShouldOutputAValidCurve() {
-      var component = (Section3dPreviewComponent)CreateElement2dTests.ComponentMotherLoadPanel();
+      var component = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(true);
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(component);
       var morph = new StretchSpaceMorph(new Point3d(0, 0, 0), new Point3d(2, 0, 0), 3);
       var morphed = (GsaElement2dGoo)output.Morph(morph);

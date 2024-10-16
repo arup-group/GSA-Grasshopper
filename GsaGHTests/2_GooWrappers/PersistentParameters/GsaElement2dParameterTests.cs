@@ -23,8 +23,7 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(true, 1)]
     [InlineData(false, 10)]
     public void GsaElement2dParameterBakeTest(bool isLoadpanel, int expectedObjectCount) {
-      var component = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(isLoadpanel, isLoadpanel);
-      component.Preview3dSection = true;
+      var component = (Section3dPreviewComponent)CreateElement2dTests.ComponentMother(isLoadpanel);
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(component);
 
       var parameter = new GsaElement2dParameter();

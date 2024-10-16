@@ -68,7 +68,7 @@ namespace GsaGHTests.Model {
     public void GetModelGeometryElement2dDrawViewportMeshesAndWiresTest(bool isLoadPanel) {
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromGeometry(null, null, new List<GsaElement2dGoo>() {
-          (GsaElement2dGoo)ComponentTestHelper.GetOutput(CreateElement2dTests.ComponentMother(isLoadPanel, isLoadPanel)),
+          (GsaElement2dGoo)ComponentTestHelper.GetOutput(CreateElement2dTests.ComponentMother(isLoadPanel)),
         }, null, null, null, ModelUnit.M));
 
       var component = new GetModelGeometry();

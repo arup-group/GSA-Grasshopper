@@ -45,7 +45,11 @@ namespace GsaGHTests.Components.Geometry {
       return mesh;
     }
 
-    public static GH_OasysComponent ComponentMother(bool isCurve = false, bool propertyIsLoadPanelType = false) {
+    public static GH_OasysComponent ComponentMother(bool isLoadPanel = false) {
+      return CreateElement2dTests.ComponentMother(isLoadPanel, isLoadPanel);
+    }
+
+    public static GH_OasysComponent ComponentMother(bool isCurve, bool propertyIsLoadPanelType) {
       var comp = new Create2dElement();
       comp.CreateAttributes();
       if (isCurve) {
@@ -60,18 +64,6 @@ namespace GsaGHTests.Components.Geometry {
       comp.Preview3dSection = true;
       comp.ExpireSolution(true);
       return comp;
-    }
-
-    public static GH_OasysComponent ComponentMotherLoadPanel(bool setGeometry = true) {
-      var component = new Create2dElement();
-      component.CreateAttributes();
-      if (setGeometry) {
-        ComponentTestHelper.SetInput(
-         component, Get2dPolyline(), 0);
-      }
-      ComponentTestHelper.SetInput(component,
-       ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(true)), 1);
-      return component;
     }
 
     [Fact]
@@ -89,7 +81,7 @@ namespace GsaGHTests.Components.Geometry {
     [InlineData(true, 4, 6)]
     [InlineData(false, 10, 8)]
     public void CreateComponentWithSection3dPreviewTest(bool isLoadPanel, int expectedVerticesCount, int expectedOutlineCount) {
-      var component = (Section3dPreviewComponent)ComponentMother(isLoadPanel, isLoadPanel);
+      var component = (Section3dPreviewComponent)ComponentMother(isLoadPanel);
       var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(component);
       Assert.Equal(expectedVerticesCount, output.Value.Section3dPreview.Mesh.Vertices.Count);
       Assert.Equal(expectedOutlineCount, output.Value.Section3dPreview.Outlines.Count());
@@ -120,7 +112,8 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void InvalidPolylineToCreateLoadPanel() {
-      GH_OasysComponent comp = ComponentMotherLoadPanel(false);
+      bool isLoadPanel = true;
+      GH_OasysComponent comp = ComponentMother(isLoadPanel);
       var curve = new PolylineCurve();
       curve.SetPoint(0, new Point3d(0, 0, 0));
       curve.SetPoint(0, new Point3d(0, 1, 0));
@@ -133,7 +126,8 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void InvalidGeometryToCreateLoadPanel() {
-      GH_OasysComponent comp = ComponentMotherLoadPanel(false);
+      bool isLoadPanel = true;
+      GH_OasysComponent comp = ComponentMother(isLoadPanel);
       var curve = new Line(new Point3d(0, 0, 0), new Point3d(0, 1, 0));
       ComponentTestHelper.SetInput(
          comp, curve, 0);
