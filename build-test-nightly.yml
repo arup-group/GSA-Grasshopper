@@ -78,7 +78,7 @@ jobs:
 
       - powershell: |
           & 'C:\Program Files\Oasys\*\GSA.exe' /Register
-          displayName: 'Register GSA COM'
+        displayName: 'Register GSA COM'
         failOnStderr: false
       
       - task: NuGetToolInstaller@1
