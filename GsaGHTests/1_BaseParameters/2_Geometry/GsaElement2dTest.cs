@@ -27,24 +27,12 @@ namespace GsaGHTests.Parameters {
     public void DuplicateTest() {
       var original = new GsaElement2d(new Mesh());
       var duplicate = new GsaElement2d(original);
-      Duplicates.AreEqual(original, duplicate, new List<string>() {
-        "Guid"
-      });
+      Duplicates.AreEqual(original, duplicate, new List<string>() { "Guid" });
     }
 
     [Fact]
     public void TestCreateGsaElem2dFromMesh() {
-      var pts = new Point3dList {
-        new Point3d(-3, -4, 0),
-        new Point3d(5, -2, 0),
-        new Point3d(6, 7, 0),
-        new Point3d(-1, 2, 0),
-      };
-      pts.Add(pts[0]);
-      var pol = new Polyline(pts);
-
-      var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
-        MeshingParameters.DefaultAnalysisMesh, 0.001);
+      Mesh mesh = ToMesh(new Polyline(Point3dList1()));
 
       var elem = new GsaElement2d(mesh);
       int elid = 14;
@@ -120,23 +108,22 @@ namespace GsaGHTests.Parameters {
       }
     }
 
-    [Fact]
-    public void TestDuplicateElem2d() {
+    private static Point3dList Point3dList1() {
       var pts = new Point3dList {
-        new Point3d(0, 0, 0),
-        new Point3d(0, 5, 0),
-        new Point3d(5, 5, 0),
-        new Point3d(5, 0, 0),
+        new Point3d(-3, -4, 0),
+        new Point3d(5, -2, 0),
+        new Point3d(6, 7, 0),
+        new Point3d(-1, 2, 0),
       };
       pts.Add(pts[0]);
-      var pol = new Polyline(pts);
+      return pts;
+    }
 
-      var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
-        MeshingParameters.DefaultAnalysisMesh, 0.001);
+    [Fact]
+    public void TestDuplicateElem2d() {
+      Mesh mesh = ToMesh(new Polyline(Point3dList2()));
 
-      var origi = new GsaElement2d(mesh) {
-        Prop2ds = new List<GsaProperty2d>()
-      };
+      var origi = new GsaElement2d(mesh) { Prop2ds = new List<GsaProperty2d>() };
       int elid = 3;
       int secid = 4;
       var grps = new List<int>();
@@ -254,6 +241,17 @@ namespace GsaGHTests.Parameters {
       }
     }
 
+    private static Point3dList Point3dList2() {
+      var pts = new Point3dList {
+        new Point3d(0, 0, 0),
+        new Point3d(0, 5, 0),
+        new Point3d(5, 5, 0),
+        new Point3d(5, 0, 0),
+      };
+      pts.Add(pts[0]);
+      return pts;
+    }
+
     [Fact]
     public void CreateSectionNotNull() {
       GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
@@ -341,18 +339,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(Color.DarkCyan.ToArgb(), ele.Mesh.VertexColors[0].ToArgb());
       Assert.Equal(Color.DarkBlue.ToArgb(), ele.Mesh.VertexColors[1].ToArgb());
     }
-    private GsaElement2d CreateSampleElement2dWithQuad4Type() {
-      var pts = new Point3dList {
-       new Point3d(-3, -4, 0),
-       new Point3d(5, -2, 0),
-       new Point3d(6, 7, 0),
-       new Point3d(-1, 2, 0),
-     };
-      pts.Add(pts[0]);
-      var pol = new Polyline(pts);
 
-      var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(),
-        MeshingParameters.DefaultAnalysisMesh, 0.001);
+    private GsaElement2d CreateSampleElement2dWithQuad4Type() {
+      Mesh mesh = ToMesh(new Polyline(Point3dList1()));
 
       var elem = new GsaElement2d(mesh);
       int elid = 14;
@@ -379,12 +368,27 @@ namespace GsaGHTests.Parameters {
       elem.ApiElements.SetMembers(off);
 
       elem.ApiElements[0].Type = ElementType.QUAD4;
-      elem.ApiElements[0].Topology = new ReadOnlyCollection<int>(new List<int>(4) { 1, 2, 3, 4 });
+      elem.ApiElements[0].Topology = new ReadOnlyCollection<int>(new List<int>(4) {
+        1,
+        2,
+        3,
+        4
+      });
       elem.ApiElements[1].Type = ElementType.QUAD4;
-      elem.ApiElements[1].Topology = new ReadOnlyCollection<int>(new List<int>(4) { 4, 3, 2, 1 });
+      elem.ApiElements[1].Topology = new ReadOnlyCollection<int>(new List<int>(4) {
+        4,
+        3,
+        2,
+        1
+      });
       elem.ApiElements.RemoveRange(2, 20);
 
       return elem;
+    }
+
+    private static Mesh ToMesh(Polyline pol) {
+      var mesh = Mesh.CreateFromPlanarBoundary(pol.ToPolylineCurve(), MeshingParameters.DefaultAnalysisMesh, 0.001);
+      return mesh;
     }
   }
 }
