@@ -24,6 +24,16 @@ using PostHog = OasysGH.Helpers.PostHog;
 using Utility = OasysGH.Utility;
 
 namespace GsaGH {
+  public interface IAnalytics {
+    void PluginLoaded(OasysPluginInfo pluginInfo, string error = "");
+  }
+
+  public class PostHoGAnalytics : IAnalytics {
+    public void PluginLoaded(OasysPluginInfo pluginInfo, string error = "") {
+      PostHog.PluginLoaded(pluginInfo, error);
+    }
+  }
+
   public class GsaGhInfo : GH_AssemblyInfo {
     internal readonly struct GsaVersionRequired {
       internal static readonly int MajorVersion = 10;
@@ -84,6 +94,15 @@ namespace GsaGH {
       => "Version " + GrasshopperVersion
         + $" of GSA-Grasshopper requires {GsaVersionRequired.FullVersion} installed. Please upgrade {ProductName}.";
     private string _GsaApiDllVersion;
+    private readonly IAnalytics _analytics;
+    private readonly bool _underTest;
+
+    public AddReferencePriority() : this(new PostHoGAnalytics(), underTest: false) { }
+
+    internal AddReferencePriority(IAnalytics analytics, bool underTest) {
+      _analytics = analytics;
+      _underTest = underTest;
+    }
 
     public override GH_LoadingInstruction PriorityLoad() {
       if (string.IsNullOrEmpty(TryFindPluginPath("GSA.gha"))) {
@@ -101,8 +120,10 @@ namespace GsaGH {
 
       // this is a temporary fix for TDA
       // needs more investigation!
-      if (Assembly.GetEntryAssembly() != null && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
-        Assembly.LoadFile(PluginPath + MicrosoftDataSqliteDll);
+      if (!_underTest) {
+        if (Assembly.GetEntryAssembly() != null && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
+          Assembly.LoadFile(PluginPath + MicrosoftDataSqliteDll);
+        }
       }
 
       SetInstances();
@@ -116,12 +137,11 @@ namespace GsaGH {
         SetGsaApiInstalledVersion();
 
         if (CheckGsaUpdateIsRequired(_GsaApiDllVersion, GsaVersionRequired.FullVersion)) {
+          LoadException(_GsaUpgradeRequiredMessage, GsaVersionMustBeUpdatedMessage);
           return false;
         }
       } catch (Exception e) {
-        string loadedPlugins = LoadedPlugins();
-        string message = DisablePluginsErrorMessage(e.Message, loadedPlugins);
-        LoadException(_LoadingGsaApiMessage, message);
+        LoadException(_LoadingGsaApiMessage, DisablePluginsErrorMessage(e.Message, LoadedPlugins()));
         return false;
       }
 
@@ -145,7 +165,7 @@ namespace GsaGH {
     private void SetPlugins() {
       Utility.InitialiseMainMenuUnitsAndDependentPluginsCheck();
       RhinoApp.Closing += GsaComHelper.Dispose;
-      PostHog.PluginLoaded(PluginInfo.Instance, _GsaApiDllVersion);
+      _analytics.PluginLoaded(PluginInfo.Instance, _GsaApiDllVersion);
     }
 
     private static void SetInstances() {
@@ -162,17 +182,17 @@ namespace GsaGH {
       return loadedPlugins;
     }
 
-    public static bool CheckGsaUpdateIsRequired(string gsaApiDllVersion, string gsaVersionNeeded) {
-      string[] splittedGsaApiDllVer = gsaApiDllVersion.Split('.');
-      string[] splittedGsaVerNeeded = gsaVersionNeeded.Split('.');
+    public static bool CheckGsaUpdateIsRequired(string foundVersion, string minimumVersion) {
+      char separator = '.';
+      string[] splitFoundVersion = foundVersion.Split(separator);
+      string[] splitMinimumVersion = minimumVersion.Split(separator);
 
-      if ((int.Parse(splittedGsaApiDllVer[0]) >= int.Parse(splittedGsaVerNeeded[0]))
-        & (int.Parse(splittedGsaApiDllVer[1]) >= int.Parse(splittedGsaVerNeeded[1]))
-        & (int.Parse(splittedGsaApiDllVer[2]) >= int.Parse(splittedGsaVerNeeded[2]))) {
+      if (int.Parse(splitFoundVersion[0]) >= int.Parse(splitMinimumVersion[0])
+        && int.Parse(splitFoundVersion[1]) >= int.Parse(splitMinimumVersion[1])
+        && int.Parse(splitFoundVersion[2]) >= int.Parse(splitMinimumVersion[2])) {
         return false;
       }
 
-      LoadException(_GsaUpgradeRequiredMessage, GsaVersionMustBeUpdatedMessage);
       return true;
     }
 
@@ -196,8 +216,7 @@ namespace GsaGH {
       const string name = "PATH";
       string pathvar = Environment.GetEnvironmentVariable(name);
       string value = InstallPath + ";" + pathvar;
-      EnvironmentVariableTarget target = EnvironmentVariableTarget.Process;
-      Environment.SetEnvironmentVariable(name, value, target);
+      Environment.SetEnvironmentVariable(name, value, EnvironmentVariableTarget.Process);
     }
 
     private static string TryFindPluginPath(string keyword) {

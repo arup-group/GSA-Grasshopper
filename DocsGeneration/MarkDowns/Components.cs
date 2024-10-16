@@ -99,7 +99,7 @@ namespace DocsGeneration.MarkDowns {
             FileHelper.CreateIconLink(property),
             FileHelper.CreateParameterLink(property, parmeterNames),
             StringHelper.MakeBold(property.Name),
-            property.Description.Replace("GSA ", string.Empty),
+            property.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty),
          });
         }
 
