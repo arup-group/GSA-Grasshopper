@@ -52,7 +52,7 @@ namespace GsaGH.Parameters {
 
       Value.SupportPreview?.DrawViewportWires(args);
 
-      if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+      if (args.Color == Colours.EntityIsNotSelected) {
         // this is a workaround to change colour between selected and not
         if ((Color)Value.ApiNode.Colour != Color.FromArgb(0, 0, 0)) {
           args.Pipeline.DrawPoint(

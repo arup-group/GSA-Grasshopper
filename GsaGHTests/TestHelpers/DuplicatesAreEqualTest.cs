@@ -21,8 +21,13 @@ namespace GsaGHTests.Helpers {
         = typeB.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
       for (int i = 0; i < propertyInfoA.Length; i++) {
+
         PropertyInfo propertyA = propertyInfoA[i];
         PropertyInfo propertyB = propertyInfoB[i];
+
+        if (IsExcluded(propertyA, excluded)) {
+          continue;
+        }
 
         if (!propertyA.CanWrite && !propertyB.CanWrite) {
           continue;
@@ -36,6 +41,7 @@ namespace GsaGHTests.Helpers {
         Type propertyTypeB = propertyB.PropertyType;
 
         try {
+
           objPropertyValueA = propertyA.GetValue(objA, null);
           objPropertyValueB = propertyB.GetValue(objB, null);
 

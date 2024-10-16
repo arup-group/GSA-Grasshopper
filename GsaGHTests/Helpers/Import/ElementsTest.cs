@@ -1,12 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Cryptography;
+
+using Grasshopper.Kernel.Geometry;
+using Grasshopper.Kernel.Geometry.SpatialTrees;
 
 using GsaAPI;
 
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 
+using Rhino.Collections;
 using Rhino.Geometry;
 
 using Xunit;
@@ -32,7 +37,7 @@ namespace GsaGHTests.Helpers.Import {
     public void ImportElement2dTest() {
       var model = new GsaModel(ImportElementsMotherModel());
       var elements = new Elements(model);
-      GsaElement2d elem = elements.Element2ds.First().Value;
+      GsaElement2d elem = elements.Element2ds.Where(x => x.Value.IsLoadPanel == false).First().Value;
       Assert.Equal("EC2-1-1", elem.Prop2ds[0].Material.ConcreteDesignCodeName);
       Assert.Equal(200, elem.Prop2ds[0].Thickness.Millimeters);
       Duplicates.AreEqual(model.Materials.ConcreteMaterials[1], elem.Prop2ds[0].Material);
@@ -42,6 +47,20 @@ namespace GsaGHTests.Helpers.Import {
       AssertPointsAreEqual(new Point3d(4.5, 0, 0), elem.Mesh.Vertices[1]);
       AssertPointsAreEqual(new Point3d(4.5, 4.5, 0), elem.Mesh.Vertices[2]);
       AssertPointsAreEqual(new Point3d(0, 4.5, 0), elem.Mesh.Vertices[3]);
+    }
+
+    [Fact]
+    public void ImportLoadPanelTest() {
+      var model = new GsaModel(ImportElementsMotherModel());
+      var elements = new Elements(model);
+      GsaElement2d elem = elements.Element2ds.Where(x => x.Value.IsLoadPanel).First().Value;
+      Assert.Equal(Property2D_Type.LOAD, elem.Prop2ds[0].ApiProp2d.Type);
+      var polyline = new Rhino.Geometry.Polyline();
+      elem.Curve.TryGetPolyline(out polyline);
+      AssertPointsAreEqual(new Point3d(0, 0, 0), polyline.ElementAt(0));
+      AssertPointsAreEqual(new Point3d(4.5, 0, 0), polyline.ElementAt(1));
+      AssertPointsAreEqual(new Point3d(4.5, 4.5, 0), polyline.ElementAt(2));
+      AssertPointsAreEqual(new Point3d(0, 4.5, 0), polyline.ElementAt(3));
     }
 
     [Fact]
@@ -151,13 +170,19 @@ namespace GsaGHTests.Helpers.Import {
           }),
         Property = 2,
       });
-
       model.AddElement(new Element() {
         Type = ElementType.BRICK8,
         Topology = new ReadOnlyCollection<int>(new List<int>() {
           1, 2, 3, 4, 5, 6, 7, 8,
           }),
         Property = 5,
+      });
+
+      model.AddLoadPanelElement(new LoadPanelElement {
+        Topology = new ReadOnlyCollection<int>(new List<int>() {
+          1, 2, 3, 4
+          }),
+        Property = 8,
       });
 
       return model;

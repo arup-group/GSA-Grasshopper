@@ -37,7 +37,7 @@ namespace GsaGH.Parameters {
     protected override GsaElement2dGoo PreferredCast(object data) {
       var mesh = new Mesh();
       if (GH_Convert.ToMesh(data, ref mesh, GH_Conversion.Both)) {
-        return new GsaElement2dGoo(new GsaElement2d(mesh, false));
+        return new GsaElement2dGoo(new GsaElement2d(mesh));
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Element2d");
@@ -49,8 +49,12 @@ namespace GsaGH.Parameters {
       att ??= doc.CreateDefaultAttributes();
       att.ColorSource = ObjectColorSource.ColorFromObject;
       foreach (GsaElement2dGoo goo in m_data.AllData(true).Cast<GsaElement2dGoo>()) {
-        gH_BakeUtility.BakeObject(new GH_Mesh(goo.Value.Mesh), att, doc);
-        goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
+        if (goo.Value.IsLoadPanel) {
+          gH_BakeUtility.BakeObject(new GH_Curve(goo.Value.Curve), att, doc);
+        } else {
+          gH_BakeUtility.BakeObject(new GH_Mesh(goo.Value.Mesh), att, doc);
+          goo.Value.Section3dPreview?.BakeGeometry(ref gH_BakeUtility, doc, att);
+        }
       }
       obj_ids.AddRange(gH_BakeUtility.BakedIds);
     }

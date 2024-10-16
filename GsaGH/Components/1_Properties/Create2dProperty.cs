@@ -34,33 +34,35 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.quinary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Create2dProperty;
-    private readonly IReadOnlyDictionary<Prop2dType, string> _dropdownTopLevel
-      = new Dictionary<Prop2dType, string> {
-        { Prop2dType.PlaneStress, "Plane Stress" },
-        { Prop2dType.Fabric, "Fabric" },
-        { Prop2dType.FlatPlate, "Flat Plate" },
-        { Prop2dType.Shell, "Shell" },
-        { Prop2dType.CurvedShell, "Curved Shell" },
-        { Prop2dType.LoadPanel, "Load Panel" },
-      };
-    private readonly IReadOnlyDictionary<SupportType, string> _supportDropDown
-      = new Dictionary<SupportType, string> {
-        { SupportType.Auto, "Automatic" },
-        { SupportType.AllEdges, "All edges" },
-        { SupportType.ThreeEdges, "Three edges" },
-        { SupportType.TwoEdges, "Two edges" },
-        { SupportType.TwoAdjacentEdges, "Two adjacent edges" },
-        { SupportType.OneEdge, "One edge" },
-        { SupportType.Cantilever, "Cantilever" },
-      };
+    private readonly IReadOnlyDictionary<Prop2dType, string> _dropdownTopLevel = new Dictionary<Prop2dType, string> {
+      { Prop2dType.PlaneStress, "Plane Stress" },
+      { Prop2dType.Fabric, "Fabric" },
+      { Prop2dType.FlatPlate, "Flat Plate" },
+      { Prop2dType.Shell, "Shell" },
+      { Prop2dType.CurvedShell, "Curved Shell" },
+      { Prop2dType.LoadPanel, "Load Panel" },
+    };
+    private readonly IReadOnlyDictionary<SupportType, string> _supportDropDown = new Dictionary<SupportType, string> {
+      { SupportType.Auto, "Automatic" },
+      { SupportType.AllEdges, "All edges" },
+      { SupportType.ThreeEdges, "Three edges" },
+      { SupportType.TwoEdges, "Two edges" },
+      { SupportType.TwoAdjacentEdges, "Two adjacent edges" },
+      { SupportType.OneEdge, "One edge" },
+      { SupportType.Cantilever, "Cantilever" },
+      { SupportType.OneWay, "One-way" },
+      { SupportType.TwoWay, "Two-way" },
+    };
+
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
     private Prop2dType _mode = Prop2dType.Shell;
     private int _supportTypeIndex;
+    public const string UseOfLegacyTypeWarningMessage
+      = "You are using a legacy support type for Load Panel.\nThis will be removed in future versions. Please use OneWay or TwoWay instead.";
 
-    public Create2dProperty() : base("Create 2D Property", "Prop2d", "Create a GSA 2D Property",
-      CategoryName.Name(), SubCategoryName.Cat1()) {
+    public Create2dProperty() : base("Create 2D Property", "Prop2d", "Create a GSA 2D Property", CategoryName.Name(),
+      SubCategoryName.Cat1()) {
       Hidden = true;
-
     }
 
     public override void SetSelected(int i, int j) {
@@ -85,13 +87,25 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
+    private bool IsLegacySupportEdge(Prop2D property2d = null) {
+      if (property2d != null) {
+        return property2d.SupportType != SupportType.Auto && property2d.SupportType != SupportType.AllEdges
+          && property2d.SupportType != SupportType.OneWay && property2d.SupportType != SupportType.TwoWay;
+      }
+
+      return _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
+        && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges)
+        && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.OneWay)
+        && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.TwoWay);
+    }
+
     public override void VariableParameterMaintenance() {
       switch (_mode) {
         case Prop2dType.LoadPanel:
-          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
-            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges)) {
+          if (IsLegacySupportEdge()) {
             SetReferenceEdgeInputAt(0);
           }
+
           return;
 
         case Prop2dType.Fabric:
@@ -102,16 +116,17 @@ namespace GsaGH.Components {
         case Prop2dType.PlaneStress:
         case Prop2dType.FlatPlate:
         case Prop2dType.CurvedShell:
-          SetInputProperties(0, "Thk", $"Thickness [{Length.GetAbbreviation(_lengthUnit)}]",
-            "Section thickness", optional: false);
+          SetInputProperties(0, "Thk", $"Thickness [{Length.GetAbbreviation(_lengthUnit)}]", "Section thickness",
+            optional: false);
           SetMaterialInputAt(1);
 
           if (_mode != Prop2dType.PlaneStress) {
             SetInputProperties(2, "RS", "Reference Surface",
               "Reference Surface Middle = 0 (default), Top = 1, Bottom = 2", optional: true);
-            SetInputProperties(3, "Off", $"Offset [{Length.GetAbbreviation(_lengthUnit)}]",
-              "Additional Offset", optional: true);
+            SetInputProperties(3, "Off", $"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Additional Offset",
+              optional: true);
           }
+
           return;
       }
     }
@@ -135,13 +150,13 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddGenericParameter("Thickness [" + Length.GetAbbreviation(_lengthUnit) + "]",
-        "Thk", "Section thickness", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Thickness [{Length.GetAbbreviation(_lengthUnit)}]", "Thk", "Section thickness",
+        GH_ParamAccess.item);
       pManager.AddParameter(new GsaMaterialParameter());
       pManager.AddGenericParameter("Reference Surface", "RS",
         "Reference Surface Middle = 0 (default), Top = 1, Bottom = 2", GH_ParamAccess.item);
-      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off",
-        "Additional Offset", GH_ParamAccess.item);
+      pManager.AddGenericParameter($"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Off", "Additional Offset",
+        GH_ParamAccess.item);
       pManager[2].Optional = true;
       pManager[3].Optional = true;
     }
@@ -168,7 +183,18 @@ namespace GsaGH.Components {
           break;
       }
 
-      if (_mode != Prop2dType.LoadPanel) {
+      if (_mode == Prop2dType.LoadPanel) {
+        prop.ApiProp2d.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
+        if (IsLegacySupportEdge(prop.ApiProp2d)) {
+          this.AddRuntimeWarning(UseOfLegacyTypeWarningMessage);
+          int referenceEdge = 0;
+          if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0 && referenceEdge <= 4) {
+            prop.ApiProp2d.ReferenceEdge = referenceEdge;
+          } else {
+            this.AddRuntimeWarning("Input RE failed to collect data");
+          }
+        }
+      } else {
         prop.ApiProp2d.AxisProperty = 0;
 
         if (_mode != Prop2dType.Fabric) {
@@ -185,11 +211,12 @@ namespace GsaGH.Components {
                 if (GH_Convert.ToInt32(ghReferenceSurface.Value, out int reference, GH_Conversion.Both)) {
                   prop.ApiProp2d.ReferenceSurface = (ReferenceSurface)reference;
                 } else if (GH_Convert.ToString(ghReferenceSurface, out string value, GH_Conversion.Both)) {
-                  prop.ApiProp2d.ReferenceSurface = (ReferenceSurface)Enum.Parse(typeof(ReferenceSurface), value, ignoreCase: true);
+                  prop.ApiProp2d.ReferenceSurface
+                    = (ReferenceSurface)Enum.Parse(typeof(ReferenceSurface), value, ignoreCase: true);
                 }
               } catch {
-                this.AddRuntimeError("Unable to convert input " + ghReferenceSurface.Value +
-                  " to a Reference Surface (Middle = 0, Top = 1, Bottom = 2)");
+                this.AddRuntimeError(
+                  $"Unable to convert input {ghReferenceSurface.Value} to a Reference Surface (Middle = 0, Top = 1, Bottom = 2)");
                 return;
               }
             } else {
@@ -197,17 +224,6 @@ namespace GsaGH.Components {
             }
 
             prop.AdditionalOffsetZ = (Length)Input.UnitNumber(this, da, 3, _lengthUnit, true);
-          }
-        }
-      } else {
-        prop.ApiProp2d.SupportType = _supportDropDown.FirstOrDefault(x => x.Value == _selectedItems[1]).Key;
-        if (prop.ApiProp2d.SupportType != SupportType.Auto && prop.ApiProp2d.SupportType != SupportType.AllEdges) {
-          int referenceEdge = 0;
-          if (da.GetData("Reference edge", ref referenceEdge) && referenceEdge > 0
-            && referenceEdge <= 4) {
-            prop.ApiProp2d.ReferenceEdge = referenceEdge;
-          } else {
-            this.AddRuntimeWarning("Input RE failed to collect data");
           }
         }
       }
@@ -253,7 +269,8 @@ namespace GsaGH.Components {
           return item.Key;
         }
       }
-      throw new Exception("Unable to convert " + name + " to Prop2d Type");
+
+      throw new Exception($"Unable to convert {name} to Prop2d Type");
     }
 
     private void ResetDropdownMenus() {
@@ -270,9 +287,7 @@ namespace GsaGH.Components {
       }
     }
 
-    private void SetInputProperties(
-      int index, string nickname, string name, string description,
-      bool optional = true) {
+    private void SetInputProperties(int index, string nickname, string name, string description, bool optional = true) {
       Params.Input[index].NickName = nickname;
       Params.Input[index].Name = name;
       Params.Input[index].Description = description;
@@ -338,14 +353,23 @@ namespace GsaGH.Components {
           break;
 
         case Prop2dType.LoadPanel:
-          if (_supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
-            && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges)) {
+          if (IsLegacySupportEdge()) {
             Params.RegisterInputParam(new Param_Integer());
           }
+
           break;
       }
 
       _mode = mode;
+    }
+
+    public SupportType GetLoadPanelSupportType() {
+      return _supportDropDown.Keys.ToList()[_supportTypeIndex];
+    }
+
+    public void SetLoadPanelSupportType(SupportType supportType) {
+      SetSelected(0, 5);
+      SetSelected(1, _supportDropDown.Keys.ToList().IndexOf(supportType));
     }
   }
 }

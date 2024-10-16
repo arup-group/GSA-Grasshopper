@@ -15,6 +15,7 @@ namespace GsaGH.Helpers.Graphics {
   /// </summary>
   [ExcludeFromCodeCoverage]
   public class Colours {
+    public static Color EntityIsNotSelected => Color.FromArgb(255, 150, 0, 0);
     public static Brush ActiveBrush => new SolidBrush(ActiveColour);
     public static Color ActiveColour => GsaDarkBlue;
     public static Brush AnnotationTextBright => Brushes.White;
@@ -54,6 +55,7 @@ namespace GsaGH.Helpers.Graphics {
         return material;
       }
     }
+
     public static DisplayMaterial Element2dFaceSelected {
       get {
         var material = new DisplayMaterial {
@@ -64,6 +66,30 @@ namespace GsaGH.Helpers.Graphics {
         return material;
       }
     }
+
+    private static Color Element2dFaceColorForLoadPanel = Color.FromArgb(50, 195, 218, 219);
+
+    public static DisplayMaterial Element2dFaceLoadPanel {
+      get {
+        var material = new DisplayMaterial {
+          Diffuse = Element2dFaceColorForLoadPanel,
+          Emission = Color.FromArgb(50, 75, 218, 219),
+          Transparency = 0.1,
+        };
+        return material;
+      }
+    }
+
+    public static DisplayMaterial Element2dFaceSelectedLoadPanel {
+      get {
+        var material = new DisplayMaterial {
+          Diffuse = Element2dFaceColorForLoadPanel,
+          Transparency = 0.4,
+        };
+        return material;
+      }
+    }
+
     public static DisplayMaterial Element3dFace {
       get {
         var material = new DisplayMaterial {

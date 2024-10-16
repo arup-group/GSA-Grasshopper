@@ -3,6 +3,8 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers.Graphics;
+
 using OasysGH;
 using OasysGH.Parameters;
 
@@ -80,7 +82,7 @@ namespace GsaGH.Parameters {
 
       int thickness = 1;
       // this is a workaround to change colour between selected and not
-      if (args.Color != Color.FromArgb(255, 150, 0, 0)) {
+      if (args.Color != Colours.EntityIsNotSelected) {
         thickness = 3;
       }
 
@@ -90,7 +92,7 @@ namespace GsaGH.Parameters {
         int pattern = 999999;
         args.Pipeline.DrawPatternedPolyline(Value.Points, color, pattern, thickness, false);
 
-        if (args.Color != Color.FromArgb(255, 150, 0, 0)) {
+        if (args.Color != Colours.EntityIsNotSelected) {
           Value.Text.Bold = true;
         }
 

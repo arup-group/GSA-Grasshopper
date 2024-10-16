@@ -62,7 +62,7 @@ namespace GsaGH.Parameters {
 
       if (Value.PolyCurve != null) {
         // this is a workaround to change colour between selected and not
-        if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+        if (args.Color == Colours.EntityIsNotSelected) {
           if (Value.ApiMember.IsDummy) {
             args.Pipeline.DrawDottedPolyline(Value.Topology, Colours.Dummy1D, false);
           } else {
@@ -87,7 +87,7 @@ namespace GsaGH.Parameters {
           Point3dList pts = Value.Topology;
           for (int i = 0; i < pts.Count; i++) {
             // this is a workaround to change colour between selected and not
-            if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+            if (args.Color == Colours.EntityIsNotSelected) {
               if (i == 0 || i == pts.Count - 1) {
                 // draw first point bigger
                 args.Pipeline.DrawPoint(pts[i], PointStyle.RoundSimple, 2, Colours.Member1dNode);

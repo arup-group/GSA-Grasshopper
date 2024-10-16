@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Security.Cryptography;
 
 using Grasshopper;
 using Grasshopper.Kernel;
@@ -27,43 +28,59 @@ namespace GsaGH.Parameters {
     public GsaElement2dGoo(GsaElement2d item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {
-      if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
-        target = Value == null ? default : (TQ)(object)new GH_Mesh(Value.Mesh);
-        return true;
+      if (Value != null) {
+        if (Value.IsLoadPanel) {
+          if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
+            target = (TQ)(object)new GH_Curve(Value.Curve);
+            return true;
+          }
+        } else {
+          if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
+            target = (TQ)(object)new GH_Mesh(Value.Mesh);
+            return true;
+          }
+        }
       }
-
       target = default;
       return false;
     }
 
     public override void DrawViewportMeshes(GH_PreviewMeshArgs args) {
-      if (Value != null && Value.Mesh != null) {
-        args.Pipeline.DrawMeshShaded(Value?.Mesh,
-        args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)
-          ? Colours.Element2dFace : Colours.Element2dFaceSelected);
+      if (Value != null) {
+        if (Value.IsLoadPanel) {
+          if (Value.Curve != null) {
+            Brep[] PlanerBrep = Brep.CreatePlanarBreps(Value.Curve, Rhino.RhinoDoc.ActiveDoc != null ? Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance : 0.001);
+            foreach (Brep brep in PlanerBrep) {
+              args.Pipeline.DrawBrepShaded(brep, args.Material.Diffuse == Colours.EntityIsNotSelected
+              ? Colours.Element2dFaceLoadPanel : Colours.Element2dFaceSelectedLoadPanel);
+            }
+          }
+        } else {
+          if (Value.Mesh != null) {
+            args.Pipeline.DrawMeshShaded(Value?.Mesh,
+            args.Material.Diffuse == Colours.EntityIsNotSelected
+              ? Colours.Element2dFace : Colours.Element2dFaceSelected);
+          }
+        }
+        Value?.Section3dPreview?.DrawViewportMeshes(args);
       }
-
-      Value?.Section3dPreview?.DrawViewportMeshes(args);
     }
 
     public override void DrawViewportWires(GH_PreviewWireArgs args) {
-      if (Value == null || CentralSettings.PreviewMeshEdges == false || Value.Mesh == null) {
-        return;
-      }
-
-      Value.Section3dPreview?.DrawViewportWires(args);
-
-      if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
-        args.Pipeline.DrawMeshWires(Value.Mesh, Colours.Element2dEdge, 1);
-      } else {
-        args.Pipeline.DrawMeshWires(Value.Mesh, Colours.Element2dEdgeSelected, 2);
-      }
-
-      if (Value.Section3dPreview != null) {
-        if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
-          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Element2dEdge, 1);
+      if (Value != null) {
+        Value.Section3dPreview?.DrawViewportWires(args);
+        if (Value.Section3dPreview != null) {
+          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, 1);
+        }
+        if (Value.IsLoadPanel) {
+          if (Value.Curve != null) {
+            args.Pipeline.DrawCurve(Value.Curve, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, -1);
+          }
         } else {
-          args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Element2dEdgeSelected, 2);
+          if (CentralSettings.PreviewMeshEdges == false || Value.Mesh == null) {
+            return;
+          }
+          args.Pipeline.DrawMeshWires(Value.Mesh, args.Color == Colours.EntityIsNotSelected ? Colours.Element2dEdge : Colours.Element2dEdgeSelected, 1);
         }
       }
     }
@@ -76,22 +93,31 @@ namespace GsaGH.Parameters {
       if (Value == null) {
         return null;
       }
-
       if (Value.Section3dPreview != null && Value.Section3dPreview.Mesh != null) {
         return Value.Section3dPreview.Mesh;
       }
-
-      return Value.Mesh;
+      if (Value.IsLoadPanel) {
+        return Value.Curve;
+      } else {
+        return Value.Mesh;
+      }
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
       var elem = new GsaElement2d(Value) {
-        Ids = new List<int>(new int[Value.Mesh.Faces.Count]),
+        Ids = new List<int>(new int[Value.IsLoadPanel ? 1 : Value.Mesh.Faces.Count]),
       };
       elem.Topology?.Morph(xmorph);
-      Mesh m = Value.Mesh.DuplicateMesh();
-      xmorph.Morph(m);
-      elem.Mesh = m;
+      if (Value.IsLoadPanel) {
+        Curve m = Value.Curve.DuplicateCurve();
+        xmorph.Morph(m);
+        elem.Curve = m;
+      } else {
+        Mesh m = Value.Mesh.DuplicateMesh();
+        xmorph.Morph(m);
+        elem.Mesh = m;
+      }
+
       elem.Section3dPreview?.Morph(xmorph);
       return new GsaElement2dGoo(elem);
     }
@@ -100,12 +126,19 @@ namespace GsaGH.Parameters {
       var xpts = new Point3dList(Value.Topology);
       xpts.Transform(xform);
       var elem = new GsaElement2d(Value) {
-        Ids = new List<int>(new int[Value.Mesh.Faces.Count]),
+        Ids = new List<int>(new int[Value.IsLoadPanel ? 1 : Value.Mesh.Faces.Count]),
         Topology = xpts
       };
-      Mesh m = Value.Mesh.DuplicateMesh();
-      m.Transform(xform);
-      elem.Mesh = m;
+
+      if (Value.IsLoadPanel) {
+        Curve m = Value.Curve.DuplicateCurve();
+        m.Transform(xform);
+        elem.Curve = m;
+      } else {
+        Mesh m = Value.Mesh.DuplicateMesh();
+        m.Transform(xform);
+        elem.Mesh = m;
+      }
       elem.Section3dPreview?.Transform(xform);
       return new GsaElement2dGoo(elem);
     }

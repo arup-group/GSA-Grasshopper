@@ -65,14 +65,14 @@ namespace GsaGH.Parameters {
 
       if (Value.ApiMember.Type == MemberType.VOID_CUTTER_2D) {
         // this is a workaround to change colour between selected and not
-        if (args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)) {
+        if (args.Material.Diffuse == Colours.EntityIsNotSelected) {
           args.Pipeline.DrawBrepShaded(Value.Brep,
             Colours.Member2dVoidCutterFace);
         }
       } else {
         args.Pipeline.DrawBrepShaded(Value.Brep,
           // this is a workaround to change colour between selected and not
-          args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)
+          args.Material.Diffuse == Colours.EntityIsNotSelected
             ? Colours.Member2dFace : Colours.Member2dFaceSelected);
         Value?.Section3dPreview?.DrawViewportMeshes(args);
       }
@@ -90,7 +90,7 @@ namespace GsaGH.Parameters {
       Value.Section3dPreview?.DrawViewportWires(args);
 
       // this is a workaround to change colour between selected and not
-      bool selected = args.Color != Color.FromArgb(255, 150, 0, 0);
+      bool selected = args.Color != Colours.EntityIsNotSelected;
       if (Value.Brep != null) {
         if (!selected) {
           if (Value.ApiMember.Type == MemberType.VOID_CUTTER_2D) {
@@ -169,7 +169,7 @@ namespace GsaGH.Parameters {
       }
 
       if (Value.Section3dPreview != null) {
-        if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+        if (args.Color == Colours.EntityIsNotSelected) {
           args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Member2dEdge);
         } else {
           args.Pipeline.DrawLines(Value.Section3dPreview.Outlines, Colours.Member2dEdgeSelected);

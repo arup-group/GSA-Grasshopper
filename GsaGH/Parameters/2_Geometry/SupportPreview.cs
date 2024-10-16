@@ -111,7 +111,7 @@ namespace GsaGH.Parameters {
     }
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
-      if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+      if (args.Color == Colours.EntityIsNotSelected) {
         // this is a workaround to change colour between selected and not
 
         if (SupportSymbol != null) {

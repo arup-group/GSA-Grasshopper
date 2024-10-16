@@ -105,7 +105,7 @@ namespace GsaGH.Parameters {
     }
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
-      if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+      if (args.Color == Colours.EntityIsNotSelected) {
         args.Pipeline.DrawLines(Outlines, Colours.Element1d);
       } else {
         args.Pipeline.DrawLines(Outlines, Colours.Element1dSelected);

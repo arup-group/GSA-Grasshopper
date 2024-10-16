@@ -483,7 +483,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     public static Tuple<List<GSAElement>, Point3dList, List<List<int>>> ConvertMeshToElem2d(
-      Mesh mesh, bool isLoadPanel, bool createQuadraticElements = false) {
+      Mesh mesh, bool createQuadraticElements = false) {
       var elems = new List<GSAElement>();
       var topoPts = new Point3dList(mesh.Vertices.ToPoint3dArray());
       var topoInts = new List<List<int>>();
@@ -491,7 +491,7 @@ namespace GsaGH.Helpers.GH {
 
       foreach (MeshNgon ngon in ngons) {
 
-        GSAElement elem = isLoadPanel ? new GSAElement(new LoadPanelElement()) : new GSAElement(new Element());
+        var elem = new GSAElement(new Element());
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
 
         switch (topo.Count) {
@@ -778,6 +778,29 @@ namespace GsaGH.Helpers.GH {
       Plane.FitPlaneToPoints(ctrlPts, out Plane plane);
       plane.Normal.Unitize();
       return new Plane(plane.Origin, plane.Normal);
+    }
+
+    internal static Point3dList LoadPanelTopo(Curve curve) {
+      curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
+      var topology = new Point3dList();
+      foreach (Point3d item in polyline.ToArray()) {
+        if (!topology.Contains(item)) {
+          topology.Add(item);
+        }
+      }
+      return topology;
+    }
+
+    internal static List<List<int>> LoadPanelTopoIndices(Curve curve) {
+      curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
+      var topo = new List<int>();
+      foreach (Point3d p in polyline.ToList()) {
+        int index = polyline.ToList().IndexOf(p);
+        if (!topo.Contains(index)) {
+          topo.Add(index);
+        }
+      }
+      return new List<List<int>> { topo };
     }
   }
 }

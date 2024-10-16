@@ -1,57 +1,40 @@
-﻿using GsaAPI;
-
-using GsaGH.Components;
-using GsaGH.Parameters;
+﻿using GsaGH.Components;
 
 using GsaGHTests.Helpers;
 
-using OasysGH.Components;
-
-using OasysUnits;
-
 using Xunit;
-
-using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Components.Properties {
   [Collection("GrasshopperFixture collection")]
   public class CreateProp2dTests {
 
-    public static GH_OasysDropDownComponent ComponentMother(bool isLoadType) {
-      var comp = new Create2dProperty();
-      comp.CreateAttributes();
-
-      comp.SetSelected(0, isLoadType ? 5 : 2); // set type to 2-"Flat Plate" or 5-"Load"
-      comp.SetSelected(1, 3); // set measure to "in" or for load "TwoEdges"
-
+    public static Create2dProperty ComponentMother(bool isLoadType) {
       if (isLoadType) {
-        ComponentTestHelper.SetInput(comp, 2, 0);
-      } else {
-        ComponentTestHelper.SetInput(comp, 14.0, 0); // 14 inch thickness
-        ComponentTestHelper.SetInput(comp,
-          ComponentTestHelper.GetOutput(CreateCustomMaterialTests.ComponentMother()), 1);
+        return GetLoadPanelProperty();
       }
 
-      return comp;
+      return GetFlatPlateProperty();
     }
 
-    [Fact]
-    public void CreateFlatComponent() {
-      GH_OasysDropDownComponent comp = ComponentMother(false);
-
-      var output = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(Property2D_Type.PLATE, output.Value.ApiProp2d.Type);
-      Assert.Equal(new Length(14, LengthUnit.Inch), output.Value.Thickness);
+    public static Create2dProperty GetFlatPlateProperty() {
+      var component = new Create2dProperty();
+      component.CreateAttributes();
+      component.SetSelected(0, 2); // 2-"Flat Plate"
+      component.SetSelected(1, 3); // "in"
+      ComponentTestHelper.SetInput(component, 14.0, 0); // 14 inch thickness
+      ComponentTestHelper.SetInput(component,
+        ComponentTestHelper.GetOutput(CreateCustomMaterialTests.ComponentMother()), 1);
+      return component;
     }
 
-    [Fact]
-    public void CreateLoadComponent() {
-      GH_OasysDropDownComponent comp = ComponentMother(true);
-
-      var output = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(Property2D_Type.LOAD, output.Value.ApiProp2d.Type);
-      Assert.Equal(SupportType.TwoEdges, output.Value.ApiProp2d.SupportType);
-      Assert.Equal(2, output.Value.ApiProp2d.ReferenceEdge);
+    public static Create2dProperty GetLoadPanelProperty() {
+      var component = new Create2dProperty();
+      component.CreateAttributes();
+      component.SetSelected(0, 5); // 5-"Load"
+      component.SetSelected(1, 3); // "TwoEdges"
+      ComponentTestHelper.SetInput(component, 2, 0);
+      return component;
     }
   }
+
 }

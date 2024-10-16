@@ -154,6 +154,11 @@ namespace GsaGHTests.Helpers.Import {
         Description = "200(mm)"
       });
 
+      //property 8
+      model.AddProp2D(new Prop2D() {
+        Type = Property2D_Type.LOAD
+      }); ;
+
       model.AddProp3D(new Prop3D() {
         MaterialType = MaterialType.STEEL, // 1
         MaterialGradeProperty = 1,
