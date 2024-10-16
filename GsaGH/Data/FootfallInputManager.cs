@@ -127,7 +127,7 @@ namespace GsaGH.Data {
     private List<InputAttributes> CreateInputAttributesList() {
       var attributes = new List<InputAttributes>() {
         _modalAnalysisTaskAttributes,
-        _responseNodesAttributes,
+        // _responseNodesAttributes,
       };
 
       if (_selfExcitation) {
