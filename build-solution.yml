@@ -9,6 +9,10 @@ parameters:
   default: Release
 
 steps:
+- powershell: |
+    dir
+  displayName: 'list dir'
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
