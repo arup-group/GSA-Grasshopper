@@ -1,7 +1,7 @@
 parameters:
 - name: repoRoot
   type: string
-  dedault: ''
+  default: ''
 - name: solution
   type: string
 - name: configuration
