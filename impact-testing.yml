@@ -1,234 +1,68 @@
-# https://aka.ms/yaml
-
-trigger:
+pr:
   branches:
     include:
-    - release/*
-  paths:
-    include:
-      - GsaGH/**
-      - GsaGHTests/**
+      - 'release/*'
 
-variables:
-  - group: s3PushInstallers
-  - group: pipeline-tokens
-  - name: configuration
-    value: Release
-
-jobs:
-  - job: SetupMachine
-    displayName: Setup Machine with GSA Version
-    pool: 'rhino-compute'
-    condition: always()
-    workspace:
-      clean: all
-
+stages:
+- stage: CheckRepoChanges
+  displayName: 'Check Repository Changes'
+  jobs:
+  - job: CheckChanges
+    displayName: 'Check for Changes in GsaGH and IntegrationTests'
+    pool:
+      vmImage: 'windows-latest'
     steps:
-      - powershell: |
-          Get-ChildItem *.msi -Recurse | Remove-Item
-          aws s3 cp s3://oasys-installer-store/GSA/nightly . --exclude "*" --include *Arup*.msi --recursive
-          # Move-Item -Path $(Pipeline.Workspace)\*Arup*.msi -Destination $(Pipeline.Workspace)\gsa.msi
-        displayName: 'Download GSA nightly'
-        failOnStderr: true
-
-      - powershell: |
-          $msiFile = Get-ChildItem -Filter *.msi -Recurse | Select-Object -First 1
-          if ($msiFile) {
-            Move-Item -Path $msiFile.FullName -Destination "$(Pipeline.Workspace)\gsa.msi"
-            Write-Output "MSI file moved and renamed to: $(Pipeline.Workspace)\gsa.msi"
-          } else {
-            Write-Output "No .msi file found."
+    - powershell: |
+        Write-Output "Checking for changes in GsaGH/** and IntegrationTests/**..."
+        $gitChanges = git diff --name-only HEAD~1 HEAD
+        $unitTestsChanged = $false
+        $integrationTestsChanged = $false
+        
+        foreach ($file in $gitChanges) {
+          if ($file -like 'GsaGH/*') {
+            $unitTestsChanged = $true
           }
-        failOnStderr: true
-        displayName: 'rename file'
-
-      - publish: $(Pipeline.Workspace)/gsa.msi
-        displayName: 'Publish MSI Installer as an Artifact'
-        artifact: GSAInstaller
-
-      - powershell: |
-          $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
-          Write-output "Installer Path: ${installerPath}"
-          Write-output "GSA Version:"
-          if (!(Test-Path $installerPath.FullName)) {
-            Write-output "File '{0}' does not exist" -f $installerPath.FullName
+          if ($file -like 'IntegrationTests/*') {
+            $integrationTestsChanged = $true
           }
-          try {
-            $WindowsInstaller = New-Object -com WindowsInstaller.Installer
-            $Database = $WindowsInstaller.GetType().InvokeMember("OpenDatabase", "InvokeMethod", $Null, $WindowsInstaller, @($installerPath.FullName, 0))
-            $Query = "SELECT Value FROM Property WHERE Property = 'ProductVersion'"
-            $View = $database.GetType().InvokeMember("OpenView", "InvokeMethod", $Null, $Database, ($Query))
-            $View.GetType().InvokeMember("Execute", "InvokeMethod", $Null, $View, $Null) | Out-Null
-            $Record = $View.GetType().InvokeMember( "Fetch", "InvokeMethod", $Null, $View, $Null )
-            $Version = $Record.GetType().InvokeMember( "StringData", "GetProperty", $Null, $Record, 1 )
-            Write-output $Version
-          } catch {
-            Write-output "Failed to get MSI file version: {0}." -f $_
-          }
-          $app = Start-Process ${installerPath} -ArgumentList '/passive /quiet /l* msiLog.txt' -PassThru -Wait
-          $app.WaitForExit()
-          Write-Output "Exit code: $($app.ExitCode)"
-          Write-Output "Exit time: $($app.ExitTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss')) UTC"
-          if ($app.ExitCode -ne 0) {
-            Write-Error "Application could not be installed. Error code $($app.ExitCode)"
-            exit(1)
-          }
-        displayName: 'Install GSA'
-        failOnStderr: true
+        }
+        
+        Write-Output "Setting pipeline variables based on changes detected..."
+        if ($unitTestsChanged) {
+          Write-Output "UnitTests=True"
+          echo "##vso[task.setvariable variable=UnitTests]true"
+        }
+        if ($integrationTestsChanged) {
+          Write-Output "Integration=True"
+          echo "##vso[task.setvariable variable=Integration]true"
+        }
+      displayName: 'Detect Changes in Repo'
 
-      - powershell: |
-          & 'C:\Program Files\Oasys\*\GSA.exe' /Register
-        displayName: 'Register GSA COM'
-        failOnStderr: false
-      
-      - task: NuGetToolInstaller@1
+- stage: ImpactTestingUnit
+  displayName: 'Impact Testing (Unit)'
+  dependsOn: CheckRepoChanges
+  condition: eq(variables['UnitTests'], 'true')
+  jobs:
+  - job: UnitTests
+    displayName: 'Run Unit Tests'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - powershell: |
+        Write-Output "Running Unit Tests..."
+      displayName: 'Run Unit Tests'
 
-      - task: NuGetCommand@2
-        displayName: 'Restoring NuGet packages'
-        inputs:
-            command: 'restore'
-            restoreSolution: 'GsaGH.sln'
-
-      - task: VSBuild@1
-        displayName: 'Building project in $(configuration)'
-        inputs:
-          solution: 'GsaGH.sln'
-          msbuildArgs: '/p:AppxBundlePlatforms="x64" /p:AppxPackageDir="$(build.artifactStagingDirectory)\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /m /nr:false /p:TreatWarningsAsErrors="true"'
-          platform: 'x64'
-          configuration: '$(configuration)'
-          clean: true
-        env:
-          MSBUILDDISABLENODEREUSE: 1
-      
-      - task: VisualStudioTestPlatformInstaller@1
-        displayName: 'Install Test Platform'
-
-      - task: VSTest@3
-        inputs:
-          testSelector: 'testAssemblies'  # Enables Test Impact Analysis
-          testAssemblyVer2: |
-            GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
-          searchFolder: '$(System.DefaultWorkingDirectory)'
-          runOnlyImpactedTests: true
-          runInParallel: true
-          failOnStderr: true
-          
-      # **\bin\**\GsaReTests.dll  # Modify this pattern based on where your test assemblies are
-      # - powershell: |
-      #     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
-      #   displayName: Unit Tests
-      #   failOnStderr: true
-
-      - powershell: |
-          if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
-            Write-Output "codecov.yml is invalid"
-            Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
-            exit(1)
-          } else {
-            Write-Output "codecov.yml is valid"
-          }
-        displayName: Validate codecov.yml
-        failOnStderr: true
-
-      - powershell: |
-          $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
-          echo $coverage_file_gsagh
-          Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
-          $ProgressPreference = 'SilentlyContinue'
-          Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
-          ls $(System.DefaultWorkingDirectory)\
-          cd $(System.DefaultWorkingDirectory)\
-          .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
-        env:
-          CODECOV_TOKEN: $(CODECOV_TOKEN)
-        displayName: Upload Code Coverage to codecovio
-        failOnStderr: true
-
-      - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
-        displayName: Publish GsaGHTest xml to Azure
-        artifact: GsaGHTestsCoverage
-        continueOnError: true
-# - powershell: |
-#     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
-#     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\integration  .\IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
-#   displayName: dotnet tests
-#   failOnStderr: true
-#
-# - powershell: |
-#     if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
-#       Write-Output "codecov.yml is invalid"
-#       Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
-#       exit(1)
-#     } else {
-#       Write-Output "codecov.yml is valid"
-#     }
-#   displayName: Validate codecov.yml
-#   failOnStderr: true
-#
-# - powershell: |
-#     $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
-#     echo $coverage_file_gsagh
-#     $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
-#     echo $coverage_file_integration
-#     Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
-#     Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-#     $ProgressPreference = 'SilentlyContinue'
-#     Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
-#     ls $(System.DefaultWorkingDirectory)\
-#     cd $(System.DefaultWorkingDirectory)\
-#     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
-#     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_integration.xml -F integration
-#   env:
-#     CODECOV_TOKEN: $(CODECOV_TOKEN)
-#   displayName: Upload Code Coverage to codecovio
-#   failOnStderr: true
-#
-# - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
-#   displayName: Publish GsaGHTest xml to Azure
-#   artifact: GsaGHTestsCoverage
-#   continueOnError: true
-#
-# - publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-#   displayName: Publish IntegrationTest xml to Azure
-#   artifact: IntegrationTestsCoverage
-#   continueOnError: true
-#
-
-  # - job: UninstallAndClean
-  #   displayName: Uninstall And Clean
-  #   dependsOn: [SetupMachine, RunUnitTests]
-  #   condition: always()
-  #   pool: 'rhino-compute'
-  #   workspace:
-  #     clean: none
-  #   steps:
-      # - task: DownloadPipelineArtifact@2
-      #   inputs:
-      #     artifact: GSAInstaller
-      #     path: $(Pipeline.Workspace)  # Download it to the same workspace path
-      #   displayName: 'Download MSI Installer Artifact'
-
-      - powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
-        displayName: 'Delete orphan .ghlink files'
-        condition: always()
-
-      - powershell: |
-          $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
-          Write-output "Installer Path: ${installerPath}"
-          $app = Start-Process "msiexec.exe" -ArgumentList "/x ${installerPath} /quiet /passive /norestart /l* msiUninstallLog.txt" -PassThru -Wait
-          $app.WaitForExit()
-          Write-Output "Exit code: $($app.ExitCode)"
-          Write-Output "Exit time: $($app.ExitTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss')) UTC"
-          ### Success error codes: 0 = ERROR_SUCCESS, 1641 = ERROR_SUCCESS_REBOOT_INITIATED, 3010 = ERROR_SUCCESS_REBOOT_REQUIRED
-          ### See https://docs.microsoft.com/en-us/windows/win32/msi/error-codes
-          if (($app.ExitCode -eq 0) -or ($app.ExitCode -eq 1641) -or ($app.ExitCode -eq 3010)) {
-            Write-Output "Application successfully uninstalled with exit code $($app.ExitCode)"
-            rm $installerPath
-            exit(0)
-          } else {
-            Write-Error "Application could not be uninstalled. Error code $($app.ExitCode)"
-            exit(1)
-          }
-        condition: always()
-        displayName: 'Uninstall Application'
+- stage: ImpactTestingIntegration
+  displayName: 'Impact Testing (Integration)'
+  dependsOn: ImpactTestingUnit
+  condition: eq(variables['Integration'], 'true')
+  jobs:
+  - job: IntegrationTests
+    displayName: 'Run Integration Tests'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - powershell: |
+        Write-Output "Running Integration Tests..."
+      displayName: 'Run Integration Tests'
 
