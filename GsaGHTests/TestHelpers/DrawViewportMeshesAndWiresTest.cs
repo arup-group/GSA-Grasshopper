@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Drawing;
 using System.Reflection;
+
 using Grasshopper.Kernel;
+
+using GsaGH.Helpers.Graphics;
+
 using Rhino.Display;
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.Helpers {
@@ -17,7 +22,7 @@ namespace GsaGHTests.Helpers {
       Grasshopper.CentralSettings.PreviewMeshEdges = true;
       MeshingParameters mp = grasshopperDocument.PreviewCurrentMeshParameters();
       var notSelectedMaterial = new DisplayMaterial {
-        Diffuse = Color.FromArgb(255, 150, 0, 0),
+        Diffuse = Colours.EntityIsNotSelected,
         Emission = Color.FromArgb(50, 190, 190, 190),
         Transparency = 0.1,
       };
@@ -32,7 +37,7 @@ namespace GsaGHTests.Helpers {
         displayPipeline,
         rhinoViewPort,
         3,
-        Color.FromArgb(255, 150, 0, 0),
+        Colours.EntityIsNotSelected,
         Color.FromArgb(255, 150, 0, 1),
         notSelectedMaterial,
         selectedMaterial,

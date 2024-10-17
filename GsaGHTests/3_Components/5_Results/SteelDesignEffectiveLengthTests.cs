@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Xunit;
+
 using SteelDesignEffectiveLength = GsaGH.Components.SteelDesignEffectiveLength;
 
 namespace GsaGHTests.Components.Results {
@@ -87,10 +93,10 @@ namespace GsaGHTests.Components.Results {
     [InlineData(SteelDesignEffectiveLengthHelper.SpanElements, false)]
     public void SteelDesignEffectiveLengthStringOutputAnalysisCaseTest(
       SteelDesignEffectiveLengthHelper outputType, bool isAnalysisCase) {
-        // Assemble
-        GsaResult result = isAnalysisCase
-          ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.BasicFrame, 1)
-          : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.BasicFrame, 1);
+      // Assemble
+      GsaResult result = isAnalysisCase
+        ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.BasicFrame, 1)
+        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.BasicFrame, 1);
 
       var comp = new SteelDesignEffectiveLength();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -109,15 +115,15 @@ namespace GsaGHTests.Components.Results {
       }
     }
 
-    [Theory] 
+    [Theory]
     [InlineData(SteelDesignEffectiveLengthHelper.Span, true)]
     [InlineData(SteelDesignEffectiveLengthHelper.Span, false)]
     public void SteelDesignEffectiveLengthIntegerOutputAnalysisCaseTest(
       SteelDesignEffectiveLengthHelper outputType, bool isAnalysisCase) {
-        // Assemble
-        GsaResult result = isAnalysisCase
-          ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.BasicFrame, 1)
-          : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.BasicFrame, 1);
+      // Assemble
+      GsaResult result = isAnalysisCase
+        ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.BasicFrame, 1)
+        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.BasicFrame, 1);
 
       var comp = new SteelDesignEffectiveLength();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -149,10 +155,10 @@ namespace GsaGHTests.Components.Results {
     [InlineData(SteelDesignEffectiveLengthHelper.EffectiveLength, false)]
     public void SteelDesignEffectiveLengthLengthOutputAnalysisCaseTest(
       SteelDesignEffectiveLengthHelper outputType, bool isAnalysisCase) {
-        // Assemble
-        GsaResult result = isAnalysisCase
-          ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.BasicFrame, 1)
-          : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.BasicFrame, 1);
+      // Assemble
+      GsaResult result = isAnalysisCase
+        ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.BasicFrame, 1)
+        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.BasicFrame, 1);
 
       var comp = new SteelDesignEffectiveLength();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -176,10 +182,10 @@ namespace GsaGHTests.Components.Results {
     [InlineData(SteelDesignEffectiveLengthHelper.SlendernessRatio, false)]
     public void SteelDesignEffectiveLengthRatioOutputAnalysisCaseTest(
       SteelDesignEffectiveLengthHelper outputType, bool isAnalysisCase) {
-        // Assemble
-        GsaResult result = isAnalysisCase
-          ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.BasicFrame, 1)
-          : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.BasicFrame, 1);
+      // Assemble
+      GsaResult result = isAnalysisCase
+        ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.BasicFrame, 1)
+        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.BasicFrame, 1);
 
       var comp = new SteelDesignEffectiveLength();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
@@ -191,7 +197,7 @@ namespace GsaGHTests.Components.Results {
 
         for (int i = 0; i < expected.Count; i++) {
           List<IQuantity> resultOutput = ComponentTestHelper.GetResultOutput(comp, (int)outputType);
-          
+
           Assert.Equal(expected[i],
             ResultHelper.RoundToSignificantDigits(resultOutput[i].As(RatioUnit.DecimalFraction),
               4));
@@ -207,10 +213,10 @@ namespace GsaGHTests.Components.Results {
     [InlineData(SteelDesignEffectiveLengthHelper.EffectiveSpanRatio2, false)]
     public void SteelDesignEffectiveLengthNumberOutputAnalysisCaseTest(
       SteelDesignEffectiveLengthHelper outputType, bool isAnalysisCase) {
-        // Assemble
-        GsaResult result = isAnalysisCase
-          ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.BasicFrame, 1)
-          : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.BasicFrame, 1);
+      // Assemble
+      GsaResult result = isAnalysisCase
+        ? (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.BasicFrame, 1)
+        : (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.BasicFrame, 1);
 
       var comp = new SteelDesignEffectiveLength();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Drawing;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
+
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
@@ -46,7 +49,7 @@ namespace GsaGH.Parameters {
           bool6.Yy = false;
           bool6.Zz = false;
           return new GsaBool6Goo(bool6);
-        } else if (mystring == "pin" | mystring == "pinned") {
+        } else if (mystring == "pin" || mystring == "pinned") {
           bool6.X = true;
           bool6.Y = true;
           bool6.Z = true;
@@ -54,7 +57,7 @@ namespace GsaGH.Parameters {
           bool6.Yy = false;
           bool6.Zz = false;
           return new GsaBool6Goo(bool6);
-        } else if (mystring == "fix" | mystring == "fixed") {
+        } else if (mystring == "fix" || mystring == "fixed") {
           bool6.X = true;
           bool6.Y = true;
           bool6.Z = true;
@@ -62,8 +65,8 @@ namespace GsaGH.Parameters {
           bool6.Yy = true;
           bool6.Zz = true;
           return new GsaBool6Goo(bool6);
-        } else if (mystring == "release" | mystring == "released" | mystring == "hinge"
-          | mystring == "hinged" | mystring == "charnier") {
+        } else if (mystring == "release" || mystring == "released" || mystring == "hinge"
+          || mystring == "hinged" || mystring == "charnier") {
           bool6.X = false;
           bool6.Y = false;
           bool6.Z = false;
@@ -92,17 +95,12 @@ namespace GsaGH.Parameters {
       };
     }
     private bool ConvertChar(char rel) {
-      switch (rel) {
-        case 'r':
-          return false;
-
-        case 'f':
-          return true;
-
-        default:
-          throw new ArgumentException(
-            $"Unable to convert string to Bool6, character {rel} not recognised");
-      }
+      return rel switch {
+        'r' => false,
+        'f' => true,
+        _ => throw new ArgumentException(
+                    $"Unable to convert string to Bool6, character {rel} not recognised"),
+      };
     }
   }
 }

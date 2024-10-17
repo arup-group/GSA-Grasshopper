@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.CustomComponent {

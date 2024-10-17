@@ -1,15 +1,21 @@
 ﻿using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Components.Geometry;
 using GsaGHTests.Components.Loads;
 using GsaGHTests.Helper;
 using GsaGHTests.Model;
 using GsaGHTests.Parameters;
+
 using OasysGH.Components;
+
 using Xunit;
+
 using NodeDisplacements = GsaGH.Components.NodeDisplacements;
 
 namespace GsaGHTests.Helpers.GH {

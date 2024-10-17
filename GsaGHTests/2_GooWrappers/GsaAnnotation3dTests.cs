@@ -1,6 +1,9 @@
 ﻿using System.Drawing;
+
 using GsaGH.Parameters;
+
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters {

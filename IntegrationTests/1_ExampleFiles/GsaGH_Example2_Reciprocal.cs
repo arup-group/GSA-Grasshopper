@@ -2,9 +2,12 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Parameters;
+
 using Xunit;
 
 namespace IntegrationTests.ExampleFiles {

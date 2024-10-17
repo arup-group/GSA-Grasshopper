@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers.Graphics;
+
 using OasysUnits;
+
 using Rhino.Collections;
 using Rhino.Geometry;
 

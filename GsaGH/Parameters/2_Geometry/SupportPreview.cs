@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers.Graphics;
+
 using Rhino;
 using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Geometry;
+
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
@@ -107,7 +111,7 @@ namespace GsaGH.Parameters {
     }
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
-      if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+      if (args.Color == Colours.EntityIsNotSelected) {
         // this is a workaround to change colour between selected and not
 
         if (SupportSymbol != null) {

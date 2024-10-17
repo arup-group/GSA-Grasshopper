@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
+
 using Xunit;
 
 namespace IntegrationTests.Components {

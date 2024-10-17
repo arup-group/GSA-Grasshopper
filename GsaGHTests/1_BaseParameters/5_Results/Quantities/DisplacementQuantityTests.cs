@@ -1,7 +1,11 @@
 ﻿using System;
+
 using GsaAPI;
+
 using GsaGH.Parameters.Results;
+
 using OasysUnits;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters.Results {

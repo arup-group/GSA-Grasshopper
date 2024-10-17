@@ -1,6 +1,9 @@
 ﻿using System;
+
 using GsaAPI;
+
 using GsaGH.Parameters.Enums;
+
 using Rhino.Collections;
 
 namespace GsaGH.Parameters {
@@ -45,7 +48,7 @@ namespace GsaGH.Parameters {
         Points = Points,
       };
 
-      if(ApiPolyline != null) {
+      if (ApiPolyline != null) {
         dup.ApiPolyline = DuplicateApiPolyline();
       }
 

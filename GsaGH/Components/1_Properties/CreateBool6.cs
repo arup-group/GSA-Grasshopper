@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.UI;
@@ -33,6 +37,9 @@ namespace GsaGH.Components {
     }
 
     public override void CreateAttributes() {
+      if (!_isInitialised) {
+        InitialiseDropdowns();
+      }
       var bool6 = new List<List<bool>>() {
         new List<bool>() {
           _x,
@@ -92,7 +99,9 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override void InitialiseDropdowns() { }
+    protected override void InitialiseDropdowns() {
+      _isInitialised = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddBooleanParameter("X", "X", "X", GH_ParamAccess.item);

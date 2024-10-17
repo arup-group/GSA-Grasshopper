@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+
 using Grasshopper.Kernel;
+
 using GsaAPI.Materials;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -158,14 +163,14 @@ namespace GsaGH.Components {
       da.GetData(3, ref poisson);
 
       CoefficientOfThermalExpansionUnit thermalExpansionUnit
-        = CoefficientOfThermalExpansionUnit.InverseDegreeCelsius;
+        = CoefficientOfThermalExpansionUnit.PerDegreeCelsius;
       switch (_temperatureUnit) {
         case TemperatureUnit.DegreeFahrenheit:
-          thermalExpansionUnit = CoefficientOfThermalExpansionUnit.InverseDegreeFahrenheit;
+          thermalExpansionUnit = CoefficientOfThermalExpansionUnit.PerDegreeFahrenheit;
           break;
 
         case TemperatureUnit.Kelvin:
-          thermalExpansionUnit = CoefficientOfThermalExpansionUnit.InverseKelvin;
+          thermalExpansionUnit = CoefficientOfThermalExpansionUnit.PerKelvin;
           break;
       }
 
@@ -174,7 +179,7 @@ namespace GsaGH.Components {
         PoissonsRatio = poisson,
         Density = Input.UnitNumber(this, da, 4, _densityUnit).As(DensityUnit.KilogramPerCubicMeter),
         CoefficientOfThermalExpansion = Input.UnitNumber(this, da, 5, thermalExpansionUnit, true)
-        .As(CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
+        .As(CoefficientOfThermalExpansionUnit.PerDegreeCelsius),
         Name = name,
       };
 

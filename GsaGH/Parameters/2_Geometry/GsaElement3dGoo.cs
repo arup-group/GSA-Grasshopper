@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.Graphics;
+
 using OasysGH;
 using OasysGH.Parameters;
+
 using Rhino.Collections;
 using Rhino.Geometry;
 
@@ -38,7 +42,7 @@ namespace GsaGH.Parameters {
       }
       args.Pipeline.DrawMeshShaded(Value.DisplayMesh,
         // this is a workaround to change colour between selected and not
-        args.Material.Diffuse == Color.FromArgb(255, 150, 0, 0)
+        args.Material.Diffuse == Colours.EntityIsNotSelected
           ? Colours.Element3dFace : Colours.Element2dFaceSelected);
     }
 

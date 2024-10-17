@@ -5,9 +5,12 @@ using System.Drawing;
 using System.Reflection;
 using System.Resources;
 using System.Text.RegularExpressions;
+
 using Grasshopper.Kernel;
+
 using GsaGH;
 using GsaGH.Properties;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters {

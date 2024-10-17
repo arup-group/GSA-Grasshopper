@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+
 using GsaAPI;
+
 using GsaGH.Helpers.Import;
+
 using Rhino.Geometry;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
@@ -29,23 +33,39 @@ namespace GsaGH.Parameters {
       return elem1dGoos;
     }
 
-    internal static ConcurrentBag<GsaElement2dGoo> CreateElement2dFromApi(
-      ConcurrentDictionary<int, GSAElement> elements, GsaModel model) {
+    internal static ConcurrentBag<GsaElement2dGoo> CreateLoadPanelElementFromApi(
+  ConcurrentDictionary<int, GSAElement> elements, GsaModel model) {
       ReadOnlyDictionary<int, Node> nodes = model.ApiNodes;
-      ReadOnlyDictionary<int, Axis> axDict = model.ApiModel.Axes();
+      var elem2dGoos = new ConcurrentBag<GsaElement2dGoo>();
+      Parallel.ForEach(elements, elem => {
+        if(elem.Value.IsLoadPanel) {
+          GsaProperty2d prop2d = model.GetProp2d(elem.Value);
+          Curve polyline = GetPolylineFromApiElement2d(elem.Value, nodes, model.ModelUnit);
+          var element2D = new GsaElement2d(elem.Value, polyline, prop2d);
+          elem2dGoos.Add(new GsaElement2dGoo(element2D));
+        }
+      });
 
+      return elem2dGoos;
+    }
+
+    internal static ConcurrentBag<GsaElement2dGoo> CreateElement2dFromApi(
+    ConcurrentDictionary<int, GSAElement> elements, GsaModel model) {
+      ReadOnlyDictionary<int, Node> nodes = model.ApiNodes;
       var sortedElements = new ConcurrentDictionary<int, ConcurrentDictionary<int, GSAElement>>();
       Parallel.ForEach(elements, elem => {
-        int parent = -elem.Value.ParentMember.Member;
-        if (parent == 0) {
-          parent = elem.Value.Property;
-        }
+        if (!elem.Value.IsLoadPanel) {
+          int parent = -elem.Value.ParentMember.Member;
+          if (parent == 0) {
+            parent = elem.Value.Property;
+          }
 
-        if (!sortedElements.ContainsKey(parent)) {
-          sortedElements.TryAdd(parent, new ConcurrentDictionary<int, GSAElement>());
-        }
+          if (!sortedElements.ContainsKey(parent)) {
+            sortedElements.TryAdd(parent, new ConcurrentDictionary<int, GSAElement>());
+          }
 
-        sortedElements[parent][elem.Key] = elem.Value;
+          sortedElements[parent][elem.Key] = elem.Value;
+        }
       });
 
       var elem2dGoos = new ConcurrentBag<GsaElement2dGoo>();
@@ -55,14 +75,12 @@ namespace GsaGH.Parameters {
         ConcurrentDictionary<int, GSAElement> elems = sortedElements[parentId];
         var prop2Ds = new ConcurrentDictionary<int, GsaProperty2d>();
         var mList = new ConcurrentDictionary<int, Mesh>();
-
         Parallel.For(0, elems.Count, j => {
           int elementId = elems.Keys.ElementAt(j);
           Mesh faceMesh = GetMeshFromApiElement2d(elems[elementId], nodes, model.ModelUnit);
           if (faceMesh == null) {
             return;
           }
-
           mList[elementId] = faceMesh;
           GsaProperty2d prop2d = model.GetProp2d(elems[elementId]);
           if (prop2d != null) {
@@ -99,8 +117,7 @@ namespace GsaGH.Parameters {
           elem2dGoos.Add(new GsaElement2dGoo(element2D));
         }
       });
-
-      return elem2dGoos;
+      return new ConcurrentBag<GsaElement2dGoo>(elem2dGoos.Union(CreateLoadPanelElementFromApi(elements, model)));
     }
 
     internal static ConcurrentBag<GsaElement3dGoo> CreateElement3dFromApi(
@@ -182,17 +199,17 @@ namespace GsaGH.Parameters {
 
     internal static Mesh GetMeshFromApiElement2d(GSAElement element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
       ReadOnlyCollection<int> topo = element.Topology;
-      if(topo.Count < 3) {
+      if (topo.Count < 3) {
         return null;
       }
 
-      if(!element.IsLoadPanel) {
+      if (!element.IsLoadPanel) {
         if (element.Type == ElementType.BRICK8 || element.Type == ElementType.WEDGE6
         || element.Type == ElementType.PYRAMID5 || element.Type == ElementType.TETRA4) {
           return null;
         }
       }
-      
+
       var outMesh = new Mesh();
 
       foreach (int t in topo) {
@@ -275,6 +292,22 @@ namespace GsaGH.Parameters {
       }
 
       return outMesh;
+    }
+
+    internal static Curve GetPolylineFromApiElement2d(GSAElement element, ReadOnlyDictionary<int, Node> nodes, LengthUnit unit) {
+      ReadOnlyCollection<int> topo = element.Topology;
+      if (topo.Count < 3) {
+        return null;
+      }
+      var points = new List<Point3d>();
+      foreach (int t in topo) {
+        if (nodes.TryGetValue(t, out Node node)) {
+          points.Add(Nodes.Point3dFromNode(node, unit));
+        }
+      }
+      points.Add(points[0]);
+
+      return new PolylineCurve(points);
     }
 
     internal static Mesh GetMeshFromApiElement3d(

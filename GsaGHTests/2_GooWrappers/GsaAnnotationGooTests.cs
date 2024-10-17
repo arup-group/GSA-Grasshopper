@@ -1,11 +1,18 @@
 ﻿using System.Drawing;
+
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.GooWrappers;
+
 using OasysGH.Parameters;
+
 using OasysUnits.Units;
+
 using Rhino.Geometry;
 using Rhino.Geometry.Morphs;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters {
@@ -159,7 +166,7 @@ namespace GsaGHTests.Parameters {
     public void MorphAnnotationDotTest() {
       var morph = new StretchSpaceMorph(new Point3d(0, 0, 0), new Point3d(10, 10, 10), 10);
       var annoDot = new GsaAnnotationGoo(GsaAnnotationDotTests.AnnotationDotMother());
-      var morphed = ((GsaAnnotationGoo)annoDot.Morph(morph)).Value;
+      IGsaAnnotation morphed = ((GsaAnnotationGoo)annoDot.Morph(morph)).Value;
       Assert.NotNull(morphed);
       Assert.Equal(0.88, morphed.Location.X, 2);
       Assert.Equal(0.88, morphed.Location.Y, 2);

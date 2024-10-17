@@ -2,13 +2,19 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
+
 using Rhino.Geometry;
+
 using Xunit;
+
 using static GsaGHTests.Helpers.Export.AssembleModelTests;
 
 namespace GsaGHTests.Model {

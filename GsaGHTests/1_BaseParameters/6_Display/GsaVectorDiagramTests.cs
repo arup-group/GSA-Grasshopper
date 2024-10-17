@@ -1,12 +1,18 @@
 ﻿using System.Drawing;
+
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters;
+
 using OasysUnits;
+
 using Rhino.Collections;
 using Rhino.Geometry;
 using Rhino.Geometry.Morphs;
+
 using Xunit;
+
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using Line = Rhino.Geometry.Line;
 

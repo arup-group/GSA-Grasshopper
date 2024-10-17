@@ -1,11 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {

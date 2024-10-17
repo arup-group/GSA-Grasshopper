@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Xunit;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Parameters {
@@ -72,8 +78,10 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("mariam", sect.ApiSection.Name);
       Assert.Equal(4, sect.ApiSection.Pool);
       Assert.Equal(BasicOffset.TopRight, sect.ApiSection.BasicOffset);
-      Assert.Equal(new Length(1, LengthUnit.Centimeter), sect.AdditionalOffsetY);
-      Assert.Equal(new Length(2, LengthUnit.Centimeter), sect.AdditionalOffsetZ);
+      var tolerance = Length.FromMeters(1e-6);
+      Assert.True(new Length(1, LengthUnit.Centimeter).Equals(sect.AdditionalOffsetY, tolerance));
+      Assert.True(new Length(2, LengthUnit.Centimeter).Equals(sect.AdditionalOffsetZ, tolerance));
+
     }
 
     [Fact]
@@ -86,7 +94,8 @@ namespace GsaGHTests.Parameters {
         Id = 15
       };
 
-      Assert.Equal(areaExpected, sect.SectionProperties.Area);
+      var tolerance = Area.FromSquareMeters(1e-6);
+      Assert.True(areaExpected.Equals(sect.SectionProperties.Area, tolerance));
       Assert.Equal(15, sect.Id);
     }
 
@@ -123,6 +132,7 @@ namespace GsaGHTests.Parameters {
       orig.ApiSection.BasicOffset = BasicOffset.TopLeft;
       orig.AdditionalOffsetY = new Length(1, LengthUnit.Centimeter);
       orig.AdditionalOffsetZ = new Length(2, LengthUnit.Centimeter);
+      var tolerance = Length.FromMeters(1e-6);
 
       Assert.Equal("STD R 15 20", orig.ApiSection.Profile);
       Assert.Equal(areaExpected.SquareMillimeters, orig.SectionProperties.Area.SquareMillimeters);
@@ -135,16 +145,16 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("mariam", dup.ApiSection.Name);
       Assert.Equal(12, dup.ApiSection.Pool);
       Assert.Equal(BasicOffset.BottomLeft, dup.ApiSection.BasicOffset);
-      Assert.Equal(new Length(-1, LengthUnit.Foot), dup.AdditionalOffsetY);
-      Assert.Equal(new Length(-2, LengthUnit.Foot), dup.AdditionalOffsetZ);
+      Assert.True(new Length(-1, LengthUnit.Foot).Equals(dup.AdditionalOffsetY, tolerance));
+      Assert.True(new Length(-2, LengthUnit.Foot).Equals(dup.AdditionalOffsetZ, tolerance));
 
       Assert.Equal(4, orig.Material.Id);
       Assert.Equal("Custom", orig.Material.MaterialType.ToString());
       Assert.Equal("kris", orig.ApiSection.Name);
       Assert.Equal(99, orig.ApiSection.Pool);
       Assert.Equal(BasicOffset.TopLeft, orig.ApiSection.BasicOffset);
-      Assert.Equal(new Length(1, LengthUnit.Centimeter), orig.AdditionalOffsetY);
-      Assert.Equal(new Length(2, LengthUnit.Centimeter), orig.AdditionalOffsetZ);
+      Assert.True(new Length(1, LengthUnit.Centimeter).Equals(orig.AdditionalOffsetY, tolerance));
+      Assert.True(new Length(2, LengthUnit.Centimeter).Equals(orig.AdditionalOffsetZ, tolerance));
     }
   }
 }

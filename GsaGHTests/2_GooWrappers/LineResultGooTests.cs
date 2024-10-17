@@ -1,8 +1,13 @@
 ﻿using System.Drawing;
+
 using GsaGH.Parameters;
+
 using OasysUnits;
+
 using Rhino.Geometry;
+
 using Xunit;
+
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGHTests.GooWrappers {

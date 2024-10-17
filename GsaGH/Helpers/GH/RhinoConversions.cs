@@ -3,15 +3,21 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+
 using GsaAPI;
+
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
+
 using OasysGH.Units;
+
 using OasysUnits;
+
 using Rhino;
 using Rhino.Collections;
 using Rhino.Geometry;
+
 using Elements = GsaGH.Helpers.Import.Elements;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
@@ -27,11 +33,10 @@ namespace GsaGH.Helpers.GH {
       var crvs = new PolyCurve();
 
       for (int i = 0; i < topology.Count - 1; i++) {
-        if (topoType != null & topoType[i + 1] == "A") {
+        if (topoType != null && topoType[i + 1] == "A") {
           crvs.Append(new Arc(topology[i], topology[i + 1], topology[i + 2]));
           i++;
-        }
-        else {
+        } else {
           crvs.Append(new Line(topology[i], topology[i + 1]));
         }
       }
@@ -350,8 +355,7 @@ namespace GsaGH.Helpers.GH {
 
         polyCurve = new PolyCurve();
         polyCurve.Append(curve);
-      }
-      else {
+      } else {
         if (tolerance < 0) {
           tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
         }
@@ -382,8 +386,7 @@ namespace GsaGH.Helpers.GH {
 
           crvType.Add("");
           point3ds.Add(segments[segments.Length - 1].PointAtEnd);
-        }
-        else {
+        } else {
           crvType.Add("");
           crvType.Add("");
 
@@ -480,7 +483,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     public static Tuple<List<GSAElement>, Point3dList, List<List<int>>> ConvertMeshToElem2d(
-      Mesh mesh, bool isLoadPanel, bool createQuadraticElements = false) {
+      Mesh mesh, bool createQuadraticElements = false) {
       var elems = new List<GSAElement>();
       var topoPts = new Point3dList(mesh.Vertices.ToPoint3dArray());
       var topoInts = new List<List<int>>();
@@ -488,7 +491,7 @@ namespace GsaGH.Helpers.GH {
 
       foreach (MeshNgon ngon in ngons) {
 
-        GSAElement elem = isLoadPanel ? new GSAElement(new LoadPanelElement()) : new GSAElement(new Element());
+        var elem = new GSAElement(new Element());
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
 
         switch (topo.Count) {
@@ -683,8 +686,7 @@ namespace GsaGH.Helpers.GH {
       foreach (BrepLoop brepLoop in brep.Loops) {
         if (brepLoop.LoopType == BrepLoopType.Outer) {
           outer = brepLoop.To3dCurve();
-        }
-        else {
+        } else {
           inner.Add(brepLoop.To3dCurve());
         }
       }
@@ -697,8 +699,7 @@ namespace GsaGH.Helpers.GH {
       Point3dList ctrlPts;
       if (edges[0].TryGetPolyline(out Rhino.Geometry.Polyline tempCrv)) {
         ctrlPts = new Point3dList(tempCrv);
-      }
-      else {
+      } else {
         Tuple<PolyCurve, Point3dList, List<string>> convertBadSrf
           = ConvertMem2dCrv(edges[0], tolerance);
         ctrlPts = convertBadSrf.Item2;
@@ -733,8 +734,7 @@ namespace GsaGH.Helpers.GH {
           if (inclCrvs[i].IsInPlane(plane,
             DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry))) {
             inclCrvs[i] = Curve.ProjectToPlane(inclCrvs[i], plane);
-          }
-          else {
+          } else {
             //TODO - find intersection overlaps or points btw curve and plane: https://developer.rhino3d.com/api/RhinoCommon/html/T_Rhino_Geometry_Intersect_IntersectionEvent.htm
             break;
           }
@@ -778,6 +778,29 @@ namespace GsaGH.Helpers.GH {
       Plane.FitPlaneToPoints(ctrlPts, out Plane plane);
       plane.Normal.Unitize();
       return new Plane(plane.Origin, plane.Normal);
+    }
+
+    internal static Point3dList LoadPanelTopo(Curve curve) {
+      curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
+      var topology = new Point3dList();
+      foreach (Point3d item in polyline.ToArray()) {
+        if (!topology.Contains(item)) {
+          topology.Add(item);
+        }
+      }
+      return topology;
+    }
+
+    internal static List<List<int>> LoadPanelTopoIndices(Curve curve) {
+      curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
+      var topo = new List<int>();
+      foreach (Point3d p in polyline.ToList()) {
+        int index = polyline.ToList().IndexOf(p);
+        if (!topo.Contains(index)) {
+          topo.Add(index);
+        }
+      }
+      return new List<List<int>> { topo };
     }
   }
 }

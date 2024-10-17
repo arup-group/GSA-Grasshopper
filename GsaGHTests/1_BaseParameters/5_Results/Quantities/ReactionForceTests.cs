@@ -1,8 +1,13 @@
 ﻿using System;
+
 using GsaAPI;
+
 using GsaGH.Parameters.Results;
+
 using OasysUnits.Units;
+
 using Xunit;
+
 using ForceUnit = OasysUnits.Units.ForceUnit;
 
 namespace GsaGHTests.Parameters.Results {
@@ -18,52 +23,52 @@ namespace GsaGHTests.Parameters.Results {
       ForceUnit fUnit = ForceUnit.Newton;
       MomentUnit mUnit = MomentUnit.NewtonMeter;
       if (double.IsNaN(x)) {
-        Assert.Null(reaction.XAs(fUnit));
+        Assert.False(reaction.XAs(fUnit).HasValue);
       } else {
         Assert.Equal(x, reaction.XAs(fUnit));
       }
 
       if (double.IsNaN(y)) {
-        Assert.Null(reaction.YAs(fUnit));
+        Assert.False(reaction.YAs(fUnit).HasValue);
       } else {
         Assert.Equal(y, reaction.YAs(fUnit));
       }
 
       if (double.IsNaN(z)) {
-        Assert.Null(reaction.ZAs(fUnit));
+        Assert.False(reaction.ZAs(fUnit).HasValue);
       } else {
         Assert.Equal(z, reaction.ZAs(fUnit));
       }
 
-      if (double.IsNaN(x)) {
-        Assert.Null(reaction.XyzAs(fUnit));
+      double p = Math.Sqrt((x * x) + (y * y) + (z * z));
+      if (double.IsNaN(p)) {
+        Assert.False(reaction.XyzAs(fUnit).HasValue);
       } else {
-        double p = Math.Sqrt((x * x) + (y * y) + (z * z));
         Assert.Equal(p, reaction.XyzAs(fUnit));
       }
 
       if (double.IsNaN(xx)) {
-        Assert.Null(reaction.XxAs(mUnit));
+        Assert.False(reaction.XxAs(mUnit).HasValue);
       } else {
         Assert.Equal(xx, reaction.XxAs(mUnit));
       }
 
       if (double.IsNaN(yy)) {
-        Assert.Null(reaction.YyAs(mUnit));
+        Assert.False(reaction.YyAs(mUnit).HasValue);
       } else {
         Assert.Equal(yy, reaction.YyAs(mUnit));
       }
 
       if (double.IsNaN(zz)) {
-        Assert.Null(reaction.ZzAs(mUnit));
+        Assert.False(reaction.ZzAs(mUnit).HasValue);
       } else {
         Assert.Equal(zz, reaction.ZzAs(mUnit));
       }
 
-      if (double.IsNaN(xx)) {
-        Assert.Null(reaction.XxyyzzAs(mUnit));
+      p = Math.Sqrt((xx * xx) + (yy * yy) + (zz * zz));
+      if (double.IsNaN(p)) {
+        Assert.False(reaction.XxyyzzAs(mUnit).HasValue);
       } else {
-        double p = Math.Sqrt((xx * xx) + (yy * yy) + (zz * zz));
         Assert.Equal(p, reaction.XxyyzzAs(mUnit));
       }
     }

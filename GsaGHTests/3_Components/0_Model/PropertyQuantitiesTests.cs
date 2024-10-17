@@ -1,9 +1,13 @@
 ﻿using Grasshopper.Kernel.Data;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
+
 using OasysGH.Parameters;
+
 using Xunit;
 
 namespace GsaGHTests.Model {

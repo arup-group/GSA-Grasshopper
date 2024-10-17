@@ -1,9 +1,13 @@
 ﻿using System.Drawing;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers.Graphics;
+
 using OasysGH;
 using OasysGH.Parameters;
+
 using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
@@ -62,7 +66,7 @@ namespace GsaGH.Parameters {
 
       if (Value.Line != null) {
         // this is a workaround to change colour between selected and not
-        if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+        if (args.Color == Colours.EntityIsNotSelected) {
           if (Value.ApiElement.IsDummy) {
             args.Pipeline.DrawDottedLine(Value.Line.PointAtStart, Value.Line.PointAtEnd,
               Colours.Dummy1D);

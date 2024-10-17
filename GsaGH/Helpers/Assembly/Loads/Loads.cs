@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Grasshopper.Kernel;
+
 using GsaAPI;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
+
 using OasysUnits;
+
 using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using LoadCase = GsaAPI.LoadCase;
@@ -55,8 +60,8 @@ namespace GsaGH.Helpers.Assembly {
         }
       }
 
-      foreach(EntityList list in _lists.ReadOnlyDictionary.Values) {
-        if(load.ApiLoad.EntityList == $"\"{list.Name}\"") {
+      foreach (EntityList list in _lists.ReadOnlyDictionary.Values) {
+        if (load.ApiLoad.EntityList == $"\"{list.Name}\"") {
           load.ApiLoad.EntityType = list.Type;
         }
       }
@@ -237,7 +242,7 @@ namespace GsaGH.Helpers.Assembly {
         $"({Length.GetAbbreviation(_unit)})";
       }
 
-      if(load.ApiLoad.PolyLineReference > 0) {
+      if (load.ApiLoad.PolyLineReference > 0) {
         _model.AddPolyline(load.ApiPolyline);
       }
 

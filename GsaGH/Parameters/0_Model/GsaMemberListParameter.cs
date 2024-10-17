@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Drawing;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
+
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {

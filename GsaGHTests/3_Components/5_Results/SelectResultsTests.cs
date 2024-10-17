@@ -1,8 +1,11 @@
 ﻿using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Results {
@@ -19,8 +22,8 @@ namespace GsaGHTests.Components.Results {
       var comp = new SelectResult();
       comp.CreateAttributes();
 
-      Assert.Equal("AnalysisCase", comp._selectedItems[0]);
-      Assert.Equal("   ", comp._selectedItems[1]);
+      Assert.Equal("AnalysisCase", comp.SelectedItems[0]);
+      Assert.Equal("   ", comp.SelectedItems[1]);
 
       ComponentTestHelper.SetInput(comp, modelInput, 0);
 
@@ -31,56 +34,56 @@ namespace GsaGHTests.Components.Results {
     public void DropSelectionsTest() {
       GH_OasysDropDownComponent comp = ResultsComponentMother();
       var result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal("A1", comp._selectedItems[1]);
-      Assert.Equal(2, comp._selectedItems.Count);
+      Assert.Equal("A1", comp.SelectedItems[1]);
+      Assert.Equal(2, comp.SelectedItems.Count);
       result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
       comp.SetSelected(1, 1);
-      Assert.Equal("A2", comp._selectedItems[1]);
+      Assert.Equal("A2", comp.SelectedItems[1]);
       comp.SetSelected(1, 0);
-      Assert.Equal("A1", comp._selectedItems[1]);
+      Assert.Equal("A1", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 1);
-      Assert.Equal("C1", comp._selectedItems[1]);
-      Assert.Equal("All", comp._selectedItems[2]);
-      Assert.Equal(3, comp._selectedItems.Count);
+      Assert.Equal("C1", comp.SelectedItems[1]);
+      Assert.Equal("All", comp.SelectedItems[2]);
+      Assert.Equal(3, comp.SelectedItems.Count);
       result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
       comp.SetSelected(1, 1);
-      Assert.Equal("C2", comp._selectedItems[1]);
+      Assert.Equal("C2", comp.SelectedItems[1]);
       result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
       comp.SetSelected(1, 2);
-      Assert.Equal("C3", comp._selectedItems[1]);
+      Assert.Equal("C3", comp.SelectedItems[1]);
       comp.SetSelected(1, 0);
-      Assert.Equal("C1", comp._selectedItems[1]);
+      Assert.Equal("C1", comp.SelectedItems[1]);
 
       result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
       comp.SetSelected(2, 1);
-      Assert.Equal("P1", comp._selectedItems[2]);
+      Assert.Equal("P1", comp.SelectedItems[2]);
 
       result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
       comp.SetSelected(2, 0);
-      Assert.Equal("All", comp._selectedItems[2]);
+      Assert.Equal("All", comp.SelectedItems[2]);
 
       comp.SetSelected(0, 0);
       result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal("A1", comp._selectedItems[1]);
-      Assert.Equal(2, comp._selectedItems.Count);
+      Assert.Equal("A1", comp.SelectedItems[1]);
+      Assert.Equal(2, comp.SelectedItems.Count);
     }
 
     [Fact]
     public void SetInputsAfterRunTest() {
       GH_OasysDropDownComponent comp = ResultsComponentMother();
       var result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal("A1", comp._selectedItems[1]);
-      Assert.Equal(2, comp._selectedItems.Count);
+      Assert.Equal("A1", comp.SelectedItems[1]);
+      Assert.Equal(2, comp.SelectedItems.Count);
       result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
 
       ComponentTestHelper.SetInput(comp, 2, 2);
       result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal("A2", comp._selectedItems[1]);
+      Assert.Equal("A2", comp.SelectedItems[1]);
 
       ComponentTestHelper.SetInput(comp, "C", 1);
       result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal("C2", comp._selectedItems[1]);
+      Assert.Equal("C2", comp.SelectedItems[1]);
     }
 
     [Fact]
@@ -89,7 +92,7 @@ namespace GsaGHTests.Components.Results {
       var result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
       ComponentTestHelper.SetInput(comp, "C", 1);
       result = (GsaResultGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal("C1", comp._selectedItems[1]);
+      Assert.Equal("C1", comp.SelectedItems[1]);
     }
 
     [Fact]
@@ -104,12 +107,12 @@ namespace GsaGHTests.Components.Results {
       // pick a high analysis case id
       comp.SetSelected(1, 12);
       comp.Params.Output[0].CollectData();
-      Assert.Equal("A13", comp._selectedItems[1]);
+      Assert.Equal("A13", comp.SelectedItems[1]);
 
       // change first dropdown to Combination case
       comp.SetSelected(0, 1);
       comp.Params.Output[0].CollectData();
-      Assert.Equal("C4", comp._selectedItems[1]);
+      Assert.Equal("C4", comp.SelectedItems[1]);
     }
 
     [Fact]
@@ -119,18 +122,18 @@ namespace GsaGHTests.Components.Results {
       var model = new GsaModel(apiModel);
       ComponentTestHelper.SetInput(comp, new GsaModelGoo(model));
       comp.Params.Output[0].CollectData();
-      Assert.Equal(2, comp._dropDownItems.Count);
-      Assert.Equal(2, comp._dropDownItems[0].Count);
-      Assert.Equal(13, comp._dropDownItems[1].Count);
+      Assert.Equal(2, comp.DropDownItems.Count);
+      Assert.Equal(2, comp.DropDownItems[0].Count);
+      Assert.Equal(13, comp.DropDownItems[1].Count);
       comp.SetSelected(0, 1); // combination case
       comp.Params.Output[0].CollectData();
-      Assert.Equal(3, comp._dropDownItems.Count);
-      Assert.Equal(2, comp._dropDownItems[0].Count);
-      Assert.Equal(4, comp._dropDownItems[1].Count);
-      Assert.Equal(2, comp._dropDownItems[2].Count); // All, P1
+      Assert.Equal(3, comp.DropDownItems.Count);
+      Assert.Equal(2, comp.DropDownItems[0].Count);
+      Assert.Equal(4, comp.DropDownItems[1].Count);
+      Assert.Equal(2, comp.DropDownItems[2].Count); // All, P1
       comp.SetSelected(1, 3); // C4 (contains 2 permutations)
       comp.Params.Output[0].CollectData();
-      Assert.Equal(3, comp._dropDownItems[2].Count); // All, P1, P2
+      Assert.Equal(3, comp.DropDownItems[2].Count); // All, P1, P2
     }
 
     [Fact]
@@ -140,16 +143,16 @@ namespace GsaGHTests.Components.Results {
       var model1 = new GsaModel(apiModel1);
       ComponentTestHelper.SetInput(comp, new GsaModelGoo(model1));
       comp.Params.Output[0].CollectData();
-      Assert.Equal(2, comp._dropDownItems.Count);
-      Assert.Equal(2, comp._dropDownItems[0].Count);
-      Assert.Equal(13, comp._dropDownItems[1].Count);
+      Assert.Equal(2, comp.DropDownItems.Count);
+      Assert.Equal(2, comp.DropDownItems[0].Count);
+      Assert.Equal(13, comp.DropDownItems[1].Count);
       var apiModel2 = new GsaAPI.Model(GsaFile.SteelDesignSimple);
       var model2 = new GsaModel(apiModel2);
       ComponentTestHelper.SetInput(comp, new GsaModelGoo(model2));
       comp.Params.Output[0].CollectData();
-      Assert.Equal(2, comp._dropDownItems.Count);
-      Assert.Equal(2, comp._dropDownItems[0].Count);
-      Assert.Equal(2, comp._dropDownItems[1].Count);
+      Assert.Equal(2, comp.DropDownItems.Count);
+      Assert.Equal(2, comp.DropDownItems[0].Count);
+      Assert.Equal(2, comp.DropDownItems[1].Count);
     }
 
     [Fact]
@@ -170,13 +173,13 @@ namespace GsaGHTests.Components.Results {
       comp.Params.Output[0].CollectData();
       comp.SetSelected(1, 1); // case C2
       comp.Params.Output[0].CollectData();
-      Assert.Equal("Combination", comp._selectedItems[0]);
-      Assert.Equal(3, comp._dropDownItems.Count);
+      Assert.Equal("Combination", comp.SelectedItems[0]);
+      Assert.Equal(3, comp.DropDownItems.Count);
       ComponentTestHelper.SetInput(comp, "Analysis", 1);
       comp.Params.Output[0].CollectData();
-      Assert.Equal("AnalysisCase", comp._selectedItems[0]);
-      Assert.Equal("A2", comp._selectedItems[1]);
-      Assert.Equal(2, comp._dropDownItems.Count);
+      Assert.Equal("AnalysisCase", comp.SelectedItems[0]);
+      Assert.Equal("A2", comp.SelectedItems[1]);
+      Assert.Equal(2, comp.DropDownItems.Count);
     }
 
     [Fact]
@@ -189,13 +192,13 @@ namespace GsaGHTests.Components.Results {
       comp.Params.Output[0].CollectData();
       comp.SetSelected(1, 1); // case A2
       comp.Params.Output[0].CollectData();
-      Assert.Equal("AnalysisCase", comp._selectedItems[0]);
-      Assert.Equal(2, comp._dropDownItems.Count);
+      Assert.Equal("AnalysisCase", comp.SelectedItems[0]);
+      Assert.Equal(2, comp.DropDownItems.Count);
       ComponentTestHelper.SetInput(comp, "Combination", 1);
       comp.Params.Output[0].CollectData();
-      Assert.Equal("Combination", comp._selectedItems[0]);
-      Assert.Equal("C2", comp._selectedItems[1]);
-      Assert.Equal(3, comp._dropDownItems.Count);
+      Assert.Equal("Combination", comp.SelectedItems[0]);
+      Assert.Equal("C2", comp.SelectedItems[1]);
+      Assert.Equal(3, comp.DropDownItems.Count);
     }
 
     [Fact]
@@ -206,10 +209,10 @@ namespace GsaGHTests.Components.Results {
       ComponentTestHelper.SetInput(comp, new GsaModelGoo(model));
       ComponentTestHelper.SetInput(comp, 0, 2);
       comp.Params.Output[0].CollectData();
-      Assert.Equal("All", comp._selectedItems[1]);
+      Assert.Equal("All", comp.SelectedItems[1]);
       ComponentTestHelper.SetInput(comp, 2, 2);
       comp.Params.Output[0].CollectData();
-      Assert.Equal("A2", comp._selectedItems[1]);
+      Assert.Equal("A2", comp.SelectedItems[1]);
     }
 
     [Fact]
@@ -224,13 +227,13 @@ namespace GsaGHTests.Components.Results {
       comp.Params.Output[0].CollectData();
       comp.SetSelected(2, 2); // C4p2
       comp.Params.Output[0].CollectData();
-      Assert.Equal("P2", comp._selectedItems[2]);
+      Assert.Equal("P2", comp.SelectedItems[2]);
       ComponentTestHelper.SetInput(comp, 0, 3);
       comp.Params.Output[0].CollectData();
-      Assert.Equal("All", comp._selectedItems[2]);
+      Assert.Equal("All", comp.SelectedItems[2]);
       ComponentTestHelper.SetInput(comp, 2, 3);
       comp.Params.Output[0].CollectData();
-      Assert.Equal("from input", comp._selectedItems[2]);
+      Assert.Equal("from input", comp.SelectedItems[2]);
     }
   }
 }

@@ -4,17 +4,22 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.Parameters;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -150,7 +155,7 @@ namespace GsaGH.Components {
       LengthUnit unit = LengthUnit.Millimeter;
       string[] type = parts[1].Split('(', ')');
       if (type.Length > 1) {
-        UnitParser parser = UnitParser.Default;
+        UnitParser parser = OasysUnitsSetup.Default.UnitParser;
         unit = parser.Parse<LengthUnit>(type[1]);
       }
 

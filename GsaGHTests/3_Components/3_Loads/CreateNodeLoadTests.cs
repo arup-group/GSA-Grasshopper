@@ -1,8 +1,11 @@
 ﻿using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
+
 using GsaGHTests.Helpers;
+
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Loads {

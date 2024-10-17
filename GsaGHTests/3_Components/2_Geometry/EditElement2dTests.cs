@@ -1,14 +1,23 @@
 ﻿using System.Drawing;
+
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using OasysUnits;
+
 using Rhino.Collections;
 using Rhino.Geometry;
+using GsaGHTests.Components.Geometry;
 using Xunit;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 
@@ -17,30 +26,22 @@ namespace GsaGHTests.Components.Geometry {
   public class EditElement2dTests {
 
     public static GH_OasysComponent ComponentMother() {
-      var comp = new Edit2dElement();
-      comp.CreateAttributes();
+      var component = new Edit2dElement();
+      component.CreateAttributes();
 
-      return comp;
+      return component;
     }
     [Fact]
     public void SettingOffsetToLoadPanelWillThrowRunTimeError() {
-      var points = new Point3dList {
-        new Point3d(-3, -4, 0),
-        new Point3d(5, -2, 0),
-        new Point3d(6, 7, 0),
-        new Point3d(-1, 2, 0),
-      };
-      points.Add(points[0]);
-      var polyline = new Rhino.Geometry.Polyline(points);
 
-      var mesh = Mesh.CreateFromPlanarBoundary(polyline.ToPolylineCurve(),
+      var mesh = Mesh.CreateFromPlanarBoundary(CreateElement2dTests.Get2dPolyline(),
         MeshingParameters.DefaultAnalysisMesh, 0.001);
 
       var fe2dElement = new GsaElement2d(mesh);
-      var fe2dLoadPanel = new GsaElement2d(mesh,true);
+      var fe2dLoadPanel = new GsaElement2d(CreateElement2dTests.Get2dPolyline());
 
       GH_OasysComponent feComponet = ComponentMother();
-    
+
       ComponentTestHelper.SetInput(feComponet, new GsaElement2dGoo(fe2dElement), 0);
       ComponentTestHelper.SetInput(feComponet, new GsaOffsetGoo(new GsaOffset(1, 2, 3, 4)), 4);
       var offset = (GsaOffsetGoo)ComponentTestHelper.GetOutput(feComponet, 6);

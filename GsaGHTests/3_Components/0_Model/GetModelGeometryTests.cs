@@ -2,13 +2,19 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
+
 using Rhino.Geometry;
+
 using Xunit;
+
 using static GsaGHTests.Helpers.Export.AssembleModelTests;
 
 namespace GsaGHTests.Model {
@@ -37,10 +43,10 @@ namespace GsaGHTests.Model {
           new GsaNodeGoo(NodeWithSupportText),
         }, null, null, null, null, null, ModelUnit.M));
 
-      var comp = new GetModelGeometry();
-      ComponentTestHelper.SetInput(comp, modelGoo);
-      var output = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 0);
-      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
+      var component = new GetModelGeometry();
+      ComponentTestHelper.SetInput(component, modelGoo);
+      var output = (GsaNodeGoo)ComponentTestHelper.GetOutput(component, 0);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(component);
     }
 
     [Fact]
@@ -50,23 +56,25 @@ namespace GsaGHTests.Model {
           (GsaElement1dGoo)ComponentTestHelper.GetOutput(CreateElement1dTests.ComponentMother()),
         }, null, null, null, null, ModelUnit.M));
 
-      var comp = new GetModelGeometry();
-      ComponentTestHelper.SetInput(comp, modelGoo);
-      var output = (GsaElement1dGoo)ComponentTestHelper.GetOutput(comp, 1);
-      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
+      var component = new GetModelGeometry();
+      ComponentTestHelper.SetInput(component, modelGoo);
+      var output = (GsaElement1dGoo)ComponentTestHelper.GetOutput(component, 1);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(component);
     }
 
-    [Fact]
-    public void GetModelGeometryElement2dDrawViewportMeshesAndWiresTest() {
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void GetModelGeometryElement2dDrawViewportMeshesAndWiresTest(bool isLoadPanel) {
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromGeometry(null, null, new List<GsaElement2dGoo>() {
-          (GsaElement2dGoo)ComponentTestHelper.GetOutput(CreateElement2dTests.ComponentMother()),
+          (GsaElement2dGoo)ComponentTestHelper.GetOutput(CreateElement2dTests.ComponentMother(isLoadPanel)),
         }, null, null, null, ModelUnit.M));
 
-      var comp = new GetModelGeometry();
-      ComponentTestHelper.SetInput(comp, modelGoo);
-      var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(comp, 2);
-      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
+      var component = new GetModelGeometry();
+      ComponentTestHelper.SetInput(component, modelGoo);
+      var output = (GsaElement2dGoo)ComponentTestHelper.GetOutput(component, 2);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(component);
     }
 
     [Fact]
@@ -76,10 +84,10 @@ namespace GsaGHTests.Model {
           (GsaMember1dGoo)ComponentTestHelper.GetOutput(CreateMember1dTests.ComponentMother()),
         }, null, null, ModelUnit.M));
 
-      var comp = new GetModelGeometry();
-      ComponentTestHelper.SetInput(comp, modelGoo);
-      var output = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 4);
-      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
+      var component = new GetModelGeometry();
+      ComponentTestHelper.SetInput(component, modelGoo);
+      var output = (GsaMember1dGoo)ComponentTestHelper.GetOutput(component, 4);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(component);
     }
 
     [Fact]
@@ -89,10 +97,10 @@ namespace GsaGHTests.Model {
           (GsaMember2dGoo)ComponentTestHelper.GetOutput(CreateMember2dTests.ComponentMother()),
         }, null, ModelUnit.M));
 
-      var comp = new GetModelGeometry();
-      ComponentTestHelper.SetInput(comp, modelGoo);
-      var output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp, 5);
-      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
+      var component = new GetModelGeometry();
+      ComponentTestHelper.SetInput(component, modelGoo);
+      var output = (GsaMember2dGoo)ComponentTestHelper.GetOutput(component, 5);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(component);
     }
 
     [Fact]
@@ -103,55 +111,55 @@ namespace GsaGHTests.Model {
           (GsaMember3dGoo)ComponentTestHelper.GetOutput(CreateMember3dTests.ComponentMother()),
         }, ModelUnit.M));
 
-      var comp = new GetModelGeometry();
-      ComponentTestHelper.SetInput(comp, modelGoo);
-      var output = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp, 6);
-      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
+      var component = new GetModelGeometry();
+      ComponentTestHelper.SetInput(component, modelGoo);
+      var output = (GsaMember3dGoo)ComponentTestHelper.GetOutput(component, 6);
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(component);
     }
 
     [Fact]
     public void CreateGetGeometryTest() {
-      var comp = new GetModelGeometry();
-      comp.CreateAttributes();
-      ChangeDropDownTest(comp);
+      var component = new GetModelGeometry();
+      component.CreateAttributes();
+      ChangeDropDownTest(component);
     }
 
     [Fact]
     public void ModeClickedTest() {
-      var comp = new GetModelGeometry();
+      var component = new GetModelGeometry();
 
-      Assert.True(string.IsNullOrEmpty(comp.Message));
-      comp.GraftModeClicked(null, null);
-      Assert.Equal("Graft by Property", comp.Message);
-      comp.ListModeClicked(null, null);
-      Assert.Equal("Import as List", comp.Message);
+      Assert.True(string.IsNullOrEmpty(component.Message));
+      component.GraftModeClicked(null, null);
+      Assert.Equal("Graft by Property", component.Message);
+      component.ListModeClicked(null, null);
+      Assert.Equal("Import as List", component.Message);
     }
 
     private static void ChangeDropDownTest(
-      GetModelGeometry comp, bool ignoreSpacerDescriptionsCount = false) {
-      Assert.True(comp._isInitialised);
+      GetModelGeometry component, bool ignoreSpacerDescriptionsCount = false) {
+      Assert.True(component._isInitialised);
       if (!ignoreSpacerDescriptionsCount) {
-        Assert.Equal(comp._dropDownItems.Count, comp._spacerDescriptions.Count);
+        Assert.Equal(component._dropDownItems.Count, component._spacerDescriptions.Count);
       }
 
-      Assert.Equal(comp._dropDownItems.Count, comp._selectedItems.Count);
+      Assert.Equal(component._dropDownItems.Count, component._selectedItems.Count);
 
-      for (int i = 0; i < comp._dropDownItems.Count; i++) {
-        comp.SetSelected(i, 0);
+      for (int i = 0; i < component._dropDownItems.Count; i++) {
+        component.SetSelected(i, 0);
 
-        for (int j = 0; j < comp._dropDownItems[i].Count; j++) {
-          comp.SetSelected(i, j);
-          TestDeserialize(comp);
-          Assert.Equal(comp._selectedItems[i], comp._dropDownItems[i][j]);
+        for (int j = 0; j < component._dropDownItems[i].Count; j++) {
+          component.SetSelected(i, j);
+          TestDeserialize(component);
+          Assert.Equal(component._selectedItems[i], component._dropDownItems[i][j]);
         }
       }
     }
 
-    private static void TestDeserialize(GetModelGeometry comp, string customIdentifier = "") {
-      comp.CreateAttributes();
+    private static void TestDeserialize(GetModelGeometry component, string customIdentifier = "") {
+      component.CreateAttributes();
 
       var doc = new GH_Document();
-      doc.AddObject(comp, true);
+      doc.AddObject(component, true);
 
       var serialize = new GH_DocumentIO {
         Document = doc,
@@ -163,7 +171,7 @@ namespace GsaGHTests.Model {
 
       string path = Path.Combine(Environment.CurrentDirectory, "GH-Test-Files");
       Directory.CreateDirectory(path);
-      Type myType = comp.GetType();
+      Type myType = component.GetType();
       string pathFileName = Path.Combine(path, myType.Name) + customIdentifier + ".gh";
       Assert.True(serialize.SaveQuiet(pathFileName));
 
@@ -176,6 +184,16 @@ namespace GsaGHTests.Model {
       deserializedComponent.Params.Output[0].CollectData();
 
       Duplicates.AreEqual(originalComponent, deserializedComponent, new List<string>() { "Guid" });
+    }
+
+    [Fact]
+    public void NoExceptionWhenAssignedModelIsNull() {
+      var component = new GetModelGeometry();
+      var parameter = new GsaModelParameter();
+      parameter.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, null);
+      component.Params.Input[0].AddSource(parameter);
+      ComponentTestHelper.ComputeOutput(component);
+      Assert.Empty(component.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
     }
   }
 }

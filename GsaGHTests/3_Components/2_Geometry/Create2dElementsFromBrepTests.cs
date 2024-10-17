@@ -1,16 +1,23 @@
 ﻿using System.Collections.Generic;
+
 using GsaAPI;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
+using GsaGHTests.Components.Properties;
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class Create2dElementsFromBrepTests {
-    public static Create2dElementsFromBrep ComponentMother() {
+    public static Create2dElementsFromBrep ComponentMother(bool isLoadPanel = false) {
       var comp = new Create2dElementsFromBrep();
       comp.CreateAttributes();
 
@@ -32,6 +39,9 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, brep, 0);
       ComponentTestHelper.SetInput(comp, pts, 1);
       ComponentTestHelper.SetInput(comp, crv, 2);
+
+      ComponentTestHelper.SetInput(comp,
+       ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(isLoadPanel)), 3);
       return comp;
     }
 
@@ -192,6 +202,13 @@ namespace GsaGHTests.Components.Geometry {
       comp.Params.Output[0].CollectData();
 
       Assert.Equal(2, comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark).Count);
+    }
+
+    [Fact]
+    public void RuntimeErrorWhenLoadpanelPropertyIsAssigned() {
+      GH_OasysComponent comp = ComponentMother(true);
+      ComponentTestHelper.GetOutput(comp);
+      Assert.Contains(Create2dElementsFromBrep.DoesNotSupportLoadPanelErrorMessage, comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error)[1]);
     }
   }
 }

@@ -1,9 +1,13 @@
 ﻿using System;
+
 using GsaAPI;
+
 using OasysGH.Units;
+
 using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Geometry;
+
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {

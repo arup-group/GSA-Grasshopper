@@ -1,5 +1,7 @@
 ﻿using GsaAPI;
+
 using GsaGH.Parameters;
+
 using Xunit;
 
 namespace GsaGHTests.Helpers.Import {
@@ -151,6 +153,11 @@ namespace GsaGHTests.Helpers.Import {
         MaterialAnalysisProperty = 0,
         Description = "200(mm)"
       });
+
+      //property 8
+      model.AddProp2D(new Prop2D() {
+        Type = Property2D_Type.LOAD
+      }); ;
 
       model.AddProp3D(new Prop3D() {
         MaterialType = MaterialType.STEEL, // 1

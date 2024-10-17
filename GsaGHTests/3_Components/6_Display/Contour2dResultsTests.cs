@@ -1,13 +1,18 @@
 ﻿using System.Collections.Generic;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters;
+
 using OasysGH.UI;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Display {
@@ -29,25 +34,25 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     public void DefaultDropSelectionsTest() {
       var comp = new Contour2dResults();
-      Assert.Equal("Displacement", comp._selectedItems[0]);
-      Assert.Equal("Resolved |U|", comp._selectedItems[1]);
+      Assert.Equal("Displacement", comp.SelectedItems[0]);
+      Assert.Equal("Resolved |U|", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 1);
-      Assert.Equal("Force", comp._selectedItems[0]);
-      Assert.Equal("Force Nx", comp._selectedItems[1]);
+      Assert.Equal("Force", comp.SelectedItems[0]);
+      Assert.Equal("Force Nx", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 2);
-      Assert.Equal("Stress", comp._selectedItems[0]);
-      Assert.Equal("Stress xx", comp._selectedItems[1]);
-      Assert.Equal("Middle", comp._selectedItems[2]);
+      Assert.Equal("Stress", comp.SelectedItems[0]);
+      Assert.Equal("Stress xx", comp.SelectedItems[1]);
+      Assert.Equal("Middle", comp.SelectedItems[2]);
 
       comp.SetSelected(0, 3);
-      Assert.Equal("Footfall", comp._selectedItems[0]);
-      Assert.Equal("Resonant", comp._selectedItems[1]);
+      Assert.Equal("Footfall", comp.SelectedItems[0]);
+      Assert.Equal("Resonant", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 0);
-      Assert.Equal("Displacement", comp._selectedItems[0]);
-      Assert.Equal("Resolved |U|", comp._selectedItems[1]);
+      Assert.Equal("Displacement", comp.SelectedItems[0]);
+      Assert.Equal("Resolved |U|", comp.SelectedItems[1]);
     }
 
     [Fact]

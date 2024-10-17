@@ -1,13 +1,18 @@
 ﻿using System.Collections.Generic;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters;
+
 using OasysGH.UI;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Display {
@@ -29,16 +34,16 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     public void DefaultDropSelectionsTest() {
       var comp = new Contour3dResults();
-      Assert.Equal("Displacement", comp._selectedItems[0]);
-      Assert.Equal("Resolved |U|", comp._selectedItems[1]);
+      Assert.Equal("Displacement", comp.SelectedItems[0]);
+      Assert.Equal("Resolved |U|", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 1);
-      Assert.Equal("Stress", comp._selectedItems[0]);
-      Assert.Equal("Stress zz", comp._selectedItems[1]);
+      Assert.Equal("Stress", comp.SelectedItems[0]);
+      Assert.Equal("Stress zz", comp.SelectedItems[1]);
 
       comp.SetSelected(0, 0);
-      Assert.Equal("Displacement", comp._selectedItems[0]);
-      Assert.Equal("Resolved |U|", comp._selectedItems[1]);
+      Assert.Equal("Displacement", comp.SelectedItems[0]);
+      Assert.Equal("Resolved |U|", comp.SelectedItems[1]);
     }
 
     [Fact]

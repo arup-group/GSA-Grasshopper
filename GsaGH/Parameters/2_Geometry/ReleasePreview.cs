@@ -1,8 +1,13 @@
 ﻿using System.Collections.Generic;
+
 using Grasshopper.Kernel;
+
 using GsaAPI;
+
 using GsaGH.Helpers.Graphics;
+
 using Rhino.Geometry;
+
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
@@ -17,7 +22,7 @@ namespace GsaGH.Parameters {
       PreviewGreenLines = new List<Line>();
       PreviewRedLines = new List<Line>();
 
-      if (start == null | end == null) {
+      if (start == null || end == null) {
         return;
       }
 

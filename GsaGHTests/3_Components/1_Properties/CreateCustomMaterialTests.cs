@@ -1,9 +1,13 @@
 ﻿using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Properties {
@@ -42,8 +46,8 @@ namespace GsaGHTests.Components.Properties {
       Assert.Equal(2, output.Value.AnalysisMaterial.PoissonsRatio);
       Assert.Equal(new Density(3, DensityUnit.KilogramPerCubicMeter).As(DensityUnit.KilogramPerCubicMeter),
         output.Value.AnalysisMaterial.Density);
-      Assert.Equal(new CoefficientOfThermalExpansion(4, CoefficientOfThermalExpansionUnit.InverseKelvin).As(
-          CoefficientOfThermalExpansionUnit.InverseDegreeCelsius),
+      Assert.Equal(new CoefficientOfThermalExpansion(4, CoefficientOfThermalExpansionUnit.PerKelvin).As(
+          CoefficientOfThermalExpansionUnit.PerDegreeCelsius),
         output.Value.AnalysisMaterial.CoefficientOfThermalExpansion);
     }
   }

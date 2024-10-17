@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Assembly {
@@ -10,8 +12,7 @@ namespace GsaGH.Helpers.Assembly {
     private void AddElement(int id, Guid guid, GSAElement apiElement, bool overwrite) {
       if (id > 0) {
         _elements.SetValue(id, guid, apiElement, overwrite);
-      }
-      else {
+      } else {
         _elements.AddValue(guid, apiElement);
       }
     }
@@ -30,8 +31,7 @@ namespace GsaGH.Helpers.Assembly {
 
       if (element1d.ApiElement.Type != ElementType.SPRING) {
         apiElement.Property = ConvertSection(element1d.Section);
-      }
-      else {
+      } else {
         apiElement.Property = ConvertSpringProp(element1d.SpringProperty);
       }
 

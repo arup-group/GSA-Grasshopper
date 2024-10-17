@@ -1,4 +1,5 @@
 ﻿using GsaGH.Parameters;
+
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -8,10 +9,9 @@ namespace GsaGH.Helpers.GsaApi.Grahics {
     /// For 3D visualisation stuff without results
     /// </summary>
     /// <param name="model"></param>
-    /// <param name="userLengthUnitIfModelUndefined"></param>
     /// <returns></returns>
-    internal static double ComputeScale(GsaModel model, LengthUnit userLengthUnitIfModelUndefined) {
-      return ComputeScale(model, 1.0, userLengthUnitIfModelUndefined, false, 1.0);
+    internal static double ComputeScale(GsaModel model) {
+      return ComputeScale(model, 1.0, false, 1.0);
     }
 
     /// <summary>
@@ -19,18 +19,14 @@ namespace GsaGH.Helpers.GsaApi.Grahics {
     /// </summary>
     /// <param name="model"></param>
     /// <param name="userScaleFactor"></param>
-    /// <param name="userLengthUnitIfModelUndefined"></param>
     /// <param name="autoScale"></param>
     /// <param name="unitScaleFactor"></param>
     /// <returns></returns>
     internal static double ComputeScale(GsaModel model, double userScaleFactor,
-      LengthUnit userLengthUnitIfModelUndefined, bool autoScale, double unitScaleFactor) {
+     bool autoScale, double unitScaleFactor) {
       double lengthScaleFactor = 1;
       if (!autoScale) {
-        LengthUnit lengthUnit = model.ModelUnit == LengthUnit.Undefined
-        ? userLengthUnitIfModelUndefined
-        : model.ModelUnit;
-
+        LengthUnit lengthUnit = model.ModelUnit;
         lengthScaleFactor = UnitConverter.Convert(1, lengthUnit, Length.BaseUnit);
       }
 

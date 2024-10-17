@@ -1,7 +1,9 @@
-﻿using Grasshopper.Kernel.Types;
+﻿using System.Collections.Generic;
+
 using Grasshopper;
+using Grasshopper.Kernel.Types;
+
 using OasysGH.Parameters;
-using System.Collections.Generic;
 
 namespace GsaGHTests.Parameters.Results {
   public class SteelDesignEffectiveLengthA1 {
@@ -9,7 +11,7 @@ namespace GsaGHTests.Parameters.Results {
     // "BasicFrame.gwb" for member id=46,47,48 for analysis case A1
     //Length and Positions are in meters
 
-    internal static List<double> MajorMemberLength= new List<double>() {
+    internal static List<double> MajorMemberLength = new List<double>() {
       7071,
       8000,
       8000,
@@ -45,28 +47,28 @@ namespace GsaGHTests.Parameters.Results {
       5000,
       8000,
     };
-    internal static List<double> MajorSpanLength= new List<double>() {
+    internal static List<double> MajorSpanLength = new List<double>() {
       7071,
       5000,
       3000,
       5000,
       3000,
     };
-    internal static List<double> MajorEffectiveLength= new List<double>() {
+    internal static List<double> MajorEffectiveLength = new List<double>() {
       7071,
       3500,
       2100,
       3500,
       2100,
     };
-    internal static List<double> MajorEffectiveLengthEffectiveSpanRatio= new List<double>() {
+    internal static List<double> MajorEffectiveLengthEffectiveSpanRatio = new List<double>() {
       1,
       0.4375,
       0.2625,
       0.4375,
       0.2625,
     };
-    internal static List<double> MajorEffectiveLengthEffectiveSpanRatio2= new List<double>() {
+    internal static List<double> MajorEffectiveLengthEffectiveSpanRatio2 = new List<double>() {
       1.0,
       0.7,
       0.7,
@@ -197,31 +199,33 @@ namespace GsaGHTests.Parameters.Results {
     };
     internal static List<double> LTEffectiveLength = new List<double>() {
       7071,
-      5000,
-      3000,
-      5000,
-      3000,
+      3625,
+      3100,
+      3500,
+      2100,
     };
     internal static List<double> LTEffectiveLengthEffectiveSpanRatio = new List<double>() {
       1.0,
-      0.625,
-      0.375,
-      0.625,
-      0.375,
+      0.4531,
+      0.3875,
+      0.4375,
+      0.2625,
+
     };
     internal static List<double> LTEffectiveLengthEffectiveSpanRatio2 = new List<double>() {
-      1.0,
-      1.0,
-      1.0,
-      1.0,
-      1.0,
+      1.0    ,
+      0.725  ,
+      1.033  ,
+      0.7    ,
+      0.7    ,
+
     };
     internal static List<double> LTSlendernessRatio = new List<double>() {
       217.1,
-      27.1,
-      16.26,
-      27.1,
-      16.26,
+      19.65,
+      16.8,
+      18.97,
+      11.38,
     };
   }
 }

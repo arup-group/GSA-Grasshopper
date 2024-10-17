@@ -2,8 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Threading.Tasks;
+
 using GsaAPI;
+
 using Rhino.Geometry;
+
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Helpers.Import {

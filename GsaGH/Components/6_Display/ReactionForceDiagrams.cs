@@ -6,24 +6,32 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Rhino.Geometry;
+
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
@@ -84,7 +92,7 @@ namespace GsaGH.Components {
 
       return endPoint;
     }
-    
+
     public override void CreateAttributes() {
       if (!_isInitialised) {
         InitialiseDropdowns();
@@ -134,11 +142,6 @@ namespace GsaGH.Components {
         forceUnitsMenu,
         momentUnitsMenu,
       };
-
-      if (_lengthUnit == LengthUnit.Undefined) {
-        ToolStripMenuItem modelUnitsMenu = GenerateModelGeometryUnitsMenu("Model geometry");
-        toolStripItems.Insert(0, modelUnitsMenu);
-      }
 
       unitsMenu.DropDownItems.AddRange(toolStripItems.ToArray());
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
@@ -315,22 +318,6 @@ namespace GsaGH.Components {
       return forceUnitsMenu;
     }
 
-    private ToolStripMenuItem GenerateModelGeometryUnitsMenu(string menuTitle) {
-      var modelUnitsMenu = new ToolStripMenuItem(menuTitle) {
-        Enabled = true,
-      };
-      foreach (ToolStripMenuItem toolStripMenuItem in UnitsHelper
-       .GetFilteredAbbreviations(EngineeringUnits.Length).Select(unit
-          => new ToolStripMenuItem(unit, null, (s, e) => UpdateModel(unit)) {
-            Checked = unit == Length.GetAbbreviation(_lengthUnit),
-            Enabled = true,
-          })) {
-        modelUnitsMenu.DropDownItems.Add(toolStripMenuItem);
-      }
-
-      return modelUnitsMenu;
-    }
-
     private ToolStripMenuItem GenerateMomentUnitsMenu(string menuTitle) {
       var momentUnitsMenu = new ToolStripMenuItem(menuTitle) {
         Enabled = true,
@@ -427,19 +414,7 @@ namespace GsaGH.Components {
     }
 
     private LengthUnit GetLengthUnit(GsaResult gsaResult) {
-      LengthUnit lengthUnit = gsaResult.Model.ModelUnit;
-      bool isUndefined = lengthUnit == LengthUnit.Undefined;
-
-      if (!isUndefined) {
-        return lengthUnit;
-      }
-
-      lengthUnit = _lengthUnit;
-      this.AddRuntimeRemark("Model came straight out of GSA and we couldn't read the units. "
-        + "The geometry has been scaled to be in " + lengthUnit.ToString()
-        + ". This can be changed by right-clicking the component -> 'Select Units'");
-
-      return lengthUnit;
+      return gsaResult.Model.ModelUnit;
     }
 
     private bool IsGhObjectValid(GH_ObjectWrapper ghObject) {

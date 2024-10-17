@@ -4,17 +4,24 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters.Results;
+
 using OasysGH.Units;
+
 using OasysUnits;
+
 using Rhino;
 using Rhino.DocObjects;
 using Rhino.Geometry;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 
@@ -98,10 +105,9 @@ namespace GsaGH.Parameters {
     }
 
     public void DrawViewportWires(GH_PreviewWireArgs args) {
-      if (args.Color == Color.FromArgb(255, 150, 0, 0)) {
+      if (args.Color == Colours.EntityIsNotSelected) {
         args.Pipeline.DrawLines(Outlines, Colours.Element1d);
-      }
-      else {
+      } else {
         args.Pipeline.DrawLines(Outlines, Colours.Element1dSelected);
       }
     }
@@ -178,8 +184,7 @@ namespace GsaGH.Parameters {
         element.Property = model.AddProp2D(elem.Prop2ds[i].ApiProp2d);
         if (element.IsLoadPanel) {
           model.AddLoadPanelElement(element.LoadPanelElelment);
-        }
-        else {
+        } else {
           model.AddElement(element.Element);
         }
 
@@ -252,8 +257,7 @@ namespace GsaGH.Parameters {
     private GraphicSpecification Specification(Layer layer, string definition, DimensionType type) {
       if (layer == Layer.Analysis) {
         return AnalysisLayerSpec(definition, type);
-      }
-      else {
+      } else {
         return DesignLayerSpec(definition, type);
       }
     }

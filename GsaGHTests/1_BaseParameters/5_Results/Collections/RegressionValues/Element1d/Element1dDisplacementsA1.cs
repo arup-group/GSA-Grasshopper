@@ -157,7 +157,7 @@ namespace GsaGHTests.Parameters.Results {
     internal static List<double> ZzInRadian() {
       return new List<double>() {
         102.4E-6,
-        146.2E-6,        
+        146.2E-6,
         131.0E-6,
         56.79E-6,
         25.64E-6,

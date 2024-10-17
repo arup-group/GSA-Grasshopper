@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.UI;
+
 using Rhino;
 using Rhino.DocObjects;
 
@@ -32,12 +37,17 @@ namespace GsaGH.Components {
       CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     public override void CreateAttributes() {
+      if (!_isInitialised) {
+        InitialiseDropdowns();
+      }
       m_attributes = new SliderComponentAttributes(this, SetVal, SetMaxMin, _defScale, _minValue, _maxValue, _noDigits,
         "Scale");
       _isInitialised = true;
     }
 
-    protected override void InitialiseDropdowns() { }
+    protected override void InitialiseDropdowns() {
+      _isInitialised = true;
+    }
 
     public override bool Read(GH_IReader reader) {
       _noDigits = reader.GetInt32("noDec");

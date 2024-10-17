@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
+
 using Xunit;
 
 namespace IntegrationTests {

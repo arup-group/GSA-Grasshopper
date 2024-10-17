@@ -5,17 +5,24 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using GsaAPI;
+
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Helpers.Import;
+
+using OasysGH.Units;
+
 using OasysUnits;
+
 using Rhino.Geometry;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// A GSA model is the main parameter that associates with a GSA model file. Data and results can be extracted from an opened model. A model contains all the constituent parts (Properties, Elements/Members, Loads, Cases, Tasks, etc). 
+  /// A GSA model is the main parameter that associates with a GSA model file. Data and results can be extracted from an opened model. A model contains all the constituent parts (Properties, Elements/Members, Loads, Cases, Tasks, etc).
   /// <para>Use the <see cref="Components.CreateModel"/> or <see cref="Components.AnalyseModel"/> components to assemble a new Model or use the <see cref="Components.OpenModel"/> to work with an existing Model. You can use the <see cref="Components.GetModelProperties"/> or <see cref="Components.GetModelGeometry"/> to start editing the objects from an existing model. </para>
   /// <para>If the model has been analysed you can use the <see cref="Components.SelectResult"/> component to explore the Models structural performance and behaviour.</para>
   /// </summary>
@@ -75,6 +82,7 @@ namespace GsaGH.Parameters {
         Setup();
         _analysisLayerPreview = null;
         _designLayerPreview = null;
+
       }
     }
     internal ReadOnlyDictionary<int, GsaSectionGoo> Sections { get; private set; }
@@ -82,8 +90,9 @@ namespace GsaGH.Parameters {
     internal ReadOnlyDictionary<int, GsaProperty3dGoo> Prop3ds { get; private set; }
     internal ReadOnlyDictionary<int, GsaSpringPropertyGoo> SpringProps { get; private set; }
     private BoundingBox _boundingBox = BoundingBox.Empty;
-    private LengthUnit _lengthUnit = LengthUnit.Undefined;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private Model _model = new Model();
+
     private Section3dPreview _analysisLayerPreview;
     private Section3dPreview _designLayerPreview;
 
@@ -132,10 +141,8 @@ namespace GsaGH.Parameters {
           }
         }
       }
-
-      if (ModelUnit != LengthUnit.Undefined) {
-        s += " [" + Length.GetAbbreviation(ModelUnit) + "]";
-      }
+      //unit
+      s += " [" + Length.GetAbbreviation(ModelUnit) + "]";
 
       return s;
     }
@@ -189,7 +196,7 @@ namespace GsaGH.Parameters {
       Parallel.ForEach(outNodes,
         node => pts.Add(Nodes.Point3dFromNode(node.Value, LengthUnit.Meter)));
 
-      if (ModelUnit == LengthUnit.Undefined || ModelUnit == LengthUnit.Meter) {
+      if (ModelUnit == LengthUnit.Meter) {
         return new BoundingBox(pts);
       }
 

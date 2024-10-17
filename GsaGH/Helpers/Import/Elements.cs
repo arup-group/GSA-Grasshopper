@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.Import {
@@ -16,11 +18,11 @@ namespace GsaGH.Helpers.Import {
       var elem1dDict = new ConcurrentDictionary<int, GSAElement>();
       var elem2dDict = new ConcurrentDictionary<int, GSAElement>();
       var elem3dDict = new ConcurrentDictionary<int, GSAElement>();
-      ReadOnlyDictionary<int, GsaAPI.Assembly> aDict = model.ApiModel.Assemblies(); 
+      ReadOnlyDictionary<int, GsaAPI.Assembly> aDict = model.ApiModel.Assemblies();
       ReadOnlyDictionary<int, Element> eDict = model.ApiModel.Elements(elementList);
       ReadOnlyDictionary<int, LoadPanelElement> loadPanels = model.ApiModel.LoadPanelElements(elementList);
       Parallel.ForEach(loadPanels, item => elem2dDict.TryAdd(item.Key, new GSAElement(item.Value)));
-        Parallel.ForEach(eDict, item => {
+      Parallel.ForEach(eDict, item => {
         int elemDimension = 1; // default assume 1D element
         ElementType type = item.Value.Type;
         switch (type) {

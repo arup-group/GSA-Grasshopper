@@ -1,17 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
 using OasysGH.Parameters;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Rhino.Display;
 using Rhino.Geometry;
+
 using Xunit;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Properties {
@@ -27,14 +36,14 @@ namespace GsaGHTests.Properties {
     [Fact]
     public void LoadPanelPropertyIfNotInGlobalAxisWillThrowRunTimeWarning() {
       var prop2d = new GsaProperty2d();
-      prop2d.ApiProp2d.Type= Property2D_Type.LOAD;
+      prop2d.ApiProp2d.Type = Property2D_Type.LOAD;
 
       GH_OasysComponent comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, new GsaProperty2dGoo(prop2d), 0);
       ComponentTestHelper.SetInput(comp, new GH_Integer((int)GsaAPI.StandardAxis.Local), 4);
       var id = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
       Assert.Null(id);
-      Assert.Contains( "One runtime warning", comp.InstanceDescription);
+      Assert.Contains("One runtime warning", comp.InstanceDescription);
 
       comp = ComponentMother();
       ComponentTestHelper.SetInput(comp, new GH_Integer((int)GsaAPI.StandardAxis.Global), 4);

@@ -45,9 +45,9 @@ namespace GsaGH.Graphics
       this.tableLayoutPanel.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.logoPictureBox)).BeginInit();
       this.SuspendLayout();
-      // 
+      //
       // tableLayoutPanel
-      // 
+      //
       this.tableLayoutPanel.ColumnCount = 3;
       this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32.65128F));
       this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 29.48005F));
@@ -76,9 +76,9 @@ namespace GsaGH.Graphics
       this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
       this.tableLayoutPanel.Size = new System.Drawing.Size(417, 256);
       this.tableLayoutPanel.TabIndex = 0;
-      // 
+      //
       // logoPictureBox
-      // 
+      //
       this.logoPictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
       this.logoPictureBox.Image = global::GsaGH.Properties.Resources.GSALogo128;
       this.logoPictureBox.Location = new System.Drawing.Point(3, 3);
@@ -87,9 +87,9 @@ namespace GsaGH.Graphics
       this.logoPictureBox.Size = new System.Drawing.Size(130, 129);
       this.logoPictureBox.TabIndex = 12;
       this.logoPictureBox.TabStop = false;
-      // 
+      //
       // labelProductName
-      // 
+      //
       this.tableLayoutPanel.SetColumnSpan(this.labelProductName, 2);
       this.labelProductName.Dock = System.Windows.Forms.DockStyle.Fill;
       this.labelProductName.Location = new System.Drawing.Point(142, 0);
@@ -100,9 +100,9 @@ namespace GsaGH.Graphics
       this.labelProductName.TabIndex = 19;
       this.labelProductName.Text = "GSA Grasshopper Plugin";
       this.labelProductName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
+      //
       // labelVersion
-      // 
+      //
       this.labelVersion.Dock = System.Windows.Forms.DockStyle.Fill;
       this.labelVersion.Location = new System.Drawing.Point(142, 27);
       this.labelVersion.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
@@ -112,9 +112,9 @@ namespace GsaGH.Graphics
       this.labelVersion.TabIndex = 0;
       this.labelVersion.Text = "Plugin Version";
       this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
+      //
       // labelApiVersion
-      // 
+      //
       this.tableLayoutPanel.SetColumnSpan(this.labelApiVersion, 2);
       this.labelApiVersion.Dock = System.Windows.Forms.DockStyle.Fill;
       this.labelApiVersion.Location = new System.Drawing.Point(142, 54);
@@ -125,9 +125,9 @@ namespace GsaGH.Graphics
       this.labelApiVersion.TabIndex = 21;
       this.labelApiVersion.Text = "API Version";
       this.labelApiVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
+      //
       // labelCompanyName
-      // 
+      //
       this.tableLayoutPanel.SetColumnSpan(this.labelCompanyName, 2);
       this.labelCompanyName.Dock = System.Windows.Forms.DockStyle.Fill;
       this.labelCompanyName.Location = new System.Drawing.Point(142, 81);
@@ -138,9 +138,9 @@ namespace GsaGH.Graphics
       this.labelCompanyName.TabIndex = 22;
       this.labelCompanyName.Text = "Company";
       this.labelCompanyName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
+      //
       // labelContact
-      // 
+      //
       this.labelContact.Location = new System.Drawing.Point(142, 108);
       this.labelContact.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
       this.labelContact.Name = "labelContact";
@@ -148,9 +148,9 @@ namespace GsaGH.Graphics
       this.labelContact.TabIndex = 22;
       this.labelContact.Text = "Contact and support:";
       this.labelContact.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      // 
+      //
       // linkEmail
-      // 
+      //
       this.linkEmail.Location = new System.Drawing.Point(264, 108);
       this.linkEmail.Margin = new System.Windows.Forms.Padding(6, 0, 3, 0);
       this.linkEmail.Name = "linkEmail";
@@ -160,9 +160,9 @@ namespace GsaGH.Graphics
       this.linkEmail.Text = "oasys@arup.com";
       this.linkEmail.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       this.linkEmail.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkEmail_LinkClicked);
-      // 
+      //
       // Check
-      // 
+      //
       this.Check.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.Check.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.Check.Location = new System.Drawing.Point(302, 30);
@@ -172,9 +172,9 @@ namespace GsaGH.Graphics
       this.Check.Text = "&Check for Updates";
       this.Check.UseVisualStyleBackColor = true;
       this.Check.Click += new System.EventHandler(this.Button1_Click);
-      // 
+      //
       // linkWebsite
-      // 
+      //
       this.linkWebsite.Anchor = System.Windows.Forms.AnchorStyles.Left;
       this.linkWebsite.AutoSize = true;
       this.tableLayoutPanel.SetColumnSpan(this.linkWebsite, 2);
@@ -186,9 +186,9 @@ namespace GsaGH.Graphics
       this.linkWebsite.TabStop = true;
       this.linkWebsite.Text = "www.oasys-software.com";
       this.linkWebsite.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1_LinkClicked);
-      // 
+      //
       // okButton
-      // 
+      //
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.okButton.Location = new System.Drawing.Point(339, 232);
@@ -197,9 +197,9 @@ namespace GsaGH.Graphics
       this.okButton.TabIndex = 24;
       this.okButton.Text = "&OK";
       this.okButton.Click += new System.EventHandler(this.OkButton_Click);
-      // 
+      //
       // disclaimer
-      // 
+      //
       this.disclaimer.AccessibleName = "";
       this.tableLayoutPanel.SetColumnSpan(this.disclaimer, 3);
       this.disclaimer.Location = new System.Drawing.Point(6, 135);
@@ -208,15 +208,15 @@ namespace GsaGH.Graphics
       this.disclaimer.Size = new System.Drawing.Size(408, 81);
       this.disclaimer.TabIndex = 28;
       this.disclaimer.Text = "disclaimer";
-      // 
+      //
       // imageList1
-      // 
+      //
       this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
       this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
       this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-      // 
+      //
       // AboutBox
-      // 
+      //
       this.AcceptButton = this.okButton;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

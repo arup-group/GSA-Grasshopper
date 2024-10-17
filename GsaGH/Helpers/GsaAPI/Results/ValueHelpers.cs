@@ -2,10 +2,37 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using OasysUnits;
+
 namespace GsaGH.Helpers.GsaApi {
   internal static partial class ResultHelper {
 
+    internal static bool IsNaNOrInfinity(double d) {
+      return double.IsInfinity(d) || double.IsNaN(d);
+    }
+
+    internal static bool IsNaNOrInfinity(Force force) {
+      return double.IsInfinity(force.Value) || double.IsNaN(force.Value);
+    }
+
+    internal static bool IsNaNOrInfinity(Moment moment) {
+      return double.IsInfinity(moment.Value) || double.IsNaN(moment.Value);
+    }
+
+    internal static bool IsNaNOrInfinity(Length length) {
+      return double.IsInfinity(length.Value) || double.IsNaN(length.Value);
+    }
+
+    internal static bool IsNaNOrInfinity(Ratio ratio) {
+      return double.IsInfinity(ratio.Value) || double.IsNaN(ratio.Value);
+    }
+
     internal static double RoundToSignificantDigits(double d, int digits) {
+
+      if (IsNaNOrInfinity(d)) {
+        return d;
+      }
+
       if (d == 0.0) {
         return 0.0;
       }
@@ -24,7 +51,7 @@ namespace GsaGH.Helpers.GsaApi {
 
     internal static List<double> SmartRounder(double max, double min) {
       var roundedvals = new List<double>();
-      if (max == 0 & min == 0) {
+      if (max == 0 && min == 0) {
         roundedvals.Add(0.000000000001);
         roundedvals.Add(-0.000000000001);
         roundedvals.Add(0);

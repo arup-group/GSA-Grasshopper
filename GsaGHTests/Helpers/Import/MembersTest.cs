@@ -1,8 +1,12 @@
 ﻿using System.Linq;
+
 using GsaAPI;
+
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
+
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.Helpers.Import {

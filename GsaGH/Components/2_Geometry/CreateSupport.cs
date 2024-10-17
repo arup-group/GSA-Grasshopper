@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Drawing;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.UI;
+
 using Rhino.Geometry;
 
 namespace GsaGH.Components {
@@ -31,6 +36,9 @@ namespace GsaGH.Components {
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 
     public override void CreateAttributes() {
+      if (!_isInitialised) {
+        InitialiseDropdowns();
+      }
       m_attributes = new SupportComponentAttributes(this, SetRestraints, "Restraints", _x, _y, _z,
         _xx, _yy, _zz);
     }
@@ -68,7 +76,9 @@ namespace GsaGH.Components {
       return base.Write(writer);
     }
 
-    protected override void InitialiseDropdowns() { }
+    protected override void InitialiseDropdowns() {
+      _isInitialised = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddPointParameter("Point", "Pt", "Point (x, y, z) location of support",

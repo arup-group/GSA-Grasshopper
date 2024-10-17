@@ -4,10 +4,14 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
@@ -15,13 +19,17 @@ using GsaGH.Helpers.GsaApi.Grahics;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Rhino.Geometry;
+
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using DiagramType = GsaAPI.DiagramType;
 using ForceUnit = OasysUnits.Units.ForceUnit;
@@ -242,13 +250,11 @@ namespace GsaGH.Components {
         autoScale = false;
       }
 
-      LengthUnit lengthUnit = result.Model.ModelUnit;
-
       DiagramType type = GetDiagramType();
 
       double unitScale = ComputeUnitScale(autoScale);
       double computedScale
-        = GraphicsScalar.ComputeScale(result.Model, scale, lengthUnit, autoScale, unitScale);
+        = GraphicsScalar.ComputeScale(result.Model, scale, autoScale, unitScale);
       var graphic = new DiagramSpecification() {
         ListDefinition = list.Definition,
         ListType = list.Type,
@@ -280,7 +286,7 @@ namespace GsaGH.Components {
         }
       }
 
-      double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, lengthUnit);
+      double lengthScaleFactor = UnitConverter.Convert(1, Length.BaseUnit, result.Model.ModelUnit);
 
       foreach (Line item in linesFromModel) {
         if (isDisplacement) {

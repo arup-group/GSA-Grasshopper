@@ -1,17 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Grasshopper.Kernel.Data;
+
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters;
 using GsaGHTests.Parameters.Results;
+
 using OasysGH.Parameters;
+
 using OasysUnits;
+
 using Xunit;
+
 using GsaResultTests = GsaGHTests.Parameters.Results.GsaResultTests;
 using SteelUtilisations = GsaGH.Components.SteelUtilisations;
 

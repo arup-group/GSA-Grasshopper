@@ -3,12 +3,16 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers.Assembly;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Helpers.GH {

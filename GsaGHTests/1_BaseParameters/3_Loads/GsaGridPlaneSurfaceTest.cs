@@ -1,9 +1,15 @@
 ﻿using GsaAPI;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using Rhino.Geometry;
+
 using Xunit;
+
 using static GsaAPI.GridSurface;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Parameters {

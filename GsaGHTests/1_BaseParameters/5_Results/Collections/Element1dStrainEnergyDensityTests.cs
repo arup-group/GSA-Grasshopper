@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters.Results {

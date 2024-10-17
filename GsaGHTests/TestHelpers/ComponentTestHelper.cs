@@ -1,29 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
+
 using OasysGH.Parameters;
+
 using OasysUnits;
+
 using Rhino.Geometry;
 
 namespace GsaGHTests.Helpers {
   public partial class ComponentTestHelper {
 
     public static object GetOutput(
-      GH_Component component, int index = 0, int branch = 0, int item = 0,
-      bool forceUpdate = false) {
+      GH_Component component, int index = 0, int branch = 0, int item = 0, bool forceUpdate = false) {
       if (forceUpdate || component.Params.Output[index].VolatileDataCount == 0) {
-        component.ExpireSolution(true);
-        component.Params.Output[index].ExpireSolution(true);
-        component.Params.Output[index].CollectData();
+        ComputeOutput(component, index);
       }
 
       return component.Params.Output[index].VolatileData.get_Branch(branch)[item];
+    }
+
+    public static void ComputeOutput(GH_Component component, int index = 0)
+    {
+      component.ExpireSolution(true);
+      component.Params.Output[index].ExpireSolution(true);
+      component.Params.Output[index].CollectData();
     }
 
     public static object GetOutput(
@@ -41,34 +50,32 @@ namespace GsaGHTests.Helpers {
       return param.VolatileData.get_Branch(branch)[item];
     }
 
-    public static IList GetListOutput(
-     GH_Component component, int index = 0, int branch = 0) {
+    public static IList GetListOutput(GH_Component component, int index = 0, int branch = 0) {
       component.ExpireSolution(true);
       component.Params.Output[index].ExpireSolution(true);
       component.Params.Output[index].CollectData();
       return component.Params.Output[index].VolatileData.get_Branch(branch);
     }
 
-    public static List<IQuantity> GetResultOutput(
-      GH_Component component, int index, GH_Path path = null) {
+    public static List<IQuantity> GetResultOutput(GH_Component component, int index, GH_Path path = null) {
       if (path == null) {
         component.Params.Output[index].DataMapping = GH_DataMapping.Flatten;
       }
+
       component.ExpireSolution(true);
       component.Params.Output[index].ExpireSolution(true);
       component.Params.Output[index].CollectData();
 
-      IList<IGH_Goo> output = path == null
-        ? component.Params.Output[index].VolatileData.AllData(false).ToList()
-        : (IList<IGH_Goo>)component.Params.Output[index].VolatileData.get_Branch(path);
+      IList<IGH_Goo> output = path == null ? component.Params.Output[index].VolatileData.AllData(false).ToList() :
+        (IList<IGH_Goo>)component.Params.Output[index].VolatileData.get_Branch(path);
       return output.Select(x => ((GH_UnitNumber)x).Value).ToList();
     }
 
-    public static List<IGH_Goo> GetResultOutputAllData(
-      GH_Component component, int index, GH_Path path = null) {
+    public static List<IGH_Goo> GetResultOutputAllData(GH_Component component, int index, GH_Path path = null) {
       if (path == null) {
         component.Params.Output[index].DataMapping = GH_DataMapping.Flatten;
       }
+
       component.ExpireSolution(true);
       component.Params.Output[index].ExpireSolution(true);
       component.Params.Output[index].CollectData();
@@ -119,6 +126,16 @@ namespace GsaGHTests.Helpers {
     }
 
     public static void SetInput(GH_Component component, object obj, int index = 0) {
+      Param_GenericObject input = GetGenericParameterFor(obj);
+      component.Params.Input[index].AddSource(input);
+    }
+
+    public static void SetInput(GH_Component component, object obj, string name) {
+      var index = component.Params.IndexOfInputParam(name);
+      SetInput(component, obj, index);
+    }
+
+    private static Param_GenericObject GetGenericParameterFor(object obj) {
       var input = new Param_GenericObject();
       input.CreateAttributes();
       if (typeof(IQuantity).IsAssignableFrom(obj.GetType())) {
@@ -127,7 +144,7 @@ namespace GsaGHTests.Helpers {
         input.PersistentData.Append(new GH_ObjectWrapper(obj));
       }
 
-      component.Params.Input[index].AddSource(input);
+      return input;
     }
 
     public static void SetInput(GH_Component component, Point3d pt, int index = 0) {
