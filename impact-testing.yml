@@ -70,7 +70,7 @@ stages:
         version: latest
     - template: build-solution.yml
       parameters:
-        solution: gsa.sln
+        solution: GSA-Grasshopper/gsa.sln
         configuration: Release
     - template: uninstall-gsa.yml
 
