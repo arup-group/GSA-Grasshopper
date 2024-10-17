@@ -28,7 +28,7 @@ stages:
       env:
         GITHUB_TOKEN: $(GITHUB_TOKEN)
 
-      - powershell: |
+    - powershell: |
         git clone --filter=blob:none --branch "$(sourceBranch)"
         Write-Output "Checking for changes in GsaGH/** and IntegrationTests/**..."
         git fetch origin
