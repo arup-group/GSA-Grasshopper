@@ -94,7 +94,6 @@ stages:
           
     - template: build-solution.yml
       parameters:
-        repoRoot: GSA-Grasshopper
         solution: GsaGH.sln
         configuration: Release
     - template: uninstall-gsa.yml
