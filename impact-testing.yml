@@ -65,9 +65,13 @@ stages:
     - powershell: |
         Write-Output "Running Unit Tests..."
       displayName: 'Run Unit Tests'
+
     - template: install-gsa.yml
       parameters:
         version: latest
+    - powershell: |
+        dir
+      displayName: 'list dir'        
     - template: build-solution.yml
       parameters:
         solution: GsaGH.sln
