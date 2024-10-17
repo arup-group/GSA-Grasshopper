@@ -1,0 +1,12 @@
+parameters:
+- name: version
+  type: string
+  default: 'nightly'
+
+steps:
+  - powershell: |
+      Get-ChildItem *.msi -Recurse | Remove-Item
+      aws s3 cp s3://oasys-installer-store/GSA/${{ parameters.version }} . --exclude "*" --include *Arup*.msi --recursive
+      Get-ChildItem *.msi | Rename-Item -NewName gsa.msi
+    displayName: 'Download GSA nightly'
+    failOnStderr: true

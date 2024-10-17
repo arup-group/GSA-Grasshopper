@@ -65,9 +65,10 @@ stages:
     - powershell: |
         Write-Output "Running Unit Tests..."
       displayName: 'Run Unit Tests'
-    - template: install-gsa-latest.yml
+    - template: install-gsa.yml
       parameters:
         version: latest
+    - template: uninstall-gsa.yml
 
 - stage: ImpactTestingIntegration
   displayName: 'Impact Testing (Integration)'
