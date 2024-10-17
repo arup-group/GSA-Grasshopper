@@ -1,4 +1,7 @@
 parameters:
+- name: repoRoot
+  type: string
+  dedault: ''
 - name: solution
   type: string
 - name: configuration
@@ -17,6 +20,7 @@ steps:
 - task: VSBuild@1
   displayName: 'Building project in $(configuration)'
   inputs:
+    solution: '$(repoRoot)/$(solution)'
     solution: '$(solution)'
     msbuildArgs: '/p:AppxBundlePlatforms="x64" /p:AppxPackageDir="$(build.artifactStagingDirectory)\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /m /nr:false /p:TreatWarningsAsErrors="true"'
     platform: 'x64'
