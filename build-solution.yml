@@ -1,0 +1,26 @@
+parameters:
+- name: solution
+  type: string
+- name: configuration
+  type: string
+  default: Release
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  displayName: 'Restoring NuGet packages'
+  inputs:
+    command: 'restore'
+    restoreSolution: '$(solution)'
+
+- task: VSBuild@1
+  displayName: 'Building project in $(configuration)'
+  inputs:
+    solution: '$(solution)'
+    msbuildArgs: '/p:AppxBundlePlatforms="x64" /p:AppxPackageDir="$(build.artifactStagingDirectory)\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /m /nr:false /p:TreatWarningsAsErrors="true"'
+    platform: 'x64'
+      configuration: '$(configuration)'
+      clean: true
+  env:
+    MSBUILDDISABLENODEREUSE: 1
