@@ -251,7 +251,7 @@ namespace GsaGH.Components {
         cases = new List<GsaAnalysisCase>();
         var footfallAnalysisCase = new GsaAnalysisCase {
           Name = name,
-          Definition = name,
+          Definition = "Footfall",
         };
         cases.Add(footfallAnalysisCase);
       }
@@ -291,6 +291,8 @@ namespace GsaGH.Components {
 
       var parameter = new FootfallAnalysisTaskParameter {
         ModalAnalysisTaskId = analysisTaskId,
+        ExcitationNodes="all",
+        ResponseNodes="all",
       };
 
       string responseNodes = "All";
