@@ -72,6 +72,15 @@ stages:
     - powershell: |
         dir
       displayName: 'list dir'
+
+    - task: NuGetToolInstaller@1
+
+    - task: NuGetCommand@2
+      displayName: 'Restoring NuGet packages'
+      inputs:
+        command: 'restore'
+        restoreSolution: 'GsaGH.sln'
+    
     - task: VSBuild@1
       displayName: 'Building project in $(configuration)'
       inputs:
