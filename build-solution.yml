@@ -24,7 +24,7 @@ steps:
 - task: VSBuild@1
   displayName: 'Building project in $(configuration)'
   inputs:
-    solution: '$(repoRoot)/$(solution)'
+    solution: ${{ parameters.solution }}
     msbuildArgs: '/p:AppxBundlePlatforms="x64" /p:AppxPackageDir="$(build.artifactStagingDirectory)\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /m /nr:false /p:TreatWarningsAsErrors="true"'
     platform: 'x64'
     configuration: '$(configuration)'
