@@ -4,6 +4,8 @@ trigger:
   branches:
     include:
     - release/*
+    exclude:
+      - 'task/GSAGH-555-new-pipeline'
 
 variables:
   - group: s3PushInstallers
