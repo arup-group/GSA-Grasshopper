@@ -17,11 +17,11 @@ stages:
       vmImage: 'windows-latest'
     steps:
 
-    - checkout: none
+    # - checkout: none
 
     - powershell: |
-        Write-Output "Minimal checkout of repository...Branch=$env:System.PullRequest.SourceBranch"
-        # git clone --filter=blob:none --branch $env:System.PullRequest.SourceBranch
+        Write-Output "Minimal checkout of repository...Branch= $(System.PullRequest.SourceBranch)"
+        # git clone --filter=blob:none --branch $(System.PullRequest.SourceBranch)
       displayName: 'Minimal Checkout'
       env:
         GITHUB_TOKEN: $(GITHUB_TOKEN)
