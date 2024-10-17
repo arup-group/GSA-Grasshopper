@@ -44,6 +44,8 @@ namespace GsaGHTests.Components.Properties
     }
 
     [Theory]
+    [InlineData(LocalSupportType.Auto)]
+    [InlineData(LocalSupportType.AllEdges)]
     [InlineData(LocalSupportType.ThreeEdges)]
     [InlineData(LocalSupportType.TwoEdges)]
     [InlineData(LocalSupportType.TwoAdjacentEdges)]

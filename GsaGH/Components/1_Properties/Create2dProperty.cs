@@ -43,6 +43,8 @@ namespace GsaGH.Components {
       { Prop2dType.LoadPanel, "Load Panel" },
     };
     private readonly IReadOnlyDictionary<SupportType, string> _supportDropDown = new Dictionary<SupportType, string> {
+      { SupportType.OneWay, "One-way" },
+      { SupportType.TwoWay, "Two-way" },
       { SupportType.Auto, "Automatic" },
       { SupportType.AllEdges, "All edges" },
       { SupportType.ThreeEdges, "Three edges" },
@@ -50,8 +52,6 @@ namespace GsaGH.Components {
       { SupportType.TwoAdjacentEdges, "Two adjacent edges" },
       { SupportType.OneEdge, "One edge" },
       { SupportType.Cantilever, "Cantilever" },
-      { SupportType.OneWay, "One-way" },
-      { SupportType.TwoWay, "Two-way" },
     };
 
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitSection;
@@ -89,13 +89,10 @@ namespace GsaGH.Components {
 
     private bool IsLegacySupportEdge(Prop2D property2d = null) {
       if (property2d != null) {
-        return property2d.SupportType != SupportType.Auto && property2d.SupportType != SupportType.AllEdges
-          && property2d.SupportType != SupportType.OneWay && property2d.SupportType != SupportType.TwoWay;
+        return property2d.SupportType != SupportType.OneWay && property2d.SupportType != SupportType.TwoWay;
       }
 
-      return _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.Auto)
-        && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.AllEdges)
-        && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.OneWay)
+      return  _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.OneWay)
         && _supportTypeIndex != _supportDropDown.Keys.ToList().IndexOf(SupportType.TwoWay);
     }
 
@@ -126,7 +123,6 @@ namespace GsaGH.Components {
             SetInputProperties(3, "Off", $"Offset [{Length.GetAbbreviation(_lengthUnit)}]", "Additional Offset",
               optional: true);
           }
-
           return;
       }
     }
