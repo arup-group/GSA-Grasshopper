@@ -12,12 +12,15 @@ stages:
     pool:
       vmImage: 'windows-latest'
     steps:
+    - checkout: none
     - powershell: |
+        git clone --filter=blob:none --branch "$(sourceBranch)"
         Write-Output "Checking for changes in GsaGH/** and IntegrationTests/**..."
+        git fetch origin
         $gitChanges = git diff --name-only HEAD~1 HEAD
         $unitTestsChanged = $false
         $integrationTestsChanged = $false
-        
+
         foreach ($file in $gitChanges) {
           if ($file -like 'GsaGH/*') {
             $unitTestsChanged = $true
@@ -26,7 +29,7 @@ stages:
             $integrationTestsChanged = $true
           }
         }
-        
+
         Write-Output "Setting pipeline variables based on changes detected..."
         if ($unitTestsChanged) {
           Write-Output "UnitTests=True"
@@ -65,4 +68,3 @@ stages:
     - powershell: |
         Write-Output "Running Integration Tests..."
       displayName: 'Run Integration Tests'
-
