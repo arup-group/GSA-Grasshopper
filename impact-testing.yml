@@ -94,8 +94,9 @@ stages:
           
     - template: build-solution.yml
       parameters:
-        solution: GsaGH.sln
-        configuration: Release
+        repoRoot: '.'
+        solution: 'GsaGH.sln'
+        configuration: 'Release'
     - template: uninstall-gsa.yml
 
 - stage: ImpactTestingIntegration
