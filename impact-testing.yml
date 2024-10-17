@@ -12,6 +12,8 @@ pool: 'rhino-compute'
 stages:
 - stage: CheckRepoChanges
   displayName: 'Check Repository Changes'
+  pool:
+    vmImage: 'windows-latest'
   jobs:
   - job: CheckChanges
     displayName: 'Check for Changes in GsaGH and IntegrationTests'
