@@ -19,15 +19,15 @@ steps:
   displayName: 'Restoring NuGet packages'
   inputs:
     command: 'restore'
-    restoreSolution: '$(solution)'
+    restoreSolution: ${{ parameters.solution }}
 
 - task: VSBuild@1
-  displayName: 'Building project in $(configuration)'
+  displayName: 'Building project in ${{ parameters.configuration }}'
   inputs:
     solution: ${{ parameters.solution }}
     msbuildArgs: '/p:AppxBundlePlatforms="x64" /p:AppxPackageDir="$(build.artifactStagingDirectory)\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /m /nr:false /p:TreatWarningsAsErrors="true"'
     platform: 'x64'
-    configuration: '$(configuration)'
+    configuration: ${{ parameters.configuration }}
     clean: true
   env:
     MSBUILDDISABLENODEREUSE: 1
