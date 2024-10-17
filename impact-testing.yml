@@ -62,6 +62,7 @@ stages:
   - job: UnitTests
     displayName: 'Run Unit Tests'
     steps:
+    - checkout: self
     - powershell: |
         Write-Output "Running Unit Tests..."
       displayName: 'Run Unit Tests'
