@@ -1,7 +1,4 @@
 parameters:
-- name: repoRoot
-  type: string
-  default: ''
 - name: solution
   type: string
 - name: configuration
