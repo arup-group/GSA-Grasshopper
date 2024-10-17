@@ -7,14 +7,14 @@ variables:
   - group: s3PushInstallers
   - group: pipeline-tokens
 
+pool: 'rhino-compute'
+
 stages:
 - stage: CheckRepoChanges
   displayName: 'Check Repository Changes'
   jobs:
   - job: CheckChanges
     displayName: 'Check for Changes in GsaGH and IntegrationTests'
-    pool:
-      vmImage: 'windows-latest'
     steps:
 
     - checkout: none
@@ -59,8 +59,6 @@ stages:
   jobs:
   - job: UnitTests
     displayName: 'Run Unit Tests'
-    pool:
-      vmImage: 'windows-latest'
     steps:
     - powershell: |
         Write-Output "Running Unit Tests..."
@@ -77,8 +75,6 @@ stages:
   jobs:
   - job: IntegrationTests
     displayName: 'Run Integration Tests'
-    pool:
-      vmImage: 'windows-latest'
     steps:
     - powershell: |
         Write-Output "Running Integration Tests..."
