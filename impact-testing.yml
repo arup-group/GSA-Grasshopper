@@ -3,6 +3,10 @@ pr:
     include:
       - 'release/*'
 
+variables:
+  - group: s3PushInstallers
+  - group: pipeline-tokens
+
 stages:
 - stage: CheckRepoChanges
   displayName: 'Check Repository Changes'
@@ -12,8 +16,19 @@ stages:
     pool:
       vmImage: 'windows-latest'
     steps:
+
     - checkout: none
+
     - powershell: |
+        Write-Output "Minimal checkout of repository..."
+        git clone --filter=blob:none --branch $env:System.PullRequest.SourceBranch --depth 100 --sparse https://$env:GITHUB_TOKEN@github.com/arup-group/GSA-Grasshopper .
+        git fetch --no-tags --filter=blob:none origin $env:targetBranch:refs/remotes/origin/$env:targetBranch
+        git branch $env:targetBranch FETCH_HEAD
+      displayName: 'Minimal Checkout'
+      env:
+        GITHUB_TOKEN: $(GITHUB_TOKEN)
+
+      - powershell: |
         git clone --filter=blob:none --branch "$(sourceBranch)"
         Write-Output "Checking for changes in GsaGH/** and IntegrationTests/**..."
         git fetch origin
