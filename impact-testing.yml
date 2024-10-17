@@ -70,32 +70,9 @@ stages:
     - template: install-gsa.yml
       parameters:
         version: latest
-    - powershell: |
-        dir
-      displayName: 'list dir'
-
-    - task: NuGetToolInstaller@1
-
-    - task: NuGetCommand@2
-      displayName: 'Restoring NuGet packages'
-      inputs:
-        command: 'restore'
-        restoreSolution: 'GsaGH.sln'
-    
-    - task: VSBuild@1
-      displayName: 'Building project in $(configuration)'
-      inputs:
-        solution: 'GsaGH.sln'
-        msbuildArgs: '/p:AppxBundlePlatforms="x64" /p:AppxPackageDir="$(build.artifactStagingDirectory)\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /m /nr:false /p:TreatWarningsAsErrors="true"'
-        platform: 'x64'
-        configuration: Release
-        clean: true
-      env:
-        MSBUILDDISABLENODEREUSE: 1
           
     - template: build-solution.yml
       parameters:
-        repoRoot: '.'
         solution: 'GsaGH.sln'
         configuration: 'Release'
     - template: uninstall-gsa.yml
