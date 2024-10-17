@@ -10,3 +10,38 @@ steps:
       Get-ChildItem *.msi | Rename-Item -NewName gsa.msi
     displayName: 'Download GSA nightly'
     failOnStderr: true
+
+  - powershell: |
+      $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
+      Write-output "Installer Path: ${installerPath}"
+      Write-output "GSA Version:"
+      if (!(Test-Path $installerPath.FullName)) {
+        Write-output "File '{0}' does not exist" -f $installerPath.FullName
+      }
+      try {
+        $WindowsInstaller = New-Object -com WindowsInstaller.Installer
+        $Database = $WindowsInstaller.GetType().InvokeMember("OpenDatabase", "InvokeMethod", $Null, $WindowsInstaller, @($installerPath.FullName, 0))
+        $Query = "SELECT Value FROM Property WHERE Property = 'ProductVersion'"
+        $View = $database.GetType().InvokeMember("OpenView", "InvokeMethod", $Null, $Database, ($Query))
+        $View.GetType().InvokeMember("Execute", "InvokeMethod", $Null, $View, $Null) | Out-Null
+        $Record = $View.GetType().InvokeMember( "Fetch", "InvokeMethod", $Null, $View, $Null )
+        $Version = $Record.GetType().InvokeMember( "StringData", "GetProperty", $Null, $Record, 1 )
+        Write-output $Version
+      } catch {
+        Write-output "Failed to get MSI file version: {0}." -f $_
+      }
+      $app = Start-Process ${installerPath} -ArgumentList '/passive /quiet /l* msiLog.txt' -PassThru -Wait
+      $app.WaitForExit()
+      Write-Output "Exit code: $($app.ExitCode)"
+      Write-Output "Exit time: $($app.ExitTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss')) UTC"
+      if ($app.ExitCode -ne 0) {
+        Write-Error "Application could not be installed. Error code $($app.ExitCode)"
+        exit(1)
+      }
+    displayName: 'Install GSA'
+    failOnStderr: true
+
+  - powershell: |
+      & 'C:\Program Files\Oasys\*\GSA.exe' /Register
+    displayName: 'Register GSA COM'
+    failOnStderr: false
