@@ -1,7 +1,11 @@
 # https://aka.ms/yaml
 
 trigger:
-- main
+  branches:
+    include:
+      - main
+    exclude:
+      - 'task/GSAGH-555-new-pipeline'
 
 variables:
   - group: s3PushInstallers
