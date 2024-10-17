@@ -20,7 +20,7 @@ stages:
     - checkout: none
 
     - powershell: |
-        Write-Output "Minimal checkout of repository...Branch= $(System.PullRequest.SourceBranch)"
+      Write-Output "Minimal checkout of repository...Branch:$(System.PullRequest.SourceBranch)"
         git clone --branch $(System.PullRequest.SourceBranch) --depth 100 --sparse https://$(GITHUB_TOKEN)@github.com/arup-group/GSA-Grasshopper.git .
       displayName: 'Minimal Checkout'
       env:
@@ -45,14 +45,10 @@ stages:
         }
 
         Write-Output "Setting pipeline variables based on changes detected..."
-        if ($unitTestsChanged) {
-          Write-Output "UnitTests=True"
-          echo "##vso[task.setvariable variable=UnitTests]true"
-        }
-        if ($integrationTestsChanged) {
-          Write-Output "Integration=True"
-          echo "##vso[task.setvariable variable=Integration]true"
-        }
+        Write-Output "UnitTests=$unitTestsChanged"
+        echo "##vso[task.setvariable variable=UnitTests]$unitTestsChanged"
+        Write-Output "Integration=$integrationTestsChanged"
+        echo "##vso[task.setvariable variable=Integration]$integrationTestsChanged"
       displayName: 'Detect Changes in Repo'
 
 - stage: ImpactTestingUnit
