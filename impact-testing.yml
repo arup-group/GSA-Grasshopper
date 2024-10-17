@@ -1,4 +1,4 @@
-pr:
+trigger:
   branches:
     include:
       - 'release/*'
@@ -20,11 +20,8 @@ stages:
     - checkout: none
 
     - powershell: |
-        Write-Output "Minimal checkout of repository..."
-        git clone --filter=blob:none --branch $env:System.PullRequest.SourceBranch
-        # git clone --branch $env:System.PullRequest.SourceBranch --depth 100 --sparse https://$env:GITHUB_TOKEN@github.com/arup-group/GSA-Grasshopper .
-        # git fetch --no-tags --filter=blob:none origin $env:targetBranch:refs/remotes/origin/$env:targetBranch
-        # git branch $env:targetBranch FETCH_HEAD
+        Write-Output "Minimal checkout of repository...Branch=$env:System.PullRequest.SourceBranch"
+        # git clone --filter=blob:none --branch $env:System.PullRequest.SourceBranch
       displayName: 'Minimal Checkout'
       env:
         GITHUB_TOKEN: $(GITHUB_TOKEN)
