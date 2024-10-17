@@ -21,7 +21,7 @@ stages:
 
     - powershell: |
         Write-Output "Minimal checkout of repository...Branch= $(System.PullRequest.SourceBranch)"
-        # git clone --filter=blob:none --branch $(System.PullRequest.SourceBranch)
+        git clone --branch $(System.PullRequest.SourceBranch) --depth 100 --sparse https://$(GITHUB_TOKEN)@github.com/arup-group/GSA-Grasshopper.git .
       displayName: 'Minimal Checkout'
       env:
         GITHUB_TOKEN: $(GITHUB_TOKEN)
@@ -29,6 +29,8 @@ stages:
     - powershell: |
         Write-Output "Checking for changes in GsaGH/** and IntegrationTests/**..."
         git fetch origin
+        git status
+
         $gitChanges = git diff --name-only HEAD~1 HEAD
         $unitTestsChanged = $false
         $integrationTestsChanged = $false
