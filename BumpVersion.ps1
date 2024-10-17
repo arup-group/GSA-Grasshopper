@@ -57,7 +57,7 @@ if (-not (Validate-VersionFormat $newVersion)) {
 # Define the paths and patterns for each file
 $filesToUpdate = @(
     @{
-        FilePath = ".\GsaGH\OasysGH.csproj"
+        FilePath = ".\GsaGH\GsaGH.csproj"
         SearchPattern = '<Version>(.*?)<\/Version>'
         ReplacementPattern = "<Version>$newVersion</Version>"
     },
