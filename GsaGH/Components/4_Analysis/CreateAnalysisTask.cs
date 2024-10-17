@@ -285,23 +285,24 @@ namespace GsaGH.Components {
     }
 
     private bool CreateFootfallTask(IGH_DataAccess da, string name, out AnalysisTask task) {
+      const string defaultValueForNode = "all";
       task = null;
       int analysisTaskId = 0;
       da.GetData(2, ref analysisTaskId);
 
       var parameter = new FootfallAnalysisTaskParameter {
         ModalAnalysisTaskId = analysisTaskId,
-        ExcitationNodes="all",
-        ResponseNodes="all",
+        ExcitationNodes= defaultValueForNode,
+        ResponseNodes= defaultValueForNode,
       };
 
-      string responseNodes = "All";
+      string responseNodes = defaultValueForNode;
       if (da.GetData(3, ref responseNodes)) {
         parameter.ResponseNodes = responseNodes;
       }
 
       int i = 4;
-      string excitationNodes = "All";
+      string excitationNodes = defaultValueForNode;
       if (!IsSelfExcitationSelected()) {
         if (da.GetData(i++, ref excitationNodes)) {
           parameter.ExcitationNodes = excitationNodes;
