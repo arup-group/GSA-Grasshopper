@@ -17,7 +17,7 @@ stages:
       vmImage: 'windows-latest'
     steps:
 
-    # - checkout: none
+    - checkout: none
 
     - powershell: |
         Write-Output "Minimal checkout of repository...Branch= $(System.PullRequest.SourceBranch)"
