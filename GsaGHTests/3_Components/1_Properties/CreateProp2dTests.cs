@@ -1,4 +1,6 @@
-﻿using GsaGH.Components;
+﻿using GsaAPI;
+
+using GsaGH.Components;
 
 using GsaGHTests.Helpers;
 
@@ -31,7 +33,7 @@ namespace GsaGHTests.Components.Properties {
       var component = new Create2dProperty();
       component.CreateAttributes();
       component.SetSelected(0, 5); // 5-"Load"
-      component.SetSelected(1, 3); // "TwoEdges"
+      component.SetLoadPanelSupportType((SupportType)LoadPanelPropertyTests.LocalSupportType.TwoEdges);
       ComponentTestHelper.SetInput(component, 2, 0);
       return component;
     }
