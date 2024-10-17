@@ -54,7 +54,8 @@ stages:
 - stage: ImpactTestingUnit
   displayName: 'Impact Testing (Unit)'
   dependsOn: CheckRepoChanges
-  condition: eq(variables['UnitTests'], 'true')
+  condition: always()
+  # condition: eq(variables['UnitTests'], 'true')
   jobs:
   - job: UnitTests
     displayName: 'Run Unit Tests'
@@ -64,6 +65,9 @@ stages:
     - powershell: |
         Write-Output "Running Unit Tests..."
       displayName: 'Run Unit Tests'
+    - template: install-gsa-latest.yml
+      parameters:
+        version: latest
 
 - stage: ImpactTestingIntegration
   displayName: 'Impact Testing (Integration)'
