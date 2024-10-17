@@ -68,6 +68,10 @@ stages:
     - template: install-gsa.yml
       parameters:
         version: latest
+    - template: build-solution.yml
+      parameters:
+        solution: gsa.sln
+        configuration: Release
     - template: uninstall-gsa.yml
 
 - stage: ImpactTestingIntegration
