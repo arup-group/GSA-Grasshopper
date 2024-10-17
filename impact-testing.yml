@@ -20,7 +20,7 @@ stages:
     - checkout: none
 
     - powershell: |
-      Write-Output "Minimal checkout of repository...Branch:$(System.PullRequest.SourceBranch)"
+        Write-Output "Minimal checkout of repository...Branch:$(System.PullRequest.SourceBranch)"
         git clone --branch $(System.PullRequest.SourceBranch) --depth 100 --sparse https://$(GITHUB_TOKEN)@github.com/arup-group/GSA-Grasshopper.git .
       displayName: 'Minimal Checkout'
       env:
