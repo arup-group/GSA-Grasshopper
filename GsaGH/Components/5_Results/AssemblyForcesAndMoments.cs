@@ -157,7 +157,6 @@ namespace GsaGH.Components {
 
         ReadOnlyCollection<int> elementIds = result.AssemblyIds(assemblylist);
         Parameters.Results.AssemblyForcesAndMoments resultSet = result.AssemblyForcesAndMoments.ResultSubset(elementIds);
-
         List<int> permutations = result.SelectedPermutationIds ?? new List<int>() {
           1,
         };
@@ -201,6 +200,8 @@ namespace GsaGH.Components {
           outRotZ.Add(new GH_UnitNumber(extrema.Zz.ToUnit(_momentUnit)), path);
           outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz.ToUnit(_momentUnit)), path);
         }
+
+        SendMessage.SendErrorsAndWarnings(this, resultSet.Subset.Values);
 
         PostHog.Result(result.CaseType, 1, "AssemblyForce");
       }

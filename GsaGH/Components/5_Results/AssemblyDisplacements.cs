@@ -174,6 +174,8 @@ namespace GsaGH.Components {
           outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz), path);
         }
 
+        SendMessage.SendErrorsAndWarnings(this, resultSet.Subset.Values);
+
         PostHog.Result(result.CaseType, 1, "AssemblyDisplacement");
       }
 

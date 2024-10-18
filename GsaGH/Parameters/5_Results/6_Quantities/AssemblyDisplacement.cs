@@ -8,9 +8,17 @@ namespace GsaGH.Parameters.Results {
   public class AssemblyDisplacement : IEntity1dQuantity<IDisplacement> {
     public IDictionary<double, IDisplacement> Results { get; private set; } = new Dictionary<double, IDisplacement>();
     public IList<string> Storeys { get; private set; } = new List<string>();
+    public ICollection<string> Warnings { get; internal set; } = new HashSet<string>();
+    public ICollection<string> Errors { get; internal set; } = new HashSet<string>();
 
     internal AssemblyDisplacement(ReadOnlyCollection<AssemblyResult> result) {
       for (int i = 0; i < result.Count; i++) {
+        if (Results.ContainsKey(result[i].Position)) {
+          Warnings.Add(
+            "Some of the assembly displacements has been skipped. Two or more results has the same positions.");
+          continue;
+        }
+
         Results.Add(result[i].Position, new Displacement(result[i]));
         Storeys.Add(result[i].Storey);
       }

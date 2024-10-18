@@ -6,6 +6,8 @@ namespace GsaGH.Parameters.Results {
   public abstract class Entity1dResult<ApiResultType, QuantityResult>
     : IEntity1dQuantity<QuantityResult> where QuantityResult : IResultItem {
     public IDictionary<double, QuantityResult> Results { get; private set; }
+    public ICollection<string> Warnings { get; internal set; } = new List<string>();
+    public ICollection<string> Errors { get; internal set; } = new List<string>();
 
     internal Entity1dResult(IDictionary<double, QuantityResult> results) {
       Results = results;

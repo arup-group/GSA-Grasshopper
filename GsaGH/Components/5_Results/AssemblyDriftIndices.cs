@@ -126,6 +126,8 @@ namespace GsaGH.Components {
           outTransXy.Add(new GH_UnitNumber(extrema.Xy), path);
         }
 
+        SendMessage.SendErrorsAndWarnings(this, resultSet.Subset.Values);
+
         PostHog.Result(result.CaseType, 1, "AssemblyDriftIndex");
       }
 
