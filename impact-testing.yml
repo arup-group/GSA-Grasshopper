@@ -76,6 +76,25 @@ stages:
         solution: 'GsaGH.sln'
         configuration: 'Release'
     - template: uninstall-gsa.yml
+    
+    - task: VisualStudioTestPlatformInstaller@1
+      displayName: 'Install Test Platform'
+
+    - task: VSTest@3
+      inputs:
+        testSelector: 'testAssemblies'  # Enables Test Impact Analysis
+        testAssemblyVer2: |
+          GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
+        searchFolder: '$(System.DefaultWorkingDirectory)'
+        runOnlyImpactedTests: true
+        runInParallel: true
+        failOnStderr: true
+        
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
 
 - stage: ImpactTestingIntegration
   displayName: 'Impact Testing (Integration)'
