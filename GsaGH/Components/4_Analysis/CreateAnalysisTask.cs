@@ -81,6 +81,7 @@ namespace GsaGH.Components {
       Optional = false,
     };
     private int _casesParamIndex = 2;
+    public const string defaultValueForNode = "all";
 
     private readonly FootfallInputManager _footfallInputManager;
     private AnalysisTaskType _type = AnalysisTaskType.Static;
@@ -251,7 +252,7 @@ namespace GsaGH.Components {
         cases = new List<GsaAnalysisCase>();
         var footfallAnalysisCase = new GsaAnalysisCase {
           Name = name,
-          Definition = name,
+          Definition = "Footfall",
         };
         cases.Add(footfallAnalysisCase);
       }
@@ -291,15 +292,17 @@ namespace GsaGH.Components {
 
       var parameter = new FootfallAnalysisTaskParameter {
         ModalAnalysisTaskId = analysisTaskId,
+        ExcitationNodes = defaultValueForNode,
+        ResponseNodes = defaultValueForNode,
       };
 
-      string responseNodes = "All";
+      string responseNodes = defaultValueForNode;
       if (da.GetData(3, ref responseNodes)) {
         parameter.ResponseNodes = responseNodes;
       }
 
       int i = 4;
-      string excitationNodes = "All";
+      string excitationNodes = defaultValueForNode;
       if (!IsSelfExcitationSelected()) {
         if (da.GetData(i++, ref excitationNodes)) {
           parameter.ExcitationNodes = excitationNodes;
