@@ -87,10 +87,11 @@ stages:
           GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
         searchFolder: '$(System.DefaultWorkingDirectory)'
         runOnlyImpactedTests: true
-        runInParallel: true
+        runInParallel: false
         failOnStderr: true
         
     - task: PublishBuildArtifacts@1
+      condition: always()
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'drop'
