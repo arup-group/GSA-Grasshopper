@@ -5,7 +5,7 @@
     SpanElements,
     StartPosition,
     EndPosition,
-    SpanLength, 
+    SpanLength,
     EffectiveLength,
     EffectiveSpanRatio,
     EffectiveSpanRatio2,

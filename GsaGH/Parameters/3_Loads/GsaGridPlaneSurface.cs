@@ -1,9 +1,14 @@
 ﻿using System;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Parameters.Enums;
+
 using OasysUnits;
+
 using Rhino.Geometry;
+
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 

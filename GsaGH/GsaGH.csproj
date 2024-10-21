@@ -4,45 +4,50 @@
     <PlatformTarget>x64</PlatformTarget>
     <Platforms>x64</Platforms>
     <Title>GsaGH</Title>
-	    <Company>Oasys</Company>
+    <Company>Oasys</Company>
     <Copyright>Copyright © Oasys 1985 - 2024</Copyright>
     <PackageProjectUrl>https://github.com/arup-group/GSA-Grasshopper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arup-group/GSA-Grasshopper</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>GSALogo128.png</PackageIcon>
-    <Version>1.4.0</Version>
+    <Version>1.5.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-	   <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <LangVersion>8.0</LangVersion>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <Description>Official Oasys GSA Grasshopper Plugin
 
-The plugin requires a licensed version of Gsa to load.
+      The plugin requires a licensed version of Gsa to load.
 
-Contact oasys@arup.com to request a free trial version.
+      Contact oasys@arup.com to request a free trial version.
 
-Copyright © Oasys 1985 - 2024</Description>
+      Copyright © Oasys 1985 - 2024
+    </Description>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="$(Configuration) == 'Debug' AND $([MSBuild]::IsOSPlatform(Windows))">
     <StartProgram>C:\Program Files\Rhino 7\System\Rhino.exe</StartProgram>
     <StartArguments></StartArguments>
     <StartAction>Program</StartAction>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
-  
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="Copy &quot;$(TargetPath)&quot; &quot;$(TargetDir)GSA.gha&quot;&#xD;&#xA;Copy &quot;Properties\Icons\GSALogo64.png&quot; &quot;$(TargetDir)GsaIcon.png&quot;" />
   </Target>
- 
+
   <ItemGroup>
+    <PackageReference Include="OasysGH" Version="1.2.4" />
+    <PackageReference Include="OasysUnits" Version="1.2.1" />
+    <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>GsaGHTests</_Parameter1>
     </AssemblyAttribute>
@@ -53,26 +58,25 @@ Copyright © Oasys 1985 - 2024</Description>
       <_Parameter1>DocsGeneration</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Grasshopper" Version="6.27.20176.5001" IncludeAssets="compile;build">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.3" />
-    <PackageReference Include="OasysGH" Version="1.0.4" />
     <PackageReference Include="RhinoCommon" Version="6.27.20176.5001">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>compile;build</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  
+
   <ItemGroup>
     <Reference Include="GsaAPI">
-      <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.2\GsaAPI.dll</HintPath>
+      <HintPath>C:\Program Files\Oasys\GSA 10.2\GsaAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Interop.Gsa_10_2">
-      <HintPath>..\..\..\..\..\..\Program Files\Oasys\GSA 10.2\Interop.Gsa_10_2.dll</HintPath>
+      <HintPath>C:\Program Files\Oasys\GSA 10.2\Interop.Gsa_10_2.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -86,7 +90,7 @@ Copyright © Oasys 1985 - 2024</Description>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Include="..\README.md">
       <Pack>True</Pack>
@@ -95,18 +99,18 @@ Copyright © Oasys 1985 - 2024</Description>
     <None Include="licenses\Newtonsoft" />
     <None Include="licenses\UnitsNet" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Include="Properties\Icons\GSALogo128.png" Pack="true" PackagePath="" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Include="Properties\Icons\GsaLogo64.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-  
+
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -114,12 +118,12 @@ Copyright © Oasys 1985 - 2024</Description>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-  
+
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  
+
 </Project>

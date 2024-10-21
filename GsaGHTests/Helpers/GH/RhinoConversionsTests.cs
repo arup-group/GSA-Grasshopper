@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+
+using GsaAPI;
+
 using GsaGH.Helpers.GH;
+
 using Rhino.Collections;
+using GsaGHTests.Components.Geometry;
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.Helpers.GH {
@@ -53,6 +59,27 @@ namespace GsaGHTests.Helpers.GH {
       Assert.Equal(expected.X, actual.X, 10);
       Assert.Equal(expected.Y, actual.Y, 10);
       Assert.Equal(expected.Z, actual.Z, 10);
+    }
+
+    [Fact]
+    public void ConvertCurveToLoadPanelTopoTest() {
+      PolylineCurve curve = CreateElement2dTests.Get2dPolyline();
+      Point3dList actualPoints = RhinoConversions.LoadPanelTopo(curve);
+      Assert.Equal(curve.PointCount - 1, actualPoints.Count);
+      for (int i = 0; i < actualPoints.Count; i++) {
+        Assert.Equal(curve.PointAt(i).X, actualPoints[i].X);
+      }
+    }
+
+    [Fact]
+    public void ConvertCurveToLoadPanelIndexTest() {
+      List<List<int>> loadPanelIndices = RhinoConversions.LoadPanelTopoIndices(CreateElement2dTests.Get2dPolyline());
+      foreach (List<int> Indices in loadPanelIndices) {
+        Assert.Equal(4, Indices.Count);
+        for (int i = 0; i < Indices.Count; i++) {
+          Assert.Equal(i, Indices[i]);
+        }
+      }
     }
   }
 }

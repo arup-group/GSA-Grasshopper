@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using Rhino.Geometry;
+
 using Xunit;
+
 using Polyline = GsaAPI.Polyline;
 
 namespace GsaGHTests.Parameters {

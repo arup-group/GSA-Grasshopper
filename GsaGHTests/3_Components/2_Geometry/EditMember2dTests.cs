@@ -1,13 +1,23 @@
 ﻿using System.Drawing;
+
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Components;
+using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using OasysUnits;
+
 using Rhino.Geometry;
+
 using Xunit;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 
@@ -177,6 +187,19 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(3, output4.Value.PointAtEnd.X);
       Assert.Equal(3, output4.Value.PointAtEnd.Y);
       Assert.Equal(0, output4.Value.PointAtEnd.Z);
+    }
+
+    [Theory]
+    [InlineData((int)GsaAPI.AnalysisOrder.LINEAR)]
+    [InlineData((int)GsaAPI.AnalysisOrder.QUADRATIC)]
+    [InlineData((int)GsaAPI.AnalysisOrder.RIGID_DIAPHRAGM)]
+    [InlineData((int)GsaAPI.AnalysisOrder.LOAD_PANEL)]
+    public void CheckAnaysisOrderIsWorkingAsExpected(int analysisOrder) {
+      GH_OasysComponent comp = ComponentMother();
+
+      ComponentTestHelper.SetInput(comp, analysisOrder, 8);
+      var output8 = (GH_String)ComponentTestHelper.GetOutput(comp, 8);
+      Assert.Equal((GsaAPI.AnalysisOrder)analysisOrder, Mappings.GetAnalysisOrder(output8.Value));
     }
   }
 }

@@ -1,8 +1,13 @@
 ﻿using System;
+
 using GsaAPI;
+
 using GsaGH.Parameters.Enums;
+
 using OasysUnits;
+
 using Rhino.Geometry;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {

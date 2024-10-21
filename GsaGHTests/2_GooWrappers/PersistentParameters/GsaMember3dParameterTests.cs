@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {

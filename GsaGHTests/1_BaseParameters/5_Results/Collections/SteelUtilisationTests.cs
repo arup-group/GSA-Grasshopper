@@ -1,10 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
+
 using OasysUnits;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
@@ -23,7 +27,7 @@ namespace GsaGHTests.Parameters.Results {
       IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> resultSet
         = result.SteelUtilisations.ResultSubset(elementIds);
 
-      // Assert 
+      // Assert
       var expectedIds = result.Model.ApiModel.Elements(MemberList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
@@ -38,7 +42,7 @@ namespace GsaGHTests.Parameters.Results {
       IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> resultSet
         = result.SteelUtilisations.ResultSubset(elementIds);
 
-      // Assert 
+      // Assert
       var expectedIds = result.Model.ApiModel.Elements(MemberList).Keys.OrderBy(x => x).ToList();
       Assert.Equal(expectedIds, resultSet.Ids);
     }
@@ -209,7 +213,7 @@ namespace GsaGHTests.Parameters.Results {
       IEntity0dResultSubset<ISteelUtilisation, SteelUtilisationExtremaKeys> resultSet
         = result.SteelUtilisations.ResultSubset(elementIds);
 
-      // Assert 
+      // Assert
       IList<ISteelUtilisation> utilisations = resultSet.Subset[1];
       double overall = ((Ratio)resultSet.GetExtrema(resultSet.Min.Overall).Overall).DecimalFractions;
       double localCombined = ((Ratio)resultSet.GetExtrema(resultSet.Min.LocalCombined).LocalCombined).DecimalFractions;
@@ -253,7 +257,7 @@ namespace GsaGHTests.Parameters.Results {
       ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(1.0), 1, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys);
       ExtremaKeyUtility.UpdateExtrema(new SteelUtilisation(-1.0), 2, 0, ref maxValue, ref minValue, ref maxKeys, ref minKeys);
 
-      // Assert 
+      // Assert
       Assert.Equal(1.0, maxValue.Overall.Value.DecimalFractions);
       Assert.Equal(1.0, maxValue.LocalCombined.Value.DecimalFractions);
       Assert.Equal(1.0, maxValue.BucklingCombined.Value.DecimalFractions);

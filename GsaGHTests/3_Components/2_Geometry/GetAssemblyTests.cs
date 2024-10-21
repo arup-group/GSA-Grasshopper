@@ -1,11 +1,17 @@
 ﻿using System.Collections;
+
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
@@ -104,7 +110,7 @@ namespace GsaGHTests.Components.Geometry {
       var topology1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 3);
       var topology2 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
       var orientationNode = (GH_Integer)ComponentTestHelper.GetOutput(comp, 5);
-      var extentsY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 6 );
+      var extentsY = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 6);
       var extentsZ = (GH_ObjectWrapper)ComponentTestHelper.GetOutput(comp, 7);
       IList internalTopology = ComponentTestHelper.GetListOutput(comp, 8);
       var curveFit = (GH_Integer)ComponentTestHelper.GetOutput(comp, 9);

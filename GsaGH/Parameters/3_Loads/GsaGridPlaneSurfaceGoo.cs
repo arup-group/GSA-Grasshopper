@@ -1,10 +1,14 @@
 ﻿using System.Drawing;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers.Graphics;
+
 using OasysGH;
 using OasysGH.Parameters;
 using OasysGH.Units;
+
 using Rhino.Display;
 using Rhino.Geometry;
 

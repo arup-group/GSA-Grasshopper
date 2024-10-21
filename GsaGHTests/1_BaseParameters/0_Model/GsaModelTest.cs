@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+
 using GsaAPI;
+
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
+
 using OasysUnits;
+
 using Rhino.Geometry;
+
 using Xunit;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Parameters {

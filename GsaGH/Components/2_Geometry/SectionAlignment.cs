@@ -4,16 +4,21 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
+using OasysGH.Units;
+
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -131,7 +136,7 @@ namespace GsaGH.Components {
             return;
           }
 
-          if (mem2d.Prop2d == null || mem2d.Prop2d.Thickness == Length.Zero) {
+          if (mem2d.Prop2d == null || mem2d.Prop2d.Thickness.Equals(Length.Zero, DefaultUnits.Tolerance)) {
             this.AddRuntimeError("Member has no property attached");
             return;
           }
@@ -182,8 +187,7 @@ namespace GsaGH.Components {
           LengthUnit unit = LengthUnit.Millimeter;
           string[] type = parts[1].Split('(', ')');
           if (type.Length > 1) {
-            UnitParser parser = UnitParser.Default;
-            unit = parser.Parse<LengthUnit>(type[1]);
+            unit = OasysUnitsSetup.Default.UnitParser.Parse<LengthUnit>(type[1]);
           }
 
           Length depth = Length.Zero;

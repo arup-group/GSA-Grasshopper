@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using GsaAPI;
+
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
+
 using AlignmentType = GsaGH.Parameters.AlignmentType;
 using DiagramType = GsaAPI.DiagramType;
 
@@ -52,6 +55,8 @@ namespace GsaGH.Helpers.GsaApi {
           "Quadratic", AnalysisOrder.QUADRATIC
         }, {
           "Rigid Diaphragm", AnalysisOrder.RIGID_DIAPHRAGM
+        },{
+          "Load Panel", AnalysisOrder.LOAD_PANEL
         },
       };
 

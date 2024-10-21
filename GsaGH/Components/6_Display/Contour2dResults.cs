@@ -6,7 +6,9 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using GH_IO.Serialization;
+
 using Grasshopper.GUI;
 using Grasshopper.GUI.Gradient;
 using Grasshopper.Kernel;
@@ -14,7 +16,9 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.Graphics;
@@ -22,17 +26,21 @@ using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Parameters;
 using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Rhino.Collections;
 using Rhino.Display;
 using Rhino.Geometry;
+
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using ForceUnit = OasysUnits.Units.ForceUnit;
 using Layer2d = GsaGH.Parameters.Results.Layer2d;
@@ -831,7 +839,7 @@ namespace GsaGH.Components {
       LengthUnit lengthUnit = result.Model.ModelUnit;
 
       Parallel.ForEach(elems.Keys, key => {
-        var element = new GSAElement( elems[key]);
+        var element = new GSAElement(elems[key]);
         if (element.Topology.Count < 3) {
           return;
         }

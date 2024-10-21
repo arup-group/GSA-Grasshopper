@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {

@@ -3,19 +3,25 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
+
 using GsaAPI;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Helpers;
 using OasysGH.UI;
+
 using Rhino.UI;
 
 namespace GsaGH.Components {
@@ -37,6 +43,9 @@ namespace GsaGH.Components {
     }
 
     public override void CreateAttributes() {
+      if (!_isInitialised) {
+        InitialiseDropdowns();
+      }
       m_attributes = new ThreeButtonComponentAttributes(this, "Save", "Save As", "Open in GSA",
         SaveButtonClick, SaveAsButtonClick, OpenGsaExe, true, "Save GSA file");
     }
@@ -55,7 +64,9 @@ namespace GsaGH.Components {
       return flag;
     }
 
-    protected override void InitialiseDropdowns() { }
+    protected override void InitialiseDropdowns() {
+      _isInitialised = true;
+    }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
       pManager.AddParameter(new GsaModelParameter(), "GSA Model", "GSA", "GSA model to save",

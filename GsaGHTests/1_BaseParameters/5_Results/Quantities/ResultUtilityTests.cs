@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using GsaGH.Parameters.Results;
+
 using OasysUnits;
 using OasysUnits.Units;
+
 using Xunit;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGHTests.Parameters.Results {

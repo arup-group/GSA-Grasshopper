@@ -1,11 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+
 using Grasshopper.Plugin;
+
 using OasysGH.Units;
+
 using Rhino;
 using Rhino.Runtime.InProcess;
+
 using RhinoInside;
+
 using Xunit;
 
 namespace GsaGHTests {

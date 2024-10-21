@@ -4,12 +4,16 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+
 using Grasshopper;
 using Grasshopper.Kernel.Data;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
+
 using Rhino.Collections;
 using Rhino.Geometry;
 
@@ -18,7 +22,7 @@ namespace GsaGH.Parameters {
   /// <para>Elements in GSA are geometrical objects used for Analysis. Elements must be split at intersections with other elements to connect to each other or 'node out'. </para>
   /// <para>In Grasshopper, an Element3D is a collection of 3D Elements (mesh solids representing <see href="https://docs.oasys-software.com/structural/gsa/references/element-types.html#brick-wedge-pyramid-and-tetra-elements">Brick, Wedge, Pyramid or Tetra Elements</see>) used for FE analysis. In GSA, a 3D Element is just a single closed mesh, but for Rhino performance reasons we have made Element3D an <see href="https://docs.mcneel.com/rhino/7/help/en-us/popup_moreinformation/ngon.htm">Ngon Mesh</see> that can contain more than one closed mesh.</para>
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
-  /// 
+  ///
   /// </summary>
   public class GsaElement3d {
     public List<GSAElement> ApiElements { get; internal set; }
@@ -54,8 +58,7 @@ namespace GsaGH.Parameters {
     public GsaElement3d(Mesh mesh) {
       if (mesh.IsClosed) {
         NgonMesh = mesh;
-      }
-      else {
+      } else {
         Mesh m = mesh.DuplicateMesh();
         m.FillHoles();
         NgonMesh = m;

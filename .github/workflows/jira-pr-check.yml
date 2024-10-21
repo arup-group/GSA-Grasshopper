@@ -6,6 +6,7 @@ on:
     types: [opened, edited, reopened, synchronize]
     branches:
       - main
+      - 'release/**'
     
 jobs:
   # This workflow contains a single job called "check-jira"

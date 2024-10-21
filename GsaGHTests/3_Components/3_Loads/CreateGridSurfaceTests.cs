@@ -1,40 +1,45 @@
 ﻿using System;
+
+using Grasshopper.Kernel.Parameters;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Xunit;
+
 using static GsaAPI.GridSurface;
 
 namespace GsaGHTests.Components.Loads {
   [Collection("GrasshopperFixture collection")]
   public class GridSurfaceTests {
+    private readonly GH_OasysDropDownComponent _component;
 
     public static GH_OasysDropDownComponent ComponentMother() {
       var comp = new CreateGridSurface();
       comp.CreateAttributes();
-
       return comp;
     }
 
+    public GridSurfaceTests() { _component = ComponentMother(); }
+
     [Fact]
     public void CreateComponentTest() {
-      GH_OasysDropDownComponent comp = ComponentMother();
+      var gridPlane = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(CreateGridPlaneTests.ComponentMother());
 
-      var gridPlane
-        = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(
-          CreateGridPlaneTests.ComponentMother());
+      ComponentTestHelper.SetInput(_component, gridPlane, 0);
+      ComponentTestHelper.SetInput(_component, 42, 1);
+      ComponentTestHelper.SetInput(_component, "all", 2);
+      ComponentTestHelper.SetInput(_component, "test", 3);
+      ComponentTestHelper.SetInput(_component, 99, 4);
+      ComponentTestHelper.SetInput(_component, Math.PI, 5);
 
-      ComponentTestHelper.SetInput(comp, gridPlane, 0);
-      ComponentTestHelper.SetInput(comp, 42, 1);
-      ComponentTestHelper.SetInput(comp, "all", 2);
-      ComponentTestHelper.SetInput(comp, "test", 3);
-      ComponentTestHelper.SetInput(comp, 99, 4);
-      ComponentTestHelper.SetInput(comp, Math.PI, 5);
+      GsaGridPlaneSurface gridSurface = GetComponentOutput().Value;
 
-      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
-      GsaGridPlaneSurface gridSurface = output.Value;
-
+      Assert.Equal("all", gridSurface.GridSurface.Elements);
       Assert.Equal(42, gridSurface.GridPlaneId);
       Assert.Equal("10", gridSurface.Elevation);
       Assert.Equal("test", gridSurface.GridPlane.Name);
@@ -54,20 +59,20 @@ namespace GsaGHTests.Components.Loads {
     [InlineData(1, 2, false, 2)]
     [InlineData(2, 1, false, 2)]
     [InlineData(3, 0, false, 2)]
-    public void Create1dTwoWaySpanTest(int expansionType, int expectedExpansionType, bool simplify, int expectedSpanType) {
-      GH_OasysDropDownComponent comp = ComponentMother();
-      comp.CreateAttributes();
-      comp.SetSelected(0, 1); // 1D, Two-way span
-      ComponentTestHelper.SetInput(comp, 42, 1);
-      ComponentTestHelper.SetInput(comp, "all", 2);
-      ComponentTestHelper.SetInput(comp, "myGridSurface", 3);
-      ComponentTestHelper.SetInput(comp, "10mm", 4);
-      ComponentTestHelper.SetInput(comp, expansionType, 5);
-      ComponentTestHelper.SetInput(comp, simplify, 6);
+    public void Create1dTwoWaySpanTest(
+      int expansionType, int expectedExpansionType, bool simplify, int expectedSpanType) {
+      _component.CreateAttributes();
+      _component.SetSelected(0, 1); // 1D, Two-way span
+      ComponentTestHelper.SetInput(_component, 42, 1);
+      ComponentTestHelper.SetInput(_component, "1 to 10", 2);
+      ComponentTestHelper.SetInput(_component, "myGridSurface", 3);
+      ComponentTestHelper.SetInput(_component, "10mm", 4);
+      ComponentTestHelper.SetInput(_component, expansionType, 5);
+      ComponentTestHelper.SetInput(_component, simplify, 6);
 
-      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
-      GsaGridPlaneSurface gridSurface = output.Value;
+      GsaGridPlaneSurface gridSurface = GetComponentOutput().Value;
 
+      Assert.Equal("1 to 10", gridSurface.GridSurface.Elements);
       Assert.Equal("0", gridSurface.Elevation);
       Assert.Equal(42, gridSurface.GridSurfaceId);
       Assert.Equal("myGridSurface", gridSurface.GridSurface.Name);
@@ -78,17 +83,16 @@ namespace GsaGHTests.Components.Loads {
 
     [Fact]
     public void Create2dTest() {
-      GH_OasysDropDownComponent comp = ComponentMother();
-      comp.CreateAttributes();
-      comp.SetSelected(0, 2); // 2D
-      ComponentTestHelper.SetInput(comp, 42, 1);
-      ComponentTestHelper.SetInput(comp, "all", 2);
-      ComponentTestHelper.SetInput(comp, "myGridSurface", 3);
-      ComponentTestHelper.SetInput(comp, "10mm", 4);
+      _component.CreateAttributes();
+      _component.SetSelected(0, 2); // 2D
+      ComponentTestHelper.SetInput(_component, 42, 1);
+      ComponentTestHelper.SetInput(_component, "PA1", 2);
+      ComponentTestHelper.SetInput(_component, "myGridSurface", 3);
+      ComponentTestHelper.SetInput(_component, "10mm", 4);
 
-      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
-      GsaGridPlaneSurface gridSurface = output.Value;
-
+      GsaGridPlaneSurface gridSurface = GetComponentOutput().Value;
+      //PA1 = all 2d element having property 1
+      Assert.Equal("PA1", gridSurface.GridSurface.Elements);
       Assert.Equal("0", gridSurface.Elevation);
       Assert.Equal(42, gridSurface.GridSurfaceId);
       Assert.Equal("myGridSurface", gridSurface.GridSurface.Name);
@@ -98,25 +102,58 @@ namespace GsaGHTests.Components.Loads {
 
     [Fact]
     public void EntityListTypeErrorTest() {
-      var comp = new CreateGridSurface();
-      ComponentTestHelper.SetInput(comp, "little", 4);
+      ComponentTestHelper.SetInput(_component, "little", 4);
 
-      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
-      comp.Params.Output[0].ExpireSolution(true);
-      comp.Params.Output[0].CollectData();
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+      _ = GetComponentOutput();
+      Assert.Single(_component.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
     }
 
     [Fact]
     public void DirectionWarningTest() {
-      var comp = new CreateGridSurface();
-      comp.CreateAttributes();
-      ComponentTestHelper.SetInput(comp, 2 * Math.PI, 5);
+      _component.CreateAttributes();
+      ComponentTestHelper.SetInput(_component, 2 * Math.PI, 5);
 
-      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(comp);
-      comp.Params.Output[0].ExpireSolution(true);
-      comp.Params.Output[0].CollectData();
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+      _ = GetComponentOutput();
+      _component.Params.Output[0].ExpireSolution(true);
+      _component.Params.Output[0].CollectData();
+      Assert.Single(_component.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+    }
+
+    [Fact]
+    public void GridSurfaceLoadableObjectIsPassedAndRead() {
+      ComponentTestHelper.SetInput(_component, "G6", 2);
+
+      GsaGridPlaneSurface gridSurface = GetComponentOutput().Value;
+
+      Assert.Equal("G6", gridSurface.GridSurface.Elements);
+    }
+
+    [Fact]
+    public void GridSurfaceDirectionShouldAlwaysConvertToDegreesFromRadians() {
+      var angleParameter = _component.Params.Input[5] as Param_Number;
+      angleParameter.UseDegrees = false;
+      ComponentTestHelper.SetInput(_component, Math.PI, 5);
+
+      GsaGridPlaneSurface gridSurface = GetComponentOutput().Value;
+
+      Assert.Equal(180, gridSurface.GridSurface.Direction);
+    }
+
+    [Fact]
+    public void GridSurfaceDirectionShouldAlwaysConvertToDegreesFromDegrees() {
+      var angleParameter = _component.Params.Input[5] as Param_Number;
+      angleParameter.UseDegrees = true;
+      ComponentTestHelper.SetInput(_component, 180, 5);
+
+      GsaGridPlaneSurface gridSurface = GetComponentOutput().Value;
+
+      Assert.Equal(180, gridSurface.GridSurface.Direction);
+    }
+
+    private GsaGridPlaneSurfaceGoo GetComponentOutput() {
+      var output = (GsaGridPlaneSurfaceGoo)ComponentTestHelper.GetOutput(_component);
+      return output;
     }
   }
+
 }

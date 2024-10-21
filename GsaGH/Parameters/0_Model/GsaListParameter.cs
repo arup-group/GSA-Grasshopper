@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Drawing;
+
 using Grasshopper.Kernel;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
+
 using OasysGH.Parameters;
 
 namespace GsaGH.Parameters {
@@ -31,7 +34,7 @@ namespace GsaGH.Parameters {
 
         return new GsaListGoo(list);
       }
-      
+
       if (data is GsaElement1dGoo element1d) {
         var list = new GsaList() {
           EntityType = EntityType.Element,

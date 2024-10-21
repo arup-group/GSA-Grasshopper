@@ -1,8 +1,12 @@
 ﻿using Grasshopper.Kernel.Types;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {

@@ -1,10 +1,15 @@
 ﻿using System.Collections.Generic;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using GsaGH.Components;
+
 using GsaGHTests.Helpers;
 using GsaGHTests.Model;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {

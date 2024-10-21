@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+
 using OasysUnits;
 
 namespace GsaGH.Parameters.Results {
@@ -147,83 +148,83 @@ namespace GsaGH.Parameters.Results {
       ref ResultVector6<double?> maxValue, ref ResultVector6<double?> minValue,
       ref ResultVector6<Entity0dExtremaKey> maxKey, ref ResultVector6<Entity0dExtremaKey> minKey) {
 
-      if (item.X != null && ((Force)item.X).Value > maxValue.X) {
-        maxValue.X = ((Force)item.X).Value;
+      if (item.X.HasValue && !double.IsNaN(item.X.Value.Value) && item.X.Value.Value > maxValue.X) {
+        maxValue.X = item.X.Value.Value;
         maxKey.X = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Y != null && ((Force)item.Y).Value > maxValue.Y) {
-        maxValue.Y = ((Force)item.Y).Value;
+      if (item.Y.HasValue && !double.IsNaN(item.Y.Value.Value) && item.Y.Value.Value > maxValue.Y) {
+        maxValue.Y = item.Y.Value.Value;
         maxKey.Y = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Z != null && ((Force)item.Z).Value > maxValue.Z) {
-        maxValue.Z = ((Force)item.Z).Value;
+      if (item.Z.HasValue && !double.IsNaN(item.Z.Value.Value) && item.Z.Value.Value > maxValue.Z) {
+        maxValue.Z = item.Z.Value.Value;
         maxKey.Z = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Xyz != null && ((Force)item.Xyz).Value > maxValue.Xyz) {
-        maxValue.Xyz = ((Force)item.Xyz).Value;
+      if (item.Xyz.HasValue && !double.IsNaN(item.Xyz.Value.Value) && item.Xyz.Value.Value > maxValue.Xyz) {
+        maxValue.Xyz = item.Xyz.Value.Value;
         maxKey.Xyz = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Xx != null && ((Moment)item.Xx).Value > maxValue.Xx) {
-        maxValue.Xx = ((Moment)item.Xx).Value;
+      if (item.Xx.HasValue && !double.IsNaN(item.Xx.Value.Value) && item.Xx.Value.Value > maxValue.Xx) {
+        maxValue.Xx = item.Xx.Value.Value;
         maxKey.Xx = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Yy != null && ((Moment)item.Yy).Value > maxValue.Yy) {
-        maxValue.Yy = ((Moment)item.Yy).Value;
+      if (item.Yy.HasValue && !double.IsNaN(item.Yy.Value.Value) && item.Yy.Value.Value > maxValue.Yy) {
+        maxValue.Yy = item.Yy.Value.Value;
         maxKey.Yy = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Zz != null && ((Moment)item.Zz).Value > maxValue.Zz) {
-        maxValue.Zz = ((Moment)item.Zz).Value;
+      if (item.Zz.HasValue && !double.IsNaN(item.Zz.Value.Value) && item.Zz.Value.Value > maxValue.Zz) {
+        maxValue.Zz = item.Zz.Value.Value;
         maxKey.Zz = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Xxyyzz != null && ((Moment)item.Xxyyzz).Value > maxValue.Xxyyzz) {
-        maxValue.Xxyyzz = ((Moment)item.Xxyyzz).Value;
+      if (item.Xxyyzz.HasValue && !double.IsNaN(item.Xxyyzz.Value.Value) && item.Xxyyzz.Value.Value > maxValue.Xxyyzz) {
+        maxValue.Xxyyzz = item.Xxyyzz.Value.Value;
         maxKey.Xxyyzz = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.X != null && ((Force)item.X).Value < minValue.X) {
-        minValue.X = ((Force)item.X).Value;
+      if (item.X.HasValue && !double.IsNaN(item.X.Value.Value) && item.X.Value.Value < minValue.X) {
+        minValue.X = item.X.Value.Value;
         minKey.X = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.X != null && ((Force)item.Y).Value < minValue.Y) {
-        minValue.Y = ((Force)item.Y).Value;
+      if (item.Y.HasValue && !double.IsNaN(item.Y.Value.Value) && item.Y.Value.Value < minValue.Y) {
+        minValue.Y = item.Y.Value.Value;
         minKey.Y = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Z != null && ((Force)item.Z).Value < minValue.Z) {
-        minValue.Z = ((Force)item.Z).Value;
+      if (item.Z.HasValue && !double.IsNaN(item.Z.Value.Value) && item.Z.Value.Value < minValue.Z) {
+        minValue.Z = item.Z.Value.Value;
         minKey.Z = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Xyz != null && ((Force)item.Xyz).Value < minValue.Xyz) {
-        minValue.Xyz = ((Force)item.Xyz).Value;
+      if (item.Xyz.HasValue && !double.IsNaN(item.Xyz.Value.Value) && item.Xyz.Value.Value < minValue.Xyz) {
+        minValue.Xyz = item.Xyz.Value.Value;
         minKey.Xyz = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Xx != null && ((Moment)item.Xx).Value < minValue.Xx) {
-        minValue.Xx = ((Moment)item.Xx).Value;
+      if (item.Xx.HasValue && !double.IsNaN(item.Xx.Value.Value) && item.Xx.Value.Value < minValue.Xx) {
+        minValue.Xx = item.Xx.Value.Value;
         minKey.Xx = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Yy != null && ((Moment)item.Yy).Value < minValue.Yy) {
-        minValue.Yy = ((Moment)item.Yy).Value;
+      if (item.Yy.HasValue && !double.IsNaN(item.Yy.Value.Value) && item.Yy.Value.Value < minValue.Yy) {
+        minValue.Yy = item.Yy.Value.Value;
         minKey.Yy = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Zz != null && ((Moment)item.Zz).Value < minValue.Zz) {
-        minValue.Zz = ((Moment)item.Zz).Value;
+      if (item.Zz.HasValue && !double.IsNaN(item.Zz.Value.Value) && item.Zz.Value.Value < minValue.Zz) {
+        minValue.Zz = item.Zz.Value.Value;
         minKey.Zz = new Entity0dExtremaKey(nodeId, permutation);
       }
 
-      if (item.Xxyyzz != null && ((Moment)item.Xxyyzz).Value < minValue.Xxyyzz) {
-        minValue.Xxyyzz = ((Moment)item.Xxyyzz).Value;
+      if (item.Xxyyzz.HasValue && !double.IsNaN(item.Xxyyzz.Value.Value) && item.Xxyyzz.Value.Value < minValue.Xxyyzz) {
+        minValue.Xxyyzz = item.Xxyyzz.Value.Value;
         minKey.Xxyyzz = new Entity0dExtremaKey(nodeId, permutation);
       }
     }

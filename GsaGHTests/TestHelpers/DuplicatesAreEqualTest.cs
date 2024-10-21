@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
 using Xunit;
 
 namespace GsaGHTests.Helpers {
@@ -20,8 +21,13 @@ namespace GsaGHTests.Helpers {
         = typeB.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
       for (int i = 0; i < propertyInfoA.Length; i++) {
+
         PropertyInfo propertyA = propertyInfoA[i];
         PropertyInfo propertyB = propertyInfoB[i];
+
+        if (IsExcluded(propertyA, excluded)) {
+          continue;
+        }
 
         if (!propertyA.CanWrite && !propertyB.CanWrite) {
           continue;
@@ -35,6 +41,7 @@ namespace GsaGHTests.Helpers {
         Type propertyTypeB = propertyB.PropertyType;
 
         try {
+
           objPropertyValueA = propertyA.GetValue(objA, null);
           objPropertyValueB = propertyB.GetValue(objB, null);
 
@@ -97,7 +104,7 @@ namespace GsaGHTests.Helpers {
                 using (IEnumerator<object> enumeratorA = enumerableA.GetEnumerator()) {
                   while (enumeratorA.MoveNext()) {
                     Assert.True(enumeratorB.MoveNext());
-                    AreEqual(enumeratorA.Current, enumeratorB.Current);
+                    AreEqual(enumeratorA.Current, enumeratorB.Current, excluded);
                   }
                 }
               }
@@ -121,7 +128,6 @@ namespace GsaGHTests.Helpers {
 
       return true;
     }
-
     private static bool IsExcluded(PropertyInfo info, List<string> excluded) {
       if (excluded == null) {
         return false;

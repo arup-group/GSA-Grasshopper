@@ -3,9 +3,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.Import;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
@@ -14,7 +17,7 @@ namespace GsaGH.Parameters {
   /// Type. In Grasshopper, a Entity List can also contain a copy of all the items in the list. </para>
   /// <para>Lists (of nodes, elements, members or cases) are used, for example, when a particular load
   /// is to be applied to one or several elements. To define a series of items the list can either
-  /// specify each individually or, if applicable, use a more concise 
+  /// specify each individually or, if applicable, use a more concise
   /// <see href="https://docs.oasys-software.com/structural/gsa/references/listsandembeddedlists.html">syntax</see>.</para>
   /// </summary>
   public class GsaList {

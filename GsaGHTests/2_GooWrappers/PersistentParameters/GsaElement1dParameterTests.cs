@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
+
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {

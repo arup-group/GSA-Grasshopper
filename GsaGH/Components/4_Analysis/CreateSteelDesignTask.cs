@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+
 using Grasshopper.Kernel;
+
 using GsaAPI;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
+
 using EntityType = GsaGH.Parameters.EntityType;
 
 namespace GsaGH.Components {

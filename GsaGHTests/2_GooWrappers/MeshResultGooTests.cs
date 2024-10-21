@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
+
 using GsaGH.Parameters;
+
 using OasysUnits;
+
 using Rhino.Collections;
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {

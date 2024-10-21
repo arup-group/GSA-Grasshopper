@@ -1,10 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using Rhino.Collections;
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters {

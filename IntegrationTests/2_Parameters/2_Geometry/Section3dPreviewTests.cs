@@ -1,9 +1,12 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Reflection;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
 using Rhino.Geometry;
+
 using Xunit;
 
 namespace IntegrationTests.Parameters {

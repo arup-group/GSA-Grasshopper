@@ -23,21 +23,21 @@ steps:
     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
     Write-output "Installer Path: ${installerPath}"
     Write-output "GSA Version:"
-    if (!(Test-Path $installerPath.FullName)) { 
-      Write-output "File '{0}' does not exist" -f $installerPath.FullName 
-    } 
-    try { 
-      $WindowsInstaller = New-Object -com WindowsInstaller.Installer 
-      $Database = $WindowsInstaller.GetType().InvokeMember("OpenDatabase", "InvokeMethod", $Null, $WindowsInstaller, @($installerPath.FullName, 0)) 
+    if (!(Test-Path $installerPath.FullName)) {
+      Write-output "File '{0}' does not exist" -f $installerPath.FullName
+    }
+    try {
+      $WindowsInstaller = New-Object -com WindowsInstaller.Installer
+      $Database = $WindowsInstaller.GetType().InvokeMember("OpenDatabase", "InvokeMethod", $Null, $WindowsInstaller, @($installerPath.FullName, 0))
       $Query = "SELECT Value FROM Property WHERE Property = 'ProductVersion'"
-      $View = $database.GetType().InvokeMember("OpenView", "InvokeMethod", $Null, $Database, ($Query)) 
+      $View = $database.GetType().InvokeMember("OpenView", "InvokeMethod", $Null, $Database, ($Query))
       $View.GetType().InvokeMember("Execute", "InvokeMethod", $Null, $View, $Null) | Out-Null
-      $Record = $View.GetType().InvokeMember( "Fetch", "InvokeMethod", $Null, $View, $Null ) 
-      $Version = $Record.GetType().InvokeMember( "StringData", "GetProperty", $Null, $Record, 1 ) 
+      $Record = $View.GetType().InvokeMember( "Fetch", "InvokeMethod", $Null, $View, $Null )
+      $Version = $Record.GetType().InvokeMember( "StringData", "GetProperty", $Null, $Record, 1 )
       Write-output $Version
-    } catch { 
+    } catch {
       Write-output "Failed to get MSI file version: {0}." -f $_
-    }  
+    }
     $app = Start-Process ${installerPath} -ArgumentList '/passive /quiet /l* msiLog.txt' -PassThru -Wait
     $app.WaitForExit()
     Write-Output "Exit code: $($app.ExitCode)"
@@ -48,11 +48,16 @@ steps:
     }
   displayName: 'Install GSA'
   failOnStderr: true
-  
+
 - powershell: |
     & 'C:\Program Files\Oasys\*\GSA.exe' /Register
   displayName: 'Register GSA COM'
   failOnStderr: false
+
+- powershell: |
+    ./cleanRegistry.ps1
+  displayName: 'Run Registry Cleaner'
+  failOnStderr: true
 
 - task: NuGetToolInstaller@1
 
@@ -61,7 +66,7 @@ steps:
   inputs:
       command: 'restore'
       restoreSolution: 'GsaGH.sln'
-  
+
 - task: VSBuild@1
   displayName: 'Building project in $(configuration)'
   inputs:
@@ -80,16 +85,16 @@ steps:
   failOnStderr: true
 
 - powershell: |
-    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) { 
+    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
       Write-Output "codecov.yml is invalid"
       Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
       exit(1)
-    } else { 
+    } else {
       Write-Output "codecov.yml is valid"
     }
   displayName: Validate codecov.yml
   failOnStderr: true
-  
+
 - powershell: |
     $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
     echo $coverage_file_gsagh
@@ -155,7 +160,7 @@ steps:
         $underscoreSeparatedTag = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
         $tagNumbersOnlyUnderscore = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
         $tagNumbersOnlydot = $majorVersion + "." + $minorVersion + "." + $spVersion + "." + $buildNumber
-        
+
         Write-Host ("##vso[task.setvariable variable=dotSeparatedTag]$dotSeparatedTag")
         git rev-parse $dotSeparatedTag
         if($lastExitCode -eq 0){Write-Host ("##vso[task.setvariable variable=TAG_EXISTS]true")}

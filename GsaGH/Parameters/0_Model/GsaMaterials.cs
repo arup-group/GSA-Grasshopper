@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+
 using GsaAPI;
 
 namespace GsaGH.Parameters {
@@ -44,38 +45,23 @@ namespace GsaGH.Parameters {
         }
       }
 
-      switch (type) {
-        case MaterialType.ALUMINIUM:
-          return AluminiumMaterials.TryGetValue(gradeProp, out GsaMaterial aluminium) ? aluminium
-            : new GsaReferencedMaterial(gradeProp, MatType.Aluminium);
-
-        case MaterialType.CONCRETE:
-          return ConcreteMaterials.TryGetValue(gradeProp, out GsaMaterial concrete) ? concrete
-            : new GsaReferencedMaterial(gradeProp, MatType.Concrete);
-
-        case MaterialType.FABRIC:
-          return FabricMaterials.TryGetValue(gradeProp, out GsaMaterial fabric) ? fabric
-            : new GsaReferencedMaterial(gradeProp, MatType.Fabric);
-
-        case MaterialType.FRP:
-          return FrpMaterials.TryGetValue(gradeProp, out GsaMaterial frp) ? frp
-            : new GsaReferencedMaterial(gradeProp, MatType.Frp);
-
-        case MaterialType.GLASS:
-          return GlassMaterials.TryGetValue(gradeProp, out GsaMaterial glass) ? glass
-            : new GsaReferencedMaterial(gradeProp, MatType.Glass);
-
-        case MaterialType.FIRST:
-          return SteelMaterials.TryGetValue(gradeProp, out GsaMaterial steel) ? steel
-            : new GsaReferencedMaterial(gradeProp, MatType.Steel);
-
-        case MaterialType.TIMBER:
-          return TimberMaterials.TryGetValue(gradeProp, out GsaMaterial timber) ? timber
-            : new GsaReferencedMaterial(gradeProp, MatType.Timber);
-
-        default:
-          return new GsaReferencedMaterial(gradeProp, GsaMaterialFactory.GetMatType(type));
-      }
+      return type switch {
+        MaterialType.ALUMINIUM => AluminiumMaterials.TryGetValue(gradeProp, out GsaMaterial aluminium) ? aluminium
+                    : new GsaReferencedMaterial(gradeProp, MatType.Aluminium),
+        MaterialType.CONCRETE => ConcreteMaterials.TryGetValue(gradeProp, out GsaMaterial concrete) ? concrete
+                    : new GsaReferencedMaterial(gradeProp, MatType.Concrete),
+        MaterialType.FABRIC => FabricMaterials.TryGetValue(gradeProp, out GsaMaterial fabric) ? fabric
+                    : new GsaReferencedMaterial(gradeProp, MatType.Fabric),
+        MaterialType.FRP => FrpMaterials.TryGetValue(gradeProp, out GsaMaterial frp) ? frp
+                    : new GsaReferencedMaterial(gradeProp, MatType.Frp),
+        MaterialType.GLASS => GlassMaterials.TryGetValue(gradeProp, out GsaMaterial glass) ? glass
+                    : new GsaReferencedMaterial(gradeProp, MatType.Glass),
+        MaterialType.FIRST => SteelMaterials.TryGetValue(gradeProp, out GsaMaterial steel) ? steel
+                    : new GsaReferencedMaterial(gradeProp, MatType.Steel),
+        MaterialType.TIMBER => TimberMaterials.TryGetValue(gradeProp, out GsaMaterial timber) ? timber
+                    : new GsaReferencedMaterial(gradeProp, MatType.Timber),
+        _ => new GsaReferencedMaterial(gradeProp, GsaMaterialFactory.GetMatType(type)),
+      };
     }
 
     internal bool SanitizeGenericCodeNames() {

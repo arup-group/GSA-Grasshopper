@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using Xunit;
+
 using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -29,7 +33,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("undef List", list.Name);
       Assert.Equal("1 to 5 not 3", list.Definition);
       Assert.Equal(EntityType.Undefined, list.EntityType);
-      Assert.Equal("1 to 5 not 3", (string)list.GetListObjects(LengthUnit.Undefined)[0]);
+      Assert.Equal("1 to 5 not 3", (string)list.GetListObjects(LengthUnit.Meter)[0]);
     }
 
     [Fact]

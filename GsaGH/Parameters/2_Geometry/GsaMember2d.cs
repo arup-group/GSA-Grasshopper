@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+
 using GsaAPI;
+
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
+
 using OasysUnits;
+
 using Rhino.Collections;
 using Rhino.Geometry;
+
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
@@ -58,7 +63,8 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create new instance by casting from a Brep with optional inclusion geometry
     /// </summary>
-    public GsaMember2d(Brep brep, List<Curve> includeCurves = null, Point3dList includePoints = null) {
+    public GsaMember2d(
+      Brep brep, List<Curve> includeCurves = null, Point3dList includePoints = null) {
       ApiMember = new Member {
         Type = MemberType.GENERIC_2D,
       };
@@ -120,16 +126,10 @@ namespace GsaGH.Parameters {
     /// Create a new instance from an API object from an existing model
     /// </summary>
     internal GsaMember2d(
-      KeyValuePair<int, Member> mem,
-      Point3dList topology,
-      List<string> topologyType,
-      List<Point3dList> voidTopology,
-      List<List<string>> voidTopologyType,
-      List<Point3dList> inlcusionLinesTopology,
-      List<List<string>> inclusionTopologyType,
-      Point3dList includePoints,
-      GsaProperty2d prop2d,
-      LengthUnit modelUnit) {
+      KeyValuePair<int, Member> mem, Point3dList topology, List<string> topologyType,
+      List<Point3dList> voidTopology, List<List<string>> voidTopologyType,
+      List<Point3dList> inlcusionLinesTopology, List<List<string>> inclusionTopologyType,
+      Point3dList includePoints, GsaProperty2d prop2d, LengthUnit modelUnit) {
       ApiMember = mem.Value;
       ApiMember.MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
       Id = mem.Key;
@@ -155,8 +155,8 @@ namespace GsaGH.Parameters {
 
           if (voidTopologyType != null) {
             VoidCurves.Add(
-              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(
-                voidTopology[i], voidTopologyType[i]));
+              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i],
+                voidTopologyType[i]));
           } else {
             VoidCurves.Add(RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i]));
           }
@@ -287,8 +287,8 @@ namespace GsaGH.Parameters {
     }
 
     private GsaOffset GetOffSetFromApiMember() {
-      return new GsaOffset(
-        ApiMember.Offset.X1, ApiMember.Offset.X2, ApiMember.Offset.Y, ApiMember.Offset.Z);
+      return new GsaOffset(ApiMember.Offset.X1, ApiMember.Offset.X2, ApiMember.Offset.Y,
+        ApiMember.Offset.Z);
     }
 
     private void SetOffsetInApiElement(GsaOffset offset) {
@@ -296,6 +296,16 @@ namespace GsaGH.Parameters {
       ApiMember.Offset.X2 = offset.X2.Meters;
       ApiMember.Offset.Y = offset.Y.Meters;
       ApiMember.Offset.Z = offset.Z.Meters;
+    }
+
+    public void SetProperty(GsaProperty2d property) {
+      Prop2d = property;
+      if (property.ApiProp2d == null) {
+        return;
+      }
+
+      ApiMember.Type2D = property.ApiProp2d.Type == Property2D_Type.LOAD ?
+        AnalysisOrder.LOAD_PANEL : AnalysisOrder.LINEAR;
     }
   }
 }

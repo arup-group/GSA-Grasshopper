@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using Xunit;
+
 using static GsaAPI.GridLineLoad;
+
 using LoadCaseType = GsaGH.Parameters.LoadCaseType;
 
 namespace GsaGHTests.Parameters {

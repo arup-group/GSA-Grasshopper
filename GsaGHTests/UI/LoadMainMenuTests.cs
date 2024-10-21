@@ -1,5 +1,7 @@
 ﻿using System.Windows.Forms;
+
 using GsaGH.Graphics.Menu;
+
 using Xunit;
 
 namespace GsaGHTests.UI {

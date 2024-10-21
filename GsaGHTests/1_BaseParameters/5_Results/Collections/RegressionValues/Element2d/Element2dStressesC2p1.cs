@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using GsaGH.Parameters.Results;
 
 namespace GsaGHTests.Parameters.Results {

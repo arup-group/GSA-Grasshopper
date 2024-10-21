@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using Grasshopper;
 using Grasshopper.Kernel.Data;
+
 using GsaAPI;
+
 using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.GsaApi {

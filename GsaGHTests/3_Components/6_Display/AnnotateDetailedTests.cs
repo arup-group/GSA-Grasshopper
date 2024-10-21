@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+
 using GsaGH.Components;
+
 using OasysGH.UI;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Display {
@@ -9,10 +12,10 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     public void DefaultDropSelectionsTest() {
       var comp = new AnnotateDetailed();
-      Assert.Equal("Regular Dot", comp._selectedItems[0]);
+      Assert.Equal("Regular Dot", comp.SelectedItems[0]);
 
       comp.SetSelected(0, 1);
-      Assert.Equal("TextTag 3D", comp._selectedItems[0]);
+      Assert.Equal("TextTag 3D", comp.SelectedItems[0]);
     }
 
     [Fact]

@@ -1,5 +1,7 @@
 ﻿using System.Linq;
+
 using GsaGH.Parameters;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters {
@@ -72,11 +74,12 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void ToStringTest2() {
-      var designTask = new GsaSteelDesignTask("myTask");
-      designTask.List = new GsaList() {
-        Definition = "1 3",
-        EntityType = EntityType.Member,
-        Name = "myList"
+      var designTask = new GsaSteelDesignTask("myTask") {
+        List = new GsaList() {
+          Definition = "1 3",
+          EntityType = EntityType.Member,
+          Name = "myList"
+        }
       };
       designTask.ApiTask.CombinationCaseId = 99;
       designTask.ApiTask.UpperTargetUtilisationLimit = 0.8;

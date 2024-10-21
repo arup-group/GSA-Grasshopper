@@ -1,6 +1,9 @@
 ﻿using System;
+
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters.Results {

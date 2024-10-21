@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
 using GsaGH.Parameters.Results;
+
 using GsaGHTests.Helper;
+
 using OasysUnits;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
@@ -27,7 +31,7 @@ namespace GsaGHTests.Parameters.Results {
       // Act
       AssemblyForcesAndMoments resultSet = result.AssemblyForcesAndMoments.ResultSubset(new Collection<int>() { 2 });
 
-      // Assert 
+      // Assert
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
       Assert.Equal(expected, max, 1E-6);
     }

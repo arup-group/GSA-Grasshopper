@@ -1,8 +1,13 @@
 ﻿using System.Drawing;
+
 using GsaGH.Parameters;
+
 using OasysUnits;
+
 using Rhino.Geometry;
+
 using Xunit;
+
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;

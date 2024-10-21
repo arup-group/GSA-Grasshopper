@@ -2,17 +2,24 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+
 using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
+
 using GsaAPI;
+
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
+
 using OasysGH;
 using OasysGH.Components;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
+
 using OasysUnits;
+
 using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Components {

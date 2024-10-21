@@ -1,10 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+
 using GsaAPI;
+
 using GsaGH.Components;
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
+
 using OasysGH.Components;
+
 using Xunit;
 
 namespace GsaGHTests.Components.Geometry {
