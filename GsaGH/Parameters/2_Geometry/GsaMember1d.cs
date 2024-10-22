@@ -63,7 +63,8 @@ namespace GsaGH.Parameters {
     public GsaMember1d() {
       ApiMember = new Member() {
         Type = MemberType.GENERIC_1D,
-        Type1D = ElementType.BEAM
+        Type1D = ElementType.BEAM,
+        Group = GsaMember.DefaultGroupValue,
       };
     }
 
@@ -74,7 +75,8 @@ namespace GsaGH.Parameters {
     public GsaMember1d(Curve crv) {
       ApiMember = new Member {
         Type = MemberType.GENERIC_1D,
-        Type1D = ElementType.BEAM
+        Type1D = ElementType.BEAM,
+        Group = GsaMember.DefaultGroupValue,
       };
       UpdateGeometry(crv);
       UpdateReleasesPreview();
@@ -106,6 +108,7 @@ namespace GsaGH.Parameters {
       Id = mem.Key;
       ApiMember = mem.Value;
       ApiMember.MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
+      ApiMember.Group = mem.Value.Group;
 
       AdjustToModelUnit(modelUnit);
 
@@ -232,5 +235,9 @@ namespace GsaGH.Parameters {
           ApiMember.OrientationAngle * Math.PI / 180.0, s, e)
         : new ReleasePreview();
     }
+  }
+
+  public struct GsaMember {
+    public const int DefaultGroupValue = 1;
   }
 }

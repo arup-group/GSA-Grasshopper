@@ -57,6 +57,7 @@ namespace GsaGH.Parameters {
     public GsaMember2d() {
       ApiMember = new Member() {
         Type = MemberType.GENERIC_2D,
+        Group = GsaMember.DefaultGroupValue,
       };
     }
 
@@ -67,6 +68,7 @@ namespace GsaGH.Parameters {
       Brep brep, List<Curve> includeCurves = null, Point3dList includePoints = null) {
       ApiMember = new Member {
         Type = MemberType.GENERIC_2D,
+        Group = GsaMember.DefaultGroupValue,
       };
 
       (Tuple<PolyCurve, Point3dList, List<string>> edgeTuple,
@@ -132,6 +134,7 @@ namespace GsaGH.Parameters {
       Point3dList includePoints, GsaProperty2d prop2d, LengthUnit modelUnit) {
       ApiMember = mem.Value;
       ApiMember.MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
+      ApiMember.Group = mem.Value.Group;
       Id = mem.Key;
 
       if (topology[0] != topology[topology.Count - 1]) // add last point to close boundary
