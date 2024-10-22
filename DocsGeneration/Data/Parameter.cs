@@ -67,6 +67,9 @@ namespace DocsGeneration.Data {
 
         Type axialStiffness = types.Where(t => t.Name == "AxialStiffness").ToList()[0];
         types.Remove(axialStiffness);
+
+        Type radiation = types.Where(t => t.Name == "AbsorbedDoseOfIonizingRadiation").ToList()[0];
+        types.Remove(radiation);
         Type bendingStiffness = types.Where(t => t.Name == "BendingStiffness").ToList()[0];
         types.Remove(bendingStiffness);
         Type duration = types.Where(t => t.Name == "Duration").ToList()[0];
