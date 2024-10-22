@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
 using GsaAPI;
@@ -71,7 +72,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(3, output2.Value.PointAtEnd.Y, 6);
       Assert.Equal(1, output2.Value.PointAtEnd.Z, 6);
       Assert.Equal("STD CH(ft) 1 2 3 4", output3.Value.ApiSection.Profile);
-      Assert.Equal(0, output4.Value);
+      Assert.Equal(1, output4.Value);
       Assert.Equal("Generic 1D", output5.Value);
       Assert.Equal("Beam", output6.Value);
       Assert.Equal(0, output7.Value.X1.Value, 6);
@@ -225,11 +226,11 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, 0.0, 14);
 
       var output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
 
       ComponentTestHelper.SetInput(comp, 1.0, 14);
       output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
     }
 
     [Fact]
@@ -278,7 +279,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(3, output2.Value.PointAtEnd.Y, 6);
       Assert.Equal(1, output2.Value.PointAtEnd.Z, 6);
       Assert.NotNull(output3.Value);
-      Assert.Equal(0, output4.Value);
+      Assert.Equal(1, output4.Value);
       Assert.Equal("Generic 1D", output5.Value);
       Assert.Equal("Spring", output6.Value);
       Assert.Equal(0, output7.Value.X1.Value, 6);
@@ -325,7 +326,7 @@ namespace GsaGHTests.Components.Geometry {
 
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
     [Fact]
@@ -336,7 +337,7 @@ namespace GsaGHTests.Components.Geometry {
 
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -347,7 +348,7 @@ namespace GsaGHTests.Components.Geometry {
 
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
   }
 }

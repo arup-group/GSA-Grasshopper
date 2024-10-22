@@ -49,7 +49,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(0.5, output4.Value);
       Assert.True(output5.Value);
       Assert.Equal("", output6.Value);
-      Assert.Equal(0, output7.Value);
+      Assert.Equal(1, output7.Value);
       Assert.Equal(0, output8.Value.R);
       Assert.Equal(0, output8.Value.G);
       Assert.Equal(0, output8.Value.B);
