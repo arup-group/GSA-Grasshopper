@@ -18,9 +18,9 @@ using Rhino;
 using Rhino.Collections;
 using Rhino.Geometry;
 
-using Elements = GsaGH.Helpers.Import.Elements;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
+using Polyline = Rhino.Geometry.Polyline;
 
 namespace GsaGH.Helpers.GH {
   /// <summary>
@@ -490,8 +490,9 @@ namespace GsaGH.Helpers.GH {
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
 
       foreach (MeshNgon ngon in ngons) {
-
-        var elem = new GSAElement(new Element());
+        var elem = new GSAElement(new Element() {
+          Group = GsaElementDefaults.GroupValue,
+        });
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
 
         switch (topo.Count) {
@@ -600,7 +601,9 @@ namespace GsaGH.Helpers.GH {
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
 
       foreach (MeshNgon ngon in ngons) {
-        var elem = new GSAElement(new Element());
+        var elem = new GSAElement(new Element() {
+          Group = GsaElementDefaults.GroupValue,
+        });
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
         var faces = ngon.FaceIndexList().Select(u => (int)u).ToList();
         topoInts.Add(topo);
@@ -697,7 +700,7 @@ namespace GsaGH.Helpers.GH {
       edges.AddRange(inner);
 
       Point3dList ctrlPts;
-      if (edges[0].TryGetPolyline(out Rhino.Geometry.Polyline tempCrv)) {
+      if (edges[0].TryGetPolyline(out Polyline tempCrv)) {
         ctrlPts = new Point3dList(tempCrv);
       } else {
         Tuple<PolyCurve, Point3dList, List<string>> convertBadSrf
@@ -781,7 +784,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     internal static Point3dList LoadPanelTopo(Curve curve) {
-      curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
+      curve.TryGetPolyline(out Polyline polyline);
       var topology = new Point3dList();
       foreach (Point3d item in polyline.ToArray()) {
         if (!topology.Contains(item)) {
@@ -792,7 +795,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     internal static List<List<int>> LoadPanelTopoIndices(Curve curve) {
-      curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
+      curve.TryGetPolyline(out Polyline polyline);
       var topo = new List<int>();
       foreach (Point3d p in polyline.ToList()) {
         int index = polyline.ToList().IndexOf(p);

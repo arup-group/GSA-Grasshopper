@@ -57,7 +57,7 @@ namespace GsaGH.Parameters {
     public GsaMember2d() {
       ApiMember = new Member() {
         Type = MemberType.GENERIC_2D,
-        Group = GsaMember.DefaultGroupValue,
+        Group = GsaMemberDefaults.GroupValue,
       };
     }
 
@@ -68,7 +68,7 @@ namespace GsaGH.Parameters {
       Brep brep, List<Curve> includeCurves = null, Point3dList includePoints = null) {
       ApiMember = new Member {
         Type = MemberType.GENERIC_2D,
-        Group = GsaMember.DefaultGroupValue,
+        Group = GsaMemberDefaults.GroupValue,
       };
 
       (Tuple<PolyCurve, Point3dList, List<string>> edgeTuple,

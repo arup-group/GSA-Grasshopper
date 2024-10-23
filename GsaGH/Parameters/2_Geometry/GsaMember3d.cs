@@ -41,7 +41,7 @@ namespace GsaGH.Parameters {
     public GsaMember3d() {
       ApiMember = new Member() {
         Type = MemberType.GENERIC_3D,
-        Group = GsaMember.DefaultGroupValue,
+        Group = GsaMemberDefaults.GroupValue,
       };
     }
 
@@ -51,7 +51,7 @@ namespace GsaGH.Parameters {
     public GsaMember3d(Mesh mesh) {
       ApiMember = new Member {
         Type = MemberType.GENERIC_3D,
-        Group = GsaMember.DefaultGroupValue,
+        Group = GsaMemberDefaults.GroupValue,
       };
       SolidMesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
       UpdatePreview();
@@ -63,7 +63,7 @@ namespace GsaGH.Parameters {
     public GsaMember3d(Brep brep) {
       ApiMember = new Member {
         Type = MemberType.GENERIC_3D,
-        Group = GsaMember.DefaultGroupValue,
+        Group = GsaMemberDefaults.GroupValue,
       };
       SolidMesh = RhinoConversions.ConvertBrepToTriMeshSolid(brep);
       UpdatePreview();
