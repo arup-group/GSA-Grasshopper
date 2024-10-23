@@ -72,6 +72,7 @@ namespace GsaGHTests.Components.Geometry {
       TestPoint3d(new Point3d(1, 1, 0), output.Value.Mesh.Vertices[2]);
       TestPoint3d(new Point3d(0, 1, 0), output.Value.Mesh.Vertices[3]);
       Assert.Equal(new Length(14, LengthUnit.Inch), output.Value.Prop2ds[0].Thickness);
+      output.Value.ApiElements.ForEach(x => Assert.Equal(1, x.Group));
     }
 
     [Theory]

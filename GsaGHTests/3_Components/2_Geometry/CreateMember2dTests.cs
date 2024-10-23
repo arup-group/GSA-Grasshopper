@@ -47,6 +47,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(Property2D_Type.PLATE, output.Value.Prop2d.ApiProp2d.Type);
       Assert.Equal(new Length(14, LengthUnit.Inch), output.Value.Prop2d.Thickness);
       Assert.Equal(0.5, output.Value.ApiMember.MeshSize);
+      Assert.Equal(1, output.Value.ApiMember.Group);
     }
 
     [Fact]

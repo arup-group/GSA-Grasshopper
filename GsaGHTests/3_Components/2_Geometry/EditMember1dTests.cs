@@ -64,6 +64,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(3, output0.Value.PolyCurve.PointAtEnd.Y, 6);
       Assert.Equal(1, output0.Value.PolyCurve.PointAtEnd.Z, 6);
       Assert.Equal("STD CH(ft) 1 2 3 4", output0.Value.Section.ApiSection.Profile);
+      Assert.Equal(1, output0.Value.ApiMember.Group);
       Assert.Equal(0, output1.Value);
       Assert.Equal(0, output2.Value.PointAtStart.X, 6);
       Assert.Equal(-1, output2.Value.PointAtStart.Y, 6);
@@ -172,6 +173,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(2, output0.Value.PolyCurve.PointAtEnd.Y);
       Assert.Equal(3, output0.Value.PolyCurve.PointAtEnd.Z);
       Assert.Equal("STD CH 10 20 30 40", output0.Value.Section.ApiSection.Profile);
+      Assert.Equal(7, output0.Value.ApiMember.Group);
       Assert.Equal(1, output1.Value);
       Assert.Equal(0, output2.Value.PointAtStart.X);
       Assert.Equal(0, output2.Value.PointAtStart.Y);
@@ -270,6 +272,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(7, output0.Value.PolyCurve.PointAtEnd.X, 6);
       Assert.Equal(3, output0.Value.PolyCurve.PointAtEnd.Y, 6);
       Assert.Equal(1, output0.Value.PolyCurve.PointAtEnd.Z, 6);
+      Assert.Equal(1, output0.Value.ApiMember.Group);
       Assert.Null(output0.Value.Section);
       Assert.Equal(0, output1.Value);
       Assert.Equal(0, output2.Value.PointAtStart.X, 6);
