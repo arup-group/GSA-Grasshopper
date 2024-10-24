@@ -446,6 +446,7 @@ namespace GsaGH.Components {
       switch (ghString.Trim().ToUpper()) {
         case "1":
         case "Z":
+          
           responseDirection = ResponseDirection.Z;
           break;
 
