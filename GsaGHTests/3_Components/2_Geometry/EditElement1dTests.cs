@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
 using GsaAPI;
@@ -57,6 +58,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(3, elem.Value.Line.PointAtEnd.Y, 6);
       Assert.Equal(1, elem.Value.Line.PointAtEnd.Z, 6);
       Assert.Equal("STD CH(ft) 1 2 3 4", elem.Value.Section.ApiSection.Profile);
+      Assert.Equal(1, elem.Value.ApiElement.Group);
       Assert.Equal(0, id.Value);
       Assert.Equal(0, line.Value.From.X, 6);
       Assert.Equal(-1, line.Value.From.Y, 6);
@@ -65,7 +67,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(3, line.Value.To.Y, 6);
       Assert.Equal(1, line.Value.To.Z, 6);
       Assert.Equal("STD CH(ft) 1 2 3 4", ((GsaSection)section.Value).ApiSection.Profile);
-      Assert.Equal(0, group.Value);
+      Assert.Equal(1, group.Value);
       Assert.Equal("Beam", type.Value);
       Assert.Equal(0, offset.Value.X1.Value, 6);
       Assert.Equal(0, offset.Value.X2.Value, 6);
@@ -139,6 +141,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(2, elem.Value.Line.PointAtEnd.Y);
       Assert.Equal(3, elem.Value.Line.PointAtEnd.Z);
       Assert.Equal("STD CH 10 20 30 40", elem.Value.Section.ApiSection.Profile);
+      Assert.Equal(7, elem.Value.ApiElement.Group);
       Assert.Equal(1, id.Value);
       Assert.Equal(0, line.Value.From.X);
       Assert.Equal(0, line.Value.From.Y);
@@ -218,6 +221,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(3, elem.Value.Line.PointAtEnd.Y, 6);
       Assert.Equal(1, elem.Value.Line.PointAtEnd.Z, 6);
       Assert.Null(elem.Value.Section);
+      Assert.Equal(1, elem.Value.ApiElement.Group);
       Assert.Equal(0, id.Value);
       Assert.Equal(0, line.Value.From.X, 6);
       Assert.Equal(-1, line.Value.From.Y, 6);
@@ -226,7 +230,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(3, line.Value.To.Y, 6);
       Assert.Equal(1, line.Value.To.Z, 6);
       Assert.NotNull(((GsaSpringProperty)springProperty.Value).ApiProperty);
-      Assert.Equal(0, group.Value);
+      Assert.Equal(1, group.Value);
       Assert.Equal("Spring", type.Value);
       Assert.Equal(0, offset.Value.X1.Value, 6);
       Assert.Equal(0, offset.Value.X2.Value, 6);
@@ -265,7 +269,7 @@ namespace GsaGHTests.Components.Geometry {
 
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -276,7 +280,7 @@ namespace GsaGHTests.Components.Geometry {
 
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -287,7 +291,7 @@ namespace GsaGHTests.Components.Geometry {
 
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
   }
 }

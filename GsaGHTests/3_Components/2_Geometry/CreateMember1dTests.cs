@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
 using GsaGH.Components;
@@ -43,6 +44,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(1, output.Value.PolyCurve.PointAtEnd.Z);
       Assert.Equal("STD CH(ft) 1 2 3 4", output.Value.Section.ApiSection.Profile);
       Assert.Equal(0.5, output.Value.ApiMember.MeshSize);
+      Assert.Equal(1, output.Value.ApiMember.Group);
     }
 
     [Fact]
@@ -120,7 +122,7 @@ namespace GsaGHTests.Components.Geometry {
         comp, new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 0.001)), 0);
 
       var output = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
   }
 }

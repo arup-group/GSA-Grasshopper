@@ -43,13 +43,14 @@ namespace GsaGHTests.Components.Geometry {
 
       Assert.Equal(MatType.Concrete, output0.Value.Prop3d.Material.MaterialType);
       Assert.Equal(0.5, output0.Value.ApiMember.MeshSize);
+      Assert.Equal(1, output0.Value.ApiMember.Group);
       Assert.Equal(0, output1.Value);
       Assert.NotNull(output2.Value);
       Assert.Equal(MatType.Concrete, output3.Value.Material.MaterialType);
       Assert.Equal(0.5, output4.Value);
       Assert.True(output5.Value);
       Assert.Equal("", output6.Value);
-      Assert.Equal(0, output7.Value);
+      Assert.Equal(1, output7.Value);
       Assert.Equal(0, output8.Value.R);
       Assert.Equal(0, output8.Value.G);
       Assert.Equal(0, output8.Value.B);
@@ -82,6 +83,7 @@ namespace GsaGHTests.Components.Geometry {
 
       Assert.Equal(MatType.Concrete, output0.Value.Prop3d.Material.MaterialType);
       Assert.Equal(0.7, output0.Value.ApiMember.MeshSize);
+      Assert.Equal(1, output0.Value.ApiMember.Group);
       Assert.Equal(7, output1.Value);
       Assert.NotNull(output2.Value);
       Assert.Equal(MatType.Concrete, output3.Value.Material.MaterialType);
