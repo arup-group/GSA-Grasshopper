@@ -51,7 +51,6 @@ namespace GsaGH.Components {
       GH_DocumentObject.Menu_AppendSeparator(menu);
 
       (owner as IGH_VariableParameterComponent).VariableParameterMaintenance();
-      owner.ExpireSolution(true);
     }
 
     internal void MaintainText(ToolStripItem tolerance) {
