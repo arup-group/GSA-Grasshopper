@@ -75,7 +75,6 @@ stages:
       parameters:
         solution: 'GsaGH.sln'
         configuration: 'Release'
-    - template: uninstall-gsa.yml
     
     - task: VisualStudioTestPlatformInstaller@1
       displayName: 'Install Test Platform'
@@ -96,6 +95,8 @@ stages:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'drop'
         publishLocation: 'Container'
+
+    - template: uninstall-gsa.yml
 
 - stage: ImpactTestingIntegration
   displayName: 'Impact Testing (Integration)'
