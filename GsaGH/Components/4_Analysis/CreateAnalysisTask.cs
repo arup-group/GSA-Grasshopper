@@ -447,7 +447,7 @@ namespace GsaGH.Components {
 
     private static bool HasDirectionFromString(out ResponseDirection responseDirection, string ghString) {
       switch (ghString.Trim().ToUpper()) {
-        case "1":
+        case "5":
         case "Z":
           
           responseDirection = ResponseDirection.Z;
