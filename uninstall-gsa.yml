@@ -1,0 +1,20 @@
+
+steps:
+  - powershell: |
+      $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
+      Write-output "Installer Path: ${installerPath}"
+      $app = Start-Process "msiexec.exe" -ArgumentList "/x ${installerPath} /quiet /passive /norestart /l* msiUninstallLog.txt" -PassThru -Wait
+      $app.WaitForExit()
+      Write-Output "Exit code: $($app.ExitCode)"
+      Write-Output "Exit time: $($app.ExitTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss')) UTC"
+
+      if (($app.ExitCode -eq 0) -or ($app.ExitCode -eq 1641) -or ($app.ExitCode -eq 3010)) {
+        Write-Output "Application successfully uninstalled with exit code $($app.ExitCode)"
+        rm $installerPath
+        exit(0)
+      } else {
+        Write-Error "Application could not be uninstalled. Error code $($app.ExitCode)"
+        exit(1)
+      }
+    condition: always()
+    displayName: 'Uninstall Application'

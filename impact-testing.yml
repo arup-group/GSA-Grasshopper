@@ -1,0 +1,111 @@
+trigger:
+  branches:
+    include:
+      - 'release/*'
+
+variables:
+  - group: s3PushInstallers
+  - group: pipeline-tokens
+
+pool: 'rhino-compute'
+
+stages:
+- stage: CheckRepoChanges
+  displayName: 'Check Repository Changes'
+  pool:
+    vmImage: 'windows-latest'
+  jobs:
+  - job: CheckChanges
+    displayName: 'Check for Changes in GsaGH and IntegrationTests'
+    steps:
+
+    - checkout: none
+
+    - powershell: |
+        Write-Output "Minimal checkout of repository...Branch:$(System.PullRequest.SourceBranch)"
+        git clone --branch $(System.PullRequest.SourceBranch) --depth 100 --sparse https://$(GITHUB_TOKEN)@github.com/arup-group/GSA-Grasshopper.git .
+      displayName: 'Minimal Checkout'
+      env:
+        GITHUB_TOKEN: $(GITHUB_TOKEN)
+
+    - powershell: |
+        Write-Output "Checking for changes in GsaGH/** and IntegrationTests/**..."
+        git fetch origin
+        git status
+
+        $gitChanges = git diff --name-only HEAD~1 HEAD
+        $unitTestsChanged = $false
+        $integrationTestsChanged = $false
+
+        foreach ($file in $gitChanges) {
+          if ($file -like 'GsaGH/*') {
+            $unitTestsChanged = $true
+          }
+          if ($file -like 'IntegrationTests/*') {
+            $integrationTestsChanged = $true
+          }
+        }
+
+        Write-Output "Setting pipeline variables based on changes detected..."
+        Write-Output "UnitTests=$unitTestsChanged"
+        echo "##vso[task.setvariable variable=UnitTests]$unitTestsChanged"
+        Write-Output "Integration=$integrationTestsChanged"
+        echo "##vso[task.setvariable variable=Integration]$integrationTestsChanged"
+      displayName: 'Detect Changes in Repo'
+
+- stage: ImpactTestingUnit
+  displayName: 'Impact Testing (Unit)'
+  dependsOn: CheckRepoChanges
+  condition: always()
+  # condition: eq(variables['UnitTests'], 'true')
+  jobs:
+  - job: UnitTests
+    displayName: 'Run Unit Tests'
+    steps:
+    - checkout: self
+    - powershell: |
+        Write-Output "Running Unit Tests..."
+      displayName: 'Run Unit Tests'
+
+    - template: install-gsa.yml
+      parameters:
+        version: latest
+          
+    - template: build-solution.yml
+      parameters:
+        solution: 'GsaGH.sln'
+        configuration: 'Release'
+    
+    - task: VisualStudioTestPlatformInstaller@1
+      displayName: 'Install Test Platform'
+
+    - task: VSTest@3
+      inputs:
+        testSelector: 'testAssemblies'  # Enables Test Impact Analysis
+        testAssemblyVer2: |
+          GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
+        searchFolder: '$(System.DefaultWorkingDirectory)'
+        runOnlyImpactedTests: true
+        runInParallel: false
+        failOnStderr: true
+        
+    - task: PublishBuildArtifacts@1
+      condition: always()
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+
+    - template: uninstall-gsa.yml
+
+- stage: ImpactTestingIntegration
+  displayName: 'Impact Testing (Integration)'
+  dependsOn: CheckRepoChanges
+  condition: eq(variables['Integration'], 'true')
+  jobs:
+  - job: IntegrationTests
+    displayName: 'Run Integration Tests'
+    steps:
+    - powershell: |
+        Write-Output "Running Integration Tests..."
+      displayName: 'Run Integration Tests'
