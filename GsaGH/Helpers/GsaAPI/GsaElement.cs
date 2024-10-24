@@ -1,21 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
-using System.IO;
-using System.Runtime.Remoting.Lifetime;
-using System.Xml.Linq;
 
-using GsaAPI;
-
-using GsaGH.Helpers.Import;
-using GsaGH.Parameters;
-
-using Newtonsoft.Json.Linq;
-
-using OasysUnits;
-
-using AngleUnit = OasysUnits.Units.AngleUnit;
 namespace GsaAPI {
   public class GSAElement {
     public static int LoadPanelType = -1000;
@@ -23,10 +8,12 @@ namespace GsaAPI {
     public GSAElement(Element element) {
       Element = element;
       IsLoadPanel = false;
+      Element.Group = element.Group == 0 ? 1 : element.Group;
     }
     public GSAElement(LoadPanelElement element) {
       LoadPanelElelment = element;
       IsLoadPanel = true;
+      LoadPanelElelment.Group = element.Group == 0 ? 1 : element.Group;
     }
 
     public bool IsLoadPanel { get; }

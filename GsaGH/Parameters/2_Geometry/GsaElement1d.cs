@@ -61,7 +61,6 @@ namespace GsaGH.Parameters {
     public GsaElement1d() {
       ApiElement = new GSAElement(new Element {
         Type = ElementType.BEAM,
-        Group = GsaElementDefaults.GroupValue,
       });
     }
 
@@ -73,7 +72,6 @@ namespace GsaGH.Parameters {
       Id = Id;
       ApiElement = new GSAElement(new Element {
         Type = ElementType.BEAM,
-        Group = GsaElementDefaults.GroupValue,
       });
       Line = line;
       UpdateReleasesPreview();
@@ -101,10 +99,8 @@ namespace GsaGH.Parameters {
       GsaSection section, ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
       Id = element.Key;
       ApiElement = element.Value;
-      ApiElement.Group = GsaElementDefaults.GroupValue;
       if (nodes.Keys.Contains(ApiElement.OrientationNode)) {
-        OrientationNode
-          = new GsaNode(Nodes.Point3dFromNode(nodes[ApiElement.OrientationNode], modelUnit));
+        OrientationNode = new GsaNode(Nodes.Point3dFromNode(nodes[ApiElement.OrientationNode], modelUnit));
       }
 
       Line = new LineCurve(new Line(
@@ -121,10 +117,8 @@ namespace GsaGH.Parameters {
       GsaSpringProperty springProperty, ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
       Id = element.Key;
       ApiElement = element.Value;
-      ApiElement.Group = GsaElementDefaults.GroupValue;
       if (nodes.Keys.Contains(ApiElement.OrientationNode)) {
-        OrientationNode
-          = new GsaNode(Nodes.Point3dFromNode(nodes[ApiElement.OrientationNode], modelUnit));
+        OrientationNode = new GsaNode(Nodes.Point3dFromNode(nodes[ApiElement.OrientationNode], modelUnit));
       }
 
       Line = new LineCurve(new Line(

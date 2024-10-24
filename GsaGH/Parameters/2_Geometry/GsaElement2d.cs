@@ -74,9 +74,7 @@ namespace GsaGH.Parameters {
     public GsaElement2d(Curve curve) {
       Curve = curve.DuplicateCurve();
       ApiElements = new List<GSAElement> {
-        new GSAElement(new LoadPanelElement()) {
-          Group = GsaElementDefaults.GroupValue,
-        },
+        new GSAElement(new LoadPanelElement()),
       };
       Topology = RhinoConversions.LoadPanelTopo(curve);
       TopoInt = RhinoConversions.LoadPanelTopoIndices(curve);

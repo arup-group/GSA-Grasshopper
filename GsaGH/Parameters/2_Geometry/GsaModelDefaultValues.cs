@@ -4,8 +4,4 @@
     public const int GroupValue = 1;
   }
 
-  public struct GsaElementDefaults {
-    public const int GroupValue = 1;
-  }
-
 }

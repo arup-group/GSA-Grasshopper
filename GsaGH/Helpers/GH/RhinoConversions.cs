@@ -490,9 +490,7 @@ namespace GsaGH.Helpers.GH {
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
 
       foreach (MeshNgon ngon in ngons) {
-        var elem = new GSAElement(new Element() {
-          Group = GsaElementDefaults.GroupValue,
-        });
+        var elem = new GSAElement(new Element());
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
 
         switch (topo.Count) {
@@ -601,9 +599,7 @@ namespace GsaGH.Helpers.GH {
       var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
 
       foreach (MeshNgon ngon in ngons) {
-        var elem = new GSAElement(new Element() {
-          Group = GsaElementDefaults.GroupValue,
-        });
+        var elem = new GSAElement(new Element());
         var topo = ngon.BoundaryVertexIndexList().Select(u => (int)u).ToList();
         var faces = ngon.FaceIndexList().Select(u => (int)u).ToList();
         topoInts.Add(topo);
