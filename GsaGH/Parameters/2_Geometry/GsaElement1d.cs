@@ -59,9 +59,7 @@ namespace GsaGH.Parameters {
     /// Empty constructor instantiating a new API object
     /// </summary>
     public GsaElement1d() {
-      ApiElement = new GSAElement(new Element {
-        Type = ElementType.BEAM,
-      });
+      SetDefaultApiElement();
     }
 
     /// <summary>
@@ -70,15 +68,13 @@ namespace GsaGH.Parameters {
     /// <param name="line"></param>
     public GsaElement1d(LineCurve line) {
       Id = Id;
-      ApiElement = new GSAElement(new Element {
-        Type = ElementType.BEAM,
-      });
       Line = line;
+      SetDefaultApiElement();
       UpdateReleasesPreview();
     }
 
     /// <summary>
-    /// Create a duplicate instance from another instance
+    ///   Create a duplicate instance from another instance
     /// </summary>
     /// <param name="other"></param>
     public GsaElement1d(GsaElement1d other) {
@@ -97,34 +93,16 @@ namespace GsaGH.Parameters {
     /// </summary>
     internal GsaElement1d(KeyValuePair<int, GSAElement> element, IReadOnlyDictionary<int, Node> nodes,
       GsaSection section, ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
-      Id = element.Key;
-      ApiElement = element.Value;
-      if (nodes.Keys.Contains(ApiElement.OrientationNode)) {
-        OrientationNode = new GsaNode(Nodes.Point3dFromNode(nodes[ApiElement.OrientationNode], modelUnit));
-      }
-
-      Line = new LineCurve(new Line(
-        Nodes.Point3dFromNode(nodes[ApiElement.Topology[0]], modelUnit),
-        Nodes.Point3dFromNode(nodes[ApiElement.Topology[1]], modelUnit)));
-      LocalAxes = new LocalAxes(localAxes);
+      InitVariables(element, nodes, localAxes, modelUnit);
       Section = section;
     }
 
     /// <summary>
-    /// Create a new instance from an API object from an existing model
+    ///   Create a new instance from an API object from an existing model
     /// </summary>
     internal GsaElement1d(KeyValuePair<int, GSAElement> element, IReadOnlyDictionary<int, Node> nodes,
       GsaSpringProperty springProperty, ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
-      Id = element.Key;
-      ApiElement = element.Value;
-      if (nodes.Keys.Contains(ApiElement.OrientationNode)) {
-        OrientationNode = new GsaNode(Nodes.Point3dFromNode(nodes[ApiElement.OrientationNode], modelUnit));
-      }
-
-      Line = new LineCurve(new Line(
-        Nodes.Point3dFromNode(nodes[ApiElement.Topology[0]], modelUnit),
-        Nodes.Point3dFromNode(nodes[ApiElement.Topology[1]], modelUnit)));
-      LocalAxes = new LocalAxes(localAxes);
+      InitVariables(element, nodes, localAxes, modelUnit);
       SpringProperty = springProperty;
     }
 
@@ -147,10 +125,7 @@ namespace GsaGH.Parameters {
       elem.SetEndRelease(0, ApiElement.GetEndRelease(0));
       elem.SetEndRelease(1, ApiElement.GetEndRelease(1));
 
-      elem.Offset.X1 = ApiElement.Offset.X1;
-      elem.Offset.X2 = ApiElement.Offset.X2;
-      elem.Offset.Y = ApiElement.Offset.Y;
-      elem.Offset.Z = ApiElement.Offset.Z;
+      SetOffsets(elem);
 
       // workaround to handle that System.Drawing.Color is non-nullable type
       if ((Color)ApiElement.Colour != Color.FromArgb(0, 0, 0)) {
@@ -204,6 +179,33 @@ namespace GsaGH.Parameters {
     private void SetRelease(GsaBool6 bool6, int pos) {
       ApiElement.SetEndRelease(pos, new EndRelease(bool6.ApiBool6));
       UpdateReleasesPreview();
+    }
+
+    private void SetDefaultApiElement() {
+      ApiElement = new GSAElement(new Element {
+        Type = ElementType.BEAM,
+      });
+    }
+
+    private void InitVariables(
+      KeyValuePair<int, GSAElement> element, IReadOnlyDictionary<int, Node> nodes, ReadOnlyCollection<double> localAxes,
+      LengthUnit modelUnit) {
+      Id = element.Key;
+      ApiElement = element.Value;
+      if (nodes.Keys.Contains(ApiElement.OrientationNode)) {
+        OrientationNode = new GsaNode(Nodes.Point3dFromNode(nodes[ApiElement.OrientationNode], modelUnit));
+      }
+
+      Line = new LineCurve(new Line(Nodes.Point3dFromNode(nodes[ApiElement.Topology[0]], modelUnit),
+        Nodes.Point3dFromNode(nodes[ApiElement.Topology[1]], modelUnit)));
+      LocalAxes = new LocalAxes(localAxes);
+    }
+
+    private void SetOffsets(Element elem) {
+      elem.Offset.X1 = ApiElement.Offset.X1;
+      elem.Offset.X2 = ApiElement.Offset.X2;
+      elem.Offset.Y = ApiElement.Offset.Y;
+      elem.Offset.Z = ApiElement.Offset.Z;
     }
   }
 }

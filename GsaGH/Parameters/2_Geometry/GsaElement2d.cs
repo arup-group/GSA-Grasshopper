@@ -181,11 +181,9 @@ namespace GsaGH.Parameters {
           points.Add(polyline.CenterPoint());
         } else {
           Point3d pt = Mesh.Faces.GetFaceCenter(faceIndex);
-          int index = 0;
 
           switch (ApiElements[i].Type) {
             case ElementType.QUAD8:
-              index = TopoInt[i][0];
               pt = Mesh.Vertices[Mesh.Faces[faceIndex].C];
               faceIndex += 8;
               break;

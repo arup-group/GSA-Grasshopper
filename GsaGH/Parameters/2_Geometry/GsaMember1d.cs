@@ -61,11 +61,7 @@ namespace GsaGH.Parameters {
     /// Empty constructor instantiating a new API object
     /// </summary>
     public GsaMember1d() {
-      ApiMember = new Member() {
-        Type = MemberType.GENERIC_1D,
-        Type1D = ElementType.BEAM,
-        Group = GsaMemberDefaults.GroupValue,
-      };
+      CreateDefaultApiMember();
     }
 
     /// <summary>
@@ -73,17 +69,13 @@ namespace GsaGH.Parameters {
     /// </summary>
     /// <param name="crv"></param>
     public GsaMember1d(Curve crv) {
-      ApiMember = new Member {
-        Type = MemberType.GENERIC_1D,
-        Type1D = ElementType.BEAM,
-        Group = GsaMemberDefaults.GroupValue,
-      };
+      CreateDefaultApiMember();
       UpdateGeometry(crv);
       UpdateReleasesPreview();
     }
 
     /// <summary>
-    /// Create a duplicate instance from another instance
+    ///   Create a duplicate instance from another instance
     /// </summary>
     /// <param name="other"></param>
     public GsaMember1d(GsaMember1d other) {
@@ -147,10 +139,7 @@ namespace GsaGH.Parameters {
         mem.Topology = ApiMember.Topology;
       }
 
-      mem.Offset.X1 = ApiMember.Offset.X1;
-      mem.Offset.X2 = ApiMember.Offset.X2;
-      mem.Offset.Y = ApiMember.Offset.Y;
-      mem.Offset.Z = ApiMember.Offset.Z;
+      SetOffsets(mem);
 
       mem.SetEndRelease(0, ApiMember.GetEndRelease(0));
       mem.SetEndRelease(1, ApiMember.GetEndRelease(1));
@@ -220,6 +209,13 @@ namespace GsaGH.Parameters {
       ApiMember.Offset.Z = offset.Z.Meters;
     }
 
+    private void SetOffsets(Member mem) {
+      mem.Offset.X1 = ApiMember.Offset.X1;
+      mem.Offset.X2 = ApiMember.Offset.X2;
+      mem.Offset.Y = ApiMember.Offset.Y;
+      mem.Offset.Z = ApiMember.Offset.Z;
+    }
+
     private void SetRelease(GsaBool6 bool6, int pos) {
       ApiMember.SetEndRelease(pos, new EndRelease(bool6.ApiBool6));
       UpdateReleasesPreview();
@@ -234,6 +230,14 @@ namespace GsaGH.Parameters {
         ? new ReleasePreview(PolyCurve,
           ApiMember.OrientationAngle * Math.PI / 180.0, s, e)
         : new ReleasePreview();
+    }
+
+    private void CreateDefaultApiMember() {
+      ApiMember = new Member {
+        Type = MemberType.GENERIC_1D,
+        Type1D = ElementType.BEAM,
+        Group = GsaMemberDefaults.GroupValue,
+      };
     }
   }
 }

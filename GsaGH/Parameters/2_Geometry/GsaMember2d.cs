@@ -52,24 +52,16 @@ namespace GsaGH.Parameters {
     }
 
     /// <summary>
-    /// Empty constructor instantiating a new API object
+    ///   Empty constructor instantiating a new API object
     /// </summary>
-    public GsaMember2d() {
-      ApiMember = new Member() {
-        Type = MemberType.GENERIC_2D,
-        Group = GsaMemberDefaults.GroupValue,
-      };
-    }
+    public GsaMember2d() { CreateDefaultApiMember(); }
 
     /// <summary>
-    /// Create new instance by casting from a Brep with optional inclusion geometry
+    ///   Create new instance by casting from a Brep with optional inclusion geometry
     /// </summary>
     public GsaMember2d(
       Brep brep, List<Curve> includeCurves = null, Point3dList includePoints = null) {
-      ApiMember = new Member {
-        Type = MemberType.GENERIC_2D,
-        Group = GsaMemberDefaults.GroupValue,
-      };
+      CreateDefaultApiMember();
 
       (Tuple<PolyCurve, Point3dList, List<string>> edgeTuple,
           Tuple<List<PolyCurve>, List<Point3dList>, List<List<string>>> voidTuple,
@@ -88,12 +80,7 @@ namespace GsaGH.Parameters {
       InclusionPoints = inclTuple.Item4;
 
       Brep = RhinoConversions.BuildBrep(PolyCurve, VoidCurves);
-      if (Brep == null) {
-        throw new Exception(" Error with Mem2D: Unable to build Brep, "
-          + "please verify input geometry is valid and tolerance "
-          + "is set accordingly with your geometry under GSA Plugin Unit "
-          + "Settings or if unset under Rhino unit settings");
-      }
+      CheckBrep();
     }
 
     /// <summary>
@@ -137,52 +124,14 @@ namespace GsaGH.Parameters {
       ApiMember.Group = mem.Value.Group;
       Id = mem.Key;
 
-      if (topology[0] != topology[topology.Count - 1]) // add last point to close boundary
-      {
-        topology.Add(topology[0]);
-        topologyType.Add(string.Empty);
-      }
+      InitTopology(topology, topologyType);
 
-      PolyCurve = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topologyType);
-      Topology = topology;
-      TopologyType = topologyType;
-
-      if (voidTopology != null) {
-        VoidCurves ??= new List<PolyCurve>();
-
-        for (int i = 0; i < voidTopology.Count; i++) {
-          if (voidTopology[i][0] != voidTopology[i][voidTopology[i].Count - 1]) {
-            voidTopology[i].Add(voidTopology[i][0]);
-            voidTopologyType[i].Add(string.Empty);
-          }
-
-          if (voidTopologyType != null) {
-            VoidCurves.Add(
-              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i],
-                voidTopologyType[i]));
-          } else {
-            VoidCurves.Add(RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i]));
-          }
-        }
-      }
+      InitVoidCurves(voidTopology, voidTopologyType);
 
       VoidTopology = voidTopology;
       VoidTopologyType = voidTopologyType;
 
-      if (inlcusionLinesTopology != null) {
-        InclusionLines ??= new List<PolyCurve>();
-
-        for (int i = 0; i < inlcusionLinesTopology.Count; i++) {
-          if (inclusionTopologyType != null) {
-            InclusionLines.Add(
-              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i],
-                inclusionTopologyType[i]));
-          } else {
-            InclusionLines.Add(
-              RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i]));
-          }
-        }
-      }
+      InitInclusionLines(inlcusionLinesTopology, inclusionTopologyType);
 
       InclusionLinesTopology = inlcusionLinesTopology;
       InclusionLinesTopologyType = inclusionTopologyType;
@@ -216,10 +165,7 @@ namespace GsaGH.Parameters {
         mem.Topology = ApiMember.Topology;
       }
 
-      mem.Offset.X1 = ApiMember.Offset.X1;
-      mem.Offset.X2 = ApiMember.Offset.X2;
-      mem.Offset.Y = ApiMember.Offset.Y;
-      mem.Offset.Z = ApiMember.Offset.Z;
+      SetOffsetForMember(mem);
 
       // workaround to handle that Color is non-nullable type
       if ((Color)ApiMember.Colour != Color.FromArgb(0, 0, 0)) {
@@ -281,12 +227,23 @@ namespace GsaGH.Parameters {
       InclusionPoints = inclTuple.Item4;
 
       Brep = RhinoConversions.BuildBrep(PolyCurve, VoidCurves);
+      CheckBrep();
+    }
+
+    private void CheckBrep() {
       if (Brep == null) {
         throw new Exception(" Error with Mem2D: Unable to build Brep, "
           + "please verify input geometry is valid and tolerance "
           + "is set accordingly with your geometry under GSA Plugin Unit "
           + "Settings or if unset under Rhino unit settings");
       }
+    }
+
+    private void CreateDefaultApiMember() {
+      ApiMember = new Member() {
+        Type = MemberType.GENERIC_2D,
+        Group = GsaMemberDefaults.GroupValue,
+      };
     }
 
     private GsaOffset GetOffSetFromApiMember() {
@@ -301,6 +258,13 @@ namespace GsaGH.Parameters {
       ApiMember.Offset.Z = offset.Z.Meters;
     }
 
+    private void SetOffsetForMember(Member mem) {
+      mem.Offset.X1 = ApiMember.Offset.X1;
+      mem.Offset.X2 = ApiMember.Offset.X2;
+      mem.Offset.Y = ApiMember.Offset.Y;
+      mem.Offset.Z = ApiMember.Offset.Z;
+    }
+
     public void SetProperty(GsaProperty2d property) {
       Prop2d = property;
       if (property.ApiProp2d == null) {
@@ -309,6 +273,52 @@ namespace GsaGH.Parameters {
 
       ApiMember.Type2D = property.ApiProp2d.Type == Property2D_Type.LOAD ?
         AnalysisOrder.LOAD_PANEL : AnalysisOrder.LINEAR;
+    }
+
+    private void InitInclusionLines(
+      List<Point3dList> inlcusionLinesTopology, List<List<string>> inclusionTopologyType) {
+      if (inlcusionLinesTopology == null) {
+        return;
+      }
+
+      InclusionLines ??= new List<PolyCurve>();
+
+      for (int i = 0; i < inlcusionLinesTopology.Count; i++) {
+        InclusionLines.Add(inclusionTopologyType != null ?
+          RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i], inclusionTopologyType[i]) :
+          RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(inlcusionLinesTopology[i]));
+      }
+    }
+
+    private void InitTopology(Point3dList topology, List<string> topologyType) {
+      if (topology[0] != topology[topology.Count - 1]) // add last point to close boundary
+      {
+        topology.Add(topology[0]);
+        topologyType.Add(string.Empty);
+      }
+
+      PolyCurve = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topologyType);
+      Topology = topology;
+      TopologyType = topologyType;
+    }
+
+    private void InitVoidCurves(List<Point3dList> voidTopology, List<List<string>> voidTopologyType) {
+      if (voidTopology == null) {
+        return;
+      }
+
+      VoidCurves ??= new List<PolyCurve>();
+
+      for (int i = 0; i < voidTopology.Count; i++) {
+        if (voidTopology[i][0] != voidTopology[i][voidTopology[i].Count - 1]) {
+          voidTopology[i].Add(voidTopology[i][0]);
+          voidTopologyType[i].Add(string.Empty);
+        }
+
+        VoidCurves.Add(voidTopologyType != null ?
+          RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i], voidTopologyType[i]) :
+          RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(voidTopology[i]));
+      }
     }
   }
 }
