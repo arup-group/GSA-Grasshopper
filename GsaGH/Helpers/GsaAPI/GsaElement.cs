@@ -11,26 +11,26 @@ namespace GsaAPI {
       Element.Group = element.Group == 0 ? 1 : element.Group;
     }
     public GSAElement(LoadPanelElement element) {
-      LoadPanelElelment = element;
+      LoadPanelElement = element;
       IsLoadPanel = true;
-      LoadPanelElelment.Group = element.Group == 0 ? 1 : element.Group;
+      LoadPanelElement.Group = element.Group == 0 ? 1 : element.Group;
     }
 
     public bool IsLoadPanel { get; }
-    public LoadPanelElement LoadPanelElelment { get; }
+    public LoadPanelElement LoadPanelElement { get; }
     public Element Element { get; }
 
     public string Name {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.Name;
+          return LoadPanelElement.Name;
         } else {
           return Element.Name;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.Name = value;
+          LoadPanelElement.Name = value;
         } else {
           Element.Name = value;
         }
@@ -40,14 +40,14 @@ namespace GsaAPI {
     public int Property {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.Property;
+          return LoadPanelElement.Property;
         } else {
           return Element.Property;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.Property = value;
+          LoadPanelElement.Property = value;
         } else {
           Element.Property = value;
         }
@@ -57,14 +57,14 @@ namespace GsaAPI {
     public int Group {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.Group;
+          return LoadPanelElement.Group;
         } else {
           return Element.Group;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.Group = value;
+          LoadPanelElement.Group = value;
         } else {
           Element.Group = value;
         }
@@ -74,14 +74,14 @@ namespace GsaAPI {
     public ParentMember ParentMember {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.ParentMember;
+          return LoadPanelElement.ParentMember;
         } else {
           return Element.ParentMember;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.ParentMember = value;
+          LoadPanelElement.ParentMember = value;
         } else {
           Element.ParentMember = value;
         }
@@ -91,14 +91,14 @@ namespace GsaAPI {
     public bool IsDummy {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.IsDummy;
+          return LoadPanelElement.IsDummy;
         } else {
           return Element.IsDummy;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.IsDummy = value;
+          LoadPanelElement.IsDummy = value;
         } else {
           Element.IsDummy = value;
         }
@@ -123,14 +123,14 @@ namespace GsaAPI {
     public double OrientationAngle {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.OrientationAngle;
+          return LoadPanelElement.OrientationAngle;
         } else {
           return Element.OrientationAngle;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.OrientationAngle = value;
+          LoadPanelElement.OrientationAngle = value;
         } else {
           Element.OrientationAngle = value;
         }
@@ -155,14 +155,14 @@ namespace GsaAPI {
     public ReadOnlyCollection<int> Topology {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.Topology;
+          return LoadPanelElement.Topology;
         } else {
           return Element.Topology;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.Topology = value;
+          LoadPanelElement.Topology = value;
         } else {
           Element.Topology = value;
         }
@@ -187,14 +187,14 @@ namespace GsaAPI {
     public ValueType Colour {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.Colour;
+          return LoadPanelElement.Colour;
         } else {
           return Element.Colour;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.Colour = value;
+          LoadPanelElement.Colour = value;
         } else {
           Element.Colour = value;
         }
