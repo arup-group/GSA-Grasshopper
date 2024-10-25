@@ -70,12 +70,12 @@ stages:
     - template: install-gsa.yml
       parameters:
         version: latest
-          
+
     - template: build-solution.yml
       parameters:
         solution: 'GsaGH.sln'
         configuration: 'Debug'
-    
+
     - task: VisualStudioTestPlatformInstaller@1
       displayName: 'Install Test Platform'
       inputs:
@@ -99,7 +99,7 @@ stages:
         $coverage_file = (Resolve-Path $(Agent.TempDirectory)/TestResults/*.trx).Path
         echo $coverage_file
       displayName: 'Find TRX File'
-    
+
     - task: PublishBuildArtifacts@1
       condition: always()
       inputs:
@@ -114,10 +114,10 @@ stages:
       inputs:
         codeCoverageTool: 'Cobertura' # 'JaCoCo'
         summaryFileLocation: $coverage_file
-        #pathToSources: # string. Path to Source files. 
+        #pathToSources: # string. Path to Source files.
         #failIfCoverageEmpty: false # boolean. Fail if code coverage results are missing. Default: false.
-    
-    - template: run-tests.yml
+
+    - template: dotnet-tests-with-coverage.yml
 
     - template: uninstall-gsa.yml
 
