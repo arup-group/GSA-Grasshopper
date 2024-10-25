@@ -1,263 +1,263 @@
- # https://aka.ms/yaml
-
- trigger:
-   branches:
-     exclude:
-       - 'task/GSAGH-555-new-pipeline'
-
- variables:
-   - group: s3PushInstallers
-   - group: pipeline-tokens
-   - name: configuration
-     value: Release
-
- pool: 'rhino-compute'
-
- steps:
- - powershell: |
-     Get-ChildItem *.msi -Recurse | Remove-Item
-     aws s3 cp s3://oasys-installer-store/GSA/latest . --exclude "*" --include *Arup*.msi --recursive
-     Get-ChildItem *.msi | Rename-Item -NewName gsa.msi
-   displayName: 'Download GSA latest'
-   failOnStderr: true
-
- - powershell: |
-     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
-     Write-output "Installer Path: ${installerPath}"
-     Write-output "GSA Version:"
-     if (!(Test-Path $installerPath.FullName)) {
-       Write-output "File '{0}' does not exist" -f $installerPath.FullName
-     }
-     try {
-       $WindowsInstaller = New-Object -com WindowsInstaller.Installer
-       $Database = $WindowsInstaller.GetType().InvokeMember("OpenDatabase", "InvokeMethod", $Null, $WindowsInstaller, @($installerPath.FullName, 0))
-       $Query = "SELECT Value FROM Property WHERE Property = 'ProductVersion'"
-       $View = $database.GetType().InvokeMember("OpenView", "InvokeMethod", $Null, $Database, ($Query))
-       $View.GetType().InvokeMember("Execute", "InvokeMethod", $Null, $View, $Null) | Out-Null
-       $Record = $View.GetType().InvokeMember( "Fetch", "InvokeMethod", $Null, $View, $Null )
-       $Version = $Record.GetType().InvokeMember( "StringData", "GetProperty", $Null, $Record, 1 )
-       Write-output $Version
-     } catch {
-       Write-output "Failed to get MSI file version: {0}." -f $_
-     }
-     $app = Start-Process ${installerPath} -ArgumentList '/passive /quiet /l* msiLog.txt' -PassThru -Wait
-     $app.WaitForExit()
-     Write-Output "Exit code: $($app.ExitCode)"
-     Write-Output "Exit time: $($app.ExitTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss')) UTC"
-     if ($app.ExitCode -ne 0) {
-       Write-Error "Application could not be installed. Error code $($app.ExitCode)"
-       exit(1)
-     }
-   displayName: 'Install GSA'
-   failOnStderr: true
-
- - powershell: |
-     & 'C:\Program Files\Oasys\*\GSA.exe' /Register
-   displayName: 'Register GSA COM'
-   failOnStderr: false
-
- - powershell: |
-     ./cleanRegistry.ps1
-   displayName: 'Run Registry Cleaner'
-   failOnStderr: true
-
- - task: NuGetToolInstaller@1
-
- - task: NuGetCommand@2
-   displayName: 'Restoring NuGet packages'
-   inputs:
-       command: 'restore'
-       restoreSolution: 'GsaGH.sln'
-
- - task: VSBuild@1
-   displayName: 'Building project in $(configuration)'
-   inputs:
-     solution: 'GsaGH.sln'
-     msbuildArgs: '/p:AppxBundlePlatforms="x64" /p:AppxPackageDir="$(build.artifactStagingDirectory)\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /m /nr:false /p:TreatWarningsAsErrors="true"'
-     platform: 'x64'
-     configuration: '$(configuration)'
-     clean: true
-   env:
-     MSBUILDDISABLENODEREUSE: 1
-
- - powershell: |
-     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
-     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\integration  .\IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
-   displayName: dotnet tests
-   failOnStderr: true
-
- - powershell: |
-     if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
-       Write-Output "codecov.yml is invalid"
-       Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
-       exit(1)
-     } else {
-       Write-Output "codecov.yml is valid"
-     }
-   displayName: Validate codecov.yml
-   failOnStderr: true
-
- - powershell: |
-     $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
-     echo $coverage_file_gsagh
-     $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
-     echo $coverage_file_integration
-     Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
-     Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-     $ProgressPreference = 'SilentlyContinue'
-     Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
-     ls $(System.DefaultWorkingDirectory)\
-     cd $(System.DefaultWorkingDirectory)\
-     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
-     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_integration.xml -F integration
-   env:
-     CODECOV_TOKEN: $(CODECOV_TOKEN)
-   displayName: Upload Code Coverage to codecovio
-   failOnStderr: true
-
- - task: PublishCodeCoverageResults@1
-   displayName: Create Azure GsaGH CodeCoverage
-   inputs:
-     codeCoverageTool: 'cobertura'
-     summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
-     pathToSources: '$(System.DefaultWorkingDirectory)'
-   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-
- - task: PublishCodeCoverageResults@1
-   displayName: Create Azure IntegrationTest CodeCoverage
-   inputs:
-     codeCoverageTool: 'cobertura'
-     summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/integration/**/coverage.cobertura.xml'
-     pathToSources: '$(System.DefaultWorkingDirectory)'
-   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-
- - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
-   displayName: Publish GsaGHTest xml to Azure
-   artifact: GsaGHTestsCoverage
-   continueOnError: true
-
- - publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-   displayName: Publish IntegrationTest xml to Azure
-   artifact: IntegrationTestsCoverage
-   continueOnError: true
-
- - task: PowerShell@2
-   displayName: Check for existing tags
-   inputs:
-     targetType: 'inline'
-     script: |
-         $versionInfo = $(Get-Item .\GsaGH\bin\x64\Release\net48\GsaGH.dll).VersionInfo
-         echo $versionInfo
-         $fullVersion = [array]${versionInfo}.FileVersion.split('.')
-         $currentTime = $(Get-Date -Format "dddd MM/dd/yyyy HH:mm")
-         $majorVersion = [string]$fullVersion[0]
-         $minorVersion = [string]$fullVersion[1]
-         $spVersion = [string]$fullVersion[2]
-         $buildNumber = [string]$fullVersion[3]
-
-         $tag = [array]@($exeName,$majorVersion,$minorVersion,$spVersion,$buildNumber)
-         $tagNumbersOnly = [array]@($majorVersion,$minorVersion,$spVersion,$buildNumber)
-
-         $dotSeparatedTag = $majorVersion + "." + $minorVersion + "." + $spVersion
-         $underscoreSeparatedTag = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
-         $tagNumbersOnlyUnderscore = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
-         $tagNumbersOnlydot = $majorVersion + "." + $minorVersion + "." + $spVersion + "." + $buildNumber
-
-         Write-Host ("##vso[task.setvariable variable=dotSeparatedTag]$dotSeparatedTag")
-         git rev-parse $dotSeparatedTag
-         if($lastExitCode -eq 0){Write-Host ("##vso[task.setvariable variable=TAG_EXISTS]true")}
-         if($lastExitCode -eq 0){
-           $tagExists = 'true'
-           echo $tagExists
-         }
-     errorActionPreference: 'continue'
-     workingDirectory: '$(System.DefaultWorkingDirectory)'
-     ignoreLASTEXITCODE: true
-
- - powershell: |
-     cd GsaGH\bin\x64\Release
-     curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
-     .\yak version
-     cd net48
-     ..\yak spec
-     Add-Content manifest.yml 'icon: GsaIcon.png'
-     Add-Content manifest.yml 'keywords:'
-     Add-Content manifest.yml '- oasys'
-     Add-Content manifest.yml '- gsa'
-     Add-Content manifest.yml '- gsagh'
-     Add-Content manifest.yml '- fe'
-     Add-Content manifest.yml '- fea'
-     Add-Content manifest.yml '- fem'
-     Add-Content manifest.yml '- structural'
-     Add-Content manifest.yml '- structuralanalysis'
-     ..\yak build --platform win
-     $yakCurrentVersName = Get-ChildItem -Path . -Filter "*.yak"
-     $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
-     Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
-     ..\yak build --platform win
-   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
-   displayName: Package yak
-
- - powershell: |
-     cd GsaGH
-     & 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' GsaGH.csproj /t:pack /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg /p:DebugType=portable /property:Configuration=Debug
-   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
-   displayName: Package NuGet
-
- - powershell: |
-     .\DocsGeneration\bin\x64\Debug\net48\DocsGeneration.exe
-     Compress-Archive -Path .\Output -DestinationPath .\results\$(dotSeparatedTag)-docs.zip -Force
-   displayName: Generate docs site
-   failOnStderr: true
-
- - publish: $(System.DefaultWorkingDirectory)\results\$(dotSeparatedTag)-docs.zip
-   displayName: Publish Docs artifact
-   artifact: Docs
-   continueOnError: false
-
- - task: GitHubRelease@1
-   displayName: 'Publishing assets to Github'
-   inputs:
-     gitHubConnection: 'github.com_MJCramp'
-     repositoryName: 'arup-group/GSA-Grasshopper'
-     action: 'edit'
-     target: '$(Build.SourceVersion)'
-     tag: '$(dotSeparatedTag)'
-     title: 'GsaGH version $(dotSeparatedTag)'
-     releaseNotesSource: 'inline'
-     releaseNotesInline: |
-       Created from commit https://github.com/arup-group/GSA-Grasshopper/commit/$(Build.SourceVersion)
-     assets: |
-       $(System.DefaultWorkingDirectory)/**/*.yak
-       $(System.DefaultWorkingDirectory)/**/*.nupkg
-       $(System.DefaultWorkingDirectory)/**/*.snupkg
-       $(System.DefaultWorkingDirectory)/**/$(dotSeparatedTag)-docs.zip
-     assetUploadMode: 'replace'
-     isDraft: true
-     isPreRelease: false
-     addChangeLog: false
-   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
-
- - powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
-   displayName: 'Delete orphan .ghlink files'
-   condition: always()
-
- - powershell: |
-     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
-     Write-output "Installer Path: ${installerPath}"
-     $app = Start-Process "msiexec.exe" -ArgumentList "/x ${installerPath} /quiet /passive /norestart /l* msiUninstallLog.txt" -PassThru -Wait
-     $app.WaitForExit()
-     Write-Output "Exit code: $($app.ExitCode)"
-     Write-Output "Exit time: $($app.ExitTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss')) UTC"
-     ### Success error codes: 0 = ERROR_SUCCESS, 1641 = ERROR_SUCCESS_REBOOT_INITIATED, 3010 = ERROR_SUCCESS_REBOOT_REQUIRED
-     ### See https://docs.microsoft.com/en-us/windows/win32/msi/error-codes
-     if (($app.ExitCode -eq 0) -or ($app.ExitCode -eq 1641) -or ($app.ExitCode -eq 3010)) {
-       Write-Output "Application successfully uninstalled with exit code $($app.ExitCode)"
-       rm $installerPath
-       exit(0)
-     } else {
-       Write-Error "Application could not be uninstalled. Error code $($app.ExitCode)"
-       exit(1)
-     }
-   condition: always()
-   displayName: 'Uninstall Application'
+# # https://aka.ms/yaml
+#
+# trigger:
+#   branches:
+#     exclude:
+#       - 'task/GSAGH-555-new-pipeline'
+#
+# variables:
+#   - group: s3PushInstallers
+#   - group: pipeline-tokens
+#   - name: configuration
+#     value: Release
+#
+# pool: 'rhino-compute'
+#
+# steps:
+# - powershell: |
+#     Get-ChildItem *.msi -Recurse | Remove-Item
+#     aws s3 cp s3://oasys-installer-store/GSA/latest . --exclude "*" --include *Arup*.msi --recursive
+#     Get-ChildItem *.msi | Rename-Item -NewName gsa.msi
+#   displayName: 'Download GSA latest'
+#   failOnStderr: true
+#
+# - powershell: |
+#     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
+#     Write-output "Installer Path: ${installerPath}"
+#     Write-output "GSA Version:"
+#     if (!(Test-Path $installerPath.FullName)) {
+#       Write-output "File '{0}' does not exist" -f $installerPath.FullName
+#     }
+#     try {
+#       $WindowsInstaller = New-Object -com WindowsInstaller.Installer
+#       $Database = $WindowsInstaller.GetType().InvokeMember("OpenDatabase", "InvokeMethod", $Null, $WindowsInstaller, @($installerPath.FullName, 0))
+#       $Query = "SELECT Value FROM Property WHERE Property = 'ProductVersion'"
+#       $View = $database.GetType().InvokeMember("OpenView", "InvokeMethod", $Null, $Database, ($Query))
+#       $View.GetType().InvokeMember("Execute", "InvokeMethod", $Null, $View, $Null) | Out-Null
+#       $Record = $View.GetType().InvokeMember( "Fetch", "InvokeMethod", $Null, $View, $Null )
+#       $Version = $Record.GetType().InvokeMember( "StringData", "GetProperty", $Null, $Record, 1 )
+#       Write-output $Version
+#     } catch {
+#       Write-output "Failed to get MSI file version: {0}." -f $_
+#     }
+#     $app = Start-Process ${installerPath} -ArgumentList '/passive /quiet /l* msiLog.txt' -PassThru -Wait
+#     $app.WaitForExit()
+#     Write-Output "Exit code: $($app.ExitCode)"
+#     Write-Output "Exit time: $($app.ExitTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss')) UTC"
+#     if ($app.ExitCode -ne 0) {
+#       Write-Error "Application could not be installed. Error code $($app.ExitCode)"
+#       exit(1)
+#     }
+#   displayName: 'Install GSA'
+#   failOnStderr: true
+#
+# - powershell: |
+#     & 'C:\Program Files\Oasys\*\GSA.exe' /Register
+#   displayName: 'Register GSA COM'
+#   failOnStderr: false
+#
+# - powershell: |
+#     ./cleanRegistry.ps1
+#   displayName: 'Run Registry Cleaner'
+#   failOnStderr: true
+#
+# - task: NuGetToolInstaller@1
+#
+# - task: NuGetCommand@2
+#   displayName: 'Restoring NuGet packages'
+#   inputs:
+#       command: 'restore'
+#       restoreSolution: 'GsaGH.sln'
+#
+# - task: VSBuild@1
+#   displayName: 'Building project in $(configuration)'
+#   inputs:
+#     solution: 'GsaGH.sln'
+#     msbuildArgs: '/p:AppxBundlePlatforms="x64" /p:AppxPackageDir="$(build.artifactStagingDirectory)\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /m /nr:false /p:TreatWarningsAsErrors="true"'
+#     platform: 'x64'
+#     configuration: '$(configuration)'
+#     clean: true
+#   env:
+#     MSBUILDDISABLENODEREUSE: 1
+#
+# - powershell: |
+#     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
+#     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\integration  .\IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
+#   displayName: dotnet tests
+#   failOnStderr: true
+#
+# - powershell: |
+#     if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
+#       Write-Output "codecov.yml is invalid"
+#       Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
+#       exit(1)
+#     } else {
+#       Write-Output "codecov.yml is valid"
+#     }
+#   displayName: Validate codecov.yml
+#   failOnStderr: true
+#
+# - powershell: |
+#     $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
+#     echo $coverage_file_gsagh
+#     $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
+#     echo $coverage_file_integration
+#     Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+#     Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
+#     $ProgressPreference = 'SilentlyContinue'
+#     Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
+#     ls $(System.DefaultWorkingDirectory)\
+#     cd $(System.DefaultWorkingDirectory)\
+#     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
+#     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_integration.xml -F integration
+#   env:
+#     CODECOV_TOKEN: $(CODECOV_TOKEN)
+#   displayName: Upload Code Coverage to codecovio
+#   failOnStderr: true
+#
+# - task: PublishCodeCoverageResults@1
+#   displayName: Create Azure GsaGH CodeCoverage
+#   inputs:
+#     codeCoverageTool: 'cobertura'
+#     summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
+#     pathToSources: '$(System.DefaultWorkingDirectory)'
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+#
+# - task: PublishCodeCoverageResults@1
+#   displayName: Create Azure IntegrationTest CodeCoverage
+#   inputs:
+#     codeCoverageTool: 'cobertura'
+#     summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/integration/**/coverage.cobertura.xml'
+#     pathToSources: '$(System.DefaultWorkingDirectory)'
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+#
+# - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+#   displayName: Publish GsaGHTest xml to Azure
+#   artifact: GsaGHTestsCoverage
+#   continueOnError: true
+#
+# - publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
+#   displayName: Publish IntegrationTest xml to Azure
+#   artifact: IntegrationTestsCoverage
+#   continueOnError: true
+#
+# - task: PowerShell@2
+#   displayName: Check for existing tags
+#   inputs:
+#     targetType: 'inline'
+#     script: |
+#         $versionInfo = $(Get-Item .\GsaGH\bin\x64\Release\net48\GsaGH.dll).VersionInfo
+#         echo $versionInfo
+#         $fullVersion = [array]${versionInfo}.FileVersion.split('.')
+#         $currentTime = $(Get-Date -Format "dddd MM/dd/yyyy HH:mm")
+#         $majorVersion = [string]$fullVersion[0]
+#         $minorVersion = [string]$fullVersion[1]
+#         $spVersion = [string]$fullVersion[2]
+#         $buildNumber = [string]$fullVersion[3]
+#
+#         $tag = [array]@($exeName,$majorVersion,$minorVersion,$spVersion,$buildNumber)
+#         $tagNumbersOnly = [array]@($majorVersion,$minorVersion,$spVersion,$buildNumber)
+#
+#         $dotSeparatedTag = $majorVersion + "." + $minorVersion + "." + $spVersion
+#         $underscoreSeparatedTag = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
+#         $tagNumbersOnlyUnderscore = $majorVersion + "_" + $minorVersion + "_" + $spVersion + "_" + $buildNumber
+#         $tagNumbersOnlydot = $majorVersion + "." + $minorVersion + "." + $spVersion + "." + $buildNumber
+#
+#         Write-Host ("##vso[task.setvariable variable=dotSeparatedTag]$dotSeparatedTag")
+#         git rev-parse $dotSeparatedTag
+#         if($lastExitCode -eq 0){Write-Host ("##vso[task.setvariable variable=TAG_EXISTS]true")}
+#         if($lastExitCode -eq 0){
+#           $tagExists = 'true'
+#           echo $tagExists
+#         }
+#     errorActionPreference: 'continue'
+#     workingDirectory: '$(System.DefaultWorkingDirectory)'
+#     ignoreLASTEXITCODE: true
+#
+# - powershell: |
+#     cd GsaGH\bin\x64\Release
+#     curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
+#     .\yak version
+#     cd net48
+#     ..\yak spec
+#     Add-Content manifest.yml 'icon: GsaIcon.png'
+#     Add-Content manifest.yml 'keywords:'
+#     Add-Content manifest.yml '- oasys'
+#     Add-Content manifest.yml '- gsa'
+#     Add-Content manifest.yml '- gsagh'
+#     Add-Content manifest.yml '- fe'
+#     Add-Content manifest.yml '- fea'
+#     Add-Content manifest.yml '- fem'
+#     Add-Content manifest.yml '- structural'
+#     Add-Content manifest.yml '- structuralanalysis'
+#     ..\yak build --platform win
+#     $yakCurrentVersName = Get-ChildItem -Path . -Filter "*.yak"
+#     $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
+#     Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
+#     ..\yak build --platform win
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
+#   displayName: Package yak
+#
+# - powershell: |
+#     cd GsaGH
+#     & 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' GsaGH.csproj /t:pack /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg /p:DebugType=portable /property:Configuration=Debug
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
+#   displayName: Package NuGet
+#
+# - powershell: |
+#     .\DocsGeneration\bin\x64\Debug\net48\DocsGeneration.exe
+#     Compress-Archive -Path .\Output -DestinationPath .\results\$(dotSeparatedTag)-docs.zip -Force
+#   displayName: Generate docs site
+#   failOnStderr: true
+#
+# - publish: $(System.DefaultWorkingDirectory)\results\$(dotSeparatedTag)-docs.zip
+#   displayName: Publish Docs artifact
+#   artifact: Docs
+#   continueOnError: false
+#
+# - task: GitHubRelease@1
+#   displayName: 'Publishing assets to Github'
+#   inputs:
+#     gitHubConnection: 'github.com_MJCramp'
+#     repositoryName: 'arup-group/GSA-Grasshopper'
+#     action: 'edit'
+#     target: '$(Build.SourceVersion)'
+#     tag: '$(dotSeparatedTag)'
+#     title: 'GsaGH version $(dotSeparatedTag)'
+#     releaseNotesSource: 'inline'
+#     releaseNotesInline: |
+#       Created from commit https://github.com/arup-group/GSA-Grasshopper/commit/$(Build.SourceVersion)
+#     assets: |
+#       $(System.DefaultWorkingDirectory)/**/*.yak
+#       $(System.DefaultWorkingDirectory)/**/*.nupkg
+#       $(System.DefaultWorkingDirectory)/**/*.snupkg
+#       $(System.DefaultWorkingDirectory)/**/$(dotSeparatedTag)-docs.zip
+#     assetUploadMode: 'replace'
+#     isDraft: true
+#     isPreRelease: false
+#     addChangeLog: false
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
+#
+# - powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
+#   displayName: 'Delete orphan .ghlink files'
+#   condition: always()
+#
+# - powershell: |
+#     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
+#     Write-output "Installer Path: ${installerPath}"
+#     $app = Start-Process "msiexec.exe" -ArgumentList "/x ${installerPath} /quiet /passive /norestart /l* msiUninstallLog.txt" -PassThru -Wait
+#     $app.WaitForExit()
+#     Write-Output "Exit code: $($app.ExitCode)"
+#     Write-Output "Exit time: $($app.ExitTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss')) UTC"
+#     ### Success error codes: 0 = ERROR_SUCCESS, 1641 = ERROR_SUCCESS_REBOOT_INITIATED, 3010 = ERROR_SUCCESS_REBOOT_REQUIRED
+#     ### See https://docs.microsoft.com/en-us/windows/win32/msi/error-codes
+#     if (($app.ExitCode -eq 0) -or ($app.ExitCode -eq 1641) -or ($app.ExitCode -eq 3010)) {
+#       Write-Output "Application successfully uninstalled with exit code $($app.ExitCode)"
+#       rm $installerPath
+#       exit(0)
+#     } else {
+#       Write-Error "Application could not be uninstalled. Error code $($app.ExitCode)"
+#       exit(1)
+#     }
+#   condition: always()
+#   displayName: 'Uninstall Application'
