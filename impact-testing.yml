@@ -83,11 +83,13 @@ stages:
       inputs:
         testSelector: 'testAssemblies'  # Enables Test Impact Analysis
         testAssemblyVer2: |
-          GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
+          **\*Tests.dll
+          !**\obj\**
         searchFolder: '$(System.DefaultWorkingDirectory)'
         runOnlyImpactedTests: true
         runInParallel: false
         failOnStderr: true
+        codeCoverageEnabled: true
         
     - task: PublishBuildArtifacts@1
       condition: always()
