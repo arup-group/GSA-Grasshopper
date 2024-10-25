@@ -8,7 +8,7 @@ parameters:
 
 steps:
   - powershell: |
-      $name = ${{ parameters.dllName }}
+      $name = "${{ parameters.dllName }}"
     displayName: 'Simplify name'
   - powershell: |
       $dllFile = (ls -r "$(System.DefaultWorkingDirectory)\$name\bin\**\${{ parameters.configuration }}\$name.dll").FullName
