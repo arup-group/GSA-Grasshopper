@@ -93,11 +93,12 @@ stages:
         runInParallel: true
         failOnStderr: true
         codeCoverageEnabled: true
+        testFiltercriteria: "FullyQualifiedName=GsaGHTests.Components.Analysis.CreateAnalysisTaskTests"
         
     - task: PublishBuildArtifacts@1
       condition: always()
       inputs:
-        PathtoPublish: '$(System.DefaultWorkingDirectory)'
+        PathtoPublish: '$(Agent.TempDirectory)\TestResults\**\*xml'
         ArtifactName: 'Tests Results'
         publishLocation: 'Container'
 
