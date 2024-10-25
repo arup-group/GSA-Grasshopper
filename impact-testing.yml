@@ -93,20 +93,26 @@ stages:
         runInParallel: true
         failOnStderr: true
         codeCoverageEnabled: true
-        testFiltercriteria: "FullyQualifiedName~GsaGHTests.Components.Analysis.CreateAnalysisTaskTests.CreateAnalysisTest"
-        
+        testFiltercriteria: "FullyQualifiedName~GsaGHTests.Components.Analysis.CreateAnalysisTaskTests"
+
+    - powershell: |
+        $coverage_file = (Resolve-Path $(Agent.TempDirectory)/TestResults/*.trx).Path
+        echo $coverage_file
+      displayName: 'Find TRX File'
+    
     - task: PublishBuildArtifacts@1
       condition: always()
       inputs:
-        PathtoPublish: '$(Agent.TempDirectory)\TestResults\*.trx'
+        PathtoPublish: '$(Agent.TempDirectory)\TestResults'
         ArtifactName: 'Tests Results'
         publishLocation: 'Container'
 
     # Publish code coverage results v2
     # Publish any of the code coverage results from a build.
     - task: PublishCodeCoverageResults@2
+      condition: always()
       inputs:
-        summaryFileLocation: '$(Agent.TempDirectory)\TestResults\*.trx'
+        summaryFileLocation: $coverage_file
         #pathToSources: # string. Path to Source files. 
         #failIfCoverageEmpty: false # boolean. Fail if code coverage results are missing. Default: false.
 
