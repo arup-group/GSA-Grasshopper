@@ -93,7 +93,7 @@ stages:
         runInParallel: true
         failOnStderr: true
         codeCoverageEnabled: true
-        testFiltercriteria: "FullyQualifiedName=GsaGHTests.Components.Analysis.CreateAnalysisTaskTests"
+        testFiltercriteria: "FullyQualifiedName~GsaGHTests.Components.Analysis.CreateAnalysisTaskTests.CreateAnalysisTest"
         
     - task: PublishBuildArtifacts@1
       condition: always()
