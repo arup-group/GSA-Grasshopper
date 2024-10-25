@@ -78,9 +78,12 @@ stages:
     
     - task: VisualStudioTestPlatformInstaller@1
       displayName: 'Install Test Platform'
-      testPlatformVersion: '16.11.0'
+      inputs:
+          packageFeedSelector: 'nugetOrg'
+          versionSelector: 'specificVersion'
+          testPlatformVersion: '16.11.0'
 
-    - task: VSTest@3
+    - task: VSTest@2
       inputs:
         testSelector: 'testAssemblies'  # Enables Test Impact Analysis
         testAssemblyVer2: |
