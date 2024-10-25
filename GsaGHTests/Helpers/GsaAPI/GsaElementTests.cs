@@ -2,7 +2,8 @@
 
 using Xunit;
 
-namespace GsaGHTests.Helpers.GsaAPI {
+namespace GsaGHTests.Helpers.GsaAPITests {
+  [Collection("GrasshopperFixture collection")]
   public class GsaElementTests {
     [Fact]
     public void GroupsShouldDefaultToOne() {
