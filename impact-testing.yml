@@ -94,7 +94,7 @@ stages:
         failOnStderr: true
         codeCoverageEnabled: true
         
-    - task: PublishBuildArtifacts@2
+    - task: PublishBuildArtifacts@1
       condition: always()
       inputs:
         PathtoPublish: '$(System.DefaultWorkingDirectory)'
