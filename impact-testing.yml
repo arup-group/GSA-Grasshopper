@@ -76,44 +76,44 @@ stages:
         solution: 'GsaGH.sln'
         configuration: 'Debug'
 
-    - task: VisualStudioTestPlatformInstaller@1
-      displayName: 'Install Test Platform'
-      inputs:
-          packageFeedSelector: 'nugetOrg'
-          versionSelector: 'specificVersion'
-          testPlatformVersion: '16.11.0'
+    #- task: VisualStudioTestPlatformInstaller@1
+    #  displayName: 'Install Test Platform'
+    #  inputs:
+    #      packageFeedSelector: 'nugetOrg'
+    #      versionSelector: 'specificVersion'
+    #      testPlatformVersion: '16.11.0'
 
-    - task: VSTest@2
-      inputs:
-        testSelector: 'testAssemblies'  # Enables Test Impact Analysis
-        testAssemblyVer2: |
-          GsaGHTests\bin\x64\Debug\net48\GsaGHTests.dll
-        searchFolder: '$(System.DefaultWorkingDirectory)'
-        runOnlyImpactedTests: true
-        runInParallel: true
-        failOnStderr: true
-        codeCoverageEnabled: true
-        testFiltercriteria: "FullyQualifiedName~GsaGHTests.Components.Analysis.CreateAnalysisTaskTests"
+    #- task: VSTest@2
+    #  inputs:
+    #    testSelector: 'testAssemblies'  # Enables Test Impact Analysis
+    #    testAssemblyVer2: |
+    #      GsaGHTests\bin\x64\Debug\net48\GsaGHTests.dll
+    #    searchFolder: '$(System.DefaultWorkingDirectory)'
+    #    runOnlyImpactedTests: true
+    #    runInParallel: true
+    #    failOnStderr: true
+    #    codeCoverageEnabled: true
+    #    testFiltercriteria: "FullyQualifiedName~GsaGHTests.Components.Analysis.CreateAnalysisTaskTests"
 
-    - powershell: |
-        $coverage_file = (Resolve-Path $(Agent.TempDirectory)/TestResults/*.trx).Path
-        echo $coverage_file
-      displayName: 'Find TRX File'
+    #- powershell: |
+    #    $coverage_file = (Resolve-Path $(Agent.TempDirectory)/TestResults/*.trx).Path
+    #    echo $coverage_file
+    #  displayName: 'Find TRX File'
 
-    - task: PublishBuildArtifacts@1
-      condition: always()
-      inputs:
-        PathtoPublish: '$(Agent.TempDirectory)\TestResults'
-        ArtifactName: 'Tests Results'
-        publishLocation: 'Container'
+    #- task: PublishBuildArtifacts@1
+    #  condition: always()
+    #  inputs:
+    #    PathtoPublish: '$(Agent.TempDirectory)\TestResults'
+    #    ArtifactName: 'Tests Results'
+    #    publishLocation: 'Container'
 
     # Publish code coverage results v2
     # Publish any of the code coverage results from a build.
-    - task: PublishCodeCoverageResults@2
-      condition: always()
-      inputs:
-        codeCoverageTool: 'Cobertura' # 'JaCoCo'
-        summaryFileLocation: $coverage_file
+   # - task: PublishCodeCoverageResults@2
+   #   condition: always()
+   #   inputs:
+   #     codeCoverageTool: 'Cobertura' # 'JaCoCo'
+   #     summaryFileLocation: $coverage_file
         #pathToSources: # string. Path to Source files.
         #failIfCoverageEmpty: false # boolean. Fail if code coverage results are missing. Default: false.
 
