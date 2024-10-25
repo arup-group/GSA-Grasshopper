@@ -11,7 +11,7 @@ steps:
       $name = "${{ parameters.dllName }}"
     displayName: 'Simplify name'
   - powershell: |
-      $dllFile = (ls -r "$(System.DefaultWorkingDirectory)\${name}\bin\**\${{ parameters.configuration }}\${name}.dll").FullName
+      $dllFile = (ls -r "$(System.DefaultWorkingDirectory)\${{ parameters.dllName }}\bin\**\${{ parameters.configuration }}\${{ parameters.dllName }}.dll").FullName
     displayName: 'Find dll file'
 
   - powershell: |
