@@ -98,9 +98,17 @@ stages:
     - task: PublishBuildArtifacts@1
       condition: always()
       inputs:
-        PathtoPublish: '$(Agent.TempDirectory)\TestResults'
+        PathtoPublish: '$(Agent.TempDirectory)\TestResults\*.trx'
         ArtifactName: 'Tests Results'
         publishLocation: 'Container'
+
+    # Publish code coverage results v2
+    # Publish any of the code coverage results from a build.
+    - task: PublishCodeCoverageResults@2
+      inputs:
+        summaryFileLocation: '$(Agent.TempDirectory)\TestResults\*.trx'
+        #pathToSources: # string. Path to Source files. 
+        #failIfCoverageEmpty: false # boolean. Fail if code coverage results are missing. Default: false.
 
     - template: uninstall-gsa.yml
 
