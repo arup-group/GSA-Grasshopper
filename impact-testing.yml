@@ -78,6 +78,7 @@ stages:
     
     - task: VisualStudioTestPlatformInstaller@1
       displayName: 'Install Test Platform'
+      testPlatformVersion: '16.11.0'
 
     - task: VSTest@3
       inputs:
@@ -90,11 +91,11 @@ stages:
         failOnStderr: true
         codeCoverageEnabled: true
         
-    - task: PublishBuildArtifacts@1
+    - task: PublishBuildArtifacts@2
       condition: always()
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'drop'
+        PathtoPublish: '$(System.DefaultWorkingDirectory)'
+        ArtifactName: 'Tests Results'
         publishLocation: 'Container'
 
     - template: uninstall-gsa.yml
