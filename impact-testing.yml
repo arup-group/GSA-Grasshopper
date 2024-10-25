@@ -112,6 +112,7 @@ stages:
     - task: PublishCodeCoverageResults@2
       condition: always()
       inputs:
+        codeCoverageTool: 'Cobertura' # 'JaCoCo'
         summaryFileLocation: $coverage_file
         #pathToSources: # string. Path to Source files. 
         #failIfCoverageEmpty: false # boolean. Fail if code coverage results are missing. Default: false.
