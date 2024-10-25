@@ -116,6 +116,8 @@ stages:
         summaryFileLocation: $coverage_file
         #pathToSources: # string. Path to Source files. 
         #failIfCoverageEmpty: false # boolean. Fail if code coverage results are missing. Default: false.
+    
+    - template: run-tests.yml
 
     - template: uninstall-gsa.yml
 
