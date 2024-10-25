@@ -74,7 +74,7 @@ stages:
     - template: build-solution.yml
       parameters:
         solution: 'GsaGH.sln'
-        configuration: 'Release'
+        configuration: 'Debug'
     
     - task: VisualStudioTestPlatformInstaller@1
       displayName: 'Install Test Platform'
@@ -87,7 +87,7 @@ stages:
       inputs:
         testSelector: 'testAssemblies'  # Enables Test Impact Analysis
         testAssemblyVer2: |
-          GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
+          GsaGHTests\bin\x64\Debug\net48\GsaGHTests.dll
         searchFolder: '$(System.DefaultWorkingDirectory)'
         runOnlyImpactedTests: true
         runInParallel: true
