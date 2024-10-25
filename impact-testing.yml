@@ -83,7 +83,7 @@ stages:
       inputs:
         testSelector: 'testAssemblies'  # Enables Test Impact Analysis
         testAssemblyVer2: |
-          **\*Tests.dll
+          **\GsaGHTests.dll
           !**\obj\**
         searchFolder: '$(System.DefaultWorkingDirectory)'
         runOnlyImpactedTests: true
