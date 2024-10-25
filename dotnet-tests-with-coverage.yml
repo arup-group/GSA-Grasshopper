@@ -8,11 +8,13 @@ parameters:
 
 steps:
   - powershell: |
-      $dllFile = (ls -r "$(System.DefaultWorkingDirectory)\${{ dllName }}\bin\**\${{ configuration }}\${{ dllName }}.dll").FullName
+      $name = $ {{ parameters.dllName }}
+  - powershell: |
+      $dllFile = (ls -r "$(System.DefaultWorkingDirectory)\$name\bin\**\${{ parameters.configuration }}\$name.dll").FullName
     displayName: 'Find dll file'
 
   - powershell: |
-      dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\${{ dllName }} $dllFile --filter FullyQualifiedName~GsaGHTests.Components.Analysis.CreateAnalysisTaskTests
+      dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\$name $dllFile --filter FullyQualifiedName~GsaGHTests.Components.Analysis.CreateAnalysisTaskTests
     displayName: dotnet tests
     failOnStderr: true
 
@@ -30,26 +32,26 @@ steps:
   - powershell: |
       $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
       echo $coverage_file_gsagh
-      Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_${{ dllName }}.xml
+      Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_$name.xml
       $ProgressPreference = 'SilentlyContinue'
       Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
       ls $(System.DefaultWorkingDirectory)\
       cd $(System.DefaultWorkingDirectory)\
-      .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_${{ dllName }}.xml -F {{ dllName }}
+      .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_$name.xml -F $name
     env:
       CODECOV_TOKEN: $(CODECOV_TOKEN)
     displayName: Upload Code Coverage to codecovio
     failOnStderr: true
 
   - task: PublishCodeCoverageResults@1
-    displayName: Create Azure ${{ dllName }} CodeCoverage
+    displayName: Create Azure $name CodeCoverage
     inputs:
       codeCoverageTool: 'cobertura'
-      summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/${{ dllName }}/**/coverage.cobertura.xml'
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/$name/**/coverage.cobertura.xml'
       pathToSources: '$(System.DefaultWorkingDirectory)'
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
-  - publish: $(System.DefaultWorkingDirectory)\results\coverage_${{ dllName }}.xml
+  - publish: $(System.DefaultWorkingDirectory)\results\coverage_$name.xml
     displayName: Publish GsaGHTest xml to Azure
-    artifact: ${{ dllName }}TestsCoverage
+    artifact: $nameTestsCoverage
     continueOnError: true
