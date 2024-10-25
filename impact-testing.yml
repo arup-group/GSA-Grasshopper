@@ -98,7 +98,7 @@ stages:
     - task: PublishBuildArtifacts@1
       condition: always()
       inputs:
-        PathtoPublish: '$(Agent.TempDirectory)\TestResults\**\*xml'
+        PathtoPublish: '$(Agent.TempDirectory)\TestResults'
         ArtifactName: 'Tests Results'
         publishLocation: 'Container'
 
