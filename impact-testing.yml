@@ -90,7 +90,7 @@ stages:
           GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
         searchFolder: '$(System.DefaultWorkingDirectory)'
         runOnlyImpactedTests: true
-        runInParallel: false
+        runInParallel: true
         failOnStderr: true
         codeCoverageEnabled: true
         
