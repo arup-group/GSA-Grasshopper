@@ -8,6 +8,8 @@ using GsaGHTests.Helpers;
 
 using OasysGH.Components;
 
+using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.Parameters {
@@ -30,6 +32,20 @@ namespace GsaGHTests.Parameters {
       var duplicate = new GsaElement3d(original);
 
       Duplicates.AreEqual(original, duplicate, new List<string> { "Guid" });
+    }
+
+    [Fact]
+    public void CreateElement3dFromMeshShouldSetValues() {
+      var mesh = new Mesh();
+      var element = new GsaElement3d(mesh);
+
+      Assert.NotNull(element.NgonMesh);
+      Assert.False(element.NgonMesh.IsClosed);
+      Assert.Empty(element.Ids);
+      Assert.Empty(element.ApiElements);
+      Assert.Empty(element.Topology);
+      Assert.Empty(element.TopoInt);
+      Assert.Empty(element.FaceInt);
     }
   }
 }
