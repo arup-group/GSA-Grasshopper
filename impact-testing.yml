@@ -33,7 +33,8 @@ stages:
         git fetch origin
         git status
 
-        $gitChanges = git diff --name-only HEAD~1 HEAD
+        $targetBranch = $(System.PullRequest.TargetBranch)
+        $gitChanges = git diff --name-only $targetBranch HEAD
         $unitTestsChanged = $false
         $integrationTestsChanged = $false
 
@@ -52,6 +53,8 @@ stages:
         Write-Output "Integration=$integrationTestsChanged"
         echo "##vso[task.setvariable variable=Integration]$integrationTestsChanged"
       displayName: 'Detect Changes in Repo'
+    - powershell: |
+        $files = git diff HEAD~1 --name-only | Where-Object { $_ -like "*.cs" -and $_ -notlike "*Tests.cs" }
 
 - stage: ImpactTestingUnit
   displayName: 'Impact Testing (Unit)'
