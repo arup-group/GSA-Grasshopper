@@ -273,7 +273,7 @@ namespace GsaGH.Components {
 
       GsaBool6Goo end = null;
       if (da.GetData(9, ref end)) {
-        mem.ReleaseEnd = start.Value.Negate();
+        mem.ReleaseEnd = end.Value.Negate();
       }
 
       bool autoOffset1 = false;
