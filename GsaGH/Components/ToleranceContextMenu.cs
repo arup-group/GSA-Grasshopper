@@ -42,12 +42,6 @@ namespace GsaGH.Components {
           + "\n- Calculating positions for EllipseHollowProfile and CircleHollowProfile in ExpandBeamToShell."
           + "\n- Converting non-planar quadrilaterals to triangles in Create2dElementsFromBrep."
           + "\n\nNote: These tolerances do not affect the preference tolerance in GSA.",
-        //ToolTipText = "Set the tolerance for operations, including:"
-        //  + "\nCalculating coincident node collapses for components such as:"
-        //  + "\n\tAnalyseModel, CreateModel, CreateElementsFromMembers, and Create2dElementsFromBrep."
-        //  + "\nAdditionally, calculate the positions of EllipseHollowProfile and CircleHollowProfile for the ExpandBeamToShell component,"
-        //  + "\nor convert non-planar quadrilaterals to triangles, and calculate positions for the Create2dElementsFromBrep component. "
-        //  + "\n\nNote that none of these tolerances are used to set preference tolerance in GSA.",
       };
 
       //only for init submenu
