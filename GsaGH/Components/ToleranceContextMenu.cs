@@ -34,9 +34,20 @@ namespace GsaGH.Components {
       tolerance.BackColor = Color.FromArgb(255, 180, 255, 150);
       tolerance.TextChanged += (s, e) => MaintainText(tolerance);
 
-      var toleranceMenu = new ToolStripMenuItem("Set Tolerance", Resources.ModelUnits) {
+      var toleranceMenu = new ToolStripMenuItem("Calculation Tolerance", Resources.ModelUnits) {
         Enabled = true,
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
+        ToolTipText = "Set tolerance values for various operations, including:"
+          + "\n- Collapsing coincident nodes for components like AnalyseModel, CreateModel, CreateElementsFromMembers, and Create2dElementsFromBrep."
+          + "\n- Calculating positions for EllipseHollowProfile and CircleHollowProfile in ExpandBeamToShell."
+          + "\n- Converting non-planar quadrilaterals to triangles in Create2dElementsFromBrep."
+          + "\n\nNote: These tolerances do not affect the preference tolerance in GSA.",
+        //ToolTipText = "Set the tolerance for operations, including:"
+        //  + "\nCalculating coincident node collapses for components such as:"
+        //  + "\n\tAnalyseModel, CreateModel, CreateElementsFromMembers, and Create2dElementsFromBrep."
+        //  + "\nAdditionally, calculate the positions of EllipseHollowProfile and CircleHollowProfile for the ExpandBeamToShell component,"
+        //  + "\nor convert non-planar quadrilaterals to triangles, and calculate positions for the Create2dElementsFromBrep component. "
+        //  + "\n\nNote that none of these tolerances are used to set preference tolerance in GSA.",
       };
 
       //only for init submenu
