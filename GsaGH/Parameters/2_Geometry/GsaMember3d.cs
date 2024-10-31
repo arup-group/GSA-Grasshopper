@@ -112,7 +112,7 @@ namespace GsaGH.Parameters {
         mem.Topology = ApiMember.Topology;
       }
 
-      MemberHelper.SetOffsetsFrom(mem, ApiMember);
+      mem.SetOffsetsFrom(ApiMember);
 
       if ((Color)ApiMember.Colour
         != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type

@@ -51,8 +51,8 @@ namespace GsaGH.Parameters {
     public ReleasePreview ReleasePreview { get; private set; }
 
     public GsaOffset Offset {
-      get => MemberHelper.GetOffsetFromMember(ApiMember);
-      set => MemberHelper.SetOffsetForMember(ApiMember, value);
+      get => ApiMember.GetOffsetFromMember();
+      set => ApiMember.SetOffsetForMember(value);
     }
 
     public Angle OrientationAngle {
@@ -151,7 +151,7 @@ namespace GsaGH.Parameters {
         mem.Topology = ApiMember.Topology;
       }
 
-      MemberHelper.SetOffsetsFrom(mem, ApiMember);
+      mem.SetOffsetsFrom(ApiMember);
 
       mem.SetEndRelease(0, ApiMember.GetEndRelease(0));
       mem.SetEndRelease(1, ApiMember.GetEndRelease(1));

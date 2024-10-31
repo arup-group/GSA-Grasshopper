@@ -54,8 +54,8 @@ namespace GsaGH.Parameters {
     public Section3dPreview Section3dPreview { get; private set; }
 
     public GsaOffset Offset {
-      get => MemberHelper.GetOffsetFromMember(ApiMember);
-      set => MemberHelper.SetOffsetForMember(ApiMember, value);
+      get => ApiMember.GetOffsetFromMember();
+      set => ApiMember.SetOffsetForMember(value);
     }
 
     public Angle OrientationAngle {
@@ -177,7 +177,7 @@ namespace GsaGH.Parameters {
         mem.Topology = ApiMember.Topology;
       }
 
-      MemberHelper.SetOffsetsFrom(mem, ApiMember);
+      mem.SetOffsetsFrom(ApiMember);
 
       // workaround to handle that Color is non-nullable type
       if ((Color)ApiMember.Colour != Color.FromArgb(0, 0, 0)) {
@@ -277,7 +277,7 @@ namespace GsaGH.Parameters {
     }
 
     private void InitTopology(Point3dList topology, List<string> topologyType) {
-      if (topology[0] != topology[topology.Count - 1]) // add last point to close boundary
+      if (!topology.IsClosed()) // add last point to close boundary
       {
         topology.Add(topology[0]);
         topologyType.Add(string.Empty);
