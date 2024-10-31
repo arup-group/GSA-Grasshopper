@@ -3,17 +3,19 @@ using System.Collections.ObjectModel;
 
 namespace GsaAPI {
   public class GSAElement {
+    public const int DefaultGroup = 1;
+    public const int IndexZero = 0;
     public static int LoadPanelType = -1000;
     private GSAElement() { }
     public GSAElement(Element element) {
       Element = element;
       IsLoadPanel = false;
-      Element.Group = element.Group == 0 ? 1 : element.Group;
+      Element.Group = SetGroupFrom(element.Group);
     }
     public GSAElement(LoadPanelElement element) {
       LoadPanelElement = element;
       IsLoadPanel = true;
-      LoadPanelElement.Group = element.Group == 0 ? 1 : element.Group;
+      LoadPanelElement.Group = SetGroupFrom(element.Group);
     }
 
     public bool IsLoadPanel { get; }
@@ -237,6 +239,9 @@ namespace GsaAPI {
       }
     }
 
+    private static int SetGroupFrom(int id) {
+      return id == IndexZero ? DefaultGroup : id;
+    }
   }
 
 }
