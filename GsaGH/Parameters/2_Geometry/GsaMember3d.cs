@@ -21,9 +21,20 @@ using Polyline = Rhino.Geometry.Polyline;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// <para>Members in GSA are geometrical objects used in the Design Layer. Members can automatically intersection with other members. Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can automatically be created from Members used for analysis. </para>
-  /// <para>A Member3D is the volumetric geometry resembling for instance soil. It can be defined geometrically by a closed Solid (either Mesh or Brep).</para>
-  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> to read more.</para>
+  ///   <para>
+  ///     Members in GSA are geometrical objects used in the Design Layer. Members can automatically intersection with
+  ///     other members. Members are as such more closely related to building objects, like a beam, column, slab or wall.
+  ///     Elements can automatically be created from Members used for analysis.
+  ///   </para>
+  ///   <para>
+  ///     A Member3D is the volumetric geometry resembling for instance soil. It can be defined geometrically by a closed
+  ///     Solid (either Mesh or Brep).
+  ///   </para>
+  ///   <para>
+  ///     Refer to
+  ///     <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> to read
+  ///     more.
+  ///   </para>
   /// </summary>
   public class GsaMember3d {
     public Member ApiMember { get; internal set; }
@@ -38,13 +49,13 @@ namespace GsaGH.Parameters {
     /// <summary>
     ///   Empty constructor instantiating a new API object
     /// </summary>
-    public GsaMember3d() { CreateDefaultApiMember(); }
+    public GsaMember3d() { ApiMember = MemberHelper.CreateDefaultApiMember(MemberType.GENERIC_3D); }
 
     /// <summary>
     /// Create new instance by casting from a Mesh
     /// </summary>
     public GsaMember3d(Mesh mesh) {
-      CreateDefaultApiMember();
+      ApiMember = MemberHelper.CreateDefaultApiMember(MemberType.GENERIC_3D);
       SolidMesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
       UpdatePreview();
     }
@@ -53,7 +64,7 @@ namespace GsaGH.Parameters {
     /// Create new instance by casting from a Brep
     /// </summary>
     public GsaMember3d(Brep brep) {
-      CreateDefaultApiMember();
+      ApiMember = MemberHelper.CreateDefaultApiMember(MemberType.GENERIC_3D);
       SolidMesh = RhinoConversions.ConvertBrepToTriMeshSolid(brep);
       UpdatePreview();
     }
@@ -101,7 +112,7 @@ namespace GsaGH.Parameters {
         mem.Topology = ApiMember.Topology;
       }
 
-      SetOffsets(mem);
+      MemberHelper.SetOffsetsFrom(mem, ApiMember);
 
       if ((Color)ApiMember.Colour
         != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
@@ -110,13 +121,6 @@ namespace GsaGH.Parameters {
       }
 
       return mem;
-    }
-
-    private void SetOffsets(Member mem) {
-      mem.Offset.X1 = ApiMember.Offset.X1;
-      mem.Offset.X2 = ApiMember.Offset.X2;
-      mem.Offset.Y = ApiMember.Offset.Y;
-      mem.Offset.Z = ApiMember.Offset.Z;
     }
 
     public override string ToString() {
@@ -161,13 +165,6 @@ namespace GsaGH.Parameters {
       }
 
       PreviewPts = new Point3dList(SolidMesh.Vertices.ToPoint3dArray());
-    }
-
-    private void CreateDefaultApiMember() {
-      ApiMember = new Member() {
-        Type = MemberType.GENERIC_3D,
-        Group = GsaMemberDefaults.GroupValue,
-      };
     }
   }
 }

@@ -20,9 +20,21 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// <para><see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> in GSA are geometrical objects used in the Design Layer. Members can automatically intersection with other members. Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can automatically be created from Members used for analysis. </para>
-  /// <para>A Member1D is the linear geometry resembling for instance a column or a beam. They can be defined geometrically by a PolyCurve consisting of either multiple line segments or a single arc.</para>
-  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/explanations/members-1d.html">1D Members</see> to read more.</para>
+  ///   <para>
+  ///     <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> in
+  ///     GSA are geometrical objects used in the Design Layer. Members can automatically intersection with other members.
+  ///     Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can
+  ///     automatically be created from Members used for analysis.
+  ///   </para>
+  ///   <para>
+  ///     A Member1D is the linear geometry resembling for instance a column or a beam. They can be defined geometrically
+  ///     by a PolyCurve consisting of either multiple line segments or a single arc.
+  ///   </para>
+  ///   <para>
+  ///     Refer to
+  ///     <see href="https://docs.oasys-software.com/structural/gsa/explanations/members-1d.html">1D Members</see> to read
+  ///     more.
+  ///   </para>
   /// </summary>
   public class GsaMember1d {
     public Member ApiMember { get; internal set; }
@@ -39,8 +51,8 @@ namespace GsaGH.Parameters {
     public ReleasePreview ReleasePreview { get; private set; }
 
     public GsaOffset Offset {
-      get => GetOffSetFromApiMember();
-      set => SetOffsetInApiElement(value);
+      get => MemberHelper.GetOffsetFromMember(ApiMember);
+      set => MemberHelper.SetOffsetForMember(ApiMember, value);
     }
 
     public Angle OrientationAngle {
@@ -58,7 +70,7 @@ namespace GsaGH.Parameters {
     }
 
     /// <summary>
-    /// Empty constructor instantiating a new API object
+    ///   Empty constructor instantiating a new API object
     /// </summary>
     public GsaMember1d() {
       CreateDefaultApiMember();
@@ -139,7 +151,7 @@ namespace GsaGH.Parameters {
         mem.Topology = ApiMember.Topology;
       }
 
-      SetOffsets(mem);
+      MemberHelper.SetOffsetsFrom(mem, ApiMember);
 
       mem.SetEndRelease(0, ApiMember.GetEndRelease(0));
       mem.SetEndRelease(1, ApiMember.GetEndRelease(1));
@@ -167,8 +179,7 @@ namespace GsaGH.Parameters {
     }
 
     public void UpdateGeometry(Curve crv) {
-      Tuple<PolyCurve, Point3dList, List<string>> convertCrv
-        = RhinoConversions.ConvertMem1dCrv(crv);
+      Tuple<PolyCurve, Point3dList, List<string>> convertCrv = RhinoConversions.ConvertMem1dCrv(crv);
       PolyCurve = convertCrv.Item1;
       Topology = convertCrv.Item2;
       TopologyType = convertCrv.Item3;
@@ -177,8 +188,7 @@ namespace GsaGH.Parameters {
     private void AdjustToModelUnit(LengthUnit modelUnit) {
       ApiMember.EffectiveLength.DestablisingLoad
         = new Length(ApiMember.EffectiveLength.DestablisingLoad, LengthUnit.Meter).As(modelUnit);
-      if (modelUnit != LengthUnit.Meter
-        && ApiMember.EffectiveLength is EffectiveLengthFromUserSpecifiedValue user) {
+      if (modelUnit != LengthUnit.Meter && ApiMember.EffectiveLength is EffectiveLengthFromUserSpecifiedValue user) {
         if (user.EffectiveLengthAboutY.Option == EffectiveLengthOptionType.Absolute) {
           user.EffectiveLengthAboutY = new EffectiveLengthAttribute(EffectiveLengthOptionType.Absolute,
             new Length(user.EffectiveLengthAboutY.Value, LengthUnit.Meter).As(modelUnit));
@@ -190,30 +200,10 @@ namespace GsaGH.Parameters {
         }
 
         if (user.EffectiveLengthLaterialTorsional.Option == EffectiveLengthOptionType.Absolute) {
-          user.EffectiveLengthLaterialTorsional = new EffectiveLengthAttribute(
-            EffectiveLengthOptionType.Absolute,
+          user.EffectiveLengthLaterialTorsional = new EffectiveLengthAttribute(EffectiveLengthOptionType.Absolute,
             new Length(user.EffectiveLengthLaterialTorsional.Value, LengthUnit.Meter).As(modelUnit));
         }
       }
-    }
-
-    private GsaOffset GetOffSetFromApiMember() {
-      return new GsaOffset(
-        ApiMember.Offset.X1, ApiMember.Offset.X2, ApiMember.Offset.Y, ApiMember.Offset.Z);
-    }
-
-    private void SetOffsetInApiElement(GsaOffset offset) {
-      ApiMember.Offset.X1 = offset.X1.Meters;
-      ApiMember.Offset.X2 = offset.X2.Meters;
-      ApiMember.Offset.Y = offset.Y.Meters;
-      ApiMember.Offset.Z = offset.Z.Meters;
-    }
-
-    private void SetOffsets(Member mem) {
-      mem.Offset.X1 = ApiMember.Offset.X1;
-      mem.Offset.X2 = ApiMember.Offset.X2;
-      mem.Offset.Y = ApiMember.Offset.Y;
-      mem.Offset.Z = ApiMember.Offset.Z;
     }
 
     private void SetRelease(GsaBool6 bool6, int pos) {
@@ -225,19 +215,13 @@ namespace GsaGH.Parameters {
       Bool6 s = ApiMember.GetEndRelease(0).Releases;
       Bool6 e = ApiMember.GetEndRelease(1).Releases;
 
-      ReleasePreview = s.X || s.Y || s.Z || s.XX || s.YY || s.ZZ
-        || e.X || e.Y || e.Z || e.XX || e.YY || e.ZZ
-        ? new ReleasePreview(PolyCurve,
-          ApiMember.OrientationAngle * Math.PI / 180.0, s, e)
-        : new ReleasePreview();
+      ReleasePreview = s.X || s.Y || s.Z || s.XX || s.YY || s.ZZ || e.X || e.Y || e.Z || e.XX || e.YY || e.ZZ ?
+        new ReleasePreview(PolyCurve, ApiMember.OrientationAngle * Math.PI / 180.0, s, e) : new ReleasePreview();
     }
 
     private void CreateDefaultApiMember() {
-      ApiMember = new Member {
-        Type = MemberType.GENERIC_1D,
-        Type1D = ElementType.BEAM,
-        Group = GsaMemberDefaults.GroupValue,
-      };
+      ApiMember = MemberHelper.CreateDefaultApiMember(MemberType.GENERIC_1D);
+      ApiMember.Type1D = ElementType.BEAM;
     }
   }
 }

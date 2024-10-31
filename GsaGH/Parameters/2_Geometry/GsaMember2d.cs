@@ -19,9 +19,21 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// <para><see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> in GSA are geometrical objects used in the Design Layer. Members can automatically intersect with other members. Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can automatically be created from Members used for analysis. </para>
-  /// <para>A Member2D is the planar/area geometry resembling for instance a slab or a wall. It can be defined geometrically from a planar Brep.</para>
-  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/explanations/members-2d.html">2D Members</see> to read more.</para>
+  ///   <para>
+  ///     <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-member.html">Members</see> in
+  ///     GSA are geometrical objects used in the Design Layer. Members can automatically intersect with other members.
+  ///     Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can
+  ///     automatically be created from Members used for analysis.
+  ///   </para>
+  ///   <para>
+  ///     A Member2D is the planar/area geometry resembling for instance a slab or a wall. It can be defined
+  ///     geometrically from a planar Brep.
+  ///   </para>
+  ///   <para>
+  ///     Refer to
+  ///     <see href="https://docs.oasys-software.com/structural/gsa/explanations/members-2d.html">2D Members</see> to read
+  ///     more.
+  ///   </para>
   /// </summary>
   public class GsaMember2d {
     public Member ApiMember { get; internal set; }
@@ -42,8 +54,8 @@ namespace GsaGH.Parameters {
     public Section3dPreview Section3dPreview { get; private set; }
 
     public GsaOffset Offset {
-      get => GetOffSetFromApiMember();
-      set => SetOffsetInApiElement(value);
+      get => MemberHelper.GetOffsetFromMember(ApiMember);
+      set => MemberHelper.SetOffsetForMember(ApiMember, value);
     }
 
     public Angle OrientationAngle {
@@ -54,14 +66,14 @@ namespace GsaGH.Parameters {
     /// <summary>
     ///   Empty constructor instantiating a new API object
     /// </summary>
-    public GsaMember2d() { CreateDefaultApiMember(); }
+    public GsaMember2d() { ApiMember = MemberHelper.CreateDefaultApiMember(MemberType.GENERIC_2D); }
 
     /// <summary>
     ///   Create new instance by casting from a Brep with optional inclusion geometry
     /// </summary>
     public GsaMember2d(
       Brep brep, List<Curve> includeCurves = null, Point3dList includePoints = null) {
-      CreateDefaultApiMember();
+      ApiMember = MemberHelper.CreateDefaultApiMember(MemberType.GENERIC_2D);
 
       (Tuple<PolyCurve, Point3dList, List<string>> edgeTuple,
           Tuple<List<PolyCurve>, List<Point3dList>, List<List<string>>> voidTuple,
@@ -165,7 +177,7 @@ namespace GsaGH.Parameters {
         mem.Topology = ApiMember.Topology;
       }
 
-      SetOffsetForMember(mem);
+      MemberHelper.SetOffsetsFrom(mem, ApiMember);
 
       // workaround to handle that Color is non-nullable type
       if ((Color)ApiMember.Colour != Color.FromArgb(0, 0, 0)) {
@@ -237,32 +249,6 @@ namespace GsaGH.Parameters {
           + "is set accordingly with your geometry under GSA Plugin Unit "
           + "Settings or if unset under Rhino unit settings");
       }
-    }
-
-    private void CreateDefaultApiMember() {
-      ApiMember = new Member() {
-        Type = MemberType.GENERIC_2D,
-        Group = GsaMemberDefaults.GroupValue,
-      };
-    }
-
-    private GsaOffset GetOffSetFromApiMember() {
-      return new GsaOffset(ApiMember.Offset.X1, ApiMember.Offset.X2, ApiMember.Offset.Y,
-        ApiMember.Offset.Z);
-    }
-
-    private void SetOffsetInApiElement(GsaOffset offset) {
-      ApiMember.Offset.X1 = offset.X1.Meters;
-      ApiMember.Offset.X2 = offset.X2.Meters;
-      ApiMember.Offset.Y = offset.Y.Meters;
-      ApiMember.Offset.Z = offset.Z.Meters;
-    }
-
-    private void SetOffsetForMember(Member mem) {
-      mem.Offset.X1 = ApiMember.Offset.X1;
-      mem.Offset.X2 = ApiMember.Offset.X2;
-      mem.Offset.Y = ApiMember.Offset.Y;
-      mem.Offset.Z = ApiMember.Offset.Z;
     }
 
     public void SetProperty(GsaProperty2d property) {
