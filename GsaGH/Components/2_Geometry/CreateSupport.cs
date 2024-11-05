@@ -50,7 +50,9 @@ namespace GsaGH.Components {
       _xx = reader.GetBoolean("xx");
       _yy = reader.GetBoolean("yy");
       _zz = reader.GetBoolean("zz");
-      return base.Read(reader);
+      bool flag= base.Read(reader);
+      Params.UpdateRestrainedBool6Parameter();
+      return flag;
     }
 
     public void SetRestraints(bool resx, bool resy, bool resz, bool resxx, bool resyy, bool reszz) {
@@ -85,7 +87,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddPlaneParameter("Plane", "Pl", "[Optional] Plane for local axis",
         GH_ParamAccess.item, Plane.WorldXY);
-      pManager.AddParameter(new GsaBool6Parameter(), "Restraints", "B6",
+      pManager.AddParameter(new GsaRestrainedParameter(), "Restraints", "B6",
         "[Optional] Restraint in Bool6 form", GH_ParamAccess.item);
 
       pManager[1].Optional = true;
@@ -107,7 +109,7 @@ namespace GsaGH.Components {
         localAxis = ghPlane.Value;
       }
 
-      GsaBool6Goo bool6Goo = null;
+      GsaRestrainedGoo bool6Goo = null;
       if (da.GetData(2, ref bool6Goo)) {
         _x = bool6Goo.Value.X;
         _y = bool6Goo.Value.Y;

@@ -59,7 +59,7 @@ namespace GsaGH.Components {
         Params.ReplaceInputParameter(new GsaSpringPropertyParameter(), 7, true);
         Params.ReplaceOutputParameter(new GsaSpringPropertyParameter(), 7);
       }
-
+      Params.UpdateRestrainedBool6Parameter();
       return flag;
     }
 
@@ -100,7 +100,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddPlaneParameter("Node local axis", "Pl", "Set Local axis (Plane) of Node",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "Node Restraints", "B6",
+      pManager.AddParameter(new GsaRestrainedParameter(), "Node Restraints", "B6",
         "Set Restraints (Bool6) of Node", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Damper Property", "DP", "Set Damper Property by reference",
         GH_ParamAccess.item);
@@ -131,7 +131,7 @@ namespace GsaGH.Components {
       pManager.AddPlaneParameter("Node local axis", "Pl", "Local axis (Plane) of Node",
         GH_ParamAccess.item);
       pManager.HideParameter(3);
-      pManager.AddParameter(new GsaBool6Parameter(), "Node Restraints", "B6",
+      pManager.AddParameter(new GsaRestrainedParameter(), "Node Restraints", "B6",
         "Restraints (Bool6) of Node", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Damper Property", "DP", "Get Damper Property reference",
         GH_ParamAccess.item);
@@ -179,7 +179,7 @@ namespace GsaGH.Components {
         node.LocalAxis = ghPln.Value;
       }
 
-      GsaBool6Goo restraintGoo = null;
+      GsaRestrainedGoo restraintGoo = null;
       if (da.GetData(4, ref restraintGoo)) {
         node.Restraint = restraintGoo.Value;
       }
@@ -213,7 +213,7 @@ namespace GsaGH.Components {
       da.SetData(1, node.Id);
       da.SetData(2, node.Point);
       da.SetData(3, new GH_Plane(node.LocalAxis));
-      da.SetData(4, new GsaBool6Goo(node.Restraint));
+      da.SetData(4, new GsaRestrainedGoo(node.Restraint));
       da.SetData(5, node.ApiNode.DamperProperty);
       da.SetData(6, node.ApiNode.MassProperty);
       da.SetData(7, new GsaSpringPropertyGoo(node.SpringProperty));

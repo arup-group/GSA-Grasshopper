@@ -4,6 +4,8 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Parameters;
+
 namespace GsaGH.Helpers.GH {
   public static class ReplaceParam {
     public static void ReplaceInputParameter(
@@ -35,6 +37,64 @@ namespace GsaGH.Helpers.GH {
       type = type.Replace("GsaGH.Parameters.", string.Empty);
       type = type.Replace("Goo", string.Empty);
       return type;
+    }
+
+    public static void UpdateReleaseBool6Parameter(this GH_ComponentParamServer parameters) {
+      //input parameter
+      for (int id = 0; id < parameters.Input.Count; id++) {
+        IGH_Param param = parameters.Input[id];
+        if (param.ComponentGuid == new GsaBool6Parameter().ComponentGuid) {
+          var parameter = new GsaReleaseParameter {
+            Name = param.Name,
+            NickName = param.NickName,
+            Description = param.Description,
+            Access = param.Access
+          };
+          parameters.ReplaceInputParameter(parameter, id, param.Optional);
+        }
+      }
+      //output parameter
+      for (int id = 0; id < parameters.Output.Count; id++) {
+        IGH_Param param = parameters.Output[id];
+        if (param.ComponentGuid == new GsaBool6Parameter().ComponentGuid) {
+          var parameter = new GsaReleaseParameter {
+            Name = param.Name,
+            NickName = param.NickName,
+            Description = param.Description,
+            Access = param.Access
+          };
+          parameters.ReplaceOutputParameter(parameter, id);
+        }
+      }
+    }
+
+    public static void UpdateRestrainedBool6Parameter(this GH_ComponentParamServer parameters) {
+      //input parameter
+      for (int id = 0; id < parameters.Input.Count; id++) {
+        IGH_Param param = parameters.Input[id];
+        if (param.ComponentGuid == new GsaBool6Parameter().ComponentGuid) {
+          var parameter = new GsaRestrainedParameter {
+            Name = param.Name,
+            NickName = param.NickName,
+            Description = param.Description,
+            Access = param.Access
+          };
+          parameters.ReplaceInputParameter(parameter, id, param.Optional);
+        }
+      }
+      //output parameter
+      for (int id = 0; id < parameters.Output.Count; id++) {
+        IGH_Param param = parameters.Output[id];
+        if (param.ComponentGuid == new GsaBool6Parameter().ComponentGuid) {
+          var parameter = new GsaRestrainedParameter {
+            Name = param.Name,
+            NickName = param.NickName,
+            Description = param.Description,
+            Access = param.Access
+          };
+          parameters.ReplaceOutputParameter(parameter, id);
+        }
+      }
     }
   }
 }

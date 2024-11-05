@@ -55,40 +55,19 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      string state = "Other";
-      if (X == false && Y == false && Z == false && Xx == false && Yy == false && Zz == false) {
-        state = "Free";
-      }
-
-      if (X == true && Y == true && Z == true && Xx == false && Yy == false && Zz == false) {
-        state = "Pin";
-      }
-
-      if (X == false && Y == false && Z == false && Xx == false && Yy == true && Zz == true) {
-        state = "Hinge";
-      }
-
-      if (X == true && Y == true && Z == true && Xx == true && Yy == true && Zz == true) {
-        state = "Fixed";
-      }
-
-      if (state == "Other") {
-        string sx = X ? "\u2713" : "\u2610";
-        sx = "X" + sx;
-        string sy = Y ? "\u2713" : "\u2610";
-        sy = " Y" + sy;
-        string sz = Z ? "\u2713" : "\u2610";
-        sz = " Z" + sz;
-        string sxx = Xx ? "\u2713" : "\u2610";
-        sxx = " XX" + sxx;
-        string syy = Yy ? "\u2713" : "\u2610";
-        syy = " YY" + syy;
-        string szz = Zz ? "\u2713" : "\u2610";
-        szz = " ZZ" + szz;
-        return sx + sy + sz + sxx + syy + szz;
-      } else {
-        return state.Trim();
-      }
+      string sx = X ? "\u2713" : "\u2610";
+      sx = "X" + sx;
+      string sy = Y ? "\u2713" : "\u2610";
+      sy = " Y" + sy;
+      string sz = Z ? "\u2713" : "\u2610";
+      sz = " Z" + sz;
+      string sxx = Xx ? "\u2713" : "\u2610";
+      sxx = " XX" + sxx;
+      string syy = Yy ? "\u2713" : "\u2610";
+      syy = " YY" + syy;
+      string szz = Zz ? "\u2713" : "\u2610";
+      szz = " ZZ" + szz;
+      return sx + sy + sz + sxx + syy + szz;
     }
   }
 }

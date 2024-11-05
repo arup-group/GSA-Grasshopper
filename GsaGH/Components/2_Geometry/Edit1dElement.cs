@@ -52,7 +52,7 @@ namespace GsaGH.Components {
         Params.ReplaceInputParameter(new GsaPropertyParameter(), 3, true);
         Params.ReplaceOutputParameter(new GsaPropertyParameter(), 3);
       }
-
+      Params.UpdateReleaseBool6Parameter();
       return flag;
     }
 
@@ -79,9 +79,9 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Element Offset",
         GH_ParamAccess.item);
 
-      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
+      pManager.AddParameter(new GsaReleaseParameter(), "Start release", "⭰",
         "Set Release (Bool6) at Start of Element", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
+      pManager.AddParameter(new GsaReleaseParameter(), "End release", "⭲",
         "Set Release (Bool6) at End of Element", GH_ParamAccess.item);
 
       pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Element Orientation Angle",
@@ -118,9 +118,9 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Element Offset",
         GH_ParamAccess.item);
 
-      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
+      pManager.AddParameter(new GsaReleaseParameter(), "Start release", "⭰",
         "Get Release (Bool6) at Start of Element", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
+      pManager.AddParameter(new GsaReleaseParameter(), "End release", "⭲",
         "Get Release (Bool6) at End of Element", GH_ParamAccess.item);
 
       pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Element Orientation Angle",
@@ -203,12 +203,12 @@ namespace GsaGH.Components {
         elem.Offset = offset.Value;
       }
 
-      GsaBool6Goo start = null;
+      GsaReleaseGoo start = null;
       if (da.GetData(7, ref start)) {
         elem.ReleaseStart = start.Value;
       }
 
-      GsaBool6Goo end = null;
+      GsaReleaseGoo end = null;
       if (da.GetData(8, ref end)) {
         elem.ReleaseEnd = end.Value;
       }
@@ -256,8 +256,8 @@ namespace GsaGH.Components {
       da.SetData(5,
         Mappings._elementTypeMapping.FirstOrDefault(x => x.Value == elem.ApiElement.Type).Key);
       da.SetData(6, new GsaOffsetGoo(elem.Offset));
-      da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
-      da.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
+      da.SetData(7, new GsaReleaseGoo(elem.ReleaseStart));
+      da.SetData(8, new GsaReleaseGoo(elem.ReleaseEnd));
       da.SetData(9, elem.OrientationAngle.Radians);
       da.SetData(10, new GsaNodeGoo(elem.OrientationNode));
       da.SetData(11, elem.ApiElement.Name);

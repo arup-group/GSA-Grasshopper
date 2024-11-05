@@ -1,5 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
+using Grasshopper.Kernel;
+
+using GsaGH.Parameters;
 
 namespace GsaGH.Helpers {
   public static class StringExtension {
@@ -37,6 +41,110 @@ namespace GsaGH.Helpers {
         value = value.Replace("  ", " ");
       }
       return value.Trim();
+    }
+    public static bool FindString(string baseString, string stringToFind) {
+      foreach (string str in baseString.Split(new char[] { ' ', '\t', ')', '(' })) {
+        if (str.Equals(stringToFind)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    public static GsaBool6 ParseBool6(object data, bool isRelease = false) {
+      var bool6 = new GsaBool6();
+      if (GH_Convert.ToBoolean(data, out bool mybool, GH_Conversion.Both)) {
+        bool6.X = mybool;
+        bool6.Y = mybool;
+        bool6.Z = mybool;
+        bool6.Xx = mybool;
+        bool6.Yy = mybool;
+        bool6.Zz = mybool;
+        return bool6;
+      }
+      if (GH_Convert.ToString(data, out string mystring, GH_Conversion.Both)) {
+        mystring = mystring.Trim().ToLower();
+        if (mystring == "free") {
+          bool6.X = isRelease;
+          bool6.Y = isRelease;
+          bool6.Z = isRelease;
+          bool6.Xx = isRelease;
+          bool6.Yy = isRelease;
+          bool6.Zz = isRelease;
+          return bool6;
+        } else if (mystring == "pin" || mystring == "pinned") {
+          bool6.X = !isRelease;
+          bool6.Y = !isRelease;
+          bool6.Z = !isRelease;
+          bool6.Xx = isRelease;
+          bool6.Yy = isRelease;
+          bool6.Zz = isRelease;
+          return bool6;
+        } else if (mystring == "fix" || mystring == "fixed") {
+          bool6.X = !isRelease;
+          bool6.Y = !isRelease;
+          bool6.Z = !isRelease;
+          bool6.Xx = !isRelease;
+          bool6.Yy = !isRelease;
+          bool6.Zz = !isRelease;
+          return bool6;
+        } else if (mystring == "release" || mystring == "released" || mystring == "hinge"
+          || mystring == "hinged" || mystring == "charnier") {
+          bool6.X = isRelease;
+          bool6.Y = isRelease;
+          bool6.Z = isRelease;
+          bool6.Xx = isRelease;
+          bool6.Yy = !isRelease;
+          bool6.Zz = !isRelease;
+          return bool6;
+        } else if (ParseBool6(mystring, ref bool6)) {
+          return bool6;
+        } else if (mystring.Length == 6) {
+          return ConvertString(mystring, isRelease);
+        }
+      }
+      throw new InvalidCastException($"Data conversion failed from {data.GetTypeName()} to Bool6");
+    }
+
+    public static bool ParseBool6(string booleanString, ref GsaBool6 input) {
+      booleanString = booleanString.Trim().ToLower();
+      if (FindString(booleanString, "x☐") || FindString(booleanString, "x✓")
+          || FindString(booleanString, "y☐") || FindString(booleanString, "y✓")
+          || FindString(booleanString, "z☐") || FindString(booleanString, "z✓")
+          || FindString(booleanString, "xx☐") || FindString(booleanString, "xx✓")
+          || FindString(booleanString, "yy☐") || FindString(booleanString, "yy✓")
+          || FindString(booleanString, "zz☐") || FindString(booleanString, "zz✓")) {
+
+        input.X = FindString(booleanString, "x✓");
+        input.Y = FindString(booleanString, "y✓");
+        input.Z = FindString(booleanString, "z✓");
+        input.Xx = FindString(booleanString, "xx✓");
+        input.Yy = FindString(booleanString, "yy✓");
+        input.Zz = FindString(booleanString, "zz✓");
+        return true;
+      }
+      return false;
+    }
+
+    private static GsaBool6 ConvertString(string txt, bool isRelease) {
+      int i = 0;
+      var b = new GsaBool6() {
+        X = ConvertChar(txt[i++], isRelease),
+        Y = ConvertChar(txt[i++], isRelease),
+        Z = ConvertChar(txt[i++], isRelease),
+        Xx = ConvertChar(txt[i++], isRelease),
+        Yy = ConvertChar(txt[i++], isRelease),
+        Zz = ConvertChar(txt[i++], isRelease),
+      };
+      return b;
+    }
+    private static bool ConvertChar(char character, bool isRelease) {
+      return character switch {
+        'r' => isRelease,
+        'f' => !isRelease,
+        _ => throw new ArgumentException(
+                    $"Unable to convert string to Bool6, character {character} not recognised"),
+      };
     }
   }
 }

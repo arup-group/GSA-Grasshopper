@@ -68,7 +68,7 @@ namespace GsaGH.Components {
         Params.ReplaceInputParameter(new GsaPropertyParameter(), 3, true);
         Params.ReplaceOutputParameter(new GsaPropertyParameter(), 3);
       }
-
+      Params.UpdateReleaseBool6Parameter();
       return flag;
     }
 
@@ -100,9 +100,9 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Member Offset",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
+      pManager.AddParameter(new GsaReleaseParameter(), "Start release", "⭰",
         "Set Release (Bool6) at Start of Member", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
+      pManager.AddParameter(new GsaReleaseParameter(), "End release", "⭲",
         "Set Release (Bool6) at End of Member", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Automatic Offset End 1", "AO1",
         "Set Automatic Offset at End 1 of Member", GH_ParamAccess.item);
@@ -149,9 +149,9 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Member Offset",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
+      pManager.AddParameter(new GsaReleaseParameter(), "Start release", "⭰",
         "Get Release (Bool6) at Start of Member", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
+      pManager.AddParameter(new GsaReleaseParameter(), "End release", "⭲",
         "Get Release (Bool6) at End of Member", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Automatic Offset End 1", "AO1",
         "Get Automatic Offset at End 1 of Member", GH_ParamAccess.item);
@@ -266,12 +266,12 @@ namespace GsaGH.Components {
         mem.Offset = offset.Value;
       }
 
-      GsaBool6Goo start = null;
+      GsaReleaseGoo start = null;
       if (da.GetData(8, ref start)) {
         mem.ReleaseStart = start.Value;
       }
 
-      GsaBool6Goo end = null;
+      GsaReleaseGoo end = null;
       if (da.GetData(9, ref end)) {
         mem.ReleaseEnd = end.Value;
       }
@@ -359,8 +359,8 @@ namespace GsaGH.Components {
       da.SetData(6,
         Mappings._elementTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type1D).Key);
       da.SetData(7, new GsaOffsetGoo(mem.Offset));
-      da.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
-      da.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));
+      da.SetData(8, new GsaReleaseGoo(mem.ReleaseStart));
+      da.SetData(9, new GsaReleaseGoo(mem.ReleaseEnd));
       da.SetData(10, mem.ApiMember.AutomaticOffset.End1);
       da.SetData(11, mem.ApiMember.AutomaticOffset.X1);
       da.SetData(12, mem.ApiMember.AutomaticOffset.End2);
