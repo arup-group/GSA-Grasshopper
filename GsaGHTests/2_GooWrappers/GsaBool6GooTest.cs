@@ -1,5 +1,6 @@
 ﻿using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
@@ -43,17 +44,23 @@ namespace GsaGHTests.GooWrappers {
     public void CastFromStringtest(
       string s, bool expectedX, bool expectedY, bool expectedZ, bool expectedXx, bool expectedYy,
       bool expectedZz) {
-      var param = new GsaBool6Parameter();
-      param.CreateAttributes();
-      ComponentTestHelper.SetInput(param, new GH_String(s));
-      var output = (GsaBool6Goo)ComponentTestHelper.GetOutput(param);
+      //restraint
+      GsaBool6 output = StringExtension.ParseBool6(s);
+      Assert.Equal(expectedX, output.X);
+      Assert.Equal(expectedY, output.Y);
+      Assert.Equal(expectedZ, output.Z);
+      Assert.Equal(expectedXx, output.Xx);
+      Assert.Equal(expectedYy, output.Yy);
+      Assert.Equal(expectedZz, output.Zz);
 
-      Assert.Equal(expectedX, output.Value.X);
-      Assert.Equal(expectedY, output.Value.Y);
-      Assert.Equal(expectedZ, output.Value.Z);
-      Assert.Equal(expectedXx, output.Value.Xx);
-      Assert.Equal(expectedYy, output.Value.Yy);
-      Assert.Equal(expectedZz, output.Value.Zz);
+      //releases
+      output = StringExtension.ParseBool6(s, true);
+      Assert.Equal(!expectedX, output.X);
+      Assert.Equal(!expectedY, output.Y);
+      Assert.Equal(!expectedZ, output.Z);
+      Assert.Equal(!expectedXx, output.Xx);
+      Assert.Equal(!expectedYy, output.Yy);
+      Assert.Equal(!expectedZz, output.Zz);
     }
   }
 }
