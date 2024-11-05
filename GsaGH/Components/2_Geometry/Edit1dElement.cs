@@ -12,6 +12,7 @@ using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
@@ -52,7 +53,7 @@ namespace GsaGH.Components {
         Params.ReplaceInputParameter(new GsaPropertyParameter(), 3, true);
         Params.ReplaceOutputParameter(new GsaPropertyParameter(), 3);
       }
-
+      Params.UpdateBool6Parameter();
       return flag;
     }
 
@@ -79,10 +80,10 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Element Offset",
         GH_ParamAccess.item);
 
-      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
-        "Set Release (Bool6) at Start of Element", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
-        "Set Release (Bool6) at End of Element", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Start release", "⭰",
+         StringExtension.ReleaseDescription(), GH_ParamAccess.item);
+      pManager.AddGenericParameter("End release", "⭲",
+          StringExtension.ReleaseDescription(false), GH_ParamAccess.item);
 
       pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Element Orientation Angle",
         GH_ParamAccess.item);
@@ -203,15 +204,14 @@ namespace GsaGH.Components {
         elem.Offset = offset.Value;
       }
 
-      GsaBool6Goo start = null;
-      if (da.GetData(7, ref start)) {
-        elem.ReleaseStart = start.Value.Negate();
+      if(Inputs.ParseBool6(da, 7, out GsaBool6 releaseStart)) {
+        elem.ReleaseStart = releaseStart;
       }
 
-      GsaBool6Goo end = null;
-      if (da.GetData(8, ref end)) {
-        elem.ReleaseEnd = end.Value.Negate();
+      if (Inputs.ParseBool6(da, 8, out GsaBool6 releaseEnd)) {
+        elem.ReleaseEnd = releaseEnd;
       }
+
 
       double angle = 0;
       if (da.GetData(9, ref angle)) {
@@ -256,9 +256,8 @@ namespace GsaGH.Components {
       da.SetData(5,
         Mappings._elementTypeMapping.FirstOrDefault(x => x.Value == elem.ApiElement.Type).Key);
       da.SetData(6, new GsaOffsetGoo(elem.Offset));
-      bool isRestraint = false;
-      da.SetData(7, new GsaBool6Goo(elem.ReleaseStart.Negate(isRestraint)));
-      da.SetData(8, new GsaBool6Goo(elem.ReleaseEnd.Negate(isRestraint)));
+      da.SetData(7, new GsaBool6Goo(elem.ReleaseStart));
+      da.SetData(8, new GsaBool6Goo(elem.ReleaseEnd));
       da.SetData(9, elem.OrientationAngle.Radians);
       da.SetData(10, new GsaNodeGoo(elem.OrientationNode));
       da.SetData(11, elem.ApiElement.Name);

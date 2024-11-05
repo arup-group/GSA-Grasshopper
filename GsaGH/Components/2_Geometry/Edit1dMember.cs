@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Emit;
 
 using GH_IO.Serialization;
 
+using Grasshopper.Documentation;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
@@ -68,7 +71,7 @@ namespace GsaGH.Components {
         Params.ReplaceInputParameter(new GsaPropertyParameter(), 3, true);
         Params.ReplaceOutputParameter(new GsaPropertyParameter(), 3);
       }
-
+      Params.UpdateBool6Parameter();
       return flag;
     }
 
@@ -100,10 +103,10 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Member Offset",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
-        "Set Release (Bool6) at Start of Member", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
-        "Set Release (Bool6) at End of Member", GH_ParamAccess.item);
+      pManager.AddGenericParameter("Start release", "⭰",
+         StringExtension.ReleaseDescription(), GH_ParamAccess.item);
+      pManager.AddGenericParameter("End release", "⭲",
+      StringExtension.ReleaseDescription(false), GH_ParamAccess.item);
       pManager.AddBooleanParameter("Automatic Offset End 1", "AO1",
         "Set Automatic Offset at End 1 of Member", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Automatic Offset End 2", "AO2",
@@ -266,14 +269,12 @@ namespace GsaGH.Components {
         mem.Offset = offset.Value;
       }
 
-      GsaBool6Goo start = null;
-      if (da.GetData(8, ref start)) {
-        mem.ReleaseStart = start.Value.Negate();
+      if (Inputs.ParseBool6(da, 8, out GsaBool6 releaseStart)) {
+        mem.ReleaseStart = releaseStart;
       }
 
-      GsaBool6Goo end = null;
-      if (da.GetData(9, ref end)) {
-        mem.ReleaseEnd = end.Value.Negate();
+      if (Inputs.ParseBool6(da, 9, out GsaBool6 releaseEnd)) {
+        mem.ReleaseEnd = releaseEnd;
       }
 
       bool autoOffset1 = false;
@@ -359,9 +360,8 @@ namespace GsaGH.Components {
       da.SetData(6,
         Mappings._elementTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type1D).Key);
       da.SetData(7, new GsaOffsetGoo(mem.Offset));
-      bool isRestraint = false;
-      da.SetData(8, new GsaBool6Goo(mem.ReleaseStart.Negate(isRestraint)));
-      da.SetData(9, new GsaBool6Goo(mem.ReleaseEnd.Negate(isRestraint)));
+      da.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
+      da.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));
       da.SetData(10, mem.ApiMember.AutomaticOffset.End1);
       da.SetData(11, mem.ApiMember.AutomaticOffset.X1);
       da.SetData(12, mem.ApiMember.AutomaticOffset.End2);

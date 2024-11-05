@@ -512,5 +512,21 @@ namespace GsaGH.Helpers.GH {
           return false;
       }
     }
+
+    internal static bool ParseBool6(IGH_DataAccess da, int Id, out GsaBool6 output, bool isRelease = true) {
+      IGH_Goo input = null;
+      output = new GsaBool6();
+      if (da.GetData(Id, ref input)) {
+        if (input is GsaBool6Goo) {
+          output = (input as GsaBool6Goo).Value;
+        } else {
+          output = StringExtension.ParseBool6(input, isRelease);
+        }
+        if (output != null) {
+          return true;
+        }
+      }
+      return false;
+    }
   }
 }

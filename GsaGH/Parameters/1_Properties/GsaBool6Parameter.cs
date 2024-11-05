@@ -3,6 +3,7 @@ using System.Drawing;
 
 using Grasshopper.Kernel;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Properties;
 
@@ -27,7 +28,6 @@ namespace GsaGH.Parameters {
 
     protected override GsaBool6Goo PreferredCast(object data) {
       var bool6 = new GsaBool6();
-
       if (GH_Convert.ToBoolean(data, out bool mybool, GH_Conversion.Both)) {
         bool6.X = mybool;
         bool6.Y = mybool;
@@ -37,70 +37,12 @@ namespace GsaGH.Parameters {
         bool6.Zz = mybool;
         return new GsaBool6Goo(bool6);
       }
-
-      if (GH_Convert.ToString(data, out string mystring, GH_Conversion.Both)) {
-        mystring = mystring.Trim().ToLower();
-
-        if (mystring == "free") {
-          bool6.X = false;
-          bool6.Y = false;
-          bool6.Z = false;
-          bool6.Xx = false;
-          bool6.Yy = false;
-          bool6.Zz = false;
-          return new GsaBool6Goo(bool6);
-        } else if (mystring == "pin" || mystring == "pinned") {
-          bool6.X = true;
-          bool6.Y = true;
-          bool6.Z = true;
-          bool6.Xx = false;
-          bool6.Yy = false;
-          bool6.Zz = false;
-          return new GsaBool6Goo(bool6);
-        } else if (mystring == "fix" || mystring == "fixed") {
-          bool6.X = true;
-          bool6.Y = true;
-          bool6.Z = true;
-          bool6.Xx = true;
-          bool6.Yy = true;
-          bool6.Zz = true;
-          return new GsaBool6Goo(bool6);
-        } else if (mystring == "release" || mystring == "released" || mystring == "hinge"
-          || mystring == "hinged" || mystring == "charnier") {
-          bool6.X = false;
-          bool6.Y = false;
-          bool6.Z = false;
-          bool6.Xx = false;
-          bool6.Yy = true;
-          bool6.Zz = true;
-          return new GsaBool6Goo(bool6);
-        } else if (mystring.Length == 6) {
-          return new GsaBool6Goo(ConvertString(mystring));
-        }
+      if (GH_Convert.ToString(data, out string mystring, GH_Conversion.Both)
+        && StringExtension.ParseBool6(mystring, ref bool6)) {
+        new GsaBool6Goo(bool6);
       }
-
-      this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Bool6");
       return new GsaBool6Goo(null);
     }
 
-    private GsaBool6 ConvertString(string txt) {
-      int i = 0;
-      return new GsaBool6() {
-        X = ConvertChar(txt[i++]),
-        Y = ConvertChar(txt[i++]),
-        Z = ConvertChar(txt[i++]),
-        Xx = ConvertChar(txt[i++]),
-        Yy = ConvertChar(txt[i++]),
-        Zz = ConvertChar(txt[i++]),
-      };
-    }
-    private bool ConvertChar(char rel) {
-      return rel switch {
-        'r' => false,
-        'f' => true,
-        _ => throw new ArgumentException(
-                    $"Unable to convert string to Bool6, character {rel} not recognised"),
-      };
-    }
   }
 }

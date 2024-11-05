@@ -8,6 +8,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -59,7 +60,7 @@ namespace GsaGH.Components {
         Params.ReplaceInputParameter(new GsaSpringPropertyParameter(), 7, true);
         Params.ReplaceOutputParameter(new GsaSpringPropertyParameter(), 7);
       }
-
+      Params.UpdateBool6Parameter();
       return flag;
     }
 
@@ -100,7 +101,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddPlaneParameter("Node local axis", "Pl", "Set Local axis (Plane) of Node",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "Node Restraints", "B6",
+      pManager.AddGenericParameter("Node Restraints", "B6",
         "Set Restraints (Bool6) of Node", GH_ParamAccess.item);
       pManager.AddIntegerParameter("Damper Property", "DP", "Set Damper Property by reference",
         GH_ParamAccess.item);
@@ -179,9 +180,8 @@ namespace GsaGH.Components {
         node.LocalAxis = ghPln.Value;
       }
 
-      GsaBool6Goo restraintGoo = null;
-      if (da.GetData(4, ref restraintGoo)) {
-        node.Restraint = restraintGoo.Value;
+      if (Inputs.ParseBool6(da, 4, out GsaBool6 restraint, false)) {
+        node.Restraint = restraint;
       }
 
       int damperId = 0;
@@ -219,7 +219,6 @@ namespace GsaGH.Components {
       da.SetData(7, new GsaSpringPropertyGoo(node.SpringProperty));
       da.SetData(8, node.ApiNode?.Name);
       da.SetData(9, node.ApiNode.Colour);
-
       // only get connected elements/members if enabled (computationally expensive)
       if (_mode != FoldMode.GetConnected) {
         return;
