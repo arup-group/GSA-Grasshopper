@@ -39,7 +39,7 @@ namespace GsaGH.Parameters {
       }
       if (GH_Convert.ToString(data, out string mystring, GH_Conversion.Both)
         && StringExtension.ParseBool6(mystring, ref bool6)) {
-        new GsaBool6Goo(bool6);
+        return new GsaBool6Goo(bool6);
       }
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Bool6");
       return new GsaBool6Goo(null);
