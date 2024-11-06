@@ -111,11 +111,11 @@ namespace GsaGH.Helpers {
     }
 
     private static bool IsHinged(string input) {
-      return input == "hinge" || input == "fixed";
+      return input == "hinge" || input == "hinged";
     }
 
     private static bool IsFixed(string input) {
-      return input == "fix" || input == "hinged";
+      return input == "fix" || input == "fixed";
     }
 
     private static bool IsPinned(string input) {
