@@ -12,7 +12,7 @@ namespace GsaGH.Parameters {
   public class GsaReleaseGoo : GH_OasysGoo<GsaBool6> {
     public static string Description =>
       "GSA releases containing six booleans representing the status";
-    public static string Name => "Releases";
+    public static string Name => "Release";
     public static string NickName => "Rel";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 

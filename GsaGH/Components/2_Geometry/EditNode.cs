@@ -179,7 +179,7 @@ namespace GsaGH.Components {
         node.LocalAxis = ghPln.Value;
       }
 
-      GsaRestrainedGoo restraintGoo = null;
+      GsaRestraintGoo restraintGoo = null;
       if (da.GetData(4, ref restraintGoo)) {
         node.Restraint = restraintGoo.Value;
       }
@@ -213,7 +213,7 @@ namespace GsaGH.Components {
       da.SetData(1, node.Id);
       da.SetData(2, node.Point);
       da.SetData(3, new GH_Plane(node.LocalAxis));
-      da.SetData(4, new GsaRestrainedGoo(node.Restraint));
+      da.SetData(4, new GsaRestraintGoo(node.Restraint));
       da.SetData(5, node.ApiNode.DamperProperty);
       da.SetData(6, node.ApiNode.MassProperty);
       da.SetData(7, new GsaSpringPropertyGoo(node.SpringProperty));

@@ -41,8 +41,8 @@ namespace GsaGHTests.Components.Geometry {
       var group = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
       var type = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
       var offset = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 6);
-      var relStart = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 7);
-      var relEnd = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8);
+      var relStart = (GsaReleaseGoo)ComponentTestHelper.GetOutput(comp, 7);
+      var relEnd = (GsaReleaseGoo)ComponentTestHelper.GetOutput(comp, 8);
       var angle = (GH_Number)ComponentTestHelper.GetOutput(comp, 9);
       var orientation = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 10);
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, 11);
@@ -123,8 +123,8 @@ namespace GsaGHTests.Components.Geometry {
       var group = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
       var type = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
       var offset = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 6);
-      var relStart = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 7);
-      var relEnd = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8);
+      var relStart = (GsaReleaseGoo)ComponentTestHelper.GetOutput(comp, 7);
+      var relEnd = (GsaReleaseGoo)ComponentTestHelper.GetOutput(comp, 8);
       var angle = (GH_Number)ComponentTestHelper.GetOutput(comp, 9);
       var orientation = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 10);
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, 11);
@@ -202,8 +202,8 @@ namespace GsaGHTests.Components.Geometry {
       var group = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
       var type = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
       var offset = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 6);
-      var relStart = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 7);
-      var relEnd = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8);
+      var relStart = (GsaReleaseGoo)ComponentTestHelper.GetOutput(comp, 7);
+      var relEnd = (GsaReleaseGoo)ComponentTestHelper.GetOutput(comp, 8);
       var angle = (GH_Number)ComponentTestHelper.GetOutput(comp, 9);
       var orientation = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 10);
       var name = (GH_String)ComponentTestHelper.GetOutput(comp, 11);

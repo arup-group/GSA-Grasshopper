@@ -109,7 +109,7 @@ namespace GsaGH.Components {
         localAxis = ghPlane.Value;
       }
 
-      GsaRestrainedGoo bool6Goo = null;
+      GsaRestraintGoo bool6Goo = null;
       if (da.GetData(2, ref bool6Goo)) {
         _x = bool6Goo.Value.X;
         _y = bool6Goo.Value.Y;

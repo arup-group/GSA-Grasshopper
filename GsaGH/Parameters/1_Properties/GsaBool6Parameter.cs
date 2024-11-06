@@ -27,8 +27,8 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaBool6Goo PreferredCast(object data) {
-      if (data is GsaRestrainedGoo) {
-        var outData = data as GsaRestrainedGoo;
+      if (data is GsaRestraintGoo) {
+        var outData = data as GsaRestraintGoo;
         return new GsaBool6Goo(outData.Value);
       } else if (data is GsaReleaseGoo) {
         var outData = data as GsaReleaseGoo;
