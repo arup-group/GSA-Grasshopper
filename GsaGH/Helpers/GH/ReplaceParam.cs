@@ -73,7 +73,7 @@ namespace GsaGH.Helpers.GH {
       for (int id = 0; id < parameters.Input.Count; id++) {
         IGH_Param param = parameters.Input[id];
         if (param.ComponentGuid == new GsaBool6Parameter().ComponentGuid) {
-          var parameter = new GsaRestrainedParameter {
+          var parameter = new GsaRestraintParameter {
             Name = param.Name,
             NickName = param.NickName,
             Description = param.Description,
@@ -86,7 +86,7 @@ namespace GsaGH.Helpers.GH {
       for (int id = 0; id < parameters.Output.Count; id++) {
         IGH_Param param = parameters.Output[id];
         if (param.ComponentGuid == new GsaBool6Parameter().ComponentGuid) {
-          var parameter = new GsaRestrainedParameter {
+          var parameter = new GsaRestraintParameter {
             Name = param.Name,
             NickName = param.NickName,
             Description = param.Description,

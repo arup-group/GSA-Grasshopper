@@ -87,7 +87,7 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddPlaneParameter("Plane", "Pl", "[Optional] Plane for local axis",
         GH_ParamAccess.item, Plane.WorldXY);
-      pManager.AddParameter(new GsaRestrainedParameter(), "Restraints", "B6",
+      pManager.AddParameter(new GsaRestraintParameter(), "Restraints", "B6",
         "[Optional] Restraint in Bool6 form", GH_ParamAccess.item);
 
       pManager[1].Optional = true;
@@ -109,7 +109,7 @@ namespace GsaGH.Components {
         localAxis = ghPlane.Value;
       }
 
-      GsaRestraintGoo bool6Goo = null;
+      GsaBool6Goo bool6Goo = null;
       if (da.GetData(2, ref bool6Goo)) {
         _x = bool6Goo.Value.X;
         _y = bool6Goo.Value.Y;

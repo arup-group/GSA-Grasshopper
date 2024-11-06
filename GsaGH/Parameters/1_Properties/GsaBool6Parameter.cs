@@ -27,32 +27,15 @@ namespace GsaGH.Parameters {
       SubCategoryName.Cat9())) { }
 
     protected override GsaBool6Goo PreferredCast(object data) {
-      if (data is GsaRestraintGoo) {
-        var outData = data as GsaRestraintGoo;
-        return new GsaBool6Goo(outData.Value);
-      } else if (data is GsaReleaseGoo) {
-        var outData = data as GsaReleaseGoo;
-        return new GsaBool6Goo(outData.Value);
-      } else {
-        try {
-          var bool6 = new GsaBool6();
-          if (GH_Convert.ToBoolean(data, out bool mybool, GH_Conversion.Both)) {
-            bool6.X = mybool;
-            bool6.Y = mybool;
-            bool6.Z = mybool;
-            bool6.Xx = mybool;
-            bool6.Yy = mybool;
-            bool6.Zz = mybool;
-            return new GsaBool6Goo(bool6);
-          }
-          if (GH_Convert.ToString(data, out string mystring, GH_Conversion.Both)
-            && StringExtension.ParseBool6(mystring, ref bool6)) {
-            new GsaBool6Goo(bool6);
-          }
-        } catch (Exception ex) {
-          this.AddRuntimeError(ex.Message);
-          return new GsaBool6Goo(null);
-        }
+      var bool6 = new GsaBool6();
+      if (GH_Convert.ToBoolean(data, out bool mybool, GH_Conversion.Both)) {
+        bool6.X = mybool;
+        bool6.Y = mybool;
+        bool6.Z = mybool;
+        bool6.Xx = mybool;
+        bool6.Yy = mybool;
+        bool6.Zz = mybool;
+        return new GsaBool6Goo(bool6);
       }
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Bool6");
       return new GsaBool6Goo(null);

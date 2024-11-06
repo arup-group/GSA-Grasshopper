@@ -121,6 +121,9 @@
   <data name="AddList" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\AddList.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ReleaseParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ReleaseParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="AnalyseModel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\AnalyseModel.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -570,6 +573,9 @@
   </data>
   <data name="Result3dInfo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\Result3dInfo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RestraintParam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RestraintParam.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ResultDiagrams" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Icons\ResultDiagrams.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+
 using Grasshopper.Kernel;
 
 using GsaGH.Parameters;
+
+using Rhino.Render.Fields;
 
 namespace GsaGH.Helpers {
   public static class StringExtension {
@@ -72,7 +75,7 @@ namespace GsaGH.Helpers {
           bool6.Yy = isRelease;
           bool6.Zz = isRelease;
           return bool6;
-        } else if (mystring == "pin" || mystring == "pinned") {
+        } else if (IsPinned(mystring)) {
           bool6.X = !isRelease;
           bool6.Y = !isRelease;
           bool6.Z = !isRelease;
@@ -80,7 +83,7 @@ namespace GsaGH.Helpers {
           bool6.Yy = isRelease;
           bool6.Zz = isRelease;
           return bool6;
-        } else if (mystring == "fix" || mystring == "fixed") {
+        } else if (IsFixed(mystring)) {
           bool6.X = !isRelease;
           bool6.Y = !isRelease;
           bool6.Z = !isRelease;
@@ -88,16 +91,13 @@ namespace GsaGH.Helpers {
           bool6.Yy = !isRelease;
           bool6.Zz = !isRelease;
           return bool6;
-        } else if (mystring == "release" || mystring == "released" || mystring == "hinge"
-          || mystring == "hinged" || mystring == "charnier") {
+        } else if (IsRelease(mystring) || IsHinged(mystring) || mystring == "charnier") {
           bool6.X = isRelease;
           bool6.Y = isRelease;
           bool6.Z = isRelease;
           bool6.Xx = isRelease;
           bool6.Yy = !isRelease;
           bool6.Zz = !isRelease;
-          return bool6;
-        } else if (ParseBool6(mystring, ref bool6)) {
           return bool6;
         } else if (mystring.Length == 6) {
           return ConvertString(mystring, isRelease);
@@ -106,24 +106,20 @@ namespace GsaGH.Helpers {
       throw new InvalidCastException($"Data conversion failed from {data.GetTypeName()} to Bool6");
     }
 
-    public static bool ParseBool6(string booleanString, ref GsaBool6 input) {
-      booleanString = booleanString.Trim().ToLower();
-      if (FindString(booleanString, "x☐") || FindString(booleanString, "x✓")
-          || FindString(booleanString, "y☐") || FindString(booleanString, "y✓")
-          || FindString(booleanString, "z☐") || FindString(booleanString, "z✓")
-          || FindString(booleanString, "xx☐") || FindString(booleanString, "xx✓")
-          || FindString(booleanString, "yy☐") || FindString(booleanString, "yy✓")
-          || FindString(booleanString, "zz☐") || FindString(booleanString, "zz✓")) {
+    private static bool IsRelease(string input) {
+      return input == "release" || input == "released";
+    }
 
-        input.X = FindString(booleanString, "x✓");
-        input.Y = FindString(booleanString, "y✓");
-        input.Z = FindString(booleanString, "z✓");
-        input.Xx = FindString(booleanString, "xx✓");
-        input.Yy = FindString(booleanString, "yy✓");
-        input.Zz = FindString(booleanString, "zz✓");
-        return true;
-      }
-      return false;
+    private static bool IsHinged(string input) {
+      return input == "hinge" || input == "fixed";
+    }
+
+    private static bool IsFixed(string input) {
+      return input == "fix" || input == "hinged";
+    }
+
+    private static bool IsPinned(string input) {
+      return input == "pin" || input == "pinned";
     }
 
     private static GsaBool6 ConvertString(string txt, bool isRelease) {

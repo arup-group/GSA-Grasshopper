@@ -42,8 +42,8 @@ namespace GsaGHTests.Components.Geometry {
       var output5 = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
       var output6 = (GH_String)ComponentTestHelper.GetOutput(comp, 6);
       var output7 = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 7);
-      var output8 = (GsaReleaseGoo)ComponentTestHelper.GetOutput(comp, 8);
-      var output9 = (GsaReleaseGoo)ComponentTestHelper.GetOutput(comp, 9);
+      var output8 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8);
+      var output9 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9);
       var output10 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 10);
       var output12 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 12);
       var output14 = (GH_Number)ComponentTestHelper.GetOutput(comp, 14);
@@ -148,8 +148,8 @@ namespace GsaGHTests.Components.Geometry {
       var output5 = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
       var output6 = (GH_String)ComponentTestHelper.GetOutput(comp, 6);
       var output7 = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 7);
-      var output8 = (GsaReleaseGoo)ComponentTestHelper.GetOutput(comp, 8);
-      var output9 = (GsaReleaseGoo)ComponentTestHelper.GetOutput(comp, 9);
+      var output8 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8);
+      var output9 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9);
       var output10 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 10);
 
       var output12 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 12);
@@ -249,8 +249,8 @@ namespace GsaGHTests.Components.Geometry {
       var output5 = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
       var output6 = (GH_String)ComponentTestHelper.GetOutput(comp, 6);
       var output7 = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 7);
-      var output8 = (GsaReleaseGoo)ComponentTestHelper.GetOutput(comp, 8);
-      var output9 = (GsaReleaseGoo)ComponentTestHelper.GetOutput(comp, 9);
+      var output8 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8);
+      var output9 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9);
       var output10 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 10);
       var output12 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 12);
       var output14 = (GH_Number)ComponentTestHelper.GetOutput(comp, 14);
@@ -348,6 +348,32 @@ namespace GsaGHTests.Components.Geometry {
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
       Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void MemberReleasesAreCorrectWhenBoolValuesAssignedAsInput() {
+      GH_OasysComponent comp = ComponentMother();
+      var startReleaseInput = new GsaBool6(true, true, true, false, false, false);
+      var endReleaseInput = new GsaBool6(false, false, false, true, true, true);
+      ComponentTestHelper.SetInput(comp, new GsaBool6Goo(startReleaseInput), 8);
+      ComponentTestHelper.SetInput(comp, new GsaBool6Goo(endReleaseInput), 9);
+      GsaBool6 startReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8)).Value;
+      GsaBool6 endReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9)).Value;
+      EditElement1dTests.CompareRelease(startReleaseInput, startReleaseOutput);
+      EditElement1dTests.CompareRelease(endReleaseInput, endReleaseOutput);
+    }
+
+    [Fact]
+    public void MemberReleasesAreCorrectWhenStringAssignedAsInput() {
+      GH_OasysComponent comp = ComponentMother();
+      var startReleaseInput = new GsaBool6(true, true, true, false, false, false);
+      var endReleaseInput = new GsaBool6(false, false, false, true, true, true);
+      ComponentTestHelper.SetInput(comp, "RRRFFF", 8);
+      ComponentTestHelper.SetInput(comp, "FFFRRR", 9);
+      GsaBool6 startReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8)).Value;
+      GsaBool6 endReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9)).Value;
+      EditElement1dTests.CompareRelease(startReleaseInput, startReleaseOutput);
+      EditElement1dTests.CompareRelease(endReleaseInput, endReleaseOutput);
     }
   }
 }

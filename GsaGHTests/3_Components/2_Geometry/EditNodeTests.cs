@@ -36,7 +36,7 @@ namespace GsaGHTests.Components.Geometry {
       var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var output2 = (GH_Point)ComponentTestHelper.GetOutput(comp, 2);
       var output3 = (GH_Plane)ComponentTestHelper.GetOutput(comp, 3);
-      var output4 = (GsaRestraintGoo)ComponentTestHelper.GetOutput(comp, 4);
+      var output4 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 4);
       var output5 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 5);
       var output6 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 6);
       var output7 = (GsaSpringPropertyGoo)ComponentTestHelper.GetOutput(comp, 7);
@@ -94,7 +94,7 @@ namespace GsaGHTests.Components.Geometry {
       var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
       var output2 = (GH_Point)ComponentTestHelper.GetOutput(comp, 2);
       var output3 = (GH_Plane)ComponentTestHelper.GetOutput(comp, 3);
-      var output4 = (GsaRestraintGoo)ComponentTestHelper.GetOutput(comp, 4);
+      var output4 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 4);
       var output5 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 5);
       var output6 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 6);
       var output7 = (GsaSpringPropertyGoo)ComponentTestHelper.GetOutput(comp, 7);

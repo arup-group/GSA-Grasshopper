@@ -266,12 +266,12 @@ namespace GsaGH.Components {
         mem.Offset = offset.Value;
       }
 
-      GsaReleaseGoo start = null;
+      GsaBool6Goo start = null;
       if (da.GetData(8, ref start)) {
         mem.ReleaseStart = start.Value;
       }
 
-      GsaReleaseGoo end = null;
+      GsaBool6Goo end = null;
       if (da.GetData(9, ref end)) {
         mem.ReleaseEnd = end.Value;
       }
@@ -359,8 +359,8 @@ namespace GsaGH.Components {
       da.SetData(6,
         Mappings._elementTypeMapping.FirstOrDefault(x => x.Value == mem.ApiMember.Type1D).Key);
       da.SetData(7, new GsaOffsetGoo(mem.Offset));
-      da.SetData(8, new GsaReleaseGoo(mem.ReleaseStart));
-      da.SetData(9, new GsaReleaseGoo(mem.ReleaseEnd));
+      da.SetData(8, new GsaBool6Goo(mem.ReleaseStart));
+      da.SetData(9, new GsaBool6Goo(mem.ReleaseEnd));
       da.SetData(10, mem.ApiMember.AutomaticOffset.End1);
       da.SetData(11, mem.ApiMember.AutomaticOffset.X1);
       da.SetData(12, mem.ApiMember.AutomaticOffset.End2);
