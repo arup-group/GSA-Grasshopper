@@ -35,7 +35,7 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(input.ToString(), output.ToString());
       Assert.Equal(input.X, output.X);
       Assert.Equal(input.Y, output.Y);
-      Assert.Equal(input.Z, output.X);
+      Assert.Equal(input.Z, output.Z);
       Assert.Equal(input.Xx, output.Xx);
       Assert.Equal(input.Yy, output.Yy);
       Assert.Equal(input.Zz, output.Zz);
