@@ -1,7 +1,9 @@
-﻿using GsaGH.Helpers.Assembly;
+﻿using GsaGH.Helpers;
+using GsaGH.Helpers.Assembly;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
+using GsaGHTests.Components.Geometry;
 
 using Rhino.Geometry;
 
@@ -82,6 +84,21 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(xx, original.Xx);
       Assert.Equal(yy, original.Yy);
       Assert.Equal(zz, original.Zz);
+    }
+
+    [Theory]
+    [InlineData("GSA Bool6 (X☐ Y☐ Z☐ XX☐ YY☐ ZZ☐)", false, false, false, false, false, false)]
+    [InlineData("GSA Bool6 (X✓ Y☐ Z☐ XX☐ YY☐ ZZ☐)", true, false, false, false, false, false)]
+    [InlineData("GSA Bool6 (X✓ Y✓ Z☐ XX☐ YY☐ ZZ☐)", true, true, false, false, false, false)]
+    [InlineData("GSA Bool6 (X✓ Y✓ Z✓ XX☐ YY☐ ZZ☐)", true, true, true, false, false, false)]
+    [InlineData("GSA Bool6 (X✓ Y✓ Z✓ XX✓ YY☐ ZZ☐)", true, true, true, true, false, false)]
+    [InlineData("GSA Bool6 (X✓ Y✓ Z✓ XX✓ YY✓ ZZ☐)", true, true, true, true, true, false)]
+    [InlineData("GSA Bool6 (X✓ Y✓ Z✓ XX✓ YY✓ ZZ✓)", true, true, true, true, true, true)]
+
+    public void BooleanStringIsParsedCorrctly(string booleanString, bool x, bool y, bool z, bool xx, bool yy, bool zz) {
+      GsaBool6 parsedUutput = StringExtension.ParseBool6(booleanString);
+      var expectedOutput = new GsaBool6(x, y, z, xx, yy, zz);
+      EditElement1dTests.CompareRelease(expectedOutput, parsedUutput);
     }
   }
 }
