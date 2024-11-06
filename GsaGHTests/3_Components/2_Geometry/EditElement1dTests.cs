@@ -30,6 +30,17 @@ namespace GsaGHTests.Components.Geometry {
       return comp;
     }
 
+    internal static void CompareRelease(GsaBool6 input, GsaBool6 output) {
+      Assert.Equal(input.ToString(), output.ToString());
+      Assert.Equal(input.ToString(), output.ToString());
+      Assert.Equal(input.X, output.X);
+      Assert.Equal(input.Y, output.Y);
+      Assert.Equal(input.Z, output.X);
+      Assert.Equal(input.Xx, output.Xx);
+      Assert.Equal(input.Yy, output.Yy);
+      Assert.Equal(input.Zz, output.Zz);
+    }
+
     [Fact]
     public void GetOutputsFromInputElements() {
       GH_OasysComponent comp = ComponentMother();
@@ -289,5 +300,33 @@ namespace GsaGHTests.Components.Geometry {
       comp.Params.Output[0].CollectData();
       Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
     }
+
+    [Fact]
+    public void ElementReleasesAreCorrectWhenBoolValuesAssignedAsInput() {
+      GH_OasysComponent comp = ComponentMother();
+      var startReleaseInput = new GsaBool6(true, true, true, false, false, false);
+      var endReleaseInput = new GsaBool6(false, false, false, true, true, true);
+      ComponentTestHelper.SetInput(comp, new GsaBool6Goo(startReleaseInput), 7);
+      ComponentTestHelper.SetInput(comp, new GsaBool6Goo(endReleaseInput), 8);
+      GsaBool6 startReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 7)).Value;
+      GsaBool6 endReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8)).Value;
+      CompareRelease(startReleaseInput, startReleaseOutput);
+      CompareRelease(endReleaseInput, endReleaseOutput);
+    }
+
+    [Fact]
+    public void ElementReleasesAreCorrectWhenStringAssignedAsInput() {
+      GH_OasysComponent comp = ComponentMother();
+      var startReleaseInput = new GsaBool6(true, true, true, false, false, false);
+      var endReleaseInput = new GsaBool6(false, false, false, true, true, true);
+      ComponentTestHelper.SetInput(comp, "RRRFFF", 7);
+      ComponentTestHelper.SetInput(comp, "FFFRRR", 8);
+      GsaBool6 startReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 7)).Value;
+      GsaBool6 endReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8)).Value;
+      CompareRelease(startReleaseInput, startReleaseOutput);
+      CompareRelease(endReleaseInput, endReleaseOutput);
+    }
+
+
   }
 }

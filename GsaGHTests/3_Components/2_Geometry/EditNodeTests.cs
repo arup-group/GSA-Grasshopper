@@ -139,5 +139,24 @@ namespace GsaGHTests.Components.Geometry {
       comp.FlipMode(null, null);
       Assert.Equal(12, comp.Params.Output.Count);
     }
+
+    [Fact]
+    public void NodeRestraintAreCorrectWhenBoolValuesAssignedAsInput() {
+      GH_OasysComponent comp = ComponentMother();
+      var nodeRestraintInput = new GsaBool6(true, true, true, false, false, false);
+      ComponentTestHelper.SetInput(comp, new GsaBool6Goo(nodeRestraintInput), 4);
+      GsaBool6 nodeRestraintOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 4)).Value;
+      EditElement1dTests.CompareRelease(nodeRestraintInput, nodeRestraintOutput);
+
+    }
+
+    [Fact]
+    public void MemberReleasesAreCorrectWhenStringAssignedAsInput() {
+      GH_OasysComponent comp = ComponentMother();
+      var nodeRestraintInput = new GsaBool6(true, true, true, false, false, false);
+      ComponentTestHelper.SetInput(comp, "FFFRRR", 4);
+      GsaBool6 nodeRestraintOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 4)).Value;
+      EditElement1dTests.CompareRelease(nodeRestraintInput, nodeRestraintOutput);
+    }
   }
 }

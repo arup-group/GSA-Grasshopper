@@ -349,5 +349,31 @@ namespace GsaGHTests.Components.Geometry {
       comp.Params.Output[0].CollectData();
       Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
     }
+
+    [Fact]
+    public void MemberReleasesAreCorrectWhenBoolValuesAssignedAsInput() {
+      GH_OasysComponent comp = ComponentMother();
+      var startReleaseInput = new GsaBool6(true, true, true, false, false, false);
+      var endReleaseInput = new GsaBool6(false, false, false, true, true, true);
+      ComponentTestHelper.SetInput(comp, new GsaBool6Goo(startReleaseInput), 8);
+      ComponentTestHelper.SetInput(comp, new GsaBool6Goo(endReleaseInput), 9);
+      GsaBool6 startReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8)).Value;
+      GsaBool6 endReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9)).Value;
+      EditElement1dTests.CompareRelease(startReleaseInput, startReleaseOutput);
+      EditElement1dTests.CompareRelease(endReleaseInput, endReleaseOutput);
+    }
+
+    [Fact]
+    public void MemberReleasesAreCorrectWhenStringAssignedAsInput() {
+      GH_OasysComponent comp = ComponentMother();
+      var startReleaseInput = new GsaBool6(true, true, true, false, false, false);
+      var endReleaseInput = new GsaBool6(false, false, false, true, true, true);
+      ComponentTestHelper.SetInput(comp, "RRRFFF", 8);
+      ComponentTestHelper.SetInput(comp, "FFFRRR", 9);
+      GsaBool6 startReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8)).Value;
+      GsaBool6 endReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9)).Value;
+      EditElement1dTests.CompareRelease(startReleaseInput, startReleaseOutput);
+      EditElement1dTests.CompareRelease(endReleaseInput, endReleaseOutput);
+    }
   }
 }
