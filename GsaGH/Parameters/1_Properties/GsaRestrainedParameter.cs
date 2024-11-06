@@ -13,16 +13,20 @@ namespace GsaGH.Parameters {
   /// <summary>
   ///   This class provides a parameter interface for the <see cref="GsaBool6Goo" /> type.
   /// </summary>
-  public class GsaRestraintParameter : GH_OasysPersistentParam<GsaBool6Goo> {
+  public class GsaRestraintParameter : GsaBool6Parameter {
     public override Guid ComponentGuid => new Guid("9bf01532-2035-4108-9c56-5e88b87f5220");
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override string InstanceDescription => GsaRestraintParameterInfo.Description;
     public override string TypeName => GsaRestraintParameterInfo.Name;
     protected override Bitmap Icon => Resources.RestraintParam;
 
-    public GsaRestraintParameter() : base(new GH_InstanceDescription(GsaRestraintParameterInfo.Name,
-      GsaRestraintParameterInfo.NickName, GsaRestraintParameterInfo.Description, CategoryName.Name(),
-      SubCategoryName.Cat9())) { }
+    public GsaRestraintParameter() {
+      Name = GsaRestraintParameterInfo.Name;
+      NickName = GsaRestraintParameterInfo.NickName;
+      Description = GsaRestraintParameterInfo.Description;
+      Category = CategoryName.Name();
+      SubCategory = SubCategoryName.Cat9();
+    }
 
     protected override GsaBool6Goo PreferredCast(object data) {
       try {
