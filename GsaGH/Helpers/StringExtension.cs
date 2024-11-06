@@ -45,14 +45,6 @@ namespace GsaGH.Helpers {
       }
       return value.Trim();
     }
-    public static bool FindString(string baseString, string stringToFind) {
-      foreach (string str in baseString.Split(new char[] { ' ', '\t', ')', '(' })) {
-        if (str.Equals(stringToFind)) {
-          return true;
-        }
-      }
-      return false;
-    }
 
     public static GsaBool6 ParseBool6(object data, bool isRelease = false) {
       var bool6 = new GsaBool6();
