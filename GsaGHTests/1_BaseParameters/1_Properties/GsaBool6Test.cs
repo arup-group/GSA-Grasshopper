@@ -8,6 +8,7 @@ using GsaGHTests.Components.Geometry;
 using Rhino.Geometry;
 
 using Xunit;
+using Grasshopper.Kernel.Types;
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -94,11 +95,27 @@ namespace GsaGHTests.Parameters {
     [InlineData("GSA Bool6 (X✓ Y✓ Z✓ XX✓ YY☐ ZZ☐)", true, true, true, true, false, false)]
     [InlineData("GSA Bool6 (X✓ Y✓ Z✓ XX✓ YY✓ ZZ☐)", true, true, true, true, true, false)]
     [InlineData("GSA Bool6 (X✓ Y✓ Z✓ XX✓ YY✓ ZZ✓)", true, true, true, true, true, true)]
-
     public void BooleanStringIsParsedCorrctly(string booleanString, bool x, bool y, bool z, bool xx, bool yy, bool zz) {
-      GsaBool6 parsedUutput = StringExtension.ParseBool6(booleanString);
+      GsaBool6 parsedOutput = StringExtension.ParseBool6(booleanString);
       var expectedOutput = new GsaBool6(x, y, z, xx, yy, zz);
-      EditElement1dTests.CompareRelease(expectedOutput, parsedUutput);
+      EditElement1dTests.CompareRelease(expectedOutput, parsedOutput);
+    }
+
+    [Theory]
+    [InlineData("GSA Bool6 (X☐ Y☐ Z☐ XX☐ YY☐ ZZ☐)", false, false, false, false, false, false)]
+    [InlineData("GSA Bool6 (X✓ Y☐ Z☐ XX☐ YY☐ ZZ☐)", true, false, false, false, false, false)]
+    [InlineData("GSA Bool6 (X✓ Y✓ Z☐ XX☐ YY☐ ZZ☐)", true, true, false, false, false, false)]
+    [InlineData("GSA Bool6 (X✓ Y✓ Z✓ XX☐ YY☐ ZZ☐)", true, true, true, false, false, false)]
+    [InlineData("GSA Bool6 (X✓ Y✓ Z✓ XX✓ YY☐ ZZ☐)", true, true, true, true, false, false)]
+    [InlineData("GSA Bool6 (X✓ Y✓ Z✓ XX✓ YY✓ ZZ☐)", true, true, true, true, true, false)]
+    [InlineData("GSA Bool6 (X✓ Y✓ Z✓ XX✓ YY✓ ZZ✓)", true, true, true, true, true, true)]
+    public void CastBool6FromStringTest(string booleanString, bool x, bool y, bool z, bool xx, bool yy, bool zz) {
+      var param = new GsaBool6Parameter();
+      param.CreateAttributes();
+      ComponentTestHelper.SetInput(param, booleanString);
+      GsaBool6 parsedOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(param)).Value;
+      var expectedOutput = new GsaBool6(x, y, z, xx, yy, zz);
+      EditElement1dTests.CompareRelease(expectedOutput, parsedOutput);
     }
   }
 }
