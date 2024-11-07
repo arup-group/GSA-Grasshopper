@@ -264,10 +264,32 @@ namespace GsaGH.Helpers.Assembly {
             continue;
           }
 
+          int numberOfDynamicMode = NumberOfDynamicMode(task.ApiTask);
           foreach (GsaAnalysisCase ca in task.Cases) {
-            _model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Definition);
+            if (numberOfDynamicMode > 0) {
+              int mode = Convert.ToInt32(ca.Definition.ToLower().Replace("m", ""));
+              _model.AddAnalysisCaseToTask(task.Id, ca.Name, mode);
+            } else {
+              _model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Definition);
+            }
           }
         }
+      }
+    }
+    private int NumberOfDynamicMode(AnalysisTask task) {
+      try {
+        var parameter = new ModalDynamicTaskParameter(task);
+        ModeCalculationStrategy modelCalculationMethod = parameter.ModeCalculationStrategy;
+        if (modelCalculationMethod is ModeCalculationStrategyByFrequency) {
+          return (modelCalculationMethod as ModeCalculationStrategyByFrequency).MaximumNumberOfModes;
+        } else if (modelCalculationMethod is ModeCalculationStrategyByMassParticipation) {
+          return (modelCalculationMethod as ModeCalculationStrategyByMassParticipation).MaximumNumberOfModes;
+        } else {
+          return (modelCalculationMethod as ModeCalculationStrategyByNumberOfModes).NumberOfModes;
+        }
+      } catch {
+        //not modal analysis task
+        return 0;
       }
     }
 
