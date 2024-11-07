@@ -1,6 +1,11 @@
-﻿using GsaGH.Helpers.Assembly;
+﻿using System.Collections.Generic;
+
+using Grasshopper.Kernel;
+
+using GsaGH.Helpers.Assembly;
 using GsaGH.Parameters;
 
+using GsaGHTests.Components.Geometry;
 using GsaGHTests.Helpers;
 
 using Rhino.Geometry;
@@ -82,6 +87,57 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(xx, original.Xx);
       Assert.Equal(yy, original.Yy);
       Assert.Equal(zz, original.Zz);
+    }
+
+    [Fact]
+    public void ReleaseParameterInfoIsCorrect() {
+      var param = new GsaReleaseParameter();
+      Assert.Equal(GsaReleaseParameterInfo.Name, param.Name);
+      Assert.Equal(GsaReleaseParameterInfo.Description, param.Description);
+      Assert.Equal(GsaReleaseParameterInfo.NickName, param.NickName);
+      Assert.Equal(GsaReleaseParameterInfo.Description, param.InstanceDescription);
+      Assert.Equal(GsaReleaseParameterInfo.Name, param.TypeName);
+    }
+
+    [Fact]
+    public void ReleaseParameterReportErrorForWongInput() {
+      var param = new GsaReleaseParameter();
+      param.CreateAttributes();
+      ComponentTestHelper.SetInput(param, "wrong");
+      IList<string> message = param.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error);
+      Assert.Single(message);
+      Assert.Equal("Data conversion failed from Text to Bool6", message[0]);
+      param.ClearData();
+      ComponentTestHelper.SetInput(param, "FFTTRR");
+      message = param.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error);
+      Assert.Single(message);
+      Assert.Equal("Unable to convert string to Bool6, character t not recognised", message[0]);
+    }
+
+    [Fact]
+    public void RestraintParameterInfoIsCorrect() {
+      var param = new GsaRestraintParameter();
+      Assert.Equal(GsaRestraintParameterInfo.Name, param.Name);
+      Assert.Equal(GsaRestraintParameterInfo.Description, param.Description);
+      Assert.Equal(GsaRestraintParameterInfo.NickName, param.NickName);
+      Assert.Equal(GsaRestraintParameterInfo.Description, param.InstanceDescription);
+      Assert.Equal(GsaRestraintParameterInfo.Name, param.TypeName);
+    }
+
+    [Fact]
+    public void RestraintParameterReportErrorForWongInput() {
+      var param = new GsaRestraintParameter();
+      param.CreateAttributes();
+      ComponentTestHelper.SetInput(param, "wrong");
+      IList<string> message = param.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error);
+      Assert.Single(message);
+      Assert.Equal("Data conversion failed from Text to Bool6", message[0]);
+      param.ClearData();
+      ComponentTestHelper.SetInput(param, "FFTTRR");
+      message = param.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error);
+      Assert.Single(message);
+      Assert.Equal("Unable to convert string to Bool6, character t not recognised", message[0]);
+
     }
   }
 }
