@@ -132,11 +132,14 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(LengthUnit.Foot, UnitMapping.GetUnit(m.ApiModel.UiUnits().LengthLarge));
     }
 
-    [Fact]
-    public void ModalAnalysisTaskAreCopiedInDuplicateModel() {
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void ModalAnalysisTaskAreCopiedInDuplicateModel(int methodId) {
       var original = new GsaModel();
+      int numberOfMode = 5;
       // Task
-      var modeCalculationStrategy = new ModeCalculationStrategyByFrequency(0, 15, 5);
       var massOption = new MassOption(ModalMassOption.LumpMassAtNode, 1);
       var additionalMassDerivedFromLoads = new AdditionalMassDerivedFromLoads(
           "L1",
@@ -145,7 +148,7 @@ namespace GsaGHTests.Parameters {
       );
       var ModalDamping = new ModalDamping(0.5);
       var modalDynamicTaskParameter = new ModalDynamicTaskParameter(
-          modeCalculationStrategy,
+          ModeCalculationMethod(methodId, numberOfMode),
           massOption,
           additionalMassDerivedFromLoads,
           ModalDamping
@@ -157,7 +160,7 @@ namespace GsaGHTests.Parameters {
               modalDynamicTaskParameter
           )
       );
-      for (int mode = 1; mode <= modeCalculationStrategy.MaximumNumberOfModes; mode++) {
+      for (int mode = 1; mode <= numberOfMode; mode++) {
         original.ApiModel.AddAnalysisCaseToTask(taskId, "test case", mode);
       }
       System.Collections.ObjectModel.ReadOnlyDictionary<int, AnalysisTask> taskIn = original.ApiModel.AnalysisTasks();
@@ -181,6 +184,24 @@ namespace GsaGHTests.Parameters {
           Assert.Equal(assembled.ApiModel.AnalysisCaseName(caseId), original.ApiModel.AnalysisCaseName(caseId));
           Assert.Equal(assembled.ApiModel.AnalysisCaseDescription(caseId), original.ApiModel.AnalysisCaseDescription(caseId));
         }
+      }
+    }
+    internal ModeCalculationStrategy ModeCalculationMethod(int Id, int numberOfMode) {
+      switch (Id) {
+        case 0:
+          return new ModeCalculationStrategyByNumberOfModes(numberOfMode);
+        case 1:
+          return new ModeCalculationStrategyByFrequency(2, 15, numberOfMode);
+        case 2:
+          return new ModeCalculationStrategyByMassParticipation(
+                85,
+                92,
+                10,
+                numberOfMode,
+                true
+            );
+          default:
+          throw new InvalidOperationException("not supported");
       }
     }
   }
