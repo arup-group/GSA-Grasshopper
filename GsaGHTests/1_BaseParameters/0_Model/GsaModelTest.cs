@@ -6,6 +6,7 @@ using GsaAPI;
 
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GsaApi.EnumMappings;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helper;
@@ -129,6 +130,58 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(LengthUnit.Foot, m.ModelUnit);
 
       Assert.Equal(LengthUnit.Foot, UnitMapping.GetUnit(m.ApiModel.UiUnits().LengthLarge));
+    }
+
+    [Fact]
+    public void ModalAnalysisTaskAreCopiedInDuplicateModel() {
+      var original = new GsaModel();
+      // Task
+      var modeCalculationStrategy = new ModeCalculationStrategyByFrequency(0, 15, 5);
+      var massOption = new MassOption(ModalMassOption.LumpMassAtNode, 1);
+      var additionalMassDerivedFromLoads = new AdditionalMassDerivedFromLoads(
+          "L1",
+          Direction.Z,
+          1
+      );
+      var ModalDamping = new ModalDamping(0.5);
+      var modalDynamicTaskParameter = new ModalDynamicTaskParameter(
+          modeCalculationStrategy,
+          massOption,
+          additionalMassDerivedFromLoads,
+          ModalDamping
+      );
+
+      int taskId = original.ApiModel.AddAnalysisTask(
+          AnalysisTaskFactory.CreateModalDynamicAnalysisTask(
+              "task1",
+              modalDynamicTaskParameter
+          )
+      );
+      for (int mode = 1; mode <= modeCalculationStrategy.MaximumNumberOfModes; mode++) {
+        original.ApiModel.AddAnalysisCaseToTask(taskId, "test case", mode);
+      }
+      System.Collections.ObjectModel.ReadOnlyDictionary<int, AnalysisTask> taskIn = original.ApiModel.AnalysisTasks();
+
+      //assemble model and get task
+      var analysis = new GsaAnalysis();
+      foreach (KeyValuePair<int, AnalysisTask> analysisTask in taskIn) {
+        analysis.AnalysisTasks.Add(new GsaAnalysisTask(analysisTask.Key, analysisTask.Value, original.ApiModel));
+      }
+      var assembly = new ModelAssembly(new GsaModel(), null, null, null, null, null, analysis,
+        LengthUnit.Meter, Length.Zero, false, null);
+      var assembled = new GsaModel() {
+        ApiModel = assembly.GetModel()
+      };
+      System.Collections.ObjectModel.ReadOnlyDictionary<int, AnalysisTask> taskOut = assembled.ApiModel.AnalysisTasks();
+
+      Assert.Equal(taskIn.Count, taskIn.Count);
+      foreach (int key in taskIn.Keys) {
+        Assert.Equal(taskIn[key].Name, taskOut[key].Name);
+        foreach (int caseId in taskIn[key].Cases) {
+          Assert.Equal(assembled.ApiModel.AnalysisCaseName(caseId), original.ApiModel.AnalysisCaseName(caseId));
+          Assert.Equal(assembled.ApiModel.AnalysisCaseDescription(caseId), original.ApiModel.AnalysisCaseDescription(caseId));
+        }
+      }
     }
   }
 }
