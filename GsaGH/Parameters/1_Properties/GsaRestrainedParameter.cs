@@ -29,7 +29,13 @@ namespace GsaGH.Parameters {
     }
 
     protected override GsaBool6Goo PreferredCast(object data) {
-      return new GsaBool6Goo(StringExtension.ParseRestrain(data));
+      try {
+        GsaBool6 gsaBool6 = StringExtension.ParseRestrain(data);
+        return new GsaBool6Goo(gsaBool6);
+      } catch (InvalidCastException e) {
+        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+        return new GsaBool6Goo(null);
+      }
     }
 
   }
