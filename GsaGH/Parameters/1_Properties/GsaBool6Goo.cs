@@ -22,5 +22,9 @@ namespace GsaGH.Parameters {
     public override IGH_Goo Duplicate() {
       return new GsaBool6Goo(Value);
     }
+
+    public override bool Equals(object obj) {
+      return obj is GsaBool6Goo goo && goo.Value.Equals(Value);
+    }
   }
 }

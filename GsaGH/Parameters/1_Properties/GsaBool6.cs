@@ -69,5 +69,37 @@ namespace GsaGH.Parameters {
       szz = " ZZ" + szz;
       return sx + sy + sz + sxx + syy + szz;
     }
+
+    public bool AllFalse() {
+      return !X && !Y && !Z && !Xx && !Yy && !Zz;
+    }
+
+    public bool AllTrue() {
+      return X && Y && Z && Xx && Yy && Zz;
+    }
+
+    public override int GetHashCode() {
+      return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode() ^ Xx.GetHashCode() ^ Yy.GetHashCode()
+        ^ Zz.GetHashCode();
+    }
+
+    public override bool Equals(object obj) {
+      if (obj is GsaBool6 bool6) {
+        return X == bool6.X && Y == bool6.Y && Z == bool6.Z && Xx == bool6.Xx && Yy == bool6.Yy && Zz == bool6.Zz;
+      } else if (obj is bool boolean) {
+        return AllEqualTo(boolean);
+      } else {
+        return false;
+      }
+    }
+
+    private bool AllEqualTo(bool boolean) {
+      return X == boolean && Y == boolean && Z == boolean && Xx == boolean && Yy == boolean && Zz == boolean;
+    }
+
+    public static GsaBool6 operator !(GsaBool6 bool6) {
+      return new GsaBool6(!bool6.X, !bool6.Y, !bool6.Z, !bool6.Xx, !bool6.Yy, !bool6.Zz);
+    }
   }
+
 }

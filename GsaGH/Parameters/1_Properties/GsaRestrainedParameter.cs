@@ -29,18 +29,13 @@ namespace GsaGH.Parameters {
     }
 
     protected override GsaBool6Goo PreferredCast(object data) {
-      try {
-        return new GsaBool6Goo(StringExtension.ParseBool6(data));
-      } catch (Exception e) {
-        this.AddRuntimeError(e.Message);
-        return new GsaBool6Goo(null);
-      }
+      return new GsaBool6Goo(StringExtension.ParseRestrain(data));
     }
+
   }
 
   public class GsaRestraintParameterInfo {
-    public static string Description =>
-      "GSA Bool6 containing six booleans representing a node restraint";
+    public static string Description => "GSA Bool6 containing six booleans representing a node restraint";
     public static string Name => "Restraint";
     public static string NickName => "Res";
   }

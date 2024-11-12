@@ -43,10 +43,11 @@ namespace GsaGH.Helpers {
       while (value.Contains("  ")) {
         value = value.Replace("  ", " ");
       }
+
       return value.Trim();
     }
 
-    public static GsaBool6 ParseBool6(object data, bool isRelease = false) {
+    public static GsaBool6 ParseBool6(object data) {
       var bool6 = new GsaBool6();
       if (GH_Convert.ToBoolean(data, out bool mybool, GH_Conversion.Both)) {
         bool6.X = mybool;
@@ -55,46 +56,70 @@ namespace GsaGH.Helpers {
         bool6.Xx = mybool;
         bool6.Yy = mybool;
         bool6.Zz = mybool;
-        return bool6;
+      } else {
+        throw new InvalidCastException($"Data  conversion failed from '{data}' of type {data.GetTypeName()} to Bool6");
       }
+
+      return bool6;
+    }
+
+    public static GsaBool6 ParseRestrain(object data) {
+      try {
+        return ParseBool6(data);
+      } catch (InvalidCastException) {
+        return !ParseReleaseInternal(data);
+      }
+    }
+
+    public static GsaBool6 ParseRelease(object data) {
+      try {
+        return ParseBool6(data);
+      } catch (InvalidCastException) {
+        return ParseReleaseInternal(data);
+      }
+    }
+
+    private static GsaBool6 ParseReleaseInternal(object data) {
+      var bool6 = new GsaBool6();
       if (GH_Convert.ToString(data, out string mystring, GH_Conversion.Both)) {
         mystring = mystring.Trim().ToLower();
         if (mystring == "free") {
-          bool6.X = isRelease;
-          bool6.Y = isRelease;
-          bool6.Z = isRelease;
-          bool6.Xx = isRelease;
-          bool6.Yy = isRelease;
-          bool6.Zz = isRelease;
-          return bool6;
+          bool6.X = true;
+          bool6.Y = true;
+          bool6.Z = true;
+          bool6.Xx = true;
+          bool6.Yy = true;
+          bool6.Zz = true;
         } else if (IsPinned(mystring)) {
-          bool6.X = !isRelease;
-          bool6.Y = !isRelease;
-          bool6.Z = !isRelease;
-          bool6.Xx = isRelease;
-          bool6.Yy = isRelease;
-          bool6.Zz = isRelease;
-          return bool6;
+          bool6.X = false;
+          bool6.Y = false;
+          bool6.Z = false;
+          bool6.Xx = true;
+          bool6.Yy = true;
+          bool6.Zz = true;
         } else if (IsFixed(mystring)) {
-          bool6.X = !isRelease;
-          bool6.Y = !isRelease;
-          bool6.Z = !isRelease;
-          bool6.Xx = !isRelease;
-          bool6.Yy = !isRelease;
-          bool6.Zz = !isRelease;
-          return bool6;
+          bool6.X = false;
+          bool6.Y = false;
+          bool6.Z = false;
+          bool6.Xx = false;
+          bool6.Yy = false;
+          bool6.Zz = false;
         } else if (IsRelease(mystring) || IsHinged(mystring) || mystring == "charnier") {
-          bool6.X = isRelease;
-          bool6.Y = isRelease;
-          bool6.Z = isRelease;
-          bool6.Xx = isRelease;
-          bool6.Yy = !isRelease;
-          bool6.Zz = !isRelease;
-          return bool6;
+          bool6.X = true;
+          bool6.Y = true;
+          bool6.Z = true;
+          bool6.Xx = true;
+          bool6.Yy = false;
+          bool6.Zz = false;
         } else if (mystring.Length == 6) {
-          return ConvertString(mystring, isRelease);
+          return ConvertString(mystring, true);
+        } else {
+          throw new InvalidCastException($"Data conversion failed from {data.GetTypeName()} to Bool6");
         }
+
+        return bool6;
       }
+
       throw new InvalidCastException($"Data conversion failed from {data.GetTypeName()} to Bool6");
     }
 
@@ -126,13 +151,14 @@ namespace GsaGH.Helpers {
       };
       return b;
     }
+
     private static bool ConvertChar(char character, bool isRelease) {
       return character switch {
         'r' => isRelease,
         'f' => !isRelease,
-        _ => throw new ArgumentException(
-                    $"Unable to convert string to Bool6, character {character} not recognised"),
+        _ => throw new InvalidCastException($"Unable to convert string to Bool6, character {character} not recognised"),
       };
     }
   }
+
 }

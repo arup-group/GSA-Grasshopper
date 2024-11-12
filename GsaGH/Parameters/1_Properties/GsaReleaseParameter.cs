@@ -30,18 +30,12 @@ namespace GsaGH.Parameters {
     }
 
     protected override GsaBool6Goo PreferredCast(object data) {
-      try {
-        return new GsaBool6Goo(StringExtension.ParseBool6(data, true));
-      } catch (Exception e) {
-        this.AddRuntimeError(e.Message);
-        return new GsaBool6Goo(null);
-      }
+      return new GsaBool6Goo(StringExtension.ParseRelease(data));
     }
   }
 
   public class GsaReleaseParameterInfo {
-    public static string Description =>
-      "GSA releases containing six booleans representing the status";
+    public static string Description => "GSA releases containing six booleans representing the status";
     public static string Name => "Release";
     public static string NickName => "Rel";
   }
