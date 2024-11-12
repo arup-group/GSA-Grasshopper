@@ -18,6 +18,13 @@ using Xunit;
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class CreateMember1dTests {
+    private readonly GsaMember1dGoo _gsaMember1dGoo;
+    private GsaMember1dGoo _gsaMember1dGooFromSection3d;
+
+    public CreateMember1dTests() {
+      GH_OasysComponent comp = ComponentMother();
+      _gsaMember1dGoo = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
+    }
 
     public static GH_OasysComponent ComponentMother() {
       var comp = new Create1dMember();
@@ -31,34 +38,79 @@ namespace GsaGHTests.Components.Geometry {
       return comp;
     }
 
-    [Fact]
-    public void CreateComponentTest() {
-      GH_OasysComponent comp = ComponentMother();
+    private void SetMember1dFromSection3d() {
+      if (_gsaMember1dGooFromSection3d != null) {
+        return;
+      }
 
-      var output = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(0, output.Value.PolyCurve.PointAtStart.X);
-      Assert.Equal(-1, output.Value.PolyCurve.PointAtStart.Y);
-      Assert.Equal(0, output.Value.PolyCurve.PointAtStart.Z);
-      Assert.Equal(7, output.Value.PolyCurve.PointAtEnd.X);
-      Assert.Equal(3, output.Value.PolyCurve.PointAtEnd.Y);
-      Assert.Equal(1, output.Value.PolyCurve.PointAtEnd.Z);
-      Assert.Equal("STD CH(ft) 1 2 3 4", output.Value.Section.ApiSection.Profile);
-      Assert.Equal(0.5, output.Value.ApiMember.MeshSize);
-      Assert.Equal(1, output.Value.ApiMember.Group);
+      var section3dPreview = (Section3dPreviewDropDownComponent)ComponentMother();
+      section3dPreview.Preview3dSection = true;
+      section3dPreview.ExpireSolution(true);
+      _gsaMember1dGooFromSection3d = (GsaMember1dGoo)ComponentTestHelper.GetOutput(section3dPreview);
     }
 
     [Fact]
-    public void CreateComponentWithSection3dPreviewTest() {
-      var comp = (Section3dPreviewDropDownComponent)ComponentMother();
-      comp.Preview3dSection = true;
-      comp.ExpireSolution(true);
+    public void ComponentShouldReturn0AsPointAtStartXValue() {
+      Assert.Equal(0, _gsaMember1dGoo.Value.PolyCurve.PointAtStart.X);
+    }
 
-      var output = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(16, output.Value.Section3dPreview.Mesh.Vertices.Count);
-      Assert.Equal(24, output.Value.Section3dPreview.Outlines.Count());
+    [Fact]
+    public void ComponentShouldReturnMinus1AsPointAtStartYValue() {
+      Assert.Equal(-1, _gsaMember1dGoo.Value.PolyCurve.PointAtStart.Y);
+    }
 
+    [Fact]
+    public void ComponentShouldReturn0AsPointAtStartZValue() {
+      Assert.Equal(0, _gsaMember1dGoo.Value.PolyCurve.PointAtStart.Z);
+    }
+
+    [Fact]
+    public void ComponentShouldReturn7AsPointAtEndXValue() {
+      Assert.Equal(7, _gsaMember1dGoo.Value.PolyCurve.PointAtEnd.X);
+    }
+
+    [Fact]
+    public void ComponentShouldReturn3AsPointAtEndYValue() {
+      Assert.Equal(3, _gsaMember1dGoo.Value.PolyCurve.PointAtEnd.Y);
+    }
+
+    [Fact]
+    public void ComponentShouldReturn1AsPointAtEndZValue() {
+      Assert.Equal(1, _gsaMember1dGoo.Value.PolyCurve.PointAtEnd.Z);
+    }
+
+    [Fact]
+    public void ComponentShouldReturn05AsMeshSize() {
+      Assert.Equal(0.5, _gsaMember1dGoo.Value.ApiMember.MeshSize);
+    }
+
+    [Fact]
+    public void ComponentShouldReturnCorrectProfile() {
+      Assert.Equal("STD CH(ft) 1 2 3 4", _gsaMember1dGoo.Value.Section.ApiSection.Profile);
+    }
+
+    [Fact]
+    public void ComponentShouldReturnDefaultGroupValue() {
+      Assert.Equal(1, _gsaMember1dGoo.Value.ApiMember.Group);
+    }
+
+    [Fact]
+    public void CreateComponentWithSection3dPreviewShouldReturn16Vertices() {
+      SetMember1dFromSection3d();
+      Assert.Equal(16, _gsaMember1dGooFromSection3d.Value.Section3dPreview.Mesh.Vertices.Count);
+    }
+
+    [Fact]
+    public void CreateComponentWithSection3dPreviewShouldReturn24Outlines() {
+      SetMember1dFromSection3d();
+      Assert.Equal(24, _gsaMember1dGooFromSection3d.Value.Section3dPreview.Outlines.Count());
+    }
+
+    [Fact]
+    public void CreateComponentWithSection3dPreviewShouldCastToMesh() {
+      SetMember1dFromSection3d();
       var mesh = new GH_Mesh();
-      Assert.True(output.CastTo(ref mesh));
+      Assert.True(_gsaMember1dGooFromSection3d.CastTo(ref mesh));
     }
 
     [Theory]
