@@ -70,14 +70,6 @@ namespace GsaGH.Parameters {
       return sx + sy + sz + sxx + syy + szz;
     }
 
-    public bool AllFalse() {
-      return !X && !Y && !Z && !Xx && !Yy && !Zz;
-    }
-
-    public bool AllTrue() {
-      return X && Y && Z && Xx && Yy && Zz;
-    }
-
     public override int GetHashCode() {
       return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode() ^ Xx.GetHashCode() ^ Yy.GetHashCode()
         ^ Zz.GetHashCode();

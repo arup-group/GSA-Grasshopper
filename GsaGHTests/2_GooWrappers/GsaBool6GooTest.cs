@@ -8,6 +8,8 @@ using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
 
+using Rhino.Geometry;
+
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
@@ -49,6 +51,32 @@ namespace GsaGHTests.GooWrappers {
       var output = (GsaBool6Goo)ComponentTestHelper.GetOutput(param);
 
       Assert.True(output.Value.Equals(value));
+    }
+
+    [Fact]
+    public void NotTheSameTypeThereforeNotEqual() {
+      Assert.False(new GsaBool6().Equals(new Point3d()));
+    }
+
+    [Fact]
+    public void NullIsNotEqual() {
+      Assert.False(new GsaBool6().Equals(null));
+    }
+
+    [Fact]
+    public void ShouldCheckAllComponentWhenComparingWithBoolFalse() {
+      Assert.False(new GsaBool6(true, true, true, true, true, false).Equals(true));
+    }
+
+    [Fact]
+    public void ShouldCheckAllComponentWhenComparingWithBoolTrue() {
+      Assert.True(new GsaBool6(true, true, true, true, true, true).Equals(true));
+    }
+
+    [Fact]
+    public void ShouldHaveTheSameHashCode() {
+      Assert.Equal(new GsaBool6(true, true, false, false, true, true).GetHashCode(),
+        new GsaBool6(true, true, false, false, true, true).GetHashCode());
     }
 
     [Theory]
@@ -104,5 +132,13 @@ namespace GsaGHTests.GooWrappers {
       string exactlySixCharacters = "ABCDEF";
       Assert.Throws<InvalidCastException>(() => StringExtension.ParseBool6(exactlySixCharacters));
     }
+
+    [Fact]
+    public void ParseReleaseShouldThrowExceptionWhenANonStringNonBool() {
+      var exactlySixCharacters = new DummyClass();
+      Assert.Throws<InvalidCastException>(() => StringExtension.ParseRelease(exactlySixCharacters));
+    }
+
+    private class DummyClass { }
   }
 }
