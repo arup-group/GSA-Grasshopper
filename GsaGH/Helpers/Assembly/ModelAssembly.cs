@@ -249,26 +249,7 @@ namespace GsaGH.Helpers.Assembly {
 
     private void ConvertAndAssembleAnalysisTasks(List<GsaAnalysisTask> analysisTasks) {
       // Set Analysis Tasks in model
-      if (analysisTasks != null) {
-        ReadOnlyDictionary<int, AnalysisTask> existingTasks = _model.AnalysisTasks();
-        foreach (GsaAnalysisTask task in analysisTasks) {
-          if (!existingTasks.Keys.Contains(task.Id)) {
-            task.Id = _model.AddAnalysisTask(task.ApiTask);
-          }
-
-          if (task.Cases == null || task.Cases.Count == 0) {
-            task.CreateDefaultCases(_gsaModel);
-          }
-
-          if (task.Cases == null) {
-            continue;
-          }
-
-          foreach (GsaAnalysisCase ca in task.Cases) {
-            _model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Definition);
-          }
-        }
-      }
+      ModelFactory.BuildAnalysisTask(_gsaModel, analysisTasks);
     }
 
     private void ConvertAndAssembleCombinations(List<GsaCombinationCase> combinations) {
