@@ -21,16 +21,6 @@ namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class EditMember1dTests {
 
-    public static GH_OasysComponent ComponentMother() {
-      var comp = new Edit1dMember();
-      comp.CreateAttributes();
-
-      ComponentTestHelper.SetInput(comp,
-        ComponentTestHelper.GetOutput(CreateMember1dTests.ComponentMother()), 0);
-
-      return comp;
-    }
-
     [Fact]
     public void CreateComponentTest1() {
       GH_OasysComponent comp = ComponentMother();
@@ -352,6 +342,156 @@ namespace GsaGHTests.Components.Geometry {
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
       Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
+    private static GH_OasysComponent ComponentMother() {
+      var comp = new Edit1dMember();
+      comp.CreateAttributes();
+
+      ComponentTestHelper.SetInput(comp, ComponentTestHelper.GetOutput(CreateMember1dTests.ComponentMother()), 0);
+
+      return comp;
+    }
+  }
+
+  public class EditMember1dTestsHelper {
+    private readonly GH_OasysComponent _component;
+
+    public EditMember1dTestsHelper() {
+      _component = ComponentMother();
+    }
+
+    private static GH_OasysComponent ComponentMother() {
+      var comp = new Edit1dMember();
+      comp.CreateAttributes();
+
+      ComponentTestHelper.SetInput(comp, ComponentTestHelper.GetOutput(CreateMember1dTests.ComponentMother()), 0);
+
+      return comp;
+    }
+
+    public GH_OasysComponent GetComponent() {
+      return _component;
+    }
+
+    public GsaMember1dGoo GetMemberOutput() {
+      var element = (GsaMember1dGoo)ComponentTestHelper.GetOutput(_component, 0);
+      return element;
+    }
+
+    public GH_Integer GetIdOutput() {
+      var id = (GH_Integer)ComponentTestHelper.GetOutput(_component, 1);
+      return id;
+    }
+
+    public GH_Curve GetMemberCurveOutput() {
+      var curve = (GH_Curve)ComponentTestHelper.GetOutput(_component, 2);
+      return curve;
+    }
+
+    public GsaPropertyGoo GetSectionOutput() {
+      var section = (GsaPropertyGoo)ComponentTestHelper.GetOutput(_component, 3);
+      return section;
+    }
+
+    public GsaSpringPropertyGoo GetSpringPropertyOutput() {
+      var property = (GsaSpringPropertyGoo)ComponentTestHelper.GetOutput(_component, 3);
+      return property;
+    }
+
+    public GH_Integer GetMemberGroupOutput() {
+      var group = (GH_Integer)ComponentTestHelper.GetOutput(_component, 4);
+      return group;
+    }
+
+    public GH_String GetMemberTypeOutput() {
+      var type = (GH_String)ComponentTestHelper.GetOutput(_component, 5);
+      return type;
+    }
+
+    public GH_String GetElementTypeOutput() {
+      var type = (GH_String)ComponentTestHelper.GetOutput(_component, 6);
+      return type;
+    }
+
+    public GsaOffsetGoo GetOffsetOutput() {
+      var offset = (GsaOffsetGoo)ComponentTestHelper.GetOutput(_component, 7);
+      return offset;
+    }
+
+    public GsaBool6Goo GetStartReleaseOutput() {
+      var startRelease = (GsaBool6Goo)ComponentTestHelper.GetOutput(_component, 8);
+      return startRelease;
+    }
+
+    public GsaBool6Goo GetEndReleaseOutput() {
+      var endRelease = (GsaBool6Goo)ComponentTestHelper.GetOutput(_component, 9);
+      return endRelease;
+    }
+
+    public GH_Boolean GetAutomaticOffsetEnd1Output() {
+      var autoBoolean = (GH_Boolean)ComponentTestHelper.GetOutput(_component, 10);
+      return autoBoolean;
+    }
+
+    public GH_Number GetAutomaticOffsetX1Output() {
+      var offsetX1 = (GH_Number)ComponentTestHelper.GetOutput(_component, 11);
+      return offsetX1;
+    }
+
+    public GH_Boolean GetAutomaticOffsetEnd2Output() {
+      var autoBoolean = (GH_Boolean)ComponentTestHelper.GetOutput(_component, 12);
+      return autoBoolean;
+    }
+
+    public GH_Number GetAutomaticOffsetX2Output() {
+      var offsetX1 = (GH_Number)ComponentTestHelper.GetOutput(_component, 13);
+      return offsetX1;
+    }
+
+    public GH_Number GetAngleOutput() {
+      var angle = (GH_Number)ComponentTestHelper.GetOutput(_component, 14);
+      return angle;
+    }
+
+    public GsaNodeGoo GetOrientationOutput() {
+      var orientation = (GsaNodeGoo)ComponentTestHelper.GetOutput(_component, 15);
+      return orientation;
+    }
+
+    public GH_Number GetMeshSizeOutput() {
+      var mesh = (GH_Number)ComponentTestHelper.GetOutput(_component, 16);
+      return mesh;
+    }
+
+    public GH_Boolean GetIntersectorOutput() {
+      var intersector = (GH_Boolean)ComponentTestHelper.GetOutput(_component, 17);
+      return intersector;
+    }
+
+    public GsaEffectiveLengthOptionsGoo GetEffectiveLengthOutput() {
+      var effectiveLength = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(_component, 18);
+      return effectiveLength;
+    }
+
+    public GH_String GetNameOutput() {
+      var name = (GH_String)ComponentTestHelper.GetOutput(_component, 19);
+      return name;
+    }
+
+    public GH_Colour GetColorOutput() {
+      var colour = (GH_Colour)ComponentTestHelper.GetOutput(_component, 20);
+      return colour;
+    }
+
+    public GH_Boolean GetDummyOutput() {
+      var dummy = (GH_Boolean)ComponentTestHelper.GetOutput(_component, 21);
+      return dummy;
+    }
+
+    public GH_String GetTopologyOutput() {
+      var topology = (GH_String)ComponentTestHelper.GetOutput(_component, 22);
+      return topology;
     }
   }
 }
