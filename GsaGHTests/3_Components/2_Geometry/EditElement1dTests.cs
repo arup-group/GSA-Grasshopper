@@ -867,7 +867,7 @@ namespace GsaGHTests.Components.Geometry {
       return _component;
     }
 
-    public static GH_OasysComponent ComponentMother() {
+    private static GH_OasysComponent ComponentMother() {
       var comp = new Edit1dElement();
       comp.CreateAttributes();
 
