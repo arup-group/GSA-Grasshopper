@@ -17,6 +17,8 @@ using Rhino.Geometry;
 
 using Xunit;
 
+using Line = Rhino.Geometry.Line;
+
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class EditElement1dTests_WithoutSettingInputs {
@@ -28,242 +30,242 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void ComponentReturnValidElementLinePointAtStartXValue() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(0, element.Value.Line.PointAtStart.X, 6);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(0, element.Line.PointAtStart.X, 6);
     }
 
     [Fact]
     public void ComponentReturnValidElementLinePointAtStartYValue() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(-1, element.Value.Line.PointAtStart.Y, 6);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(-1, element.Line.PointAtStart.Y, 6);
     }
 
     [Fact]
     public void ComponentReturnValidElementLinePointAtStartZValue() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(0, element.Value.Line.PointAtStart.Z, 6);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(0, element.Line.PointAtStart.Z, 6);
     }
 
     [Fact]
     public void ComponentReturnValidElementLinePointAtEndXValue() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(7, element.Value.Line.PointAtEnd.X, 6);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(7, element.Line.PointAtEnd.X, 6);
     }
 
     [Fact]
     public void ComponentReturnValidElementLinePointAtEndYValue() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(3, element.Value.Line.PointAtEnd.Y, 6);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(3, element.Line.PointAtEnd.Y, 6);
     }
 
     [Fact]
     public void ComponentReturnValidElementLinePointAtEndZValue() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(1, element.Value.Line.PointAtEnd.Z, 6);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(1, element.Line.PointAtEnd.Z, 6);
     }
 
     [Fact]
     public void ComponentReturnValidSectionProfile() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal("STD CH(ft) 1 2 3 4", element.Value.Section.ApiSection.Profile);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal("STD CH(ft) 1 2 3 4", element.Section.ApiSection.Profile);
     }
 
     [Fact]
     public void ComponentReturnValidApiElementGroupValue() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(1, element.Value.ApiElement.Group);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(1, element.ApiElement.Group);
     }
 
     [Fact]
     public void ComponentReturnValidIdValue() {
-      GH_Integer id = _helper.GetIdOutput();
-      Assert.Equal(0, id.Value);
+      int id = _helper.GetIdOutput();
+      Assert.Equal(0, id);
     }
 
     [Fact]
     public void ComponentReturnValidLineFromXValue() {
-      GH_Line line = _helper.GetLineOutput();
-      Assert.Equal(0, line.Value.From.X, 6);
+      Line line = _helper.GetLineOutput();
+      Assert.Equal(0, line.From.X, 6);
     }
 
     [Fact]
     public void ComponentReturnValidLineFromYValue() {
-      GH_Line line = _helper.GetLineOutput();
-      Assert.Equal(-1, line.Value.From.Y, 6);
+      Line line = _helper.GetLineOutput();
+      Assert.Equal(-1, line.From.Y, 6);
     }
 
     [Fact]
     public void ComponentReturnValidLineFromZValue() {
-      GH_Line line = _helper.GetLineOutput();
-      Assert.Equal(0, line.Value.From.Z, 6);
+      Line line = _helper.GetLineOutput();
+      Assert.Equal(0, line.From.Z, 6);
     }
 
     [Fact]
     public void ComponentReturnValidLineToXValue() {
-      GH_Line line = _helper.GetLineOutput();
-      Assert.Equal(7, line.Value.To.X, 6);
+      Line line = _helper.GetLineOutput();
+      Assert.Equal(7, line.To.X, 6);
     }
 
     [Fact]
     public void ComponentReturnValidLineToYValue() {
-      GH_Line line = _helper.GetLineOutput();
-      Assert.Equal(3, line.Value.To.Y, 6);
+      Line line = _helper.GetLineOutput();
+      Assert.Equal(3, line.To.Y, 6);
     }
 
     [Fact]
     public void ComponentReturnValidLineToZValue() {
-      GH_Line line = _helper.GetLineOutput();
-      Assert.Equal(1, line.Value.To.Z, 6);
+      Line line = _helper.GetLineOutput();
+      Assert.Equal(1, line.To.Z, 6);
     }
 
     [Fact]
     public void ComponentReturnValidSectionProfileFromInput() {
-      GsaPropertyGoo section = _helper.GetSectionOutput();
-      Assert.Equal("STD CH(ft) 1 2 3 4", ((GsaSection)section.Value).ApiSection.Profile);
+      IGsaProperty section = _helper.GetSectionOutput();
+      Assert.Equal("STD CH(ft) 1 2 3 4", ((GsaSection)section).ApiSection.Profile);
     }
 
     [Fact]
     public void ComponentReturnDefaultGroupValue() {
-      GH_Integer group = _helper.GetGroupOutput();
-      Assert.Equal(1, group.Value);
+      int group = _helper.GetGroupOutput();
+      Assert.Equal(1, group);
     }
 
     [Fact]
     public void ComponentReturnValidType() {
-      GH_String type = _helper.GetTypeOutput();
-      Assert.Equal("Beam", type.Value);
+      string type = _helper.GetTypeOutput();
+      Assert.Equal("Beam", type);
     }
 
     [Fact]
     public void ComponentReturnValidOffsetX1() {
-      GsaOffsetGoo offset = _helper.GetOffsetOutput();
-      Assert.Equal(0, offset.Value.X1.Value, 6);
+      GsaOffset offset = _helper.GetOffsetOutput();
+      Assert.Equal(0, offset.X1.Value, 6);
     }
 
     [Fact]
     public void ComponentReturnValidOffsetX2() {
-      GsaOffsetGoo offset = _helper.GetOffsetOutput();
-      Assert.Equal(0, offset.Value.X2.Value, 6);
+      GsaOffset offset = _helper.GetOffsetOutput();
+      Assert.Equal(0, offset.X2.Value, 6);
     }
 
     [Fact]
     public void ComponentReturnValidOffsetY() {
-      GsaOffsetGoo offset = _helper.GetOffsetOutput();
-      Assert.Equal(0, offset.Value.Y.Value, 6);
+      GsaOffset offset = _helper.GetOffsetOutput();
+      Assert.Equal(0, offset.Y.Value, 6);
     }
 
     [Fact]
     public void ComponentReturnValidOffsetZ() {
-      GsaOffsetGoo offset = _helper.GetOffsetOutput();
-      Assert.Equal(0, offset.Value.Z.Value, 6);
+      GsaOffset offset = _helper.GetOffsetOutput();
+      Assert.Equal(0, offset.Z.Value, 6);
     }
 
     [Fact]
     public void ComponentReturnValidReleaseStartX() {
-      GsaBool6Goo startRelease = _helper.GetStartReleaseOutput();
-      Assert.False(startRelease.Value.X);
+      GsaBool6 startRelease = _helper.GetStartReleaseOutput();
+      Assert.False(startRelease.X);
     }
 
     [Fact]
     public void ComponentReturnValidReleaseStartY() {
-      GsaBool6Goo startRelease = _helper.GetStartReleaseOutput();
-      Assert.False(startRelease.Value.Y);
+      GsaBool6 startRelease = _helper.GetStartReleaseOutput();
+      Assert.False(startRelease.Y);
     }
 
     [Fact]
     public void ComponentReturnValidReleaseStartZ() {
-      GsaBool6Goo startRelease = _helper.GetStartReleaseOutput();
-      Assert.False(startRelease.Value.Z);
+      GsaBool6 startRelease = _helper.GetStartReleaseOutput();
+      Assert.False(startRelease.Z);
     }
 
     [Fact]
     public void ComponentReturnValidReleaseStartXx() {
-      GsaBool6Goo startRelease = _helper.GetStartReleaseOutput();
-      Assert.False(startRelease.Value.Xx);
+      GsaBool6 startRelease = _helper.GetStartReleaseOutput();
+      Assert.False(startRelease.Xx);
     }
 
     [Fact]
     public void ComponentReturnValidReleaseStartYy() {
-      GsaBool6Goo startRelease = _helper.GetStartReleaseOutput();
-      Assert.False(startRelease.Value.Yy);
+      GsaBool6 startRelease = _helper.GetStartReleaseOutput();
+      Assert.False(startRelease.Yy);
     }
 
     [Fact]
     public void ComponentReturnValidReleaseStartZz() {
-      GsaBool6Goo startRelease = _helper.GetStartReleaseOutput();
-      Assert.False(startRelease.Value.Zz);
+      GsaBool6 startRelease = _helper.GetStartReleaseOutput();
+      Assert.False(startRelease.Zz);
     }
 
     [Fact]
     public void ComponentReturnValidReleaseEndX() {
-      GsaBool6Goo endRelease = _helper.GetEndReleaseOutput();
-      Assert.False(endRelease.Value.X);
+      GsaBool6 endRelease = _helper.GetEndReleaseOutput();
+      Assert.False(endRelease.X);
     }
 
     [Fact]
     public void ComponentReturnValidReleaseEndY() {
-      GsaBool6Goo endRelease = _helper.GetEndReleaseOutput();
-      Assert.False(endRelease.Value.Y);
+      GsaBool6 endRelease = _helper.GetEndReleaseOutput();
+      Assert.False(endRelease.Y);
     }
 
     [Fact]
     public void ComponentReturnValidReleaseEndZ() {
-      GsaBool6Goo endRelease = _helper.GetEndReleaseOutput();
-      Assert.False(endRelease.Value.Z);
+      GsaBool6 endRelease = _helper.GetEndReleaseOutput();
+      Assert.False(endRelease.Z);
     }
 
     [Fact]
     public void ComponentReturnValidReleaseEndXx() {
-      GsaBool6Goo endRelease = _helper.GetEndReleaseOutput();
-      Assert.False(endRelease.Value.Xx);
+      GsaBool6 endRelease = _helper.GetEndReleaseOutput();
+      Assert.False(endRelease.Xx);
     }
 
     [Fact]
     public void ComponentReturnValidReleaseEndYy() {
-      GsaBool6Goo endRelease = _helper.GetEndReleaseOutput();
-      Assert.False(endRelease.Value.Yy);
+      GsaBool6 endRelease = _helper.GetEndReleaseOutput();
+      Assert.False(endRelease.Yy);
     }
 
     [Fact]
     public void ComponentReturnValidReleaseEndZz() {
-      GsaBool6Goo endRelease = _helper.GetEndReleaseOutput();
-      Assert.False(endRelease.Value.Zz);
+      GsaBool6 endRelease = _helper.GetEndReleaseOutput();
+      Assert.False(endRelease.Zz);
     }
 
     [Fact]
     public void ComponentReturnDefaultAngleValue() {
-      GH_Number angle = _helper.GetAngleOutput();
-      Assert.Equal(0, angle.Value);
+      double angle = _helper.GetAngleOutput();
+      Assert.Equal(0, angle);
     }
 
     [Fact]
     public void ComponentReturnNullOrientationValue() {
-      GsaNodeGoo orientation = _helper.GetOrientationOutput();
-      Assert.Null(orientation.Value);
+      GsaNode orientation = _helper.GetOrientationOutput();
+      Assert.Null(orientation);
     }
 
     [Fact]
     public void ComponentReturnEmptyNameValue() {
-      GH_String name = _helper.GetNameOutput();
-      Assert.Empty(name.Value);
+      string name = _helper.GetNameOutput();
+      Assert.Empty(name);
     }
 
     [Fact]
     public void ComponentReturnDefaultColorValue() {
-      GH_Colour colour = _helper.GetColorOutput();
-      Assert.Equal("ff000000", colour.Value.Name);
+      Color colour = _helper.GetColorOutput();
+      Assert.Equal("ff000000", colour.Name);
     }
 
     [Fact]
     public void ComponentReturnDefaultDummyValue() {
-      GH_Boolean dummy = _helper.GetDummyOutput();
-      Assert.False(dummy.Value);
+      bool dummy = _helper.GetDummyOutput();
+      Assert.False(dummy);
     }
 
     [Fact]
     public void ComponentShouldReturnParentMemberDefaultValue() {
-      GH_Integer parentMember = _helper.GetParentMemberOutput();
-      Assert.Equal(0, parentMember.Value);
+      int parentMember = _helper.GetParentMemberOutput();
+      Assert.Equal(0, parentMember);
     }
   }
 
@@ -292,254 +294,254 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtStartValueX() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(0, element.Value.Line.PointAtStart.X);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(0, element.Line.PointAtStart.X);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtStartValueY() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(0, element.Value.Line.PointAtStart.Y);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(0, element.Line.PointAtStart.Y);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtStartValueZ() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(0, element.Value.Line.PointAtStart.Z);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(0, element.Line.PointAtStart.Z);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtEndValueX() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(1, element.Value.Line.PointAtEnd.X);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(1, element.Line.PointAtEnd.X);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtEndValueY() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(2, element.Value.Line.PointAtEnd.Y);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(2, element.Line.PointAtEnd.Y);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtEndValueZ() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(3, element.Value.Line.PointAtEnd.Z);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(3, element.Line.PointAtEnd.Z);
     }
 
     [Fact]
     public void EditElementShouldReturnValidSectionProfileFromElement() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal("STD CH 10 20 30 40", element.Value.Section.ApiSection.Profile);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(_helper.DefaultSection, element.Section.ApiSection.Profile);
     }
 
     [Fact]
     public void EditElementShouldReturnValidGroupValueFromElement() {
-      GsaElement1dGoo element = _helper.GetElementOutput();
-      Assert.Equal(7, element.Value.ApiElement.Group);
+      GsaElement1d element = _helper.GetElementOutput();
+      Assert.Equal(7, element.ApiElement.Group);
     }
 
     [Fact]
     public void EditElementShouldReturnValidId() {
-      GH_Integer output = _helper.GetIdOutput();
-      Assert.Equal(1, output.Value);
+      int output = _helper.GetIdOutput();
+      Assert.Equal(1, output);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLineFromXValue() {
-      GH_Line output = _helper.GetLineOutput();
-      Assert.Equal(0, output.Value.From.X);
+      Line output = _helper.GetLineOutput();
+      Assert.Equal(0, output.From.X);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLineFromYValue() {
-      GH_Line output = _helper.GetLineOutput();
-      Assert.Equal(0, output.Value.From.Y);
+      Line output = _helper.GetLineOutput();
+      Assert.Equal(0, output.From.Y);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLineFromZValue() {
-      GH_Line output = _helper.GetLineOutput();
-      Assert.Equal(0, output.Value.From.Z);
+      Line output = _helper.GetLineOutput();
+      Assert.Equal(0, output.From.Z);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLineToXValue() {
-      GH_Line output = _helper.GetLineOutput();
-      Assert.Equal(1, output.Value.To.X);
+      Line output = _helper.GetLineOutput();
+      Assert.Equal(1, output.To.X);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLineToYValue() {
-      GH_Line output = _helper.GetLineOutput();
-      Assert.Equal(2, output.Value.To.Y);
+      Line output = _helper.GetLineOutput();
+      Assert.Equal(2, output.To.Y);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLineToZValue() {
-      GH_Line output = _helper.GetLineOutput();
-      Assert.Equal(3, output.Value.To.Z);
+      Line output = _helper.GetLineOutput();
+      Assert.Equal(3, output.To.Z);
     }
 
     [Fact]
     public void EditElementShouldReturnValidSectionProfileValue() {
-      GsaPropertyGoo output = _helper.GetSectionOutput();
-      Assert.Equal("STD CH 10 20 30 40", ((GsaSection)output.Value).ApiSection.Profile);
+      IGsaProperty output = _helper.GetSectionOutput();
+      Assert.Equal(_helper.DefaultSection, ((GsaSection)output).ApiSection.Profile);
     }
 
     [Fact]
     public void EditElementShouldReturnValidGroupValue() {
-      GH_Integer output = _helper.GetGroupOutput();
-      Assert.Equal(7, output.Value);
+      int output = _helper.GetGroupOutput();
+      Assert.Equal(7, output);
     }
 
     [Fact]
     public void EditElementShouldReturnValidTypeValue() {
-      GH_String output = _helper.GetTypeOutput();
-      Assert.Equal("Beam", output.Value);
+      string output = _helper.GetTypeOutput();
+      Assert.Equal("Beam", output);
     }
 
     [Fact]
     public void EditElementShouldReturnValidOffsetX1Value() {
-      GsaOffsetGoo output = _helper.GetOffsetOutput();
-      Assert.Equal(1, output.Value.X1.Value);
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(1, output.X1.Value);
     }
 
     [Fact]
     public void EditElementShouldReturnValidOffsetX2Value() {
-      GsaOffsetGoo output = _helper.GetOffsetOutput();
-      Assert.Equal(2, output.Value.X2.Value);
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(2, output.X2.Value);
     }
 
     [Fact]
     public void EditElementShouldReturnValidOffsetYValue() {
-      GsaOffsetGoo output = _helper.GetOffsetOutput();
-      Assert.Equal(3, output.Value.Y.Value);
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(3, output.Y.Value);
     }
 
     [Fact]
     public void EditElementShouldReturnValidOffsetZValue() {
-      GsaOffsetGoo output = _helper.GetOffsetOutput();
-      Assert.Equal(4, output.Value.Z.Value);
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(4, output.Z.Value);
     }
 
     [Fact]
     public void EditElementShouldReturnValidStartReleaseXValue() {
-      GsaBool6Goo output = _helper.GetStartReleaseOutput();
-      Assert.True(output.Value.X);
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.True(output.X);
     }
 
     [Fact]
     public void EditElementShouldReturnValidStartReleaseYValue() {
-      GsaBool6Goo output = _helper.GetStartReleaseOutput();
-      Assert.True(output.Value.Y);
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.True(output.Y);
     }
 
     [Fact]
     public void EditElementShouldReturnValidStartReleaseZValue() {
-      GsaBool6Goo output = _helper.GetStartReleaseOutput();
-      Assert.True(output.Value.X);
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.True(output.X);
     }
 
     [Fact]
     public void EditElementShouldReturnValidStartReleaseXxValue() {
-      GsaBool6Goo output = _helper.GetStartReleaseOutput();
-      Assert.True(output.Value.Xx);
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.True(output.Xx);
     }
 
     [Fact]
     public void EditElementShouldReturnValidStartReleaseYyValue() {
-      GsaBool6Goo output = _helper.GetStartReleaseOutput();
-      Assert.True(output.Value.Yy);
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.True(output.Yy);
     }
 
     [Fact]
     public void EditElementShouldReturnValidStartReleaseZzValue() {
-      GsaBool6Goo output = _helper.GetStartReleaseOutput();
-      Assert.True(output.Value.Zz);
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.True(output.Zz);
     }
 
     [Fact]
     public void EditElementShouldReturnValidEndReleaseXValue() {
-      GsaBool6Goo output = _helper.GetEndReleaseOutput();
-      Assert.True(output.Value.X);
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.True(output.X);
     }
 
     [Fact]
     public void EditElementShouldReturnValidEndReleaseYValue() {
-      GsaBool6Goo output = _helper.GetEndReleaseOutput();
-      Assert.True(output.Value.Y);
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.True(output.Y);
     }
 
     [Fact]
     public void EditElementShouldReturnValidEndReleaseZValue() {
-      GsaBool6Goo output = _helper.GetEndReleaseOutput();
-      Assert.True(output.Value.X);
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.True(output.X);
     }
 
     [Fact]
     public void EditElementShouldReturnValidEndReleaseXxValue() {
-      GsaBool6Goo output = _helper.GetEndReleaseOutput();
-      Assert.True(output.Value.Xx);
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.True(output.Xx);
     }
 
     [Fact]
     public void EditElementShouldReturnValidEndReleaseYyValue() {
-      GsaBool6Goo output = _helper.GetEndReleaseOutput();
-      Assert.True(output.Value.Yy);
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.True(output.Yy);
     }
 
     [Fact]
     public void EditElementShouldReturnValidEndtReleaseZzValue() {
-      GsaBool6Goo output = _helper.GetEndReleaseOutput();
-      Assert.True(output.Value.Zz);
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.True(output.Zz);
     }
 
     [Fact]
     public void EditElementShouldReturnValidAngleValue() {
-      GH_Number output = _helper.GetAngleOutput();
-      Assert.Equal(Math.PI, output.Value);
+      double output = _helper.GetAngleOutput();
+      Assert.Equal(Math.PI, output);
     }
 
     [Fact]
     public void EditElementShouldReturnValidOrientationYValue() {
-      GsaNodeGoo output = _helper.GetOrientationOutput();
-      Assert.Equal(2, output.Value.Point.Y);
+      GsaNode output = _helper.GetOrientationOutput();
+      Assert.Equal(2, output.Point.Y);
     }
 
     [Fact]
     public void EditElementShouldReturnValidOrientationZValue() {
-      GsaNodeGoo output = _helper.GetOrientationOutput();
-      Assert.Equal(3, output.Value.Point.Z);
+      GsaNode output = _helper.GetOrientationOutput();
+      Assert.Equal(3, output.Point.Z);
     }
 
     [Fact]
     public void EditElementShouldReturnValidOrientationIdValue() {
-      GsaNodeGoo output = _helper.GetOrientationOutput();
-      Assert.Equal(99, output.Value.Id);
+      GsaNode output = _helper.GetOrientationOutput();
+      Assert.Equal(99, output.Id);
     }
 
     [Fact]
     public void EditElementShouldReturnValidNameValue() {
-      GH_String output = _helper.GetNameOutput();
-      Assert.Equal("name", output.Value);
+      string output = _helper.GetNameOutput();
+      Assert.Equal("name", output);
     }
 
     [Fact]
     public void EditElementShouldReturnValidColorValue() {
-      GH_Colour output = _helper.GetColorOutput();
-      Assert.Equal("ffffffff", output.Value.Name);
+      Color output = _helper.GetColorOutput();
+      Assert.Equal("ffffffff", output.Name);
     }
 
     [Fact]
     public void EditElementShouldReturnValidDummyValue() {
-      GH_Boolean output = _helper.GetDummyOutput();
-      Assert.True(output.Value);
+      bool output = _helper.GetDummyOutput();
+      Assert.True(output);
     }
 
     [Fact]
     public void EditElementShouldReturnValidParentMemberValue() {
-      GH_Integer output = _helper.GetParentMemberOutput();
-      Assert.Equal(0, output.Value);
+      int output = _helper.GetParentMemberOutput();
+      Assert.Equal(0, output);
     }
   }
 
@@ -558,242 +560,242 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void EditElementShouldReturnValidLinePointAtStartXValue() {
-      GsaElement1dGoo output = _helper.GetElementOutput();
-      Assert.Equal(0, output.Value.Line.PointAtStart.X, 6);
+      GsaElement1d output = _helper.GetElementOutput();
+      Assert.Equal(0, output.Line.PointAtStart.X, 6);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLinePointAtStartYValue() {
-      GsaElement1dGoo output = _helper.GetElementOutput();
-      Assert.Equal(-1, output.Value.Line.PointAtStart.Y, 6);
+      GsaElement1d output = _helper.GetElementOutput();
+      Assert.Equal(-1, output.Line.PointAtStart.Y, 6);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLinePointAtStartZValue() {
-      GsaElement1dGoo output = _helper.GetElementOutput();
-      Assert.Equal(0, output.Value.Line.PointAtStart.Z, 6);
+      GsaElement1d output = _helper.GetElementOutput();
+      Assert.Equal(0, output.Line.PointAtStart.Z, 6);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLinePointAtEndXValue() {
-      GsaElement1dGoo output = _helper.GetElementOutput();
-      Assert.Equal(7, output.Value.Line.PointAtEnd.X, 6);
+      GsaElement1d output = _helper.GetElementOutput();
+      Assert.Equal(7, output.Line.PointAtEnd.X, 6);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLinePointAtEndYValue() {
-      GsaElement1dGoo output = _helper.GetElementOutput();
-      Assert.Equal(3, output.Value.Line.PointAtEnd.Y, 6);
+      GsaElement1d output = _helper.GetElementOutput();
+      Assert.Equal(3, output.Line.PointAtEnd.Y, 6);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLinePointAtEndZValue() {
-      GsaElement1dGoo output = _helper.GetElementOutput();
-      Assert.Equal(1, output.Value.Line.PointAtEnd.Z, 6);
+      GsaElement1d output = _helper.GetElementOutput();
+      Assert.Equal(1, output.Line.PointAtEnd.Z, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnNullElementSection() {
-      GsaElement1dGoo output = _helper.GetElementOutput();
-      Assert.Null(output.Value.Section);
+      GsaElement1d output = _helper.GetElementOutput();
+      Assert.Null(output.Section);
     }
 
     [Fact]
     public void EditElement1dShouldReturnDefaultElementGrupForElement() {
-      GsaElement1dGoo output = _helper.GetElementOutput();
-      Assert.Equal(1, output.Value.ApiElement.Group);
+      GsaElement1d output = _helper.GetElementOutput();
+      Assert.Equal(1, output.ApiElement.Group);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidId() {
-      GH_Integer output = _helper.GetIdOutput();
-      Assert.Equal(0, output.Value);
+      int output = _helper.GetIdOutput();
+      Assert.Equal(0, output);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidLineFromXValue() {
-      GH_Line output = _helper.GetLineOutput();
-      Assert.Equal(0, output.Value.From.X, 6);
+      Line output = _helper.GetLineOutput();
+      Assert.Equal(0, output.From.X, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidLineFromYValue() {
-      GH_Line output = _helper.GetLineOutput();
-      Assert.Equal(-1, output.Value.From.Y, 6);
+      Line output = _helper.GetLineOutput();
+      Assert.Equal(-1, output.From.Y, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidLineFromZValue() {
-      GH_Line output = _helper.GetLineOutput();
-      Assert.Equal(0, output.Value.From.Z, 6);
+      Line output = _helper.GetLineOutput();
+      Assert.Equal(0, output.From.Z, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidLineToXValue() {
-      GH_Line output = _helper.GetLineOutput();
-      Assert.Equal(7, output.Value.To.X, 6);
+      Line output = _helper.GetLineOutput();
+      Assert.Equal(7, output.To.X, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidLineToYValue() {
-      GH_Line output = _helper.GetLineOutput();
-      Assert.Equal(3, output.Value.To.Y, 6);
+      Line output = _helper.GetLineOutput();
+      Assert.Equal(3, output.To.Y, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidLineToZValue() {
-      GH_Line output = _helper.GetLineOutput();
-      Assert.Equal(1, output.Value.To.Z, 6);
+      Line output = _helper.GetLineOutput();
+      Assert.Equal(1, output.To.Z, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnNotNullProperty() {
-      GsaPropertyGoo output = _helper.GetSectionOutput();
-      Assert.NotNull(((GsaSpringProperty)output.Value).ApiProperty);
+      IGsaProperty output = _helper.GetSectionOutput();
+      Assert.NotNull(((GsaSpringProperty)output).ApiProperty);
     }
 
     [Fact]
     public void EditElement1dShouldReturnDefaultGroupValue() {
-      GH_Integer output = _helper.GetGroupOutput();
-      Assert.Equal(1, output.Value);
+      int output = _helper.GetGroupOutput();
+      Assert.Equal(1, output);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidType() {
-      GH_String output = _helper.GetTypeOutput();
-      Assert.Equal("Spring", output.Value);
+      string output = _helper.GetTypeOutput();
+      Assert.Equal("Spring", output);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidOffsetX1Value() {
-      GsaOffsetGoo output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.Value.X1.Value, 6);
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(0, output.X1.Value, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidOffsetX2Value() {
-      GsaOffsetGoo output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.Value.X2.Value, 6);
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(0, output.X2.Value, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidOffsetYValue() {
-      GsaOffsetGoo output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.Value.Y.Value, 6);
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(0, output.Y.Value, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidOffsetZValue() {
-      GsaOffsetGoo output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.Value.Z.Value, 6);
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(0, output.Z.Value, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidStartReleaseXValue() {
-      GsaBool6Goo output = _helper.GetStartReleaseOutput();
-      Assert.False(output.Value.X);
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.False(output.X);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidStartReleaseYValue() {
-      GsaBool6Goo output = _helper.GetStartReleaseOutput();
-      Assert.False(output.Value.Y);
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.False(output.Y);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidStartReleaseZValue() {
-      GsaBool6Goo output = _helper.GetStartReleaseOutput();
-      Assert.False(output.Value.Z);
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.False(output.Z);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidStartReleaseXxValue() {
-      GsaBool6Goo output = _helper.GetStartReleaseOutput();
-      Assert.False(output.Value.Xx);
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.False(output.Xx);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidStartReleaseYyValue() {
-      GsaBool6Goo output = _helper.GetStartReleaseOutput();
-      Assert.False(output.Value.Yy);
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.False(output.Yy);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidStartReleaseZzValue() {
-      GsaBool6Goo output = _helper.GetStartReleaseOutput();
-      Assert.False(output.Value.Zz);
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.False(output.Zz);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidEndReleaseXValue() {
-      GsaBool6Goo output = _helper.GetEndReleaseOutput();
-      Assert.False(output.Value.X);
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.False(output.X);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidEndReleaseYValue() {
-      GsaBool6Goo output = _helper.GetEndReleaseOutput();
-      Assert.False(output.Value.Y);
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.False(output.Y);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidEndReleaseZValue() {
-      GsaBool6Goo output = _helper.GetEndReleaseOutput();
-      Assert.False(output.Value.Z);
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.False(output.Z);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidEndReleaseXxValue() {
-      GsaBool6Goo output = _helper.GetEndReleaseOutput();
-      Assert.False(output.Value.Xx);
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.False(output.Xx);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidEndReleaseYyValue() {
-      GsaBool6Goo output = _helper.GetEndReleaseOutput();
-      Assert.False(output.Value.Yy);
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.False(output.Yy);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidEndReleaseZzValue() {
-      GsaBool6Goo output = _helper.GetEndReleaseOutput();
-      Assert.False(output.Value.Zz);
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.False(output.Zz);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidAngleValue() {
-      GH_Number output = _helper.GetAngleOutput();
-      Assert.Equal(0, output.Value, 6);
+      double output = _helper.GetAngleOutput();
+      Assert.Equal(0, output, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnNullOrientation() {
-      GsaNodeGoo output = _helper.GetOrientationOutput();
-      Assert.Null(output.Value);
+      GsaNode output = _helper.GetOrientationOutput();
+      Assert.Null(output);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidName() {
-      GH_String output = _helper.GetNameOutput();
-      Assert.Equal("", output.Value);
+      string output = _helper.GetNameOutput();
+      Assert.Equal("", output);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidColor() {
-      GH_Colour output = _helper.GetColorOutput();
-      Assert.Equal("ff000000", output.Value.Name);
+      Color output = _helper.GetColorOutput();
+      Assert.Equal("ff000000", output.Name);
     }
 
     [Fact]
     public void EditElement1dShouldReturnFalseDummy() {
-      GH_Boolean output = _helper.GetDummyOutput();
-      Assert.False(output.Value);
+      bool output = _helper.GetDummyOutput();
+      Assert.False(output);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidParentMember() {
-      GH_Integer output = _helper.GetParentMemberOutput();
-      Assert.Equal(0, output.Value);
+      int output = _helper.GetParentMemberOutput();
+      Assert.Equal(0, output);
     }
   }
 
@@ -851,12 +853,14 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditElementShouldReturnValidTypeWhenInputTypeIsInt() {
       _helper.SetTypeInput("1");
-      GH_String output = _helper.GetTypeOutput();
-      Assert.Equal("Bar", output.Value);
+      string output = _helper.GetTypeOutput();
+      Assert.Equal("Bar", output);
     }
   }
 
   public class EditElement1dTestsHelper {
+    public readonly string DefaultSection = "STD CH 10 20 30 40";
+    public readonly int DefaultId = 1;
     private readonly GH_OasysComponent _component;
 
     public EditElement1dTestsHelper() {
@@ -876,82 +880,90 @@ namespace GsaGHTests.Components.Geometry {
       return comp;
     }
 
-    public GsaElement1dGoo GetElementOutput() {
+    public GsaElement1d GetElementOutput() {
       var element = (GsaElement1dGoo)ComponentTestHelper.GetOutput(_component, 0);
-      return element;
+      return element.Value;
     }
 
-    public GH_Integer GetIdOutput() {
+    public int GetIdOutput() {
       var id = (GH_Integer)ComponentTestHelper.GetOutput(_component, 1);
-      return id;
+      return id.Value;
     }
 
-    public GH_Line GetLineOutput() {
+    public Line GetLineOutput() {
       var line = (GH_Line)ComponentTestHelper.GetOutput(_component, 2);
-      return line;
+      return line.Value;
     }
 
-    public GsaPropertyGoo GetSectionOutput() {
+    public IGsaProperty GetSectionOutput() {
       var section = (GsaPropertyGoo)ComponentTestHelper.GetOutput(_component, 3);
-      return section;
+      return section.Value;
     }
 
-    public GH_Integer GetGroupOutput() {
+    public int GetGroupOutput() {
       var group = (GH_Integer)ComponentTestHelper.GetOutput(_component, 4);
-      return group;
+      return group.Value;
     }
 
-    public GH_String GetTypeOutput() {
+    public string GetTypeOutput() {
       var type = (GH_String)ComponentTestHelper.GetOutput(_component, 5);
-      return type;
+      return type.Value;
     }
 
-    public GsaOffsetGoo GetOffsetOutput() {
+    public GsaOffset GetOffsetOutput() {
       var offset = (GsaOffsetGoo)ComponentTestHelper.GetOutput(_component, 6);
-      return offset;
+      return offset.Value;
     }
 
-    public GsaBool6Goo GetStartReleaseOutput() {
+    public GsaBool6 GetStartReleaseOutput() {
       var startRelease = (GsaBool6Goo)ComponentTestHelper.GetOutput(_component, 7);
-      return startRelease;
+      return startRelease.Value;
     }
 
-    public GsaBool6Goo GetEndReleaseOutput() {
+    public GsaBool6 GetEndReleaseOutput() {
       var endRelease = (GsaBool6Goo)ComponentTestHelper.GetOutput(_component, 8);
-      return endRelease;
+      return endRelease.Value;
     }
 
-    public GH_Number GetAngleOutput() {
+    public double GetAngleOutput() {
       var angle = (GH_Number)ComponentTestHelper.GetOutput(_component, 9);
-      return angle;
+      return angle.Value;
     }
 
-    public GsaNodeGoo GetOrientationOutput() {
+    public GsaNode GetOrientationOutput() {
       var orientation = (GsaNodeGoo)ComponentTestHelper.GetOutput(_component, 10);
-      return orientation;
+      return orientation.Value;
     }
 
-    public GH_String GetNameOutput() {
+    public string GetNameOutput() {
       var name = (GH_String)ComponentTestHelper.GetOutput(_component, 11);
-      return name;
+      return name.Value;
     }
 
-    public GH_Colour GetColorOutput() {
+    public Color GetColorOutput() {
       var colour = (GH_Colour)ComponentTestHelper.GetOutput(_component, 12);
-      return colour;
+      return colour.Value;
     }
 
-    public GH_Boolean GetDummyOutput() {
+    public bool GetDummyOutput() {
       var dummy = (GH_Boolean)ComponentTestHelper.GetOutput(_component, 13);
-      return dummy;
+      return dummy.Value;
     }
 
-    public GH_Integer GetParentMemberOutput() {
+    public int GetParentMemberOutput() {
       var parentMember = (GH_Integer)ComponentTestHelper.GetOutput(_component, 14);
-      return parentMember;
+      return parentMember.Value;
     }
 
-    public void SetIdInput(int id = 1) {
+    public void SetIdInput() {
+      SetIdInput(DefaultId);
+    }
+
+    public void SetSectionInput() {
+      SetSectionInput(DefaultSection);
+    }
+
+    public void SetIdInput(int id) {
       ComponentTestHelper.SetInput(_component, id, 1);
     }
 
@@ -959,7 +971,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(_component, new LineCurve(new Point3d(0, 0, 0), new Point3d(1, 2, 3)), 2);
     }
 
-    public void SetSectionInput(string profile = "STD CH 10 20 30 40") {
+    public void SetSectionInput(string profile) {
       ComponentTestHelper.SetInput(_component, profile, 3);
     }
 
