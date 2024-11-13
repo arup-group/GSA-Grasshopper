@@ -30,46 +30,45 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new Edit1dElement();
       comp.CreateAttributes();
 
-      ComponentTestHelper.SetInput(comp,
-        ComponentTestHelper.GetOutput(CreateElement1dTests.ComponentMother()), 0);
+      ComponentTestHelper.SetInput(comp, ComponentTestHelper.GetOutput(CreateElement1dTests.ComponentMother()), 0);
 
       return comp;
     }
 
     [Fact]
-    public void ComponentReturnValidLinePointAtStartXValue() {
+    public void ComponentReturnValidElementLinePointAtStartXValue() {
       GsaElement1dGoo element = GetElementOutput();
       Assert.Equal(0, element.Value.Line.PointAtStart.X, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidLinePointAtStartYValue() {
+    public void ComponentReturnValidElementLinePointAtStartYValue() {
       GsaElement1dGoo element = GetElementOutput();
       Assert.Equal(-1, element.Value.Line.PointAtStart.Y, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidLinePointAtStartZValue() {
+    public void ComponentReturnValidElementLinePointAtStartZValue() {
       GsaElement1dGoo element = GetElementOutput();
       Assert.Equal(0, element.Value.Line.PointAtStart.Z, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidLinePointAtEndXValue() {
+    public void ComponentReturnValidElementLinePointAtEndXValue() {
       GsaElement1dGoo element = GetElementOutput();
-      Assert.Equal(7, element.Value.Line.PointAtStart.X, 6);
+      Assert.Equal(7, element.Value.Line.PointAtEnd.X, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidLinePointAtEndYValue() {
+    public void ComponentReturnValidElementLinePointAtEndYValue() {
       GsaElement1dGoo element = GetElementOutput();
-      Assert.Equal(3, element.Value.Line.PointAtStart.Y, 6);
+      Assert.Equal(3, element.Value.Line.PointAtEnd.Y, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidLinePointAtEndZValue() {
+    public void ComponentReturnValidElementLinePointAtEndZValue() {
       GsaElement1dGoo element = GetElementOutput();
-      Assert.Equal(1, element.Value.Line.PointAtStart.Z, 6);
+      Assert.Equal(1, element.Value.Line.PointAtEnd.Z, 6);
     }
 
     [Fact]
@@ -277,85 +276,297 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     [Fact]
-    public void EditElementByInputs() {
-      ComponentTestHelper.SetInput(_component, 1, 1);
-      ComponentTestHelper.SetInput(_component, new LineCurve(new Point3d(0, 0, 0), new Point3d(1, 2, 3)), 2);
-      ComponentTestHelper.SetInput(_component, "STD CH 10 20 30 40", 3);
-      ComponentTestHelper.SetInput(_component, 7, 4);
-      ComponentTestHelper.SetInput(_component, "Beam", 5);
-      ComponentTestHelper.SetInput(_component, new GsaOffsetGoo(new GsaOffset(1, 2, 3, 4)), 6);
-      ComponentTestHelper.SetInput(_component, new GsaBool6Goo(new GsaBool6(true, true, true, true, true, true)), 7);
-      ComponentTestHelper.SetInput(_component, new GsaBool6Goo(new GsaBool6(true, true, true, true, true, true)), 8);
-      ComponentTestHelper.SetInput(_component, Math.PI, 9);
-      var node = new GsaNode(new Point3d(1, 2, 3)) {
-        Id = 99
-      };
-      ComponentTestHelper.SetInput(_component, new GsaNodeGoo(node), 10);
-      ComponentTestHelper.SetInput(_component, "name", 11);
-      ComponentTestHelper.SetInput(_component, new GH_Colour(Color.White), 12);
-      ComponentTestHelper.SetInput(_component, true, 13);
-
-      var element = (GsaElement1dGoo)ComponentTestHelper.GetOutput(_component, 0);
-      var id = (GH_Integer)ComponentTestHelper.GetOutput(_component, 1);
-      var line = (GH_Line)ComponentTestHelper.GetOutput(_component, 2);
-      var section = (GsaPropertyGoo)ComponentTestHelper.GetOutput(_component, 3);
-      var group = (GH_Integer)ComponentTestHelper.GetOutput(_component, 4);
-      var type = (GH_String)ComponentTestHelper.GetOutput(_component, 5);
-      var offset = (GsaOffsetGoo)ComponentTestHelper.GetOutput(_component, 6);
-      var startRelease = (GsaBool6Goo)ComponentTestHelper.GetOutput(_component, 7);
-      var relEnd = (GsaBool6Goo)ComponentTestHelper.GetOutput(_component, 8);
-      var angle = (GH_Number)ComponentTestHelper.GetOutput(_component, 9);
-      var orientation = (GsaNodeGoo)ComponentTestHelper.GetOutput(_component, 10);
-      var name = (GH_String)ComponentTestHelper.GetOutput(_component, 11);
-      var colour = (GH_Colour)ComponentTestHelper.GetOutput(_component, 12);
-      var dummy = (GH_Boolean)ComponentTestHelper.GetOutput(_component, 13);
-      var parentMem = (GH_Integer)ComponentTestHelper.GetOutput(_component, 14);
-
+    public void EditElementShouldReturnValidElementLinePointAtStartValueX() {
+      SetInputForEditElement1d();
+      GsaElement1dGoo element = GetElementOutput();
       Assert.Equal(0, element.Value.Line.PointAtStart.X);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidElementLinePointAtStartValueY() {
+      SetInputForEditElement1d();
+      GsaElement1dGoo element = GetElementOutput();
       Assert.Equal(0, element.Value.Line.PointAtStart.Y);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidElementLinePointAtStartValueZ() {
+      SetInputForEditElement1d();
+      GsaElement1dGoo element = GetElementOutput();
       Assert.Equal(0, element.Value.Line.PointAtStart.Z);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidElementLinePointAtEndValueX() {
+      SetInputForEditElement1d();
+      GsaElement1dGoo element = GetElementOutput();
       Assert.Equal(1, element.Value.Line.PointAtEnd.X);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidElementLinePointAtEndValueY() {
+      SetInputForEditElement1d();
+      GsaElement1dGoo element = GetElementOutput();
       Assert.Equal(2, element.Value.Line.PointAtEnd.Y);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidElementLinePointAtEndValueZ() {
+      SetInputForEditElement1d();
+      GsaElement1dGoo element = GetElementOutput();
       Assert.Equal(3, element.Value.Line.PointAtEnd.Z);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidSectionProfileFromElement() {
+      SetInputForEditElement1d();
+      GsaElement1dGoo element = GetElementOutput();
       Assert.Equal("STD CH 10 20 30 40", element.Value.Section.ApiSection.Profile);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidGroupValueFromElement() {
+      SetInputForEditElement1d();
+      GsaElement1dGoo element = GetElementOutput();
       Assert.Equal(7, element.Value.ApiElement.Group);
-      Assert.Equal(1, id.Value);
-      Assert.Equal(0, line.Value.From.X);
-      Assert.Equal(0, line.Value.From.Y);
-      Assert.Equal(0, line.Value.From.Z);
-      Assert.Equal(1, line.Value.To.X);
-      Assert.Equal(2, line.Value.To.Y);
-      Assert.Equal(3, line.Value.To.Z);
-      Assert.Equal("STD CH 10 20 30 40", ((GsaSection)section.Value).ApiSection.Profile);
-      Assert.Equal(7, group.Value);
-      Assert.Equal("Beam", type.Value);
-      Assert.Equal(1, offset.Value.X1.Value);
-      Assert.Equal(2, offset.Value.X2.Value);
-      Assert.Equal(3, offset.Value.Y.Value);
-      Assert.Equal(4, offset.Value.Z.Value);
-      Assert.True(startRelease.Value.X);
-      Assert.True(startRelease.Value.Y);
-      Assert.True(startRelease.Value.Z);
-      Assert.True(startRelease.Value.Xx);
-      Assert.True(startRelease.Value.Yy);
-      Assert.True(startRelease.Value.Zz);
-      Assert.True(relEnd.Value.X);
-      Assert.True(relEnd.Value.Y);
-      Assert.True(relEnd.Value.Z);
-      Assert.True(relEnd.Value.Xx);
-      Assert.True(relEnd.Value.Yy);
-      Assert.True(relEnd.Value.Zz);
-      Assert.Equal(Math.PI, angle.Value);
-      Assert.Equal(1, orientation.Value.Point.X);
-      Assert.Equal(2, orientation.Value.Point.Y);
-      Assert.Equal(3, orientation.Value.Point.Z);
-      Assert.Equal(99, orientation.Value.Id);
-      Assert.Equal("name", name.Value);
-      Assert.Equal(255, colour.Value.R);
-      Assert.Equal(255, colour.Value.G);
-      Assert.Equal(255, colour.Value.B);
-      Assert.True(dummy.Value);
-      Assert.Equal(0, parentMem.Value);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidId() {
+      SetInputForEditElement1d();
+      GH_Integer output = GetIdOutput();
+      Assert.Equal(1, output.Value);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidLineFromXValue() {
+      SetInputForEditElement1d();
+      GH_Line output = GetLineOutput();
+      Assert.Equal(0, output.Value.From.X);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidLineFromYValue() {
+      SetInputForEditElement1d();
+      GH_Line output = GetLineOutput();
+      Assert.Equal(0, output.Value.From.Y);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidLineFromZValue() {
+      SetInputForEditElement1d();
+      GH_Line output = GetLineOutput();
+      Assert.Equal(0, output.Value.From.Z);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidLineToXValue() {
+      SetInputForEditElement1d();
+      GH_Line output = GetLineOutput();
+      Assert.Equal(1, output.Value.To.X);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidLineToYValue() {
+      SetInputForEditElement1d();
+      GH_Line output = GetLineOutput();
+      Assert.Equal(2, output.Value.To.Y);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidLineToZValue() {
+      SetInputForEditElement1d();
+      GH_Line output = GetLineOutput();
+      Assert.Equal(3, output.Value.To.Z);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidSectionProfileValue() {
+      SetInputForEditElement1d();
+      GsaPropertyGoo output = GetSectionOutput();
+      Assert.Equal("STD CH 10 20 30 40", ((GsaSection)output.Value).ApiSection.Profile);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidGroupValue() {
+      SetInputForEditElement1d();
+      GH_Integer output = GetGroupOutput();
+      Assert.Equal(7, output.Value);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidTypeValue() {
+      SetInputForEditElement1d();
+      GH_String output = GetTypeOutput();
+      Assert.Equal("Beam", output.Value);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidOffsetX1Value() {
+      SetInputForEditElement1d();
+      GsaOffsetGoo output = GetOffsetOutput();
+      Assert.Equal(1, output.Value.X1.Value);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidOffsetX2Value() {
+      SetInputForEditElement1d();
+      GsaOffsetGoo output = GetOffsetOutput();
+      Assert.Equal(2, output.Value.X2.Value);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidOffsetYValue() {
+      SetInputForEditElement1d();
+      GsaOffsetGoo output = GetOffsetOutput();
+      Assert.Equal(3, output.Value.Y.Value);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidOffsetZValue() {
+      SetInputForEditElement1d();
+      GsaOffsetGoo output = GetOffsetOutput();
+      Assert.Equal(4, output.Value.Z.Value);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidStartReleaseXValue() {
+      SetInputForEditElement1d();
+      GsaBool6Goo output = GetStartReleaseOutput();
+      Assert.True(output.Value.X);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidStartReleaseYValue() {
+      SetInputForEditElement1d();
+      GsaBool6Goo output = GetStartReleaseOutput();
+      Assert.True(output.Value.Y);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidStartReleaseZValue() {
+      SetInputForEditElement1d();
+      GsaBool6Goo output = GetStartReleaseOutput();
+      Assert.True(output.Value.X);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidStartReleaseXxValue() {
+      SetInputForEditElement1d();
+      GsaBool6Goo output = GetStartReleaseOutput();
+      Assert.True(output.Value.Xx);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidStartReleaseYyValue() {
+      SetInputForEditElement1d();
+      GsaBool6Goo output = GetStartReleaseOutput();
+      Assert.True(output.Value.Yy);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidStartReleaseZzValue() {
+      SetInputForEditElement1d();
+      GsaBool6Goo output = GetStartReleaseOutput();
+      Assert.True(output.Value.Zz);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidEndReleaseXValue() {
+      SetInputForEditElement1d();
+      GsaBool6Goo output = GetEndReleaseOutput();
+      Assert.True(output.Value.X);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidEndReleaseYValue() {
+      SetInputForEditElement1d();
+      GsaBool6Goo output = GetEndReleaseOutput();
+      Assert.True(output.Value.Y);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidEndReleaseZValue() {
+      SetInputForEditElement1d();
+      GsaBool6Goo output = GetEndReleaseOutput();
+      Assert.True(output.Value.X);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidEndReleaseXxValue() {
+      SetInputForEditElement1d();
+      GsaBool6Goo output = GetEndReleaseOutput();
+      Assert.True(output.Value.Xx);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidEndReleaseYyValue() {
+      SetInputForEditElement1d();
+      GsaBool6Goo output = GetEndReleaseOutput();
+      Assert.True(output.Value.Yy);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidEndtReleaseZzValue() {
+      SetInputForEditElement1d();
+      GsaBool6Goo output = GetEndReleaseOutput();
+      Assert.True(output.Value.Zz);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidAngleValue() {
+      SetInputForEditElement1d();
+      GH_Number output = GetAngleOutput();
+      Assert.Equal(Math.PI, output.Value);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidOrientationYValue() {
+      SetInputForEditElement1d();
+      GsaNodeGoo output = GetOrientationOutput();
+      Assert.Equal(2, output.Value.Point.Y);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidOrientationZValue() {
+      SetInputForEditElement1d();
+      GsaNodeGoo output = GetOrientationOutput();
+      Assert.Equal(3, output.Value.Point.Z);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidOrientationIdValue() {
+      SetInputForEditElement1d();
+      GsaNodeGoo output = GetOrientationOutput();
+      Assert.Equal(99, output.Value.Id);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidNameValue() {
+      SetInputForEditElement1d();
+      GH_String output = GetNameOutput();
+      Assert.Equal("name", output.Value);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidColorValue() {
+      SetInputForEditElement1d();
+      GH_Colour output = GetColorOutput();
+      Assert.Equal("ffffffff", output.Value.Name);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidDummyValue() {
+      SetInputForEditElement1d();
+      GH_Boolean output = GetDummyOutput();
+      Assert.True(output.Value);
+    }
+
+    [Fact]
+    public void EditElementShouldReturnValidParentMemberValue() {
+      SetInputForEditElement1d();
+      GH_Integer output = GetParentMemberOutput();
+      Assert.Equal(0, output.Value);
     }
 
     [Fact]
@@ -467,6 +678,26 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
+    private void SetInputForEditElement1d() {
+      SetIdInput();
+      SetLineInput();
+      SetSectionInput();
+      SetGroupInput(7);
+      SetTypeInput("Beam");
+      SetOffsetInput(new GsaOffsetGoo(new GsaOffset(1, 2, 3, 4)));
+      SetStartReleaseInput(new GsaBool6Goo(new GsaBool6(true, true, true, true, true, true)));
+      SetEndReleaseInput(new GsaBool6Goo(new GsaBool6(true, true, true, true, true, true)));
+      SetAngleInput(Math.PI);
+      SetOrientationInput(new GsaNodeGoo(new GsaNode(new Point3d(1, 2, 3)) {
+        Id = 99,
+      }));
+      SetNameInput("name");
+      SetColorInput(new GH_Colour(Color.White));
+      SetDummyInput(true);
+    }
+
+    #region helper methods: get output
+
     private GsaElement1dGoo GetElementOutput() {
       var element = (GsaElement1dGoo)ComponentTestHelper.GetOutput(_component, 0);
       return element;
@@ -541,5 +772,64 @@ namespace GsaGHTests.Components.Geometry {
       var parentMember = (GH_Integer)ComponentTestHelper.GetOutput(_component, 14);
       return parentMember;
     }
+
+    #endregion
+
+    #region helper methods: set input
+
+    private void SetIdInput(int id = 1) {
+      ComponentTestHelper.SetInput(_component, id, 1);
+    }
+
+    private void SetLineInput() {
+      ComponentTestHelper.SetInput(_component, new LineCurve(new Point3d(0, 0, 0), new Point3d(1, 2, 3)), 2);
+    }
+
+    private void SetSectionInput(string profile = "STD CH 10 20 30 40") {
+      ComponentTestHelper.SetInput(_component, profile, 3);
+    }
+
+    private void SetGroupInput(int id = 7) {
+      ComponentTestHelper.SetInput(_component, id, 4);
+    }
+
+    private void SetTypeInput(string type) {
+      ComponentTestHelper.SetInput(_component, type, 5);
+    }
+
+    private void SetOffsetInput(GsaOffsetGoo offset) {
+      ComponentTestHelper.SetInput(_component, offset, 6);
+    }
+
+    private void SetStartReleaseInput(GsaBool6Goo release) {
+      ComponentTestHelper.SetInput(_component, release, 7);
+    }
+
+    private void SetEndReleaseInput(GsaBool6Goo release) {
+      ComponentTestHelper.SetInput(_component, release, 8);
+    }
+
+    private void SetAngleInput(double angle) {
+      ComponentTestHelper.SetInput(_component, angle, 9);
+    }
+
+    private void SetOrientationInput(GsaNodeGoo orientation) {
+      ComponentTestHelper.SetInput(_component, orientation, 10);
+    }
+
+    private void SetNameInput(string name) {
+      ComponentTestHelper.SetInput(_component, name, 11);
+    }
+
+    private void SetColorInput(GH_Colour color) {
+      ComponentTestHelper.SetInput(_component, color, 12);
+    }
+
+    private void SetDummyInput(bool dummy) {
+      ComponentTestHelper.SetInput(_component, dummy, 13);
+    }
+
+    #endregion
+
   }
 }
