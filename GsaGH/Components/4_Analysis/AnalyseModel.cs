@@ -225,7 +225,7 @@ namespace GsaGH.Components {
           var task = new GsaAnalysisTask {
             Id = model.ApiModel.AddAnalysisTask(),
           };
-          ModelFactory.BuildAnalysisTask(model, new List<GsaAnalysisTask> { task });
+          ModelFactory.BuildAnalysisTask(model.ApiModel, new List<GsaAnalysisTask> { task }, true);
           if (model.ApiModel.AnalysisTasks()[task.Id].Cases.Count == 0) {
             this.AddRuntimeWarning(
               " Model contains no loads and has not been analysed, but has been assembled.");
@@ -233,9 +233,6 @@ namespace GsaGH.Components {
             this.AddRuntimeRemark(
               " Model contained no Analysis Tasks. Default Task has been created containing " +
               "all cases found in model");
-            foreach (GsaAnalysisCase analysisCase in task.Cases) {
-              model.ApiModel.SetAnalysisCaseToTask(task.Id, analysisCase.Id, analysisCase.Name, analysisCase.Definition);
-            }
             gsaTasks = model.ApiModel.AnalysisTasks();
           }
         }

@@ -17,7 +17,7 @@ using ForceUnit = OasysUnits.Units.ForceUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using MassUnit = OasysUnits.Units.MassUnit;
 
-namespace GsaGHTests.Helpers.GsaAPITests {
+namespace GsaGHTests.Helpers.GsaApi {
   [Collection("GrasshopperFixture collection")]
   public class MappingsTests {
 

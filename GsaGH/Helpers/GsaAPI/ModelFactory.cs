@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 using GsaAPI;
 
@@ -76,35 +77,51 @@ namespace GsaGH.Helpers.GsaApi {
       }
     }
 
-    public static void BuildAnalysisTask(GsaModel model, List<GsaAnalysisTask> analysisTasks) {
+    public static void BuildAnalysisTask(Model model, List<GsaAnalysisTask> analysisTasks, bool createDefaultCase = false) {
       if (analysisTasks != null) {
-        ReadOnlyDictionary<int, AnalysisTask> existingTasks = model.ApiModel.AnalysisTasks();
+        ReadOnlyDictionary<int, AnalysisTask> existingTasks = model.AnalysisTasks();
         foreach (GsaAnalysisTask task in analysisTasks) {
           bool isNewTask = !existingTasks.Keys.Contains(task.Id);
           if (isNewTask) {
-            task.Id = model.ApiModel.AddAnalysisTask(task.ApiTask);
+            task.Id = model.AddAnalysisTask(task.ApiTask);
           }
 
-          if (task.Cases.Count == 0) {
-            task.CreateDefaultCases(model);
+          if (task.Cases.Count == 0 && createDefaultCase) {
+            task.CreateDefaultCases(new GsaModel(model));
+          } else {
+            //clear anaysis case list from task
+            foreach (GsaAnalysisCase analysisCase in task.Cases) {
+              model.DeleteAnalysisCaseFromTask(task.Id, analysisCase.Id);
+            }
           }
-
-          if (task.Cases.Count == 0) {
-            //still no case indicate no load present in gsa model
-            continue;
-          }
-
+          //then create case and assign to task
           foreach (GsaAnalysisCase analysisCase in task.Cases) {
-            string caseDefinition = model.ApiModel.AnalysisCaseDescription(analysisCase.Id);
-            if (!string.IsNullOrEmpty(analysisCase.Definition)) {
-              //create new case and assign to task
-              model.ApiModel.AddAnalysisCaseToTask(task.Id, analysisCase.Name, analysisCase.Definition);
+            if (AnalysisCaseNeedToBeAppended(model, task.Id, analysisCase.Id)) {
+              //when two different analysis task is referring same analysis case
+              model.AddAnalysisCaseToTask(task.Id, analysisCase.Name, analysisCase.Definition);
             } else {
-              model.ApiModel.SetAnalysisCaseToTask(task.Id, analysisCase.Id, analysisCase.Name, analysisCase.Definition);
+              model.SetAnalysisCaseToTask(task.Id, analysisCase.Id, analysisCase.Name, analysisCase.Definition);
             }
           }
         }
       }
+    }
+
+    private static bool AnalysisCaseNeedToBeAppended(Model model, int taskId, int analysisCaseId) {
+      foreach (KeyValuePair<int, AnalysisTask> existingTask in model.AnalysisTasks()) {
+        if (taskId == existingTask.Key) {
+          continue;
+        }
+        foreach (int existingCase in existingTask.Value.Cases) {
+          //i.e. same anlysis case is existing in another task
+          if (existingCase == analysisCaseId) {
+            {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
     }
   }
 }

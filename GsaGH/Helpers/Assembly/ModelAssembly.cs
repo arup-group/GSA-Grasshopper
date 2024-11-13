@@ -27,7 +27,6 @@ namespace GsaGH.Helpers.Assembly {
     private GsaIntDictionary<Axis> _axes;
     private GsaGuidIntListDictionary<GSAElement> _elements;
     private GsaIntDictionary<GridLine> _gridLines;
-    private GsaModel _gsaModel;
     private GsaGuidDictionary<EntityList> _lists;
     private ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship;
     private GsaGuidDictionary<Member> _members;
@@ -249,7 +248,7 @@ namespace GsaGH.Helpers.Assembly {
 
     private void ConvertAndAssembleAnalysisTasks(List<GsaAnalysisTask> analysisTasks) {
       // Set Analysis Tasks in model
-      ModelFactory.BuildAnalysisTask(_gsaModel, analysisTasks);
+      ModelFactory.BuildAnalysisTask(_model, analysisTasks);
     }
 
     private void ConvertAndAssembleCombinations(List<GsaCombinationCase> combinations) {
@@ -588,7 +587,6 @@ namespace GsaGH.Helpers.Assembly {
     private void SetupModel(GsaModel model, LengthUnit unit) {
       model ??= new GsaModel();
       _model = model.ApiModel;
-      _gsaModel = model;
       _unit = unit;
       _model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_unit);
       UiUnits units = _model.UiUnits();

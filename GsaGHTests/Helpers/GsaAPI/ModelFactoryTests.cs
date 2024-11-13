@@ -35,7 +35,7 @@ namespace GsaGHTests.Helpers.GsaApi {
       var task = new GsaAnalysisTask {
         Id = model.ApiModel.AddAnalysisTask(),
       };
-      ModelFactory.BuildAnalysisTask(model, new List<GsaAnalysisTask> { task });
+      ModelFactory.BuildAnalysisTask(model.ApiModel, new List<GsaAnalysisTask> { task }, true);
       AnalysisTask outTask = model.ApiModel.AnalysisTasks()[task.Id];
       Assert.Equal(1, outTask.Cases[0]);
       Assert.Equal(3, outTask.Cases[1]);
@@ -45,16 +45,17 @@ namespace GsaGHTests.Helpers.GsaApi {
     public void AnalysisCasesAreGettingAppendedAtLastWhenAnalysisCaseExist() {
       GsaModel model = GSAModel();
       int taskId = model.ApiModel.AddAnalysisTask();
-      //this will create analysis task of Id=1
+      //this will create analysis case of Id = 1
       model.ApiModel.AddAnalysisCaseToTask(taskId, "DL", "L1");
 
+      //now create another task and assign same analysis case i.e. Id = 1
       var newTask = new GsaAnalysisTask {
         Id = model.ApiModel.AddAnalysisTask(),
       };
-      //now smae task Id = 1 is used to create another case. So, should create case at Id = 2
+
       newTask.Cases.Add(new GsaAnalysisCase() { Id = 1, Name = "DL", Definition = "L1" });
 
-      ModelFactory.BuildAnalysisTask(model, new List<GsaAnalysisTask> { newTask });
+      ModelFactory.BuildAnalysisTask(model.ApiModel, new List<GsaAnalysisTask> { newTask });
       AnalysisTask outTask = model.ApiModel.AnalysisTasks()[newTask.Id];
       Assert.Equal(2, outTask.Cases[0]);
 
@@ -66,7 +67,7 @@ namespace GsaGHTests.Helpers.GsaApi {
        var task = new GsaAnalysisTask {
         Id = model.ApiModel.AddAnalysisTask(),
       };
-      ModelFactory.BuildAnalysisTask(model, new List<GsaAnalysisTask> { task });
+      ModelFactory.BuildAnalysisTask(model.ApiModel, new List<GsaAnalysisTask> { task });
       AnalysisTask outTask = model.ApiModel.AnalysisTasks()[task.Id];
       Assert.Empty(outTask.Cases);
     }
