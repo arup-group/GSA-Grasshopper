@@ -221,6 +221,11 @@ namespace GsaGHTests.Helpers {
       return output.Value;
     }
 
+    public static Mesh GetMeshOutput(GH_OasysComponent component, int index) {
+      var output = (GH_Mesh)GetOutput(component, index);
+      return output.Value;
+    }
+
     #endregion
 
     #region Goos output
@@ -240,6 +245,11 @@ namespace GsaGHTests.Helpers {
       return member.Value;
     }
 
+    public static GsaMember3d GetMember3dOutput(GH_OasysComponent component, int index) {
+      var member = (GsaMember3dGoo)GetOutput(component, index);
+      return member.Value;
+    }
+
     public static IGsaProperty GetPropertyOutput(GH_OasysComponent component, int index) {
       var section = (GsaPropertyGoo)GetOutput(component, index);
       return section.Value;
@@ -247,6 +257,11 @@ namespace GsaGHTests.Helpers {
 
     public static GsaProperty2d Get2dPropertyOutput(GH_OasysComponent component, int index) {
       var output = (GsaProperty2dGoo)GetOutput(component, index);
+      return output.Value;
+    }
+
+    public static GsaProperty3d Get3dPropertyOutput(GH_OasysComponent component, int index) {
+      var output = (GsaProperty3dGoo)GetOutput(component, index);
       return output.Value;
     }
 
