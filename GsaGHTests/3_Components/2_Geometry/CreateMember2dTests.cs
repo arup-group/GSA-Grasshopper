@@ -85,13 +85,13 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void CreateComponentWithSection3dPreviewShouldReturn10Vertices() {
       SetMember2dFromSection3d();
-      Assert.Equal(4, _gsaMember2dGooFromSection3d.Value.Section3dPreview.Mesh.Vertices.Count);
+      Assert.Equal(10, _gsaMember2dGooFromSection3d.Value.Section3dPreview.Mesh.Vertices.Count);
     }
 
     [Fact]
     public void CreateComponentWithSection3dPreviewShouldReturn12Outlines() {
       SetMember2dFromSection3d();
-      Assert.Equal(7, _gsaMember2dGooFromSection3d.Value.Section3dPreview.Outlines.Count());
+      Assert.Equal(12, _gsaMember2dGooFromSection3d.Value.Section3dPreview.Outlines.Count());
     }
 
     [Fact]
