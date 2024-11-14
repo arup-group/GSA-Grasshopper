@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 using Grasshopper.Kernel;
@@ -10,6 +11,7 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 
+using OasysGH.Components;
 using OasysGH.Parameters;
 
 using OasysUnits;
@@ -28,8 +30,7 @@ namespace GsaGHTests.Helpers {
       return component.Params.Output[index].VolatileData.get_Branch(branch)[item];
     }
 
-    public static void ComputeOutput(GH_Component component, int index = 0)
-    {
+    public static void ComputeOutput(GH_Component component, int index = 0) {
       component.ExpireSolution(true);
       component.Params.Output[index].ExpireSolution(true);
       component.Params.Output[index].CollectData();
@@ -131,7 +132,7 @@ namespace GsaGHTests.Helpers {
     }
 
     public static void SetInput(GH_Component component, object obj, string name) {
-      var index = component.Params.IndexOfInputParam(name);
+      int index = component.Params.IndexOfInputParam(name);
       SetInput(component, obj, index);
     }
 
@@ -192,5 +193,113 @@ namespace GsaGHTests.Helpers {
       input.PersistentData.Append(resultGoo);
       component.Params.Input[0].AddSource(input);
     }
+
+    #region extra types output
+
+    public static Color GetColorOutput(GH_OasysComponent component, int index) {
+      var colour = (GH_Colour)GetOutput(component, index);
+      return colour.Value;
+    }
+
+    public static Curve GetCurveOutput(GH_OasysComponent component, int index) {
+      var curve = (GH_Curve)GetOutput(component, index);
+      return curve.Value;
+    }
+
+    public Line GetLineOutput(GH_OasysComponent component, int index) {
+      var line = (GH_Line)GetOutput(component, index);
+      return line.Value;
+    }
+
+    public static Brep GetBrepOutput(GH_OasysComponent component, int index) {
+      var output = (GH_Brep)GetOutput(component, index);
+      return output.Value;
+    }
+
+    #endregion
+
+    #region Goos output
+
+    public static GsaElement1d GetElement1dOutput(GH_OasysComponent component, int index) {
+      var element = (GsaElement1dGoo)GetOutput(component, index);
+      return element.Value;
+    }
+
+    public static GsaMember1d GetMember1dOutput(GH_OasysComponent component, int index) {
+      var member = (GsaMember1dGoo)GetOutput(component, index);
+      return member.Value;
+    }
+
+    public static GsaMember2d GetMember2dOutput(GH_OasysComponent component, int index) {
+      var member = (GsaMember2dGoo)GetOutput(component, index);
+      return member.Value;
+    }
+
+    public IGsaProperty GetPropertyOutput(GH_OasysComponent component, int index) {
+      var section = (GsaPropertyGoo)GetOutput(component, index);
+      return section.Value;
+    }
+
+    public static GsaProperty2d Get2dPropertyOutput(GH_OasysComponent component, int index) {
+      var output = (GsaProperty2dGoo)GetOutput(component, index);
+      return output.Value;
+    }
+
+    public static GsaSpringProperty GetSpringPropertyOutput(GH_OasysComponent component, int index) {
+      var property = (GsaSpringPropertyGoo)GetOutput(component, index);
+      return property.Value;
+    }
+
+    public static GsaNode GetNodeOutput(GH_OasysComponent component, int index) {
+      var orientation = (GsaNodeGoo)GetOutput(component, index);
+      return orientation.Value;
+    }
+
+    public static GsaSection GetSectionOutput(GH_OasysComponent component, int index) {
+      var section = (GsaSectionGoo)GetOutput(component, index);
+      return section.Value;
+    }
+
+    public static GsaOffset GetOffsetOutput(GH_OasysComponent component, int index) {
+      var output = (GsaOffsetGoo)GetOutput(component, index);
+      return output.Value;
+    }
+
+    public static GsaBool6 GetBool6Output(GH_OasysComponent component, int index) {
+      var startRelease = (GsaBool6Goo)GetOutput(component, index);
+      return startRelease.Value;
+    }
+
+    public static GsaEffectiveLengthOptions GetEffectiveLengthOutput(GH_OasysComponent component, int index) {
+      var effectiveLength = (GsaEffectiveLengthOptionsGoo)GetOutput(component, index);
+      return effectiveLength.Value;
+    }
+
+    #endregion
+
+    #region base Types output
+
+    public static bool GetBoolOutput(GH_OasysComponent component, int index) {
+      var output = (GH_Boolean)GetOutput(component, index);
+      return output.Value;
+    }
+
+    public static double GetNumberOutput(GH_OasysComponent component, int index) {
+      var output = (GH_Number)GetOutput(component, index);
+      return output.Value;
+    }
+
+    public static int GetIntOutput(GH_OasysComponent component, int index) {
+      var output = (GH_Integer)GetOutput(component, index);
+      return output.Value;
+    }
+
+    public static string GetStringOutput(GH_OasysComponent component, int index) {
+      var output = (GH_String)GetOutput(component, index);
+      return output.Value;
+    }
+
+    #endregion
+
   }
 }
