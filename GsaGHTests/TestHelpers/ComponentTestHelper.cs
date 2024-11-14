@@ -206,7 +206,7 @@ namespace GsaGHTests.Helpers {
       return curve.Value;
     }
 
-    public Line GetLineOutput(GH_OasysComponent component, int index) {
+    public static Line GetLineOutput(GH_OasysComponent component, int index) {
       var line = (GH_Line)GetOutput(component, index);
       return line.Value;
     }
@@ -235,7 +235,7 @@ namespace GsaGHTests.Helpers {
       return member.Value;
     }
 
-    public IGsaProperty GetPropertyOutput(GH_OasysComponent component, int index) {
+    public static IGsaProperty GetPropertyOutput(GH_OasysComponent component, int index) {
       var section = (GsaPropertyGoo)GetOutput(component, index);
       return section.Value;
     }
