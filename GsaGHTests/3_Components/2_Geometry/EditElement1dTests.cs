@@ -881,78 +881,63 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     public GsaElement1d GetElementOutput() {
-      var element = (GsaElement1dGoo)ComponentTestHelper.GetOutput(_component, 0);
-      return element.Value;
+      return ComponentTestHelper.GetElement1dOutput(_component, 0);
     }
 
     public int GetIdOutput() {
-      var id = (GH_Integer)ComponentTestHelper.GetOutput(_component, 1);
-      return id.Value;
+      return ComponentTestHelper.GetIntOutput(_component, 1);
     }
 
     public Line GetLineOutput() {
-      var line = (GH_Line)ComponentTestHelper.GetOutput(_component, 2);
-      return line.Value;
+      return ComponentTestHelper.GetLineOutput(_component, 2);
     }
 
     public IGsaProperty GetSectionOutput() {
-      var section = (GsaPropertyGoo)ComponentTestHelper.GetOutput(_component, 3);
-      return section.Value;
+      return ComponentTestHelper.GetPropertyOutput(_component, 3);
     }
 
     public int GetGroupOutput() {
-      var group = (GH_Integer)ComponentTestHelper.GetOutput(_component, 4);
-      return group.Value;
+      return ComponentTestHelper.GetIntOutput(_component, 4);
     }
 
     public string GetTypeOutput() {
-      var type = (GH_String)ComponentTestHelper.GetOutput(_component, 5);
-      return type.Value;
+      return ComponentTestHelper.GetStringOutput(_component, 5);
     }
 
     public GsaOffset GetOffsetOutput() {
-      var offset = (GsaOffsetGoo)ComponentTestHelper.GetOutput(_component, 6);
-      return offset.Value;
+      return ComponentTestHelper.GetOffsetOutput(_component, 6);
     }
 
     public GsaBool6 GetStartReleaseOutput() {
-      var startRelease = (GsaBool6Goo)ComponentTestHelper.GetOutput(_component, 7);
-      return startRelease.Value;
+      return ComponentTestHelper.GetBool6Output(_component, 7);
     }
 
     public GsaBool6 GetEndReleaseOutput() {
-      var endRelease = (GsaBool6Goo)ComponentTestHelper.GetOutput(_component, 8);
-      return endRelease.Value;
+      return ComponentTestHelper.GetBool6Output(_component, 8);
     }
 
     public double GetAngleOutput() {
-      var angle = (GH_Number)ComponentTestHelper.GetOutput(_component, 9);
-      return angle.Value;
+      return ComponentTestHelper.GetNumberOutput(_component, 9);
     }
 
     public GsaNode GetOrientationOutput() {
-      var orientation = (GsaNodeGoo)ComponentTestHelper.GetOutput(_component, 10);
-      return orientation.Value;
+      return ComponentTestHelper.GetNodeOutput(_component, 10);
     }
 
     public string GetNameOutput() {
-      var name = (GH_String)ComponentTestHelper.GetOutput(_component, 11);
-      return name.Value;
+      return ComponentTestHelper.GetStringOutput(_component, 11);
     }
 
     public Color GetColorOutput() {
-      var colour = (GH_Colour)ComponentTestHelper.GetOutput(_component, 12);
-      return colour.Value;
+      return ComponentTestHelper.GetColorOutput(_component, 12);
     }
 
     public bool GetDummyOutput() {
-      var dummy = (GH_Boolean)ComponentTestHelper.GetOutput(_component, 13);
-      return dummy.Value;
+      return ComponentTestHelper.GetBoolOutput(_component, 13);
     }
 
     public int GetParentMemberOutput() {
-      var parentMember = (GH_Integer)ComponentTestHelper.GetOutput(_component, 14);
-      return parentMember.Value;
+      return ComponentTestHelper.GetIntOutput(_component, 14);
     }
 
     public void SetIdInput() {
