@@ -20,6 +20,8 @@ namespace GsaGHTests.GooWrappers {
     [InlineData(typeof(GsaModelParameter))]
     // 1_Properties
     [InlineData(typeof(GsaBool6Parameter))]
+    [InlineData(typeof(GsaReleaseParameter))]
+    [InlineData(typeof(GsaRestraintParameter))]
     [InlineData(typeof(GsaMaterialParameter))]
     [InlineData(typeof(GsaOffsetParameter))]
     [InlineData(typeof(GsaPropertyParameter), true)]
