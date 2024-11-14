@@ -1005,14 +1005,15 @@ namespace GsaGHTests.Components.Geometry {
     public void ComponentNotReturnWarningWhenElementIsBarAndMeshSizeIsIs0() {
       _helper.SetElementTypeInput("Bar");
       _helper.SetMeshSizeInput(0.0);
+      _helper.GetMemberOutput();
       Assert.Empty(_helper.GetComponent().RuntimeMessages(GH_RuntimeMessageLevel.Warning));
     }
 
     [Fact]
     public void ComponentReturnWarningWhenElementIsBarAndMeshSizeIsIs1() {
       _helper.SetElementTypeInput("Bar");
-      _helper.SetMeshSizeInput(0.0);
       _helper.SetMeshSizeInput(1.0);
+      _helper.GetMemberOutput();
       Assert.Single(_helper.GetComponent().RuntimeMessages(GH_RuntimeMessageLevel.Warning));
     }
 
