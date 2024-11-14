@@ -27,6 +27,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("YY", true)]
     [InlineData("ZZ", false)]
     [InlineData("Cast", true)]
+    [InlineData("ReleaseOppositeToRestraint", true)]
     public void OutputTest(string groupIdentifier, bool expected) {
       GH_Document doc = Document;
 
