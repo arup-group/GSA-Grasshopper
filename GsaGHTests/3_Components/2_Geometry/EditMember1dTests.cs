@@ -1076,131 +1076,99 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     public GsaMember1d GetMemberOutput() {
-      var element = (GsaMember1dGoo)ComponentTestHelper.GetOutput(_component, 0);
-      return element.Value;
+      return ComponentTestHelper.GetMember1dOutput(_component, 0);
     }
 
     public int GetIdOutput() {
-      var id = (GH_Integer)ComponentTestHelper.GetOutput(_component, 1);
-      return id.Value;
+      return ComponentTestHelper.GetIntOutput(_component, 1);
     }
 
     public Curve GetMemberCurveOutput() {
-      var curve = (GH_Curve)ComponentTestHelper.GetOutput(_component, 2);
-      return curve.Value;
+      return ComponentTestHelper.GetCurveOutput(_component, 2);
     }
 
     public GsaSection GetSectionOutput() {
-      var section = (GsaSectionGoo)ComponentTestHelper.GetOutput(_component, 3);
-      return section.Value;
+      return ComponentTestHelper.GetSectionOutput(_component, 3);
     }
 
     public GsaSpringProperty GetSpringPropertyOutput() {
-      var property = (GsaSpringPropertyGoo)ComponentTestHelper.GetOutput(_component, 3);
-      return property.Value;
+      return ComponentTestHelper.GetSpringPropertyOutput(_component, 3);
     }
 
     public int GetMemberGroupOutput() {
-      var group = (GH_Integer)ComponentTestHelper.GetOutput(_component, 4);
-      return group.Value;
+      return ComponentTestHelper.GetIntOutput(_component, 4);
     }
 
     public string GetMemberTypeOutput() {
-      var type = (GH_String)ComponentTestHelper.GetOutput(_component, 5);
-      return type.Value;
+      return ComponentTestHelper.GetStringOutput(_component, 5);
     }
 
     public string GetElementTypeOutput() {
-      var type = (GH_String)ComponentTestHelper.GetOutput(_component, 6);
-      return type.Value;
+      return ComponentTestHelper.GetStringOutput(_component, 6);
     }
 
     public GsaOffset GetOffsetOutput() {
-      var offset = (GsaOffsetGoo)ComponentTestHelper.GetOutput(_component, 7);
-      return offset.Value;
+      return ComponentTestHelper.GetOffsetOutput(_component, 7);
     }
 
     public GsaBool6 GetStartReleaseOutput() {
-      var startRelease = (GsaBool6Goo)ComponentTestHelper.GetOutput(_component, 8);
-      return startRelease.Value;
+      return ComponentTestHelper.GetBool6Output(_component, 8);
     }
 
     public GsaBool6 GetEndReleaseOutput() {
-      var endRelease = (GsaBool6Goo)ComponentTestHelper.GetOutput(_component, 9);
-      return endRelease.Value;
+      return ComponentTestHelper.GetBool6Output(_component, 9);
     }
 
     public bool GetAutomaticOffsetEnd1Output() {
-      var autoBoolean = (GH_Boolean)ComponentTestHelper.GetOutput(_component, 10);
-      return autoBoolean.Value;
+      return ComponentTestHelper.GetBoolOutput(_component, 10);
     }
 
     public double GetAutomaticOffsetX1Output() {
-      var offsetX1 = (GH_Number)ComponentTestHelper.GetOutput(_component, 11);
-      return offsetX1.Value;
+      return ComponentTestHelper.GetNumberOutput(_component, 11);
     }
 
     public bool GetAutomaticOffsetEnd2Output() {
-      var autoBoolean = (GH_Boolean)ComponentTestHelper.GetOutput(_component, 12);
-      return autoBoolean.Value;
+      return ComponentTestHelper.GetBoolOutput(_component, 12);
     }
 
     public double GetAutomaticOffsetX2Output() {
-      var offsetX1 = (GH_Number)ComponentTestHelper.GetOutput(_component, 13);
-      return offsetX1.Value;
+      return ComponentTestHelper.GetNumberOutput(_component, 13);
     }
 
     public double GetAngleOutput() {
-      var angle = (GH_Number)ComponentTestHelper.GetOutput(_component, 14);
-      return angle.Value;
+      return ComponentTestHelper.GetNumberOutput(_component, 14);
     }
 
     public GsaNode GetOrientationOutput() {
-      var orientation = (GsaNodeGoo)ComponentTestHelper.GetOutput(_component, 15);
-      return orientation.Value;
+      return ComponentTestHelper.GetNodeOutput(_component, 15);
     }
 
     public double GetMeshSizeOutput() {
-      var mesh = (GH_Number)ComponentTestHelper.GetOutput(_component, 16);
-      return mesh.Value;
+      return ComponentTestHelper.GetNumberOutput(_component, 16);
     }
 
     public bool GetIntersectorOutput() {
-      var intersector = (GH_Boolean)ComponentTestHelper.GetOutput(_component, 17);
-      return intersector.Value;
+      return ComponentTestHelper.GetBoolOutput(_component, 17);
     }
 
     public GsaEffectiveLengthOptions GetEffectiveLengthOutput() {
-      var effectiveLength = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(_component, 18);
-      return effectiveLength.Value;
+      return ComponentTestHelper.GetEffectiveLengthOutput(_component, 18);
     }
 
     public string GetNameOutput() {
-      var name = (GH_String)ComponentTestHelper.GetOutput(_component, 19);
-      return name.Value;
+      return ComponentTestHelper.GetStringOutput(_component, 19);
     }
 
     public Color GetColorOutput() {
-      var colour = (GH_Colour)ComponentTestHelper.GetOutput(_component, 20);
-      return colour.Value;
+      return ComponentTestHelper.GetColorOutput(_component, 20);
     }
 
     public bool GetDummyOutput() {
-      var dummy = (GH_Boolean)ComponentTestHelper.GetOutput(_component, 21);
-      return dummy.Value;
+      return ComponentTestHelper.GetBoolOutput(_component, 21);
     }
 
     public string GetTopologyOutput() {
-      var topology = (GH_String)ComponentTestHelper.GetOutput(_component, 22);
-      return topology.Value;
-    }
-
-    public void SetIdInput() {
-      SetIdInput(DefaultId);
-    }
-
-    public void SetSectionInput() {
-      SetSectionInput(DefaultMemberProfile);
+      return ComponentTestHelper.GetStringOutput(_component, 22);
     }
 
     public void SetIdInput(int input) {
