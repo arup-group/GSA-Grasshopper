@@ -206,6 +206,11 @@ namespace GsaGHTests.Helpers {
       return curve.Value;
     }
 
+    public static Point3d GetPointOutput(GH_OasysComponent component, int index) {
+      var curve = (GH_Point)GetOutput(component, index);
+      return curve.Value;
+    }
+
     public static Line GetLineOutput(GH_OasysComponent component, int index) {
       var line = (GH_Line)GetOutput(component, index);
       return line.Value;
