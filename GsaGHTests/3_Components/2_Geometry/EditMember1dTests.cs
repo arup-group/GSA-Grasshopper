@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Drawing;
 
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+
+using GsaAPI;
 
 using GsaGH.Components;
 using GsaGH.Parameters;
@@ -358,458 +361,695 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     [Fact]
-    public void ComponentReturnValidMemberPolyCurvePointAtStartXValue() {
+    public void EditMember1dReturnValidMemberPolyCurvePointAtStartXValue() {
       GsaMember1d output = _helper.GetMemberOutput();
       Assert.Equal(0, output.PolyCurve.PointAtStart.X, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidMemberPolyCurvePointAtStartYValue() {
+    public void EditMember1dReturnValidMemberPolyCurvePointAtStartYValue() {
       GsaMember1d output = _helper.GetMemberOutput();
       Assert.Equal(0, output.PolyCurve.PointAtStart.Y, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidMemberPolyCurvePointAtStartZValue() {
+    public void EditMember1dReturnValidMemberPolyCurvePointAtStartZValue() {
       GsaMember1d output = _helper.GetMemberOutput();
       Assert.Equal(0, output.PolyCurve.PointAtStart.Z, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidMemberPolyCurvePointAtEndXValue() {
+    public void EditMember1dReturnValidMemberPolyCurvePointAtEndXValue() {
       GsaMember1d output = _helper.GetMemberOutput();
       Assert.Equal(1, output.PolyCurve.PointAtEnd.X, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidMemberPolyCurvePointAtEndYValue() {
+    public void EditMember1dReturnValidMemberPolyCurvePointAtEndYValue() {
       GsaMember1d output = _helper.GetMemberOutput();
       Assert.Equal(2, output.PolyCurve.PointAtEnd.Y, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidMemberPolyCurvePointAtEndZValue() {
+    public void EditMember1dReturnValidMemberPolyCurvePointAtEndZValue() {
       GsaMember1d output = _helper.GetMemberOutput();
       Assert.Equal(3, output.PolyCurve.PointAtEnd.Z, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidMemberProfile() {
+    public void EditMember1dReturnValidMemberProfile() {
       GsaMember1d output = _helper.GetMemberOutput();
       Assert.Equal(_helper.MemberProfile, output.Section.ApiSection.Profile);
     }
 
     [Fact]
-    public void ComponentReturnDefaultMemberGroupForMember() {
+    public void EditMember1dReturnMemberGroupForMember() {
       GsaMember1d output = _helper.GetMemberOutput();
       Assert.Equal(7, output.ApiMember.Group);
     }
 
     [Fact]
-    public void ComponentReturnValidId() {
+    public void EditMember1dReturnValidId() {
       int output = _helper.GetIdOutput();
       Assert.Equal(1, output);
     }
 
     [Fact]
-    public void ComponentReturnValidMemberCurvePointAtStartXValue() {
+    public void EditMember1dReturnValidMemberCurvePointAtStartXValue() {
       Curve output = _helper.GetMemberCurveOutput();
       Assert.Equal(0, output.PointAtStart.X, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidMemberCurvePointAtStartYValue() {
+    public void EditMember1dReturnValidMemberCurvePointAtStartYValue() {
       Curve output = _helper.GetMemberCurveOutput();
       Assert.Equal(0, output.PointAtStart.Y, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidMemberCurvePointAtStartZValue() {
+    public void EditMember1dReturnValidMemberCurvePointAtStartZValue() {
       Curve output = _helper.GetMemberCurveOutput();
       Assert.Equal(0, output.PointAtStart.Z, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidMemberCurvePointAtEndXValue() {
+    public void EditMember1dReturnValidMemberCurvePointAtEndXValue() {
       Curve output = _helper.GetMemberCurveOutput();
       Assert.Equal(1, output.PointAtEnd.X, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidMemberCurvePointAtEndYValue() {
+    public void EditMember1dReturnValidMemberCurvePointAtEndYValue() {
       Curve output = _helper.GetMemberCurveOutput();
       Assert.Equal(2, output.PointAtEnd.Y, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidMemberCurvePointAtEndZValue() {
+    public void EditMember1dReturnValidMemberCurvePointAtEndZValue() {
       Curve output = _helper.GetMemberCurveOutput();
       Assert.Equal(3, output.PointAtEnd.Z, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidSection() {
+    public void EditMember1dReturnValidSection() {
       GsaSection output = _helper.GetSectionOutput();
       Assert.Equal(_helper.MemberProfile, output.ApiSection.Profile);
     }
 
     [Fact]
-    public void ComponentReturnValidDefaultMemberGroupValue() {
+    public void EditMember1dReturnValidMemberGroupValue() {
       int output = _helper.GetMemberGroupOutput();
       Assert.Equal(7, output);
     }
 
     [Fact]
-    public void ComponentReturnValidDefaultMemberType() {
+    public void EditMember1dReturnValidMemberType() {
       string output = _helper.GetMemberTypeOutput();
       Assert.Equal("Cantilever", output);
     }
 
     [Fact]
-    public void ComponentReturnValidDefaultElementType() {
+    public void EditMember1dReturnValidElementType() {
       string output = _helper.GetElementTypeOutput();
       Assert.Equal("Damper", output);
     }
 
     [Fact]
-    public void ComponentReturnValidOffsetX1Value() {
+    public void EditMember1dReturnValidOffsetX1Value() {
       GsaOffset output = _helper.GetOffsetOutput();
       Assert.Equal(1, output.X1.Value, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidOffsetX2Value() {
+    public void EditMember1dReturnValidOffsetX2Value() {
       GsaOffset output = _helper.GetOffsetOutput();
       Assert.Equal(2, output.X2.Value, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidOffsetYValue() {
+    public void EditMember1dReturnValidOffsetYValue() {
       GsaOffset output = _helper.GetOffsetOutput();
       Assert.Equal(3, output.Y.Value, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidOffsetZValue() {
+    public void EditMember1dReturnValidOffsetZValue() {
       GsaOffset output = _helper.GetOffsetOutput();
       Assert.Equal(4, output.Z.Value, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidStartReleaseXValue() {
+    public void EditMember1dReturnValidStartReleaseXValue() {
       GsaBool6 output = _helper.GetStartReleaseOutput();
       Assert.True(output.X);
     }
 
     [Fact]
-    public void ComponentReturnValidStartReleaseYValue() {
+    public void EditMember1dReturnValidStartReleaseYValue() {
       GsaBool6 output = _helper.GetStartReleaseOutput();
       Assert.True(output.Y);
     }
 
     [Fact]
-    public void ComponentReturnValidStartReleaseZValue() {
+    public void EditMember1dReturnValidStartReleaseZValue() {
       GsaBool6 output = _helper.GetStartReleaseOutput();
       Assert.True(output.Z);
     }
 
     [Fact]
-    public void ComponentReturnValidStartReleaseXxValue() {
+    public void EditMember1dReturnValidStartReleaseXxValue() {
       GsaBool6 output = _helper.GetStartReleaseOutput();
       Assert.True(output.Xx);
     }
 
     [Fact]
-    public void ComponentReturnValidStartReleaseYYValue() {
+    public void EditMember1dReturnValidStartReleaseYYValue() {
       GsaBool6 output = _helper.GetStartReleaseOutput();
       Assert.True(output.Yy);
     }
 
     [Fact]
-    public void ComponentReturnValidStartReleaseZzValue() {
+    public void EditMember1dReturnValidStartReleaseZzValue() {
       GsaBool6 output = _helper.GetStartReleaseOutput();
       Assert.True(output.Zz);
     }
 
     [Fact]
-    public void ComponentReturnValidEndReleaseXValue() {
+    public void EditMember1dReturnValidEndReleaseXValue() {
       GsaBool6 output = _helper.GetEndReleaseOutput();
       Assert.True(output.X);
     }
 
     [Fact]
-    public void ComponentReturnValidEndReleaseYValue() {
+    public void EditMember1dReturnValidEndReleaseYValue() {
       GsaBool6 output = _helper.GetEndReleaseOutput();
       Assert.True(output.Y);
     }
 
     [Fact]
-    public void ComponentReturnValidEndReleaseZValue() {
+    public void EditMember1dReturnValidEndReleaseZValue() {
       GsaBool6 output = _helper.GetEndReleaseOutput();
       Assert.True(output.Z);
     }
 
     [Fact]
-    public void ComponentReturnValidEndReleaseXxValue() {
+    public void EditMember1dReturnValidEndReleaseXxValue() {
       GsaBool6 output = _helper.GetEndReleaseOutput();
       Assert.True(output.Xx);
     }
 
     [Fact]
-    public void ComponentReturnValidEndReleaseYYValue() {
+    public void EditMember1dReturnValidEndReleaseYYValue() {
       GsaBool6 output = _helper.GetEndReleaseOutput();
       Assert.True(output.Yy);
     }
 
     [Fact]
-    public void ComponentReturnValidEndReleaseZzValue() {
+    public void EditMember1dReturnValidEndReleaseZzValue() {
       GsaBool6 output = _helper.GetEndReleaseOutput();
       Assert.True(output.Zz);
     }
 
     [Fact]
-    public void ComponentReturnValidAutomaticOffsetEnd1Value() {
+    public void EditMember1dReturnValidAutomaticOffsetEnd1Value() {
       bool output = _helper.GetAutomaticOffsetEnd1Output();
       Assert.True(output);
     }
 
     [Fact]
-    public void ComponentReturnValidAutomaticOffsetX1Value() {
+    public void EditMember1dReturnValidAutomaticOffsetX1Value() {
       double output = _helper.GetAutomaticOffsetX1Output();
       Assert.Equal(0, output);
     }
 
     [Fact]
-    public void ComponentReturnValidAutomaticOffsetEnd2Value() {
+    public void EditMember1dReturnValidAutomaticOffsetEnd2Value() {
       bool output = _helper.GetAutomaticOffsetEnd2Output();
       Assert.True(output);
     }
 
     [Fact]
-    public void ComponentReturnValidAutomaticOffsetX2Value() {
+    public void EditMember1dReturnValidAutomaticOffsetX2Value() {
       double output = _helper.GetAutomaticOffsetX2Output();
       Assert.Equal(0, output);
     }
 
     [Fact]
-    public void ComponentReturnValidAngle() {
+    public void EditMember1dReturnValidAngle() {
       double output = _helper.GetAngleOutput();
       Assert.Equal(Math.PI, output, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidOrientationX() {
+    public void EditMember1dReturnValidOrientationX() {
       GsaNode output = _helper.GetOrientationOutput();
       Assert.Equal(1, output.Point.X);
     }
 
     [Fact]
-    public void ComponentReturnValidOrientationY() {
+    public void EditMember1dReturnValidOrientationY() {
       GsaNode output = _helper.GetOrientationOutput();
       Assert.Equal(2, output.Point.Y);
     }
 
     [Fact]
-    public void ComponentReturnValidOrientationZ() {
+    public void EditMember1dReturnValidOrientationZ() {
       GsaNode output = _helper.GetOrientationOutput();
       Assert.Equal(3, output.Point.Z);
     }
 
     [Fact]
-    public void ComponentReturnValidOrientationId() {
+    public void EditMember1dReturnValidOrientationId() {
       GsaNode output = _helper.GetOrientationOutput();
       Assert.Equal(99, output.Id);
     }
 
     [Fact]
-    public void ComponentReturnValidMeshSize() {
+    public void EditMember1dReturnValidMeshSize() {
       double output = _helper.GetMeshSizeOutput();
       Assert.Equal(0.7, output, 6);
     }
 
     [Fact]
-    public void ComponentReturnValidIntersectorValue() {
+    public void EditMember1dReturnValidIntersectorValue() {
       bool output = _helper.GetIntersectorOutput();
       Assert.False(output);
     }
 
     [Fact]
-    public void ComponentReturnValidBucklingFactorsMomentAmplificationFactorStrongAxis() {
+    public void EditMember1dReturnValidBucklingFactorsMomentAmplificationFactorStrongAxis() {
       GsaEffectiveLengthOptions output = _helper.GetEffectiveLengthOutput();
       Assert.Equal(1, output.BucklingFactors.MomentAmplificationFactorStrongAxis);
     }
 
     [Fact]
-    public void ComponentReturnValidBucklingFactorsMomentAmplificationFactorWeakAxis() {
+    public void EditMember1dReturnValidBucklingFactorsMomentAmplificationFactorWeakAxis() {
       GsaEffectiveLengthOptions output = _helper.GetEffectiveLengthOutput();
       Assert.Equal(2, output.BucklingFactors.MomentAmplificationFactorWeakAxis);
     }
 
     [Fact]
-    public void ComponentReturnValidBucklingFactorsEquivalentUniformMomentFactor() {
+    public void EditMember1dReturnValidBucklingFactorsEquivalentUniformMomentFactor() {
       GsaEffectiveLengthOptions output = _helper.GetEffectiveLengthOutput();
       Assert.Equal(3, output.BucklingFactors.EquivalentUniformMomentFactor);
     }
 
     [Fact]
-    public void ComponentReturnValidName() {
+    public void EditMember1dReturnValidName() {
       string output = _helper.GetNameOutput();
       Assert.Equal("name", output);
     }
 
     [Fact]
-    public void ComponentReturnValidColor() {
+    public void EditMember1dReturnValidColor() {
       Color output = _helper.GetColorOutput();
       Assert.Equal("ffffffff", output.Name);
     }
 
     [Fact]
-    public void ComponentReturnValidDummyValue() {
+    public void EditMember1dReturnValidDummyValue() {
       bool output = _helper.GetDummyOutput();
       Assert.True(output);
     }
 
     [Fact]
-    public void ComponentReturnValidTopology() {
+    public void EditMember1dReturnValidTopology() {
       string output = _helper.GetTopologyOutput();
       Assert.Empty(output);
     }
   }
 
-  //  [Fact]
-  //  public void TestElementBarInstabilityWarning() {
-  //    GH_OasysComponent comp = ComponentMother();
-  //    ComponentTestHelper.SetInput(comp, "Bar", 6);
-  //    ComponentTestHelper.SetInput(comp, 0.0, 14);
+  [Collection("GrasshopperFixture collection")]
+  public class EditMember1dTests_ChangeToSpringMember {
+    private EditMember1dTestsHelper _helper;
 
-  //    var output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
-  //    Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+    public EditMember1dTests_ChangeToSpringMember() {
+      _helper = new EditMember1dTestsHelper();
+      var property = new AxialSpringProperty {
+        Stiffness = 3.0,
+      };
+      _helper.SetSpringPropertyInput(new GsaPropertyGoo(new GsaSpringProperty(property)));
+      _helper.SetElementTypeInput("Spring");
+    }
 
-  //    ComponentTestHelper.SetInput(comp, 1.0, 14);
-  //    output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
-  //    Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
-  //  }
+    [Fact]
+    public void EditMember1dReturnValidMemberPolyCurvePointAtStartXValue() {
+      GsaMember1d output = _helper.GetMemberOutput();
+      Assert.Equal(0, output.PolyCurve.PointAtStart.X, 6);
+    }
 
-  //  [Fact]
-  //  public void ChangeToSpringMember() {
-  //    GH_OasysComponent comp = ComponentMother();
-  //    var property = new AxialSpringProperty {
-  //      Stiffness = 3.0,
-  //    };
-  //    ComponentTestHelper.SetInput(comp, new GsaPropertyGoo(new GsaSpringProperty(property)), 3);
-  //    ComponentTestHelper.SetInput(comp, "Spring", 6);
+    [Fact]
+    public void EditMember1dReturnValidMemberPolyCurvePointAtStartYValue() {
+      GsaMember1d output = _helper.GetMemberOutput();
+      Assert.Equal(-1, output.PolyCurve.PointAtStart.Y, 6);
+    }
 
-  //    var output0 = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp, 0);
-  //    var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
-  //    var output2 = (GH_Curve)ComponentTestHelper.GetOutput(comp, 2);
-  //    var output3 = (GsaSpringPropertyGoo)ComponentTestHelper.GetOutput(comp, 3);
-  //    var output4 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 4);
-  //    var output5 = (GH_String)ComponentTestHelper.GetOutput(comp, 5);
-  //    var output6 = (GH_String)ComponentTestHelper.GetOutput(comp, 6);
-  //    var output7 = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 7);
-  //    var output8 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8);
-  //    var output9 = (GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9);
-  //    var output10 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 10);
-  //    var output12 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 12);
-  //    var output14 = (GH_Number)ComponentTestHelper.GetOutput(comp, 14);
-  //    var output15 = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp, 15);
-  //    var output16 = (GH_Number)ComponentTestHelper.GetOutput(comp, 16);
-  //    var output17 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 17);
-  //    var output18 = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp, 18);
-  //    var output19 = (GH_String)ComponentTestHelper.GetOutput(comp, 19);
-  //    var output20 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 20);
-  //    var output21 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 21);
-  //    var output22 = (GH_String)ComponentTestHelper.GetOutput(comp, 22);
+    [Fact]
+    public void EditMember1dReturnValidMemberPolyCurvePointAtStartZValue() {
+      GsaMember1d output = _helper.GetMemberOutput();
+      Assert.Equal(0, output.PolyCurve.PointAtStart.Z, 6);
+    }
 
-  //    Assert.Equal(0, output0.Value.PolyCurve.PointAtStart.X, 6);
-  //    Assert.Equal(-1, output0.Value.PolyCurve.PointAtStart.Y, 6);
-  //    Assert.Equal(0, output0.Value.PolyCurve.PointAtStart.Z, 6);
-  //    Assert.Equal(7, output0.Value.PolyCurve.PointAtEnd.X, 6);
-  //    Assert.Equal(3, output0.Value.PolyCurve.PointAtEnd.Y, 6);
-  //    Assert.Equal(1, output0.Value.PolyCurve.PointAtEnd.Z, 6);
-  //    Assert.Equal(1, output0.Value.ApiMember.Group);
-  //    Assert.Null(output0.Value.Section);
-  //    Assert.Equal(0, output1.Value);
-  //    Assert.Equal(0, output2.Value.PointAtStart.X, 6);
-  //    Assert.Equal(-1, output2.Value.PointAtStart.Y, 6);
-  //    Assert.Equal(0, output2.Value.PointAtStart.Z, 6);
-  //    Assert.Equal(7, output2.Value.PointAtEnd.X, 6);
-  //    Assert.Equal(3, output2.Value.PointAtEnd.Y, 6);
-  //    Assert.Equal(1, output2.Value.PointAtEnd.Z, 6);
-  //    Assert.NotNull(output3.Value);
-  //    Assert.Equal(1, output4.Value);
-  //    Assert.Equal("Generic 1D", output5.Value);
-  //    Assert.Equal("Spring", output6.Value);
-  //    Assert.Equal(0, output7.Value.X1.Value, 6);
-  //    Assert.Equal(0, output7.Value.X2.Value, 6);
-  //    Assert.Equal(0, output7.Value.Y.Value, 6);
-  //    Assert.Equal(0, output7.Value.Z.Value, 6);
-  //    Assert.False(output8.Value.X);
-  //    Assert.False(output8.Value.Y);
-  //    Assert.False(output8.Value.Z);
-  //    Assert.False(output8.Value.Xx);
-  //    Assert.False(output8.Value.Yy);
-  //    Assert.False(output8.Value.Zz);
-  //    Assert.False(output9.Value.X);
-  //    Assert.False(output9.Value.Y);
-  //    Assert.False(output9.Value.Z);
-  //    Assert.False(output9.Value.Xx);
-  //    Assert.False(output9.Value.Yy);
-  //    Assert.False(output9.Value.Zz);
-  //    Assert.False(output10.Value);
-  //    Assert.False(output12.Value);
-  //    Assert.Equal(0, output14.Value, 6);
-  //    Assert.Null(output15.Value);
-  //    Assert.Equal(0.5, output16.Value, 6);
-  //    Assert.True(output17.Value);
-  //    Assert.Null(output18.Value.BucklingFactors.MomentAmplificationFactorStrongAxis);
-  //    Assert.Null(output18.Value.BucklingFactors.MomentAmplificationFactorWeakAxis);
-  //    Assert.Null(output18.Value.BucklingFactors.EquivalentUniformMomentFactor);
-  //    Assert.Equal("", output19.Value);
-  //    Assert.Equal(0, output20.Value.R);
-  //    Assert.Equal(0, output20.Value.G);
-  //    Assert.Equal(0, output20.Value.B);
-  //    Assert.False(output21.Value);
-  //    Assert.Equal("", output22.Value);
-  //  }
+    [Fact]
+    public void EditMember1dReturnValidMemberPolyCurvePointAtEndXValue() {
+      GsaMember1d output = _helper.GetMemberOutput();
+      Assert.Equal(7, output.PolyCurve.PointAtEnd.X, 6);
+    }
 
-  //  [Fact]
-  //  public void InvalidPropertyElement1DTypeCombination1() {
-  //    GH_OasysComponent comp = ComponentMother();
-  //    var property = new AxialSpringProperty {
-  //      Stiffness = 3.0,
-  //    };
-  //    ComponentTestHelper.SetInput(comp, new GsaPropertyGoo(new GsaSpringProperty(property)), 3);
-  //    ComponentTestHelper.SetInput(comp, "Beam", 6);
+    [Fact]
+    public void EditMember1dReturnValidMemberPolyCurvePointAtEndYValue() {
+      GsaMember1d output = _helper.GetMemberOutput();
+      Assert.Equal(3, output.PolyCurve.PointAtEnd.Y, 6);
+    }
 
-  //    comp.Params.Output[0].ExpireSolution(true);
-  //    comp.Params.Output[0].CollectData();
-  //    Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
-  //  }
+    [Fact]
+    public void EditMember1dReturnValidMemberPolyCurvePointAtEndZValue() {
+      GsaMember1d output = _helper.GetMemberOutput();
+      Assert.Equal(1, output.PolyCurve.PointAtEnd.Z, 6);
+    }
 
-  //  [Fact]
-  //  public void InvalidPropertyElement1DTypeCombination2() {
-  //    GH_OasysComponent comp = ComponentMother();
-  //    ComponentTestHelper.SetInput(comp, "STD CH 10 20 30 40", 3);
-  //    ComponentTestHelper.SetInput(comp, "Spring", 6);
+    [Fact]
+    public void EditMember1dReturnValidMemberProfile() {
+      GsaMember1d output = _helper.GetMemberOutput();
+      Assert.Null(output.Section);
+    }
 
-  //    comp.Params.Output[0].ExpireSolution(true);
-  //    comp.Params.Output[0].CollectData();
-  //    Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
-  //  }
+    [Fact]
+    public void EditMember1dReturnDefaultMemberGroupForMember() {
+      GsaMember1d output = _helper.GetMemberOutput();
+      Assert.Equal(1, output.ApiMember.Group);
+    }
 
-  //  [Fact]
-  //  public void InvalidPropertyElement1DTypeCombination3() {
-  //    var comp = new Edit1dMember();
-  //    comp.CreateAttributes();
-  //    ComponentTestHelper.SetInput(comp, "Spring", 6);
+    [Fact]
+    public void EditMember1dReturnValidId() {
+      int output = _helper.GetIdOutput();
+      Assert.Equal(0, output);
+    }
 
-  //    comp.Params.Output[0].ExpireSolution(true);
-  //    comp.Params.Output[0].CollectData();
-  //    Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
-  //  }
+    [Fact]
+    public void EditMember1dReturnValidMemberCurvePointAtStartXValue() {
+      Curve output = _helper.GetMemberCurveOutput();
+      Assert.Equal(0, output.PointAtStart.X, 6);
+    }
 
-  //}
+    [Fact]
+    public void EditMember1dReturnValidMemberCurvePointAtStartYValue() {
+      Curve output = _helper.GetMemberCurveOutput();
+      Assert.Equal(-1, output.PointAtStart.Y, 6);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidMemberCurvePointAtStartZValue() {
+      Curve output = _helper.GetMemberCurveOutput();
+      Assert.Equal(0, output.PointAtStart.Z, 6);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidMemberCurvePointAtEndXValue() {
+      Curve output = _helper.GetMemberCurveOutput();
+      Assert.Equal(7, output.PointAtEnd.X, 6);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidMemberCurvePointAtEndYValue() {
+      Curve output = _helper.GetMemberCurveOutput();
+      Assert.Equal(3, output.PointAtEnd.Y, 6);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidMemberCurvePointAtEndZValue() {
+      Curve output = _helper.GetMemberCurveOutput();
+      Assert.Equal(1, output.PointAtEnd.Z, 6);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidSection() {
+      GsaSpringProperty output = _helper.GetSpringPropertyOutput();
+      Assert.NotNull(output);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidDefaultMemberGroupValue() {
+      int output = _helper.GetMemberGroupOutput();
+      Assert.Equal(1, output);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidMemberType() {
+      string output = _helper.GetMemberTypeOutput();
+      Assert.Equal("Generic 1D", output);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidElementType() {
+      string output = _helper.GetElementTypeOutput();
+      Assert.Equal("Spring", output);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidOffsetX1Value() {
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(0, output.X1.Value, 6);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidOffsetX2Value() {
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(0, output.X2.Value, 6);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidOffsetYValue() {
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(0, output.Y.Value, 6);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidOffsetZValue() {
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(0, output.Z.Value, 6);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidStartReleaseXValue() {
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.False(output.X);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidStartReleaseYValue() {
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.False(output.Y);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidStartReleaseZValue() {
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.False(output.Z);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidStartReleaseXxValue() {
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.False(output.Xx);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidStartReleaseYYValue() {
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.False(output.Yy);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidStartReleaseZzValue() {
+      GsaBool6 output = _helper.GetStartReleaseOutput();
+      Assert.False(output.Zz);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidEndReleaseXValue() {
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.False(output.X);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidEndReleaseYValue() {
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.False(output.Y);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidEndReleaseZValue() {
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.False(output.Z);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidEndReleaseXxValue() {
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.False(output.Xx);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidEndReleaseYYValue() {
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.False(output.Yy);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidEndReleaseZzValue() {
+      GsaBool6 output = _helper.GetEndReleaseOutput();
+      Assert.False(output.Zz);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidAutomaticOffsetEnd1Value() {
+      bool output = _helper.GetAutomaticOffsetEnd1Output();
+      Assert.False(output);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidAutomaticOffsetX1Value() {
+      double output = _helper.GetAutomaticOffsetX1Output();
+      Assert.Equal(0, output);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidAutomaticOffsetEnd2Value() {
+      bool output = _helper.GetAutomaticOffsetEnd2Output();
+      Assert.False(output);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidAutomaticOffsetX2Value() {
+      double output = _helper.GetAutomaticOffsetX2Output();
+      Assert.Equal(0, output);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidAngle() {
+      double output = _helper.GetAngleOutput();
+      Assert.Equal(0, output, 6);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidOrientationX() {
+      GsaNode output = _helper.GetOrientationOutput();
+      Assert.Null(output);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidMeshSize() {
+      double output = _helper.GetMeshSizeOutput();
+      Assert.Equal(0.5, output, 6);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidIntersectorValue() {
+      bool output = _helper.GetIntersectorOutput();
+      Assert.True(output);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidBucklingFactorsMomentAmplificationFactorStrongAxis() {
+      GsaEffectiveLengthOptions output = _helper.GetEffectiveLengthOutput();
+      Assert.Null(output.BucklingFactors.MomentAmplificationFactorStrongAxis);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidBucklingFactorsMomentAmplificationFactorWeakAxis() {
+      GsaEffectiveLengthOptions output = _helper.GetEffectiveLengthOutput();
+      Assert.Null(output.BucklingFactors.MomentAmplificationFactorWeakAxis);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidBucklingFactorsEquivalentUniformMomentFactor() {
+      GsaEffectiveLengthOptions output = _helper.GetEffectiveLengthOutput();
+      Assert.Null(output.BucklingFactors.EquivalentUniformMomentFactor);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidName() {
+      string output = _helper.GetNameOutput();
+      Assert.Empty(output);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidColor() {
+      Color output = _helper.GetColorOutput();
+      Assert.Equal("ff000000", output.Name);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidDummyValue() {
+      bool output = _helper.GetDummyOutput();
+      Assert.False(output);
+    }
+
+    [Fact]
+    public void EditMember1dReturnValidTopology() {
+      string output = _helper.GetTopologyOutput();
+      Assert.Empty(output);
+    }
+  }
+
+  [Collection("GrasshopperFixture collection")]
+  public class EditMember1dTests_ErrorsHandling {
+    private EditMember1dTestsHelper _helper;
+
+    public EditMember1dTests_ErrorsHandling() {
+      _helper = new EditMember1dTestsHelper();
+    }
+
+    [Fact]
+    public void ComponentNotReturnWarningWhenElementIsBarAndMeshSizeIsIs0() {
+      _helper.SetElementTypeInput("Bar");
+      _helper.SetMeshSizeInput(0.0);
+      Assert.Empty(_helper.GetComponent().RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+    }
+
+    [Fact]
+    public void ComponentReturnWarningWhenElementIsBarAndMeshSizeIsIs1() {
+      _helper.SetElementTypeInput("Bar");
+      _helper.SetMeshSizeInput(0.0);
+      _helper.SetMeshSizeInput(1.0);
+      Assert.Single(_helper.GetComponent().RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+    }
+
+    [Fact]
+    public void InvalidPropertyElement1DTypeCombination1() {
+      var property = new AxialSpringProperty {
+        Stiffness = 3.0,
+      };
+      _helper.SetSpringPropertyInput(new GsaPropertyGoo(new GsaSpringProperty(property)));
+      _helper.SetElementTypeInput("Beam");
+
+      _helper.GetComponent().Params.Output[0].ExpireSolution(true);
+      _helper.GetComponent().Params.Output[0].CollectData();
+      Assert.Single(_helper.GetComponent().RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+    }
+
+    [Fact]
+    public void InvalidPropertyElement1DTypeCombination2() {
+      _helper.SetSectionInput(_helper.MemberProfile);
+      _helper.SetElementTypeInput("Spring");
+
+      _helper.GetComponent().Params.Output[0].ExpireSolution(true);
+      _helper.GetComponent().Params.Output[0].CollectData();
+      Assert.Single(_helper.GetComponent().RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void InvalidPropertyElement1DTypeCombination3() {
+      var comp = new Edit1dMember();
+      comp.CreateAttributes();
+      ComponentTestHelper.SetInput(comp, "Spring", 6);
+
+      _helper.GetComponent().Params.Output[0].ExpireSolution(true);
+      _helper.GetComponent().Params.Output[0].CollectData();
+      Assert.Empty(_helper.GetComponent().RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+  }
 
   public class EditMember1dTestsHelper {
     public readonly string DefaultMemberProfile = "STD CH(ft) 1 2 3 4";
