@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 using GH_IO.Serialization;
 
@@ -17,26 +19,34 @@ using Xunit;
 namespace GsaGHTests.Helpers.GsaApi {
   [Collection("GrasshopperFixture collection")]
   public class ModelFactoryTests {
-
-    public GsaModel GsaModel() {
-      var model = new GsaModel();
+    private GsaModel _model;
+    public ModelFactoryTests() {
+      _model = new GsaModel();
       var cases = new Dictionary<int, LoadCase> {
        { 1, new LoadCase() { CaseType= GsaAPI.LoadCaseType.Dead, Name = "DL" } },
        { 3, new LoadCase() {CaseType= GsaAPI.LoadCaseType.Live, Name = "LL" } }
      };
-      model.ApiModel.SetLoadCases(new ReadOnlyDictionary<int, LoadCase>(cases));
-      model.ApiModel.AddGravityLoad(new GravityLoad { Case = 1, EntityList = "all" });
-      model.ApiModel.AddGravityLoad(new GravityLoad { Case = 3, EntityList = "all" });
-      return model;
+      _model.ApiModel.SetLoadCases(new ReadOnlyDictionary<int, LoadCase>(cases));
+      _model.ApiModel.AddGravityLoad(new GravityLoad { Case = 1, EntityList = "all" });
+      _model.ApiModel.AddGravityLoad(new GravityLoad { Case = 3, EntityList = "all" });
     }
+
+    private List<GsaAnalysisTask> GsaAnalysisTasksFromSeedModel(bool withCase = false) {
+      var gsaSeedModel = new GsaModel();
+      int id = gsaSeedModel.ApiModel.AddAnalysisTask();
+      if (withCase) {
+        gsaSeedModel.ApiModel.AddAnalysisCaseToTask(id, "AnyName", "L1");
+      }
+      return new List<GsaAnalysisTask>() { new GsaAnalysisTask(id, gsaSeedModel.ApiModel.AnalysisTasks()[id], gsaSeedModel.ApiModel) };
+    }
+
     [Fact]
     public void AnalysisCasesAreAddedAtId() {
-      GsaModel model = GsaModel();
       var task = new GsaAnalysisTask {
-        Id = model.ApiModel.AddAnalysisTask(),
+        Id = _model.ApiModel.AddAnalysisTask(),
       };
-      ModelFactory.BuildAnalysisTask(model.ApiModel, new List<GsaAnalysisTask> { task }, true);
-      AnalysisTask outTask = model.ApiModel.AnalysisTasks()[task.Id];
+      ModelFactory.BuildAnalysisTask(_model.ApiModel, new List<GsaAnalysisTask> { task }, true);
+      AnalysisTask outTask = _model.ApiModel.AnalysisTasks()[task.Id];
       //Gsa model has load case at Row(Or Id) 1 and 3
       Assert.Equal(1, outTask.Cases[0]);
       Assert.Equal(3, outTask.Cases[1]);
@@ -44,35 +54,56 @@ namespace GsaGHTests.Helpers.GsaApi {
 
     [Fact]
     public void AnalysisCasesAreAppendedWhenAnalysisCaseIsAlreadyAttachedToAnotherTask() {
-      GsaModel model = GsaModel();
-      int taskId = model.ApiModel.AddAnalysisTask();
-      //this will create analysis case having Id = 1
-      model.ApiModel.AddAnalysisCaseToTask(taskId, "DL", "L1");
-      int analysisCaseId = model.ApiModel.AnalysisTasks()[1].Cases[0];
+      int taskId = _model.ApiModel.AddAnalysisTask();
+      //this will create analysis case with Id = 1
+      _model.ApiModel.AddAnalysisCaseToTask(taskId, "AnyName", "L1");
+      int analysisCaseId = _model.ApiModel.AnalysisTasks()[taskId].Cases[0];
+      Assert.Equal(1, analysisCaseId);
 
       //now create another task
       var newTask = new GsaAnalysisTask {
-        Id = model.ApiModel.AddAnalysisTask(),
+        Id = _model.ApiModel.AddAnalysisTask(),
       };
+      Assert.Equal(2, newTask.Id);
 
       //and assign same analysis case Id
-      newTask.Cases.Add(new GsaAnalysisCase() { Id = analysisCaseId, Name = "DL", Definition = "L1" });
+      newTask.Cases.Add(new GsaAnalysisCase() {
+        Id = analysisCaseId,
+        Name = "AnyName",
+        Definition = "L1"
+      });
 
-      ModelFactory.BuildAnalysisTask(model.ApiModel, new List<GsaAnalysisTask> { newTask });
-      AnalysisTask outTask = model.ApiModel.AnalysisTasks()[newTask.Id];
-      Assert.Equal(analysisCaseId + 1, outTask.Cases[0]);
-
+      ModelFactory.BuildAnalysisTask(_model.ApiModel, new List<GsaAnalysisTask> { newTask });
+      int newAnalysCaseId = _model.ApiModel.AnalysisTasks()[newTask.Id].Cases[0];
+      Assert.Equal(analysisCaseId + 1, newAnalysCaseId);
     }
 
     [Fact]
-    public void AnalysisCasesWillBeEmptyInAbsenseOfLoadCase() {
-      var model = new GsaModel();
-       var task = new GsaAnalysisTask {
-        Id = model.ApiModel.AddAnalysisTask(),
-      };
-      ModelFactory.BuildAnalysisTask(model.ApiModel, new List<GsaAnalysisTask> { task });
-      AnalysisTask outTask = model.ApiModel.AnalysisTasks()[task.Id];
-      Assert.Empty(outTask.Cases);
+    public void ShouldAddMissingTask() {
+      ModelFactory.BuildAnalysisTask(_model.ApiModel, GsaAnalysisTasksFromSeedModel());
+      Assert.Single(_model.ApiModel.AnalysisTasks());
+    }
+
+    [Fact]
+    public void ShouldNotCreateDefaultCaseWhenCaseCountNotZero() {
+      bool createDefaultCase = true;
+      ModelFactory.BuildAnalysisTask(_model.ApiModel, GsaAnalysisTasksFromSeedModel(true), createDefaultCase);
+      Assert.Single(_model.ApiModel.AnalysisTasks().First().Value.Cases);
+    }
+
+    [Fact]
+    public void ShouldCreateDefaultCaseWhenCaseCountIsZero() {
+      bool createDefaultCase = true;
+      ModelFactory.BuildAnalysisTask(_model.ApiModel, GsaAnalysisTasksFromSeedModel(), createDefaultCase);
+      Assert.Equal(2, _model.ApiModel.AnalysisTasks().First().Value.Cases.Count);
+    }
+
+    [Fact]
+    public void AnalysisCasesWillBeEmptyInAbsenceOfLoadCase() {
+      _model = new GsaModel();
+      bool createDefaultCase = true;
+      ModelFactory.BuildAnalysisTask(_model.ApiModel, GsaAnalysisTasksFromSeedModel(), createDefaultCase);
+      Assert.Empty(_model.ApiModel.AnalysisTasks().First().Value.Cases);
     }
   }
 }
