@@ -1,49 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
-using System.IO;
-using System.Runtime.Remoting.Lifetime;
-using System.Xml.Linq;
 
-using GsaAPI;
-
-using GsaGH.Helpers.Import;
-using GsaGH.Parameters;
-
-using Newtonsoft.Json.Linq;
-
-using OasysUnits;
-
-using AngleUnit = OasysUnits.Units.AngleUnit;
 namespace GsaAPI {
   public class GSAElement {
+    public const int DefaultGroup = 1;
+    public const int IndexZero = 0;
     public static int LoadPanelType = -1000;
     private GSAElement() { }
     public GSAElement(Element element) {
       Element = element;
       IsLoadPanel = false;
+      Element.Group = SetGroupFrom(element.Group);
     }
     public GSAElement(LoadPanelElement element) {
-      LoadPanelElelment = element;
+      LoadPanelElement = element;
       IsLoadPanel = true;
+      LoadPanelElement.Group = SetGroupFrom(element.Group);
     }
 
     public bool IsLoadPanel { get; }
-    public LoadPanelElement LoadPanelElelment { get; }
+    public LoadPanelElement LoadPanelElement { get; }
     public Element Element { get; }
 
     public string Name {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.Name;
+          return LoadPanelElement.Name;
         } else {
           return Element.Name;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.Name = value;
+          LoadPanelElement.Name = value;
         } else {
           Element.Name = value;
         }
@@ -53,14 +42,14 @@ namespace GsaAPI {
     public int Property {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.Property;
+          return LoadPanelElement.Property;
         } else {
           return Element.Property;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.Property = value;
+          LoadPanelElement.Property = value;
         } else {
           Element.Property = value;
         }
@@ -70,14 +59,14 @@ namespace GsaAPI {
     public int Group {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.Group;
+          return LoadPanelElement.Group;
         } else {
           return Element.Group;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.Group = value;
+          LoadPanelElement.Group = value;
         } else {
           Element.Group = value;
         }
@@ -87,14 +76,14 @@ namespace GsaAPI {
     public ParentMember ParentMember {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.ParentMember;
+          return LoadPanelElement.ParentMember;
         } else {
           return Element.ParentMember;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.ParentMember = value;
+          LoadPanelElement.ParentMember = value;
         } else {
           Element.ParentMember = value;
         }
@@ -104,14 +93,14 @@ namespace GsaAPI {
     public bool IsDummy {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.IsDummy;
+          return LoadPanelElement.IsDummy;
         } else {
           return Element.IsDummy;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.IsDummy = value;
+          LoadPanelElement.IsDummy = value;
         } else {
           Element.IsDummy = value;
         }
@@ -136,14 +125,14 @@ namespace GsaAPI {
     public double OrientationAngle {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.OrientationAngle;
+          return LoadPanelElement.OrientationAngle;
         } else {
           return Element.OrientationAngle;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.OrientationAngle = value;
+          LoadPanelElement.OrientationAngle = value;
         } else {
           Element.OrientationAngle = value;
         }
@@ -168,14 +157,14 @@ namespace GsaAPI {
     public ReadOnlyCollection<int> Topology {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.Topology;
+          return LoadPanelElement.Topology;
         } else {
           return Element.Topology;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.Topology = value;
+          LoadPanelElement.Topology = value;
         } else {
           Element.Topology = value;
         }
@@ -200,14 +189,14 @@ namespace GsaAPI {
     public ValueType Colour {
       get {
         if (IsLoadPanel) {
-          return LoadPanelElelment.Colour;
+          return LoadPanelElement.Colour;
         } else {
           return Element.Colour;
         }
       }
       set {
         if (IsLoadPanel) {
-          LoadPanelElelment.Colour = value;
+          LoadPanelElement.Colour = value;
         } else {
           Element.Colour = value;
         }
@@ -250,6 +239,9 @@ namespace GsaAPI {
       }
     }
 
+    private static int SetGroupFrom(int id) {
+      return id == IndexZero ? DefaultGroup : id;
+    }
   }
 
 }
