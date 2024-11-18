@@ -30,17 +30,6 @@ namespace GsaGHTests.Components.Geometry {
       return comp;
     }
 
-    internal static void CompareRelease(GsaBool6 input, GsaBool6 output) {
-      Assert.Equal(input.ToString(), output.ToString());
-      Assert.Equal(input.ToString(), output.ToString());
-      Assert.Equal(input.X, output.X);
-      Assert.Equal(input.Y, output.Y);
-      Assert.Equal(input.Z, output.Z);
-      Assert.Equal(input.Xx, output.Xx);
-      Assert.Equal(input.Yy, output.Yy);
-      Assert.Equal(input.Zz, output.Zz);
-    }
-
     [Fact]
     public void GetOutputsFromInputElements() {
       GH_OasysComponent comp = ComponentMother();
@@ -310,8 +299,8 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, new GsaBool6Goo(endReleaseInput), 8);
       GsaBool6 startReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 7)).Value;
       GsaBool6 endReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8)).Value;
-      CompareRelease(startReleaseInput, startReleaseOutput);
-      CompareRelease(endReleaseInput, endReleaseOutput);
+      Assert.Equal(startReleaseInput, startReleaseOutput);
+      Assert.Equal(endReleaseInput, endReleaseOutput);
     }
 
     [Fact]
@@ -323,8 +312,8 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, "FFFRRR", 8);
       GsaBool6 startReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 7)).Value;
       GsaBool6 endReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8)).Value;
-      CompareRelease(startReleaseInput, startReleaseOutput);
-      CompareRelease(endReleaseInput, endReleaseOutput);
+     Assert.Equal(startReleaseInput, startReleaseOutput);
+     Assert.Equal(endReleaseInput, endReleaseOutput);
     }
   }
 }

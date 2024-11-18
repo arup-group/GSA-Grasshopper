@@ -359,8 +359,8 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, new GsaBool6Goo(endReleaseInput), 9);
       GsaBool6 startReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8)).Value;
       GsaBool6 endReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9)).Value;
-      EditElement1dTests.CompareRelease(startReleaseInput, startReleaseOutput);
-      EditElement1dTests.CompareRelease(endReleaseInput, endReleaseOutput);
+      Assert.Equal(startReleaseInput, startReleaseOutput);
+      Assert.Equal(endReleaseInput, endReleaseOutput);
     }
 
     [Fact]
@@ -372,8 +372,8 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(comp, "FFFRRR", 9);
       GsaBool6 startReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8)).Value;
       GsaBool6 endReleaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 9)).Value;
-      EditElement1dTests.CompareRelease(startReleaseInput, startReleaseOutput);
-      EditElement1dTests.CompareRelease(endReleaseInput, endReleaseOutput);
+      Assert.Equal(startReleaseInput, startReleaseOutput);
+      Assert.Equal(endReleaseInput, endReleaseOutput);
     }
   }
 }
