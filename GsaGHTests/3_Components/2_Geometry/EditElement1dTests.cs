@@ -301,14 +301,39 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(releaseInput, releaseOutput);
     }
 
-    [Theory]
-    [InlineData(7)]
-    [InlineData(8)]
-    public void ElementReleasesAreCorrectWhenStringAssignedAsInput(int releasePosition) {
+    [Fact]
+    public void ElementStartReleasesAreCorrectWhenBoolValuesAssignedAsInput() {
       GH_OasysComponent comp = ComponentMother();
       var releaseInput = new GsaBool6(true, true, true, false, false, false);
-      ComponentTestHelper.SetInput(comp, "RRRFFF", releasePosition);
-      GsaBool6 releaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, releasePosition)).Value;
+      ComponentTestHelper.SetInput(comp, new GsaBool6Goo(releaseInput), 7);
+      GsaBool6 releaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 7)).Value;
+      Assert.Equal(releaseInput, releaseOutput);
+    }
+
+    [Fact]
+    public void ElementEndReleasesAreCorrectWhenBoolValuesAssignedAsInput() {
+      GH_OasysComponent comp = ComponentMother();
+      var releaseInput = new GsaBool6(true, true, true, false, false, false);
+      ComponentTestHelper.SetInput(comp, new GsaBool6Goo(releaseInput), 8);
+      GsaBool6 releaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8)).Value;
+      Assert.Equal(releaseInput, releaseOutput);
+    }
+
+    [Fact]
+    public void ElementStartReleasesAreCorrectWhenStringAssignedAsInput() {
+      GH_OasysComponent comp = ComponentMother();
+      var releaseInput = new GsaBool6(true, true, true, false, false, false);
+      ComponentTestHelper.SetInput(comp, "RRRFFF", 7);
+      GsaBool6 releaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 7)).Value;
+      Assert.Equal(releaseInput, releaseOutput);
+    }
+
+    [Fact]
+    public void ElementEndReleasesAreCorrectWhenStringAssignedAsInput() {
+      GH_OasysComponent comp = ComponentMother();
+      var releaseInput = new GsaBool6(true, true, true, false, false, false);
+      ComponentTestHelper.SetInput(comp, "RRRFFF", 8);
+      GsaBool6 releaseOutput = ((GsaBool6Goo)ComponentTestHelper.GetOutput(comp, 8)).Value;
       Assert.Equal(releaseInput, releaseOutput);
     }
   }
