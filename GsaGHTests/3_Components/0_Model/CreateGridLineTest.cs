@@ -117,6 +117,7 @@ namespace GsaGHTests.Model {
     public GsaModelGoo CreateModelWithGridlines() {
       var comp = new CreateModel();
       comp.CreateAttributes();
+      CreateComponentWithLineInput();
       ComponentTestHelper.SetInput(comp, GetGridLineOutput());
       return (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
     }
