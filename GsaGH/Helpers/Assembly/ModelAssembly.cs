@@ -111,7 +111,7 @@ namespace GsaGH.Helpers.Assembly {
       ConvertAndAssembleGridLines(gridLines);
 
       if (analysis != null) {
-        ConvertAndAssembleAnalysisTasks(analysis.AnalysisTasks);
+        ModelFactory.BuildAnalysisTask(_model, analysis.AnalysisTasks);
         ConvertAndAssembleCombinations(analysis.CombinationCases);
         ConvertAndAssembleDesignTasks(analysis.DesignTasks, owner);
       }
@@ -244,11 +244,6 @@ namespace GsaGH.Helpers.Assembly {
         && _model.SteelDesignCode() == string.Empty) {
         _isSeedModel = false;
       }
-    }
-
-    private void ConvertAndAssembleAnalysisTasks(List<GsaAnalysisTask> analysisTasks) {
-      // Set Analysis Tasks in model
-      ModelFactory.BuildAnalysisTask(_model, analysisTasks);
     }
 
     private void ConvertAndAssembleCombinations(List<GsaCombinationCase> combinations) {
