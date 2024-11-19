@@ -57,10 +57,18 @@ namespace GsaGH.Helpers {
         bool6.Yy = mybool;
         bool6.Zz = mybool;
       } else {
-        throw new InvalidCastException($"Data  conversion failed from '{data}' of type {data.GetTypeName()} to Bool6");
+        throw new InvalidCastException(ExceptionMessage(data));
       }
 
       return bool6;
+    }
+
+    private static string ExceptionMessage(object data) {
+      if (data != null) {
+        return $"Data  conversion failed from '{data}' of type {data.GetTypeName()} to Bool6";
+      } else {
+        return $"Data  conversion failed from null to Bool6";
+      }
     }
 
     public static GsaBool6 ParseRestrain(object data) {
@@ -114,13 +122,12 @@ namespace GsaGH.Helpers {
         } else if (mystring.Length == 6) {
           return ConvertString(mystring, true);
         } else {
-          throw new InvalidCastException($"Data conversion failed from {data.GetTypeName()} to Bool6");
+          throw new InvalidCastException(ExceptionMessage(data));
         }
 
         return bool6;
       }
-
-      throw new InvalidCastException($"Data conversion failed from {data.GetTypeName()} to Bool6");
+      throw new InvalidCastException(ExceptionMessage(data));
     }
 
     private static bool IsRelease(string input) {

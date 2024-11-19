@@ -134,9 +134,8 @@ namespace GsaGHTests.GooWrappers {
     }
 
     [Fact]
-    public void ParseReleaseShouldThrowExceptionWhenANonStringNonBool() {
-      var exactlySixCharacters = new DummyClass();
-      Assert.Throws<InvalidCastException>(() => StringExtension.ParseRelease(exactlySixCharacters));
+    public void ParseReleaseShouldThrowExceptionWhenNullObjectIsPassed() {
+      Assert.Throws<InvalidCastException>(() => StringExtension.ParseRelease(null));
     }
 
     private class DummyClass { }
