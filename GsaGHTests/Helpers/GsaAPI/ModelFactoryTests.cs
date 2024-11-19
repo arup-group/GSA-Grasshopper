@@ -2,17 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
-
-using GH_IO.Serialization;
 
 using GsaAPI;
 
-using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
-
-using OasysUnits.Units;
 
 using Xunit;
 
@@ -41,7 +35,7 @@ namespace GsaGHTests.Helpers.GsaApi {
     }
 
     [Fact]
-    public void AnalysisCasesAreAddedAtId() {
+    public void WhenNoCasesProvidedShouldAddDefaultCaseCreatedFromLoadCase() {
       var task = new GsaAnalysisTask {
         Id = _model.ApiModel.AddAnalysisTask(),
       };
