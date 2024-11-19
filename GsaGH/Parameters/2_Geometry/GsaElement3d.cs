@@ -64,12 +64,7 @@ namespace GsaGH.Parameters {
         NgonMesh = m;
       }
 
-      Tuple<List<GSAElement>, Point3dList, List<List<int>>, List<List<int>>> convertMesh
-        = RhinoConversions.ConvertMeshToElem3d(mesh);
-      ApiElements = convertMesh.Item1;
-      Topology = convertMesh.Item2;
-      TopoInt = convertMesh.Item3;
-      FaceInt = convertMesh.Item4;
+      InitVariablesFromMesh(mesh, true);
       Ids = new List<int>(new int[NgonMesh.Faces.Count]);
     }
 
@@ -93,11 +88,7 @@ namespace GsaGH.Parameters {
     internal GsaElement3d(ConcurrentDictionary<int, GSAElement> elements, Mesh mesh,
       ConcurrentDictionary<int, GsaProperty3d> prop3ds) {
       NgonMesh = mesh;
-      Tuple<List<GSAElement>, Point3dList, List<List<int>>, List<List<int>>> convertMesh
-        = RhinoConversions.ConvertMeshToElem3d(mesh);
-      Topology = convertMesh.Item2;
-      TopoInt = convertMesh.Item3;
-      FaceInt = convertMesh.Item4;
+      InitVariablesFromMesh(mesh, false);
       ApiElements = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
       Ids = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Key).ToList();
       if (!prop3ds.IsNullOrEmpty()) {
@@ -113,21 +104,9 @@ namespace GsaGH.Parameters {
 
       var elems = new List<GSAElement>();
       for (int i = 0; i < ApiElements.Count; i++) {
-        elems.Add(new GSAElement(new Element()) {
-          Group = ApiElements[i].Group,
-          IsDummy = ApiElements[i].IsDummy,
-          Name = ApiElements[i].Name.ToString(),
-          OrientationNode = ApiElements[i].OrientationNode,
-          OrientationAngle = ApiElements[i].OrientationAngle,
-          ParentMember = ApiElements[i].ParentMember,
-          Property = ApiElements[i].Property,
-          Type = ApiElements[i].Type,
-        });
+        elems.Add(CreateGsaElement(i));
 
-        elems[i].Offset.X1 = ApiElements[i].Offset.X1;
-        elems[i].Offset.X2 = ApiElements[i].Offset.X2;
-        elems[i].Offset.Y = ApiElements[i].Offset.Y;
-        elems[i].Offset.Z = ApiElements[i].Offset.Z;
+        SetOffsets(elems, i);
         elems[i].Topology = new ReadOnlyCollection<int>(ApiElements[i].Topology);
 
         // workaround to handle that Color is non-nullable type
@@ -182,6 +161,38 @@ namespace GsaGH.Parameters {
       }
 
       _displayMesh.RebuildNormals();
+    }
+
+    private void InitVariablesFromMesh(Mesh mesh, bool setApiElements) {
+      Tuple<List<GSAElement>, Point3dList, List<List<int>>, List<List<int>>> convertMesh
+        = RhinoConversions.ConvertMeshToElem3d(mesh);
+      if (setApiElements) {
+        ApiElements = convertMesh.Item1;
+      }
+
+      Topology = convertMesh.Item2;
+      TopoInt = convertMesh.Item3;
+      FaceInt = convertMesh.Item4;
+    }
+
+    private GSAElement CreateGsaElement(int i) {
+      return new GSAElement(new Element()) {
+        Group = ApiElements[i].Group,
+        IsDummy = ApiElements[i].IsDummy,
+        Name = ApiElements[i].Name.ToString(),
+        OrientationNode = ApiElements[i].OrientationNode,
+        OrientationAngle = ApiElements[i].OrientationAngle,
+        ParentMember = ApiElements[i].ParentMember,
+        Property = ApiElements[i].Property,
+        Type = ApiElements[i].Type,
+      };
+    }
+
+    private void SetOffsets(List<GSAElement> elems, int i) {
+      elems[i].Offset.X1 = ApiElements[i].Offset.X1;
+      elems[i].Offset.X2 = ApiElements[i].Offset.X2;
+      elems[i].Offset.Y = ApiElements[i].Offset.Y;
+      elems[i].Offset.Z = ApiElements[i].Offset.Z;
     }
   }
 }

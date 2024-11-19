@@ -2,9 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Common;
-using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
 
@@ -16,7 +13,6 @@ using GsaAPI;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
-using GsaGH.Helpers.Import;
 
 using OasysUnits;
 
@@ -24,7 +20,7 @@ using Rhino.Collections;
 using Rhino.Geometry;
 
 using AngleUnit = OasysUnits.Units.AngleUnit;
-using LengthUnit = OasysUnits.Units.LengthUnit;
+using Polyline = Rhino.Geometry.Polyline;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -78,7 +74,7 @@ namespace GsaGH.Parameters {
     public GsaElement2d(Curve curve) {
       Curve = curve.DuplicateCurve();
       ApiElements = new List<GSAElement> {
-        new GSAElement(new LoadPanelElement())
+        new GSAElement(new LoadPanelElement()),
       };
       Topology = RhinoConversions.LoadPanelTopo(curve);
       TopoInt = RhinoConversions.LoadPanelTopoIndices(curve);
@@ -181,15 +177,13 @@ namespace GsaGH.Parameters {
       for (int i = 0; i < ApiElements.Count; i++) {
 
         if (ApiElements[i].IsLoadPanel) {
-          Curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline);
+          Curve.TryGetPolyline(out Polyline polyline);
           points.Add(polyline.CenterPoint());
         } else {
           Point3d pt = Mesh.Faces.GetFaceCenter(faceIndex);
-          int index = 0;
 
           switch (ApiElements[i].Type) {
             case ElementType.QUAD8:
-              index = TopoInt[i][0];
               pt = Mesh.Vertices[Mesh.Faces[faceIndex].C];
               faceIndex += 8;
               break;
@@ -223,7 +217,7 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string info = "";
       if (IsLoadPanel) {
-        if (Curve == null || !Curve.TryGetPolyline(out Rhino.Geometry.Polyline polyline)) {
+        if (Curve == null || !Curve.TryGetPolyline(out Polyline polyline)) {
           return "Null";
         }
         info = "P" + polyline.Count;

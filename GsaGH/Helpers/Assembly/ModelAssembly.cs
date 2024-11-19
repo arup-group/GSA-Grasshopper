@@ -136,7 +136,7 @@ namespace GsaGH.Helpers.Assembly {
       var loadPanels = new Dictionary<int, LoadPanelElement>();
       foreach (KeyValuePair<int, GSAElement> kvp in _elements.ReadOnlyDictionary) {
         if (kvp.Value.IsLoadPanel) {
-          loadPanels.Add(kvp.Key, kvp.Value.LoadPanelElelment);
+          loadPanels.Add(kvp.Key, kvp.Value.LoadPanelElement);
         } else {
           feElements.Add(kvp.Key, kvp.Value.Element);
         }
