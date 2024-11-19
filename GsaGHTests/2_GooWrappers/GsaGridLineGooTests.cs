@@ -9,17 +9,19 @@ using GsaGH.Parameters;
 using GsaGHTests.Helpers;
 using GsaGHTests.Model;
 
-using OasysGH.Components;
-
 using Rhino.Geometry;
 
 using Xunit;
 
-using Line = Rhino.Geometry.Line;
-
 namespace GsaGHTests.GooWrappers {
   [Collection("GrasshopperFixture collection")]
   public class GsaGridLineGooTests {
+    private CreateGridLineTestHelper _helper;
+
+    public GsaGridLineGooTests() {
+      _helper = new CreateGridLineTestHelper();
+    }
+
     [Fact]
     public void ArcGridLineGooTest() {
       var arc = new Arc(new Point3d(0, 0, 0), 0.5, Math.PI / 4);
@@ -36,16 +38,16 @@ namespace GsaGHTests.GooWrappers {
 
     [Fact]
     public void GsaGridLineGooLinePreviewTest() {
-      GH_OasysComponent comp = CreateGridLineTest.GridLineComponentMother();
-      var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
-      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
+      _helper.CreateComponentWithLineInput();
+      _helper.GetGridLineOutput();
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(_helper.GetComponent());
     }
 
     [Fact]
     public void GsaGridLineGooArcPreviewTest() {
-      GH_OasysComponent comp = CreateGridLineTest.GridArcComponentMother();
-      var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
-      ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
+      _helper.CreateComponentWithArcInput();
+      _helper.GetGridLineOutput();
+      ComponentTestHelper.DrawViewportMeshesAndWiresTest(_helper.GetComponent());
     }
 
     private void GsaGridLineGooTest(GsaGridLineGoo objectGoo, bool excludeGuid = false) {
