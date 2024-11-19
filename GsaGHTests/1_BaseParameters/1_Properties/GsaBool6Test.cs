@@ -117,7 +117,7 @@ namespace GsaGHTests.Parameters {
       ComponentTestHelper.SetInput(param, NonExistingString);
       IList<string> message = param.RuntimeMessages(GH_RuntimeMessageLevel.Error);
       Assert.Single(message);
-      Assert.Equal("Data conversion failed from Text to Bool6", message[0]);
+      Assert.Equal("Data  conversion failed from 'NonExistingString' of type Text to Bool6", message[0]);
     }
 
     [Fact]
@@ -126,7 +126,7 @@ namespace GsaGHTests.Parameters {
       param.CreateAttributes();
       param.ClearData();
       ComponentTestHelper.SetInput(param, "FFTTRR");
-      var message = param.RuntimeMessages(GH_RuntimeMessageLevel.Error);
+      IList<string> message = param.RuntimeMessages(GH_RuntimeMessageLevel.Error);
       Assert.Single(message);
       Assert.Equal("Unable to convert string to Bool6, character t not recognised", message[0]);
     }
@@ -138,7 +138,7 @@ namespace GsaGHTests.Parameters {
       ComponentTestHelper.SetInput(param, "wrong");
       IList<string> message = param.RuntimeMessages(GH_RuntimeMessageLevel.Error);
       Assert.Single(message);
-      Assert.Equal("Data conversion failed from Text to Bool6", message[0]);
+      Assert.Equal("Data  conversion failed from 'wrong' of type Text to Bool6", message[0]);
     }
 
     [Fact]
@@ -146,7 +146,7 @@ namespace GsaGHTests.Parameters {
       var param = new GsaReleaseParameter();
       param.CreateAttributes();
       ComponentTestHelper.SetInput(param, "FFTTRR");
-      var message = param.RuntimeMessages(GH_RuntimeMessageLevel.Error);
+      IList<string> message = param.RuntimeMessages(GH_RuntimeMessageLevel.Error);
       Assert.Single(message);
       Assert.Equal("Unable to convert string to Bool6, character t not recognised", message[0]);
     }

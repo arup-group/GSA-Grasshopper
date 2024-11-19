@@ -134,7 +134,7 @@ namespace GsaGHTests.GooWrappers {
     }
 
     [Fact]
-    public void ParseReleaseShouldThrowExceptionWhenNullObjectIsPassed() {
+    public void ParseReleaseShouldThrowExceptionWhenNullObjectIsUsed() {
       Assert.Throws<InvalidCastException>(() => StringExtension.ParseRelease(null));
     }
 
