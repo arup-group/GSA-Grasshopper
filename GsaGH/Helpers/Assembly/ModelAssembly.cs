@@ -15,8 +15,6 @@ using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 
-using OasysGH.Units.Helpers;
-
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -352,7 +350,7 @@ namespace GsaGH.Helpers.Assembly {
       if (gridLines != null) {
         int id = 1;
         foreach (GsaGridLine gridLine in gridLines.OrderBy(x => x.GridLine.Label)) {
-          GridLine apiGridLine = gridLine.GetApiGridLineToUnit(RhinoUnit.GetRhinoLengthUnit());
+          GridLine apiGridLine = gridLine.GetApiGridLineToUnit(_unit);
           _gridLines.SetValue(id, apiGridLine);
           id++;
         }
