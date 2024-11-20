@@ -80,23 +80,20 @@ namespace GsaGHTests.Helpers.GsaApi {
 
     [Fact]
     public void ShouldNotCreateDefaultCaseWhenCaseCountNotZero() {
-      bool createDefaultCase = true;
-      ModelFactory.BuildAnalysisTask(_model.ApiModel, GsaAnalysisTasksFromSeedModel(true), createDefaultCase);
+      ModelFactory.BuildAnalysisTask(_model.ApiModel, GsaAnalysisTasksFromSeedModel(true), true);
       Assert.Single(_model.ApiModel.AnalysisTasks().First().Value.Cases);
     }
 
     [Fact]
     public void ShouldCreateDefaultCaseWhenCaseCountIsZero() {
-      bool createDefaultCase = true;
-      ModelFactory.BuildAnalysisTask(_model.ApiModel, GsaAnalysisTasksFromSeedModel(), createDefaultCase);
+      ModelFactory.BuildAnalysisTask(_model.ApiModel, GsaAnalysisTasksFromSeedModel(), true);
       Assert.Equal(2, _model.ApiModel.AnalysisTasks().First().Value.Cases.Count);
     }
 
     [Fact]
     public void AnalysisCasesWillBeEmptyInAbsenceOfLoadCase() {
       _model = new GsaModel();
-      bool createDefaultCase = true;
-      ModelFactory.BuildAnalysisTask(_model.ApiModel, GsaAnalysisTasksFromSeedModel(), createDefaultCase);
+      ModelFactory.BuildAnalysisTask(_model.ApiModel, GsaAnalysisTasksFromSeedModel(), true);
       Assert.Empty(_model.ApiModel.AnalysisTasks().First().Value.Cases);
     }
   }
