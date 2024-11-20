@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 
 using GH_IO.Serialization;
 
@@ -37,6 +38,7 @@ namespace GsaGH.Components {
         { "Static", AnalysisTaskType.Static },
         { "Static P-delta", AnalysisTaskType.StaticPDelta },
         { "Footfall", AnalysisTaskType.Footfall },
+        { "Modal Dynamic", AnalysisTaskType.ModalDynamic },
       };
 
     public override Guid ComponentGuid => new Guid("581601cc-c0bc-47fe-ada5-b821327a4409");
@@ -49,6 +51,14 @@ namespace GsaGH.Components {
       Name = "Analysis Cases",
       Description = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)",
       Access = GH_ParamAccess.list,
+      Optional = true,
+    };
+
+    private readonly InputAttributes _modalDynamicParameterInputAttributes = new InputAttributes {
+      NickName = GsaModalDynamicAnalysisGoo.NickName,
+      Name = GsaModalDynamicAnalysisGoo.Name,
+      Description = GsaModalDynamicAnalysisGoo.Description,
+      Access = GH_ParamAccess.item,
       Optional = true,
     };
 
@@ -133,9 +143,11 @@ namespace GsaGH.Components {
           }
 
           break;
-
         case AnalysisTaskType.Footfall:
           SetFootfallInput();
+          break;
+        case AnalysisTaskType.ModalDynamic:
+          SetInputAttributes(_casesParamIndex, _modalDynamicParameterInputAttributes);
           break;
         case AnalysisTaskType.Static:
         default:
@@ -206,9 +218,13 @@ namespace GsaGH.Components {
           if (!CreateFootfallTask(da, name, out task)) {
             return;
           }
-
           break;
 
+        case AnalysisTaskType.ModalDynamic:
+          if (!CreateModalDynamicTask(da, name, out task)) {
+            return;
+          }
+          break;
         default:
           this.AddRuntimeWarning(GetAnalysisCaseErrorMessage(_type));
           break;
@@ -226,34 +242,44 @@ namespace GsaGH.Components {
     private bool GetAnalysisCases(IGH_DataAccess da, string name, out List<GsaAnalysisCase> cases) {
       cases = null;
       var ghTypes = new List<GH_ObjectWrapper>();
-      if (_type != AnalysisTaskType.Footfall) {
-        if (da.GetDataList(_casesParamIndex, ghTypes)) {
-          cases = new List<GsaAnalysisCase>();
-          for (int i = 0; i < ghTypes.Count; i++) {
-            GH_ObjectWrapper ghTypeWrapper = ghTypes[i];
-            if (ghTypeWrapper == null) {
-              this.AddRuntimeWarning($"Analysis Case input (index: {i}) is null and has been ignored");
-              continue;
-            }
+      switch (_type) {
+        case AnalysisTaskType.Static:
+        case AnalysisTaskType.StaticPDelta:
+          if (da.GetDataList(_casesParamIndex, ghTypes)) {
+            cases = new List<GsaAnalysisCase>();
+            for (int i = 0; i < ghTypes.Count; i++) {
+              GH_ObjectWrapper ghTypeWrapper = ghTypes[i];
+              if (ghTypeWrapper == null) {
+                this.AddRuntimeWarning($"Analysis Case input (index: {i}) is null and has been ignored");
+                continue;
+              }
 
-            if (ghTypeWrapper.Value is GsaAnalysisCaseGoo goo) {
-              cases.Add(goo.Value.Duplicate());
-            } else {
-              UnsupportedValueError(ghTypeWrapper);
-              return false;
+              if (ghTypeWrapper.Value is GsaAnalysisCaseGoo goo) {
+                cases.Add(goo.Value.Duplicate());
+              } else {
+                UnsupportedValueError(ghTypeWrapper);
+                return false;
+              }
             }
           }
-        }
 
-        if (cases == null) {
-          this.AddRuntimeRemark("Default Task has been created; it will by default contain all cases found in model");
-        }
-      } else {
-        cases = new List<GsaAnalysisCase> {
-          new GsaAnalysisCase(name, "Footfall")
-        };
+          if (cases == null) {
+            this.AddRuntimeRemark("Default Task has been created; it will by default contain all cases found in model");
+          }
+          break;
+        case AnalysisTaskType.Footfall:
+          cases = new List<GsaAnalysisCase>();
+          var footfallAnalysisCase = new GsaAnalysisCase {
+            Name = name,
+            Definition = "Footfall",
+          };
+          cases.Add(footfallAnalysisCase);
+          break;
+        case AnalysisTaskType.ModalDynamic:
+          break;
+        default:
+          break;
       }
-
       return true;
     }
 
@@ -358,6 +384,17 @@ namespace GsaGH.Components {
 
       task = AnalysisTaskFactory.CreateFootfallAnalysisTask(name, parameter);
       return true;
+    }
+
+    private bool CreateModalDynamicTask(IGH_DataAccess da, string name, out AnalysisTask task) {
+      GsaModalDynamicAnalysisGoo gsaModalDynamicAnalysisGoo = null;
+      if (da.GetData(2, ref gsaModalDynamicAnalysisGoo)) {
+        GsaModalDynamicAnalysis dynamicAnalysisParameter = gsaModalDynamicAnalysisGoo.Value;
+        task = AnalysisTaskFactory.CreateModalDynamicAnalysisTask(name, new ModalDynamicTaskParameter(dynamicAnalysisParameter.ModeCalculationStrategy, dynamicAnalysisParameter.MassOption, dynamicAnalysisParameter.AdditionalMassDerivedFromLoads, dynamicAnalysisParameter.ModalDamping));
+        return true;
+      }
+      task = null;
+      return false;
     }
 
     private static bool HasValidFrequencyWeightingOption(
@@ -524,7 +561,11 @@ namespace GsaGH.Components {
           _casesParamIndex = !IsSelfExcitationSelected() ? 9 : 8;
 
           break;
-        default: break;
+        case AnalysisTaskType.ModalDynamic:
+          Params.RegisterInputParam(new GsaModalDynamicAnalysisParameter());
+          break;
+        default:
+          break;
       }
     }
 
