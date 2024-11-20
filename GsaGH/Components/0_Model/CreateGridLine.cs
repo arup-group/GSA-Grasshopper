@@ -6,6 +6,8 @@ using System.Linq;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using GsaAPI;
+
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
@@ -16,9 +18,11 @@ using OasysGH.Components;
 using OasysGH.Units.Helpers;
 
 using OasysUnits;
-using OasysUnits.Units;
 
 using Rhino.Geometry;
+
+using LengthUnit = OasysUnits.Units.LengthUnit;
+using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -51,42 +55,45 @@ namespace GsaGH.Components {
       }
 
       GH_Curve curve = null;
-      GsaGridLine gridLine = null;
+      GsaGridLine gsaGridLine = null;
       if (!da.GetData(0, ref curve)) {
         return;
       }
 
       LengthUnit rhinoUnits = RhinoUnit.GetRhinoLengthUnit();
       var ghLine = new GH_Line();
-      var ghArc = new GH_Arc();
-      if (ghLine.CastFrom(curve)) {
-        Line line = ghLine.Value;
-        // project onto WorldXY
-        line.FromZ = 0;
-        line.ToZ = 0;
-        gridLine = new GsaGridLine(line, label);
-      } else if (ghArc.CastFrom(curve)) {
-        Arc arc = ghArc.Value;
-        // project onto WorldXY
-        Point3d startPoint = arc.StartPoint;
-        startPoint.Z = 0;
-        Point3d midPoint = arc.MidPoint;
-        midPoint.Z = 0;
-        Point3d endPoint = arc.EndPoint;
-        endPoint.Z = 0;
-        gridLine = new GsaGridLine(arc, label);
-      } else {
-        string message = "Invalid input geometry, curve needs to be a straight line or a circular arc.";
-        this.AddRuntimeWarning(message);
-        return;
-      }
+        var ghArc = new GH_Arc();
+        if (ghLine.CastFrom(curve)) {
+          Line line = ghLine.Value;
+          // project onto WorldXY
+          line.FromZ = 0;
+          line.ToZ = 0;
+          gsaGridLine = new GsaGridLine(line, label);
+        } else if (ghArc.CastFrom(curve)) {
+          Arc arc = ghArc.Value;
+          // project onto WorldXY
+          Point3d startPoint = arc.StartPoint;
+          startPoint.Z = 0;
+          Point3d midPoint = arc.MidPoint;
+          midPoint.Z = 0;
+          Point3d endPoint = arc.EndPoint;
+          endPoint.Z = 0;
+          gsaGridLine = new GsaGridLine(arc, label);
+        } else {
+          string message = "Invalid input geometry, curve needs to be a straight line or a circular arc.";
+          this.AddRuntimeWarning(message);
+          return;
+        }
 
-      var assembly = new ModelAssembly(null, null, new List<GsaGridLine>() {
-        gridLine,
-      }, null, null, null, null, rhinoUnits, Length.Zero, true, this);
+        var assembly = new ModelAssembly(null, null, new List<GsaGridLine>() {
+          gsaGridLine,
+        }, null, null, null, null, rhinoUnits, Length.Zero, true, this);
 
-      da.SetData(0,
-        new GsaGridLineGoo(new GsaGridLine(assembly.GetModel().GridLines().Values.FirstOrDefault(), new PolyCurve())));
+        GridLine gridLine = assembly.GetModel().GridLines().Values.FirstOrDefault();
+        gsaGridLine.GridLine = gridLine;
+
+        var goo = new GsaGridLineGoo(gsaGridLine);
+        da.SetData(0, goo);
     }
   }
 }
