@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Units;
 using OasysGH.Units.Helpers;
 
 using OasysUnits;
@@ -79,9 +81,12 @@ namespace GsaGH.Components {
         return;
       }
 
-      gridLine.GridLine.Length = UnitConverter.Convert(gridLine.GridLine.Length, rhinoUnits,
-        UnitSystem.SI.BaseUnits.Length ?? DefaultUnits.LengthUnitGeometry);
-      da.SetData(0, new GsaGridLineGoo(gridLine));
+      var assembly = new ModelAssembly(null, null, new List<GsaGridLine>() {
+        gridLine,
+      }, null, null, null, null, rhinoUnits, Length.Zero, true, this);
+
+      da.SetData(0,
+        new GsaGridLineGoo(new GsaGridLine(assembly.GetModel().GridLines().Values.FirstOrDefault(), new PolyCurve())));
     }
   }
 }

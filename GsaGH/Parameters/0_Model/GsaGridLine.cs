@@ -4,10 +4,13 @@ using GsaAPI;
 
 using OasysGH.Units;
 
+using OasysUnits;
+
 using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Geometry;
 
+using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
@@ -136,18 +139,18 @@ namespace GsaGH.Parameters {
     internal void UpdatePreview() {
       // we want to scale grid lines according to the users unit settings
       double unitLength = 1;
-      OasysUnits.Units.LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
+      LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
       switch (DefaultUnits.LengthUnitGeometry) {
-        case OasysUnits.Units.LengthUnit.Millimeter:
+        case LengthUnit.Millimeter:
           unitLength = 1000;
           break;
-        case OasysUnits.Units.LengthUnit.Centimeter:
+        case LengthUnit.Centimeter:
           unitLength = 100;
           break;
-        case OasysUnits.Units.LengthUnit.Inch:
+        case LengthUnit.Inch:
           unitLength = 39.3701;
           break;
-        case OasysUnits.Units.LengthUnit.Foot:
+        case LengthUnit.Foot:
           unitLength = 3.28084;
           break;
       }
@@ -173,7 +176,7 @@ namespace GsaGH.Parameters {
         Vector3d distance = Curve.TangentAtStart;
         distance.Unitize();
         distance *= -radius;
-        origin.Transform(Rhino.Geometry.Transform.Translation(distance));
+        origin.Transform(Transform.Translation(distance));
         plane.Origin = origin;
 
         Text = new Text3d(GridLine.Label, plane, 0.381982059 * unitLength) { // golden ratio
@@ -183,6 +186,30 @@ namespace GsaGH.Parameters {
 
         Circle = new Circle(plane, radius);
       }
+    }
+
+    public GridLine GetApiGridLineToUnit(LengthUnit unit) {
+      GridLine gridLine = DuplicateApiObject();
+      gridLine.X = unit == LengthUnit.Meter ? GridLine.X : new Length(GridLine.X, unit).Value;
+      gridLine.Y = unit == LengthUnit.Meter ? GridLine.Y : new Length(GridLine.Y, unit).Value;
+      gridLine.Length = unit == LengthUnit.Meter ? GridLine.Length : new Length(GridLine.Length, unit).Value;
+
+      return gridLine;
+    }
+
+    public GridLine DuplicateApiObject() {
+      var gsaLine = new GridLine(GridLine.Label) {
+        Theta1 = GridLine.Theta1,
+        X = GridLine.X,
+        Y = GridLine.Y,
+        Length = GridLine.Length,
+        Shape = GridLine.Shape,
+      };
+      if (GridLine.Shape == GridLineShape.Arc) {
+        gsaLine.Theta2 = GridLine.Theta2;
+      }
+
+      return gsaLine;
     }
   }
 }
