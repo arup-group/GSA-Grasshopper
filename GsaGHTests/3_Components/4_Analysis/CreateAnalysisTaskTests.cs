@@ -10,6 +10,7 @@ using GsaGH.Components;
 using GsaGH.Data;
 using GsaGH.Helpers;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 
 using GsaGHTests.Helpers;
 

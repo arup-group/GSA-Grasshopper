@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 using GH_IO.Serialization;
 
@@ -15,6 +17,7 @@ using GsaGH.Data;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 
 using OasysGH;
@@ -37,6 +40,7 @@ namespace GsaGH.Components {
         { "Static", AnalysisTaskType.Static },
         { "Static P-delta", AnalysisTaskType.StaticPDelta },
         { "Footfall", AnalysisTaskType.Footfall },
+        { "Modal Dynamic", AnalysisTaskType.ModalDynamic },
       };
 
     public override Guid ComponentGuid => new Guid("581601cc-c0bc-47fe-ada5-b821327a4409");
@@ -49,6 +53,14 @@ namespace GsaGH.Components {
       Name = "Analysis Cases",
       Description = "List of GSA Analysis Cases (if left empty, all load cases in model will be added)",
       Access = GH_ParamAccess.list,
+      Optional = true,
+    };
+
+    private readonly InputAttributes _modalDynamicParameterInputAttributes = new InputAttributes {
+      NickName = GsaModalDynamicAnalysisGoo.NickName,
+      Name = GsaModalDynamicAnalysisGoo.Name,
+      Description = GsaModalDynamicAnalysisGoo.Description,
+      Access = GH_ParamAccess.item,
       Optional = true,
     };
 
@@ -104,9 +116,12 @@ namespace GsaGH.Components {
 
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
-
       if (i == 0) {
-        _type = _solverTypes[_selectedItems[0]];
+        AnalysisTaskType type = _solverTypes[_selectedItems[0]];
+        if (type == _type) {
+          return;
+        }
+        _type = type;
         UpdateDropdownItems();
       }
 
@@ -133,9 +148,11 @@ namespace GsaGH.Components {
           }
 
           break;
-
         case AnalysisTaskType.Footfall:
           SetFootfallInput();
+          break;
+        case AnalysisTaskType.ModalDynamic:
+          SetInputAttributes(_casesParamIndex, _modalDynamicParameterInputAttributes);
           break;
         case AnalysisTaskType.Static:
         default:
@@ -188,7 +205,7 @@ namespace GsaGH.Components {
       string name = _type.ToString();
       da.GetData(1, ref name);
 
-      if (!GetAnalysisCases(da, name, out List<GsaAnalysisCase> cases)) {
+      if (!GetAnalysisCases(da, out List<GsaAnalysisCase> cases)) {
         return;
       }
 
@@ -206,9 +223,13 @@ namespace GsaGH.Components {
           if (!CreateFootfallTask(da, name, out task)) {
             return;
           }
-
           break;
 
+        case AnalysisTaskType.ModalDynamic:
+          if (!CreateModalDynamicTask(da, name, out task)) {
+            return;
+          }
+          break;
         default:
           this.AddRuntimeWarning(GetAnalysisCaseErrorMessage(_type));
           break;
@@ -223,40 +244,36 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaAnalysisTaskGoo(gsaAnalysisTask));
     }
 
-    private bool GetAnalysisCases(IGH_DataAccess da, string name, out List<GsaAnalysisCase> cases) {
+    private bool GetAnalysisCases(IGH_DataAccess da, out List<GsaAnalysisCase> cases) {
       cases = null;
-      var ghTypes = new List<GH_ObjectWrapper>();
-      if (_type != AnalysisTaskType.Footfall) {
-        if (da.GetDataList(_casesParamIndex, ghTypes)) {
-          cases = new List<GsaAnalysisCase>();
-          for (int i = 0; i < ghTypes.Count; i++) {
-            GH_ObjectWrapper ghTypeWrapper = ghTypes[i];
-            if (ghTypeWrapper == null) {
-              this.AddRuntimeWarning($"Analysis Case input (index: {i}) is null and has been ignored");
-              continue;
-            }
+      switch (_type) {
+        case AnalysisTaskType.Static:
+        case AnalysisTaskType.StaticPDelta:
+          var ghTypes = new List<GH_ObjectWrapper>();
+          if (da.GetDataList(_casesParamIndex, ghTypes)) {
+            cases = new List<GsaAnalysisCase>();
+            for (int i = 0; i < ghTypes.Count; i++) {
+              GH_ObjectWrapper ghTypeWrapper = ghTypes[i];
+              if (ghTypeWrapper == null) {
+                this.AddRuntimeWarning($"Analysis Case input (index: {i}) is null and has been ignored");
+                continue;
+              }
 
-            if (ghTypeWrapper.Value is GsaAnalysisCaseGoo goo) {
-              cases.Add(goo.Value.Duplicate());
-            } else {
-              UnsupportedValueError(ghTypeWrapper);
-              return false;
+              if (ghTypeWrapper.Value is GsaAnalysisCaseGoo goo) {
+                cases.Add(goo.Value.Duplicate());
+              } else {
+                UnsupportedValueError(ghTypeWrapper);
+                return false;
+              }
             }
           }
-        }
-
-        if (cases == null) {
-          this.AddRuntimeRemark("Default Task has been created; it will by default contain all cases found in model");
-        }
-      } else {
-        cases = new List<GsaAnalysisCase>();
-        var footfallAnalysisCase = new GsaAnalysisCase {
-          Name = name,
-          Definition = "Footfall",
-        };
-        cases.Add(footfallAnalysisCase);
+          if (cases == null) {
+            this.AddRuntimeRemark("Default Task has been created; it will by default contain all cases found in model");
+          }
+          break;
+        default:
+          break;
       }
-
       return true;
     }
 
@@ -361,6 +378,17 @@ namespace GsaGH.Components {
 
       task = AnalysisTaskFactory.CreateFootfallAnalysisTask(name, parameter);
       return true;
+    }
+
+    private bool CreateModalDynamicTask(IGH_DataAccess da, string name, out AnalysisTask task) {
+      GsaModalDynamicAnalysisGoo gsaModalDynamicAnalysisGoo = null;
+      if (da.GetData(2, ref gsaModalDynamicAnalysisGoo)) {
+        GsaModalDynamicAnalysis dynamicAnalysisParameter = gsaModalDynamicAnalysisGoo.Value;
+        task = AnalysisTaskFactory.CreateModalDynamicAnalysisTask(name, new ModalDynamicTaskParameter(dynamicAnalysisParameter.ModeCalculationStrategy, dynamicAnalysisParameter.MassOption, dynamicAnalysisParameter.AdditionalMassDerivedFromLoads, dynamicAnalysisParameter.ModalDamping));
+        return true;
+      }
+      task = null;
+      return false;
     }
 
     private static bool HasValidFrequencyWeightingOption(
@@ -475,13 +503,6 @@ namespace GsaGH.Components {
       return true;
     }
 
-    protected override void UpdateUIFromSelectedItems() {
-      _type = _solverTypes[_selectedItems[0]];
-      UpdateParameters();
-
-      base.UpdateUIFromSelectedItems();
-    }
-
     private void UpdateParameters() {
       UnregisterInputsOverTwo();
       switch (_type) {
@@ -527,7 +548,12 @@ namespace GsaGH.Components {
           _casesParamIndex = !IsSelfExcitationSelected() ? 9 : 8;
 
           break;
-        default: break;
+        case AnalysisTaskType.ModalDynamic:
+          Params.RegisterInputParam(new GsaModalDynamicAnalysisParameter());
+          _casesParamIndex = 2;
+          break;
+        default:
+          break;
       }
     }
 
@@ -562,7 +588,10 @@ namespace GsaGH.Components {
           _selectedItems.Add(_excitationMethod[ExcitationMethod.SelfExcitation]);
 
           break;
-
+        case AnalysisTaskType.ModalDynamic:
+          _dropDownItems.Add(_solverTypes.Keys.ToList());
+          _selectedItems.Add(_dropDownItems[0][3]);
+          break;
         case AnalysisTaskType.Static:
         default:
           _dropDownItems.Add(_solverTypes.Keys.ToList());

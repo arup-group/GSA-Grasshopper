@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 using GsaAPI;
 
 using GsaGH.Helpers;
+using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -37,9 +39,24 @@ namespace GsaGH.Parameters {
     }
 
     internal void CreateDefaultCases(GsaModel gsaModel) {
-      Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
-        = gsaModel.GetAnalysisTasksAndCombinations();
-      Cases = tuple.Item2.Select(x => x.Value).ToList();
+      Cases.Clear();
+      switch ((AnalysisTaskType)ApiTask.Type) {
+        case AnalysisTaskType.Static:
+        case AnalysisTaskType.StaticPDelta:
+          Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
+       = gsaModel.GetAnalysisTasksAndCombinations();
+          Cases = tuple.Item2.Select(x => x.Value).ToList();
+          break;
+        case AnalysisTaskType.Footfall:
+          var footfallAnalysisCase = new GsaAnalysisCase {
+            Name = ApiTask.Name,
+            Definition = "Footfall",
+          };
+          Cases.Add(footfallAnalysisCase);
+          break;
+        default:
+          break;
+      }
     }
   }
 }
