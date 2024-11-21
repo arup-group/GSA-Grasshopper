@@ -53,7 +53,6 @@ namespace GsaGH.Components {
         return;
       }
 
-      LengthUnit rhinoUnits = RhinoUnit.GetRhinoLengthUnit();
       var ghLine = new GH_Line();
       var ghArc = new GH_Arc();
       if (ghLine.CastFrom(curve)) {
