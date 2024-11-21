@@ -1,6 +1,5 @@
 ﻿using System;
 
-using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
 using GsaGH.Helpers;
@@ -96,7 +95,7 @@ namespace GsaGHTests.GooWrappers {
     public void CastFromStringTest(
       string text, bool expectedX, bool expectedY, bool expectedZ, bool expectedXx, bool expectedYy, bool expectedZz) {
       //release
-      var output = StringExtension.ParseRelease(text);
+      GsaBool6 output = ParseBool6.Parse(text);
       var releaseBool6 = new GsaBool6 {
         X = expectedX,
         Y = expectedY,
@@ -108,36 +107,35 @@ namespace GsaGHTests.GooWrappers {
       Assert.Equal(releaseBool6, output);
 
       //restraint is the opposite of release
-      output = StringExtension.ParseRestrain(text);
+      output = ParseBool6.ParseRestrain(text);
       Assert.Equal(!releaseBool6, output);
     }
 
     [Fact]
     public void ReleasesShouldThrowErrorWhenInvalidStringIsUsed() {
-      Assert.Throws<InvalidCastException>(() => StringExtension.ParseRelease(NonExistingString));
+      Assert.Throws<InvalidCastException>(() => ParseBool6.ParseRelease(NonExistingString));
     }
 
     [Fact]
     public void RestrainsShouldThrowErrorWhenInvalidStringIsUsed() {
-      Assert.Throws<InvalidCastException>(() => StringExtension.ParseRestrain(NonExistingString));
+      Assert.Throws<InvalidCastException>(() => ParseBool6.ParseRestrain(NonExistingString));
     }
 
     [Fact]
     public void Bool6ShouldThrowErrorWhenInvalidStringIsUsed() {
-      Assert.Throws<InvalidCastException>(() => StringExtension.ParseBool6(NonExistingString));
+      Assert.Throws<InvalidCastException>(() => ParseBool6.Parse(NonExistingString));
     }
 
     [Fact]
     public void Bool6ShouldThrowExceptionWhen6Characters() {
       string exactlySixCharacters = "ABCDEF";
-      Assert.Throws<InvalidCastException>(() => StringExtension.ParseBool6(exactlySixCharacters));
+      Assert.Throws<InvalidCastException>(() => ParseBool6.Parse(exactlySixCharacters));
     }
 
     [Fact]
     public void ParseReleaseShouldThrowExceptionWhenNullObjectIsUsed() {
-      Assert.Throws<InvalidCastException>(() => StringExtension.ParseRelease(null));
+      Assert.Throws<InvalidCastException>(() => ParseBool6.ParseRelease(null));
     }
 
-    private class DummyClass { }
   }
 }

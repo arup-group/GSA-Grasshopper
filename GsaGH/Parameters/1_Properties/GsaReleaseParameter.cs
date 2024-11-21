@@ -31,7 +31,7 @@ namespace GsaGH.Parameters {
 
     protected override GsaBool6Goo PreferredCast(object data) {
       try {
-        GsaBool6 gsaBool6 = StringExtension.ParseRelease(data);
+        GsaBool6 gsaBool6 = ParseBool6.Parse(data);
         return new GsaBool6Goo(gsaBool6);
       } catch (InvalidCastException e) {
         AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
