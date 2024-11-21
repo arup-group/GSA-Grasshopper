@@ -15,6 +15,8 @@ using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 
+using OasysGH.Units.Helpers;
+
 using OasysUnits;
 using OasysUnits.Units;
 
@@ -77,7 +79,8 @@ namespace GsaGH.Helpers.Assembly {
       Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner) {
       SetupModel(model, modelUnit);
       if (properties != null) {
-        ConvertProperties(properties.Materials, properties.Sections, properties.Property2ds, properties.Property3ds, properties.SpringProperties);
+        ConvertProperties(properties.Materials, properties.Sections, properties.Property2ds, properties.Property3ds,
+          properties.SpringProperties);
       }
 
       if (geometry != null) {
@@ -350,7 +353,8 @@ namespace GsaGH.Helpers.Assembly {
       if (gridLines != null) {
         int id = 1;
         foreach (GsaGridLine gridLine in gridLines.OrderBy(x => x.GridLine.Label)) {
-          GridLine apiGridLine = gridLine.GetApiGridLineToUnit(_unit);
+          GridLine apiGridLine
+            = gridLine.GetApiGridLineToUnit(RhinoUnit.GetRhinoLengthUnit()); // we need to grab settings from Rhino!!!!
           _gridLines.SetValue(id, apiGridLine);
           id++;
         }

@@ -139,21 +139,8 @@ namespace GsaGH.Parameters {
     internal void UpdatePreview() {
       // we want to scale grid lines according to the users unit settings
       double unitLength = 1;
-      LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-      switch (DefaultUnits.LengthUnitGeometry) {
-        case LengthUnit.Millimeter:
-          unitLength = 1000;
-          break;
-        case LengthUnit.Centimeter:
-          unitLength = 100;
-          break;
-        case LengthUnit.Inch:
-          unitLength = 39.3701;
-          break;
-        case LengthUnit.Foot:
-          unitLength = 3.28084;
-          break;
-      }
+      var length = new Length(unitLength, LengthUnit.Meter);
+      unitLength = length.ToUnit(DefaultUnits.LengthUnitGeometry).Value;
 
       Points = null;
       Curve segment = Curve.SegmentCurve(0);
@@ -190,9 +177,9 @@ namespace GsaGH.Parameters {
 
     public GridLine GetApiGridLineToUnit(LengthUnit unit) {
       GridLine gridLine = DuplicateApiObject();
-      gridLine.X = unit == LengthUnit.Meter ? GridLine.X : new Length(GridLine.X, unit).Value;
-      gridLine.Y = unit == LengthUnit.Meter ? GridLine.Y : new Length(GridLine.Y, unit).Value;
-      gridLine.Length = unit == LengthUnit.Meter ? GridLine.Length : new Length(GridLine.Length, unit).Value;
+      gridLine.X = unit == LengthUnit.Meter ? GridLine.X : new Length(GridLine.X, unit).Meters;
+      gridLine.Y = unit == LengthUnit.Meter ? GridLine.Y : new Length(GridLine.Y, unit).Meters;
+      gridLine.Length = unit == LengthUnit.Meter ? GridLine.Length : new Length(GridLine.Length, unit).Meters;
 
       return gridLine;
     }
