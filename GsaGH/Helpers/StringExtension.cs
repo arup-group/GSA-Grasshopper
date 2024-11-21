@@ -2,12 +2,6 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-using Grasshopper.Kernel;
-
-using GsaGH.Parameters;
-
-using Rhino.Render.Fields;
-
 namespace GsaGH.Helpers {
   public static class StringExtension {
 

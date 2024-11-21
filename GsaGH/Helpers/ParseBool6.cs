@@ -6,8 +6,6 @@ using Grasshopper.Kernel;
 
 using GsaGH.Parameters;
 
-using Rhino.Render.Fields;
-
 namespace GsaGH.Helpers {
   public static class ParseBool6 {
     public static GsaBool6 Parse(object data) {

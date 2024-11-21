@@ -95,7 +95,7 @@ namespace GsaGHTests.GooWrappers {
     public void CastFromStringTest(
       string text, bool expectedX, bool expectedY, bool expectedZ, bool expectedXx, bool expectedYy, bool expectedZz) {
       //release
-      GsaBool6 output = ParseBool6.Parse(text);
+      GsaBool6 output = ParseBool6.ParseRelease(text);
       var releaseBool6 = new GsaBool6 {
         X = expectedX,
         Y = expectedY,
