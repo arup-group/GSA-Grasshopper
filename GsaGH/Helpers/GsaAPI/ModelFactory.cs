@@ -1,9 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 using GsaAPI;
 
 using GsaGH.Helpers.GsaApi.EnumMappings;
+using GsaGH.Parameters;
 
 namespace GsaGH.Helpers.GsaApi {
   internal static class ModelFactory {
@@ -72,6 +75,53 @@ namespace GsaGH.Helpers.GsaApi {
 
         return new Model(concreteDesignCode, steelDesignCode);
       }
+    }
+
+    public static void BuildAnalysisTask(Model model, List<GsaAnalysisTask> analysisTasks, bool createDefaultCase = false) {
+      if (analysisTasks != null) {
+        ReadOnlyDictionary<int, AnalysisTask> existingTasks = model.AnalysisTasks();
+        foreach (GsaAnalysisTask task in analysisTasks) {
+          bool isNewTask = !existingTasks.Keys.Contains(task.Id);
+          if (isNewTask) {
+            task.Id = model.AddAnalysisTask(task.ApiTask);
+          }
+
+          if (task.Cases.Count == 0 && createDefaultCase) {
+            task.CreateDefaultCases(new GsaModel(model));
+          } else {
+            //clear analysis case list from task
+            foreach (GsaAnalysisCase analysisCase in task.Cases) {
+              model.DeleteAnalysisCaseFromTask(task.Id, analysisCase.Id);
+            }
+          }
+          //then create case and assign to task
+          foreach (GsaAnalysisCase analysisCase in task.Cases) {
+            if (AnalysisCaseNeedToBeAppended(model, task.Id, analysisCase.Id)) {
+              //when two different analysis task is referring same analysis case
+              model.AddAnalysisCaseToTask(task.Id, analysisCase.Name, analysisCase.Definition);
+            } else {
+              model.SetAnalysisCaseToTask(task.Id, analysisCase.Id, analysisCase.Name, analysisCase.Definition);
+            }
+          }
+        }
+      }
+    }
+
+    private static bool AnalysisCaseNeedToBeAppended(Model model, int taskId, int analysisCaseId) {
+      foreach (KeyValuePair<int, AnalysisTask> existingTask in model.AnalysisTasks()) {
+        if (taskId == existingTask.Key) {
+          continue;
+        }
+        foreach (int existingCase in existingTask.Value.Cases) {
+          //i.e. same analysis case is attached to another task
+          if (existingCase == analysisCaseId) {
+            {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
     }
   }
 }
