@@ -1,6 +1,8 @@
 ﻿
 using GsaAPI;
 
+using GsaGH.Parameters.Enums;
+
 namespace GsaGH.Parameters {
   /// <summary>
   /// <para>Analysis <see href="https://docs.oasys-software.com/structural/gsa/references/element-types.html#element-types">parameter</see> used in modal analysis.</para>
@@ -14,8 +16,18 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Empty constructor instantiating a new API object
     /// </summary>
-    public GsaModalDynamicAnalysis() {
-      ModeCalculationStrategy = new ModeCalculationStrategyByNumberOfModes(1);
+    public GsaModalDynamicAnalysis(ModeCalculationMethod modeMethod = ModeCalculationMethod.NumberOfMode) {
+      switch (modeMethod) {
+        case ModeCalculationMethod.NumberOfMode:
+          ModeCalculationStrategy = new ModeCalculationStrategyByNumberOfModes(1);
+          break;
+        case ModeCalculationMethod.FrquencyRange:
+          ModeCalculationStrategy = new ModeCalculationStrategyByFrequency(null, null, 100);
+          break;
+        case ModeCalculationMethod.TargetMassRatio:
+          ModeCalculationStrategy = new ModeCalculationStrategyByMassParticipation(0, 0, 0, 100, false);
+          break;
+      }
       MassOption = new MassOption(ModalMassOption.LumpMassAtNode, 1);
       AdditionalMassDerivedFromLoads = new AdditionalMassDerivedFromLoads("", Direction.X, 1);
       ModalDamping = new ModalDamping(1);
