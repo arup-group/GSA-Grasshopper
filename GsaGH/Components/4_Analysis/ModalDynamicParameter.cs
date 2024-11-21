@@ -12,15 +12,11 @@ using GsaGH.Properties;
 
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Units.Helpers;
+using GsaGH.Parameters.Enums;
 
-using OasysUnits.Units;
-
-using OasysUnits;
 using System.Linq;
 using Grasshopper.Kernel.Parameters;
-using OasysGH.UI;
-using System.Xml.Linq;
+using System.Runtime.InteropServices;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -31,7 +27,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateAnalysisCase;
-    private int _modeStrategy = 0;
+    private ModeCalculationMethod _modeMethod = ModeCalculationMethod.NumberOfMode;
     public CreateModalDynamicAnalysisParameter() : base(
       GsaModalDynamicAnalysisGoo.Name,
       GsaModalDynamicAnalysisGoo.NickName.Replace(" ", string.Empty),
@@ -39,11 +35,11 @@ namespace GsaGH.Components {
       Hidden = true;
     }
 
-    private static readonly IReadOnlyDictionary<int, string> _modeCalculationStrategy
-     = new Dictionary<int, string> {
-        { 0, "Number of modes" },
-        { 1, "Frequency range" },
-        { 2, "Target mass ratio" },
+    private static readonly IReadOnlyDictionary<ModeCalculationMethod, string> _modeCalculationMethod
+     = new Dictionary<ModeCalculationMethod, string> {
+        { ModeCalculationMethod.NumberOfMode, "Number of modes" },
+        { ModeCalculationMethod.FrquencyRange, "Frequency range" },
+        { ModeCalculationMethod.TargetMassRatio, "Target mass ratio" },
      };
 
     private static readonly IReadOnlyDictionary<ModalMassOption, string> _massOptions
@@ -72,7 +68,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var taskParameter = new GsaModalDynamicAnalysis();
+      var taskParameter = new GsaModalDynamicAnalysis(_modeMethod);
       GsaAnalysisTaskGoo analysisTaskGoo = null;
       if (da.GetData(0, ref analysisTaskGoo)) {
         if (analysisTaskGoo.Value.ApiTask != null) {
@@ -81,14 +77,14 @@ namespace GsaGH.Components {
       }
       int positionIndex = 0;
       int maxMode = 0;
-      switch (_modeStrategy) {
-        case 0:
+      switch (_modeMethod) {
+        case ModeCalculationMethod.NumberOfMode:
           int modeCount = 0;
           if (da.GetData(++positionIndex, ref modeCount)) {
             taskParameter.ModeCalculationStrategy = new ModeCalculationStrategyByNumberOfModes(modeCount);
           }
           break;
-        case 1:
+        case ModeCalculationMethod.FrquencyRange:
           var frequencyOption = taskParameter.ModeCalculationStrategy as ModeCalculationStrategyByFrequency;
           double? lowFrequency = frequencyOption.LowerFrequency;
           da.GetData(++positionIndex, ref lowFrequency);
@@ -98,7 +94,7 @@ namespace GsaGH.Components {
           da.GetData(++positionIndex, ref highFrequency);
           taskParameter.ModeCalculationStrategy = new ModeCalculationStrategyByFrequency(lowFrequency, highFrequency, maxMode);
           break;
-        case 2:
+        case ModeCalculationMethod.TargetMassRatio:
           var targetMassOption = taskParameter.ModeCalculationStrategy as ModeCalculationStrategyByMassParticipation;
           double targetMassInXDirection = targetMassOption.TargetMassInXDirection;
           da.GetData(++positionIndex, ref targetMassInXDirection);
@@ -133,15 +129,15 @@ namespace GsaGH.Components {
     public override void SetSelected(int i, int j) {
       _selectedItems[i] = _dropDownItems[i][j];
 
-      int modeStrategy = GetModeStrategy(_selectedItems[0]);
+      ModeCalculationMethod modeMethod = GetModeStrategy(_selectedItems[0]);
       if (i == 0) {
-        UpdateParameters(modeStrategy);
+        UpdateParameters(modeMethod);
       }
       base.UpdateUI();
     }
 
-    private int GetModeStrategy(string name) {
-      foreach (KeyValuePair<int, string> item in _modeCalculationStrategy) {
+    private ModeCalculationMethod GetModeStrategy(string name) {
+      foreach (KeyValuePair<ModeCalculationMethod, string> item in _modeCalculationMethod) {
         if (item.Value.Equals(name)) {
           return item.Key;
         }
@@ -167,25 +163,37 @@ namespace GsaGH.Components {
       throw new ArgumentException("Unable to convert " + name + " to mode calculation strategy");
     }
 
-    private void UpdateParameters(int mode) {
-      if (mode == _modeStrategy) {
+    private void UpdateParameters(ModeCalculationMethod modeMethod) {
+      if (modeMethod == _modeMethod) {
         return;
       }
 
-      _modeCalculationStrategy.TryGetValue(mode, out string eventName);
+      _modeCalculationMethod.TryGetValue(modeMethod, out string eventName);
       RecordUndoEvent($"{eventName} Parameters");
 
+      UnregisterParameters();
+
+      _modeMethod = modeMethod;
+    }
+
+    private void UnregisterParameters() {
       for (int i = Params.Input.Count - 1; i >= 1; i--) {
         Params.UnregisterInputParameter(Params.Input[i], true);
       }
-      _modeStrategy = mode;
     }
 
+
+
     public override void VariableParameterMaintenance() {
+      if (Params.Input.Count > 1) {
+        //other dropdown has been selected
+        return;
+      }
+
       int index = 0;
-      if (_modeStrategy == 0) {
+      if (_modeMethod == ModeCalculationMethod.NumberOfMode) {
         CreateParameter.Create(Params, new Param_Integer(), ++index, "Modes", "Md", "Set number of mode", GH_ParamAccess.item);
-      } else if (_modeStrategy == 1) {
+      } else if (_modeMethod == ModeCalculationMethod.FrquencyRange) {
         CreateParameter.Create(Params, new Param_Number(), ++index, "Lower frequency", "LF", "Set lower frequency range", GH_ParamAccess.item);
         CreateParameter.Create(Params, new Param_Number(), ++index, "Upper frequency", "UF", "Set upper frequency range", GH_ParamAccess.item);
         CreateParameter.Create(Params, new Param_Integer(), ++index, "Limiting modes", "LM", "Limit maximum number of mode", GH_ParamAccess.item);
@@ -215,8 +223,8 @@ namespace GsaGH.Components {
       _dropDownItems = new List<List<string>>();
       _selectedItems = new List<string>();
 
-      _dropDownItems.Add(_modeCalculationStrategy.Values.ToList());
-      _selectedItems.Add(_modeCalculationStrategy.Values.ElementAt(0));
+      _dropDownItems.Add(_modeCalculationMethod.Values.ToList());
+      _selectedItems.Add(_modeCalculationMethod.Values.ElementAt(0));
 
       _dropDownItems.Add(_massOptions.Values.ToList());
       _selectedItems.Add(_massOptions.Values.ElementAt(0));
