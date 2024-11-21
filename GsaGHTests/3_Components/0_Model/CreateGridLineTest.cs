@@ -7,6 +7,7 @@ using GsaGHTests.Helpers;
 
 using OasysGH.Components;
 
+using Rhino;
 using Rhino.Collections;
 using Rhino.Geometry;
 
@@ -144,6 +145,94 @@ namespace GsaGHTests.Model {
 
     public GH_OasysComponent GetComponent() {
       return _component;
+    }
+  }
+
+  [Collection("GrasshopperFixture collection")]
+  public class CreateGridLineConversionThroughAssembly {
+    [Fact]
+    public void GridLineInMillimetersShouldReturnGridLineInMeters() {
+      GsaGridLine gsaGridLine = GsaGridLine(UnitSystem.Millimeters, 1000, true, "test1");
+
+      Assert.Equal(1, gsaGridLine.GridLine.Length);
+    }
+
+    [Fact]
+    public void GridLineInMetersShouldReturnGridLineInMeters() {
+      GsaGridLine gsaGridLine = GsaGridLine(UnitSystem.Meters, 1, true, "test2");
+
+      Assert.Equal(1, gsaGridLine.GridLine.Length);
+    }
+
+    [Fact]
+    public void GridLineAlwaysReturnInSiUnit() {
+      GsaGridLine gsaGridLine = GsaGridLine(UnitSystem.Millimeters, 1000, false, "test3");
+
+      Assert.Equal(1, gsaGridLine.GridLine.Length);
+    }
+
+    private static GsaGridLine GsaGridLine(
+      UnitSystem activeDocModelUnitSystem, int toX, bool setToMeters, string modelTemplateFileName) {
+      RhinoDoc rhinoDoc = CreateRhinoDocument(activeDocModelUnitSystem, modelTemplateFileName);
+      GsaGridLineGoo gridLineOutput = CreateGridLineComponent(toX);
+      GsaModelGoo gsaModelGoo = CreateModelComponent(setToMeters, gridLineOutput);
+      GsaGridLine gsaGridLine = gsaModelGoo.Value.GetGridLines()[0];
+      CloseRhinoDoc(rhinoDoc);
+
+      return gsaGridLine;
+    }
+
+    private static GsaModelGoo CreateModelComponent(bool setToMeters, GsaGridLineGoo gridLineOutput) {
+      var createModelComponent = new CreateModel();
+      createModelComponent.CreateAttributes();
+
+      if (setToMeters) {
+        SelectMetersInDropdown(createModelComponent);
+      } else {
+        SelectMillimetersInDropdown(createModelComponent);
+      }
+
+      ComponentTestHelper.SetInput(createModelComponent, gridLineOutput, 0);
+      var gsaModelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(createModelComponent);
+
+      return gsaModelGoo;
+    }
+
+    private static GsaGridLineGoo CreateGridLineComponent(int toX) {
+      var createGridLineComponent = new CreateGridLine();
+      createGridLineComponent.CreateAttributes();
+
+      var defaultLine = new Line {
+        FromX = 0,
+        FromY = 0,
+        FromZ = 0,
+        ToX = toX,
+        ToY = 0,
+        ToZ = 0,
+      };
+      ComponentTestHelper.SetInput(createGridLineComponent, defaultLine, 0);
+      var gridLineOutput = (GsaGridLineGoo)ComponentTestHelper.GetOutput(createGridLineComponent);
+
+      return gridLineOutput;
+    }
+
+    private static RhinoDoc CreateRhinoDocument(UnitSystem activeDocModelUnitSystem, string modelTemplateFileName) {
+      var rhinooDoc = RhinoDoc.Create(modelTemplateFileName);
+      rhinooDoc.ModelUnitSystem = activeDocModelUnitSystem;
+
+      return rhinooDoc;
+    }
+
+    private static void CloseRhinoDoc(RhinoDoc rhinoDoc) {
+      rhinoDoc.Dispose();
+    }
+
+    private static void SelectMillimetersInDropdown(GH_OasysDropDownComponent component) {
+      component.SetSelected(0, 0);
+    }
+
+    private static void SelectMetersInDropdown(GH_OasysDropDownComponent component) {
+      component.SetSelected(0, 2);
     }
   }
 }
