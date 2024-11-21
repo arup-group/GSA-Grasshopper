@@ -92,8 +92,8 @@ namespace GsaGHTests.Helpers.GsaApi {
 
     [Fact]
     public void AnalysisCasesWillBeEmptyInAbsenceOfLoadCase() {
-      _model = new GsaModel();
-      ModelFactory.BuildAnalysisTask(_model.ApiModel, GsaAnalysisTasksFromSeedModel(), true);
+      var noLoadModel = new GsaModel();
+      ModelFactory.BuildAnalysisTask(noLoadModel.ApiModel, GsaAnalysisTasksFromSeedModel(), true);
       Assert.Empty(_model.ApiModel.AnalysisTasks().First().Value.Cases);
     }
   }
