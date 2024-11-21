@@ -34,7 +34,7 @@ namespace GsaGH.Parameters {
         GsaBool6 gsaBool6 = ParseBool6.ParseRelease(data);
         return new GsaBool6Goo(gsaBool6);
       } catch (InvalidCastException e) {
-        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+        this.AddRuntimeError(e.Message);
         return new GsaBool6Goo(null);
       }
     }
