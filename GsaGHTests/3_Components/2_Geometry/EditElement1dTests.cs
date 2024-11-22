@@ -856,6 +856,38 @@ namespace GsaGHTests.Components.Geometry {
       string output = _helper.GetTypeOutput();
       Assert.Equal("Bar", output);
     }
+
+    [Fact]
+    public void ElementStartReleasesAreCorrectWhenBoolValuesAssignedAsInput() {
+      var releaseInput = new GsaBool6(true, true, true, false, false, false);
+      _helper.SetStartReleaseInput(new GsaBool6Goo(releaseInput));
+      GsaBool6 releaseOutput = _helper.GetStartReleaseOutput();
+      Assert.Equal(releaseInput, releaseOutput);
+    }
+
+    [Fact]
+    public void ElementEndReleasesAreCorrectWhenBoolValuesAssignedAsInput() {
+      var releaseInput = new GsaBool6(true, true, true, false, false, false);
+      _helper.SetEndReleaseInput(new GsaBool6Goo(releaseInput));
+      GsaBool6 releaseOutput = _helper.GetEndReleaseOutput();
+      Assert.Equal(releaseInput, releaseOutput);
+    }
+
+    [Fact]
+    public void ElementStartReleasesAreCorrectWhenStringAssignedAsInput() {
+      _helper.SetStartReleaseInput("RRRFFF");
+      var releaseInput = new GsaBool6(true, true, true, false, false, false);
+      GsaBool6 releaseOutput = _helper.GetStartReleaseOutput();
+      Assert.Equal(releaseInput, releaseOutput);
+    }
+
+    [Fact]
+    public void ElementEndReleasesAreCorrectWhenStringAssignedAsInput() {
+      _helper.SetEndReleaseInput("RRRFFF");
+      var releaseInput = new GsaBool6(true, true, true, false, false, false);
+      GsaBool6 releaseOutput = _helper.GetEndReleaseOutput();
+      Assert.Equal(releaseInput, releaseOutput);
+    }
   }
 
   public class EditElement1dTestsHelper {
@@ -980,7 +1012,15 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(_component, release, 7);
     }
 
+    public void SetStartReleaseInput(string release) {
+      ComponentTestHelper.SetInput(_component, release, 7);
+    }
+
     public void SetEndReleaseInput(GsaBool6Goo release) {
+      ComponentTestHelper.SetInput(_component, release, 8);
+    }
+
+    public void SetEndReleaseInput(string release) {
       ComponentTestHelper.SetInput(_component, release, 8);
     }
 

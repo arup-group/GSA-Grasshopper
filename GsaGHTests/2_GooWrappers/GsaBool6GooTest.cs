@@ -1,59 +1,141 @@
-﻿using Grasshopper.Kernel.Types;
+﻿using System;
 
+using Grasshopper.Kernel.Types;
+
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
+
+using Rhino.Geometry;
 
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
   [Collection("GrasshopperFixture collection")]
   public class GsaBool6GooTest {
+    private const string NonExistingString = "NonExistingString";
 
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
-    public void CastFromBoolTest(bool b) {
+    public void CastFromBoolShouldSetAllToTheSameBool(bool value) {
       var param = new GsaBool6Parameter();
       param.CreateAttributes();
-      ComponentTestHelper.SetInput(param, new GH_Boolean(b));
+      ComponentTestHelper.SetInput(param, new GH_Boolean(value));
       var output = (GsaBool6Goo)ComponentTestHelper.GetOutput(param);
 
-      Assert.Equal(b, output.Value.X);
-      Assert.Equal(b, output.Value.Y);
-      Assert.Equal(b, output.Value.Z);
-      Assert.Equal(b, output.Value.Xx);
-      Assert.Equal(b, output.Value.Yy);
-      Assert.Equal(b, output.Value.Zz);
+      Assert.True(output.Value.Equals(value));
     }
 
     [Theory]
-    [InlineData("free", false, false, false, false, false, false)]
-    [InlineData("pin", true, true, true, false, false, false)]
-    [InlineData("pinned", true, true, true, false, false, false)]
-    [InlineData("fix", true, true, true, true, true, true)]
-    [InlineData("fixed", true, true, true, true, true, true)]
-    [InlineData("release", false, false, false, false, true, true)]
-    [InlineData("released", false, false, false, false, true, true)]
-    [InlineData("hinge", false, false, false, false, true, true)]
-    [InlineData("hinged", false, false, false, false, true, true)]
-    [InlineData("charnier", false, false, false, false, true, true)]
-    [InlineData("rrrrrr", false, false, false, false, false, false)]
-    [InlineData("ffffff", true, true, true, true, true, true)]
-    public void CastFromStringtest(
-      string s, bool expectedX, bool expectedY, bool expectedZ, bool expectedXx, bool expectedYy,
-      bool expectedZz) {
-      var param = new GsaBool6Parameter();
+    [InlineData(true)]
+    [InlineData(false)]
+    public void CastFromBoolShouldSetAllToTheSameBoolForReleases(bool value) {
+      var param = new GsaReleaseParameter();
       param.CreateAttributes();
-      ComponentTestHelper.SetInput(param, new GH_String(s));
+      ComponentTestHelper.SetInput(param, new GH_Boolean(value));
       var output = (GsaBool6Goo)ComponentTestHelper.GetOutput(param);
 
-      Assert.Equal(expectedX, output.Value.X);
-      Assert.Equal(expectedY, output.Value.Y);
-      Assert.Equal(expectedZ, output.Value.Z);
-      Assert.Equal(expectedXx, output.Value.Xx);
-      Assert.Equal(expectedYy, output.Value.Yy);
-      Assert.Equal(expectedZz, output.Value.Zz);
+      Assert.True(output.Value.Equals(value));
     }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void CastFromBoolShouldSetAllToTheSameBoolForRestrains(bool value) {
+      var param = new GsaRestraintParameter();
+      param.CreateAttributes();
+      ComponentTestHelper.SetInput(param, new GH_Boolean(value));
+      var output = (GsaBool6Goo)ComponentTestHelper.GetOutput(param);
+
+      Assert.True(output.Value.Equals(value));
+    }
+
+    [Fact]
+    public void NotTheSameTypeThereforeNotEqual() {
+      Assert.False(new GsaBool6().Equals(new Point3d()));
+    }
+
+    [Fact]
+    public void NullIsNotEqual() {
+      Assert.False(new GsaBool6().Equals(null));
+    }
+
+    [Fact]
+    public void ShouldCheckAllComponentWhenComparingWithBoolFalse() {
+      Assert.False(new GsaBool6(true, true, true, true, true, false).Equals(true));
+    }
+
+    [Fact]
+    public void ShouldCheckAllComponentWhenComparingWithBoolTrue() {
+      Assert.True(new GsaBool6(true, true, true, true, true, true).Equals(true));
+    }
+
+    [Fact]
+    public void ShouldHaveTheSameHashCode() {
+      Assert.Equal(new GsaBool6(true, true, false, false, true, true).GetHashCode(),
+        new GsaBool6(true, true, false, false, true, true).GetHashCode());
+    }
+
+    [Theory]
+    [InlineData("free", true, true, true, true, true, true)]
+    [InlineData("pin", false, false, false, true, true, true)]
+    [InlineData("pinned", false, false, false, true, true, true)]
+    [InlineData("fix", false, false, false, false, false, false)]
+    [InlineData("fixed", false, false, false, false, false, false)]
+    [InlineData("release", true, true, true, true, false, false)]
+    [InlineData("released", true, true, true, true, false, false)]
+    [InlineData("hinge", true, true, true, true, false, false)]
+    [InlineData("hinged", true, true, true, true, false, false)]
+    [InlineData("charnier", true, true, true, true, false, false)]
+    [InlineData("rrrrrr", true, true, true, true, true, true)]
+    [InlineData("ffffff", false, false, false, false, false, false)]
+    [InlineData("ffffrr", false, false, false, false, true, true)]
+    public void CastFromStringTest(
+      string text, bool expectedX, bool expectedY, bool expectedZ, bool expectedXx, bool expectedYy, bool expectedZz) {
+      //release
+      GsaBool6 output = ParseBool6.ParseRelease(text);
+      var releaseBool6 = new GsaBool6 {
+        X = expectedX,
+        Y = expectedY,
+        Z = expectedZ,
+        Xx = expectedXx,
+        Yy = expectedYy,
+        Zz = expectedZz
+      };
+      Assert.Equal(releaseBool6, output);
+
+      //restraint is the opposite of release
+      output = ParseBool6.ParseRestrain(text);
+      Assert.Equal(!releaseBool6, output);
+    }
+
+    [Fact]
+    public void ReleasesShouldThrowErrorWhenInvalidStringIsUsed() {
+      Assert.Throws<InvalidCastException>(() => ParseBool6.ParseRelease(NonExistingString));
+    }
+
+    [Fact]
+    public void RestrainsShouldThrowErrorWhenInvalidStringIsUsed() {
+      Assert.Throws<InvalidCastException>(() => ParseBool6.ParseRestrain(NonExistingString));
+    }
+
+    [Fact]
+    public void Bool6ShouldThrowErrorWhenInvalidStringIsUsed() {
+      Assert.Throws<InvalidCastException>(() => ParseBool6.Parse(NonExistingString));
+    }
+
+    [Fact]
+    public void Bool6ShouldThrowExceptionWhen6Characters() {
+      string exactlySixCharacters = "ABCDEF";
+      Assert.Throws<InvalidCastException>(() => ParseBool6.Parse(exactlySixCharacters));
+    }
+
+    [Fact]
+    public void ParseReleaseShouldThrowExceptionWhenNullObjectIsUsed() {
+      Assert.Throws<InvalidCastException>(() => ParseBool6.ParseRelease(null));
+    }
+
   }
 }
