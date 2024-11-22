@@ -15,12 +15,14 @@ using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 
+using OasysGH.Units.Helpers;
+
 using OasysUnits;
 using OasysUnits.Units;
 
 using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
-using LoadCase = GsaAPI.LoadCase;
+using NodeLoadType = GsaAPI.NodeLoadType;
 
 namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
@@ -75,11 +77,10 @@ namespace GsaGH.Helpers.Assembly {
       GsaModel model, List<GsaList> lists, List<GsaGridLine> gridLines, GsaGeometry geometry,
       GsaProperties properties, GsaLoading loading, GsaAnalysis analysis, LengthUnit modelUnit,
       Length toleranceCoincidentNodes, bool createElementsFromMembers, GH_Component owner) {
-
       SetupModel(model, modelUnit);
-
       if (properties != null) {
-        ConvertProperties(properties.Materials, properties.Sections, properties.Property2ds, properties.Property3ds, properties.SpringProperties);
+        ConvertProperties(properties.Materials, properties.Sections, properties.Property2ds, properties.Property3ds,
+          properties.SpringProperties);
       }
 
       if (geometry != null) {
@@ -192,9 +193,9 @@ namespace GsaGH.Helpers.Assembly {
       }
 
       // Add API Node loads to model
-      _model.AddNodeLoads(GsaAPI.NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(_displacements));
-      _model.AddNodeLoads(GsaAPI.NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(_nodeLoads));
-      _model.AddNodeLoads(GsaAPI.NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(_settlements));
+      _model.AddNodeLoads(NodeLoadType.APPL_DISP, new ReadOnlyCollection<NodeLoad>(_displacements));
+      _model.AddNodeLoads(NodeLoadType.NODE_LOAD, new ReadOnlyCollection<NodeLoad>(_nodeLoads));
+      _model.AddNodeLoads(NodeLoadType.SETTLEMENT, new ReadOnlyCollection<NodeLoad>(_settlements));
 
       // Set API lists for Nodes in model
       _model.SetLists(_lists.ReadOnlyDictionary);
@@ -352,7 +353,9 @@ namespace GsaGH.Helpers.Assembly {
       if (gridLines != null) {
         int id = 1;
         foreach (GsaGridLine gridLine in gridLines.OrderBy(x => x.GridLine.Label)) {
-          _gridLines.SetValue(id, gridLine.GridLine);
+          GridLine apiGridLine
+            = gridLine.GetApiGridLineToUnit(RhinoUnit.GetRhinoLengthUnit()); // we need to grab settings from Rhino!!!!
+          _gridLines.SetValue(id, apiGridLine);
           id++;
         }
         _model.SetGridLines(_gridLines.ReadOnlyDictionary);
