@@ -100,7 +100,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      string fileName = string.Empty;
+      string fileName = string.Empty;>
       da.GetData(2, ref fileName);
 
       bool save = false;
@@ -175,10 +175,14 @@ namespace GsaGH.Components {
         GsaModel gsaModel = tempModel.Value;
         Save(ref gsaModel, tempPath);
       }
+      RunGsa();
+    }
 
-      string fullPath = Path.GetFullPath(_fileNameLastSaved);
+    private void RunGsa() {
+      string argument = Path.GetFullPath(_fileNameLastSaved);
       string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-      Process.Start(programFiles + @"\Oasys\GSA 10.2\GSA.exe", fullPath);
+      string fullPath = Path.Combine(programFiles, @"Oasys\GSA 10.2\GSA.exe");
+      Process.Start(fullPath, argument);
     }
   }
 }
