@@ -41,7 +41,7 @@ namespace GsaGH.Parameters {
         if(elem.Value.IsLoadPanel) {
           GsaProperty2d prop2d = model.GetProp2d(elem.Value);
           Curve polyline = GetPolylineFromApiElement2d(elem.Value, nodes, model.ModelUnit);
-          var element2D = new GsaElement2d(elem.Value, polyline, prop2d);
+          var element2D = new GsaElement2d(elem.Key, elem.Value, polyline, prop2d);
           elem2dGoos.Add(new GsaElement2dGoo(element2D));
         }
       });

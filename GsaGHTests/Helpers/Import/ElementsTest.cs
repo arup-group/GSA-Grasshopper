@@ -82,6 +82,47 @@ namespace GsaGHTests.Helpers.Import {
       AssertPointsAreEqual(new Point3d(0, 4.5, 5), elem.Topology[7]);
     }
 
+    [Fact]
+    public void DataConversionBetweenApiElementAndGsaElement2dGooIsCorrect() {
+      var model = new GsaAPI.Model();
+
+      var node1 = new Node();
+      int node1Id = model.AddNode(node1);
+
+      var node2 = new Node();
+      node2.Position.X = 1;
+      int node2Id = model.AddNode(node2);
+
+      var node3 = new Node();
+      node3.Position.X = 1;
+      node3.Position.Y = 1;
+      int node3Id = model.AddNode(node3);
+
+      var node4 = new Node();
+      node4.Position.Y = 1;
+      int node4Id = model.AddNode(node4);
+
+      var element = new LoadPanelElement() {
+        Topology = new ReadOnlyCollection<int>(
+          new int[] { node1Id, node2Id, node3Id, node4Id }
+      )
+      };
+      int elementId = model.AddLoadPanelElement(element);
+
+      // now retreive
+      var ghElements = new Elements(new GsaModel(model), "all");
+      System.Collections.Concurrent.ConcurrentBag<GsaElement2dGoo> elements2ds = ghElements.Element2ds;
+      GsaElement2dGoo retrieveElement = elements2ds.First();
+      Assert.Single(elements2ds);
+      Assert.True(retrieveElement.Value.IsLoadPanel);
+      Assert.Equal(1, retrieveElement.Value.Ids.First());
+      Assert.Equal(node1Id, retrieveElement.Value.TopoInt.First()[0]);
+      Assert.Equal(node2Id, retrieveElement.Value.TopoInt.First()[1]);
+      Assert.Equal(node3Id, retrieveElement.Value.TopoInt.First()[2]);
+      Assert.Equal(node4Id, retrieveElement.Value.TopoInt.First()[3]);
+
+    }
+
     private void AssertPointsAreEqual(Point3d expected, Point3d actual) {
       Assert.Equal(expected.X, actual.X);
       Assert.Equal(expected.Y, actual.Y);
