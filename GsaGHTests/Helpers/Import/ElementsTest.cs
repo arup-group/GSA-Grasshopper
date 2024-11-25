@@ -116,10 +116,27 @@ namespace GsaGHTests.Helpers.Import {
       Assert.Single(elements2ds);
       Assert.True(retrieveElement.Value.IsLoadPanel);
       Assert.Equal(1, retrieveElement.Value.Ids.First());
-      Assert.Equal(node1Id, retrieveElement.Value.TopoInt.First()[0]);
-      Assert.Equal(node2Id, retrieveElement.Value.TopoInt.First()[1]);
-      Assert.Equal(node3Id, retrieveElement.Value.TopoInt.First()[2]);
-      Assert.Equal(node4Id, retrieveElement.Value.TopoInt.First()[3]);
+
+      List<int> topoIndexs = retrieveElement.Value.TopoInt.First();
+      //1st node position
+      Point3d nodePosition = retrieveElement.Value.Topology[topoIndexs[0]];
+      Assert.Equal(0, nodePosition.X);
+      Assert.Equal(0, nodePosition.Y);
+
+      //2nd node position
+      nodePosition = retrieveElement.Value.Topology[topoIndexs[1]];
+      Assert.Equal(1, nodePosition.X);
+      Assert.Equal(0, nodePosition.Y);
+
+      //3rd node position
+      nodePosition = retrieveElement.Value.Topology[topoIndexs[2]];
+      Assert.Equal(1, nodePosition.X);
+      Assert.Equal(1, nodePosition.Y);
+
+      //4th node position
+      nodePosition = retrieveElement.Value.Topology[topoIndexs[3]];
+      Assert.Equal(0, nodePosition.X);
+      Assert.Equal(1, nodePosition.Y);
 
     }
 
