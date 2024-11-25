@@ -176,7 +176,9 @@ namespace GsaGH.Components {
         Save(ref gsaModel, tempPath);
       }
 
-      Process.Start(_fileNameLastSaved);
+      string fullPath = Path.GetFullPath(_fileNameLastSaved);
+      string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+      Process.Start(programFiles + @"\Oasys\GSA 10.2\GSA.exe", fullPath);
     }
   }
 }
