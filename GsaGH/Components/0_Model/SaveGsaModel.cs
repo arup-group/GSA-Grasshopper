@@ -100,7 +100,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      string fileName = string.Empty;>
+      string fileName = string.Empty;
       da.GetData(2, ref fileName);
 
       bool save = false;
