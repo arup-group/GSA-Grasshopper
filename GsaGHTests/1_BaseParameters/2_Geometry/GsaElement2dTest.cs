@@ -420,8 +420,8 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void GeometryTypeOfFeaElementIsMesh() {
-      var loadPanel = new GsaElement2d(CreateElement2dTests.GetMesh());
-      Assert.Equal(typeof(Mesh), loadPanel.Geometry().GetType());
+      var feElement = new GsaElement2d(CreateElement2dTests.GetMesh());
+      Assert.Equal(typeof(Mesh), feElement.Geometry().GetType());
     }
   }
 }
