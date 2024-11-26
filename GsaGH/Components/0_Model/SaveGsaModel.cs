@@ -91,7 +91,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      var gsaModel = new GsaModel();
+      GsaModel gsaModel;
       if (ghTyp.Value is GsaModelGoo modelGoo) {
         gsaModel = modelGoo.Value;
         Message = string.Empty;
@@ -178,11 +178,10 @@ namespace GsaGH.Components {
       RunGsa();
     }
 
-    private void RunGsa() {
-      string argument = Path.GetFullPath(_fileNameLastSaved);
+    internal Process RunGsa() {
       string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
       string fullPath = Path.Combine(programFiles, @"Oasys\GSA 10.2\GSA.exe");
-      Process.Start(fullPath, argument);
+      return Process.Start(fullPath, Path.GetFullPath(_fileNameLastSaved));
     }
   }
 }

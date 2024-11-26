@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 
 using GsaGH.Components;
 using GsaGH.Parameters;
@@ -48,6 +50,21 @@ namespace GsaGHTests.Model {
       Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
 
       Assert.True(File.Exists(expectedPath));
+    }
+
+    [Fact]
+    public void StartGsaShouldTargetGsa() {
+      SaveGsaModel comp = new SaveGsaModel();
+      ComponentTestHelper.SetInput(comp, GsaModelGooMother);
+      ComponentTestHelper.SetInput(comp, true, 1);
+      ComponentTestHelper.SetInput(comp, Path.Combine(Path.GetTempPath(), "dummyPath.gwb"), 2);
+      _ = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
+      var process = comp.RunGsa();
+      try {
+        Assert.Contains("GSA", process.ProcessName);
+      } finally {
+        process.Kill();
+      }
     }
   }
 }
