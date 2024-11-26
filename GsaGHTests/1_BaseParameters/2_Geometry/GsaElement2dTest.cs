@@ -19,6 +19,7 @@ using Xunit;
 
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Polyline = Rhino.Geometry.Polyline;
+using System;
 
 namespace GsaGHTests.Parameters {
 
@@ -409,6 +410,18 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0.5, points[0].X);
       Assert.Equal(0.5, points[0].Y);
       Assert.Equal(0, points[0].Z);
+    }
+
+    [Fact]
+    public void GeometryTypeOfLoadPanelElementIsCurve() {
+      var loadPanel = new GsaElement2d(CreateElement2dTests.Get2dPolyline());
+      Assert.Equal(typeof(PolylineCurve), loadPanel.Geometry().GetType());
+    }
+
+    [Fact]
+    public void GeometryTypeOfFeaElementIsMesh() {
+      var loadPanel = new GsaElement2d(CreateElement2dTests.GetMesh());
+      Assert.Equal(typeof(Mesh), loadPanel.Geometry().GetType());
     }
   }
 }

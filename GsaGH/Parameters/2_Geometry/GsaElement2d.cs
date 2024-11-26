@@ -239,5 +239,13 @@ namespace GsaGH.Parameters {
         Mesh.VertexColors.SetColor(i, (Color)ApiElements[i].Colour);
       }
     }
+
+    public GeometryBase Geometry() {
+      if (IsLoadPanel) {
+        return Curve;
+      } else {
+        return Mesh;
+      }
+    }
   }
 }
