@@ -191,17 +191,13 @@ namespace GsaGH.Helpers.Assembly {
     private void AddNodeList(GsaList list) {
       if (list._nodes == null || list._nodes.Count == 0) {
         AddList(list);
+      } else {
+        GsaList copyList = list.Duplicate();
+        var ids = list._nodes?.Where(x => x != null && x.Value != null)
+         .Select(node => AddNode(node.Value.GetApiNodeToUnit(_unit))).ToList();
+        copyList.Definition = GsaList.CreateListDefinition(ids);
+        AddList(copyList);
       }
-      GsaList copyList = list.Duplicate();
-      var ids = list._nodes?.Where(x => x != null && x.Value != null)
-       .Select(node => AddNode(node.Value.GetApiNodeToUnit(_unit))).ToList();
-
-      if (!(ids?.Count > 0)) {
-        return;
-      }
-
-      copyList.Definition = GsaList.CreateListDefinition(ids);
-      AddList(copyList);
     }
 
     private GsaList AddPropertiesList(GsaList list, GH_Component owner) {
