@@ -97,7 +97,7 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     [Fact]
-    public void GettingCorrectTreeOutputFor2dElement() {
+    public void GettingCorrectTopologyTreeOutputFor2dElement() {
       var elements = new Elements(new GsaModel(GsaModelWithLoadPanelElement()), "all");
       GH_OasysComponent component = ComponentMother();
       ComponentTestHelper.SetListInput(component, elements.Element2ds.Cast<object>().ToList());
