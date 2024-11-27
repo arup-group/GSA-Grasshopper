@@ -114,12 +114,12 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaElement2d(GSAElement element, Curve curve, GsaProperty2d prop2d) {
+    internal GsaElement2d(int id, GSAElement element, Curve curve, GsaProperty2d prop2d) {
       Curve = curve;
       ApiElements = new List<GSAElement>() { element };
       Topology = RhinoConversions.LoadPanelTopo(curve);
       TopoInt = RhinoConversions.LoadPanelTopoIndices(curve);
-      Ids = new List<int>(new int[1]);
+      Ids = new List<int>() { id };
       if (prop2d != null) {
         Prop2ds = new List<GsaProperty2d>() { prop2d };
       }
@@ -237,6 +237,14 @@ namespace GsaGH.Parameters {
     public void UpdateMeshColours() {
       for (int i = 0; i < ApiElements.Count; i++) {
         Mesh.VertexColors.SetColor(i, (Color)ApiElements[i].Colour);
+      }
+    }
+
+    public GeometryBase Geometry() {
+      if (IsLoadPanel) {
+        return Curve;
+      } else {
+        return Mesh;
       }
     }
   }
