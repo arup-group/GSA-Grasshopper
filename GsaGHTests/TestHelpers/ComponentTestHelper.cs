@@ -151,7 +151,7 @@ namespace GsaGHTests.Helpers {
     private static Param_GenericObject GetGenericParameterFor(object obj) {
       var input = new Param_GenericObject();
       input.CreateAttributes();
-      if (typeof(IQuantity).IsAssignableFrom(obj.GetType())) {
+      if (typeof(IQuantity).IsAssignableFrom(obj?.GetType())) {
         input.PersistentData.Append(new GH_UnitNumber((IQuantity)obj));
       } else {
         input.PersistentData.Append(new GH_ObjectWrapper(obj));

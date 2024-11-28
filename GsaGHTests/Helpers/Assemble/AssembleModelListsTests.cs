@@ -5,7 +5,7 @@ using Xunit;
 
 namespace GsaGHTests.Helpers.Assemble {
   [Collection("GrasshopperFixture collection")]
-  public class AssembleModelLists {
+  public class AssembleModelListsTests {
     private const int DefaultId = 1;
     private const string ExpectedName = "create list test";
     private const string ExpectedDefinition = "1 2 3";
@@ -22,7 +22,7 @@ namespace GsaGHTests.Helpers.Assemble {
 
     [Fact]
     public void ListShouldReturnDefinitionWhenIdIsNotSet() {
-      GsaList gsaList = GsaList(DefaultId);
+      GsaList gsaList = GsaList(null);
 
       Assert.Equal(DefaultId, gsaList.Id);
       Assert.Equal(ExpectedName, gsaList.Name);
@@ -39,10 +39,7 @@ namespace GsaGHTests.Helpers.Assemble {
       var createListComponent = new CreateList();
       createListComponent.CreateAttributes();
 
-      if (id != DefaultId) {
-        ComponentTestHelper.SetInput(createListComponent, id, 0);
-      }
-
+      ComponentTestHelper.SetInput(createListComponent, id, 0);
       ComponentTestHelper.SetInput(createListComponent, ExpectedName, 1);
       ComponentTestHelper.SetInput(createListComponent, ExpectedDefinition, 2);
 
