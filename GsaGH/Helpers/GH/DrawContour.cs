@@ -30,19 +30,14 @@ namespace GsaGH.Helpers.GH {
 
     private static void DrawBottomText(IGH_PreviewArgs args, Legend legend, string bottomText, int bitmapWidth) {
       string wrappedText = WrapText(bottomText, bitmapWidth);
+      const int disctanceFromTopEdge = 145;
+      int topPosition = (int)(disctanceFromTopEdge * legend.Scale);
 
-      args.Display.Draw2dText(wrappedText, Color.Black, new Point2d(_leftBitmapEdge, (int)(145 * legend.Scale)), false,
-        _textHeight);
-    }
-
-    private static string WrapText(string bottomText, int bitmapWidth) {
-      var font = new Font(RhinoDoc.ActiveDoc.DimStyles.Current.Font.LogfontName, _textHeight);
-      string wrappedText = TextWrapper.WrapText(bottomText, bitmapWidth, font);
-      return wrappedText;
+      args.Display.Draw2dText(wrappedText, Color.Black, new Point2d(_leftBitmapEdge, topPosition), false, _textHeight);
     }
 
     private static void DrawValues(IGH_PreviewArgs args, Legend legend) {
-      const int disctanceFromLeftBitmapEdge = 20;
+      const int disctanceFromLeftBitmapEdge = 25;
       int leftEdgeOfText = _leftBitmapEdge + (int)(disctanceFromLeftBitmapEdge * legend.Scale);
 
       for (int i = 0; i < legend.Values.Count; i++) {
@@ -62,6 +57,12 @@ namespace GsaGH.Helpers.GH {
       const int disctanceFromTopViewportEdge = 20;
       int topPosition = (int)(disctanceFromTopViewportEdge * legend.Scale);
       args.Display.DrawBitmap(new DisplayBitmap(legend.Bitmap), _leftBitmapEdge, topPosition);
+    }
+
+    private static string WrapText(string bottomText, int bitmapWidth) {
+      var font = new Font(RhinoDoc.ActiveDoc.DimStyles.Current.Font.LogfontName, _textHeight);
+      string wrappedText = TextWrapper.WrapText(bottomText, bitmapWidth, font);
+      return wrappedText;
     }
   }
 }
