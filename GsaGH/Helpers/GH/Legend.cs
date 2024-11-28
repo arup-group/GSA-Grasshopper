@@ -14,6 +14,10 @@ namespace GsaGH.Helpers.GH {
     private const int DefaultWidth = 15;
     private const int DefaultHeight = 120;
 
+    public Legend() {
+      CreateBitmap();
+    }
+
     /// <summary>
     ///   Sets the list of legend values.
     /// </summary>
