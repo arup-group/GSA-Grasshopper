@@ -30,7 +30,8 @@ namespace GsaGH.Helpers.GH {
     }
 
     private static void DrawBottomText(IGH_PreviewArgs args, Legend legend, string bottomText, int bitmapWidth) {
-      string wrappedText = WrapText(bottomText, bitmapWidth);
+      int extraOffset = (int)(20 * legend.Scale);
+      string wrappedText = WrapText(bottomText, bitmapWidth + extraOffset);
       const int disctanceFromTopEdge = 145;
       int topPosition = (int)(disctanceFromTopEdge * legend.Scale);
 
@@ -60,9 +61,9 @@ namespace GsaGH.Helpers.GH {
       args.Display.DrawBitmap(new DisplayBitmap(legend.Bitmap), _leftBitmapEdge, topPosition);
     }
 
-    private static string WrapText(string bottomText, int bitmapWidth) {
+    private static string WrapText(string bottomText, int width) {
       var font = new Font(RhinoDoc.ActiveDoc.DimStyles.Current.Font.LogfontName, _textHeight);
-      string wrappedText = TextWrapper.WrapText(bottomText, bitmapWidth, font);
+      string wrappedText = TextWrapper.WrapText(bottomText, width, font);
       return wrappedText;
     }
   }

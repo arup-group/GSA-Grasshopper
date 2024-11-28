@@ -33,7 +33,7 @@ namespace GsaGH.Helpers.GH {
         string testLine = string.IsNullOrEmpty(currentLine) ? word : $"{currentLine} {word}";
         float testLineWidth = GetCachedTextWidth(testLine, font, maxWidth);
 
-        if (testLineWidth > maxWidth + extraOffset) {
+        if (testLineWidth > maxWidth) {
           lines.Add(currentLine);
           currentLine = word;
         } else {
