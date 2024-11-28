@@ -6,37 +6,45 @@ using Xunit;
 namespace GsaGHTests.Helpers.Assemble {
   [Collection("GrasshopperFixture collection")]
   public class AssembleModelLists {
-    private static readonly int DefaultId = 1;
-    private static readonly string DefaultName = "create list test";
-    private static readonly string DefaultDefinition = "1 2 3";
+    private const int DefaultId = 1;
+    private const string ExpectedName = "create list test";
+    private const string ExpectedDefinition = "1 2 3";
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public void ListShouldReturnDefinitionWhenIdIsSet(bool withId) {
-      GsaList gsaList = GsaList(withId);
+    [Fact]
+    public void ListShouldReturnDefinitionWhenIdIsSet() {
+      const int ExpectedId = 2;
+      GsaList gsaList = GsaList(ExpectedId);
 
-      Assert.Equal(DefaultId, gsaList.Id);
-      Assert.Equal(DefaultName, gsaList.Name);
-      Assert.Equal(DefaultDefinition, gsaList.Definition);
+      Assert.Equal(ExpectedId, gsaList.Id);
+      Assert.Equal(ExpectedName, gsaList.Name);
+      Assert.Equal(ExpectedDefinition, gsaList.Definition);
     }
 
-    private static GsaList GsaList(bool withId) {
-      GsaListGoo listComponent = CreateListComponent(withId);
+    [Fact]
+    public void ListShouldReturnDefinitionWhenIdIsNotSet() {
+      GsaList gsaList = GsaList();
+
+      Assert.Equal(DefaultId, gsaList.Id);
+      Assert.Equal(ExpectedName, gsaList.Name);
+      Assert.Equal(ExpectedDefinition, gsaList.Definition);
+    }
+
+    private static GsaList GsaList(int id = 1) {
+      GsaListGoo listComponent = CreateListComponent(id);
       GsaModelGoo gsaModelGoo = CreateModelComponent(listComponent);
       return gsaModelGoo.Value.GetLists()[0];
     }
 
-    private static GsaListGoo CreateListComponent(bool withId) {
+    private static GsaListGoo CreateListComponent(int id) {
       var createListComponent = new CreateList();
       createListComponent.CreateAttributes();
 
-      if (withId) {
-        ComponentTestHelper.SetInput(createListComponent, DefaultId, 0);
+      if (id != DefaultId) {
+        ComponentTestHelper.SetInput(createListComponent, id, 0);
       }
 
-      ComponentTestHelper.SetInput(createListComponent, DefaultName, 1);
-      ComponentTestHelper.SetInput(createListComponent, DefaultDefinition, 2);
+      ComponentTestHelper.SetInput(createListComponent, ExpectedName, 1);
+      ComponentTestHelper.SetInput(createListComponent, ExpectedDefinition, 2);
 
       var gridLineOutput = (GsaListGoo)ComponentTestHelper.GetOutput(createListComponent);
 
