@@ -46,8 +46,8 @@ namespace GsaGH.Helpers.GH {
       int leftEdgeOfText = _leftBitmapEdge + (int)(disctanceFromLeftBitmapEdge * legend.Scale);
 
       for (int i = 0; i < legend.Values.Count; i++) {
-        args.Display.Draw2dText(legend.Values[i], Color.Black, new Point2d(leftEdgeOfText, legend.ValuesY[i]), false,
-          _textHeight);
+        args.Display.Draw2dText(legend.Values[i], Color.Black, new Point2d(leftEdgeOfText, legend.ValuesPositionY[i]),
+          false, _textHeight);
       }
     }
 
@@ -63,6 +63,5 @@ namespace GsaGH.Helpers.GH {
       int topPosition = (int)(disctanceFromTopViewportEdge * legend.Scale);
       args.Display.DrawBitmap(new DisplayBitmap(legend.Bitmap), _leftBitmapEdge, topPosition);
     }
-
   }
 }

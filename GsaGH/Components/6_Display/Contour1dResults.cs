@@ -154,7 +154,7 @@ namespace GsaGH.Components {
     private readonly Legend _legend = new Legend() {
       Bitmap = new Bitmap(15, 120),
       Scale = 1,
-      ShowLegend = true,
+      Visible = true,
     };
 
     public Contour1dResults() : base("Contour 1D Results", "Contour1d",
@@ -179,7 +179,7 @@ namespace GsaGH.Components {
       _mode = (FoldMode)reader.GetInt32("Mode");
       _disp = (DisplayValue)reader.GetInt32("Display");
       _slider = reader.GetBoolean("slider");
-      _legend.ShowLegend = reader.GetBoolean("legend");
+      _legend.Visible = reader.GetBoolean("legend");
       _noDigits = reader.GetInt32("noDec");
       _maxValue = reader.GetDouble("valMax");
       _minValue = reader.GetDouble("valMin");
@@ -408,7 +408,7 @@ namespace GsaGH.Components {
       writer.SetInt32("Mode", (int)_mode);
       writer.SetInt32("Display", (int)_disp);
       writer.SetBoolean("slider", _slider);
-      writer.SetBoolean("legend", _legend.ShowLegend);
+      writer.SetBoolean("legend", _legend.Visible);
       writer.SetInt32("noDec", _noDigits);
       writer.SetDouble("valMax", _maxValue);
       writer.SetDouble("valMin", _minValue);
@@ -433,7 +433,7 @@ namespace GsaGH.Components {
       ToolStripMenuItem envelopeMenu = GenerateToolStripMenuItem.GetEnvelopeSubMenuItem(_envelopeType, UpdateEnvelope);
       menu.Items.Add(envelopeMenu);
 
-      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _legend.ShowLegend);
+      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _legend.Visible);
 
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
@@ -1062,7 +1062,7 @@ namespace GsaGH.Components {
       Bitmap bitmap = _legend.Bitmap;
       int gripheight = bitmap.Height / ghGradient.GripCount;
       _legend.Values = new List<string>();
-      _legend.ValuesY = new List<int>();
+      _legend.ValuesPositionY = new List<int>();
 
       var ts = new List<GH_UnitNumber>();
       var cs = new List<Color>();
@@ -1145,7 +1145,7 @@ namespace GsaGH.Components {
           _legend.Values[i] = _legend.Values[i].Replace(",", string.Empty);
         }
 
-        _legend.ValuesY.Add(bitmap.Height - starty + (gripheight / 2) - 2);
+        _legend.ValuesPositionY.Add(bitmap.Height - starty + (gripheight / 2) - 2);
       }
 
       da.SetDataTree(0, resultLines);
