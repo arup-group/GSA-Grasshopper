@@ -9,7 +9,8 @@ namespace GsaGH.Helpers.GH {
     ///   Key = Text, font size;
     ///   Value = text width;
     /// </summary>
-    private static readonly Dictionary<(string, float), float> textWidthCache = new();
+    private static readonly Dictionary<(string, float), float> textWidthCache
+      = new Dictionary<(string, float), float>();
 
     /// <summary>
     ///   Wraps the given text to fit within the specified maximum width.
