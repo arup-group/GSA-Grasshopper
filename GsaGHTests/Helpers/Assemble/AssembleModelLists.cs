@@ -22,20 +22,20 @@ namespace GsaGHTests.Helpers.Assemble {
 
     [Fact]
     public void ListShouldReturnDefinitionWhenIdIsNotSet() {
-      GsaList gsaList = GsaList();
+      GsaList gsaList = GsaList(DefaultId);
 
       Assert.Equal(DefaultId, gsaList.Id);
       Assert.Equal(ExpectedName, gsaList.Name);
       Assert.Equal(ExpectedDefinition, gsaList.Definition);
     }
 
-    private static GsaList GsaList(int id = 1) {
+    private static GsaList GsaList(int? id) {
       GsaListGoo listComponent = CreateListComponent(id);
       GsaModelGoo gsaModelGoo = CreateModelComponent(listComponent);
       return gsaModelGoo.Value.GetLists()[0];
     }
 
-    private static GsaListGoo CreateListComponent(int id) {
+    private static GsaListGoo CreateListComponent(int? id) {
       var createListComponent = new CreateList();
       createListComponent.CreateAttributes();
 
