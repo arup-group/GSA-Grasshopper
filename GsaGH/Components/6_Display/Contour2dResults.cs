@@ -131,11 +131,7 @@ namespace GsaGH.Components {
     private bool _slider = true;
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
     private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
-    private readonly Legend _legend = new Legend() {
-      Bitmap = new Bitmap(15, 120),
-      Scale = 1,
-      Visible = true,
-    };
+    private readonly Legend _legend = new Legend();
 
     public Contour2dResults() : base("Contour 2D Results", "Contour2d",
       "Displays GSA 2D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -165,9 +161,9 @@ namespace GsaGH.Components {
       _maxValue = reader.GetDouble("valMax");
       _minValue = reader.GetDouble("valMin");
       _defScale = reader.GetDouble("val");
-      _legend.Visible = reader.GetBoolean("legend");
+      _legend.SetVisibility(reader.GetBoolean("legend"));
       if (reader.ItemExists("legendScale")) {
-        _legend.Scale = reader.GetDouble("legendScale");
+        _legend.SetScale(reader.GetDouble("legendScale"));
       }
 
       if (reader.ItemExists("envelope")) {
@@ -401,7 +397,7 @@ namespace GsaGH.Components {
       writer.SetDouble("valMin", _minValue);
       writer.SetDouble("val", _defScale);
       writer.SetDouble("legendScale", _legend.Scale);
-      writer.SetBoolean("legend", _legend.Visible);
+      writer.SetBoolean("legend", _legend.IsVisible);
       writer.SetString("model", Length.GetAbbreviation(_lengthUnit));
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("force", ForcePerLength.GetAbbreviation(_forcePerLengthUnit));
@@ -421,7 +417,7 @@ namespace GsaGH.Components {
       ToolStripMenuItem envelopeMenu = GenerateToolStripMenuItem.GetEnvelopeSubMenuItem(_envelopeType, UpdateEnvelope);
       menu.Items.Add(envelopeMenu);
 
-      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _legend.Visible);
+      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _legend.IsVisible);
 
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
@@ -910,8 +906,8 @@ namespace GsaGH.Components {
         verticies.Values.ToList(), meshes.Keys.ToList());
 
       int gripheight = _legend.Bitmap.Height / ghGradient.GripCount;
-      _legend.Values = new List<string>();
-      _legend.ValuesPositionY = new List<int>();
+      var legendValues = new List<string>();
+      var legendValuePositionsY = new List<int>();
 
       var ts = new List<GH_UnitNumber>();
       var cs = new List<Color>();
@@ -941,24 +937,24 @@ namespace GsaGH.Components {
         switch (_mode) {
           case FoldMode.Displacement when (int)_disp < 4: {
               var displacement = new Length(t, _lengthResultUnit);
-              _legend.Values.Add(displacement.ToString("f" + significantDigits));
+              legendValues.Add(displacement.ToString("f" + significantDigits));
               ts.Add(new GH_UnitNumber(displacement));
               break;
             }
           case FoldMode.Displacement: {
               var rotation = new Angle(t, AngleUnit.Radian);
-              _legend.Values.Add(rotation.ToString("s" + significantDigits));
+              legendValues.Add(rotation.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(rotation));
               break;
             }
           case FoldMode.Force when ((int)_disp < 3) | _isShear: {
               var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
-              _legend.Values.Add(forcePerLength.ToString("s" + significantDigits));
+              legendValues.Add(forcePerLength.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(forcePerLength));
               break;
             }
           case FoldMode.Force: {
-            _legend.Values.Add(
+            legendValues.Add(
               new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)).ToString("s" + significantDigits) + "/"
               + Length.GetAbbreviation(lengthUnit));
               var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
@@ -967,14 +963,14 @@ namespace GsaGH.Components {
             }
           case FoldMode.Stress: {
               var stress = new Pressure(t, _stressUnitResult);
-              _legend.Values.Add(stress.ToString("s" + significantDigits));
+              legendValues.Add(stress.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(stress));
               Message = Pressure.GetAbbreviation(_stressUnitResult);
               break;
             }
           case FoldMode.Footfall: {
               var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-              _legend.Values.Add(responseFactor.ToString("s" + significantDigits));
+              legendValues.Add(responseFactor.ToString("s" + significantDigits));
               ts.Add(new GH_UnitNumber(responseFactor));
               break;
             }
@@ -982,11 +978,14 @@ namespace GsaGH.Components {
 
         if (Math.Abs(t) > 1) {
           // remove thousand separator
-          _legend.Values[i] = _legend.Values[i].Replace(",", string.Empty);
+          legendValues[i] = legendValues[i].Replace(",", string.Empty);
         }
 
-        _legend.ValuesPositionY.Add(_legend.Bitmap.Height - starty + (gripheight / 2) - 2);
+        legendValuePositionsY.Add(_legend.Bitmap.Height - starty + (gripheight / 2) - 2);
       }
+
+      _legend.SetValues(legendValues);
+      _legend.SetValuePositionsY(legendValuePositionsY);
 
       da.SetData(0, resultMeshes);
       da.SetDataList(1, cs);
@@ -1068,7 +1067,7 @@ namespace GsaGH.Components {
     }
 
     internal void ShowLegend(object sender, EventArgs e) {
-      _legend.ToggleShowLegend();
+      _legend.ToggleVisibility();
       ExpirePreview(true);
     }
 
@@ -1110,13 +1109,13 @@ namespace GsaGH.Components {
 
     internal void UpdateLegendScale() {
       try {
-        _legend.Scale = double.Parse(_scaleLegendTxt);
+        _legend.SetScale(double.Parse(_scaleLegendTxt));
       } catch (Exception e) {
         this.AddRuntimeWarning(e.Message);
         return;
       }
 
-      _legend.CreateNewBitmap(15, 120);
+      _legend.CreateBitmap();
       ExpirePreview(true);
       base.UpdateUI();
     }
