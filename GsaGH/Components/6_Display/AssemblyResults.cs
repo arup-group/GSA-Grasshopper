@@ -123,11 +123,7 @@ namespace GsaGH.Components {
     private string _scaleLegendTxt = string.Empty;
     private bool _slider = true;
     private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
-    private readonly Legend _legend = new Legend() {
-      Bitmap = new Bitmap(15, 120),
-      Scale = 1,
-      Visible = true,
-    };
+    private readonly Legend _legend = new Legend();
 
     public AssemblyResults() : base("Assembly Results", "Assembly",
       "Displays GSA Assembly Results as Contour", CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -151,13 +147,13 @@ namespace GsaGH.Components {
       _mode = (FoldMode)reader.GetInt32("Mode");
       _disp = (DisplayValue)reader.GetInt32("Display");
       _slider = reader.GetBoolean("slider");
-      _legend.Visible = reader.GetBoolean("legend");
+      _legend.SetVisibility(reader.GetBoolean("legend"));
       _noDigits = reader.GetInt32("noDec");
       _maxValue = reader.GetDouble("valMax");
       _minValue = reader.GetDouble("valMin");
       _defScale = reader.GetDouble("val");
       if (reader.ItemExists("legendScale")) {
-        _legend.Scale = reader.GetDouble("legendScale");
+        _legend.SetScale(reader.GetDouble("legendScale"));
       }
 
       if (reader.ItemExists("envelope")) {
@@ -300,7 +296,7 @@ namespace GsaGH.Components {
       writer.SetInt32("Mode", (int)_mode);
       writer.SetInt32("Display", (int)_disp);
       writer.SetBoolean("slider", _slider);
-      writer.SetBoolean("legend", _legend.Visible);
+      writer.SetBoolean("legend", _legend.IsVisible);
       writer.SetInt32("noDec", _noDigits);
       writer.SetDouble("valMax", _maxValue);
       writer.SetDouble("valMin", _minValue);
@@ -323,7 +319,7 @@ namespace GsaGH.Components {
       ToolStripMenuItem envelopeMenu = GenerateToolStripMenuItem.GetEnvelopeSubMenuItem(_envelopeType, UpdateEnvelope);
       menu.Items.Add(envelopeMenu);
 
-      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _legend.Visible);
+      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _legend.IsVisible);
 
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
@@ -803,8 +799,8 @@ namespace GsaGH.Components {
       });
 
       int gripheight = _legend.Bitmap.Height / ghGradient.GripCount;
-      _legend.Values = new List<string>();
-      _legend.ValuesPositionY = new List<int>();
+      var legendValues = new List<string>();
+      var legendValuePositionsY = new List<int>();
 
       var ts = new List<GH_UnitNumber>();
       var cs = new List<Color>();
@@ -834,48 +830,51 @@ namespace GsaGH.Components {
         switch (_mode) {
           case FoldMode.Displacement when (int)_disp < 4:
             var displacement = new Length(t, _lengthResultUnit);
-            _legend.Values.Add(displacement.ToString("f" + significantDigits));
+            legendValues.Add(displacement.ToString("f" + significantDigits));
             ts.Add(new GH_UnitNumber(displacement));
             break;
 
           case FoldMode.Displacement:
             var rotation = new Angle(t, AngleUnit.Radian);
-            _legend.Values.Add(rotation.ToString("s" + significantDigits));
+            legendValues.Add(rotation.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(rotation));
             break;
 
           case FoldMode.Drift:
             var drift = new Length(t, _lengthResultUnit);
-            _legend.Values.Add(drift.ToString("f" + significantDigits));
+            legendValues.Add(drift.ToString("f" + significantDigits));
             ts.Add(new GH_UnitNumber(drift));
             break;
 
           case FoldMode.DriftIndex:
             var driftIndex = new Ratio(t, RatioUnit.DecimalFraction);
-            _legend.Values.Add(driftIndex.ToString("f" + significantDigits));
+            legendValues.Add(driftIndex.ToString("f" + significantDigits));
             ts.Add(new GH_UnitNumber(driftIndex));
             break;
 
           case FoldMode.Force when (int)_disp < 4:
             var force = new Force(t, _forceUnit);
-            _legend.Values.Add(force.ToString("s" + significantDigits));
+            legendValues.Add(force.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(force));
             break;
 
           case FoldMode.Force:
             var moment = new Moment(t, _momentUnit);
-            _legend.Values.Add(moment.ToString("s" + significantDigits));
+            legendValues.Add(moment.ToString("s" + significantDigits));
             ts.Add(new GH_UnitNumber(moment));
             break;
         }
 
         if (Math.Abs(t) > 1) {
           // remove thousand separator
-          _legend.Values[i] = _legend.Values[i].Replace(",", string.Empty);
+          legendValues[i] = legendValues[i].Replace(",", string.Empty);
         }
 
-        _legend.ValuesPositionY.Add(_legend.Bitmap.Height - starty + (gripheight / 2) - 2);
+        legendValuePositionsY.Add(_legend.Bitmap.Height - starty + (gripheight / 2) - 2);
       }
+
+      _legend.SetValues(legendValues);
+      _legend.SetValuePositionsY(legendValuePositionsY);
 
       da.SetDataTree(0, resultLines);
       da.SetDataList(1, cs);
@@ -956,7 +955,7 @@ namespace GsaGH.Components {
     }
 
     internal void ShowLegend(object sender, EventArgs e) {
-      _legend.ToggleShowLegend();
+      _legend.ToggleVisibility();
       ExpirePreview(true);
     }
 
@@ -986,13 +985,13 @@ namespace GsaGH.Components {
 
     internal void UpdateLegendScale() {
       try {
-        _legend.Scale = double.Parse(_scaleLegendTxt);
+        _legend.SetScale(double.Parse(_scaleLegendTxt));
       } catch (Exception e) {
         this.AddRuntimeWarning(e.Message);
         return;
       }
 
-      _legend.CreateNewBitmap(15, 120);
+      _legend.CreateBitmap();
       ExpirePreview(true);
       base.UpdateUI();
     }
