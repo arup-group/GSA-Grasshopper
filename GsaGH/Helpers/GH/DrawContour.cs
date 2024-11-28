@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 
 using Grasshopper.Kernel;
 
@@ -41,8 +42,8 @@ namespace GsaGH.Helpers.GH {
       int leftEdgeOfText = _leftBitmapEdge + (int)(disctanceFromLeftBitmapEdge * legend.Scale);
 
       for (int i = 0; i < legend.Values.Count; i++) {
-        args.Display.Draw2dText(legend.Values[i], Color.Black, new Point2d(leftEdgeOfText, legend.ValuesPositionY[i]),
-          false, _textHeight);
+        args.Display.Draw2dText(legend.Values.ToList()[i], Color.Black,
+          new Point2d(leftEdgeOfText, legend.ValuePositionsY.ToList()[i]), false, _textHeight);
       }
     }
 
