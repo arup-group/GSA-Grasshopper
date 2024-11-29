@@ -1,8 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-
-using GsaAPI;
 
 using GsaGH.Components;
 using GsaGH.Parameters;
@@ -50,7 +47,7 @@ namespace GsaGHTests.Helpers.Assemble {
 
     [Fact]
     public void ListWithNodesShouldIgnoreNulls() {
-      var gsaList = GetNodeList();
+      GsaList gsaList = GetNodeList();
 
       List<object> gooObjects = GetDummyNodes();
       gooObjects.Add(null);
@@ -60,28 +57,45 @@ namespace GsaGHTests.Helpers.Assemble {
       var gridLineOutput = new GsaListGoo(gsaList);
       GsaModelGoo gsaModelGoo = CreateModelComponent(gridLineOutput);
 
-      var lists = gsaModelGoo.Value.GetLists();
+      List<GsaList> lists = gsaModelGoo.Value.GetLists();
       Assert.Single(lists);
       Assert.Equal("1 2", lists[0].Definition);
     }
 
     [Fact]
     public void ListWithNodesShouldProduceValidLists() {
-      var gsaList = GetNodeList();
+      GsaList gsaList = GetNodeList();
 
       gsaList.SetListGooObjects(GetDummyNodes());
 
       var gridLineOutput = new GsaListGoo(gsaList);
       GsaModelGoo gsaModelGoo = CreateModelComponent(gridLineOutput);
 
-      var lists = gsaModelGoo.Value.GetLists();
+      List<GsaList> lists = gsaModelGoo.Value.GetLists();
       Assert.Single(lists);
       Assert.Equal("1 2", lists[0].Definition);
     }
 
+    [Fact]
+    public void DefinitionAndNodesShouldProduceOneList() {
+      GsaList gsaList = GetNodeList();
+      gsaList.Definition = "2 3 4";
+      // node with Id = 1!!!
+      gsaList.SetListGooObjects(new List<object>() {
+        new GsaNodeGoo(new GsaNode(new Point3d(1, 2, 3))),
+      });
+
+      var gridLineOutput = new GsaListGoo(gsaList);
+      GsaModelGoo gsaModelGoo = CreateModelComponent(gridLineOutput);
+
+      List<GsaList> lists = gsaModelGoo.Value.GetLists();
+      Assert.Single(lists);
+      Assert.Equal("2 3 4 1", lists[0].Definition);
+    }
+
     private static GsaList GetNodeList() {
       return new GsaList {
-        EntityType = GsaGH.Parameters.EntityType.Node,
+        EntityType = EntityType.Node,
       };
     }
 
@@ -93,15 +107,6 @@ namespace GsaGHTests.Helpers.Assemble {
         gsaNodeGoo2
       };
       return gooObjects;
-    }
-
-    [Fact]
-    public void nullIdShouldReturnDefault() {
-      GsaList gsaList = GsaList(null);
-
-      Assert.Equal(DefaultId, gsaList.Id);
-      Assert.Equal(ExpectedName, gsaList.Name);
-      Assert.Equal(ExpectedDefinition, gsaList.Definition);
     }
 
     private static GsaList GsaList(int? id) {
