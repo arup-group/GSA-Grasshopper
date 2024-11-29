@@ -1,5 +1,12 @@
-﻿using GsaGH.Components;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+using GsaAPI;
+
+using GsaGH.Components;
 using GsaGH.Parameters;
+
+using Rhino.Geometry;
 
 using Xunit;
 
@@ -23,6 +30,62 @@ namespace GsaGHTests.Helpers.Assemble {
     [Fact]
     public void ListShouldReturnDefinitionWhenIdIsNotSet() {
       GsaList gsaList = GsaList(DefaultId);
+
+      Assert.Equal(DefaultId, gsaList.Id);
+      Assert.Equal(ExpectedName, gsaList.Name);
+      Assert.Equal(ExpectedDefinition, gsaList.Definition);
+    }
+
+    [Fact]
+    public void ListWithNodesShouldIgnoreNulls() {
+      var gsaList = GetNodeList();
+
+      List<object> gooObjects = GetDummyNodes();
+      gooObjects.Add(null);
+      gooObjects.Add(new GsaNodeGoo(null));
+      gsaList.SetListGooObjects(gooObjects);
+
+      var gridLineOutput = new GsaListGoo(gsaList);
+      GsaModelGoo gsaModelGoo = CreateModelComponent(gridLineOutput);
+
+      var lists = gsaModelGoo.Value.GetLists();
+      Assert.Single(lists);
+      Assert.Equal("1 2", lists[0].Definition);
+    }
+
+    [Fact]
+    public void ListWithNodesShouldProduceValidLists() {
+      var gsaList = GetNodeList();
+
+      gsaList.SetListGooObjects(GetDummyNodes());
+
+      var gridLineOutput = new GsaListGoo(gsaList);
+      GsaModelGoo gsaModelGoo = CreateModelComponent(gridLineOutput);
+
+      var lists = gsaModelGoo.Value.GetLists();
+      Assert.Single(lists);
+      Assert.Equal("1 2", lists[0].Definition);
+    }
+
+    private static GsaList GetNodeList() {
+      return new GsaList {
+        EntityType = GsaGH.Parameters.EntityType.Node,
+      };
+    }
+
+    private static List<object> GetDummyNodes() {
+      var gsaNodeGoo1 = new GsaNodeGoo(new GsaNode(new Point3d(1, 2, 3)));
+      var gsaNodeGoo2 = new GsaNodeGoo(new GsaNode(new Point3d(4, 5, 6)));
+      var gooObjects = new List<object> {
+        gsaNodeGoo1,
+        gsaNodeGoo2
+      };
+      return gooObjects;
+    }
+
+    [Fact]
+    public void nullIdShouldReturnDefault() {
+      GsaList gsaList = GsaList(null);
 
       Assert.Equal(DefaultId, gsaList.Id);
       Assert.Equal(ExpectedName, gsaList.Name);
