@@ -12,12 +12,12 @@ steps:
     displayName: 'Simplify name'
   - powershell: |
       $dllFile = (ls -r "$(System.DefaultWorkingDirectory)\${{ parameters.dllName }}\bin\**\${{ parameters.configuration }}\${{ parameters.dllName }}.dll").FullName
-      Write-Output $dllFile
+      Write-Output This is the file $dllFile
     displayName: 'Find dll file'
 
   - powershell: |
       dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\${{ parameters.dllName }} $dllFile
-    displayName: dotnet tests
+    displayName: 'dotnet tests'
     failOnStderr: true
 
   - powershell: |
@@ -28,7 +28,7 @@ steps:
       } else {
         Write-Output "codecov.yml is valid"
       }
-    displayName: Validate codecov.yml
+    displayName: 'Validate codecov.yml'
     failOnStderr: true
 
   - powershell: |
