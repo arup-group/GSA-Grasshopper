@@ -39,6 +39,7 @@ stages:
         $integrationTestsChanged = $false
 
         foreach ($file in $gitChanges) {
+          Write-Output "Checking file: $file"
           # both need to run
           if ($file -like 'GsaGH/*') {
             $unitTestsChanged = $true
@@ -58,8 +59,6 @@ stages:
         Write-Output "Integration=$integrationTestsChanged"
         echo "##vso[task.setvariable variable=Integration]$integrationTestsChanged"
       displayName: 'Detect Changes in Repo'
-    - powershell: |
-        $files = git diff HEAD~1 --name-only | Where-Object { $_ -like "*.cs" -and $_ -notlike "*Tests.cs" }
 
 - stage: ImpactTestingUnit
   displayName: 'Impact Testing (Unit)'
