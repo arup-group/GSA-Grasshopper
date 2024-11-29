@@ -34,16 +34,21 @@ stages:
         git status
 
         $targetBranch = $(System.PullRequest.TargetBranch)
-        $gitChanges = git diff --name-only $targetBranch HEAD
+        $gitChanges = git diff --name-only HEAD..$targetBranch
         $unitTestsChanged = $false
         $integrationTestsChanged = $false
 
         foreach ($file in $gitChanges) {
+          # both need to run
           if ($file -like 'GsaGH/*') {
             $unitTestsChanged = $true
+            $integrationTestsChanged = $true
           }
           if ($file -like 'IntegrationTests/*') {
             $integrationTestsChanged = $true
+          }
+          if ($file -like 'GsaGHTests/*') {
+            $unitTestsChanged = $true
           }
         }
 
