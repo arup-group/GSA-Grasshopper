@@ -1,86 +1,112 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
 
-namespace GsaGH.Helpers.GH {
-  public class Legend {
-    public IReadOnlyCollection<string> Values { get; private set; } = new List<string>();
-    public IReadOnlyCollection<int> ValuePositionsY { get; private set; } = new List<int>();
-    public bool IsVisible { get; private set; } = true;
-    public Bitmap Bitmap { get; private set; }
-    public double Scale { get; private set; } = 1.0;
+using Grasshopper.Kernel;
 
-    private const int DefaultWidth = 15;
-    private const int DefaultHeight = 120;
+using Rhino;
+using Rhino.Display;
+using Rhino.Geometry;
+
+namespace GsaGH.Helpers.GH {
+  internal class Legend {
+    public LegendConfiguration Configuration { get; private set; }
+
+    private const int DefaultTextHeight = 12;
+    private const int DefaultBitmapWidth = 110;
+
+    private int _textHeight = DefaultTextHeight;
+    private int _leftBitmapEdge;
+    private bool _isDrawLegendCalled = false;
 
     public Legend() {
-      CreateBitmap();
+      Configuration = new LegendConfiguration();
     }
 
     /// <summary>
-    ///   Sets the list of legend values.
+    ///   Draws the complete legend including the rectangle, title, values, and bottom text.
     /// </summary>
-    public void SetValues(List<string> values) {
-      Values = values ?? throw new ArgumentNullException(nameof(values), "Values cannot be null.");
-    }
-
-    /// <summary>
-    ///   Sets the Y positions for the legend values.
-    /// </summary>
-    public void SetValuePositionsY(List<int> positions) {
-      ValuePositionsY
-        = positions ?? throw new ArgumentNullException(nameof(positions), "Value positions cannot be null.");
-    }
-
-    /// <summary>
-    ///   Sets the scale factor for the legend.
-    /// </summary>
-    public void SetScale(double scale) {
-      if (scale <= 0) {
-        throw new ArgumentOutOfRangeException(nameof(scale), "Scale must be greater than zero.");
+    public void DrawLegendRectangle(IGH_PreviewArgs args, string title, string bottomText) {
+      if (!IsDrawable()) {
+        return;
       }
 
-      Scale = scale;
+      _isDrawLegendCalled = true;
+      InitializeDimensions(args.Viewport.Bounds.Right);
+
+      DrawBitmap(args);
+      DrawTitle(args, title);
+      DrawValues(args);
+      DrawBottomText(args, bottomText);
+
+      _isDrawLegendCalled = false;
     }
 
-    /// <summary>
-    ///   Sets the visibility of the legend.
-    ///   Use only for deserialisation!
-    /// </summary>
-    /// <param name="isVisible">The desired visibility state.</param>
-    public void SetVisibility(bool isVisible) {
-      IsVisible = isVisible;
+    public void DrawBitmap(IGH_PreviewArgs args) {
+      EnsureDimensionsInitialized(args);
+      const int TopOffset = 20;
+      int topPosition = CalculateScaledOffset(TopOffset);
+
+      args.Display.DrawBitmap(new DisplayBitmap(Configuration.Bitmap), _leftBitmapEdge, topPosition);
     }
 
-    /// <summary>
-    ///   Toggles the visibility of the legend and returns the new state.
-    /// </summary>
-    public bool ToggleVisibility() {
-      IsVisible = !IsVisible;
-      return IsVisible;
+    public void DrawTitle(IGH_PreviewArgs args, string title) {
+      EnsureDimensionsInitialized(args);
+      const int TopOffset = 7;
+      int topPosition = CalculateScaledOffset(TopOffset);
+
+      args.Display.Draw2dText(title, Color.Black, new Point2d(_leftBitmapEdge, topPosition), false, _textHeight);
     }
 
-    /// <summary>
-    ///   Creates a new Bitmap for the legend with the given width and height.
-    /// </summary>
-    public void CreateBitmap(int width = DefaultWidth, int height = DefaultHeight) {
-      if (width <= 0) {
-        throw new ArgumentOutOfRangeException(nameof(width), "Width must be greater than zero.");
+    public void DrawValues(IGH_PreviewArgs args) {
+      EnsureDimensionsInitialized(args);
+      const int LeftOffset = 25;
+      int leftEdge = _leftBitmapEdge + CalculateScaledOffset(LeftOffset);
+      var zippedLists = Configuration.Values.Zip(Configuration.ValuePositionsY, (value, positionY) => new {
+        value,
+        positionY,
+      });
+      foreach (var pair in zippedLists) {
+        args.Display.Draw2dText(pair.value, Color.Black, new Point2d(leftEdge, pair.positionY), false, _textHeight);
       }
+    }
 
-      if (height <= 0) {
-        throw new ArgumentOutOfRangeException(nameof(height), "Height must be greater than zero.");
-      }
+    public void DrawBottomText(IGH_PreviewArgs args, string bottomText) {
+      EnsureDimensionsInitialized(args);
+      const int BottomOffset = 145;
+      const int ExtraOffset = 20;
+      int bitmapWidth = CalculateScaledOffset(DefaultBitmapWidth);
+      int bitmapWidthWithOffset = bitmapWidth + CalculateScaledOffset(ExtraOffset);
+      int topPosition = CalculateScaledOffset(BottomOffset);
 
-      Bitmap = new Bitmap((int)(width * Scale), (int)(height * Scale));
+      string wrappedText = WrapText(bottomText, bitmapWidthWithOffset);
+      args.Display.Draw2dText(wrappedText, Color.Black, new Point2d(_leftBitmapEdge, topPosition), false, _textHeight);
+    }
+
+    private bool IsDrawable() {
+      return Configuration != null && Configuration.IsLegendDisplayable();
+    }
+
+    private void InitializeDimensions(int viewportEdge) {
+      _textHeight = CalculateScaledOffset(DefaultTextHeight);
+      _leftBitmapEdge = viewportEdge - CalculateScaledOffset(DefaultBitmapWidth);
     }
 
     /// <summary>
-    ///   Determines if the legend is displayable.
+    ///   Ensures dimensions are initialized for individual drawing calls.
     /// </summary>
-    public bool IsDisplayable() {
-      return Values.Any() && IsVisible;
+    private void EnsureDimensionsInitialized(IGH_PreviewArgs args) {
+      if (!_isDrawLegendCalled) {
+        InitializeDimensions(args.Viewport.Bounds.Right);
+      }
+    }
+
+    private string WrapText(string bottomText, int width) {
+      var font = new Font(RhinoDoc.ActiveDoc.DimStyles.Current.Font.LogfontName, _textHeight);
+      return TextWrapper.WrapText(bottomText, width, font);
+    }
+
+    private int CalculateScaledOffset(int value) {
+      return (int)(value * Configuration.Scale);
     }
   }
 }
