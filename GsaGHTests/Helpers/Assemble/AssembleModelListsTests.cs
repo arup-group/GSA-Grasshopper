@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 using GsaAPI;
@@ -21,6 +22,17 @@ namespace GsaGHTests.Helpers.Assemble {
     public void ListShouldReturnDefinitionWhenIdIsSet() {
       const int ExpectedId = 2;
       GsaList gsaList = GsaList(ExpectedId);
+
+      Assert.Equal(ExpectedId, gsaList.Id);
+      Assert.Equal(ExpectedName, gsaList.Name);
+      Assert.Equal(ExpectedDefinition, gsaList.Definition);
+    }
+
+    [Fact]
+    public void ListWithEmptyNodesShouldReturnDefinitionWhenIdIsSet() {
+      const int ExpectedId = 2;
+      GsaList gsaList = GsaList(ExpectedId);
+      gsaList._nodes = new ConcurrentBag<GsaNodeGoo>();
 
       Assert.Equal(ExpectedId, gsaList.Id);
       Assert.Equal(ExpectedName, gsaList.Name);
