@@ -125,7 +125,8 @@ stages:
         #failIfCoverageEmpty: false # boolean. Fail if code coverage results are missing. Default: false.
 
     - template: dotnet-tests-with-coverage.yml
-      configuration: 'Debug'
+      parameters:
+        configuration: 'Debug'
 
     - template: uninstall-gsa.yml
 
