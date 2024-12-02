@@ -1,15 +1,20 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 
+using Grasshopper.GUI;
 using Grasshopper.Kernel;
+
+using OasysGH.Components;
 
 using Rhino;
 using Rhino.Display;
 using Rhino.Geometry;
 
 namespace GsaGH.Helpers.GH {
-  internal class Legend {
-    public LegendConfiguration Configuration { get; private set; }
+  internal class ContourLegend {
+    public ContourLegendConfiguration Configuration { get; private set; }
 
     private const int DefaultTextHeight = 12;
     private const int DefaultBitmapWidth = 110;
@@ -18,8 +23,29 @@ namespace GsaGH.Helpers.GH {
     private int _leftBitmapEdge;
     private bool _isDrawLegendCalled = false;
 
-    public Legend() {
-      Configuration = new LegendConfiguration();
+    private string _scaleLegendTxt;
+
+    public ContourLegend() {
+      Configuration = new ContourLegendConfiguration();
+    }
+
+    public ToolStripMenuItem CreateLegendToolStripMenuItem(GH_OasysDropDownComponent component, Action updateUI) {
+      var legendScale = new ToolStripTextBox {
+        Text = Configuration.Scale.ToString(),
+      };
+      legendScale.TextChanged += (s, e) => MaintainScaleLegendText(legendScale);
+      var legendScaleMenu = new ToolStripMenuItem("Scale Legend") {
+        Enabled = true,
+        ImageScaling = ToolStripItemImageScaling.SizeToFit,
+      };
+      var menu2 = new GH_MenuCustomControl(legendScaleMenu.DropDown, legendScale.Control, true, 200);
+      legendScaleMenu.DropDownItems[1].MouseUp += (s, e) => {
+        UpdateLegendScale(component, updateUI);
+        (component as IGH_VariableParameterComponent).VariableParameterMaintenance();
+        component.ExpireSolution(true);
+      };
+
+      return legendScaleMenu;
     }
 
     /// <summary>
@@ -108,5 +134,26 @@ namespace GsaGH.Helpers.GH {
     private int CalculateScaledOffset(int value) {
       return (int)(value * Configuration.Scale);
     }
+
+    #region Legend toolstrip menu helpers
+
+    private void UpdateLegendScale(GH_OasysDropDownComponent component, Action updateUI) {
+      try {
+        Configuration.SetLegendScale(double.Parse(_scaleLegendTxt));
+      } catch (Exception e) {
+        component.AddRuntimeWarning("Invalid scale value. Please enter a valid number.");
+      }
+
+      Configuration.ScaleBitmap();
+      component.ExpirePreview(true);
+      updateUI();
+    }
+
+    private void MaintainScaleLegendText(ToolStripItem menuitem) {
+      _scaleLegendTxt = menuitem.Text;
+    }
+
+    #endregion
+
   }
 }

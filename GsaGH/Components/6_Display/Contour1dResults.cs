@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using GH_IO.Serialization;
 
 using Grasshopper;
-using Grasshopper.GUI;
 using Grasshopper.GUI.Gradient;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -147,11 +146,10 @@ namespace GsaGH.Components {
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private int _noDigits;
     private string _resType;
-    private string _scaleLegendTxt = string.Empty;
     private bool _slider = true;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
     private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
-    private readonly Legend _legend = new Legend();
+    private readonly ContourLegend _contourLegend = new ContourLegend();
 
     public Contour1dResults() : base("Contour 1D Results", "Contour1d",
       "Displays GSA 1D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -168,7 +166,7 @@ namespace GsaGH.Components {
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
-      _legend.DrawLegendRectangle(args, _resType, _case);
+      _contourLegend.DrawLegendRectangle(args, _resType, _case);
     }
 
     public override bool Read(GH_IReader reader) {
@@ -200,7 +198,7 @@ namespace GsaGH.Components {
       _energyResultUnit
         = (EnergyUnit)UnitsHelper.Parse(typeof(EnergyUnit), reader.GetString("energy"));
 
-      _legend.Configuration.DeserializeLegendState(reader);
+      _contourLegend.Configuration.DeserializeLegendState(reader);
 
       return base.Read(reader);
     }
@@ -413,7 +411,7 @@ namespace GsaGH.Components {
       writer.SetString("energy", Energy.GetAbbreviation(_energyResultUnit));
       writer.SetString("envelope", _envelopeType.ToString());
 
-      _legend.Configuration.SerializeLegendState(writer);
+      _contourLegend.Configuration.SerializeLegendState(writer);
 
       return base.Write(writer);
     }
@@ -428,7 +426,7 @@ namespace GsaGH.Components {
       ToolStripMenuItem envelopeMenu = GenerateToolStripMenuItem.GetEnvelopeSubMenuItem(_envelopeType, UpdateEnvelope);
       menu.Items.Add(envelopeMenu);
 
-      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _legend.Configuration.IsVisible);
+      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _contourLegend.Configuration.IsVisible);
 
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
@@ -465,21 +463,7 @@ namespace GsaGH.Components {
 
       menu.Items.Add(unitsMenu);
 
-      var legendScale = new ToolStripTextBox {
-        Text = _legend.Configuration.Scale.ToString(),
-      };
-      legendScale.TextChanged += (s, e) => MaintainScaleLegendText(legendScale);
-      var legendScaleMenu = new ToolStripMenuItem("Scale Legend") {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-      var menu2 = new GH_MenuCustomControl(legendScaleMenu.DropDown, legendScale.Control, true,
-        200);
-      legendScaleMenu.DropDownItems[1].MouseUp += (s, e) => {
-        UpdateLegendScale();
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        ExpireSolution(true);
-      };
+      ToolStripMenuItem legendScaleMenu = _contourLegend.CreateLegendToolStripMenuItem(this, () => base.UpdateUI());
       menu.Items.Add(legendScaleMenu);
 
       Menu_AppendSeparator(menu);
@@ -493,8 +477,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Force:
-          Message = (int)_disp < 4 ? Force.GetAbbreviation(_forceUnit) :
-            Moment.GetAbbreviation(_momentUnit);
+          Message = (int)_disp < 4 ? Force.GetAbbreviation(_forceUnit) : Moment.GetAbbreviation(_momentUnit);
           break;
 
         case FoldMode.ProjectedStress:
@@ -1054,7 +1037,7 @@ namespace GsaGH.Components {
           }
         }
       });
-      Bitmap bitmap = _legend.Configuration.Bitmap;
+      Bitmap bitmap = _contourLegend.Configuration.Bitmap;
       int gripheight = bitmap.Height / ghGradient.GripCount;
       var legendValues = new List<string>();
       var legendValuePositionsY = new List<int>();
@@ -1080,7 +1063,7 @@ namespace GsaGH.Components {
         int endy = starty + gripheight;
         for (int y = starty; y < endy; y++) {
           for (int x = 0; x < bitmap.Width; x++) {
-            _legend.Configuration.Bitmap.SetPixel(x, bitmap.Height - y - 1, gradientcolour);
+            _contourLegend.Configuration.Bitmap.SetPixel(x, bitmap.Height - y - 1, gradientcolour);
           }
         }
 
@@ -1143,8 +1126,8 @@ namespace GsaGH.Components {
         legendValuePositionsY.Add(bitmap.Height - starty + (gripheight / 2) - 2);
       }
 
-      _legend.Configuration.SetTextValues(legendValues);
-      _legend.Configuration.SetValuePositionsY(legendValuePositionsY);
+      _contourLegend.Configuration.SetTextValues(legendValues);
+      _contourLegend.Configuration.SetValuePositionsY(legendValuePositionsY);
 
       da.SetDataTree(0, resultLines);
       da.SetDataList(1, cs);
@@ -1249,7 +1232,7 @@ namespace GsaGH.Components {
     }
 
     internal void ShowLegend(object sender, EventArgs e) {
-      _legend.Configuration.ToggleLegendVisibility();
+      _contourLegend.Configuration.ToggleLegendVisibility();
       ExpirePreview(true);
     }
 
@@ -1287,23 +1270,6 @@ namespace GsaGH.Components {
       _stressUnit = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
-    }
-
-    internal void UpdateLegendScale() {
-      try {
-        _legend.Configuration.SetLegendScale(double.Parse(_scaleLegendTxt));
-      } catch (Exception e) {
-        this.AddRuntimeWarning(e.Message);
-        return;
-      }
-
-      _legend.Configuration.ScaleBitmap();
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    internal void MaintainScaleLegendText(ToolStripItem menuitem) {
-      _scaleLegendTxt = menuitem.Text;
     }
   }
 }

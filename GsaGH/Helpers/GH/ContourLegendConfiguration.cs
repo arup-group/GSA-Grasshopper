@@ -6,7 +6,7 @@ using System.Linq;
 using GH_IO.Serialization;
 
 namespace GsaGH.Helpers.GH {
-  public class LegendConfiguration {
+  public class ContourLegendConfiguration {
     public IReadOnlyCollection<string> Values { get; private set; } = new List<string>();
     public IReadOnlyCollection<int> ValuePositionsY { get; private set; } = new List<int>();
     public bool IsVisible { get; private set; } = true;
@@ -18,7 +18,7 @@ namespace GsaGH.Helpers.GH {
     private const string ScaleKey = "legendScale";
     private const string VisibilityKey = "legend";
 
-    public LegendConfiguration() {
+    public ContourLegendConfiguration() {
       ScaleBitmap();
     }
 
