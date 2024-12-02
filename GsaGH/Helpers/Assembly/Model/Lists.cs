@@ -9,8 +9,6 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 
-using EntityType = GsaGH.Parameters.EntityType;
-
 namespace GsaGH.Helpers.Assembly {
   internal partial class ModelAssembly {
     private void AddElementList(GsaList list, GH_Component owner) {
@@ -128,6 +126,7 @@ namespace GsaGH.Helpers.Assembly {
         if (list.Name == null || list.Name.Length == 0) {
           list.Name = list.EntityType.ToString() + " List [" + (_lists.Count + 1) + "]";
         }
+
         _lists.AddValue(list.Guid, list.GetApiList());
       }
     }
@@ -190,18 +189,10 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void AddNodeList(GsaList list) {
-      if (list._nodes == null || list._nodes.Count == 0) {
-        AddList(list);
-      }
       GsaList copyList = list.Duplicate();
-      var ids = new List<int>();
-
-      foreach (GsaNodeGoo node in list._nodes.Where(x => x != null && x.Value != null)) {
-        ids.Add(AddNode(node.Value.GetApiNodeToUnit(_unit)));
-      }
-
-      copyList.Definition = GsaList.CreateListDefinition(ids);
-
+      var ids = list._nodes.Where(x => x != null && x.Value != null)
+       .Select(node => AddNode(node.Value.GetApiNodeToUnit(_unit))).ToList();
+      copyList.Definition += " " + GsaList.CreateListDefinition(ids);
       AddList(copyList);
     }
 
