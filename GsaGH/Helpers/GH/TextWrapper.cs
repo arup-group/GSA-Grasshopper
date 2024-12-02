@@ -24,8 +24,6 @@ namespace GsaGH.Helpers.GH {
         return string.Empty;
       }
 
-      int extraOffset = 20;
-
       string[] words = text.Split(' ');
       var lines = new List<string>();
       string currentLine = "";

@@ -140,7 +140,7 @@ namespace GsaGH.Helpers.GH {
     private void UpdateLegendScale(GH_OasysDropDownComponent component, Action updateUI) {
       try {
         Configuration.SetLegendScale(double.Parse(_scaleLegendTxt));
-      } catch (Exception e) {
+      } catch (Exception) {
         component.AddRuntimeWarning("Invalid scale value. Please enter a valid number.");
       }
 
