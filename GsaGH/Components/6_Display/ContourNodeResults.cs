@@ -121,7 +121,6 @@ namespace GsaGH.Components {
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private int _noDigits;
     private string _resType;
-    private string _scaleLegendTxt = string.Empty;
     private bool _slider = true;
     private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
     private readonly ContourLegend _contourLegend = new ContourLegend();

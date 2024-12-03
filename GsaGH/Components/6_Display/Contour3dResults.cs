@@ -94,7 +94,6 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.Displacement;
     private int _noDigits;
     private string _resType;
-    private string _scaleLegendTxt = string.Empty;
     private bool _slider = true;
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
     private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
