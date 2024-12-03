@@ -19,7 +19,7 @@ namespace GsaGH.Helpers.GH {
     /// </summary>
     /// <param name="text">The text to wrap.</param>
     /// <param name="maxWidth">The maximum width in pixels.</param>
-    /// <param name="font">The font used for text display</param>
+    /// <param name="fontSize">The font size of the text</param>
     /// <returns>Wrapped text with line breaks.</returns>
     public static string WrapText(string text, int maxWidth, int fontSize) {
       if (string.IsNullOrWhiteSpace(text)) {
