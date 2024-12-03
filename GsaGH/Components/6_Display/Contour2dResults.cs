@@ -126,7 +126,6 @@ namespace GsaGH.Components {
     private FoldMode _mode = FoldMode.Displacement;
     private int _noDigits;
     private string _resType;
-    private string _scaleLegendTxt = string.Empty;
     private bool _slider = true;
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
     private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
@@ -1091,23 +1090,6 @@ namespace GsaGH.Components {
       _stressUnitResult = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
-    }
-
-    internal void UpdateLegendScale() {
-      try {
-        _contourLegend.Configuration.SetLegendScale(double.Parse(_scaleLegendTxt));
-      } catch (Exception e) {
-        this.AddRuntimeWarning(e.Message);
-        return;
-      }
-
-      _contourLegend.Configuration.ScaleBitmap();
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    internal void MaintainScaleLegendText(ToolStripItem menuitem) {
-      _scaleLegendTxt = menuitem.Text;
     }
   }
 }

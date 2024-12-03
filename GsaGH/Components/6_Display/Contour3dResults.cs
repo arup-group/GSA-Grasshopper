@@ -732,22 +732,5 @@ namespace GsaGH.Components {
       ExpirePreview(true);
       base.UpdateUI();
     }
-
-    internal void UpdateLegendScale() {
-      try {
-        _contourLegend.Configuration.SetLegendScale(double.Parse(_scaleLegendTxt));
-      } catch (Exception e) {
-        this.AddRuntimeWarning(e.Message);
-        return;
-      }
-
-      _contourLegend.Configuration.ScaleBitmap();
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    internal void MaintainScaleLegendText(ToolStripItem menuitem) {
-      _scaleLegendTxt = menuitem.Text;
-    }
   }
 }
