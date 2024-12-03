@@ -360,7 +360,6 @@ namespace GsaGH.Components {
         return;
       }
 
-      ;
       LengthUnit lengthUnit = result.Model.ModelUnit;
 
       var ghColours = new List<GH_Colour>();

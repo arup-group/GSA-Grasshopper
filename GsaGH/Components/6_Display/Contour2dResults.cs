@@ -452,7 +452,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Force:
-          Message = ((int)_disp < 3) | _isShear ? ForcePerLength.GetAbbreviation(_forcePerLengthUnit) :
+          Message = (int)_disp < 3 || _isShear ? ForcePerLength.GetAbbreviation(_forcePerLengthUnit) :
             Force.GetAbbreviation(_forceUnit) + "·" + Length.GetAbbreviation(_lengthUnit) + "/"
             + Length.GetAbbreviation(_lengthUnit);
           break;
@@ -532,8 +532,6 @@ namespace GsaGH.Components {
         this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
         return;
       }
-
-      ;
 
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();
@@ -682,9 +680,7 @@ namespace GsaGH.Components {
 
           values = shearSelector != null ?
             ResultsUtility.GetResultComponent(shears.Subset, shearSelector, permutations, _envelopeType) :
-            forceSelector != null ?
-              ResultsUtility.GetResultComponent(forces.Subset, forceSelector, permutations, _envelopeType) :
-              ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutations, _envelopeType);
+            GetResultComponent(forceSelector, forces, permutations, moments, momentSelector);
           break;
 
         case FoldMode.Stress:
@@ -947,6 +943,17 @@ namespace GsaGH.Components {
       da.SetDataList(2, ts);
 
       PostHog.Result(result.CaseType, 2, _mode.ToString(), _disp.ToString());
+    }
+
+    private ConcurrentDictionary<int, IList<IQuantity>> GetResultComponent(
+      Func<IForce2d, IQuantity> forceSelector,
+      IMeshResultSubset<IMeshQuantity<IForce2d>, IForce2d, ResultTensor2InAxis<Entity2dExtremaKey>> forces,
+      List<int> permutations,
+      IMeshResultSubset<IMeshQuantity<IMoment2d>, IMoment2d, ResultTensor2AroundAxis<Entity2dExtremaKey>> moments,
+      Func<IMoment2d, IQuantity> momentSelector) {
+      return forceSelector != null ?
+        ResultsUtility.GetResultComponent(forces.Subset, forceSelector, permutations, _envelopeType) :
+        ResultsUtility.GetResultComponent(moments.Subset, momentSelector, permutations, _envelopeType);
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {
