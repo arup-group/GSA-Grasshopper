@@ -8,7 +8,6 @@ using Grasshopper.Kernel;
 
 using OasysGH.Components;
 
-using Rhino;
 using Rhino.Display;
 using Rhino.Geometry;
 
@@ -127,8 +126,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     private string WrapText(string bottomText, int width) {
-      var font = new Font(RhinoDoc.ActiveDoc.DimStyles.Current.Font.LogfontName, _textHeight);
-      return TextWrapper.WrapText(bottomText, width, font);
+      return TextWrapper.WrapText(bottomText, width, _textHeight);
     }
 
     private int CalculateScaledOffset(int value) {

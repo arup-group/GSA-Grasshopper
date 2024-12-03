@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
+using Rhino;
+
 namespace GsaGH.Helpers.GH {
 
   public static class TextWrapper {
@@ -19,7 +21,7 @@ namespace GsaGH.Helpers.GH {
     /// <param name="maxWidth">The maximum width in pixels.</param>
     /// <param name="font">The font used for text display</param>
     /// <returns>Wrapped text with line breaks.</returns>
-    public static string WrapText(string text, int maxWidth, Font font) {
+    public static string WrapText(string text, int maxWidth, int fontSize) {
       if (string.IsNullOrWhiteSpace(text)) {
         return string.Empty;
       }
@@ -27,6 +29,7 @@ namespace GsaGH.Helpers.GH {
       string[] words = text.Split(' ');
       var lines = new List<string>();
       string currentLine = "";
+      var font = new Font(GetFontName(), fontSize);
       foreach (string word in words) {
         string testLine = string.IsNullOrEmpty(currentLine) ? word : $"{currentLine} {word}";
         float testLineWidth = GetCachedTextWidth(testLine, font, maxWidth);
@@ -63,6 +66,18 @@ namespace GsaGH.Helpers.GH {
       textWidthCache[(text, font.Size)] = width;
 
       return width;
+    }
+
+    public static string GetFontName() {
+      string fontName = "Arial";
+      try {
+        RhinoDoc activeRhino = RhinoDoc.ActiveDoc;
+        fontName = activeRhino.DimStyles.Current.Font.LogfontName;
+      } catch { //will be catched only by tests
+        return fontName;
+      }
+
+      return fontName;
     }
   }
 }
