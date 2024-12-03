@@ -1,6 +1,5 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
+using System.Linq;
 
 using GsaGH.Components;
 using GsaGH.Parameters;
@@ -65,6 +64,16 @@ namespace GsaGHTests.Model {
       } finally {
         process.Kill();
       }
+    }
+
+    [Fact]
+    public void StartGsaShouldWorkWhenFilenameHasGaps() {
+      SaveGsaModel comp = new SaveGsaModel();
+      ComponentTestHelper.SetInput(comp, GsaModelGooMother);
+      ComponentTestHelper.SetInput(comp, true, 1);
+      ComponentTestHelper.SetInput(comp, Path.Combine(Path.GetTempPath(), "dummyPath with spaces.gwb"), 2);
+      _ = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(2, comp.FileNameLastSavedFullPath.Count(x => x == '\"'));
     }
   }
 }
