@@ -1,19 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 
-using Grasshopper.GUI;
 using Grasshopper.Kernel;
-
-using OasysGH.Components;
 
 using Rhino.Display;
 using Rhino.Geometry;
 
 namespace GsaGH.Helpers.GH {
-  internal class ContourLegend {
-    public ContourLegendConfiguration Configuration { get; private set; }
+
+  internal class ContourLegend : IContourLegend {
+    private readonly IContourLegendConfiguration _configuration;
 
     private const int DefaultTextHeight = 12;
     private const int DefaultBitmapWidth = 110;
@@ -22,42 +20,29 @@ namespace GsaGH.Helpers.GH {
     private int _leftBitmapEdge;
     private bool _isDrawLegendCalled = false;
 
-    private string _scaleLegendTxt;
-
-    public ContourLegend() {
-      Configuration = new ContourLegendConfiguration();
-    }
-
-    public ToolStripMenuItem CreateLegendToolStripMenuItem(GH_OasysDropDownComponent component, Action updateUI) {
-      var legendScale = new ToolStripTextBox {
-        Text = Configuration.Scale.ToString(),
-      };
-      legendScale.TextChanged += (s, e) => MaintainScaleLegendText(legendScale);
-      var legendScaleMenu = new ToolStripMenuItem("Scale Legend") {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-      var menu2 = new GH_MenuCustomControl(legendScaleMenu.DropDown, legendScale.Control, true, 200);
-      legendScaleMenu.DropDownItems[1].MouseUp += (s, e) => {
-        UpdateLegendScale(component, updateUI);
-        (component as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        component.ExpireSolution(true);
-      };
-
-      return legendScaleMenu;
+    public ContourLegend(IContourLegendConfiguration configuration) {
+      _configuration = configuration;
     }
 
     /// <summary>
     ///   Draws the complete legend including the rectangle, title, values, and bottom text.
     /// </summary>
-    public void DrawLegendRectangle(IGH_PreviewArgs args, string title, string bottomText) {
-      if (!IsDrawable()) {
+    public void DrawLegendRectangle(
+      IGH_PreviewArgs args, string title, string bottomText,
+      List<(int startY, int endY, Color gradientColor)> gradients) {
+      if (!_configuration.IsLegendDisplayable()) {
         return;
       }
 
       _isDrawLegendCalled = true;
       InitializeDimensions(args.Viewport.Bounds.Right);
 
+      // Step 1: Apply all gradients to the bitmap
+      foreach ((int startY, int endY, Color gradientColor) in gradients) {
+        DrawGradientLegend(startY, endY, gradientColor);
+      }
+
+      //Step2 Draw other elements of the legend
       DrawBitmap(args);
       DrawTitle(args, title);
       DrawValues(args);
@@ -66,12 +51,24 @@ namespace GsaGH.Helpers.GH {
       _isDrawLegendCalled = false;
     }
 
+    public void DrawGradientLegend(int startY, int endY, Color gradientColor) {
+      if (startY < 0 || endY > _configuration.Bitmap.Height || startY >= endY) {
+        throw new ArgumentOutOfRangeException(nameof(startY), "Invalid start or end positions for the gradient.");
+      }
+
+      for (int y = startY; y < endY; y++) {
+        for (int x = 0; x < _configuration.Bitmap.Width; x++) {
+          _configuration.Bitmap.SetPixel(x, _configuration.Bitmap.Height - y - 1, gradientColor);
+        }
+      }
+    }
+
     public void DrawBitmap(IGH_PreviewArgs args) {
       EnsureDimensionsInitialized(args);
       const int TopOffset = 20;
       int topPosition = CalculateScaledOffset(TopOffset);
 
-      args.Display.DrawBitmap(new DisplayBitmap(Configuration.Bitmap), _leftBitmapEdge, topPosition);
+      args.Display.DrawBitmap(new DisplayBitmap(_configuration.Bitmap), _leftBitmapEdge, topPosition);
     }
 
     public void DrawTitle(IGH_PreviewArgs args, string title) {
@@ -86,7 +83,7 @@ namespace GsaGH.Helpers.GH {
       EnsureDimensionsInitialized(args);
       const int LeftOffset = 25;
       int leftEdge = _leftBitmapEdge + CalculateScaledOffset(LeftOffset);
-      var zippedLists = Configuration.Values.Zip(Configuration.ValuePositionsY, (value, positionY) => new {
+      var zippedLists = _configuration.Values.Zip(_configuration.ValuePositionsY, (value, positionY) => new {
         value,
         positionY,
       });
@@ -105,10 +102,6 @@ namespace GsaGH.Helpers.GH {
 
       string wrappedText = WrapText(bottomText, bitmapWidthWithOffset);
       args.Display.Draw2dText(wrappedText, Color.Black, new Point2d(_leftBitmapEdge, topPosition), false, _textHeight);
-    }
-
-    private bool IsDrawable() {
-      return Configuration != null && Configuration.IsLegendDisplayable();
     }
 
     private void InitializeDimensions(int viewportEdge) {
@@ -130,28 +123,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     private int CalculateScaledOffset(int value) {
-      return (int)(value * Configuration.Scale);
+      return (int)(value * _configuration.Scale);
     }
-
-    #region Legend toolstrip menu helpers
-
-    private void UpdateLegendScale(GH_OasysDropDownComponent component, Action updateUI) {
-      try {
-        Configuration.SetLegendScale(double.Parse(_scaleLegendTxt));
-      } catch (Exception) {
-        component.AddRuntimeWarning("Invalid scale value. Please enter a valid number.");
-      }
-
-      Configuration.ScaleBitmap();
-      component.ExpirePreview(true);
-      updateUI();
-    }
-
-    private void MaintainScaleLegendText(ToolStripItem menuitem) {
-      _scaleLegendTxt = menuitem.Text;
-    }
-
-    #endregion
-
   }
 }

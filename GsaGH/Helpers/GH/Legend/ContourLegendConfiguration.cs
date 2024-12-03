@@ -6,12 +6,12 @@ using System.Linq;
 using GH_IO.Serialization;
 
 namespace GsaGH.Helpers.GH {
-  public class ContourLegendConfiguration {
+  public class ContourLegendConfiguration : IContourLegendConfiguration {
     public IReadOnlyCollection<string> Values { get; private set; } = new List<string>();
     public IReadOnlyCollection<int> ValuePositionsY { get; private set; } = new List<int>();
-    public bool IsVisible { get; private set; } = true;
     public Bitmap Bitmap { get; private set; }
     public double Scale { get; private set; } = 1.0;
+    public bool IsVisible { get; private set; } = true;
 
     private const int DefaultWidth = 15;
     private const int DefaultHeight = 120;
@@ -43,6 +43,7 @@ namespace GsaGH.Helpers.GH {
       }
 
       Scale = scale;
+      ScaleBitmap();
     }
 
     public bool ToggleLegendVisibility() {
@@ -50,7 +51,7 @@ namespace GsaGH.Helpers.GH {
       return IsVisible;
     }
 
-    public void ScaleBitmap() {
+    private void ScaleBitmap() {
       Bitmap = new Bitmap((int)(DefaultWidth * Scale), (int)(DefaultHeight * Scale));
     }
 
