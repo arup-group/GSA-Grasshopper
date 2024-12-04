@@ -69,15 +69,12 @@ namespace GsaGH.Helpers.GH {
     }
 
     public static string GetFontName(RhinoDoc testPurpose = null) {
-      string fontName = "Arial";
       try {
         RhinoDoc activeRhino = testPurpose ?? RhinoDoc.ActiveDoc;
-        fontName = activeRhino.DimStyles.Current.Font.FamilyName;
+        return activeRhino.DimStyles.Current.Font.FamilyName;
       } catch { //will be catched only by tests
-        return fontName;
+        return "Arial";
       }
-
-      return fontName;
     }
   }
 }
