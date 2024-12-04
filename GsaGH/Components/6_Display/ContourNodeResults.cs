@@ -11,9 +11,7 @@ using GH_IO.Serialization;
 
 using Grasshopper.GUI.Gradient;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Parameters;
-using Grasshopper.Kernel.Special;
 using Grasshopper.Kernel.Types;
 
 using GsaAPI;
@@ -28,9 +26,7 @@ using GsaGH.Parameters.Results;
 using GsaGH.Properties;
 
 using OasysGH;
-using OasysGH.Components;
 using OasysGH.Parameters;
-using OasysGH.UI;
 using OasysGH.Units;
 using OasysGH.Units.Helpers;
 
@@ -47,7 +43,7 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to display GSA node result contours
   /// </summary>
-  public class ContourNodeResults : GH_OasysDropDownComponent {
+  public class ContourNodeResults : DrawContourBase {
     private enum DisplayValue {
       X,
       Y,
@@ -110,68 +106,21 @@ namespace GsaGH.Components {
       "SpringForce",
       "Footfall",
     });
-    private string _case = string.Empty;
-    private double _defScale = 250;
     private DisplayValue _disp = DisplayValue.ResXyz;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
-    private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
-    private double _maxValue = 1000;
-    private double _minValue;
     private FoldMode _mode = FoldMode.Displacement;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
-    private int _noDigits;
-    private string _resType;
-    private bool _slider = true;
-    private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
-    private readonly ContourLegendManager _contourLegendMenager = new ContourLegendManager();
-    private List<(int startY, int endY, Color gradientColor)> _gradients
-      = new List<(int startY, int endY, Color gradientColor)>();
 
     public ContourNodeResults() : base("Contour Node Results", "NodeContour",
       "Diplays GSA Node Results as Contours", CategoryName.Name(), SubCategoryName.Cat6()) { }
 
-    public override void CreateAttributes() {
-      if (!_isInitialised) {
-        InitialiseDropdowns();
-      }
-
-      m_attributes = new DropDownSliderComponentAttributes(this, SetSelected, _dropDownItems,
-        _selectedItems, _slider, SetVal, SetMaxMin, _defScale, _maxValue, _minValue, _noDigits,
-        _spacerDescriptions);
-    }
-
-    public override void DrawViewportWires(IGH_PreviewArgs args) {
-      base.DrawViewportWires(args);
-
-      _contourLegendMenager.DrawLegend(args, _resType, _case, _gradients);
-    }
-
     public override bool Read(GH_IReader reader) {
       _mode = (FoldMode)reader.GetInt32("Mode");
       _disp = (DisplayValue)reader.GetInt32("Display");
-      _slider = reader.GetBoolean("slider");
-      _noDigits = reader.GetInt32("noDec");
-      _maxValue = reader.GetDouble("valMax");
-      _minValue = reader.GetDouble("valMin");
-      _defScale = reader.GetDouble("val");
-
-      if (reader.ItemExists("envelope")) {
-        _envelopeType = (EnvelopeMethod)Enum.Parse(
-          typeof(EnvelopeMethod), reader.GetString("envelope"));
-      }
-
-      _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("force"));
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), reader.GetString("moment"));
 
-      _contourLegendMenager.DeserialiseLegendState(reader);
-
       return base.Read(reader);
-    }
-
-    public void SetMaxMin(double max, double min) {
-      _maxValue = max;
-      _minValue = min;
     }
 
     public override void SetSelected(int i, int j) {
@@ -235,10 +184,6 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    public void SetVal(double value) {
-      _defScale = value;
-    }
-
     public override void VariableParameterMaintenance() {
       if (Params.Input.Count != 5) {
         var scale = (Param_Number)Params.Input[3];
@@ -280,64 +225,24 @@ namespace GsaGH.Components {
     public override bool Write(GH_IWriter writer) {
       writer.SetInt32("Mode", (int)_mode);
       writer.SetInt32("Display", (int)_disp);
-      writer.SetBoolean("slider", _slider);
-      writer.SetInt32("noDec", _noDigits);
-      writer.SetDouble("valMax", _maxValue);
-      writer.SetDouble("valMin", _minValue);
-      writer.SetDouble("val", _defScale);
-      writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("force", Force.GetAbbreviation(_forceUnit));
       writer.SetString("moment", Moment.GetAbbreviation(_momentUnit));
-      writer.SetString("envelope", _envelopeType.ToString());
-
-      _contourLegendMenager.SerialiseLegendState(writer);
 
       return base.Write(writer);
     }
 
     protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu) {
-      if (!(menu is ContextMenuStrip)) {
-        return; // this method is also called when clicking EWR balloon
-      }
-
-      Menu_AppendSeparator(menu);
-
-      ToolStripMenuItem envelopeMenu = GenerateToolStripMenuItem.GetEnvelopeSubMenuItem(_envelopeType, UpdateEnvelope);
-      menu.Items.Add(envelopeMenu);
-
-      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _contourLegendMenager.IsLegendVisible);
-
-      var gradient = new GH_GradientControl();
-      gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24,
-        (s, e) => CreateGradient());
-      menu.Items.Add(extract);
-
-      ToolStripMenuItem lengthUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Displacement",
-        EngineeringUnits.Length, Length.GetAbbreviation(_lengthResultUnit), UpdateLength);
-
-      ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
-        EngineeringUnits.Force, Force.GetAbbreviation(_forceUnit), UpdateForce);
+      ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force", EngineeringUnits.Force,
+        Force.GetAbbreviation(_forceUnit), UpdateForce);
 
       ToolStripMenuItem momentUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Moment",
         EngineeringUnits.Moment, Moment.GetAbbreviation(_momentUnit), UpdateMoment);
 
-      var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
-
-      unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-        lengthUnitsMenu,
+      GenerateUnitMenuItems(new List<ToolStripMenuItem>() {
         forceUnitsMenu,
         momentUnitsMenu,
       });
-
-      unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
-
-      menu.Items.Add(unitsMenu);
-
-      ToolStripMenuItem legendScaleMenu = _contourLegendMenager.CreateMenu(this, () => base.UpdateUI());
-      menu.Items.Add(legendScaleMenu);
-
-      Menu_AppendSeparator(menu);
+      base.AppendAdditionalComponentMenuItems(menu);
     }
 
     protected override void BeforeSolveInstance() {
@@ -396,18 +301,12 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      IQuantity length = new Length(0, _lengthResultUnit);
-      string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
-
-      pManager.AddGenericParameter("Result Point", "P", "Contoured Points with result values",
-        GH_ParamAccess.list);
-      pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
-      pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values",
-        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Result Point", "P", "Contoured Points with result values", GH_ParamAccess.list);
+      base.RegisterOutputParams(pManager);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      _gradients = new List<(int startY, int endY, Color gradientColor)>();
+      ClearLegendGradients();
       string nodeList = "All";
       _case = string.Empty;
       _resType = string.Empty;
@@ -844,37 +743,6 @@ namespace GsaGH.Components {
       PostHog.Result(result.CaseType, 0, _mode.ToString(), _disp.ToString());
     }
 
-    internal GH_GradientControl CreateGradient(GH_Document doc = null) {
-      doc ??= OnPingDocument();
-      var gradient = new GH_GradientControl();
-      gradient.CreateAttributes();
-
-      gradient.Gradient = Colours.Stress_Gradient();
-      gradient.Gradient.NormalizeGrips();
-      gradient.Params.Input[0].AddVolatileData(new GH_Path(0), 0, -1);
-      gradient.Params.Input[1].AddVolatileData(new GH_Path(0), 0, 1);
-      gradient.Params.Input[2].AddVolatileDataList(new GH_Path(0), new List<double>() {
-        -1,
-        -0.666,
-        -0.333,
-        0,
-        0.333,
-        0.666,
-        1,
-      });
-
-      gradient.Attributes.Pivot = new PointF(
-        Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50,
-        Params.Input[2].Attributes.Bounds.Y - (gradient.Attributes.Bounds.Height / 4) - 6);
-
-      doc.AddObject(gradient, false);
-      Params.Input[2].RemoveAllSources();
-      Params.Input[2].AddSource(gradient.Params.Output[0]);
-
-      UpdateUI();
-      return gradient;
-    }
-
     private void DisplacementModeClicked() {
       RecordUndoEvent(_mode + " Parameters");
       _mode = FoldMode.Displacement;
@@ -907,33 +775,8 @@ namespace GsaGH.Components {
       ReDrawComponent();
     }
 
-    private void ReDrawComponent() {
-      var pivot = new PointF(Attributes.Pivot.X, Attributes.Pivot.Y);
-      CreateAttributes();
-      Attributes.Pivot = pivot;
-      Attributes.ExpireLayout();
-      Attributes.PerformLayout();
-    }
-
-    internal void ShowLegend(object sender, EventArgs e) {
-      _contourLegendMenager.ToggleVisibility();
-      ExpirePreview(true);
-    }
-
-    internal void UpdateEnvelope(string type) {
-      _envelopeType = (EnvelopeMethod)Enum.Parse(typeof(EnvelopeMethod), type);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
     internal void UpdateForce(string unit) {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), unit);
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    internal void UpdateLength(string unit) {
-      _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
     }
