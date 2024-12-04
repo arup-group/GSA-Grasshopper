@@ -15,8 +15,14 @@ namespace GsaGH.Helpers.GH {
 
     public readonly int DefaultWidth = 15;
     public readonly int DefaultHeight = 120;
-    private const string ScaleKey = "legendScale";
-    private const string VisibilityKey = "legend";
+    /// <summary>
+    ///   Key used to de/serialise scale of the legend
+    /// </summary>
+    public static string ScaleKey => "legendScale";
+    /// <summary>
+    ///   Key used to de/serialise visibility of the legend
+    /// </summary>
+    public static string VisibilityKey => "legend";
 
     public ContourLegendConfiguration() {
       ScaleBitmap();

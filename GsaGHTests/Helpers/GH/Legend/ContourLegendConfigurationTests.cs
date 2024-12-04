@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using GH_IO.Serialization;
+
 using GsaGH.Helpers.GH;
+
+using Moq;
 
 using Xunit;
 
 namespace GsaGHTests.Helpers.GH.Legend {
+  [Collection("GrasshopperFixture collection")]
   public class ContourLegendConfigurationTests {
     private readonly ContourLegendConfiguration legendConfiguration;
 
@@ -172,19 +177,40 @@ namespace GsaGHTests.Helpers.GH.Legend {
 
     [Fact]
     public void SerializeAndDeserializeLegendStateWorksCorrectly() {
-      var writer = new MockWriter();
-      var reader = new MockReader();
+      var mockWriter = new Mock<GH_IWriter>();
+      var mockReader = new Mock<GH_IReader>();
 
-      legendConfiguration.SetLegendScale(2.0);
+      double scale = 2.0;
+      bool visibility = false;
+      string scaleKey = ContourLegendConfiguration.ScaleKey;
+      string visibilityKey = ContourLegendConfiguration.VisibilityKey;
+
+      legendConfiguration.SetLegendScale(scale);
       legendConfiguration.ToggleLegendVisibility();
-      legendConfiguration.SerializeLegendState(writer);
+      legendConfiguration.SerializeLegendState(mockWriter.Object);
 
-      reader.Data = writer.Data;
+      // Verify that serialization methods were called with correct arguments
+      mockWriter.Verify(writer => writer.SetDouble(scaleKey, scale), Times.Once);
+      mockWriter.Verify(writer => writer.SetBoolean(visibilityKey, visibility), Times.Once);
+
+      // Mock the reader to return serialized values
+      mockReader.Setup(reader => reader.ItemExists(scaleKey)).Returns(true);
+      mockReader.Setup(reader => reader.ItemExists(visibilityKey)).Returns(true);
+      mockReader.Setup(reader => reader.GetDouble(scaleKey)).Returns(scale);
+      mockReader.Setup(reader => reader.GetBoolean(visibilityKey)).Returns(visibility);
+
       var deserializedConfig = new ContourLegendConfiguration();
-      deserializedConfig.DeserializeLegendState(reader);
+      deserializedConfig.DeserializeLegendState(mockReader.Object);
 
+      // Assert
       Assert.Equal(legendConfiguration.Scale, deserializedConfig.Scale);
       Assert.Equal(legendConfiguration.IsVisible, deserializedConfig.IsVisible);
+
+      // Verify that deserialization methods were called
+      mockReader.Verify(reader => reader.ItemExists(scaleKey), Times.Once);
+      mockReader.Verify(reader => reader.ItemExists(visibilityKey), Times.Once);
+      mockReader.Verify(reader => reader.GetDouble(scaleKey), Times.Once);
+      mockReader.Verify(reader => reader.GetBoolean(visibilityKey), Times.Once);
     }
   }
 
