@@ -11,14 +11,14 @@ using Rhino.Geometry;
 namespace GsaGH.Helpers.GH {
 
   internal class ContourLegend : IContourLegend {
-    private readonly IContourLegendConfiguration _configuration;
 
     private const int DefaultTextHeight = 12;
     private const int DefaultBitmapWidth = 110;
+    private readonly IContourLegendConfiguration _configuration;
+    private bool _isDrawLegendCalled = false;
+    private int _leftBitmapEdge;
 
     private int _textHeight = DefaultTextHeight;
-    private int _leftBitmapEdge;
-    private bool _isDrawLegendCalled = false;
 
     public ContourLegend(IContourLegendConfiguration configuration) {
       _configuration = configuration;

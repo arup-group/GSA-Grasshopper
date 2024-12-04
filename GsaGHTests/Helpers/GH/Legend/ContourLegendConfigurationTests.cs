@@ -9,7 +9,7 @@ using Moq;
 
 using Xunit;
 
-namespace GsaGHTests.Helpers.GH.Legend {
+namespace GsaGHTests.Helpers {
   [Collection("GrasshopperFixture collection")]
   public class ContourLegendConfigurationTests {
     private readonly ContourLegendConfiguration legendConfiguration;

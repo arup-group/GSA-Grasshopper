@@ -8,7 +8,7 @@ using Moq;
 
 using Xunit;
 
-namespace GsaGH.Tests.Helpers {
+namespace GsaGHTests.Helpers {
   [Collection("GrasshopperFixture collection")]
   public class LegendMenuBuilderTests {
     private Mock<Contour1dResults> _componentMock;
