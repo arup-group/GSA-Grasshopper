@@ -9,7 +9,7 @@ using GsaGH.Helpers.GH;
 using OasysGH.Components;
 
 namespace GsaGH.Helpers {
-  internal class LegendMenuBuilder {
+  public class LegendMenuBuilder {
     private string _scaleLegendTxt;
     public delegate void SetLegendScaleDelegate(double scale);
 

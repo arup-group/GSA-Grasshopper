@@ -12,7 +12,7 @@ using GsaGH.Helpers.GH;
 using OasysGH.Components;
 
 namespace GsaGH.Helpers {
-  internal class ContourLegendManager {
+  public class ContourLegendManager {
     private readonly IContourLegendConfiguration _configuration;
     private readonly IContourLegend _legend;
     private readonly LegendMenuBuilder _menuBuilder;
