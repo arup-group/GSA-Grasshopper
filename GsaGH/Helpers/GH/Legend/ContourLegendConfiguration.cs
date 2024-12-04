@@ -13,8 +13,8 @@ namespace GsaGH.Helpers.GH {
     public double Scale { get; private set; } = 1.0;
     public bool IsVisible { get; private set; } = true;
 
-    private const int DefaultWidth = 15;
-    private const int DefaultHeight = 120;
+    public readonly int DefaultWidth = 15;
+    public readonly int DefaultHeight = 120;
     private const string ScaleKey = "legendScale";
     private const string VisibilityKey = "legend";
 
@@ -56,7 +56,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     public bool IsLegendDisplayable() {
-      return Values.Any() && IsVisible;
+      return Values.Any() && ValuePositionsY.Any() && IsVisible;
     }
 
     /// <summary>
