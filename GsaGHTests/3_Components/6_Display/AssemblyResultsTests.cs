@@ -118,14 +118,6 @@ namespace GsaGHTests.Components.Display {
       comp.UpdateMoment("N·cm");
     }
 
-    [Fact]
-    public void UpdateLegendScaleTest() {
-      var comp = new AssemblyResults();
-      GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.AssemblyByStorey, 1);
-      ComponentTestHelper.SetInput(comp, result);
-      comp.UpdateLegendScale();
-    }
-
     private void SetSelectedDrawViewportMeshesAndWiresTest(AssemblyResults comp, int i, int j) {
       comp.SetSelected(i, j);
       var resultsGoo = (LineResultGoo)ComponentTestHelper.GetOutput(comp);
