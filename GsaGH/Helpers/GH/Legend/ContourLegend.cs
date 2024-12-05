@@ -11,14 +11,12 @@ using Rhino.Geometry;
 namespace GsaGH.Helpers.GH {
 
   internal class ContourLegend : IContourLegend {
-
     private const int DefaultTextHeight = 12;
     private const int DefaultBitmapWidth = 110;
     private readonly IContourLegendConfiguration _configuration;
-    private bool _isDrawLegendCalled = false;
     private int _leftBitmapEdge;
-
     private int _textHeight = DefaultTextHeight;
+    internal bool IsInvalidConfiguration = false; //only for tests
 
     public ContourLegend(IContourLegendConfiguration configuration) {
       _configuration = configuration;
@@ -31,10 +29,10 @@ namespace GsaGH.Helpers.GH {
       IGH_PreviewArgs args, string title, string bottomText,
       List<(int startY, int endY, Color gradientColor)> gradients) {
       if (!_configuration.IsLegendDisplayable()) {
+        IsInvalidConfiguration = true;
         return;
       }
 
-      _isDrawLegendCalled = true;
       InitializeDimensions(args.Viewport.Bounds.Right);
 
       // Step 1: Apply all gradients to the bitmap
@@ -47,8 +45,6 @@ namespace GsaGH.Helpers.GH {
       DrawTitle(args, title);
       DrawValues(args);
       DrawBottomText(args, bottomText);
-
-      _isDrawLegendCalled = false;
     }
 
     public void DrawGradientLegend(int startY, int endY, Color gradientColor) {
@@ -63,24 +59,21 @@ namespace GsaGH.Helpers.GH {
       }
     }
 
-    public void DrawBitmap(IGH_PreviewArgs args) {
-      EnsureDimensionsInitialized(args);
+    private void DrawBitmap(IGH_PreviewArgs args) {
       const int TopOffset = 20;
       int topPosition = CalculateScaledOffset(TopOffset);
 
       args.Display.DrawBitmap(new DisplayBitmap(_configuration.Bitmap), _leftBitmapEdge, topPosition);
     }
 
-    public void DrawTitle(IGH_PreviewArgs args, string title) {
-      EnsureDimensionsInitialized(args);
+    private void DrawTitle(IGH_PreviewArgs args, string title) {
       const int TopOffset = 7;
       int topPosition = CalculateScaledOffset(TopOffset);
 
       args.Display.Draw2dText(title, Color.Black, new Point2d(_leftBitmapEdge, topPosition), false, _textHeight);
     }
 
-    public void DrawValues(IGH_PreviewArgs args) {
-      EnsureDimensionsInitialized(args);
+    private void DrawValues(IGH_PreviewArgs args) {
       const int LeftOffset = 25;
       int leftEdge = _leftBitmapEdge + CalculateScaledOffset(LeftOffset);
       var zippedLists = _configuration.Values.Zip(_configuration.ValuePositionsY, (value, positionY) => new {
@@ -92,8 +85,7 @@ namespace GsaGH.Helpers.GH {
       }
     }
 
-    public void DrawBottomText(IGH_PreviewArgs args, string bottomText) {
-      EnsureDimensionsInitialized(args);
+    private void DrawBottomText(IGH_PreviewArgs args, string bottomText) {
       const int BottomOffset = 145;
       const int ExtraOffset = 20;
       int bitmapWidth = CalculateScaledOffset(DefaultBitmapWidth);
@@ -107,15 +99,6 @@ namespace GsaGH.Helpers.GH {
     private void InitializeDimensions(int viewportEdge) {
       _textHeight = CalculateScaledOffset(DefaultTextHeight);
       _leftBitmapEdge = viewportEdge - CalculateScaledOffset(DefaultBitmapWidth);
-    }
-
-    /// <summary>
-    ///   Ensures dimensions are initialized for individual drawing calls.
-    /// </summary>
-    private void EnsureDimensionsInitialized(IGH_PreviewArgs args) {
-      if (!_isDrawLegendCalled) {
-        InitializeDimensions(args.Viewport.Bounds.Right);
-      }
     }
 
     private string WrapText(string bottomText, int width) {

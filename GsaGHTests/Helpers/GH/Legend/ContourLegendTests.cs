@@ -1,4 +1,8 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+
+using Grasshopper.Kernel;
 
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
@@ -11,7 +15,7 @@ namespace GsaGHTests.Helpers {
   [Collection("GrasshopperFixture collection")]
   public class ContourLegendTests {
     private readonly Mock<IContourLegendConfiguration> _mockConfiguration;
-    private readonly ContourLegend legend;
+    private ContourLegend legend;
     private readonly Bitmap _mockBitmap;
 
     public ContourLegendTests() {
@@ -38,8 +42,33 @@ namespace GsaGHTests.Helpers {
         }
       }
     }
-    //other methods need to be tested manually or by integration tests. 
-    //we are not able to mock or inherit DisplayPipeline(which is needed to draw stuff)
-    //so we aren't able to check if drawings are correct
+
+    [Fact]
+    public void DrawGradientWillThrowErrorWhenStartValuesIsBiggerThanEndValue() {
+      Color color = Color.Red;
+      Assert.Throws<ArgumentOutOfRangeException>(() => legend.DrawGradientLegend(5, 1, color));
+    }
+
+    [Fact]
+    public void DrawGradientWillThrowErrorWhenEndValueIsBiggerThanBitmapHeight() {
+      Color color = Color.Red;
+      Assert.Throws<ArgumentOutOfRangeException>(() => legend.DrawGradientLegend(5, 200, color));
+    }
+
+    [Fact]
+    public void DrawGradientWillThrowErrorWhenStartValueLessThan0() {
+      Color color = Color.Green;
+      Assert.Throws<ArgumentOutOfRangeException>(() => legend.DrawGradientLegend(-1, 1, color));
+    }
+
+    [Fact]
+    public void ShouldNotDrawILegendIsNotDisplayable() {
+      legend = new ContourLegend(new ContourLegendConfiguration());
+      var previewArgsSpy = new Mock<IGH_PreviewArgs>();
+
+      legend.DrawLegendRectangle(previewArgsSpy.Object, string.Empty, string.Empty,
+        new List<(int startY, int endY, Color gradientColor)>());
+      Assert.True(legend.IsInvalidConfiguration);
+    }
   }
 }
