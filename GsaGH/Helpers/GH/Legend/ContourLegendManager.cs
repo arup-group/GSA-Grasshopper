@@ -48,6 +48,10 @@ namespace GsaGH.Helpers {
       _configuration.SetLegendScale(scale);
     }
 
+    public double GetScale() {
+      return _configuration.Scale;
+    }
+
     public bool ToggleVisibility() {
       return _configuration.ToggleLegendVisibility();
     }

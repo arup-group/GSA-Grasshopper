@@ -36,7 +36,7 @@ namespace GsaGHTests.Helpers {
     }
 
     [Fact]
-    public void CreateLegendToolStripMenuItem_UpdatesScale_OnTextChange() {
+    public void CreateLegendToolStripMenuItem_UpdatesTextBox_OnTextChange() {
       ToolStripItem scaleTextBox = _menuItem.DropDownItems[0];
       double newScale = 2.5d;
       // Act - Simulate text change
