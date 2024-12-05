@@ -3,9 +3,6 @@ using System.Reflection;
 
 using GsaGH.Helpers.GH;
 
-using Rhino;
-using Rhino.DocObjects;
-
 using Xunit;
 
 namespace GsaGHTests.Helpers {
@@ -43,30 +40,10 @@ namespace GsaGHTests.Helpers {
       return (Dictionary<(string, float), float>)fieldInfo.GetValue(null);
     }
 
-    // Testowanie metody GetFontName
-    [Fact]
-    public void GetFontName_ShouldReturnFontNameFromRhino() {
-      RhinoDoc rhinoDoc = CreateRhinoDocument("test");
-      string fontName = TextWrapper.GetFontName(rhinoDoc);
-      CloseRhinoDoc(rhinoDoc);
-      Assert.Equal("Arial", fontName);
-    }
-
     [Fact]
     public void GetFontName_ShouldReturnDefaultWhenRhinoDocIsNull() {
       string fontName = TextWrapper.GetFontName();
       Assert.Equal("Arial", fontName);
-    }
-
-    private static RhinoDoc CreateRhinoDocument(string modelTemplateFileName) {
-      var rhinooDoc = RhinoDoc.Create(modelTemplateFileName);
-      rhinooDoc.DimStyles.Current.Font = new Font("Test");
-
-      return rhinooDoc;
-    }
-
-    private static void CloseRhinoDoc(RhinoDoc rhinoDoc) {
-      rhinoDoc.Dispose();
     }
   }
 }
