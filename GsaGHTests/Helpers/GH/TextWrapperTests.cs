@@ -8,6 +8,13 @@ using Xunit;
 namespace GsaGHTests.Helpers {
   [Collection("GrasshopperFixture collection")]
   public class TextWrapperTests {
+    [Fact]
+    public void WrapTextShouldReturnEmptyWhenInputTextIsIsNullOrWhiteSpace() {
+      Assert.Empty(TextWrapper.WrapText(string.Empty, 1, 1));
+      Assert.Empty(TextWrapper.WrapText(null, 1, 1));
+      Assert.Empty(TextWrapper.WrapText("\n", 1, 1));
+      Assert.Empty(TextWrapper.WrapText(" ", 1, 1));
+    }
 
     [Fact]
     public void WrapText_ShouldWrapTextCorrectly() {
