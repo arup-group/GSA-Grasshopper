@@ -36,6 +36,7 @@ namespace GsaGH.Helpers.GH {
 
         if (testLineWidth > maxWidth) {
           lines.Add(currentLine);
+          textWidthCache[(text, font.Size)] = testLineWidth;
           currentLine = word;
         } else {
           currentLine = testLine;
@@ -63,21 +64,17 @@ namespace GsaGH.Helpers.GH {
 
       var graphics = System.Drawing.Graphics.FromImage(new Bitmap(maxWidth, 1)); //we care only about width
       float width = graphics.MeasureString(text, font).Width;
-      textWidthCache[(text, font.Size)] = width;
 
       return width;
     }
 
-    public static string GetFontName() {
-      string fontName = "Arial";
+    public static string GetFontName(RhinoDoc testPurpose = null) {
       try {
-        RhinoDoc activeRhino = RhinoDoc.ActiveDoc;
-        fontName = activeRhino.DimStyles.Current.Font.LogfontName;
+        RhinoDoc activeRhino = testPurpose ?? RhinoDoc.ActiveDoc;
+        return activeRhino.DimStyles.Current.Font.FamilyName;
       } catch { //will be catched only by tests
-        return fontName;
+        return "Arial";
       }
-
-      return fontName;
     }
   }
 }

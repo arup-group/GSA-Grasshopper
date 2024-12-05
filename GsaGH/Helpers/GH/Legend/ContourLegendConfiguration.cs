@@ -13,10 +13,16 @@ namespace GsaGH.Helpers.GH {
     public double Scale { get; private set; } = 1.0;
     public bool IsVisible { get; private set; } = true;
 
-    private const int DefaultWidth = 15;
-    private const int DefaultHeight = 120;
-    private const string ScaleKey = "legendScale";
-    private const string VisibilityKey = "legend";
+    public readonly int DefaultWidth = 15;
+    public readonly int DefaultHeight = 120;
+    /// <summary>
+    ///   Key used to de/serialise scale of the legend
+    /// </summary>
+    public static string ScaleKey => "legendScale";
+    /// <summary>
+    ///   Key used to de/serialise visibility of the legend
+    /// </summary>
+    public static string VisibilityKey => "legend";
 
     public ContourLegendConfiguration() {
       ScaleBitmap();
@@ -56,7 +62,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     public bool IsLegendDisplayable() {
-      return Values.Any() && IsVisible;
+      return Values.Any() && ValuePositionsY.Any() && IsVisible;
     }
 
     /// <summary>
