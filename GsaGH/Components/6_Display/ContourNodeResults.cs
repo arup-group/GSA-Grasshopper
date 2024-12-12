@@ -123,7 +123,7 @@ namespace GsaGH.Components {
     private string _resType;
     private bool _slider = true;
     private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
-    private readonly ContourLegendManager _contourLegendMenager = new ContourLegendManager();
+    private readonly ContourLegendManager _contourLegendMenager = ContourLegendManager.GetDefault();
     private List<(int startY, int endY, Color gradientColor)> _gradients
       = new List<(int startY, int endY, Color gradientColor)>();
 
@@ -135,9 +135,8 @@ namespace GsaGH.Components {
         InitialiseDropdowns();
       }
 
-      m_attributes = new DropDownSliderComponentAttributes(this, SetSelected, _dropDownItems,
-        _selectedItems, _slider, SetVal, SetMaxMin, _defScale, _maxValue, _minValue, _noDigits,
-        _spacerDescriptions);
+      m_attributes = new DropDownSliderComponentAttributes(this, SetSelected, _dropDownItems, _selectedItems, _slider,
+        SetVal, SetMaxMin, _defScale, _maxValue, _minValue, _noDigits, _spacerDescriptions);
     }
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
@@ -156,8 +155,7 @@ namespace GsaGH.Components {
       _defScale = reader.GetDouble("val");
 
       if (reader.ItemExists("envelope")) {
-        _envelopeType = (EnvelopeMethod)Enum.Parse(
-          typeof(EnvelopeMethod), reader.GetString("envelope"));
+        _envelopeType = (EnvelopeMethod)Enum.Parse(typeof(EnvelopeMethod), reader.GetString("envelope"));
       }
 
       _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
@@ -305,19 +303,18 @@ namespace GsaGH.Components {
       ToolStripMenuItem envelopeMenu = GenerateToolStripMenuItem.GetEnvelopeSubMenuItem(_envelopeType, UpdateEnvelope);
       menu.Items.Add(envelopeMenu);
 
-      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _contourLegendMenager.IsLegendVisible);
+      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _contourLegendMenager.Configuration.IsVisible);
 
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24,
-        (s, e) => CreateGradient());
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => CreateGradient());
       menu.Items.Add(extract);
 
       ToolStripMenuItem lengthUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Displacement",
         EngineeringUnits.Length, Length.GetAbbreviation(_lengthResultUnit), UpdateLength);
 
-      ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force",
-        EngineeringUnits.Force, Force.GetAbbreviation(_forceUnit), UpdateForce);
+      ToolStripMenuItem forceUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Force", EngineeringUnits.Force,
+        Force.GetAbbreviation(_forceUnit), UpdateForce);
 
       ToolStripMenuItem momentUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Moment",
         EngineeringUnits.Moment, Moment.GetAbbreviation(_momentUnit), UpdateMoment);
@@ -399,8 +396,7 @@ namespace GsaGH.Components {
       IQuantity length = new Length(0, _lengthResultUnit);
       string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
-      pManager.AddGenericParameter("Result Point", "P", "Contoured Points with result values",
-        GH_ParamAccess.list);
+      pManager.AddGenericParameter("Result Point", "P", "Contoured Points with result values", GH_ParamAccess.list);
       pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
       pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values",
         GH_ParamAccess.list);
@@ -768,7 +764,7 @@ namespace GsaGH.Components {
         pts[kvp.Key] = new PointResultGoo(pt, t, valcol, size, kvp.Key);
       });
 
-      int gripheight = _contourLegendMenager.GetBitmapSize().Height / ghGradient.GripCount;
+      int gripheight = _contourLegendMenager.Configuration.ActualHeight / ghGradient.GripCount;
       var legendValues = new List<string>();
       var _legendValuePositionsY = new List<int>();
 
@@ -831,11 +827,10 @@ namespace GsaGH.Components {
           legendValues[i] = legendValues[i].Replace(",", string.Empty); // remove thousand separator
         }
 
-        _legendValuePositionsY.Add(_contourLegendMenager.GetBitmapSize().Height - starty + (gripheight / 2) - 2);
+        _legendValuePositionsY.Add(_contourLegendMenager.Configuration.ActualHeight - starty + (gripheight / 2) - 2);
       }
 
-      _contourLegendMenager.SetTextValues(legendValues);
-      _contourLegendMenager.SetPositionYValues(_legendValuePositionsY);
+      _contourLegendMenager.Configuration.SetTextValues(legendValues).SetValuePositionsY(_legendValuePositionsY);
 
       da.SetDataList(0, pts.OrderBy(x => x.Key).Select(y => y.Value).ToList());
       da.SetDataList(1, cs);
@@ -863,8 +858,7 @@ namespace GsaGH.Components {
         1,
       });
 
-      gradient.Attributes.Pivot = new PointF(
-        Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50,
+      gradient.Attributes.Pivot = new PointF(Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50,
         Params.Input[2].Attributes.Bounds.Y - (gradient.Attributes.Bounds.Height / 4) - 6);
 
       doc.AddObject(gradient, false);
@@ -916,7 +910,7 @@ namespace GsaGH.Components {
     }
 
     internal void ShowLegend(object sender, EventArgs e) {
-      _contourLegendMenager.ToggleVisibility();
+      _contourLegendMenager.Configuration.ToggleLegendVisibility();
       ExpirePreview(true);
     }
 

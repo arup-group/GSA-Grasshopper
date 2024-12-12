@@ -129,7 +129,7 @@ namespace GsaGH.Components {
     private bool _slider = true;
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
     private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
-    private readonly ContourLegendManager _contourLegendMenager = new ContourLegendManager();
+    private readonly ContourLegendManager _contourLegendMenager = ContourLegendManager.GetDefault();
     private List<(int startY, int endY, Color gradientColor)> _gradients
       = new List<(int startY, int endY, Color gradientColor)>();
 
@@ -407,7 +407,7 @@ namespace GsaGH.Components {
       ToolStripMenuItem envelopeMenu = GenerateToolStripMenuItem.GetEnvelopeSubMenuItem(_envelopeType, UpdateEnvelope);
       menu.Items.Add(envelopeMenu);
 
-      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _contourLegendMenager.IsLegendVisible);
+      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _contourLegendMenager.Configuration.IsVisible);
 
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
@@ -861,7 +861,7 @@ namespace GsaGH.Components {
       resultMeshes.AddRange(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList(),
         meshes.Keys.ToList());
 
-      int gripheight = _contourLegendMenager.GetBitmapSize().Height / ghGradient.GripCount;
+      int gripheight = _contourLegendMenager.Configuration.ActualHeight / ghGradient.GripCount;
       var legendValues = new List<string>();
       var legendValuePositionsY = new List<int>();
 
@@ -932,11 +932,10 @@ namespace GsaGH.Components {
           legendValues[i] = legendValues[i].Replace(",", string.Empty);
         }
 
-        legendValuePositionsY.Add(_contourLegendMenager.GetBitmapSize().Height - starty + (gripheight / 2) - 2);
+        legendValuePositionsY.Add(_contourLegendMenager.Configuration.ActualHeight - starty + (gripheight / 2) - 2);
       }
 
-      _contourLegendMenager.SetTextValues(legendValues);
-      _contourLegendMenager.SetPositionYValues(legendValuePositionsY);
+      _contourLegendMenager.Configuration.SetTextValues(legendValues).SetValuePositionsY(legendValuePositionsY);
 
       da.SetData(0, resultMeshes);
       da.SetDataList(1, cs);
@@ -1028,7 +1027,7 @@ namespace GsaGH.Components {
     }
 
     internal void ShowLegend(object sender, EventArgs e) {
-      _contourLegendMenager.ToggleVisibility();
+      _contourLegendMenager.Configuration.ToggleLegendVisibility();
       ExpirePreview(true);
     }
 

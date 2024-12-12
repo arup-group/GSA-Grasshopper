@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Drawing;
 
 using GsaGH.Helpers.GH;
 
@@ -10,47 +9,36 @@ namespace GsaGHTests.Helpers {
   public class TextWrapperTests {
     [Fact]
     public void WrapTextShouldReturnEmptyWhenInputTextIsIsNullOrWhiteSpace() {
-      Assert.Empty(TextWrapper.WrapText(string.Empty, 1, 1));
-      Assert.Empty(TextWrapper.WrapText(null, 1, 1));
-      Assert.Empty(TextWrapper.WrapText("\n", 1, 1));
-      Assert.Empty(TextWrapper.WrapText(" ", 1, 1));
+      var font = new Font("Arial", 10);
+      Assert.Empty(TextWrapper.WrapText(string.Empty, 1, font));
+      Assert.Empty(TextWrapper.WrapText(null, 1, font));
+      Assert.Empty(TextWrapper.WrapText("\n", 1, font));
+      Assert.Empty(TextWrapper.WrapText(" ", 1, font));
     }
 
     [Fact]
     public void WrapText_ShouldWrapTextCorrectly() {
-      string inputText = "This is a test sentence that should be wrapped correctly.";
-      int maxWidth = 100;
+      string inputText = "t e";
+      int maxWidth = 1;
       int fontSize = 10;
 
-      string result = TextWrapper.WrapText(inputText, maxWidth, fontSize);
+      string result = TextWrapper.WrapText(inputText, maxWidth, new Font("Arial", fontSize));
 
       Assert.NotNull(result);
       Assert.Contains("\n", result);
-      Assert.Equal("This is a test\nsentence that\nshould be\nwrapped\ncorrectly.", result);
+      Assert.Equal("t\ne", result);
     }
 
     [Fact]
-    public void GetCachedTextWidth_ShouldCacheTextWidthCorrectly() {
-      string inputText = "This is a test sentence that should be wrapped correctly.";
-      int fontSize = 10;
+    public void WrapText_TextShouldNotBeWrapped() {
+      string inputText = "T";
       int maxWidth = 100;
+      int fontSize = 12;
 
-      string text1 = TextWrapper.WrapText(inputText, maxWidth, fontSize);
-      string text2 = TextWrapper.WrapText(inputText, maxWidth, fontSize);
+      string result = TextWrapper.WrapText(inputText, maxWidth, new Font("Arial", fontSize));
 
-      Assert.Single(GetPrivateFieldValue());
-    }
-
-    private Dictionary<(string, float), float> GetPrivateFieldValue() {
-      FieldInfo fieldInfo
-        = typeof(TextWrapper).GetField("textWidthCache", BindingFlags.NonPublic | BindingFlags.Static);
-      return (Dictionary<(string, float), float>)fieldInfo.GetValue(null);
-    }
-
-    [Fact]
-    public void GetFontName_ShouldReturnDefaultWhenRhinoDocIsNull() {
-      string fontName = TextWrapper.GetFontName();
-      Assert.Equal("Arial", fontName);
+      Assert.NotNull(result);
+      Assert.Equal("T", result);
     }
   }
 }

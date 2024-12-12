@@ -13,66 +13,49 @@ using OasysGH.Components;
 
 namespace GsaGH.Helpers {
   public class ContourLegendManager {
-    private readonly IContourLegendConfiguration _configuration;
-    private readonly IContourLegend _legend;
-    private readonly LegendMenuBuilder _menuBuilder;
+    public readonly ContourLegendConfiguration Configuration;
+    public readonly ContourLegend Legend;
+    public readonly LegendMenuBuilder MenuBuilder;
 
-    public ContourLegendManager() {
-      _configuration = new ContourLegendConfiguration();
-      _legend = new ContourLegend(_configuration);
-      _menuBuilder = new LegendMenuBuilder();
+    public static ContourLegendManager GetDefault() {
+      var _configuration = ContourLegendConfiguration.GetDefault();
+      var _legend = new ContourLegend(_configuration);
+      var _menuBuilder = new LegendMenuBuilder();
+
+      return new ContourLegendManager(_configuration, _legend, _menuBuilder);
     }
 
     public ContourLegendManager(
-      IContourLegendConfiguration configuration, IContourLegend legend, LegendMenuBuilder menuBuilder) {
-      _configuration = configuration;
-      _legend = legend;
-      _menuBuilder = menuBuilder;
+      ContourLegendConfiguration configuration, ContourLegend legend, LegendMenuBuilder menuBuilder) {
+      Configuration = configuration;
+      Legend = legend;
+      MenuBuilder = menuBuilder;
     }
 
     //drawing
     public void DrawLegend(
       IGH_PreviewArgs args, string title, string bottomText,
       List<(int startY, int endY, Color gradientColor)> gradients) {
-      _legend.DrawLegendRectangle(args, title, bottomText, gradients);
+      Legend.DrawLegendRectangle(args, title, bottomText, gradients);
     }
 
     //menu
     public ToolStripMenuItem CreateMenu(GH_OasysDropDownComponent component, Action updateUI) {
       LegendMenuBuilder.SetLegendScaleDelegate setScaleDelegate = UpdateScale;
-      return _menuBuilder.CreateLegendToolStripMenuItem(component, updateUI, setScaleDelegate, _configuration.Scale);
+      return MenuBuilder.CreateLegendToolStripMenuItem(component, updateUI, setScaleDelegate, Configuration.Scale);
     }
 
     //configuration
     public void UpdateScale(double scale) {
-      _configuration.SetLegendScale(scale);
+      Configuration.Scale = scale;
     }
-
-    public bool ToggleVisibility() {
-      return _configuration.ToggleLegendVisibility();
-    }
-
-    public bool IsLegendVisible => _configuration.IsVisible;
 
     public void DeserialiseLegendState(GH_IReader reader) {
-      _configuration.DeserializeLegendState(reader);
+      Configuration.DeserializeLegendState(reader);
     }
 
     public void SerialiseLegendState(GH_IWriter writer) {
-      _configuration.SerializeLegendState(writer);
-    }
-
-    public (int Width, int Height) GetBitmapSize() {
-      return (_configuration.Bitmap.Width, _configuration.Bitmap.Height);
-    }
-
-    public void SetTextValues(List<string> values) {
-      _configuration.SetTextValues(values);
-    }
-
-    public void SetPositionYValues(List<int> values) {
-      _configuration.SetValuePositionsY(values);
+      Configuration.SerializeLegendState(writer);
     }
   }
-
 }
