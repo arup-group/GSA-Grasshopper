@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Forms;
 
 using GH_IO.Serialization;
-
-using Grasshopper.Kernel;
 
 using GsaGH.Helpers.GH;
 
@@ -30,13 +26,6 @@ namespace GsaGH.Helpers {
       Configuration = configuration;
       Legend = legend;
       MenuBuilder = menuBuilder;
-    }
-
-    //drawing
-    public void DrawLegend(
-      IGH_PreviewArgs args, string title, string bottomText,
-      List<(int startY, int endY, Color gradientColor)> gradients) {
-      Legend.DrawLegendRectangle(args, title, bottomText, gradients);
     }
 
     //menu

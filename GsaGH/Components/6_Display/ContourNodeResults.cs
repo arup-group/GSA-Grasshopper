@@ -142,7 +142,7 @@ namespace GsaGH.Components {
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
 
-      _contourLegendMenager.DrawLegend(args, _resType, _case, _gradients);
+      _contourLegendMenager.Legend.DrawLegendRectangle(args, _resType, _case, _gradients);
     }
 
     public override bool Read(GH_IReader reader) {

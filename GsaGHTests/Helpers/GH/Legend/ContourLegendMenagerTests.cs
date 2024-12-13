@@ -16,16 +16,16 @@ using Xunit;
 namespace GsaGHTests.Helpers {
   [Collection("GrasshopperFixture collection")]
   public class ContourLegendMenagerTests {
-    private static Mock<ContourLegend> _mockLegend;
-    private static Mock<ContourLegendConfiguration> _mockConfiguration;
+    private static ContourLegend _legend;
+    private static ContourLegendConfiguration _configuration;
     private static ContourLegendManager _manager;
     private static Mock<IGH_PreviewArgs> _mockArgs;
 
     public ContourLegendMenagerTests() {
-      _mockLegend = new Mock<ContourLegend>();
-      _mockConfiguration = new Mock<ContourLegendConfiguration>();
+      _configuration = new ContourLegendConfiguration(1, 1, 1.0d);
+      _legend = new ContourLegend(_configuration);
       var menuBuilder = new LegendMenuBuilder();
-      _manager = new ContourLegendManager(_mockConfiguration.Object, _mockLegend.Object, menuBuilder);
+      _manager = new ContourLegendManager(_configuration, _legend, menuBuilder);
 
       _mockArgs = new Mock<IGH_PreviewArgs>();
     }
@@ -39,9 +39,9 @@ namespace GsaGHTests.Helpers {
         (10, 20, Color.Green),
       };
 
-      _manager.DrawLegend(_mockArgs.Object, title, bottomText, gradients);
+      _manager.Legend.DrawLegendRectangle(_mockArgs.Object, title, bottomText, gradients);
 
-      _mockLegend.Verify(l => l.DrawLegendRectangle(_mockArgs.Object, title, bottomText, gradients), Times.Once);
+      Assert.True(_manager.Legend.IsInvalidConfiguration);
     }
 
     [Fact]
@@ -58,7 +58,7 @@ namespace GsaGHTests.Helpers {
     public void UpdateScale_CallsSetLegendScale() {
       double scale = 2.5;
       _manager.UpdateScale(scale);
-      Assert.Equal(scale, _mockConfiguration.Object.Scale);
+      Assert.Equal(scale, _configuration.Scale);
     }
   }
 }
