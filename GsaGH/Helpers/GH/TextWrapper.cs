@@ -16,13 +16,7 @@ namespace GsaGH.Helpers.GH {
         return string.Empty;
       }
 
-      string[] splittedText = text.Split('\n');
-      string caseName = splittedText[0];
-      string withoutCaseName = splittedText[1];
-      string[] words = withoutCaseName.Split(' ');
-      var lines = new List<string>() {
-        caseName,
-      };
+      string[] words = GetTextToWrap(text, out List<string> lines);
       string currentLine = "";
       foreach (string word in words) {
         string testLine = string.IsNullOrEmpty(currentLine) ? word : $"{currentLine} {word}";
@@ -41,6 +35,21 @@ namespace GsaGH.Helpers.GH {
       }
 
       return string.Join("\n", lines).Trim();
+    }
+
+    private static string[] GetTextToWrap(string text, out List<string> lines) {
+      lines = new List<string>();
+      string[] splittedText = text.Split('\n');
+      string textToWrap;
+
+      if (splittedText.Length > 1) {
+        lines.Add(splittedText[0]);
+        textToWrap = splittedText[1];
+      } else {
+        textToWrap = text;
+      }
+
+      return textToWrap.Split(' ');
     }
 
     /// <summary>

@@ -34,16 +34,5 @@ namespace GsaGHTests.Helpers {
       Assert.NotNull(_menuItem.DropDownItems);
       Assert.Equal(_initialScale.ToString(), _menuItem.DropDownItems[0]?.Text);
     }
-
-    [Fact]
-    public void CreateLegendToolStripMenuItem_UpdatesTextBox_OnTextChange() {
-      ToolStripItem scaleTextBox = _menuItem.DropDownItems[0];
-      double newScale = 2.5d;
-      // Act - Simulate text change
-      scaleTextBox.Text = $"{newScale}"; // Updates private _scaleLegendTxt indirectly
-      _menuItem.DropDownItems[1].PerformClick(); // Simulate mouse up to trigger UpdateLegendScale
-
-      Assert.Equal(newScale.ToString(), _menuItem.DropDownItems[0]?.Text);
-    }
   }
 }

@@ -12,16 +12,11 @@ using Xunit;
 namespace GsaGHTests.Helpers {
   [Collection("GrasshopperFixture collection")]
   public class ContourLegendTests {
-    private readonly Mock<ContourLegendConfiguration> _mockConfiguration;
     private ContourLegend legend;
-    private readonly Bitmap _mockBitmap;
 
     public ContourLegendTests() {
-      _mockBitmap = new Bitmap(10, 10);
-      _mockConfiguration = new Mock<ContourLegendConfiguration>();
-      // _mockConfiguration.Setup(c => c.Bitmap).Returns(_mockBitmap);
-      _mockConfiguration.Setup(c => c.Scale).Returns(1.0);
-      legend = new ContourLegend(_mockConfiguration.Object);
+      var configuration = new ContourLegendConfiguration(1, 2, 1.0d);
+      legend = new ContourLegend(configuration);
     }
 
     [Fact]

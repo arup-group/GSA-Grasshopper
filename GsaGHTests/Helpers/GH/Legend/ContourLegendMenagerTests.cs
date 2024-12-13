@@ -18,15 +18,14 @@ namespace GsaGHTests.Helpers {
   public class ContourLegendMenagerTests {
     private static Mock<ContourLegend> _mockLegend;
     private static Mock<ContourLegendConfiguration> _mockConfiguration;
-    private static Mock<LegendMenuBuilder> _mockMenuBuilder;
     private static ContourLegendManager _manager;
     private static Mock<IGH_PreviewArgs> _mockArgs;
 
     public ContourLegendMenagerTests() {
       _mockLegend = new Mock<ContourLegend>();
       _mockConfiguration = new Mock<ContourLegendConfiguration>();
-      _mockMenuBuilder = new Mock<LegendMenuBuilder>();
-      _manager = new ContourLegendManager(_mockConfiguration.Object, _mockLegend.Object, _mockMenuBuilder.Object);
+      var menuBuilder = new LegendMenuBuilder();
+      _manager = new ContourLegendManager(_mockConfiguration.Object, _mockLegend.Object, menuBuilder);
 
       _mockArgs = new Mock<IGH_PreviewArgs>();
     }
