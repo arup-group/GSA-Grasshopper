@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 using Grasshopper.Kernel;
@@ -32,6 +33,11 @@ namespace GsaGHTests.Helpers {
       legend.DrawLegendRectangle(previewArgsSpy.Object, string.Empty, string.Empty,
         new List<(int startY, int endY, Color gradientColor)>());
       Assert.True(legend.IsInvalidConfiguration);
+    }
+
+    [Fact]
+    public void WhenBitmapWidthEqualZeroThenThrowError() {
+      Assert.Throws<ArgumentOutOfRangeException>(() => new ContourLegend(ContourLegendConfiguration.GetDefault(), 0));
     }
   }
 }
