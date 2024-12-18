@@ -108,6 +108,7 @@ namespace GsaGH.Components {
       "Drift Index",
       "Force",
     });
+    private static readonly ContourLegendManager _contourLegendManager = ContourLegendManager.GetDefault();
     private string _case = string.Empty;
     private double _defScale = 250;
     private DisplayValue _disp = DisplayValue.ResXyz;
@@ -121,7 +122,6 @@ namespace GsaGH.Components {
     private string _resType;
     private bool _slider = true;
     private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
-    private static readonly ContourLegendManager _contourLegendMenager = ContourLegendManager.GetDefault();
     private List<(int startY, int endY, Color gradientColor)> _gradients
       = new List<(int startY, int endY, Color gradientColor)>();
 
@@ -139,7 +139,7 @@ namespace GsaGH.Components {
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
-      _contourLegendMenager.Legend.DrawLegendRectangle(args, _resType, _case, _gradients);
+      _contourLegendManager.Legend.DrawLegendRectangle(args, _resType, _case, _gradients);
     }
 
     public override bool Read(GH_IReader reader) {
@@ -158,7 +158,7 @@ namespace GsaGH.Components {
       _forceUnit = (ForceUnit)UnitsHelper.Parse(typeof(ForceUnit), reader.GetString("force"));
       _momentUnit = (MomentUnit)UnitsHelper.Parse(typeof(MomentUnit), reader.GetString("moment"));
 
-      _contourLegendMenager.DeserialiseLegendState(reader);
+      _contourLegendManager.DeserialiseLegendState(reader);
 
       return base.Read(reader);
     }
@@ -299,7 +299,7 @@ namespace GsaGH.Components {
       writer.SetString("moment", Moment.GetAbbreviation(_momentUnit));
       writer.SetString("envelope", _envelopeType.ToString());
 
-      _contourLegendMenager.SerialiseLegendState(writer);
+      _contourLegendManager.SerialiseLegendState(writer);
 
       return base.Write(writer);
     }
@@ -314,7 +314,7 @@ namespace GsaGH.Components {
       ToolStripMenuItem envelopeMenu = GenerateToolStripMenuItem.GetEnvelopeSubMenuItem(_envelopeType, UpdateEnvelope);
       menu.Items.Add(envelopeMenu);
 
-      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _contourLegendMenager.Configuration.IsVisible);
+      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _contourLegendManager.Configuration.IsVisible);
 
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
@@ -342,7 +342,7 @@ namespace GsaGH.Components {
 
       menu.Items.Add(unitsMenu);
 
-      ToolStripMenuItem legendScaleMenu = _contourLegendMenager.CreateMenu(this, () => base.UpdateUI());
+      ToolStripMenuItem legendScaleMenu = _contourLegendManager.CreateMenu(this, () => base.UpdateUI());
 
       menu.Items.Add(legendScaleMenu);
 
@@ -776,7 +776,7 @@ namespace GsaGH.Components {
         }
       });
 
-      int gripheight = _contourLegendMenager.Configuration.ActualHeight / ghGradient.GripCount;
+      int gripheight = _contourLegendManager.Configuration.ActualHeight / ghGradient.GripCount;
       var legendValues = new List<string>();
       var legendValuePositionsY = new List<int>();
 
@@ -843,10 +843,10 @@ namespace GsaGH.Components {
           legendValues[i] = legendValues[i].Replace(",", string.Empty);
         }
 
-        legendValuePositionsY.Add(_contourLegendMenager.Configuration.ActualHeight - starty + (gripheight / 2) - 2);
+        legendValuePositionsY.Add(_contourLegendManager.Configuration.ActualHeight - starty + (gripheight / 2) - 2);
       }
 
-      _contourLegendMenager.Configuration.SetTextValues(legendValues).SetValuePositionsY(legendValuePositionsY);
+      _contourLegendManager.Configuration.SetTextValues(legendValues).SetValuePositionsY(legendValuePositionsY);
 
       da.SetDataTree(0, resultLines);
       da.SetDataList(1, cs);
@@ -926,7 +926,7 @@ namespace GsaGH.Components {
     }
 
     internal void ShowLegend(object sender, EventArgs e) {
-      _contourLegendMenager.Configuration.ToggleLegendVisibility();
+      _contourLegendManager.Configuration.ToggleLegendVisibility();
       ExpirePreview(true);
     }
 
