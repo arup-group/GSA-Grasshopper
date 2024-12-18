@@ -293,26 +293,40 @@ namespace GsaGHTests.Parameters.Results {
     }
 
     [Fact]
-    public void GetSteelUtilisationIdForMinAndMaxExtrema() {
+    public void ShouldFindTheLargestAndSmallest() {
       var dictionary = new Dictionary<int, IList<SteelUtilisation>>() {
         {
-          2, new List<SteelUtilisation>() {
-            new SteelUtilisation(19),
-          }
-        }, {
-          5, new List<SteelUtilisation>() {
-            new SteelUtilisation(10),
-            new SteelUtilisation(3),
-          }
-        }, {
           3, new List<SteelUtilisation>() {
-            new SteelUtilisation(2),
+            new SteelUtilisation(0),
+          }
+        }, {
+          2, new List<SteelUtilisation>() {
+            new SteelUtilisation(1),
           }
         },
       };
       (SteelUtilisationExtremaKeys max, SteelUtilisationExtremaKeys min) = dictionary.GetSteelUtilisationExtremaKeys();
       Assert.Equal(2, max.Overall.Id);
       Assert.Equal(3, min.Overall.Id);
+    }
+
+    [Fact]
+    public void ShouldLookAtAllItemsOnTheList() {
+      var dictionary = new Dictionary<int, IList<SteelUtilisation>>() {
+        {
+          3, new List<SteelUtilisation>() {
+            new SteelUtilisation(1),
+          }
+        }, {
+          2, new List<SteelUtilisation>() {
+            new SteelUtilisation(0),
+            new SteelUtilisation(2),
+          }
+        },
+      };
+      (SteelUtilisationExtremaKeys max, SteelUtilisationExtremaKeys min) = dictionary.GetSteelUtilisationExtremaKeys();
+      Assert.Equal(2, max.Overall.Id);
+      Assert.Equal(2, min.Overall.Id);
     }
   }
 }
