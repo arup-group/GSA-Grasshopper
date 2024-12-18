@@ -5,9 +5,8 @@ namespace GsaGH.Parameters.Results {
   public static partial class ExtremaKeyUtility {
     public static (SteelUtilisationExtremaKeys Max, SteelUtilisationExtremaKeys Min) GetSteelUtilisationExtremaKeys<T>(
       this IDictionary<int, IList<T>> subset) {
-
-      var maxValue = new SteelUtilisation(double.MaxValue);
-      var minValue = new SteelUtilisation(0.0);
+      var maxValue = new SteelUtilisation(double.MinValue);
+      var minValue = new SteelUtilisation(double.MaxValue);
 
       var maxKeys = new SteelUtilisationExtremaKeys();
       var minKeys = new SteelUtilisationExtremaKeys();
