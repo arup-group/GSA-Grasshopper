@@ -291,5 +291,28 @@ namespace GsaGHTests.Parameters.Results {
       Assert.Equal(2, minKeys.Overall.Id);
       Assert.Equal(0, minKeys.Overall.Permutation);
     }
+
+    [Fact]
+    public void GetSteelUtilisationIdForMinAndMaxExtrema() {
+      var dictionary = new Dictionary<int, IList<SteelUtilisation>>() {
+        {
+          2, new List<SteelUtilisation>() {
+            new SteelUtilisation(19),
+          }
+        }, {
+          5, new List<SteelUtilisation>() {
+            new SteelUtilisation(10),
+            new SteelUtilisation(3),
+          }
+        }, {
+          3, new List<SteelUtilisation>() {
+            new SteelUtilisation(2),
+          }
+        },
+      };
+      (SteelUtilisationExtremaKeys max, SteelUtilisationExtremaKeys min) = dictionary.GetSteelUtilisationExtremaKeys();
+      Assert.Equal(2, max.Overall.Id);
+      Assert.Equal(3, min.Overall.Id);
+    }
   }
 }
