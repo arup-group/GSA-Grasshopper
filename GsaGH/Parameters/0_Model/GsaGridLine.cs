@@ -61,7 +61,7 @@ namespace GsaGH.Parameters {
     }
 
     public GsaGridLine(Line line, string label = "") {
-      bool IsCounterClockwise = Vector3d.CrossProduct(Vector3d.XAxis, line.UnitTangent).Z > 0;
+      bool IsCounterClockwise =  Vector3d.CrossProduct(Vector3d.XAxis, line.UnitTangent).Z >= 0;
       double radians = Vector3d.VectorAngle(Vector3d.XAxis, line.UnitTangent);
       double vectorAngle = RadiansToDegrees(radians);
       if (!IsCounterClockwise) {
