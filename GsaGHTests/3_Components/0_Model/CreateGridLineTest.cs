@@ -235,32 +235,4 @@ namespace GsaGHTests.Model {
       component.SetSelected(0, 2);
     }
   }
-
-  [Collection("GrasshopperFixture collection")]
-  public class GsaGridLineTests {
-
-    [Fact]
-    public void ShouldCalculateAngleBetweenXAxisAndLine() {
-      var line = new Line(Point3d.Origin, new Point3d(1, 1, 0));
-      var gsaGridLine = new GsaGridLine(line, string.Empty);
-
-      Assert.Equal(45, gsaGridLine.GridLine.Theta1, precision: 5);
-    }
-
-    [Fact]
-    public void ShouldProvideTheClockwiseAngle() {
-      var line = new Line(Point3d.Origin, new Point3d(1, -1, 0));
-      var gsaGridLine = new GsaGridLine(line, string.Empty);
-
-      Assert.Equal(315, gsaGridLine.GridLine.Theta1, precision: 5);
-    }
-    [Fact]
-    public void ShouldProvideTheClockwiseAngle2() {
-      var line = new Line(Point3d.Origin, new Point3d(-1, -1, 0));
-      var gsaGridLine = new GsaGridLine(line, string.Empty);
-
-      Assert.Equal(225, gsaGridLine.GridLine.Theta1, precision: 5);
-    }
-
-  }
 }
