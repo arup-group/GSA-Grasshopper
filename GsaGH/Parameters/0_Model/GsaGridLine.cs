@@ -62,7 +62,8 @@ namespace GsaGH.Parameters {
 
     public GsaGridLine(Line line, string label = "") {
       bool IsCounterClockwise = Vector3d.CrossProduct(Vector3d.XAxis, line.UnitTangent).Z > 0;
-      double vectorAngle = Vector3d.VectorAngle(new Vector3d(1, 0, 0), line.UnitTangent) * 180 / Math.PI;
+      double radians = Vector3d.VectorAngle(Vector3d.XAxis, line.UnitTangent);
+      double vectorAngle = RadiansToDegrees(radians);
       if (!IsCounterClockwise) {
         vectorAngle = 360 - vectorAngle;
       }
@@ -78,6 +79,11 @@ namespace GsaGH.Parameters {
       Curve.Append(line);
 
       UpdatePreview();
+    }
+
+    private static double RadiansToDegrees(double radians)
+    {
+      return radians * 180 / Math.PI;
     }
 
     internal static Arc ToArc(GridLine gridLine) {
