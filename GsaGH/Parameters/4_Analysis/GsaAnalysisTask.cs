@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 using GsaAPI;
@@ -23,10 +24,12 @@ namespace GsaGH.Parameters {
     internal GsaAnalysisTask(int id, Model model) {
       Id = id;
       ApiTask = model.AnalysisTasks()[Id];
+      ReadOnlyDictionary<int, AnalysisCase> analysisCases = model.AnalysisCases();
       foreach (int caseId in ApiTask.Cases) {
-        string caseName = model.AnalysisCaseName(caseId);
-        string caseDescription = model.AnalysisCaseDescription(caseId);
-        Cases.Add(new GsaAnalysisCase(caseId, caseName, caseDescription));
+        if (analysisCases.ContainsKey(caseId)) {
+          AnalysisCase analysisCase = model.AnalysisCases()[caseId];
+          Cases.Add(new GsaAnalysisCase(caseId, analysisCase.Name, analysisCase.Description));
+        }
       }
     }
 
