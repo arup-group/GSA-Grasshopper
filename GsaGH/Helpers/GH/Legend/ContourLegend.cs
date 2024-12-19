@@ -28,6 +28,7 @@ namespace GsaGH.Helpers.GH {
     public int ActualBitmapWidth => (int)(BitmapWidth * _configuration.Scale);
     private int _leftBitmapEdge;
     private int _actualTextHeight;
+    private static readonly Font _systemFont = SystemFonts.DefaultFont;
     internal bool IsInvalidConfiguration = false; //only for tests
 
     public ContourLegend(ContourLegendConfiguration configuration, int bitmapInitialWidth = 15) {
@@ -102,7 +103,7 @@ namespace GsaGH.Helpers.GH {
     private void DrawBottomText(IGH_PreviewArgs args, string bottomText) {
       const int BottomOffset = 145;
       const int ExtraOffset = 10;
-      int textMaxWidth = _configuration.ActualWidth - GetScaledValue(ExtraOffset);
+      int textMaxWidth = _configuration.ActualWidth + GetScaledValue(ExtraOffset);
       int topPosition = GetScaledValue(BottomOffset);
 
       string wrappedText = WrapText(bottomText, textMaxWidth);
@@ -111,7 +112,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     private void InitializeDimensions(int viewportEdge) {
-      _actualTextHeight = GetScaledSystemFont().Height;
+      _actualTextHeight = (int)GetScaledSystemFont().Size;
       _leftBitmapEdge = viewportEdge - _configuration.ActualWidth;
       Bitmap = new Bitmap(ActualBitmapWidth, _configuration.ActualHeight);
     }
@@ -125,9 +126,9 @@ namespace GsaGH.Helpers.GH {
     }
 
     private Font GetScaledSystemFont() {
-      Font systemFont = SystemFonts.DefaultFont;
-      float fontSize = (float)(systemFont.Size * _configuration.Scale);
-      return new Font(systemFont.FontFamily, fontSize);
+      int defaultTextSize = 12;
+      float fontSize = (float)(defaultTextSize * _configuration.Scale);
+      return new Font(_systemFont.FontFamily, fontSize);
     }
   }
 }

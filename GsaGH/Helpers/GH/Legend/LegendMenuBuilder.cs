@@ -29,7 +29,7 @@ namespace GsaGH.Helpers {
         ImageScaling = ToolStripItemImageScaling.SizeToFit,
       };
 
-      var menuControl = new GH_MenuCustomControl(legendScaleMenuItem.DropDown, legendScaleTextBox.Control, true, 200);
+      _ = new GH_MenuCustomControl(legendScaleMenuItem.DropDown, legendScaleTextBox.Control, true, 200);
 
       legendScaleMenuItem.DropDownItems[1].MouseUp += (s, e) => {
         UpdateLegendScale(component, updateUI, setLegendScaleDelegate);

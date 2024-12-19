@@ -56,7 +56,9 @@ namespace GsaGH.Helpers.GH {
     }
 
     private static float CalculateTextWidth(string text, Font font) {
-      return _graphics.MeasureString(text, font).Width;
+      int dpi = 96;
+      var newFont = new Font(font.FontFamily, font.Size / (_graphics.DpiX / dpi));
+      return _graphics.MeasureString(text, newFont).Width;
     }
   }
 }
