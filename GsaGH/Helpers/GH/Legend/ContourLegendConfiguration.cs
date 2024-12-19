@@ -29,7 +29,7 @@ namespace GsaGH.Helpers.GH {
       get => _scale;
       set {
         if (value <= 0) {
-          throw new ArgumentOutOfRangeException(nameof(_scale), "Scale must be greater than zero.");
+          throw new ArgumentOutOfRangeException(nameof(Scale), "Scale must be greater than zero.");
         }
 
         _scale = value;
@@ -39,7 +39,7 @@ namespace GsaGH.Helpers.GH {
       get => _width;
       set {
         if (value <= 0) {
-          throw new ArgumentOutOfRangeException(nameof(_width), "Width must be greater than zero.");
+          throw new ArgumentOutOfRangeException(nameof(Width), "Width must be greater than zero.");
         }
 
         _width = value;
@@ -49,7 +49,7 @@ namespace GsaGH.Helpers.GH {
       get => _height;
       set {
         if (value <= 0) {
-          throw new ArgumentOutOfRangeException(nameof(_height), "Height must be greater than zero.");
+          throw new ArgumentOutOfRangeException(nameof(Height), "Height must be greater than zero.");
         }
 
         _height = value;

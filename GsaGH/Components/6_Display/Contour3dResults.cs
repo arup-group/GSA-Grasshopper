@@ -574,7 +574,7 @@ namespace GsaGH.Components {
       resultMeshes.AddRange(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList(),
         meshes.Keys.ToList());
 
-      int gripheight = _contourLegendManager.Configuration.ActualHeight / ghGradient.GripCount;
+      int gripHeight = _contourLegendManager.Configuration.ActualHeight / ghGradient.GripCount;
       var legendValues = new List<string>();
       var legendValuePositionsY = new List<int>();
 
@@ -591,12 +591,12 @@ namespace GsaGH.Components {
           t = Math.Round(t, significantDigits);
         }
 
-        Color gradientcolour = ghGradient.ColourAt((2 * (double)i / ((double)ghGradient.GripCount - 1)) - 1);
-        cs.Add(gradientcolour);
+        Color gradientColor = ghGradient.ColourAt((2 * (double)i / ((double)ghGradient.GripCount - 1)) - 1);
+        cs.Add(gradientColor);
 
-        int starty = i * gripheight;
-        int endy = starty + gripheight;
-        _gradients.Add((starty, endy, gradientcolour));
+        int startY = i * gripHeight;
+        int endY = startY + gripHeight;
+        _gradients.Add((startY, endY, gradientColor));
 
         switch (_mode) {
           case FoldMode.Displacement when (int)_disp < 4: {
@@ -623,7 +623,7 @@ namespace GsaGH.Components {
           legendValues[i] = legendValues[i].Replace(",", string.Empty); // remove thousand separator
         }
 
-        legendValuePositionsY.Add(_contourLegendManager.Configuration.ActualHeight - starty + (gripheight / 2) - 2);
+        legendValuePositionsY.Add(_contourLegendManager.Configuration.ActualHeight - startY + (gripHeight / 2) - 2);
       }
 
       _contourLegendManager.Configuration.SetTextValues(legendValues).SetValuePositionsY(legendValuePositionsY);

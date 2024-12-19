@@ -4,6 +4,9 @@ using System.Drawing;
 namespace GsaGH.Helpers.GH {
 
   public static class TextWrapper {
+    private static Bitmap _bitmap = new Bitmap(1, 1);
+    private static System.Drawing.Graphics _graphics = System.Drawing.Graphics.FromImage(_bitmap);
+
     /// <summary>
     ///   Wraps the given text to fit within the specified maximum width.
     /// </summary>
@@ -17,10 +20,10 @@ namespace GsaGH.Helpers.GH {
       }
 
       string[] words = GetTextToWrap(text, out List<string> lines);
-      string currentLine = "";
+      string currentLine = string.Empty;
       foreach (string word in words) {
         string testLine = string.IsNullOrEmpty(currentLine) ? word : $"{currentLine} {word}";
-        float testLineWidth = CalculateTextWidth(testLine, font, maxWidth);
+        float testLineWidth = CalculateTextWidth(testLine, font);
 
         if (testLineWidth > maxWidth) {
           lines.Add(currentLine);
@@ -52,16 +55,8 @@ namespace GsaGH.Helpers.GH {
       return textToWrap.Split(' ');
     }
 
-    /// <summary>
-    ///   Gets the width of the given text from the cache or measures and caches it.
-    /// </summary>
-    /// <param name="text">The text to measure.</param>
-    /// <param name="font">Font used for rendering text</param>
-    /// <param name="maxWidth">Maximum possible width for text</param>
-    /// <returns>The width of the text in pixels.</returns>
-    private static float CalculateTextWidth(string text, Font font, int maxWidth) {
-      var graphics = System.Drawing.Graphics.FromImage(new Bitmap(maxWidth, 1)); //we care only about width
-      return graphics.MeasureString(text, font).Width;
+    private static float CalculateTextWidth(string text, Font font) {
+      return _graphics.MeasureString(text, font).Width;
     }
   }
 }

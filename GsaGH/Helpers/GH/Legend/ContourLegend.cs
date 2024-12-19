@@ -15,7 +15,7 @@ namespace GsaGH.Helpers.GH {
       get => _width;
       set {
         if (value <= 0) {
-          throw new ArgumentOutOfRangeException(nameof(_width), "Width must be greater than zero.");
+          throw new ArgumentOutOfRangeException(nameof(BitmapWidth), "Width must be greater than zero.");
         }
 
         _width = value;
