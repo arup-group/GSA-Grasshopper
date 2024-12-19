@@ -153,40 +153,21 @@ namespace GsaGH.Parameters {
 
     internal Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> GetAnalysisTasksAndCombinations() {
       ReadOnlyDictionary<int, AnalysisTask> tasks = ApiModel.AnalysisTasks();
-      ReadOnlyDictionary<int, LoadCase> loadCases = ApiModel.LoadCases();
+      ReadOnlyDictionary<int, AnalysisCase> analysisCases = ApiModel.AnalysisCases();
 
       var tasksList = new List<GsaAnalysisTaskGoo>();
       var caseList = new List<GsaAnalysisCaseGoo>();
-      var caseIDs = new List<int>();
+
 
       foreach (KeyValuePair<int, AnalysisTask> item in tasks) {
-        var task = new GsaAnalysisTask(item.Key, item.Value, ApiModel);
+        var task = new GsaAnalysisTask(item.Key, ApiModel);
         tasksList.Add(new GsaAnalysisTaskGoo(task));
-        caseIDs.AddRange(task.Cases.Select(acase => acase.Id));
       }
 
-      caseIDs.AddRange(GetLoadCases());
-
-      foreach (int caseId in caseIDs) {
-        string caseName = ApiModel.AnalysisCaseName(caseId);
-        if (caseName == string.Empty) {
-          if (loadCases.ContainsKey(caseId)) {
-            caseName = loadCases[caseId].Name;
-          }
-          if (caseName == string.Empty) {
-            caseName = "Case " + caseId;
-          }
-        }
-
-        string caseDescription = ApiModel.AnalysisCaseDescription(caseId);
-        if (caseDescription == string.Empty) {
-          caseDescription = "L" + caseId;
-        }
-
+      foreach (KeyValuePair<int, AnalysisCase> item in analysisCases) {
         caseList.Add(
-          new GsaAnalysisCaseGoo(new GsaAnalysisCase(caseId, caseName, caseDescription)));
+             new GsaAnalysisCaseGoo(new GsaAnalysisCase(item.Key, item.Value.Name, item.Value.Description)));
       }
-
       return new Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>>(tasksList, caseList);
     }
 
