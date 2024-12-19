@@ -1,4 +1,8 @@
-﻿using GsaGH.Helpers;
+﻿using System.Xml.Linq;
+
+using GsaAPI;
+
+using GsaGH.Helpers;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -6,38 +10,29 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/analysiscases.html">Analysis cases</see> to read more.</para>
   /// </summary>
   public class GsaAnalysisCase {
-    public string Definition { get; set; }
-    public string Name { get; set; }
+    public AnalysisCase ApiCase { get; set; }
     internal int Id { get; set; } = 0;
 
-    public GsaAnalysisCase() { }
+    public GsaAnalysisCase() { ApiCase = new AnalysisCase("", ""); }
 
     public GsaAnalysisCase(string name, string description) {
-      Name = name;
-      Definition = description;
+      ApiCase = new AnalysisCase(name, description);
     }
 
     internal GsaAnalysisCase(int id, string name, string description = "") {
       Id = id;
-      Name = name;
-      Definition = description;
+      ApiCase = new AnalysisCase(name, description);
     }
 
     public GsaAnalysisCase Duplicate() {
-      return new GsaAnalysisCase(Id, Name, Definition);
+      return new GsaAnalysisCase(Id, ApiCase.Name, ApiCase.Description);
     }
 
     public override string ToString() {
       string id = Id == 0 ? string.Empty : "ID:" + Id + " ";
       string s = string.Empty;
-      if (Name != null) {
-        s += " '" + Name + "'";
-      }
-
-      if (Definition != null) {
-        s += " " + Definition;
-      }
-
+      s += " '" + ApiCase.Name + "'";
+      s += " " + ApiCase.Description;
       return string.Join(" ", id, s).TrimSpaces();
     }
   }

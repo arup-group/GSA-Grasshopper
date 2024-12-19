@@ -254,19 +254,11 @@ namespace GsaGH.Helpers.Assembly {
         ReadOnlyDictionary<int, AnalysisTask> existingTasks = _model.AnalysisTasks();
         foreach (GsaAnalysisTask task in analysisTasks) {
           if (!existingTasks.Keys.Contains(task.Id)) {
-            task.Id = _model.AddAnalysisTask(task.ApiTask);
-          }
-
-          if (task.Cases == null || task.Cases.Count == 0) {
-            task.CreateDefaultCases(_gsaModel);
-          }
-
-          if (task.Cases == null) {
-            continue;
-          }
-
-          foreach (GsaAnalysisCase ca in task.Cases) {
-            _model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Definition);
+            var analysisCases = new Dictionary<int, AnalysisCase>();
+            foreach (GsaAnalysisCase analysisCase in task.Cases) {
+              analysisCases.Add(analysisCase.Id, analysisCase.ApiCase);
+            }
+            TaskHelper.ImportAnalysisTask(task, analysisCases, ref _model);
           }
         }
       }
