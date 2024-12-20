@@ -9,7 +9,6 @@ using System.Windows.Forms;
 
 using GH_IO.Serialization;
 
-using Grasshopper.GUI;
 using Grasshopper.GUI.Gradient;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -38,7 +37,6 @@ using OasysUnits;
 using OasysUnits.Units;
 
 using Rhino.Collections;
-using Rhino.Display;
 using Rhino.Geometry;
 
 using AngleUnit = OasysUnits.Units.AngleUnit;
@@ -87,59 +85,37 @@ namespace GsaGH.Components {
       "Displacement",
       "Stress",
     });
+    private readonly ContourLegendManager _contourLegendManager = ContourLegendManager.GetDefault();
     private string _case = string.Empty;
     private double _defScale = 250;
     private DisplayValue _disp = DisplayValue.ResXyz;
-    private Bitmap _legend = new Bitmap(15, 120);
-    private double _legendScale = 1;
-    private List<string> _legendValues;
-    private List<int> _legendValuesPosY;
     private LengthUnit _lengthResultUnit = DefaultUnits.LengthUnitResult;
     private double _maxValue = 1000;
     private double _minValue;
     private FoldMode _mode = FoldMode.Displacement;
     private int _noDigits;
     private string _resType;
-    private string _scaleLegendTxt = string.Empty;
-    private bool _showLegend = true;
     private bool _slider = true;
     private PressureUnit _stressUnitResult = DefaultUnits.StressUnitResult;
     private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
+    private List<(int startY, int endY, Color gradientColor)> _gradients
+      = new List<(int startY, int endY, Color gradientColor)>();
 
-    public Contour3dResults() : base("Contour 3D Results", "Contour3D",
-      "Displays GSA 3D Element Results as Contour", CategoryName.Name(), SubCategoryName.Cat6()) { }
+    public Contour3dResults() : base("Contour 3D Results", "Contour3D", "Displays GSA 3D Element Results as Contour",
+      CategoryName.Name(), SubCategoryName.Cat6()) { }
 
     public override void CreateAttributes() {
       if (!_isInitialised) {
         InitialiseDropdowns();
       }
 
-      m_attributes = new DropDownSliderComponentAttributes(this, SetSelected, _dropDownItems,
-        _selectedItems, _slider, SetVal, SetMaxMin, _defScale, _maxValue, _minValue, _noDigits,
-        _spacerDescriptions);
+      m_attributes = new DropDownSliderComponentAttributes(this, SetSelected, _dropDownItems, _selectedItems, _slider,
+        SetVal, SetMaxMin, _defScale, _maxValue, _minValue, _noDigits, _spacerDescriptions);
     }
 
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
-      if (!((_legendValues != null) & _showLegend)) {
-        return;
-      }
-
-      int defaultTextHeight = 12;
-      args.Display.DrawBitmap(new DisplayBitmap(_legend),
-        args.Viewport.Bounds.Right - (int)(110 * _legendScale), (int)(20 * _legendScale));
-      for (int i = 0; i < _legendValues.Count; i++) {
-        args.Display.Draw2dText(_legendValues[i], Color.Black,
-          new Point2d(args.Viewport.Bounds.Right - (int)(85 * _legendScale), _legendValuesPosY[i]),
-          false, (int)(defaultTextHeight * _legendScale));
-      }
-
-      args.Display.Draw2dText(_resType, Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale),
-          (int)(7 * _legendScale)), false, (int)(defaultTextHeight * _legendScale));
-      args.Display.Draw2dText(_case, Color.Black,
-        new Point2d(args.Viewport.Bounds.Right - (int)(110 * _legendScale),
-          (int)(145 * _legendScale)), false, (int)(defaultTextHeight * _legendScale));
+      _contourLegendManager.Legend.DrawLegendRectangle(args, _resType, _case, _gradients);
     }
 
     public override bool Read(GH_IReader reader) {
@@ -150,20 +126,16 @@ namespace GsaGH.Components {
       _maxValue = reader.GetDouble("valMax");
       _minValue = reader.GetDouble("valMin");
       _defScale = reader.GetDouble("val");
-      _showLegend = reader.GetBoolean("legend");
-      if (reader.ItemExists("legendScale")) {
-        _legendScale = reader.GetDouble("legendScale");
-      }
 
       if (reader.ItemExists("envelope")) {
-        _envelopeType = (EnvelopeMethod)Enum.Parse(
-          typeof(EnvelopeMethod), reader.GetString("envelope"));
+        _envelopeType = (EnvelopeMethod)Enum.Parse(typeof(EnvelopeMethod), reader.GetString("envelope"));
       }
 
-      _lengthResultUnit
-        = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
-      _stressUnitResult
-        = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), reader.GetString("stress"));
+      _lengthResultUnit = (LengthUnit)UnitsHelper.Parse(typeof(LengthUnit), reader.GetString("length"));
+      _stressUnitResult = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), reader.GetString("stress"));
+
+      _contourLegendManager.DeserialiseLegendState(reader);
+
       return base.Read(reader);
     }
 
@@ -255,8 +227,7 @@ namespace GsaGH.Components {
           break;
 
         case FoldMode.Stress:
-          Params.Output[2].Name
-            = "Legend Values [" + Pressure.GetAbbreviation(_stressUnitResult) + "]";
+          Params.Output[2].Name = "Legend Values [" + Pressure.GetAbbreviation(_stressUnitResult) + "]";
           break;
       }
     }
@@ -269,11 +240,12 @@ namespace GsaGH.Components {
       writer.SetDouble("valMax", _maxValue);
       writer.SetDouble("valMin", _minValue);
       writer.SetDouble("val", _defScale);
-      writer.SetDouble("legendScale", _legendScale);
-      writer.SetBoolean("legend", _showLegend);
       writer.SetString("length", Length.GetAbbreviation(_lengthResultUnit));
       writer.SetString("stress", Pressure.GetAbbreviation(_stressUnitResult));
       writer.SetString("envelope", _envelopeType.ToString());
+
+      _contourLegendManager.SerialiseLegendState(writer);
+
       return base.Write(writer);
     }
 
@@ -287,19 +259,18 @@ namespace GsaGH.Components {
       ToolStripMenuItem envelopeMenu = GenerateToolStripMenuItem.GetEnvelopeSubMenuItem(_envelopeType, UpdateEnvelope);
       menu.Items.Add(envelopeMenu);
 
-      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _showLegend);
+      Menu_AppendItem(menu, "Show Legend", ShowLegend, true, _contourLegendManager.Configuration.IsVisible);
 
       var gradient = new GH_GradientControl();
       gradient.CreateAttributes();
-      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24,
-        (s, e) => CreateGradient());
+      var extract = new ToolStripMenuItem("Extract Default Gradient", gradient.Icon_24x24, (s, e) => CreateGradient());
       menu.Items.Add(extract);
 
       ToolStripMenuItem lengthUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Displacement",
         EngineeringUnits.Length, Length.GetAbbreviation(_lengthResultUnit), UpdateLength);
 
-      ToolStripMenuItem stressUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Stress",
-        EngineeringUnits.Stress, Pressure.GetAbbreviation(_stressUnitResult), UpdateStress);
+      ToolStripMenuItem stressUnitsMenu = GenerateToolStripMenuItem.GetSubMenuItem("Stress", EngineeringUnits.Stress,
+        Pressure.GetAbbreviation(_stressUnitResult), UpdateStress);
 
       var unitsMenu = new ToolStripMenuItem("Select Units", Resources.ModelUnits);
       unitsMenu.DropDownItems.AddRange(new ToolStripItem[] {
@@ -308,21 +279,7 @@ namespace GsaGH.Components {
       });
       unitsMenu.ImageScaling = ToolStripItemImageScaling.SizeToFit;
       menu.Items.Add(unitsMenu);
-      var legendScale = new ToolStripTextBox {
-        Text = _legendScale.ToString(),
-      };
-      legendScale.TextChanged += (s, e) => MaintainScaleLegendText(legendScale);
-      var legendScaleMenu = new ToolStripMenuItem("Scale Legend") {
-        Enabled = true,
-        ImageScaling = ToolStripItemImageScaling.SizeToFit,
-      };
-      var menu2 = new GH_MenuCustomControl(
-        legendScaleMenu.DropDown, legendScale.Control, true, 200);
-      legendScaleMenu.DropDownItems[1].MouseUp += (s, e) => {
-        UpdateLegendScale();
-        (this as IGH_VariableParameterComponent).VariableParameterMaintenance();
-        ExpireSolution(true);
-      };
+      ToolStripMenuItem legendScaleMenu = _contourLegendManager.CreateMenu(this, () => base.UpdateUI());
       menu.Items.Add(legendScaleMenu);
 
       Menu_AppendSeparator(menu);
@@ -360,16 +317,15 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaResultParameter(), "Result", "Res", "GSA Result", GH_ParamAccess.item);
       pManager.AddParameter(new GsaElementMemberListParameter());
       pManager[1].Optional = true;
       pManager.AddColourParameter("Colour", "Co",
         "Optional list of colours to override default colours" + Environment.NewLine
         + "A new gradient will be created from the input list of colours", GH_ParamAccess.list);
       pManager[2].Optional = true;
-      pManager.AddIntervalParameter("Min/Max Domain", "I",
-        "Optional Domain for custom Min to Max contour colours", GH_ParamAccess.item);
+      pManager.AddIntervalParameter("Min/Max Domain", "I", "Optional Domain for custom Min to Max contour colours",
+        GH_ParamAccess.item);
       pManager[3].Optional = true;
     }
 
@@ -377,14 +333,14 @@ namespace GsaGH.Components {
       IQuantity length = new Length(0, _lengthResultUnit);
       string lengthunitAbbreviation = string.Concat(length.ToString().Where(char.IsLetter));
 
-      pManager.AddGenericParameter("Ngon Mesh", "M", "Ngon Mesh with coloured result values",
-        GH_ParamAccess.item);
+      pManager.AddGenericParameter("Ngon Mesh", "M", "Ngon Mesh with coloured result values", GH_ParamAccess.item);
       pManager.AddGenericParameter("Colours", "LC", "Legend Colours", GH_ParamAccess.list);
       pManager.AddGenericParameter("Values [" + lengthunitAbbreviation + "]", "LT", "Legend Values",
         GH_ParamAccess.list);
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
+      _gradients = new List<(int startY, int endY, Color gradientColor)>();
       GsaResult result;
       string elementlist = "All";
       var ghTyp = new GH_ObjectWrapper();
@@ -402,7 +358,8 @@ namespace GsaGH.Components {
       if (elems.Count == 0) {
         this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
         return;
-      };
+      }
+
       LengthUnit lengthUnit = result.Model.ModelUnit;
 
       var ghColours = new List<GH_Colour>();
@@ -428,9 +385,8 @@ namespace GsaGH.Components {
       ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> valuesXyz = null;
       switch (_mode) {
         case FoldMode.Displacement:
-          IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation,
-            ResultVector3InAxis<Entity2dExtremaKey>> displacements =
-              result.Element3dDisplacements.ResultSubset(elementIds);
+          IMeshResultSubset<IMeshQuantity<ITranslation>, ITranslation, ResultVector3InAxis<Entity2dExtremaKey>>
+            displacements = result.Element3dDisplacements.ResultSubset(elementIds);
           Func<ITranslation, IQuantity> translationSelector = null;
           switch (_disp) {
             case DisplayValue.X:
@@ -459,19 +415,18 @@ namespace GsaGH.Components {
               dmax = displacements.GetExtrema(displacements.Max.Xyz).Xyz.As(_lengthResultUnit);
               dmin = displacements.GetExtrema(displacements.Min.Xyz).Xyz.As(_lengthResultUnit);
               translationSelector = (r) => r.Xyz.ToUnit(_lengthResultUnit);
-              valuesXyz = ResultsUtility.GetResultResultantTranslation(
-                displacements.Subset, lengthUnit, permutations, _envelopeType);
+              valuesXyz = ResultsUtility.GetResultResultantTranslation(displacements.Subset, lengthUnit, permutations,
+                _envelopeType);
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(
-            displacements.Subset, translationSelector, permutations, _envelopeType);
+          values = ResultsUtility.GetResultComponent(displacements.Subset, translationSelector, permutations,
+            _envelopeType);
           break;
 
         case FoldMode.Stress:
-          IMeshResultSubset<IMeshQuantity<IStress>, IStress,
-            ResultTensor3<Entity2dExtremaKey>> stresses =
-              result.Element3dStresses.ResultSubset(elementIds);
+          IMeshResultSubset<IMeshQuantity<IStress>, IStress, ResultTensor3<Entity2dExtremaKey>> stresses
+            = result.Element3dStresses.ResultSubset(elementIds);
           Func<IStress, IQuantity> stressSelector = null;
           switch (_disp) {
             case DisplayValue.X:
@@ -517,8 +472,7 @@ namespace GsaGH.Components {
               break;
           }
 
-          values = ResultsUtility.GetResultComponent(
-            stresses.Subset, stressSelector, permutations, _envelopeType);
+          values = ResultsUtility.GetResultComponent(stresses.Subset, stressSelector, permutations, _envelopeType);
           break;
       }
 
@@ -540,8 +494,8 @@ namespace GsaGH.Components {
         significantDigits = (int)rounded[2];
       }
 
-      var resultMeshes = new MeshResultGoo(new Mesh(), new List<IList<IQuantity>>(),
-        new List<Point3dList>(), new List<int>());
+      var resultMeshes = new MeshResultGoo(new Mesh(), new List<IList<IQuantity>>(), new List<Point3dList>(),
+        new List<int>());
       var meshes = new ConcurrentDictionary<int, Mesh>();
       meshes.AsParallel().AsOrdered();
       values.AsParallel().AsOrdered();
@@ -563,28 +517,24 @@ namespace GsaGH.Components {
         if (_mode == FoldMode.Displacement) {
           switch (_disp) {
             case DisplayValue.X:
-              transformation = values[key].Select(item
-                  => new Vector3d(item.As(lengthUnit) * _defScale, 0, 0)).ToList();
+              transformation = values[key].Select(item => new Vector3d(item.As(lengthUnit) * _defScale, 0, 0)).ToList();
               break;
 
             case DisplayValue.Y:
-              transformation = values[key].Select(item
-                  => new Vector3d(0, item.As(lengthUnit) * _defScale, 0)).ToList();
+              transformation = values[key].Select(item => new Vector3d(0, item.As(lengthUnit) * _defScale, 0)).ToList();
               break;
 
             case DisplayValue.Z:
-              transformation = values[key].Select(item
-                  => new Vector3d(0, 0, item.As(lengthUnit) * _defScale)).ToList();
+              transformation = values[key].Select(item => new Vector3d(0, 0, item.As(lengthUnit) * _defScale)).ToList();
               break;
 
             case DisplayValue.ResXyz:
               transformation = new List<Vector3d>();
               for (int i = 0; i < valuesXyz[key].x.Count; i++) {
-                transformation.Add(new Vector3d(
-                  valuesXyz[key].x[i] * _defScale,
-                  valuesXyz[key].y[i] * _defScale,
+                transformation.Add(new Vector3d(valuesXyz[key].x[i] * _defScale, valuesXyz[key].y[i] * _defScale,
                   valuesXyz[key].z[i] * _defScale));
               }
+
               break;
           }
         }
@@ -611,9 +561,8 @@ namespace GsaGH.Components {
           }
 
           verticies[key] = new Point3dList() {
-            new Point3d(tempmesh.Vertices.Select(pt => pt.X).Average(),
-              tempmesh.Vertices.Select(pt => pt.Y).Average(),
-              tempmesh.Vertices.Select(pt => pt.Z).Average())
+            new Point3d(tempmesh.Vertices.Select(pt => pt.X).Average(), tempmesh.Vertices.Select(pt => pt.Y).Average(),
+              tempmesh.Vertices.Select(pt => pt.Z).Average()),
           };
         } else {
           verticies[key] = new Point3dList(tempmesh.Vertices.Select(pt => (Point3d)pt).ToList());
@@ -625,9 +574,9 @@ namespace GsaGH.Components {
       resultMeshes.AddRange(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList(),
         meshes.Keys.ToList());
 
-      int gripheight = _legend.Height / ghGradient.GripCount;
-      _legendValues = new List<string>();
-      _legendValuesPosY = new List<int>();
+      int gripHeight = _contourLegendManager.Configuration.ActualHeight / ghGradient.GripCount;
+      var legendValues = new List<string>();
+      var legendValuePositionsY = new List<int>();
 
       var ts = new List<GH_UnitNumber>();
       var cs = new List<Color>();
@@ -642,46 +591,42 @@ namespace GsaGH.Components {
           t = Math.Round(t, significantDigits);
         }
 
-        Color gradientcolour
-          = ghGradient.ColourAt((2 * (double)i / ((double)ghGradient.GripCount - 1)) - 1);
-        cs.Add(gradientcolour);
+        Color gradientColor = ghGradient.ColourAt((2 * (double)i / ((double)ghGradient.GripCount - 1)) - 1);
+        cs.Add(gradientColor);
 
-        int starty = i * gripheight;
-        int endy = starty + gripheight;
-        for (int y = starty; y < endy; y++) {
-          for (int x = 0; x < _legend.Width; x++) {
-            _legend.SetPixel(x, _legend.Height - y - 1, gradientcolour);
-          }
-        }
+        int startY = i * gripHeight;
+        int endY = startY + gripHeight;
+        _gradients.Add((startY, endY, gradientColor));
 
         switch (_mode) {
           case FoldMode.Displacement when (int)_disp < 4: {
-              var displacement = new Length(t, _lengthResultUnit);
-              _legendValues.Add(displacement.ToString("f" + significantDigits));
-              ts.Add(new GH_UnitNumber(displacement));
-              break;
-            }
+            var displacement = new Length(t, _lengthResultUnit);
+            legendValues.Add(displacement.ToString("f" + significantDigits));
+            ts.Add(new GH_UnitNumber(displacement));
+            break;
+          }
           case FoldMode.Displacement: {
-              var rotation = new Angle(t, AngleUnit.Radian);
-              _legendValues.Add(rotation.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(rotation));
-              break;
-            }
+            var rotation = new Angle(t, AngleUnit.Radian);
+            legendValues.Add(rotation.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(rotation));
+            break;
+          }
           case FoldMode.Stress: {
-              var stress = new Pressure(t, _stressUnitResult);
-              _legendValues.Add(stress.ToString("s" + significantDigits));
-              ts.Add(new GH_UnitNumber(stress));
-              break;
-            }
+            var stress = new Pressure(t, _stressUnitResult);
+            legendValues.Add(stress.ToString("s" + significantDigits));
+            ts.Add(new GH_UnitNumber(stress));
+            break;
+          }
         }
 
         if (Math.Abs(t) > 1) {
-          _legendValues[i] = _legendValues[i]
-           .Replace(",", string.Empty); // remove thousand separator
+          legendValues[i] = legendValues[i].Replace(",", string.Empty); // remove thousand separator
         }
 
-        _legendValuesPosY.Add(_legend.Height - starty + (gripheight / 2) - 2);
+        legendValuePositionsY.Add(_contourLegendManager.Configuration.ActualHeight - startY + (gripHeight / 2) - 2);
       }
+
+      _contourLegendManager.Configuration.SetTextValues(legendValues).SetValuePositionsY(legendValuePositionsY);
 
       da.SetData(0, resultMeshes);
       da.SetDataList(1, cs);
@@ -709,8 +654,7 @@ namespace GsaGH.Components {
         1,
       });
 
-      gradient.Attributes.Pivot = new PointF(
-        Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50,
+      gradient.Attributes.Pivot = new PointF(Attributes.Bounds.X - gradient.Attributes.Bounds.Width - 50,
         Params.Input[2].Attributes.Bounds.Y - (gradient.Attributes.Bounds.Height / 4) - 6);
 
       doc.AddObject(gradient, false);
@@ -738,7 +682,7 @@ namespace GsaGH.Components {
     }
 
     internal void ShowLegend(object sender, EventArgs e) {
-      _showLegend = !_showLegend;
+      _contourLegendManager.Configuration.ToggleLegendVisibility();
       ExpirePreview(true);
     }
 
@@ -766,23 +710,6 @@ namespace GsaGH.Components {
       _stressUnitResult = (PressureUnit)UnitsHelper.Parse(typeof(PressureUnit), unit);
       ExpirePreview(true);
       base.UpdateUI();
-    }
-
-    internal void UpdateLegendScale() {
-      try {
-        _legendScale = double.Parse(_scaleLegendTxt);
-      } catch (Exception e) {
-        this.AddRuntimeWarning(e.Message);
-        return;
-      }
-
-      _legend = new Bitmap((int)(15 * _legendScale), (int)(120 * _legendScale));
-      ExpirePreview(true);
-      base.UpdateUI();
-    }
-
-    internal void MaintainScaleLegendText(ToolStripItem menuitem) {
-      _scaleLegendTxt = menuitem.Text;
     }
   }
 }

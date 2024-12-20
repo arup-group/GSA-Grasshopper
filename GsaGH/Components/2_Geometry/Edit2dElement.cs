@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
+using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
@@ -28,6 +30,15 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Edit2dElement;
     private AngleUnit _angleUnit = AngleUnit.Radian;
 
+
+    private readonly Param_Geometry _geometryAttributes = new Param_Geometry {
+      Name = "Geometry",
+      NickName = "G",
+      Description = "Get analysis mesh for FE element and polyline for load panel",
+      Access = GH_ParamAccess.item,
+      Optional = true,
+    };
+
     public Edit2dElement() : base("Edit 2D Element", "Elem2dEdit", "Modify GSA 2D Element",
       CategoryName.Name(), SubCategoryName.Cat2()) { }
 
@@ -36,6 +47,14 @@ namespace GsaGH.Components {
       if (Params.Input[5] is Param_Number angleParameter) {
         _angleUnit = angleParameter.UseDegrees ? AngleUnit.Degree : AngleUnit.Radian;
       }
+    }
+
+    public override bool Read(GH_IReader reader) {
+      bool flag = base.Read(reader);
+      if (Params.Output[2].Name == "Analysis Mesh") {
+        Params.ReplaceOutputParameter(_geometryAttributes, 2);
+      }
+      return flag;
     }
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
@@ -73,7 +92,7 @@ namespace GsaGH.Components {
         GsaElement2dGoo.NickName, GsaElement2dGoo.Description + " with applied changes.",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Number", "ID", "Get Element Number", GH_ParamAccess.list);
-      pManager.AddMeshParameter("Analysis Mesh", "M", "Get Analysis Mesh", GH_ParamAccess.item);
+      pManager.AddGeometryParameter(_geometryAttributes.Name, _geometryAttributes.NickName, _geometryAttributes.Description, _geometryAttributes.Access);
       pManager.HideParameter(2);
       pManager.AddParameter(new GsaProperty2dParameter(), "2D Property", "PA",
         "Get 2D Property. Input either a GSA 2D Property or an Integer to use a Property already defined in model",
@@ -182,7 +201,7 @@ namespace GsaGH.Components {
       // #### outputs ####
       da.SetData(0, new GsaElement2dGoo(elem));
       da.SetDataList(1, elem.Ids);
-      da.SetData(2, elem.Mesh);
+      da.SetData(2, elem.Geometry());
       da.SetDataList(3, elem.Prop2ds == null ? null
         : new List<GsaProperty2dGoo>(elem.Prop2ds.Select(x => new GsaProperty2dGoo(x))));
       da.SetDataList(4, elem.ApiElements.Select(x => x.Group));
