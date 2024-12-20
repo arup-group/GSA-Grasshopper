@@ -31,8 +31,8 @@ namespace GsaGHTests.Model {
 
       Assert.NotNull(caseGoo);
       Assert.Equal(1, caseGoo.Value.Id);
-      Assert.Equal("L1", caseGoo.Value.ApiCase.Description);
-      Assert.Equal("DL", caseGoo.Value.ApiCase.Name);
+      Assert.Equal("L1", caseGoo.Value.Definition);
+      Assert.Equal("DL", caseGoo.Value.Name);
 
       Assert.NotNull(combGoo);
       Assert.Equal(1, combGoo.Value.Id);

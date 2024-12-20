@@ -10,29 +10,34 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/analysiscases.html">Analysis cases</see> to read more.</para>
   /// </summary>
   public class GsaAnalysisCase {
-    public AnalysisCase ApiCase { get; set; }
+    private AnalysisCase ApiCase { get; set; }
     internal int Id { get; set; } = 0;
-
-    public GsaAnalysisCase() { ApiCase = new AnalysisCase("", ""); }
+    public string Definition => ApiCase?.Description;
+    public string Name => ApiCase?.Name;
 
     public GsaAnalysisCase(string name, string description) {
       ApiCase = new AnalysisCase(name, description);
     }
 
-    internal GsaAnalysisCase(int id, string name, string description = "") {
+    internal GsaAnalysisCase(int id, string name, string description) {
       Id = id;
       ApiCase = new AnalysisCase(name, description);
     }
 
     public GsaAnalysisCase Duplicate() {
-      return new GsaAnalysisCase(Id, ApiCase.Name, ApiCase.Description);
+      return new GsaAnalysisCase(Id, Name, Definition);
     }
 
     public override string ToString() {
       string id = Id == 0 ? string.Empty : "ID:" + Id + " ";
       string s = string.Empty;
-      s += " '" + ApiCase.Name + "'";
-      s += " " + ApiCase.Description;
+      if (Name != null) {
+        s += " '" + Name + "'";
+      }
+
+      if (Definition != null) {
+        s += " " + Definition;
+      }
       return string.Join(" ", id, s).TrimSpaces();
     }
   }

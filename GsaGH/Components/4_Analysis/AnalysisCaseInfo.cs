@@ -46,8 +46,8 @@ namespace GsaGH.Components {
       }
 
       if (ghTyp.Value is GsaAnalysisCaseGoo goo) {
-        da.SetData(0, goo.Value.ApiCase.Name);
-        da.SetData(1, goo.Value.ApiCase.Description);
+        da.SetData(0, goo.Value.Name);
+        da.SetData(1, goo.Value.Definition);
         da.SetData(2, goo.Value.Id);
       } else {
         string type = ghTyp.Value.GetType().ToString();

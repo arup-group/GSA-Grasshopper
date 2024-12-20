@@ -58,10 +58,7 @@ namespace GsaGHTests.Parameters {
       //now create another task
       GsaAnalysisTask newTask = CreateTask();
       //and assign same analysis case Id
-      newTask.Cases.Add(new GsaAnalysisCase() {
-        Id = analysisCaseId,
-        ApiCase = new AnalysisCase("AnyName", "L1")
-      });
+      newTask.Cases.Add(new GsaAnalysisCase("AnyName", "L1"));
 
       int newTaskId = TaskHelper.ImportAnalysisTask(newTask, ref _model);
       Assert.Equal(2, _model.ApiModel.AnalysisTasks().Keys.Max());

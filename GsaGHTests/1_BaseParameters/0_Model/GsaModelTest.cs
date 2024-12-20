@@ -162,8 +162,8 @@ namespace GsaGHTests.Parameters {
         for (int caseId = 0; caseId < importedTask.Value.Cases.Count; caseId++) {
           GsaAnalysisCase seedCase = seedTask.Value.Cases[caseId];
           GsaAnalysisCase importedCase = importedTask.Value.Cases[caseId];
-          Assert.Equal(importedCase.ApiCase.Name, seedCase.ApiCase.Name);
-          Assert.Equal(importedCase.ApiCase.Description, seedCase.ApiCase.Description);
+          Assert.Equal(importedCase.Name, seedCase.Name);
+          Assert.Equal(importedCase.Definition, seedCase.Definition);
         }
       }
     }

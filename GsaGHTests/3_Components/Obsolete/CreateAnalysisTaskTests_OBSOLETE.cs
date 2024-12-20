@@ -31,8 +31,8 @@ namespace GsaGHTests.Components.Analysis {
 
       Assert.Equal("my Task", output.Value.ApiTask.Name);
       Assert.Equal((int)AnalysisTaskType.Static, output.Value.ApiTask.Type);
-      Assert.Equal("my Case", output.Value.Cases[0].ApiCase.Name);
-      Assert.Equal("1.4L1 + 0.8L3", output.Value.Cases[0].ApiCase.Description);
+      Assert.Equal("my Case", output.Value.Cases[0].Name);
+      Assert.Equal("1.4L1 + 0.8L3", output.Value.Cases[0].Definition);
     }
   }
 }
