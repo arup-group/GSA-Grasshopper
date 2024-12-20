@@ -35,8 +35,8 @@ namespace GsaGHTests.Components.Analysis {
 
       Assert.Equal("my Task", output0.Value);
       Assert.Equal(0, output1.Value.Id);
-      Assert.Equal("1.4L1 + 0.8L3", output1.Value.Definition);
-      Assert.Equal("my Case", output1.Value.Name);
+      Assert.Equal("1.4L1 + 0.8L3", output1.Value.ApiCase.Description);
+      Assert.Equal("my Case", output1.Value.ApiCase.Name);
       Assert.Equal("Static", output2.Value);
       Assert.Equal(1, output3.Value);
     }
@@ -63,8 +63,8 @@ namespace GsaGHTests.Components.Analysis {
 
       Assert.Equal("Task 1", output0.Value);
       Assert.Equal(1, output1.Value.Id);
-      Assert.Equal("L1", output1.Value.Definition);
-      Assert.Equal("DL", output1.Value.Name);
+      Assert.Equal("L1", output1.Value.ApiCase.Description);
+      Assert.Equal("DL", output1.Value.ApiCase.Name);
       Assert.Equal("Static", output2.Value);
       Assert.Equal(1, output3.Value);
     }

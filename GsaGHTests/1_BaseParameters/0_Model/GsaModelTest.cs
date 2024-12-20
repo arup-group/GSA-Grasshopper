@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 
 using GsaAPI;
 
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GsaApi.EnumMappings;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helper;
@@ -14,6 +16,7 @@ using GsaGHTests.Helpers;
 using OasysUnits;
 
 using Rhino.Geometry;
+using Rhino.Runtime;
 
 using Xunit;
 
@@ -129,6 +132,40 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(LengthUnit.Foot, m.ModelUnit);
 
       Assert.Equal(LengthUnit.Foot, UnitMapping.GetUnit(m.ApiModel.UiUnits().LengthLarge));
+    }
+
+
+    [Fact]
+    public void AnalysisTaskAndCasesCanBeImportedFromSeedModel() {
+      //seed model to read existing analysis task
+      var seedModel = new GsaModel();
+      seedModel.ApiModel.Open(GsaFile.SteelDesignComplex);
+      List<GsaAnalysisTaskGoo> seedTasks = seedModel.GetAnalysisTasksAndCombinations().Item1;
+      var analysis = new GsaAnalysis();
+      foreach (GsaAnalysisTaskGoo task in seedModel.GetAnalysisTasksAndCombinations().Item1) {
+        analysis.AnalysisTasks.Add(task.Value);
+      }
+      //import into new model
+      var assembly = new ModelAssembly(null, null, null, null, null, null, analysis,
+        LengthUnit.Meter, Length.Zero, false, null);
+      var model = new GsaModel(assembly.GetModel());
+      List<GsaAnalysisTaskGoo> importedTasks = model.GetAnalysisTasksAndCombinations().Item1;
+
+      Assert.Equal(importedTasks.Count, seedTasks.Count);
+      Assert.Equal(importedTasks.Count, seedTasks.Count);
+      for (int taskId = 0; taskId < importedTasks.Count; taskId++) {
+        GsaAnalysisTaskGoo seedTask = seedTasks[taskId];
+        GsaAnalysisTaskGoo importedTask = seedTasks[taskId];
+        Assert.Equal(importedTask.Value.Cases.Count, seedTask.Value.Cases.Count);
+        Assert.Equal(importedTask.Value.ApiTask.Type, seedTask.Value.ApiTask.Type);
+        Assert.Equal(importedTask.Value.ApiTask.Cases, seedTask.Value.ApiTask.Cases);
+        for (int caseId = 0; caseId < importedTask.Value.Cases.Count; caseId++) {
+          GsaAnalysisCase seedCase = seedTask.Value.Cases[caseId];
+          GsaAnalysisCase importedCase = importedTask.Value.Cases[caseId];
+          Assert.Equal(importedCase.ApiCase.Name, seedCase.ApiCase.Name);
+          Assert.Equal(importedCase.ApiCase.Description, seedCase.ApiCase.Description);
+        }
+      }
     }
   }
 }
