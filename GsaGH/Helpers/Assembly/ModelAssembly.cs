@@ -251,11 +251,8 @@ namespace GsaGH.Helpers.Assembly {
     private void ConvertAndAssembleAnalysisTasks(List<GsaAnalysisTask> analysisTasks) {
       // Set Analysis Tasks in model
       if (analysisTasks != null) {
-        ReadOnlyDictionary<int, AnalysisTask> existingTasks = _model.AnalysisTasks();
         foreach (GsaAnalysisTask task in analysisTasks) {
-          if (!existingTasks.Keys.Contains(task.Id)) {
-            TaskHelper.ImportAnalysisTask(task, ref _model);
-          }
+          task.Id = TaskHelper.ImportAnalysisTask(task, ref _model);
         }
       }
     }

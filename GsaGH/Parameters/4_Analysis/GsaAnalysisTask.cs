@@ -24,6 +24,14 @@ namespace GsaGH.Parameters {
     internal GsaAnalysisTask(int id, Model model) {
       Id = id;
       ApiTask = model.AnalysisTasks()[Id];
+      CreateCases(model);
+    }
+
+    internal GsaAnalysisTask(AnalysisTask task, Model model) {
+      ApiTask = task;
+      CreateCases(model);
+    }
+    private void CreateCases(Model model) {
       ReadOnlyDictionary<int, AnalysisCase> analysisCases = model.AnalysisCases();
       foreach (int caseId in ApiTask.Cases) {
         if (analysisCases.ContainsKey(caseId)) {
@@ -32,7 +40,6 @@ namespace GsaGH.Parameters {
         }
       }
     }
-
     public override string ToString() {
       return (Id > 0 ? $"ID:{Id} " : string.Empty) + $"'{ApiTask.Name}' {ApiTask.Type}".Replace("_", " ")
         .TrimSpaces();
