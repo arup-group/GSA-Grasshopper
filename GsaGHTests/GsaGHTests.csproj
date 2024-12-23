@@ -13,6 +13,7 @@
     <None Remove="TestHelpers\Steel_Design_Complex.gwb.lok" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="Rhino.Inside" Version="7.0.0" />
     <PackageReference Include="xunit" Version="2.7.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.8">

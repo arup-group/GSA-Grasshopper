@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 
 using GsaGH.Components;
 using GsaGH.Parameters;
@@ -48,6 +49,31 @@ namespace GsaGHTests.Model {
       Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
 
       Assert.True(File.Exists(expectedPath));
+    }
+
+    [Fact]
+    public void StartGsaShouldTargetGsa() {
+      SaveGsaModel comp = new SaveGsaModel();
+      ComponentTestHelper.SetInput(comp, GsaModelGooMother);
+      ComponentTestHelper.SetInput(comp, true, 1);
+      ComponentTestHelper.SetInput(comp, Path.Combine(Path.GetTempPath(), "dummyPath.gwb"), 2);
+      _ = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
+      var process = comp.RunGsa();
+      try {
+        Assert.Contains("GSA", process.ProcessName);
+      } finally {
+        process.Kill();
+      }
+    }
+
+    [Fact]
+    public void StartGsaShouldWorkWhenFilenameHasGaps() {
+      SaveGsaModel comp = new SaveGsaModel();
+      ComponentTestHelper.SetInput(comp, GsaModelGooMother);
+      ComponentTestHelper.SetInput(comp, true, 1);
+      ComponentTestHelper.SetInput(comp, Path.Combine(Path.GetTempPath(), "dummyPath with spaces.gwb"), 2);
+      _ = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
+      Assert.Equal(2, comp.FileNameLastSavedFullPath.Count(x => x == '\"'));
     }
   }
 }

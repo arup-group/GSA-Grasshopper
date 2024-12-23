@@ -35,6 +35,7 @@ namespace GsaGH.Parameters {
       if (arc.Plane.ZAxis.Z < 0) {
         arc = new Arc(arc.EndPoint, arc.MidPoint, arc.StartPoint);
       }
+
       Curve = new PolyCurve();
       Curve.Append(arc);
 
@@ -60,17 +61,29 @@ namespace GsaGH.Parameters {
     }
 
     public GsaGridLine(Line line, string label = "") {
+      bool IsCounterClockwise =  Vector3d.CrossProduct(Vector3d.XAxis, line.UnitTangent).Z >= 0;
+      double radians = Vector3d.VectorAngle(Vector3d.XAxis, line.UnitTangent);
+      double vectorAngle = RadiansToDegrees(radians);
+      if (!IsCounterClockwise) {
+        vectorAngle = 360 - vectorAngle;
+      }
+
       GridLine = new GridLine(label) {
         Shape = GridLineShape.Line,
         X = line.From.X,
         Y = line.From.Y,
         Length = line.Length,
-        Theta1 = Vector3d.VectorAngle(new Vector3d(1, 0, 0), line.UnitTangent) * 180 / Math.PI
+        Theta1 = vectorAngle
       };
       Curve = new PolyCurve();
       Curve.Append(line);
 
       UpdatePreview();
+    }
+
+    private static double RadiansToDegrees(double radians)
+    {
+      return radians * 180 / Math.PI;
     }
 
     internal static Arc ToArc(GridLine gridLine) {
@@ -93,6 +106,7 @@ namespace GsaGH.Parameters {
         Arc arc = ToArc(gridLine);
         curve.Append(arc);
       }
+
       return curve;
     }
 
@@ -126,8 +140,8 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string label = GridLine.Label != "" ? $"{GridLine.Label} " : string.Empty;
       string type = GridLine.Shape == GridLineShape.Arc ? "Shape: Arc " : string.Empty;
-      string s = $"{label}{type}X:{GridLine.X} Y:{GridLine.Y} Length:" +
-        $"{GridLine.Length} Orientation:{GridLine.Theta1}°";
+      string s = $"{label}{type}X:{GridLine.X} Y:{GridLine.Y} Length:"
+        + $"{GridLine.Length} Orientation:{GridLine.Theta1}°";
       if (GridLine.Shape == GridLineShape.Arc) {
         s.Replace("Orientation", "Theta1");
         s += " Theta2:" + GridLine.Theta2 + "°";
@@ -147,8 +161,12 @@ namespace GsaGH.Parameters {
       if (segment == null) {
         return;
       }
+
       if (Curve.IsLinear()) {
-        Points = new Point3d[2] { segment.PointAtStart, segment.PointAtEnd };
+        Points = new Point3d[2] {
+          segment.PointAtStart,
+          segment.PointAtEnd
+        };
       } else {
         Points = segment.DivideEquidistant(segment.GetLength() / 360.0);
       }
