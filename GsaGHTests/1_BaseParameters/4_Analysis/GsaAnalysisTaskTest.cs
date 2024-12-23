@@ -67,7 +67,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void ShouldCreateDefaultTask() {
-      TaskHelper.CreateDefaultStaticAnalysisTask(ref _model);
+      TaskHelper.CreateDefaultStaticAnalysisTask( _model);
       Assert.Single(_model.ApiModel.AnalysisTasks());
     }
 

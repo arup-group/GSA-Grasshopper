@@ -9,16 +9,15 @@ using GsaGH.Parameters;
 
 namespace GsaGH.Helpers {
   internal static partial class TaskHelper {
-    public static int CreateDefaultStaticAnalysisTask(ref GsaModel model) {
+    public static int CreateDefaultStaticAnalysisTask(GsaModel model) {
       int taskId = model.ApiModel.AddAnalysisTask();
       model.ApiModel.CreateDefaultAnalysisCasesForTheTask(taskId);
       return taskId;
     }
 
-    public static int AddAnalysisTask(ref GsaAnalysisTask task, ref GsaModel model) {
-      int taskId = model.ApiModel.AddAnalysisTask(task.ApiTask);
-      model.ApiModel.CreateDefaultAnalysisCasesForTheTask(taskId);
-      return taskId;
+    public static void AddAnalysisTask(GsaAnalysisTask task, GsaModel model) {
+      task.Id = model.ApiModel.AddAnalysisTask(task.ApiTask);
+      model.ApiModel.CreateDefaultAnalysisCasesForTheTask(task.Id);
     }
 
     public static void ImportAnalysisTask(GsaAnalysisTask task, ref GsaModel model) {
@@ -31,7 +30,7 @@ namespace GsaGH.Helpers {
         }
         if (task.ApiTask != null) {
           if (analysisCases.Count == 0) {
-            AddAnalysisTask(ref task, ref model);
+            AddAnalysisTask(task, model);
           } else {
             model.ApiModel.ImportAnalysisTask(task.ApiTask, new ReadOnlyDictionary<int, AnalysisCase>(analysisCases));
             task.Id = highestTask + 1;

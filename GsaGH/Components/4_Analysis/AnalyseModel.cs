@@ -222,7 +222,7 @@ namespace GsaGH.Components {
       if (_analysis) {
         IReadOnlyDictionary<int, AnalysisTask> gsaTasks = model.ApiModel.AnalysisTasks();
         if (gsaTasks.Count < 1) {
-          int taskId = TaskHelper.CreateDefaultStaticAnalysisTask(ref model);
+          int taskId = TaskHelper.CreateDefaultStaticAnalysisTask(model);
           var task = new GsaAnalysisTask(taskId, model.ApiModel);
           if (task.Cases == null || task.Cases.Count == 0) {
             this.AddRuntimeWarning(
