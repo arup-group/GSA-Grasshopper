@@ -59,10 +59,9 @@ namespace GsaGHTests.Parameters {
       GsaAnalysisTask newTask = CreateTask();
       //and assign same analysis case Id
       newTask.Cases.Add(new GsaAnalysisCase("AnyName", "L1"));
-
-      int newTaskId = TaskHelper.ImportAnalysisTask(newTask, ref _model);
+      TaskHelper.ImportAnalysisTask(newTask, ref _model);
       Assert.Equal(2, _model.ApiModel.AnalysisTasks().Keys.Max());
-      int newAnalysCaseId = _model.ApiModel.AnalysisTasks()[newTaskId].Cases[0];
+      int newAnalysCaseId = _model.ApiModel.AnalysisTasks()[newTask.Id].Cases[0];
       Assert.Equal(analysisCaseId + 1, newAnalysCaseId);
     }
 
@@ -88,8 +87,9 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void NullTaskWillNotBeImported() {
-      int TaskId = TaskHelper.ImportAnalysisTask(new GsaAnalysisTask(), ref _model);
-      Assert.Equal(-1, TaskId);
+      var task = new GsaAnalysisTask();
+      TaskHelper.ImportAnalysisTask(task, ref _model);
+      Assert.Equal(0, task.Id);
       Assert.Empty(_model.ApiModel.AnalysisTasks());
     }
 

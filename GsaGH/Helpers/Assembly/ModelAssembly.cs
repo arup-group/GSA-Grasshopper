@@ -252,7 +252,7 @@ namespace GsaGH.Helpers.Assembly {
       // Set Analysis Tasks in model
       if (analysisTasks != null) {
         foreach (GsaAnalysisTask task in analysisTasks) {
-          task.Id = TaskHelper.ImportAnalysisTask(task, ref _model);
+          TaskHelper.ImportAnalysisTask(task, _model);
         }
       }
     }

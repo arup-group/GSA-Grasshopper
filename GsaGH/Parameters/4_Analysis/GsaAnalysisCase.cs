@@ -14,7 +14,9 @@ namespace GsaGH.Parameters {
     internal int Id { get; set; } = 0;
     public string Definition => ApiCase?.Description;
     public string Name => ApiCase?.Name;
-
+    private GsaAnalysisCase() {
+      ApiCase = new AnalysisCase(string.Empty, string.Empty);
+    }
     public GsaAnalysisCase(string name, string description) {
       ApiCase = new AnalysisCase(name, description);
     }
