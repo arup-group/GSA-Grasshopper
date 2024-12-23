@@ -7,6 +7,8 @@ using GsaAPI;
 
 using GsaGH.Helpers;
 
+using Rhino.Commands;
+
 namespace GsaGH.Parameters {
   /// <summary>
   /// <para>An analysis task is a package of work for the solver. Thus we can have a static analysis task, a modal analysis task, etc. Each analysis task has one or more analysis case(s). The distinction is that the cases corresponds to result sets and define items such as loading (in the static case) while the task describes what the solver has to do. </para>
@@ -33,11 +35,9 @@ namespace GsaGH.Parameters {
     }
     private void CreateCases(Model model) {
       ReadOnlyDictionary<int, AnalysisCase> analysisCases = model.AnalysisCases();
-      foreach (int caseId in ApiTask.Cases) {
-        if (analysisCases.ContainsKey(caseId)) {
-          AnalysisCase analysisCase = model.AnalysisCases()[caseId];
-          Cases.Add(new GsaAnalysisCase(caseId, analysisCase.Name, analysisCase.Description));
-        }
+      foreach (int caseId in ApiTask.Cases.Where(x => analysisCases.ContainsKey(x))) {
+        AnalysisCase analysisCase = model.AnalysisCases()[caseId];
+        Cases.Add(new GsaAnalysisCase(caseId, analysisCase.Name, analysisCase.Description));
       }
     }
     public override string ToString() {

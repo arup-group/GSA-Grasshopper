@@ -23,7 +23,7 @@ namespace GsaGH.Helpers {
     public static void ImportAnalysisTask(GsaAnalysisTask task, ref GsaModel model) {
       ReadOnlyDictionary<int, AnalysisTask> existingTasks = model.ApiModel.AnalysisTasks();
       if (task != null && !existingTasks.Keys.Contains(task.Id)) {
-        int highestTask = existingTasks.Count();
+        int highestTask = existingTasks.Count;
         var analysisCases = new Dictionary<int, AnalysisCase>();
         foreach (GsaAnalysisCase analysisCase in task.Cases) {
           analysisCases.Add(analysisCase.Id, new AnalysisCase(analysisCase.Name, analysisCase.Definition));
