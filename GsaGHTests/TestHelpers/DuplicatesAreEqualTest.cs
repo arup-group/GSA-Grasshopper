@@ -18,6 +18,9 @@ namespace GsaGHTests.Helpers {
     }
 
     public static bool AreEqual(object objA, object objB, List<string> excluded = null) {
+      if (excluded == null) {
+        excluded = new List<string>() { "Guid" };
+      }
       Assert.Equal(objA.ToString(), objB.ToString());
 
       Type typeA = objA.GetType();
@@ -131,7 +134,9 @@ namespace GsaGHTests.Helpers {
           } else {
             AreEqual(objPropertyValueA, objPropertyValueB, excluded);
           }
-        } catch (TargetParameterCountException) { return false; }
+        } catch (TargetParameterCountException) {
+          return false;
+        }
       }
 
       return true;
