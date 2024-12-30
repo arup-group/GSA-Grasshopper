@@ -132,6 +132,16 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(LengthUnit.Foot, UnitMapping.GetUnit(m.ApiModel.UiUnits().LengthLarge));
     }
 
+    [Fact]
+    public void ShouldNotHaveAnyTasks() {
+      GsaAnalysis gsaAnalysis = null;
+      var assembly = new ModelAssembly(null, null, null, null, null, null, gsaAnalysis, LengthUnit.Meter, Length.Zero,
+        false, null);
+      var model = new GsaModel(assembly.GetModel());
+      List<GsaAnalysisTaskGoo> importedTasks = model.GetAnalysisTasksAndCombinations().Item1;
+      Assert.Empty(importedTasks);
+      Assert.Empty(importedTasks);
+    }
 
     [Fact]
     public void AnalysisTaskAndCasesCanBeImportedFromSeedModel() {
