@@ -118,6 +118,7 @@ namespace GsaGH.Components {
 
       // add report output to old components
       if (Params.Output.Count < 5) {
+        Params.RegisterOutputParam(new Param_String());
         Params.Output[1].Name = "Errors";
         Params.Output[1].NickName = "E";
         Params.Output[1].Description = "Analysis Task Errors";
