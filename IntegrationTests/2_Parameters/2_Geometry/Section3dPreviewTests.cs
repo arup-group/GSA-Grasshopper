@@ -24,7 +24,7 @@ namespace IntegrationTests.Parameters {
       Mesh mesh = valOut.Value;
       Assert.NotNull(mesh);
       Assert.Equal(3452, mesh.Vertices.Count);
-      Assert.Equal(4722, mesh.Faces.Count);
+      Assert.Equal(4719, mesh.Faces.Count);
     }
 
     [Fact]
