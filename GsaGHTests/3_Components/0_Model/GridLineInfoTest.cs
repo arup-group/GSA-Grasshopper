@@ -14,22 +14,27 @@ using Xunit;
 namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
   public class GridLineInfoTest {
+    private CreateGridLineTestHelper _helper;
 
-    public static GH_OasysComponent GridLineComponentMother() {
+    public GridLineInfoTest() {
+      _helper = new CreateGridLineTestHelper();
+    }
+
+    public GH_OasysComponent GridLineComponentMother() {
       var comp = new GridLineInfo();
       comp.CreateAttributes();
-
-      var gridLineGoo = (GsaGridLineGoo)ComponentTestHelper.GetOutput(CreateGridLineTest.GridLineComponentMother(), 0);
+      _helper.CreateComponentWithLineInput();
+      GsaGridLineGoo gridLineGoo = _helper.GetGridLineOutput();
       ComponentTestHelper.SetInput(comp, gridLineGoo, 0);
 
       return comp;
     }
 
-    public static GH_OasysComponent GridArcComponentMother() {
+    public GH_OasysComponent GridArcComponentMother() {
       var comp = new GridLineInfo();
       comp.CreateAttributes();
-
-      var gridLineGoo = (GsaGridLineGoo)ComponentTestHelper.GetOutput(CreateGridLineTest.GridArcComponentMother(), 0);
+      _helper.CreateComponentWithArcInput();
+      GsaGridLineGoo gridLineGoo = _helper.GetGridLineOutput();
       ComponentTestHelper.SetInput(comp, gridLineGoo, 0);
 
       return comp;

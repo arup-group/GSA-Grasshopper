@@ -4,10 +4,13 @@ using GsaAPI;
 
 using OasysGH.Units;
 
+using OasysUnits;
+
 using Rhino.Display;
 using Rhino.DocObjects;
 using Rhino.Geometry;
 
+using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 
 namespace GsaGH.Parameters {
@@ -32,6 +35,7 @@ namespace GsaGH.Parameters {
       if (arc.Plane.ZAxis.Z < 0) {
         arc = new Arc(arc.EndPoint, arc.MidPoint, arc.StartPoint);
       }
+
       Curve = new PolyCurve();
       Curve.Append(arc);
 
@@ -57,17 +61,29 @@ namespace GsaGH.Parameters {
     }
 
     public GsaGridLine(Line line, string label = "") {
+      bool IsCounterClockwise =  Vector3d.CrossProduct(Vector3d.XAxis, line.UnitTangent).Z >= 0;
+      double radians = Vector3d.VectorAngle(Vector3d.XAxis, line.UnitTangent);
+      double vectorAngle = RadiansToDegrees(radians);
+      if (!IsCounterClockwise) {
+        vectorAngle = 360 - vectorAngle;
+      }
+
       GridLine = new GridLine(label) {
         Shape = GridLineShape.Line,
         X = line.From.X,
         Y = line.From.Y,
         Length = line.Length,
-        Theta1 = Vector3d.VectorAngle(new Vector3d(1, 0, 0), line.UnitTangent) * 180 / Math.PI
+        Theta1 = vectorAngle
       };
       Curve = new PolyCurve();
       Curve.Append(line);
 
       UpdatePreview();
+    }
+
+    private static double RadiansToDegrees(double radians)
+    {
+      return radians * 180 / Math.PI;
     }
 
     internal static Arc ToArc(GridLine gridLine) {
@@ -90,6 +106,7 @@ namespace GsaGH.Parameters {
         Arc arc = ToArc(gridLine);
         curve.Append(arc);
       }
+
       return curve;
     }
 
@@ -123,8 +140,8 @@ namespace GsaGH.Parameters {
     public override string ToString() {
       string label = GridLine.Label != "" ? $"{GridLine.Label} " : string.Empty;
       string type = GridLine.Shape == GridLineShape.Arc ? "Shape: Arc " : string.Empty;
-      string s = $"{label}{type}X:{GridLine.X} Y:{GridLine.Y} Length:" +
-        $"{GridLine.Length} Orientation:{GridLine.Theta1}°";
+      string s = $"{label}{type}X:{GridLine.X} Y:{GridLine.Y} Length:"
+        + $"{GridLine.Length} Orientation:{GridLine.Theta1}°";
       if (GridLine.Shape == GridLineShape.Arc) {
         s.Replace("Orientation", "Theta1");
         s += " Theta2:" + GridLine.Theta2 + "°";
@@ -136,29 +153,20 @@ namespace GsaGH.Parameters {
     internal void UpdatePreview() {
       // we want to scale grid lines according to the users unit settings
       double unitLength = 1;
-      OasysUnits.Units.LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
-      switch (DefaultUnits.LengthUnitGeometry) {
-        case OasysUnits.Units.LengthUnit.Millimeter:
-          unitLength = 1000;
-          break;
-        case OasysUnits.Units.LengthUnit.Centimeter:
-          unitLength = 100;
-          break;
-        case OasysUnits.Units.LengthUnit.Inch:
-          unitLength = 39.3701;
-          break;
-        case OasysUnits.Units.LengthUnit.Foot:
-          unitLength = 3.28084;
-          break;
-      }
+      var length = new Length(unitLength, LengthUnit.Meter);
+      unitLength = length.ToUnit(DefaultUnits.LengthUnitGeometry).Value;
 
       Points = null;
       Curve segment = Curve.SegmentCurve(0);
       if (segment == null) {
         return;
       }
+
       if (Curve.IsLinear()) {
-        Points = new Point3d[2] { segment.PointAtStart, segment.PointAtEnd };
+        Points = new Point3d[2] {
+          segment.PointAtStart,
+          segment.PointAtEnd
+        };
       } else {
         Points = segment.DivideEquidistant(segment.GetLength() / 360.0);
       }
@@ -173,7 +181,7 @@ namespace GsaGH.Parameters {
         Vector3d distance = Curve.TangentAtStart;
         distance.Unitize();
         distance *= -radius;
-        origin.Transform(Rhino.Geometry.Transform.Translation(distance));
+        origin.Transform(Transform.Translation(distance));
         plane.Origin = origin;
 
         Text = new Text3d(GridLine.Label, plane, 0.381982059 * unitLength) { // golden ratio
@@ -183,6 +191,30 @@ namespace GsaGH.Parameters {
 
         Circle = new Circle(plane, radius);
       }
+    }
+
+    public GridLine GetApiGridLineToUnit(LengthUnit unit) {
+      GridLine gridLine = DuplicateApiObject();
+      gridLine.X = unit == LengthUnit.Meter ? GridLine.X : new Length(GridLine.X, unit).Meters;
+      gridLine.Y = unit == LengthUnit.Meter ? GridLine.Y : new Length(GridLine.Y, unit).Meters;
+      gridLine.Length = unit == LengthUnit.Meter ? GridLine.Length : new Length(GridLine.Length, unit).Meters;
+
+      return gridLine;
+    }
+
+    public GridLine DuplicateApiObject() {
+      var gsaLine = new GridLine(GridLine.Label) {
+        Theta1 = GridLine.Theta1,
+        X = GridLine.X,
+        Y = GridLine.Y,
+        Length = GridLine.Length,
+        Shape = GridLine.Shape,
+      };
+      if (GridLine.Shape == GridLineShape.Arc) {
+        gsaLine.Theta2 = GridLine.Theta2;
+      }
+
+      return gsaLine;
     }
   }
 }

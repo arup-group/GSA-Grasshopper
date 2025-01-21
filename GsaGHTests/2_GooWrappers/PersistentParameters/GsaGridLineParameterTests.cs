@@ -1,27 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Grasshopper.Kernel.Data;
+
 using GsaGH.Parameters;
 
-using GsaGHTests.Helpers;
 using GsaGHTests.Model;
 
-using OasysGH.Components;
+using Rhino;
 
 using Xunit;
 
 namespace GsaGHTests.GooWrappers {
   [Collection("GrasshopperFixture collection")]
   public class GsaGridLineParameterTests {
+    private CreateGridLineTestHelper _helper;
+
+    public GsaGridLineParameterTests() {
+      _helper = new CreateGridLineTestHelper();
+    }
+
     [Fact]
     public void GsaGridLineParameterLineBakeTest() {
-      GH_OasysComponent comp = CreateGridLineTest.GridLineComponentMother();
-      var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
+      _helper.CreateComponentWithLineInput();
+      GsaGridLineGoo output = _helper.GetGridLineOutput();
 
       var param = new GsaGridLineParameter();
-      param.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, output);
+      param.AddVolatileData(new GH_Path(0), 0, output);
 
-      var doc = Rhino.RhinoDoc.CreateHeadless(null);
+      var doc = RhinoDoc.CreateHeadless(null);
       var guids = new List<Guid>();
       param.BakeGeometry(doc, guids);
       Assert.NotEmpty(guids);
@@ -31,13 +38,13 @@ namespace GsaGHTests.GooWrappers {
 
     [Fact]
     public void GsaGridLineParameterArcBakeTest() {
-      GH_OasysComponent comp = CreateGridLineTest.GridArcComponentMother();
-      var output = (GsaGridLineGoo)ComponentTestHelper.GetOutput(comp);
+      _helper.CreateComponentWithArcInput();
+      GsaGridLineGoo output = _helper.GetGridLineOutput();
 
       var param = new GsaGridLineParameter();
-      param.AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(0), 0, output);
+      param.AddVolatileData(new GH_Path(0), 0, output);
 
-      var doc = Rhino.RhinoDoc.CreateHeadless(null);
+      var doc = RhinoDoc.CreateHeadless(null);
       var guids = new List<Guid>();
       param.BakeGeometry(doc, guids);
       Assert.NotEmpty(guids);

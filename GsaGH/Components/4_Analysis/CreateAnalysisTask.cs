@@ -155,8 +155,9 @@ namespace GsaGH.Components {
           SetInputAttributes(_casesParamIndex, _modalDynamicParameterInputAttributes);
           break;
         case AnalysisTaskType.Static:
-        default:
           SetInputAttributes(_casesParamIndex, _analysisCaseInputAttributes);
+          break;
+        default:
           break;
       }
     }
@@ -263,12 +264,12 @@ namespace GsaGH.Components {
                 cases.Add(goo.Value.Duplicate());
               } else {
                 UnsupportedValueError(ghTypeWrapper);
-                return false;
               }
             }
           }
           if (cases == null) {
             this.AddRuntimeRemark("Default Task has been created; it will by default contain all cases found in model");
+            return false;
           }
           break;
         default:
@@ -380,7 +381,7 @@ namespace GsaGH.Components {
       return true;
     }
 
-    private bool CreateModalDynamicTask(IGH_DataAccess da, string name, out AnalysisTask task) {
+    private static bool CreateModalDynamicTask(IGH_DataAccess da, string name, out AnalysisTask task) {
       GsaModalDynamicAnalysisGoo gsaModalDynamicAnalysisGoo = null;
       if (da.GetData(2, ref gsaModalDynamicAnalysisGoo)) {
         GsaModalDynamicAnalysis dynamicAnalysisParameter = gsaModalDynamicAnalysisGoo.Value;
@@ -593,12 +594,12 @@ namespace GsaGH.Components {
           _selectedItems.Add(_dropDownItems[0][3]);
           break;
         case AnalysisTaskType.Static:
-        default:
           _dropDownItems.Add(_solverTypes.Keys.ToList());
           _selectedItems.Add(_dropDownItems[0][0]);
           break;
+        default:
+          break;
       }
-
       ReDrawComponent();
     }
 

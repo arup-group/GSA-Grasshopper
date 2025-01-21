@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Xml.Linq;
 
 using GsaAPI;
 
 using GsaGH.Helpers;
-using GsaGH.Parameters.Enums;
+
+using Rhino.Commands;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -22,41 +23,26 @@ namespace GsaGH.Parameters {
       Id = 0;
     }
 
-    internal GsaAnalysisTask(int id, AnalysisTask task, Model model) {
+    internal GsaAnalysisTask(int id, Model model) {
       Id = id;
-      foreach (int caseId in task.Cases) {
-        string caseName = model.AnalysisCaseName(caseId);
-        string caseDescription = model.AnalysisCaseDescription(caseId);
-        Cases.Add(new GsaAnalysisCase(caseId, caseName, caseDescription));
-      }
-
-      ApiTask = task;
+      ApiTask = model.AnalysisTasks()[Id];
+      CreateCases(model);
     }
 
+    internal GsaAnalysisTask(AnalysisTask task, Model model) {
+      ApiTask = task;
+      CreateCases(model);
+    }
+    private void CreateCases(Model model) {
+      ReadOnlyDictionary<int, AnalysisCase> analysisCases = model.AnalysisCases();
+      foreach (int caseId in ApiTask.Cases.Where(x => analysisCases.ContainsKey(x))) {
+        AnalysisCase analysisCase = model.AnalysisCases()[caseId];
+        Cases.Add(new GsaAnalysisCase(caseId, analysisCase.Name, analysisCase.Description));
+      }
+    }
     public override string ToString() {
       return (Id > 0 ? $"ID:{Id} " : string.Empty) + $"'{ApiTask.Name}' {ApiTask.Type}".Replace("_", " ")
         .TrimSpaces();
-    }
-
-    internal void CreateDefaultCases(GsaModel gsaModel) {
-      Cases.Clear();
-      switch ((AnalysisTaskType)ApiTask.Type) {
-        case AnalysisTaskType.Static:
-        case AnalysisTaskType.StaticPDelta:
-          Tuple<List<GsaAnalysisTaskGoo>, List<GsaAnalysisCaseGoo>> tuple
-       = gsaModel.GetAnalysisTasksAndCombinations();
-          Cases = tuple.Item2.Select(x => x.Value).ToList();
-          break;
-        case AnalysisTaskType.Footfall:
-          var footfallAnalysisCase = new GsaAnalysisCase {
-            Name = ApiTask.Name,
-            Definition = "Footfall",
-          };
-          Cases.Add(footfallAnalysisCase);
-          break;
-        default:
-          break;
-      }
     }
   }
 }

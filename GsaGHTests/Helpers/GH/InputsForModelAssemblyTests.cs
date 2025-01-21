@@ -1,4 +1,5 @@
-﻿using Grasshopper.Kernel.Types;
+﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
@@ -16,6 +17,7 @@ using OasysGH.Components;
 
 using Xunit;
 
+using EntityType = GsaAPI.EntityType;
 using NodeDisplacements = GsaGH.Components.NodeDisplacements;
 
 namespace GsaGHTests.Helpers.GH {
@@ -31,9 +33,9 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, taskGoo, 4);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -46,9 +48,9 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, combinationGoo, 4);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -62,9 +64,9 @@ namespace GsaGHTests.Helpers.GH {
       ComponentTestHelper.SetInput(comp, analysisCaseGoo, 4);
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.NotEmpty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.NotEmpty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -74,9 +76,9 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 2);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -86,9 +88,9 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 2);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -98,9 +100,9 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 2);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -110,9 +112,9 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 2);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -122,9 +124,9 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 2);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -134,9 +136,9 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 2);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -146,9 +148,9 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 2);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -158,9 +160,9 @@ namespace GsaGHTests.Helpers.GH {
       ComponentTestHelper.SetInput(comp, goo, 2);
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.NotEmpty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.NotEmpty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -172,9 +174,9 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 3);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -184,9 +186,9 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 3);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -196,9 +198,9 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 3);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -208,9 +210,9 @@ namespace GsaGHTests.Helpers.GH {
       ComponentTestHelper.SetInput(comp, goo, 3);
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.NotEmpty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.NotEmpty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -221,9 +223,9 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 0);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -234,21 +236,22 @@ namespace GsaGHTests.Helpers.GH {
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 0);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
     public void GetModelFromGridlineTest() {
-      var goo = (GsaGridLineGoo)ComponentTestHelper.GetOutput(
-        CreateGridLineTest.GridLineComponentMother());
+      var _helper = new CreateGridLineTestHelper();
+      _helper.CreateComponentWithLineInput();
+      GsaGridLineGoo goo = _helper.GetGridLineOutput();
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 0);
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -258,16 +261,16 @@ namespace GsaGHTests.Helpers.GH {
       ComponentTestHelper.SetInput(comp, goo, 0);
       comp.Params.Output[0].ExpireSolution(true);
       comp.Params.Output[0].CollectData();
-      Assert.Empty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark));
-      Assert.Single(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning));
-      Assert.NotEmpty(comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.NotEmpty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
     public void TestGetMemberListDefinitionFromMemberList() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       var apiList = new EntityList() {
-        Type = GsaAPI.EntityType.Member,
+        Type = EntityType.Member,
         Definition = "1",
         Name = "myList"
       };
@@ -275,7 +278,7 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new Member1dDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList("myList", "1", GsaAPI.EntityType.Member);
+      var list = new GsaList("myList", "1", EntityType.Member);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
@@ -286,7 +289,7 @@ namespace GsaGHTests.Helpers.GH {
     public void TestGetMemberListDefinitionErrorFromElementList() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       var apiList = new EntityList() {
-        Type = GsaAPI.EntityType.Element,
+        Type = EntityType.Element,
         Definition = "1",
         Name = "myList"
       };
@@ -294,7 +297,7 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new Member1dDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList("myList", "1", GsaAPI.EntityType.Element);
+      var list = new GsaList("myList", "1", EntityType.Element);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
@@ -305,7 +308,7 @@ namespace GsaGHTests.Helpers.GH {
     public void TestGetMemberListDefinitionFromUnnamedMemberList() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       var apiList = new EntityList() {
-        Type = GsaAPI.EntityType.Member,
+        Type = EntityType.Member,
         Definition = "1",
         Name = string.Empty
       };
@@ -313,7 +316,7 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new Member1dDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Member);
+      var list = new GsaList(string.Empty, "1", EntityType.Member);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
@@ -325,7 +328,7 @@ namespace GsaGHTests.Helpers.GH {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       var comp = new Member1dDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Member);
+      var list = new GsaList(string.Empty, "1", EntityType.Member);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
@@ -347,7 +350,7 @@ namespace GsaGHTests.Helpers.GH {
     public void TestGetNodeListDefinitionFromNodeList() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       var apiList = new EntityList() {
-        Type = GsaAPI.EntityType.Node,
+        Type = EntityType.Node,
         Definition = "2",
         Name = "myList"
       };
@@ -355,7 +358,7 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new NodeDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList("myList", "2", GsaAPI.EntityType.Node);
+      var list = new GsaList("myList", "2", EntityType.Node);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
@@ -366,7 +369,7 @@ namespace GsaGHTests.Helpers.GH {
     public void TestGetNodeListDefinitionErrorFromElementList() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       var apiList = new EntityList() {
-        Type = GsaAPI.EntityType.Element,
+        Type = EntityType.Element,
         Definition = "2",
         Name = "myList"
       };
@@ -374,7 +377,7 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new NodeDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList("myList", "2", GsaAPI.EntityType.Element);
+      var list = new GsaList("myList", "2", EntityType.Element);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
@@ -385,7 +388,7 @@ namespace GsaGHTests.Helpers.GH {
     public void TestGetNodeListDefinitionFromUnnamedMemberList() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       var apiList = new EntityList() {
-        Type = GsaAPI.EntityType.Node,
+        Type = EntityType.Node,
         Definition = "1",
         Name = string.Empty
       };
@@ -393,7 +396,7 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new NodeDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Node);
+      var list = new GsaList(string.Empty, "1", EntityType.Node);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
@@ -405,7 +408,7 @@ namespace GsaGHTests.Helpers.GH {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       var comp = new NodeDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Node);
+      var list = new GsaList(string.Empty, "1", EntityType.Node);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
@@ -427,7 +430,7 @@ namespace GsaGHTests.Helpers.GH {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       var comp = new BeamDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList("myList", "2", GsaAPI.EntityType.Node);
+      var list = new GsaList("myList", "2", EntityType.Node);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
@@ -439,7 +442,7 @@ namespace GsaGHTests.Helpers.GH {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       string listName = "myList";
       var apiList = new EntityList() {
-        Type = GsaAPI.EntityType.Element,
+        Type = EntityType.Element,
         Definition = "1 2",
         Name = $"Children of '{listName}'"
       };
@@ -447,12 +450,12 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new BeamDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList("myList", "1", GsaAPI.EntityType.Member);
+      var list = new GsaList("myList", "1", EntityType.Member);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
       Assert.Equal($"Element definition was derived from Children of '{listName}' List",
-            comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark)[0]);
+            comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark)[0]);
     }
 
     [Fact]
@@ -460,7 +463,7 @@ namespace GsaGHTests.Helpers.GH {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       string listName = "myList";
       var apiList = new EntityList() {
-        Type = GsaAPI.EntityType.Member,
+        Type = EntityType.Member,
         Definition = "1",
         Name = listName
       };
@@ -468,13 +471,13 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new BeamDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList(listName, "1", GsaAPI.EntityType.Member);
+      var list = new GsaList(listName, "1", EntityType.Member);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
       Assert.Equal($"Element definition was derived from Elements with parent " +
             $"Members included in '{listName}' List",
-            comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark)[0]);
+            comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark)[0]);
     }
 
     [Fact]
@@ -482,7 +485,7 @@ namespace GsaGHTests.Helpers.GH {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
       string listName = "myList";
       var apiList = new EntityList() {
-        Type = GsaAPI.EntityType.Member,
+        Type = EntityType.Member,
         Definition = "2",
         Name = listName
       };
@@ -491,12 +494,12 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new BeamDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList(listName, "2", GsaAPI.EntityType.Member);
+      var list = new GsaList(listName, "2", EntityType.Member);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
       Assert.Equal($"No child elements found for Members 2",
-            comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning)[0]);
+            comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning)[0]);
     }
 
     [Fact]
@@ -506,12 +509,12 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new BeamDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList(string.Empty, "2", GsaAPI.EntityType.Member);
+      var list = new GsaList(string.Empty, "2", EntityType.Member);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
       Assert.Equal($"No child elements found for Members 2",
-            comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Warning)[0]);
+            comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning)[0]);
     }
 
     [Fact]
@@ -521,13 +524,13 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new BeamDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Member);
+      var list = new GsaList(string.Empty, "1", EntityType.Member);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
       Assert.Equal($"Element definition was derived from Elements with parent "
           + $"Members included in 'Member list' List",
-            comp.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Remark)[0]);
+            comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark)[0]);
     }
 
     [Fact]
@@ -550,7 +553,7 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new ResultDiagrams();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Element);
+      var list = new GsaList(string.Empty, "1", EntityType.Element);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
@@ -564,7 +567,7 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new ResultDiagrams();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Member);
+      var list = new GsaList(string.Empty, "1", EntityType.Member);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 
@@ -578,7 +581,7 @@ namespace GsaGHTests.Helpers.GH {
 
       var comp = new ResultDiagrams();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
-      var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Node);
+      var list = new GsaList(string.Empty, "1", EntityType.Node);
       ComponentTestHelper.SetInput(comp, new GsaListGoo(list), 1);
       comp.Params.Output[0].CollectData();
 

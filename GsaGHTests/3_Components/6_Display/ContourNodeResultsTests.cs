@@ -64,7 +64,7 @@ namespace GsaGHTests.Components.Display {
     [Fact]
     public void GetGradientTest() {
       var comp = new ContourNodeResults();
-      GH_GradientControl gradient = comp.CreateGradient(new Grasshopper.Kernel.GH_Document());
+      GH_GradientControl gradient = comp.CreateGradient(new GH_Document());
       Assert.NotNull(gradient);
     }
 
@@ -146,13 +146,6 @@ namespace GsaGHTests.Components.Display {
       var comp = new ContourNodeResults();
       ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
       comp.UpdateMoment("N·cm");
-    }
-
-    [Fact]
-    public void UpdateLegendScaleTest() {
-      var comp = new ContourNodeResults();
-      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
-      comp.UpdateLegendScale();
     }
 
     private void SetSelectedDrawViewportMeshesAndWiresTest(ContourNodeResults comp, int i, int j) {

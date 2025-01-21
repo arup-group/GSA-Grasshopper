@@ -13,6 +13,13 @@ using Xunit;
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class CreateMember3dTests {
+    private readonly GsaMember3dGoo _gsaMember3dGoo;
+
+    public CreateMember3dTests() {
+      GH_OasysComponent comp = ComponentMother();
+
+      _gsaMember3dGoo = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp);
+    }
 
     public static GH_OasysComponent ComponentMother() {
       var comp = new Create3dMember();
@@ -31,12 +38,18 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     [Fact]
-    public void CreateComponentTest() {
-      GH_OasysComponent comp = ComponentMother();
+    public void ComponentShouldReturnConcreteMaterialTypeAsDefault() {
+      Assert.Equal(MatType.Concrete, _gsaMember3dGoo.Value.Prop3d.Material.MaterialType);
+    }
 
-      var output = (GsaMember3dGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(MatType.Concrete, output.Value.Prop3d.Material.MaterialType);
-      Assert.Equal(0.5, output.Value.ApiMember.MeshSize);
+    [Fact]
+    public void ComponentShouldReturn05MeshSizeValue() {
+      Assert.Equal(0.5, _gsaMember3dGoo.Value.ApiMember.MeshSize);
+    }
+
+    [Fact]
+    public void ComponentShouldReturnDefaultGroupValue() {
+      Assert.Equal(1, _gsaMember3dGoo.Value.ApiMember.Group);
     }
   }
 }

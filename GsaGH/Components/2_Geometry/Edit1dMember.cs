@@ -68,7 +68,7 @@ namespace GsaGH.Components {
         Params.ReplaceInputParameter(new GsaPropertyParameter(), 3, true);
         Params.ReplaceOutputParameter(new GsaPropertyParameter(), 3);
       }
-
+      Params.UpdateReleaseBool6Parameter();
       return flag;
     }
 
@@ -100,9 +100,9 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Member Offset",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
+      pManager.AddParameter(new GsaReleaseParameter(), "Start release", "⭰",
         "Set Release (Bool6) at Start of Member", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
+      pManager.AddParameter(new GsaReleaseParameter(), "End release", "⭲",
         "Set Release (Bool6) at End of Member", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Automatic Offset End 1", "AO1",
         "Set Automatic Offset at End 1 of Member", GH_ParamAccess.item);
@@ -149,9 +149,9 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Member Offset",
         GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
+      pManager.AddParameter(new GsaReleaseParameter(), "Start release", "⭰",
         "Get Release (Bool6) at Start of Member", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
+      pManager.AddParameter(new GsaReleaseParameter(), "End release", "⭲",
         "Get Release (Bool6) at End of Member", GH_ParamAccess.item);
       pManager.AddBooleanParameter("Automatic Offset End 1", "AO1",
         "Get Automatic Offset at End 1 of Member", GH_ParamAccess.item);

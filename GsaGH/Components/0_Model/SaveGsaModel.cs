@@ -34,6 +34,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.SaveGsaModel;
     private string _fileNameLastSaved;
+    internal string FileNameLastSavedFullPath =>  $"\"{Path.GetFullPath(_fileNameLastSaved)}\"";
     private bool _saveInputOverride = false;
 
     public SaveGsaModel() : base("Save GSA Model", "Save",
@@ -91,7 +92,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      var gsaModel = new GsaModel();
+      GsaModel gsaModel;
       if (ghTyp.Value is GsaModelGoo modelGoo) {
         gsaModel = modelGoo.Value;
         Message = string.Empty;
@@ -175,8 +176,13 @@ namespace GsaGH.Components {
         GsaModel gsaModel = tempModel.Value;
         Save(ref gsaModel, tempPath);
       }
+      RunGsa();
+    }
 
-      Process.Start(_fileNameLastSaved);
+    internal Process RunGsa() {
+      string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+      string fullPath = Path.Combine(programFiles, @"Oasys\GSA 10.2\GSA.exe");
+      return Process.Start(fullPath, FileNameLastSavedFullPath);
     }
   }
 }

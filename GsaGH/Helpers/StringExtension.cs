@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace GsaGH.Helpers {
@@ -36,6 +37,7 @@ namespace GsaGH.Helpers {
       while (value.Contains("  ")) {
         value = value.Replace("  ", " ");
       }
+
       return value.Trim();
     }
   }

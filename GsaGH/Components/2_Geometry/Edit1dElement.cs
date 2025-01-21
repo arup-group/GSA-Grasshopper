@@ -52,7 +52,7 @@ namespace GsaGH.Components {
         Params.ReplaceInputParameter(new GsaPropertyParameter(), 3, true);
         Params.ReplaceOutputParameter(new GsaPropertyParameter(), 3);
       }
-
+      Params.UpdateReleaseBool6Parameter();
       return flag;
     }
 
@@ -79,9 +79,9 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Set Element Offset",
         GH_ParamAccess.item);
 
-      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
+      pManager.AddParameter(new GsaReleaseParameter(), "Start release", "⭰",
         "Set Release (Bool6) at Start of Element", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
+      pManager.AddParameter(new GsaReleaseParameter(), "End release", "⭲",
         "Set Release (Bool6) at End of Element", GH_ParamAccess.item);
 
       pManager.AddAngleParameter("Orientation Angle", "⭮A", "Set Element Orientation Angle",
@@ -118,9 +118,9 @@ namespace GsaGH.Components {
       pManager.AddParameter(new GsaOffsetParameter(), "Offset", "Of", "Get Element Offset",
         GH_ParamAccess.item);
 
-      pManager.AddParameter(new GsaBool6Parameter(), "Start release", "⭰",
+      pManager.AddParameter(new GsaReleaseParameter(), "Start release", "⭰",
         "Get Release (Bool6) at Start of Element", GH_ParamAccess.item);
-      pManager.AddParameter(new GsaBool6Parameter(), "End release", "⭲",
+      pManager.AddParameter(new GsaReleaseParameter(), "End release", "⭲",
         "Get Release (Bool6) at End of Element", GH_ParamAccess.item);
 
       pManager.AddNumberParameter("Orientation Angle", "⭮A", "Get Element Orientation Angle",

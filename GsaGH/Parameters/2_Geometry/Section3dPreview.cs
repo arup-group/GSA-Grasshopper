@@ -183,7 +183,7 @@ namespace GsaGH.Parameters {
         element.Topology = new ReadOnlyCollection<int>(topo);
         element.Property = model.AddProp2D(elem.Prop2ds[i].ApiProp2d);
         if (element.IsLoadPanel) {
-          model.AddLoadPanelElement(element.LoadPanelElelment);
+          model.AddLoadPanelElement(element.LoadPanelElement);
         } else {
           model.AddElement(element.Element);
         }

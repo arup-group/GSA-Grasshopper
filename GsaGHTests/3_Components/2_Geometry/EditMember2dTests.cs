@@ -23,183 +23,615 @@ using Line = Rhino.Geometry.Line;
 
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
-  public class EditMember2dTests {
+  public class EditMember2dTests_WithoutSettingInputs {
+    private readonly EditMember2dTestsHelper _helper;
 
-    public static GH_OasysComponent ComponentMother() {
-      var comp = new Edit2dMember();
-      comp.CreateAttributes();
-
-      ComponentTestHelper.SetInput(comp,
-        ComponentTestHelper.GetOutput(CreateMember2dTests.ComponentMother()), 0);
-
-      return comp;
+    public EditMember2dTests_WithoutSettingInputs() {
+      _helper = new EditMember2dTestsHelper();
     }
 
     [Fact]
-    public void CreateComponentTest1() {
-      GH_OasysComponent comp = ComponentMother();
-
-      var output0 = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp, 0);
-      var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
-      var output2 = (GH_Brep)ComponentTestHelper.GetOutput(comp, 2);
-      var output5 = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp, 5);
-      var output6 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 6);
-      var output7 = (GH_String)ComponentTestHelper.GetOutput(comp, 7);
-      var output8 = (GH_String)ComponentTestHelper.GetOutput(comp, 8);
-      var output9 = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 9);
-      var output10 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 10);
-      var output11 = (GH_Number)ComponentTestHelper.GetOutput(comp, 11);
-      var output12 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 12);
-      var output13 = (GH_String)ComponentTestHelper.GetOutput(comp, 13);
-      var output14 = (GH_Number)ComponentTestHelper.GetOutput(comp, 14);
-      var output15 = (GH_String)ComponentTestHelper.GetOutput(comp, 15);
-      var output16 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 16);
-      var output17 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 17);
-      var output18 = (GH_String)ComponentTestHelper.GetOutput(comp, 18);
-
-      Assert.Equal(100, output0.Value.Brep.GetArea());
-      Assert.Equal(Property2D_Type.PLATE, output0.Value.Prop2d.ApiProp2d.Type);
-      Assert.Equal(new Length(14, LengthUnit.Inch), output0.Value.Prop2d.Thickness);
-      Assert.Equal(0.5, output0.Value.ApiMember.MeshSize);
-      Assert.Equal(0, output1.Value);
-      Assert.Equal(100, output2.Value.GetArea());
-      Assert.Equal(Property2D_Type.PLATE, output5.Value.ApiProp2d.Type);
-      Assert.Equal(new Length(14, LengthUnit.Inch), output5.Value.Thickness);
-      Assert.Equal(0, output6.Value);
-      Assert.Equal("Generic 2D", output7.Value);
-      Assert.Equal("Linear", output8.Value);
-      Assert.Equal(0, output9.Value.X1.Value);
-      Assert.Equal(0, output9.Value.X2.Value);
-      Assert.Equal(0, output9.Value.Y.Value);
-      Assert.Equal(0, output9.Value.Z.Value);
-      Assert.True(output10.Value);
-      Assert.Equal(0.5, output11.Value);
-      Assert.True(output12.Value);
-      Assert.Equal("Mixed", output13.Value);
-      Assert.Equal(0.0, output14.Value);
-      Assert.Equal("", output15.Value);
-      Assert.Equal(0, output16.Value.R);
-      Assert.Equal(0, output16.Value.G);
-      Assert.Equal(0, output16.Value.B);
-      Assert.False(output17.Value);
-      Assert.Equal("", output18.Value);
+    public void ComponentReturnValidMemberBrepAreaValue() {
+      GsaMember2d output = _helper.GetMemberOutput();
+      Assert.Equal(100, output.Brep.GetArea());
     }
 
     [Fact]
-    public void CreateComponentTest2() {
-      GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp, 7, 1);
-      ComponentTestHelper.SetInput(comp,
-        Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(4, 0, 0),
-          new Point3d(4, 4, 0), new Point3d(0, 4, 0), 1), 2);
-      ComponentTestHelper.SetInput(comp,
-        new GsaProperty2dGoo(new GsaProperty2d(new Length(200, LengthUnit.Millimeter))), 5);
-      ComponentTestHelper.SetInput(comp, 1, 6);
-      ComponentTestHelper.SetInput(comp, "Ribbed Slab", 7);
-      ComponentTestHelper.SetInput(comp, "Rigid Diaphragm", 8);
-      ComponentTestHelper.SetInput(comp, new GsaOffsetGoo(new GsaOffset(1, 2, 3, 4)), 9);
-      ComponentTestHelper.SetInput(comp, true, 10);
-      ComponentTestHelper.SetInput(comp, 0.7, 11);
-      ComponentTestHelper.SetInput(comp, false, 12); // is intersector
-      ComponentTestHelper.SetInput(comp, 3, 13); // tri mode
-      ComponentTestHelper.SetInput(comp, "name", 15);
-      ComponentTestHelper.SetInput(comp, new GH_Colour(Color.White), 16);
-      ComponentTestHelper.SetInput(comp, true, 17);
+    public void ComponentReturnPlateTypeForMember() {
+      GsaMember2d output = _helper.GetMemberOutput();
+      Assert.Equal(Property2D_Type.PLATE, output.Prop2d.ApiProp2d.Type);
+    }
 
-      var output0 = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp, 0);
-      var output1 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 1);
-      var output2 = (GH_Brep)ComponentTestHelper.GetOutput(comp, 2);
-      var output5 = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp, 5);
-      var output6 = (GH_Integer)ComponentTestHelper.GetOutput(comp, 6);
-      var output7 = (GH_String)ComponentTestHelper.GetOutput(comp, 7);
-      var output8 = (GH_String)ComponentTestHelper.GetOutput(comp, 8);
-      var output9 = (GsaOffsetGoo)ComponentTestHelper.GetOutput(comp, 9);
-      var output10 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 10);
-      var output11 = (GH_Number)ComponentTestHelper.GetOutput(comp, 11);
-      var output12 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 12);
-      var output13 = (GH_String)ComponentTestHelper.GetOutput(comp, 13);
-      var output14 = (GH_Number)ComponentTestHelper.GetOutput(comp, 14);
-      var output15 = (GH_String)ComponentTestHelper.GetOutput(comp, 15);
-      var output16 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 16);
-      var output17 = (GH_Boolean)ComponentTestHelper.GetOutput(comp, 17);
-      var output18 = (GH_String)ComponentTestHelper.GetOutput(comp, 18);
+    [Fact]
+    public void ComponentReturnValidMemberThickness() {
+      GsaMember2d output = _helper.GetMemberOutput();
+      Assert.Equal(new Length(14, LengthUnit.Inch), output.Prop2d.Thickness);
+    }
 
-      Assert.Equal(16, output0.Value.Brep.GetArea());
-      Assert.Equal(Property2D_Type.SHELL, output0.Value.Prop2d.ApiProp2d.Type);
-      Assert.Equal(new Length(200, LengthUnit.Millimeter), output0.Value.Prop2d.Thickness);
-      Assert.Equal(0.7, output0.Value.ApiMember.MeshSize);
-      Assert.Equal(7, output1.Value);
-      Assert.Equal(16, output2.Value.GetArea());
-      Assert.Equal(Property2D_Type.SHELL, output5.Value.ApiProp2d.Type);
-      Assert.Equal(new Length(200, LengthUnit.Millimeter), output5.Value.Thickness);
-      Assert.Equal(1, output6.Value);
-      Assert.Equal("Ribbed Slab", output7.Value);
-      Assert.Equal("Rigid Diaphragm", output8.Value);
-      Assert.Equal(1, output9.Value.X1.Value);
-      Assert.Equal(2, output9.Value.X2.Value);
-      Assert.Equal(3, output9.Value.Y.Value);
-      Assert.Equal(4, output9.Value.Z.Value);
-      Assert.True(output10.Value);
-      Assert.Equal(0.7, output11.Value);
-      Assert.False(output12.Value);
-      Assert.Equal("Tri", output13.Value);
-      Assert.Equal("name", output15.Value);
-      Assert.Equal(255, output16.Value.R);
-      Assert.Equal(255, output16.Value.G);
-      Assert.Equal(255, output16.Value.B);
-      Assert.True(output17.Value);
-      Assert.Equal("", output18.Value);
+    [Fact]
+    public void ComponentReturnValidMemberMeshSize() {
+      GsaMember2d output = _helper.GetMemberOutput();
+      Assert.Equal(0.5, output.ApiMember.MeshSize);
+    }
+
+    [Fact]
+    public void ComponentReturnDefaultMemberGroupValue() {
+      GsaMember2d output = _helper.GetMemberOutput();
+      Assert.Equal(1, output.ApiMember.Group);
+    }
+
+    [Fact]
+    public void ComponentReturnValidId() {
+      int output = _helper.GetIdOutput();
+      Assert.Equal(0, output);
+    }
+
+    [Fact]
+    public void ComponentReturnValidBrepArea() {
+      Brep output = _helper.GetBrepOutput();
+      Assert.Equal(100, output.GetArea());
+    }
+
+    [Fact]
+    public void ComponentReturnProperty2dPlateType() {
+      GsaProperty2d output = _helper.Get2dPropertyOutput();
+      Assert.Equal(Property2D_Type.PLATE, output.ApiProp2d.Type);
+    }
+
+    [Fact]
+    public void ComponentReturnValidProperty2dThickness() {
+      GsaProperty2d output = _helper.Get2dPropertyOutput();
+      Assert.Equal(new Length(14, LengthUnit.Inch), output.Thickness);
+    }
+
+    [Fact]
+    public void ComponentReturnValidDefaultMemberGroupValue() {
+      int output = _helper.GetGroupOutput();
+      Assert.Equal(1, output);
+    }
+
+    [Fact]
+    public void ComponentReturnValidDefaultElementType() {
+      string output = _helper.Get2dElementTypeOutput();
+      Assert.Equal("Generic 2D", output);
+    }
+
+    [Fact]
+    public void ComponentReturnValidDefaultMemberType() {
+      string output = _helper.GetMemberTypeOutput();
+      Assert.Equal("Linear", output);
+    }
+
+    [Fact]
+    public void ComponentReturnValidOffsetX1Value() {
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(0, output.X1.Value, 6);
+    }
+
+    [Fact]
+    public void ComponentReturnValidOffsetX2Value() {
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(0, output.X2.Value, 6);
+    }
+
+    [Fact]
+    public void ComponentReturnValidOffsetYValue() {
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(0, output.Y.Value, 6);
+    }
+
+    [Fact]
+    public void ComponentReturnValidOffsetZValue() {
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(0, output.Z.Value, 6);
+    }
+
+    [Fact]
+    public void ComponentReturnValidInternalOffset() {
+      bool output = _helper.GetInternalOffsetOutput();
+      Assert.True(output);
+    }
+
+    [Fact]
+    public void ComponentReturnValidMeshSize() {
+      double output = _helper.GetMeshSizeOutput();
+      Assert.Equal(0.5, output, 6);
+    }
+
+    [Fact]
+    public void ComponentReturnValidIntersectorValue() {
+      bool output = _helper.GetIntersectorOutput();
+      Assert.True(output);
+    }
+
+    [Fact]
+    public void ComponentReturnValidMeshMode() {
+      string output = _helper.GetMeshModeOutput();
+      Assert.Equal("Mixed", output);
+    }
+
+    [Fact]
+    public void ComponentReturnValidAngle() {
+      double output = _helper.GetAngleOutput();
+      Assert.Equal(0.0, output, 6);
+    }
+
+    [Fact]
+    public void ComponentReturnValidName() {
+      string output = _helper.GetNameOutput();
+      Assert.Empty(output);
+    }
+
+    [Fact]
+    public void ComponentReturnValidColor() {
+      Color output = _helper.GetColorOutput();
+      Assert.Equal("ff000000", output.Name);
+    }
+
+    [Fact]
+    public void ComponentReturnValidDummyValue() {
+      bool output = _helper.GetDummyOutput();
+      Assert.False(output);
+    }
+
+    [Fact]
+    public void ComponentReturnValidTopology() {
+      string output = _helper.GetTopologyOutput();
+      Assert.Empty(output);
+    }
+  }
+
+  [Collection("GrasshopperFixture collection")]
+  public class EditMember2dTests_ForInputsSet {
+    private readonly EditMember2dTestsHelper _helper;
+
+    public EditMember2dTests_ForInputsSet() {
+      _helper = new EditMember2dTestsHelper();
+      _helper.SetIdInput(7);
+      _helper.SetBrepInput(Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(4, 0, 0), new Point3d(4, 4, 0),
+        new Point3d(0, 4, 0), 1));
+      _helper.SetPropertyInput(new GsaProperty2dGoo(new GsaProperty2d(new Length(200, LengthUnit.Millimeter))));
+      _helper.SetGroupInput(1);
+      _helper.Set2dElementTypeInput("Ribbed Slab");
+      _helper.Set2dMemberTypeInput("Rigid Diaphragm");
+      _helper.SetOffsetInput(new GsaOffsetGoo(new GsaOffset(1, 2, 3, 4)));
+      _helper.SetInternalOffsetInput(true);
+      _helper.SetMeshSizeInput(0.7);
+      _helper.SetIntersectorInput(false);
+      _helper.SetMeshModeInput(3);
+      _helper.SetNameInput("name");
+      _helper.SetColorInput(new GH_Colour(Color.White));
+      _helper.SetDummyInput(true);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidMemberBrepAreaValue() {
+      GsaMember2d output = _helper.GetMemberOutput();
+      Assert.Equal(16, output.Brep.GetArea());
+    }
+
+    [Fact]
+    public void EditMemberReturnShellTypeForMember() {
+      GsaMember2d output = _helper.GetMemberOutput();
+      Assert.Equal(Property2D_Type.SHELL, output.Prop2d.ApiProp2d.Type);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidMemberThickness() {
+      GsaMember2d output = _helper.GetMemberOutput();
+      Assert.Equal(new Length(200, LengthUnit.Millimeter), output.Prop2d.Thickness);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidMemberMeshSize() {
+      GsaMember2d output = _helper.GetMemberOutput();
+      Assert.Equal(0.7, output.ApiMember.MeshSize);
+    }
+
+    [Fact]
+    public void EditMemberReturnDefaultMemberGroupValue() {
+      GsaMember2d output = _helper.GetMemberOutput();
+      Assert.Equal(1, output.ApiMember.Group);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidId() {
+      int output = _helper.GetIdOutput();
+      Assert.Equal(7, output);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidBrepArea() {
+      Brep output = _helper.GetBrepOutput();
+      Assert.Equal(16, output.GetArea());
+    }
+
+    [Fact]
+    public void EditMemberReturnProperty2dShellType() {
+      GsaProperty2d output = _helper.Get2dPropertyOutput();
+      Assert.Equal(Property2D_Type.SHELL, output.ApiProp2d.Type);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidProperty2dThickness() {
+      GsaProperty2d output = _helper.Get2dPropertyOutput();
+      Assert.Equal(new Length(200, LengthUnit.Millimeter), output.Thickness);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidDefaultMemberGroupValue() {
+      int output = _helper.GetGroupOutput();
+      Assert.Equal(1, output);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidDefaultElementType() {
+      string output = _helper.Get2dElementTypeOutput();
+      Assert.Equal("Ribbed Slab", output);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidDefaultMemberType() {
+      string output = _helper.GetMemberTypeOutput();
+      Assert.Equal("Rigid Diaphragm", output);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidOffsetX1Value() {
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(1, output.X1.Value, 6);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidOffsetX2Value() {
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(2, output.X2.Value, 6);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidOffsetYValue() {
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(3, output.Y.Value, 6);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidOffsetZValue() {
+      GsaOffset output = _helper.GetOffsetOutput();
+      Assert.Equal(4, output.Z.Value, 6);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidInternalOffset() {
+      bool output = _helper.GetInternalOffsetOutput();
+      Assert.True(output);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidMeshSize() {
+      double output = _helper.GetMeshSizeOutput();
+      Assert.Equal(0.7, output, 6);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidIntersectorValue() {
+      bool output = _helper.GetIntersectorOutput();
+      Assert.False(output);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidMeshMode() {
+      string output = _helper.GetMeshModeOutput();
+      Assert.Equal("Tri", output);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidAngle() {
+      double output = _helper.GetAngleOutput();
+      Assert.Equal(0.0, output, 6);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidName() {
+      string output = _helper.GetNameOutput();
+      Assert.Equal("name", output);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidColor() {
+      Color output = _helper.GetColorOutput();
+      Assert.Equal("ffffffff", output.Name);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidDummyValue() {
+      bool output = _helper.GetDummyOutput();
+      Assert.True(output);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidTopology() {
+      string output = _helper.GetTopologyOutput();
+      Assert.Empty(output);
+    }
+  }
+
+  [Collection("GrasshopperFixture collection")]
+  public class EditMember2dTests_InclusionMembers {
+    private EditMember2dTestsHelper _helper;
+
+    public EditMember2dTests_InclusionMembers() {
+      _helper = new EditMember2dTestsHelper();
+      _helper.SetBrepInput(Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(4, 0, 0), new Point3d(4, 4, 0),
+        new Point3d(0, 4, 0), 1));
+      _helper.SetInclusionPointsInput(new Point3d(2, 2, 0));
+      _helper.SetInclusionCurvesInput(new Line(new Point3d(3, 0, 0), new Point3d(3, 3, 0)));
+    }
+
+    [Fact]
+    public void EditMemberReturnOneElementInInclusionPointsList() {
+      GsaMember2d output = _helper.GetMemberOutput();
+      Assert.Single(output.InclusionPoints);
+    }
+
+    [Fact]
+    public void EditMemberReturnOneElementInInclusionLineList() {
+      GsaMember2d output = _helper.GetMemberOutput();
+      Assert.Single(output.InclusionLines);
+    }
+
+    [Fact]
+    public void EditMemberReturnDefaultGroupValue() {
+      GsaMember2d output = _helper.GetMemberOutput();
+      Assert.Equal(1, output.ApiMember.Group);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidInclusionPointXValue() {
+      Point3d output = _helper.GetInclusionPointsOutput();
+      Assert.Equal(2, output.X);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidInclusionPointYValue() {
+      Point3d output = _helper.GetInclusionPointsOutput();
+      Assert.Equal(2, output.Y);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidInclusionPointZValue() {
+      Point3d output = _helper.GetInclusionPointsOutput();
+      Assert.Equal(0, output.Z);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidInclusionLinePointAtStartXValue() {
+      Curve output = _helper.GetInclusionCurveOutput();
+      Assert.Equal(3, output.PointAtStart.X);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidInclusionLinePointAtStartYValue() {
+      Curve output = _helper.GetInclusionCurveOutput();
+      Assert.Equal(0, output.PointAtStart.Y);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidInclusionLinePointAtStartZValue() {
+      Curve output = _helper.GetInclusionCurveOutput();
+      Assert.Equal(0, output.PointAtStart.Z);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidInclusionLinePointAtEndXValue() {
+      Curve output = _helper.GetInclusionCurveOutput();
+      Assert.Equal(3, output.PointAtEnd.X);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidInclusionLinePointAtEndYValue() {
+      Curve output = _helper.GetInclusionCurveOutput();
+      Assert.Equal(3, output.PointAtEnd.Y);
+    }
+
+    [Fact]
+    public void EditMemberReturnValidInclusionLinePointAtEndZValue() {
+      Curve output = _helper.GetInclusionCurveOutput();
+      Assert.Equal(0, output.PointAtEnd.Z);
+    }
+  }
+
+  [Collection("GrasshopperFixture collection")]
+  public class EditMember2dTests_Extras {
+    private EditMember2dTestsHelper _helper;
+
+    public EditMember2dTests_Extras() {
+      _helper = new EditMember2dTestsHelper();
     }
 
     [Theory]
     [InlineData(1, "Mixed")]
     [InlineData(3, "Tri")]
     [InlineData(4, "Quad")]
-    public void SetMeshModeTest(int mode, string expected) {
-      GH_OasysComponent comp = ComponentMother();
-
-      ComponentTestHelper.SetInput(comp, mode, 13);
-      var output13 = (GH_String)ComponentTestHelper.GetOutput(comp, 13);
-      Assert.Equal(expected, output13.Value);
-    }
-
-    [Fact]
-    public void CreateComponentTest3() {
-      GH_OasysComponent comp = ComponentMother();
-      ComponentTestHelper.SetInput(comp,
-        Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(4, 0, 0),
-          new Point3d(4, 4, 0), new Point3d(0, 4, 0), 1), 2);
-      ComponentTestHelper.SetInput(comp, new Point3d(2, 2, 0), 3);
-      ComponentTestHelper.SetInput(comp, new Line(new Point3d(3, 0, 0), new Point3d(3, 3, 0)), 4);
-
-      var output0 = (GsaMember2dGoo)ComponentTestHelper.GetOutput(comp, 0);
-      var output3 = (GH_Point)ComponentTestHelper.GetOutput(comp, 3);
-      var output4 = (GH_Curve)ComponentTestHelper.GetOutput(comp, 4);
-
-      Assert.Single(output0.Value.InclusionPoints);
-      Assert.Single(output0.Value.InclusionLines);
-      Assert.Equal(2, output3.Value.X);
-      Assert.Equal(2, output3.Value.Y);
-      Assert.Equal(0, output3.Value.Z);
-      Assert.Equal(3, output4.Value.PointAtStart.X);
-      Assert.Equal(0, output4.Value.PointAtStart.Y);
-      Assert.Equal(0, output4.Value.PointAtStart.Z);
-      Assert.Equal(3, output4.Value.PointAtEnd.X);
-      Assert.Equal(3, output4.Value.PointAtEnd.Y);
-      Assert.Equal(0, output4.Value.PointAtEnd.Z);
+    public void EditMember2sReturnValidMeshModeWhenInputSet(int mode, string expected) {
+      _helper.SetMeshModeInput(mode);
+      string output = _helper.GetMeshModeOutput();
+      Assert.Equal(expected, output);
     }
 
     [Theory]
-    [InlineData((int)GsaAPI.AnalysisOrder.LINEAR)]
-    [InlineData((int)GsaAPI.AnalysisOrder.QUADRATIC)]
-    [InlineData((int)GsaAPI.AnalysisOrder.RIGID_DIAPHRAGM)]
-    [InlineData((int)GsaAPI.AnalysisOrder.LOAD_PANEL)]
+    [InlineData((int)AnalysisOrder.LINEAR)]
+    [InlineData((int)AnalysisOrder.QUADRATIC)]
+    [InlineData((int)AnalysisOrder.RIGID_DIAPHRAGM)]
+    [InlineData((int)AnalysisOrder.LOAD_PANEL)]
     public void CheckAnaysisOrderIsWorkingAsExpected(int analysisOrder) {
-      GH_OasysComponent comp = ComponentMother();
+      _helper.Set2dMemberTypeInput(analysisOrder);
+      string output = _helper.GetMemberTypeOutput();
+      Assert.Equal((AnalysisOrder)analysisOrder, Mappings.GetAnalysisOrder(output));
+    }
+  }
 
-      ComponentTestHelper.SetInput(comp, analysisOrder, 8);
-      var output8 = (GH_String)ComponentTestHelper.GetOutput(comp, 8);
-      Assert.Equal((GsaAPI.AnalysisOrder)analysisOrder, Mappings.GetAnalysisOrder(output8.Value));
+  public class EditMember2dTestsHelper {
+    private readonly GH_OasysComponent _component;
+
+    public EditMember2dTestsHelper() {
+      _component = ComponentMother();
+    }
+
+    private GH_OasysComponent ComponentMother() {
+      var comp = new Edit2dMember();
+      comp.CreateAttributes();
+
+      ComponentTestHelper.SetInput(comp, ComponentTestHelper.GetOutput(CreateMember2dTests.ComponentMother()), 0);
+
+      return comp;
+    }
+
+    public GH_OasysComponent GetComponent() {
+      return _component;
+    }
+
+    public GsaMember2d GetMemberOutput() {
+      return ComponentTestHelper.GetMember2dOutput(_component, 0);
+    }
+
+    public int GetIdOutput() {
+      return ComponentTestHelper.GetIntOutput(_component, 1);
+    }
+
+    public Brep GetBrepOutput() {
+      return ComponentTestHelper.GetBrepOutput(_component, 2);
+    }
+
+    public Point3d GetInclusionPointsOutput() {
+      return ComponentTestHelper.GetPointOutput(_component, 3);
+    }
+
+    public Curve GetInclusionCurveOutput() {
+      return ComponentTestHelper.GetCurveOutput(_component, 4);
+    }
+
+    public GsaProperty2d Get2dPropertyOutput() {
+      return ComponentTestHelper.Get2dPropertyOutput(_component, 5);
+    }
+
+    public int GetGroupOutput() {
+      return ComponentTestHelper.GetIntOutput(_component, 6);
+    }
+
+    public string Get2dElementTypeOutput() {
+      return ComponentTestHelper.GetStringOutput(_component, 7);
+    }
+
+    public string GetMemberTypeOutput() {
+      return ComponentTestHelper.GetStringOutput(_component, 8);
+    }
+
+    public GsaOffset GetOffsetOutput() {
+      return ComponentTestHelper.GetOffsetOutput(_component, 9);
+    }
+
+    public bool GetInternalOffsetOutput() {
+      return ComponentTestHelper.GetBoolOutput(_component, 10);
+    }
+
+    public double GetMeshSizeOutput() {
+      return ComponentTestHelper.GetNumberOutput(_component, 11);
+    }
+
+    public bool GetIntersectorOutput() {
+      return ComponentTestHelper.GetBoolOutput(_component, 12);
+    }
+
+    public string GetMeshModeOutput() {
+      return ComponentTestHelper.GetStringOutput(_component, 13);
+    }
+
+    public double GetAngleOutput() {
+      return ComponentTestHelper.GetNumberOutput(_component, 14);
+    }
+
+    public string GetNameOutput() {
+      return ComponentTestHelper.GetStringOutput(_component, 15);
+    }
+
+    public Color GetColorOutput() {
+      return ComponentTestHelper.GetColorOutput(_component, 16);
+    }
+
+    public bool GetDummyOutput() {
+      return ComponentTestHelper.GetBoolOutput(_component, 17);
+    }
+
+    public string GetTopologyOutput() {
+      return ComponentTestHelper.GetStringOutput(_component, 18);
+    }
+
+    public void SetIdInput(int input) {
+      ComponentTestHelper.SetInput(_component, input, 1);
+    }
+
+    public void SetBrepInput(Brep input) {
+      ComponentTestHelper.SetInput(_component, input, 2);
+    }
+
+    public void SetInclusionPointsInput(Point3d input) {
+      ComponentTestHelper.SetInput(_component, input, 3);
+    }
+
+    public void SetInclusionCurvesInput(Line input) {
+      ComponentTestHelper.SetInput(_component, input, 4);
+    }
+
+    public void SetPropertyInput(GsaProperty2dGoo input) {
+      ComponentTestHelper.SetInput(_component, input, 5);
+    }
+
+    public void SetGroupInput(int input) {
+      ComponentTestHelper.SetInput(_component, input, 6);
+    }
+
+    public void Set2dElementTypeInput(string input) {
+      ComponentTestHelper.SetInput(_component, input, 7);
+    }
+
+    public void Set2dMemberTypeInput(string input) {
+      ComponentTestHelper.SetInput(_component, input, 8);
+    }
+
+    public void Set2dMemberTypeInput(int input) {
+      ComponentTestHelper.SetInput(_component, input, 8);
+    }
+
+    public void SetOffsetInput(GsaOffsetGoo input) {
+      ComponentTestHelper.SetInput(_component, input, 9);
+    }
+
+    public void SetInternalOffsetInput(bool input) {
+      ComponentTestHelper.SetInput(_component, input, 10);
+    }
+
+    public void SetMeshSizeInput(double input) {
+      ComponentTestHelper.SetInput(_component, input, 11);
+    }
+
+    public void SetIntersectorInput(bool input) {
+      ComponentTestHelper.SetInput(_component, input, 12);
+    }
+
+    public void SetMeshModeInput(int input) {
+      ComponentTestHelper.SetInput(_component, input, 13);
+    }
+
+    public void SetNameInput(string input) {
+      ComponentTestHelper.SetInput(_component, input, 15);
+    }
+
+    public void SetColorInput(GH_Colour input) {
+      ComponentTestHelper.SetInput(_component, input, 16);
+    }
+
+    public void SetDummyInput(bool input) {
+      ComponentTestHelper.SetInput(_component, input, 17);
     }
   }
 }
