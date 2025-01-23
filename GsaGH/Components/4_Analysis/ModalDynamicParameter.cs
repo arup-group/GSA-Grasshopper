@@ -16,7 +16,6 @@ using GsaGH.Parameters.Enums;
 
 using System.Linq;
 using Grasshopper.Kernel.Parameters;
-using System.Runtime.InteropServices;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -73,6 +72,22 @@ namespace GsaGH.Components {
       if (da.GetData(0, ref analysisTaskGoo)) {
         if (analysisTaskGoo.Value.ApiTask != null) {
           taskParameter = new GsaModalDynamicAnalysis(analysisTaskGoo.Value.ApiTask);
+          if (_modeMethod != taskParameter.Method()) {
+            switch (taskParameter.Method()) {
+              case ModeCalculationMethod.NumberOfMode:
+                SetSelected(0, 0);
+                break;
+              case ModeCalculationMethod.FrquencyRange:
+                SetSelected(0, 1);
+                break;
+              case ModeCalculationMethod.TargetMassRatio:
+                SetSelected(0, 2);
+                break;
+              default:
+                break;
+            }
+            ExpireSolution(true);
+          }
         }
       }
       int positionIndex = 0;
@@ -91,7 +106,7 @@ namespace GsaGH.Components {
           double? highFrequency = frequencyOption.HigherFrequency;
           da.GetData(++positionIndex, ref highFrequency);
           maxMode = frequencyOption.MaximumNumberOfModes;
-          da.GetData(++positionIndex, ref highFrequency);
+          da.GetData(++positionIndex, ref maxMode);
           taskParameter.ModeCalculationStrategy = new ModeCalculationStrategyByFrequency(lowFrequency, highFrequency, maxMode);
           break;
         case ModeCalculationMethod.TargetMassRatio:
@@ -104,7 +119,9 @@ namespace GsaGH.Components {
           da.GetData(++positionIndex, ref targetMassInZDirection);
           maxMode = targetMassOption.MaximumNumberOfModes;
           da.GetData(++positionIndex, ref maxMode);
-          taskParameter.ModeCalculationStrategy = new ModeCalculationStrategyByMassParticipation(targetMassInXDirection, targetMassInYDirection, targetMassInZDirection, maxMode, true);
+          bool masil = targetMassOption.SkipModesWithLowMassParticipation;
+          da.GetData(++positionIndex, ref masil);
+          taskParameter.ModeCalculationStrategy = new ModeCalculationStrategyByMassParticipation(targetMassInXDirection, targetMassInYDirection, targetMassInZDirection, maxMode, masil);
           break;
         default:
           break;
@@ -120,7 +137,7 @@ namespace GsaGH.Components {
       taskParameter.MassOption = new MassOption(GetMassOption(_selectedItems[1]), massScaleFactor);
 
       double? dampingStiffness = taskParameter.ModalDamping.StiffnessProportion;
-      da.GetData(++positionIndex, ref dampingStiffness);
+      da.GetData(positionIndex + 1, ref dampingStiffness);
       taskParameter.ModalDamping = new ModalDamping(dampingStiffness);
 
       da.SetData(0, new GsaModalDynamicAnalysisGoo(taskParameter));
@@ -136,31 +153,31 @@ namespace GsaGH.Components {
       base.UpdateUI();
     }
 
-    private ModeCalculationMethod GetModeStrategy(string name) {
-      foreach (KeyValuePair<ModeCalculationMethod, string> item in _modeCalculationMethod) {
-        if (item.Value.Equals(name)) {
-          return item.Key;
-        }
+    private static ModeCalculationMethod GetModeStrategy(string name) {
+      IEnumerable<ModeCalculationMethod> items = _modeCalculationMethod.Where(x => x.Value.Equals(name)).Select(x => x.Key);
+      if (items.Any()) {
+        return items.First();
+      } else {
+        throw new ArgumentException("Unable to convert " + name + " to mode calculation strategy");
       }
-      throw new ArgumentException("Unable to convert " + name + " to mode calculation strategy");
     }
 
-    private Direction GetDirection(string name) {
-      foreach (KeyValuePair<Direction, string> item in _massDirection) {
-        if (item.Value.Equals(name)) {
-          return item.Key;
-        }
+    private static Direction GetDirection(string name) {
+      IEnumerable<Direction> items = _massDirection.Where(x => x.Value.Equals(name)).Select(x => x.Key);
+      if (items.Any()) {
+        return items.First();
+      } else {
+        throw new ArgumentException("Unable to convert " + name + " to direction");
       }
-      throw new ArgumentException("Unable to convert " + name + " to mode calculation strategy");
     }
 
-    private ModalMassOption GetMassOption(string name) {
-      foreach (KeyValuePair<ModalMassOption, string> item in _massOptions) {
-        if (item.Value.Equals(name)) {
-          return item.Key;
-        }
+    private static ModalMassOption GetMassOption(string name) {
+      IEnumerable<ModalMassOption> items = _massOptions.Where(x => x.Value.Equals(name)).Select(x => x.Key);
+      if (items.Any()) {
+        return items.First();
+      } else {
+        throw new ArgumentException("Unable to convert " + name + " to mass option");
       }
-      throw new ArgumentException("Unable to convert " + name + " to mode calculation strategy");
     }
 
     private void UpdateParameters(ModeCalculationMethod modeMethod) {
@@ -203,12 +220,12 @@ namespace GsaGH.Components {
         CreateParameter.Create(Params, new Param_Number(), ++index, "Y-direction mass participation", "Y", "Set y-direction mass participation", GH_ParamAccess.item);
         CreateParameter.Create(Params, new Param_Number(), ++index, "Z-direction mass participation", "Z", "Set z-direction mass participation", GH_ParamAccess.item);
         CreateParameter.Create(Params, new Param_Integer(), ++index, "Limiting modes", "LM", "Set limiting maximum number of mode", GH_ParamAccess.item);
-        CreateParameter.Create(Params, new Param_Boolean(), ++index, "Skip modes with low mass participation", "SM", "Set the value to true to use the Masil algorithm", GH_ParamAccess.item);
+        CreateParameter.Create(Params, new Param_Boolean(), ++index, "Skip modes with low mass participation", "MASIL", "Set the value to true to use the Masil algorithm", GH_ParamAccess.item);
       }
       CreateParameter.Create(Params, new Param_String(), ++index, "Load case ", "LC", "Additional mass load case", GH_ParamAccess.item);
       CreateParameter.Create(Params, new Param_Number(), ++index, "Load scale factor", "LSF", "Set load scale factor", GH_ParamAccess.item);
       CreateParameter.Create(Params, new Param_Number(), ++index, "Mass scale factor", "MSF", "Set mass scale factor", GH_ParamAccess.item);
-      CreateParameter.Create(Params, new Param_Number(), ++index, "Damping stiffness proportion", "DSP", "Set model damping stiffness proportion", GH_ParamAccess.item);
+      CreateParameter.Create(Params, new Param_Number(), index + 1, "Damping stiffness proportion", "DSP", "Set model damping stiffness proportion", GH_ParamAccess.item);
 
     }
 
@@ -217,7 +234,7 @@ namespace GsaGH.Components {
       _spacerDescriptions = new List<string>(new[] {
         "Mode Strategy",
         "Mass Option",
-         "Mass Direction"
+         "Mass Direction",
       });
 
       _dropDownItems = new List<List<string>>();

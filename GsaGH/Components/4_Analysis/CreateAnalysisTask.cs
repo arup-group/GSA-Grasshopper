@@ -269,13 +269,18 @@ namespace GsaGH.Components {
               }
             }
           }
-          if (cases == null) {
-            this.AddRuntimeRemark("Default Task has been created; it will by default contain all cases found in model");
-            return false;
-          }
+          break;
+        case AnalysisTaskType.Footfall:
+          cases = new List<GsaAnalysisCase> {
+          new GsaAnalysisCase("", "Footfall")
+        };
           break;
         default:
           break;
+      }
+      if (cases == null) {
+        this.AddRuntimeRemark("Default Task has been created; it will by default contain all cases found in model");
+        return false;
       }
       return true;
     }

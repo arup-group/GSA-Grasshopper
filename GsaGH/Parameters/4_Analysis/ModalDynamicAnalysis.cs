@@ -72,8 +72,21 @@ namespace GsaGH.Parameters {
       MassOption = other.MassOption;
     }
 
+    public ModeCalculationMethod Method() {
+
+      if (ModeCalculationStrategy is ModeCalculationStrategyByNumberOfModes) {
+        return ModeCalculationMethod.NumberOfMode;
+      }
+
+      if (ModeCalculationStrategy is ModeCalculationStrategyByFrequency) {
+        return ModeCalculationMethod.FrquencyRange;
+      }
+
+      return ModeCalculationMethod.TargetMassRatio;
+    }
+
     public override string ToString() {
-      return "";
+      return Method().ToString();
     }
 
   }
