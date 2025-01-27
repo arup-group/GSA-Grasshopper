@@ -13,8 +13,6 @@ using GsaGHTests.Helpers;
 
 using OasysGH.Components;
 
-using Rhino.Geometry;
-
 using Xunit;
 
 namespace GsaGHTests.Components.Analysis {
@@ -22,7 +20,7 @@ namespace GsaGHTests.Components.Analysis {
   public class ModalDynamicParameterByNumberOfModesTests {
     private GH_OasysComponent _component;
     private ModeCalculationStrategyByNumberOfModes _modeCalculationStrategy;
-    private GsaModalDynamicAnalysis _modalDynamicAnalysis;
+    private GsaModalDynamic _modalDynamicAnalysis;
     public ModalDynamicParameterByNumberOfModesTests(ModalMassOption massOption = ModalMassOption.NodalMass, Direction direction = Direction.X) {
       PrepareComponent(massOption, direction);
     }
@@ -30,13 +28,13 @@ namespace GsaGHTests.Components.Analysis {
 
     private void PrepareComponent(ModalMassOption massOption, Direction direction) {
       _component = ComponentMother(massOption, direction);
-      var _modalDynamicAnalysisGoo = (GsaModalDynamicAnalysisGoo)ComponentTestHelper.GetOutput(_component);
+      var _modalDynamicAnalysisGoo = (GsaModalDynamicGoo)ComponentTestHelper.GetOutput(_component);
       _modalDynamicAnalysis = _modalDynamicAnalysisGoo.Value;
       _modeCalculationStrategy = _modalDynamicAnalysis.ModeCalculationStrategy as ModeCalculationStrategyByNumberOfModes;
     }
 
     public static GH_OasysComponent ComponentMother(ModalMassOption massOption, Direction direction) {
-      var comp = new CreateModalDynamicAnalysisParameter();
+      var comp = new CreateModalDynamicParameter();
       comp.CreateAttributes();
       comp.SetSelected(0, 0);
       ComponentTestHelper.SetInput(comp, 5, 1);
@@ -140,7 +138,7 @@ namespace GsaGHTests.Components.Analysis {
   public class ModalDynamicParameterByFrquencyRangeTest {
     private GH_OasysComponent _component;
     private ModeCalculationStrategyByFrequency _modeCalculationStrategy;
-    private GsaModalDynamicAnalysis _modalDynamicAnalysis;
+    private GsaModalDynamic _modalDynamicAnalysis;
     public ModalDynamicParameterByFrquencyRangeTest(ModalMassOption massOption = ModalMassOption.NodalMass, Direction direction = Direction.X) {
       PrepareComponent(massOption, direction);
     }
@@ -148,13 +146,13 @@ namespace GsaGHTests.Components.Analysis {
 
     private void PrepareComponent(ModalMassOption massOption, Direction direction) {
       _component = ComponentMother(massOption, direction);
-      var _modalDynamicAnalysisGoo = (GsaModalDynamicAnalysisGoo)ComponentTestHelper.GetOutput(_component);
+      var _modalDynamicAnalysisGoo = (GsaModalDynamicGoo)ComponentTestHelper.GetOutput(_component);
       _modalDynamicAnalysis = _modalDynamicAnalysisGoo.Value;
       _modeCalculationStrategy = _modalDynamicAnalysis.ModeCalculationStrategy as ModeCalculationStrategyByFrequency;
     }
 
     public static GH_OasysComponent ComponentMother(ModalMassOption massOption, Direction direction) {
-      var comp = new CreateModalDynamicAnalysisParameter();
+      var comp = new CreateModalDynamicParameter();
       comp.CreateAttributes();
       comp.SetSelected(0, 1);
       ComponentTestHelper.SetInput(comp, 5, 1);
@@ -270,7 +268,7 @@ namespace GsaGHTests.Components.Analysis {
   public class ModalDynamicParameterByTargetMassParticipationTest {
     private GH_OasysComponent _component;
     private ModeCalculationStrategyByMassParticipation _modeCalculationStrategy;
-    private GsaModalDynamicAnalysis _modalDynamicAnalysis;
+    private GsaModalDynamic _modalDynamicAnalysis;
     public ModalDynamicParameterByTargetMassParticipationTest(ModalMassOption massOption = ModalMassOption.NodalMass, Direction direction = Direction.X) {
       PrepareComponent(massOption, direction);
     }
@@ -278,13 +276,13 @@ namespace GsaGHTests.Components.Analysis {
 
     private void PrepareComponent(ModalMassOption massOption, Direction direction) {
       _component = ComponentMother(massOption, direction);
-      var _modalDynamicAnalysisGoo = (GsaModalDynamicAnalysisGoo)ComponentTestHelper.GetOutput(_component);
+      var _modalDynamicAnalysisGoo = (GsaModalDynamicGoo)ComponentTestHelper.GetOutput(_component);
       _modalDynamicAnalysis = _modalDynamicAnalysisGoo.Value;
       _modeCalculationStrategy = _modalDynamicAnalysis.ModeCalculationStrategy as ModeCalculationStrategyByMassParticipation;
     }
 
     public static GH_OasysComponent ComponentMother(ModalMassOption massOption, Direction direction) {
-      var comp = new CreateModalDynamicAnalysisParameter();
+      var comp = new CreateModalDynamicParameter();
       comp.CreateAttributes();
       comp.SetSelected(0, 2);
       ComponentTestHelper.SetInput(comp, 90, 1);

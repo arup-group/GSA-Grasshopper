@@ -103,10 +103,11 @@ namespace GsaGHTests.Components.Analysis {
 
     [Fact]
     public void ShouldAddRemarkForMissingAnalysisCase() {
-      SetToStatic();
-      _ = ComputeAndGetOutput();
-      Assert.True(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark).Count > 0);
-      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      CreateAnalysisTask component = CreateAnalysisTaskComponent(false);
+      component.SetSelected(0, 0);
+      ComponentTestHelper.ComputeOutput(component);
+      Assert.True(component.RuntimeMessages(GH_RuntimeMessageLevel.Remark).Count > 0);
+      Assert.Single(component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
     [Theory]

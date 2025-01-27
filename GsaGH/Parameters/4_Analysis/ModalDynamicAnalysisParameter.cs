@@ -14,29 +14,29 @@ using OasysGH.Units;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   This class provides a parameter interface for the <see cref="GsaModalDynamicAnalysisGoo" /> type.
+  ///   This class provides a parameter interface for the <see cref="GsaModalDynamicGoo" /> type.
   /// </summary>
-  public class GsaModalDynamicAnalysisParameter : GH_OasysPersistentParam<GsaModalDynamicAnalysisGoo> {
+  public class GsaModalDynamicParameter : GH_OasysPersistentParam<GsaModalDynamicGoo> {
     public override Guid ComponentGuid => new Guid("6b99a192-bdbd-41bf-8efa-1bc146d3d224");
     public override GH_Exposure Exposure => GH_Exposure.quinary | GH_Exposure.obscure;
-    public override string InstanceDescription => GsaModalDynamicAnalysisGoo.Name;
-    public override string TypeName => GsaModalDynamicAnalysisGoo.Name;
-    protected override Bitmap Icon => Resources.AnalysisCaseParam;
+    public override string InstanceDescription => GsaModalDynamicGoo.Name;
+    public override string TypeName => GsaModalDynamicGoo.Name;
+    protected override Bitmap Icon => Resources.ModalDynamicParam;
 
-    public GsaModalDynamicAnalysisParameter() : base(new GH_InstanceDescription(
-      GsaModalDynamicAnalysisGoo.Name, GsaModalDynamicAnalysisGoo.NickName,
-      GsaModalDynamicAnalysisGoo.Description,
+    public GsaModalDynamicParameter() : base(new GH_InstanceDescription(
+      GsaModalDynamicGoo.Name, GsaModalDynamicGoo.NickName,
+      GsaModalDynamicGoo.Description,
       CategoryName.Name(), SubCategoryName.Cat9())) { }
 
-    protected override GsaModalDynamicAnalysisGoo PreferredCast(object data) {
+    protected override GsaModalDynamicGoo PreferredCast(object data) {
       switch (data) {
         case GsaAnalysisTaskGoo analysisTask:
-          return new GsaModalDynamicAnalysisGoo(new GsaModalDynamicAnalysis(analysisTask.Value.ApiTask));
-        case GsaModalDynamicAnalysisGoo dynamicAnalysis:
-          return new GsaModalDynamicAnalysisGoo(dynamicAnalysis.Value);
+          return new GsaModalDynamicGoo(new GsaModalDynamic(analysisTask.Value.ApiTask));
+        case GsaModalDynamicGoo dynamicAnalysis:
+          return new GsaModalDynamicGoo(dynamicAnalysis.Value);
         default:
           this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to ModalDynamicAnalysis parameter");
-          return new GsaModalDynamicAnalysisGoo(null);
+          return new GsaModalDynamicGoo(null);
       }
     }
   }

@@ -7,7 +7,7 @@ namespace GsaGH.Parameters {
   /// <summary>
   /// <para>Analysis <see href="https://docs.oasys-software.com/structural/gsa/references/element-types.html#element-types">parameter</see> used in modal analysis.</para>
   /// </summary>
-  public class GsaModalDynamicAnalysis {
+  public class GsaModalDynamic {
     public ModeCalculationStrategy ModeCalculationStrategy { get; internal set; }
     public MassOption MassOption { get; internal set; }
     public AdditionalMassDerivedFromLoads AdditionalMassDerivedFromLoads { get; internal set; }
@@ -16,7 +16,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Empty constructor instantiating a new API object
     /// </summary>
-    public GsaModalDynamicAnalysis(ModeCalculationMethod modeMethod = ModeCalculationMethod.NumberOfMode) {
+    public GsaModalDynamic(ModeCalculationMethod modeMethod = ModeCalculationMethod.NumberOfMode) {
       switch (modeMethod) {
         case ModeCalculationMethod.NumberOfMode:
           ModeCalculationStrategy = new ModeCalculationStrategyByNumberOfModes(1);
@@ -40,7 +40,7 @@ namespace GsaGH.Parameters {
     /// <param name="massOption"></param>
     /// <param name="additionalMassDerivedFromLoads"></param>
     /// <param name="modalDamping"></param>
-    internal GsaModalDynamicAnalysis(ModeCalculationStrategy modeCalcuationStrategy, MassOption massOption,
+    internal GsaModalDynamic(ModeCalculationStrategy modeCalcuationStrategy, MassOption massOption,
                                    AdditionalMassDerivedFromLoads additionalMassDerivedFromLoads,
                                    ModalDamping modalDamping) {
       AdditionalMassDerivedFromLoads = additionalMassDerivedFromLoads;
@@ -53,7 +53,7 @@ namespace GsaGH.Parameters {
     /// Create parameter from task
     /// </summary>
     /// <param name="apiAnalysisTask"></param>
-    internal GsaModalDynamicAnalysis(AnalysisTask apiAnalysisTask) {
+    internal GsaModalDynamic(AnalysisTask apiAnalysisTask) {
       var parameter = new ModalDynamicTaskParameter(apiAnalysisTask);
       AdditionalMassDerivedFromLoads = parameter.AdditionalMassDerivedFromLoads;
       ModeCalculationStrategy = parameter.ModeCalculationStrategy;
@@ -65,7 +65,7 @@ namespace GsaGH.Parameters {
     /// Create a duplicate instance from another instance
     /// </summary>
     /// <param name="other"></param>
-    public GsaModalDynamicAnalysis(GsaModalDynamicAnalysis other) {
+    public GsaModalDynamic(GsaModalDynamic other) {
       AdditionalMassDerivedFromLoads = other.AdditionalMassDerivedFromLoads;
       ModeCalculationStrategy = other.ModeCalculationStrategy;
       ModalDamping = other.ModalDamping;
