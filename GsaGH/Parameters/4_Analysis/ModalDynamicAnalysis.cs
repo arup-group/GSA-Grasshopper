@@ -33,21 +33,6 @@ namespace GsaGH.Parameters {
       ModalDamping = new ModalDamping(1);
     }
 
-    /// <summary>
-    /// Create new modal dynamic parameter
-    /// </summary>
-    /// <param name="modeCalcuationStrategy"></param>
-    /// <param name="massOption"></param>
-    /// <param name="additionalMassDerivedFromLoads"></param>
-    /// <param name="modalDamping"></param>
-    internal GsaModalDynamic(ModeCalculationStrategy modeCalcuationStrategy, MassOption massOption,
-                                   AdditionalMassDerivedFromLoads additionalMassDerivedFromLoads,
-                                   ModalDamping modalDamping) {
-      AdditionalMassDerivedFromLoads = additionalMassDerivedFromLoads;
-      ModeCalculationStrategy = modeCalcuationStrategy;
-      ModalDamping = modalDamping;
-      MassOption = massOption;
-    }
 
     /// <summary>
     /// Create parameter from task
@@ -61,16 +46,6 @@ namespace GsaGH.Parameters {
       MassOption = parameter.MassOption;
     }
 
-    /// <summary>
-    /// Create a duplicate instance from another instance
-    /// </summary>
-    /// <param name="other"></param>
-    public GsaModalDynamic(GsaModalDynamic other) {
-      AdditionalMassDerivedFromLoads = other.AdditionalMassDerivedFromLoads;
-      ModeCalculationStrategy = other.ModeCalculationStrategy;
-      ModalDamping = other.ModalDamping;
-      MassOption = other.MassOption;
-    }
 
     public ModeCalculationMethod Method() {
 
