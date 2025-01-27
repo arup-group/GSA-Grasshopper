@@ -21,16 +21,16 @@ namespace GsaGH.Components {
   /// <summary>
   ///   Component to create a GSA Analysis Case
   /// </summary>
-  public class CreateModalDynamicAnalysisParameter : GH_OasysDropDownComponent {
+  public class CreateModalDynamicParameter : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("75bf6454-92c4-4a3c-8abf-75f1d449cb85");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    protected override Bitmap Icon => Resources.CreateAnalysisCase;
+    protected override Bitmap Icon => Resources.CreateModalDynamicParameter;
     private ModeCalculationMethod _modeMethod = ModeCalculationMethod.NumberOfMode;
-    public CreateModalDynamicAnalysisParameter() : base(
-      GsaModalDynamicAnalysisGoo.Name,
-      GsaModalDynamicAnalysisGoo.NickName.Replace(" ", string.Empty),
-      "Create a " + GsaModalDynamicAnalysisGoo.Description, CategoryName.Name(), SubCategoryName.Cat4()) {
+    public CreateModalDynamicParameter() : base(
+      $"Create {GsaModalDynamicGoo.Name}",
+      GsaModalDynamicGoo.NickName.Replace(" ", string.Empty),
+      $"Create {GsaModalDynamicGoo.Description}", CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;
     }
 
@@ -63,15 +63,15 @@ namespace GsaGH.Components {
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
-      pManager.AddParameter(new GsaModalDynamicAnalysisParameter());
+      pManager.AddParameter(new GsaModalDynamicParameter());
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
-      var taskParameter = new GsaModalDynamicAnalysis(_modeMethod);
+      var taskParameter = new GsaModalDynamic(_modeMethod);
       GsaAnalysisTaskGoo analysisTaskGoo = null;
       if (da.GetData(0, ref analysisTaskGoo)) {
         if (analysisTaskGoo.Value.ApiTask != null) {
-          taskParameter = new GsaModalDynamicAnalysis(analysisTaskGoo.Value.ApiTask);
+          taskParameter = new GsaModalDynamic(analysisTaskGoo.Value.ApiTask);
           if (_modeMethod != taskParameter.Method()) {
             switch (taskParameter.Method()) {
               case ModeCalculationMethod.NumberOfMode:
@@ -140,7 +140,7 @@ namespace GsaGH.Components {
       da.GetData(positionIndex + 1, ref dampingStiffness);
       taskParameter.ModalDamping = new ModalDamping(dampingStiffness);
 
-      da.SetData(0, new GsaModalDynamicAnalysisGoo(taskParameter));
+      da.SetData(0, new GsaModalDynamicGoo(taskParameter));
     }
 
     public override void SetSelected(int i, int j) {
