@@ -17,11 +17,11 @@ using Xunit;
 
 namespace GsaGHTests.Components.Analysis {
   [Collection("GrasshopperFixture collection")]
-  public class ModalDynamicParameterByNumberOfModesTests {
+  public class CreateModalDynamicParameterByNumberOfModesTests {
     private GH_OasysComponent _component;
     private ModeCalculationStrategyByNumberOfModes _modeCalculationStrategy;
     private GsaModalDynamic _modalDynamicAnalysis;
-    public ModalDynamicParameterByNumberOfModesTests(ModalMassOption massOption = ModalMassOption.NodalMass, Direction direction = Direction.X) {
+    public CreateModalDynamicParameterByNumberOfModesTests(ModalMassOption massOption = ModalMassOption.NodalMass, Direction direction = Direction.X) {
       PrepareComponent(massOption, direction);
     }
 
@@ -37,11 +37,12 @@ namespace GsaGHTests.Components.Analysis {
       var comp = new CreateModalDynamicParameter();
       comp.CreateAttributes();
       comp.SetSelected(0, 0);
-      ComponentTestHelper.SetInput(comp, 5, 1);
-      ComponentTestHelper.SetInput(comp, "L1", 2);
-      ComponentTestHelper.SetInput(comp, 1.1, 3);
-      ComponentTestHelper.SetInput(comp, 1.2, 4);
-      ComponentTestHelper.SetInput(comp, 1.3, 5);
+      int index = 0;
+      ComponentTestHelper.SetInput(comp, 5, index++);
+      ComponentTestHelper.SetInput(comp, "L1", index++);
+      ComponentTestHelper.SetInput(comp, 1.1, index++);
+      ComponentTestHelper.SetInput(comp, 1.2, index++);
+      ComponentTestHelper.SetInput(comp, 1.3, index);
 
       switch (massOption) {
         case ModalMassOption.LumpMassAtNode:
@@ -132,14 +133,22 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(ModalMassOption.MassFromElementShapeFunction, _modalDynamicAnalysis.MassOption.ModalMassOption);
     }
 
+    [Fact]
+    public void ModalDynamicCreatedFromTaskReturnCorrectMethod() {
+      CreateAnalysisTask analysisTaskComponent = CreateAnalysisTaskTests.CreateAnalysisTaskComponent(ModeCalculationMethod.NumberOfMode);
+      GsaAnalysisTask task = ((GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(analysisTaskComponent)).Value;
+      var modaldynamic = new GsaModalDynamic(task.ApiTask);
+      Assert.Equal(ModeCalculationMethod.NumberOfMode, modaldynamic.Method());
+    }
+
   }
 
   [Collection("GrasshopperFixture collection")]
-  public class ModalDynamicParameterByFrquencyRangeTest {
+  public class CreateModalDynamicParameterByFrquencyRangeTest {
     private GH_OasysComponent _component;
     private ModeCalculationStrategyByFrequency _modeCalculationStrategy;
     private GsaModalDynamic _modalDynamicAnalysis;
-    public ModalDynamicParameterByFrquencyRangeTest(ModalMassOption massOption = ModalMassOption.NodalMass, Direction direction = Direction.X) {
+    public CreateModalDynamicParameterByFrquencyRangeTest(ModalMassOption massOption = ModalMassOption.NodalMass, Direction direction = Direction.X) {
       PrepareComponent(massOption, direction);
     }
 
@@ -155,13 +164,14 @@ namespace GsaGHTests.Components.Analysis {
       var comp = new CreateModalDynamicParameter();
       comp.CreateAttributes();
       comp.SetSelected(0, 1);
-      ComponentTestHelper.SetInput(comp, 5, 1);
-      ComponentTestHelper.SetInput(comp, 10, 2);
-      ComponentTestHelper.SetInput(comp, 30, 3);
-      ComponentTestHelper.SetInput(comp, "L1", 4);
-      ComponentTestHelper.SetInput(comp, 1.1, 5);
-      ComponentTestHelper.SetInput(comp, 1.2, 6);
-      ComponentTestHelper.SetInput(comp, 1.3, 7);
+      int index = 0;
+      ComponentTestHelper.SetInput(comp, 5, index++);
+      ComponentTestHelper.SetInput(comp, 10, index++);
+      ComponentTestHelper.SetInput(comp, 30, index++);
+      ComponentTestHelper.SetInput(comp, "L1", index++);
+      ComponentTestHelper.SetInput(comp, 1.1, index++);
+      ComponentTestHelper.SetInput(comp, 1.2, index++);
+      ComponentTestHelper.SetInput(comp, 1.3, index);
 
       switch (massOption) {
         case ModalMassOption.LumpMassAtNode:
@@ -262,14 +272,22 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(ModalMassOption.MassFromElementShapeFunction, _modalDynamicAnalysis.MassOption.ModalMassOption);
     }
 
+    [Fact]
+    public void ModalDynamicCreatedFromTaskReturnCorrectMethod() {
+      CreateAnalysisTask analysisTaskComponent = CreateAnalysisTaskTests.CreateAnalysisTaskComponent(ModeCalculationMethod.FrquencyRange);
+      GsaAnalysisTask task = ((GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(analysisTaskComponent)).Value;
+      var modaldynamic = new GsaModalDynamic(task.ApiTask);
+      Assert.Equal(ModeCalculationMethod.FrquencyRange, modaldynamic.Method());
+    }
+
   }
 
   [Collection("GrasshopperFixture collection")]
-  public class ModalDynamicParameterByTargetMassParticipationTest {
+  public class CreateModalDynamicParameterByTargetMassParticipationTest {
     private GH_OasysComponent _component;
     private ModeCalculationStrategyByMassParticipation _modeCalculationStrategy;
     private GsaModalDynamic _modalDynamicAnalysis;
-    public ModalDynamicParameterByTargetMassParticipationTest(ModalMassOption massOption = ModalMassOption.NodalMass, Direction direction = Direction.X) {
+    public CreateModalDynamicParameterByTargetMassParticipationTest(ModalMassOption massOption = ModalMassOption.NodalMass, Direction direction = Direction.X) {
       PrepareComponent(massOption, direction);
     }
 
@@ -285,15 +303,16 @@ namespace GsaGHTests.Components.Analysis {
       var comp = new CreateModalDynamicParameter();
       comp.CreateAttributes();
       comp.SetSelected(0, 2);
-      ComponentTestHelper.SetInput(comp, 90, 1);
-      ComponentTestHelper.SetInput(comp, 95, 2);
-      ComponentTestHelper.SetInput(comp, 100, 3);
-      ComponentTestHelper.SetInput(comp, 10, 4);
-      ComponentTestHelper.SetInput(comp, true, 5);
-      ComponentTestHelper.SetInput(comp, "L1", 6);
-      ComponentTestHelper.SetInput(comp, 1.1, 7);
-      ComponentTestHelper.SetInput(comp, 1.2, 8);
-      ComponentTestHelper.SetInput(comp, 1.3, 9);
+      int index = 0;
+      ComponentTestHelper.SetInput(comp, 90, index++);
+      ComponentTestHelper.SetInput(comp, 95, index++);
+      ComponentTestHelper.SetInput(comp, 100, index++);
+      ComponentTestHelper.SetInput(comp, 10, index++);
+      ComponentTestHelper.SetInput(comp, true, index++);
+      ComponentTestHelper.SetInput(comp, "L1", index++);
+      ComponentTestHelper.SetInput(comp, 1.1, index++);
+      ComponentTestHelper.SetInput(comp, 1.2, index++);
+      ComponentTestHelper.SetInput(comp, 1.3, index);
 
       switch (massOption) {
         case ModalMassOption.LumpMassAtNode:
@@ -402,6 +421,14 @@ namespace GsaGHTests.Components.Analysis {
     public void ComponentShouldReturnCorrectElementShapeFunctionOption() {
       PrepareComponent(ModalMassOption.MassFromElementShapeFunction, Direction.Z);
       Assert.Equal(ModalMassOption.MassFromElementShapeFunction, _modalDynamicAnalysis.MassOption.ModalMassOption);
+    }
+
+    [Fact]
+    public void ModalDynamicCreatedFromTaskReturnCorrectMethod() {
+      CreateAnalysisTask analysisTaskComponent = CreateAnalysisTaskTests.CreateAnalysisTaskComponent(ModeCalculationMethod.TargetMassRatio);
+      GsaAnalysisTask task = ((GsaAnalysisTaskGoo)ComponentTestHelper.GetOutput(analysisTaskComponent)).Value;
+      var modaldynamic = new GsaModalDynamic(task.ApiTask);
+      Assert.Equal(ModeCalculationMethod.TargetMassRatio, modaldynamic.Method());
     }
 
   }

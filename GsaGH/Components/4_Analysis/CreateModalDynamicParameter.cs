@@ -56,88 +56,64 @@ namespace GsaGH.Components {
     };
 
     protected override void RegisterInputParams(GH_InputParamManager pManager) {
-      pManager.AddParameter(new GsaAnalysisTaskParameter(), GsaAnalysisTaskGoo.Name,
-       GsaAnalysisTaskGoo.NickName,
-      "Extract modal dynamic analysis parameter from analyis task", GH_ParamAccess.item);
-      pManager[0].Optional = true;
     }
 
     protected override void RegisterOutputParams(GH_OutputParamManager pManager) {
       pManager.AddParameter(new GsaModalDynamicParameter());
     }
 
+
     protected override void SolveInternal(IGH_DataAccess da) {
+
       var taskParameter = new GsaModalDynamic(_modeMethod);
-      GsaAnalysisTaskGoo analysisTaskGoo = null;
-      if (da.GetData(0, ref analysisTaskGoo)) {
-        if (analysisTaskGoo.Value.ApiTask != null) {
-          taskParameter = new GsaModalDynamic(analysisTaskGoo.Value.ApiTask);
-          if (_modeMethod != taskParameter.Method()) {
-            switch (taskParameter.Method()) {
-              case ModeCalculationMethod.NumberOfMode:
-                SetSelected(0, 0);
-                break;
-              case ModeCalculationMethod.FrquencyRange:
-                SetSelected(0, 1);
-                break;
-              case ModeCalculationMethod.TargetMassRatio:
-                SetSelected(0, 2);
-                break;
-              default:
-                break;
-            }
-            ExpireSolution(true);
-          }
-        }
-      }
-      int positionIndex = 0;
+      int index = 0;
       int maxMode = 0;
       switch (_modeMethod) {
         case ModeCalculationMethod.NumberOfMode:
           int modeCount = 0;
-          if (da.GetData(++positionIndex, ref modeCount)) {
+          if (da.GetData(index++, ref modeCount)) {
             taskParameter.ModeCalculationStrategy = new ModeCalculationStrategyByNumberOfModes(modeCount);
           }
           break;
         case ModeCalculationMethod.FrquencyRange:
           var frequencyOption = taskParameter.ModeCalculationStrategy as ModeCalculationStrategyByFrequency;
           double? lowFrequency = frequencyOption.LowerFrequency;
-          da.GetData(++positionIndex, ref lowFrequency);
+          da.GetData(index++, ref lowFrequency);
           double? highFrequency = frequencyOption.HigherFrequency;
-          da.GetData(++positionIndex, ref highFrequency);
+          da.GetData(index++, ref highFrequency);
           maxMode = frequencyOption.MaximumNumberOfModes;
-          da.GetData(++positionIndex, ref maxMode);
+          da.GetData(index++, ref maxMode);
           taskParameter.ModeCalculationStrategy = new ModeCalculationStrategyByFrequency(lowFrequency, highFrequency, maxMode);
           break;
         case ModeCalculationMethod.TargetMassRatio:
           var targetMassOption = taskParameter.ModeCalculationStrategy as ModeCalculationStrategyByMassParticipation;
           double targetMassInXDirection = targetMassOption.TargetMassInXDirection;
-          da.GetData(++positionIndex, ref targetMassInXDirection);
+          da.GetData(index++, ref targetMassInXDirection);
           double targetMassInYDirection = targetMassOption.TargetMassInYDirection;
-          da.GetData(++positionIndex, ref targetMassInYDirection);
+          da.GetData(index++, ref targetMassInYDirection);
           double targetMassInZDirection = targetMassOption.TargetMassInZDirection;
-          da.GetData(++positionIndex, ref targetMassInZDirection);
+          da.GetData(index++, ref targetMassInZDirection);
           maxMode = targetMassOption.MaximumNumberOfModes;
-          da.GetData(++positionIndex, ref maxMode);
+          da.GetData(index++, ref maxMode);
           bool masil = targetMassOption.SkipModesWithLowMassParticipation;
-          da.GetData(++positionIndex, ref masil);
+          da.GetData(index++, ref masil);
           taskParameter.ModeCalculationStrategy = new ModeCalculationStrategyByMassParticipation(targetMassInXDirection, targetMassInYDirection, targetMassInZDirection, maxMode, masil);
           break;
         default:
           break;
       }
       string loadCase = taskParameter.AdditionalMassDerivedFromLoads.CaseDefinition;
-      da.GetData(++positionIndex, ref loadCase);
+      da.GetData(index++, ref loadCase);
       double loadScaleFactor = taskParameter.AdditionalMassDerivedFromLoads.ScaleFactor;
-      da.GetData(++positionIndex, ref loadScaleFactor);
+      da.GetData(index++, ref loadScaleFactor);
       taskParameter.AdditionalMassDerivedFromLoads = new AdditionalMassDerivedFromLoads(loadCase, GetDirection(_selectedItems[2]), loadScaleFactor);
 
       double massScaleFactor = taskParameter.MassOption.ScaleFactor;
-      da.GetData(++positionIndex, ref massScaleFactor);
+      da.GetData(index++, ref massScaleFactor);
       taskParameter.MassOption = new MassOption(GetMassOption(_selectedItems[1]), massScaleFactor);
 
       double? dampingStiffness = taskParameter.ModalDamping.StiffnessProportion;
-      da.GetData(positionIndex + 1, ref dampingStiffness);
+      da.GetData(index, ref dampingStiffness);
       taskParameter.ModalDamping = new ModalDamping(dampingStiffness);
 
       da.SetData(0, new GsaModalDynamicGoo(taskParameter));
@@ -149,8 +125,8 @@ namespace GsaGH.Components {
       ModeCalculationMethod modeMethod = GetModeStrategy(_selectedItems[0]);
       if (i == 0) {
         UpdateParameters(modeMethod);
+        base.UpdateUI();
       }
-      base.UpdateUI();
     }
 
     private static ModeCalculationMethod GetModeStrategy(string name) {
@@ -191,41 +167,36 @@ namespace GsaGH.Components {
       UnregisterParameters();
 
       _modeMethod = modeMethod;
+
     }
 
     private void UnregisterParameters() {
-      for (int i = Params.Input.Count - 1; i >= 1; i--) {
+      for (int i = Params.Input.Count - 1; i > 0; i--) {
         Params.UnregisterInputParameter(Params.Input[i], true);
       }
     }
 
-
-
     public override void VariableParameterMaintenance() {
-      if (Params.Input.Count > 1) {
-        //other dropdown has been selected
-        return;
-      }
 
       int index = 0;
       if (_modeMethod == ModeCalculationMethod.NumberOfMode) {
-        CreateParameter.Create(Params, new Param_Integer(), ++index, "Modes", "Md", "Set number of mode", GH_ParamAccess.item);
+        CreateParameter.Create(Params, new Param_Integer(), index++, "Modes", "Md", "Set number of mode", GH_ParamAccess.item);
       } else if (_modeMethod == ModeCalculationMethod.FrquencyRange) {
-        CreateParameter.Create(Params, new Param_Number(), ++index, "Lower frequency", "LF", "Set lower frequency range", GH_ParamAccess.item);
-        CreateParameter.Create(Params, new Param_Number(), ++index, "Upper frequency", "UF", "Set upper frequency range", GH_ParamAccess.item);
-        CreateParameter.Create(Params, new Param_Integer(), ++index, "Limiting modes", "LM", "Limit maximum number of mode", GH_ParamAccess.item);
+        CreateParameter.Create(Params, new Param_Number(), index++, "Lower frequency", "LF", "Set lower frequency range", GH_ParamAccess.item);
+        CreateParameter.Create(Params, new Param_Number(), index++, "Upper frequency", "UF", "Set upper frequency range", GH_ParamAccess.item);
+        CreateParameter.Create(Params, new Param_Integer(), index++, "Limiting modes", "LM", "Limit maximum number of mode", GH_ParamAccess.item);
 
       } else {
-        CreateParameter.Create(Params, new Param_Number(), ++index, "X-direction mass participation", "X", "Set x-direction mass participation", GH_ParamAccess.item);
-        CreateParameter.Create(Params, new Param_Number(), ++index, "Y-direction mass participation", "Y", "Set y-direction mass participation", GH_ParamAccess.item);
-        CreateParameter.Create(Params, new Param_Number(), ++index, "Z-direction mass participation", "Z", "Set z-direction mass participation", GH_ParamAccess.item);
-        CreateParameter.Create(Params, new Param_Integer(), ++index, "Limiting modes", "LM", "Set limiting maximum number of mode", GH_ParamAccess.item);
-        CreateParameter.Create(Params, new Param_Boolean(), ++index, "Skip modes with low mass participation", "MASIL", "Set the value to true to use the Masil algorithm", GH_ParamAccess.item);
+        CreateParameter.Create(Params, new Param_Number(), index++, "X-direction mass participation", "X", "Set x-direction mass participation", GH_ParamAccess.item);
+        CreateParameter.Create(Params, new Param_Number(), index++, "Y-direction mass participation", "Y", "Set y-direction mass participation", GH_ParamAccess.item);
+        CreateParameter.Create(Params, new Param_Number(), index++, "Z-direction mass participation", "Z", "Set z-direction mass participation", GH_ParamAccess.item);
+        CreateParameter.Create(Params, new Param_Integer(), index++, "Limiting modes", "LM", "Set limiting maximum number of mode", GH_ParamAccess.item);
+        CreateParameter.Create(Params, new Param_Boolean(), index++, "Skip modes with low mass participation", "MASIL", "Set the value to true to use the Masil algorithm", GH_ParamAccess.item);
       }
-      CreateParameter.Create(Params, new Param_String(), ++index, "Load case ", "LC", "Additional mass load case", GH_ParamAccess.item);
-      CreateParameter.Create(Params, new Param_Number(), ++index, "Load scale factor", "LSF", "Set load scale factor", GH_ParamAccess.item);
-      CreateParameter.Create(Params, new Param_Number(), ++index, "Mass scale factor", "MSF", "Set mass scale factor", GH_ParamAccess.item);
-      CreateParameter.Create(Params, new Param_Number(), index + 1, "Damping stiffness proportion", "DSP", "Set model damping stiffness proportion", GH_ParamAccess.item);
+      CreateParameter.Create(Params, new Param_String(), index++, "Load case ", "LC", "Additional mass load case", GH_ParamAccess.item);
+      CreateParameter.Create(Params, new Param_Number(), index++, "Load scale factor", "LSF", "Set load scale factor", GH_ParamAccess.item);
+      CreateParameter.Create(Params, new Param_Number(), index++, "Mass scale factor", "MSF", "Set mass scale factor", GH_ParamAccess.item);
+      CreateParameter.Create(Params, new Param_Number(), index, "Damping stiffness proportion", "DSP", "Set model damping stiffness proportion", GH_ParamAccess.item);
 
     }
 
