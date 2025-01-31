@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 using GH_IO.Serialization;
+using GH_IO.Types;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
@@ -244,29 +245,32 @@ namespace GsaGH.Components {
 
       da.SetData(0, new GsaAnalysisTaskGoo(gsaAnalysisTask));
     }
+    private bool StaticAndPdeltaCases(List<GH_ObjectWrapper> objectWrapper, ref List<GsaAnalysisCase> analysisCases) {
+      analysisCases = new List<GsaAnalysisCase>();
+      for (int i = 0; i < objectWrapper.Count; i++) {
+        GH_ObjectWrapper ghTypeWrapper = objectWrapper[i];
+        if (ghTypeWrapper == null) {
+          this.AddRuntimeWarning($"Analysis Case input (index: {i}) is null and has been ignored");
+          continue;
+        }
 
+        if (ghTypeWrapper.Value is GsaAnalysisCaseGoo goo) {
+          analysisCases.Add(goo.Value.Duplicate());
+        } else {
+          UnsupportedValueError(ghTypeWrapper);
+          return false;
+        }
+      }
+      return true;
+    }
     private bool GetAnalysisCases(IGH_DataAccess da, out List<GsaAnalysisCase> cases) {
       cases = null;
       switch (_analysisTaskType) {
         case AnalysisTaskType.Static:
         case AnalysisTaskType.StaticPDelta:
           var ghTypes = new List<GH_ObjectWrapper>();
-          if (da.GetDataList(_casesParamIndex, ghTypes)) {
-            cases = new List<GsaAnalysisCase>();
-            for (int i = 0; i < ghTypes.Count; i++) {
-              GH_ObjectWrapper ghTypeWrapper = ghTypes[i];
-              if (ghTypeWrapper == null) {
-                this.AddRuntimeWarning($"Analysis Case input (index: {i}) is null and has been ignored");
-                continue;
-              }
-
-              if (ghTypeWrapper.Value is GsaAnalysisCaseGoo goo) {
-                cases.Add(goo.Value.Duplicate());
-              } else {
-                UnsupportedValueError(ghTypeWrapper);
-                return false;
-              }
-            }
+          if (da.GetDataList(_casesParamIndex, ghTypes) && !StaticAndPdeltaCases(ghTypes, ref cases)) {
+            return false;
           }
           break;
         case AnalysisTaskType.Footfall:
