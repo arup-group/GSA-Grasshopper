@@ -160,7 +160,7 @@ namespace GsaGHTests.Components.Analysis {
       _modeCalculationStrategy = _modalDynamicAnalysis.ModeCalculationStrategy as ModeCalculationStrategyByFrequency;
     }
 
-    public static GH_OasysComponent ComponentMother(ModalMassOption massOption, Direction direction) {
+    public static GH_OasysComponent ComponentMother(ModalMassOption massOption= ModalMassOption.LumpMassAtNode, Direction direction= Direction.Y) {
       var comp = new CreateModalDynamicParameter();
       comp.CreateAttributes();
       comp.SetSelected(0, 1);

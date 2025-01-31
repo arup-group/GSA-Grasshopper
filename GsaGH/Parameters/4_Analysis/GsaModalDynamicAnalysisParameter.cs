@@ -32,8 +32,6 @@ namespace GsaGH.Parameters {
       switch (data) {
         case GsaAnalysisTaskGoo analysisTask:
           return new GsaModalDynamicGoo(new GsaModalDynamic(analysisTask.Value.ApiTask));
-        case GsaModalDynamicGoo dynamicAnalysis:
-          return new GsaModalDynamicGoo(dynamicAnalysis.Value);
         default:
           this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to ModalDynamicAnalysis parameter");
           return new GsaModalDynamicGoo(null);
