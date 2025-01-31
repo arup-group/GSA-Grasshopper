@@ -130,30 +130,15 @@ namespace GsaGH.Components {
     }
 
     private static ModeCalculationMethod GetModeStrategy(string name) {
-      IEnumerable<ModeCalculationMethod> items = _modeCalculationMethod.Where(x => x.Value.Equals(name)).Select(x => x.Key);
-      if (items.Any()) {
-        return items.First();
-      } else {
-        throw new ArgumentException("Unable to convert " + name + " to mode calculation strategy");
-      }
+      return _modeCalculationMethod.Where(x => x.Value.Equals(name)).Select(x => x.Key).First();
     }
 
     private static Direction GetDirection(string name) {
-      IEnumerable<Direction> items = _massDirection.Where(x => x.Value.Equals(name)).Select(x => x.Key);
-      if (items.Any()) {
-        return items.First();
-      } else {
-        throw new ArgumentException("Unable to convert " + name + " to direction");
-      }
+      return _massDirection.Where(x => x.Value.Equals(name)).Select(x => x.Key).First();
     }
 
     private static ModalMassOption GetMassOption(string name) {
-      IEnumerable<ModalMassOption> items = _massOptions.Where(x => x.Value.Equals(name)).Select(x => x.Key);
-      if (items.Any()) {
-        return items.First();
-      } else {
-        throw new ArgumentException("Unable to convert " + name + " to mass option");
-      }
+      return _massOptions.Where(x => x.Value.Equals(name)).Select(x => x.Key).First();
     }
 
     private void UpdateParameters(ModeCalculationMethod modeMethod) {
@@ -171,7 +156,7 @@ namespace GsaGH.Components {
     }
 
     private void UnregisterParameters() {
-      for (int i = Params.Input.Count - 1; i > 0; i--) {
+      for (int i = Params.Input.Count - 1; i > -1; i--) {
         Params.UnregisterInputParameter(Params.Input[i], true);
       }
     }
