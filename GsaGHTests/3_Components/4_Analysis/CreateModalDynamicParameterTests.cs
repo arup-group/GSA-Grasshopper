@@ -258,7 +258,7 @@ namespace GsaGHTests.Components.Analysis {
     }
 
     [Fact]
-    public void ComponentShouldReportErrorFrequenciesAreNotCorrect() {
+    public void ComponentShouldReportErrorIfFrequenciesAreNotCorrect() {
       SetFrequency(6, 5);
       ComponentTestHelper.ComputeOutput(_component);
       Assert.Equal(2, _component.RuntimeMessages(GH_RuntimeMessageLevel.Error).Count);
@@ -342,7 +342,11 @@ namespace GsaGHTests.Components.Analysis {
       PrepareComponent(massOption, direction);
     }
 
-
+    private void SetTargetMas(double x, double y, double z) {
+      ComponentTestHelper.SetInput(_component, x, 0);
+      ComponentTestHelper.SetInput(_component, y, 1);
+      ComponentTestHelper.SetInput(_component, z, 2);
+    }
     private void PrepareComponent(ModalMassOption massOption, Direction direction) {
       _component = ComponentMother(massOption, direction);
       var _modalDynamicAnalysisGoo = (GsaModalDynamicGoo)ComponentTestHelper.GetOutput(_component);
@@ -398,8 +402,45 @@ namespace GsaGHTests.Components.Analysis {
     }
 
     [Fact]
-    public void ComponentShouldReturnCorrectNumberOfLimitingMode() {
-      Assert.Equal(10, _modeCalculationStrategy.MaximumNumberOfModes);
+    public void ComponentShouldReportErrorIfTargetMassFactorLessThanZeroInXDirection() {
+      SetTargetMas(-1, 100, 100);
+      ComponentTestHelper.ComputeOutput(_component);
+      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void ComponentShouldReportErrorIfTargetMassFactorGreaterThan100InXDirection() {
+      SetTargetMas(101, 100, 100);
+      ComponentTestHelper.ComputeOutput(_component);
+      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void ComponentShouldReportErrorIfTargetMassFactorLessThanZeroInYDirection() {
+      SetTargetMas(100, -1, 100);
+      ComponentTestHelper.ComputeOutput(_component);
+      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void ComponentShouldReportErrorIfTargetMassFactorGreaterThan100InYDirection() {
+      SetTargetMas(100, 101, 100);
+      ComponentTestHelper.ComputeOutput(_component);
+      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void ComponentShouldReportErrorIfTargetMassFactorLessThanZeroInZDirection() {
+      SetTargetMas(100, 100, -1);
+      ComponentTestHelper.ComputeOutput(_component);
+      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void ComponentShouldReportErrorIfTargetMassFactorGreaterThan100InZDirection() {
+      SetTargetMas(100, 100, 101);
+      ComponentTestHelper.ComputeOutput(_component);
+      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
@@ -415,6 +456,11 @@ namespace GsaGHTests.Components.Analysis {
     [Fact]
     public void ComponentShouldReturnCorrectZDirectionParticipation() {
       Assert.Equal(100, _modeCalculationStrategy.TargetMassInZDirection);
+    }
+
+    [Fact]
+    public void ComponentShouldReturnCorrectNumberOfLimitingMode() {
+      Assert.Equal(10, _modeCalculationStrategy.MaximumNumberOfModes);
     }
 
     [Fact]
