@@ -16,6 +16,9 @@ using GsaGH.Parameters.Enums;
 
 using System.Linq;
 using Grasshopper.Kernel.Parameters;
+using Rhino.PlugIns;
+using Grasshopper;
+using GsaGH.Helpers;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -114,9 +117,69 @@ namespace GsaGH.Components {
 
       double? dampingStiffness = taskParameter.ModalDamping.StiffnessProportion;
       da.GetData(index, ref dampingStiffness);
-      taskParameter.ModalDamping = new ModalDamping(dampingStiffness);
 
+      taskParameter.ModalDamping = new ModalDamping(dampingStiffness);
+      if (!ValidateMassParticipation(taskParameter)) {
+        return;
+      }
       da.SetData(0, new GsaModalDynamicGoo(taskParameter));
+    }
+
+
+    private bool ValidateMassParticipation(GsaModalDynamic parameter) {
+      bool validationStatus = true;
+      switch (parameter.Method()) {
+        case ModeCalculationMethod.NumberOfMode: {
+            var method = parameter.ModeCalculationStrategy as ModeCalculationStrategyByNumberOfModes;
+            if (method.NumberOfModes < 1) {
+              this.AddRuntimeError("Number of mode should be greater than 1");
+              validationStatus = false;
+            }
+          }
+          break;
+        case ModeCalculationMethod.FrquencyRange: {
+            var method = parameter.ModeCalculationStrategy as ModeCalculationStrategyByFrequency;
+            double higherFrequency = method.HigherFrequency ?? double.MaxValue;
+            if (method.LowerFrequency.HasValue && (!GsaGH.Helpers.Utility.IsInRange
+              (method.LowerFrequency.Value, 0, higherFrequency) || GsaGH.Helpers.Utility.IsApproxEqual(method.LowerFrequency.Value, higherFrequency))) {
+              this.AddRuntimeError("Lower frquency should be positive value and less than higher frquency");
+              validationStatus = false;
+            }
+            double lowerFrequency = method.LowerFrequency ?? 0;
+            if (method.HigherFrequency.HasValue && (!GsaGH.Helpers.Utility.IsInRange
+              (method.HigherFrequency.Value, lowerFrequency, method.HigherFrequency.Value) || GsaGH.Helpers.Utility.IsApproxEqual(method.HigherFrequency.Value, lowerFrequency))) {
+              this.AddRuntimeError("Upper frquency should be positive value and greater than lower frquency");
+              validationStatus = false;
+            }
+
+          }
+          break;
+        case ModeCalculationMethod.TargetMassRatio: {
+            var method = parameter.ModeCalculationStrategy as ModeCalculationStrategyByMassParticipation;
+            if (!GsaGH.Helpers.Utility.IsInRange(method.TargetMassInXDirection, 0, 100) || !GsaGH.Helpers.Utility.IsInRange(method.TargetMassInYDirection, 0, 100) || !GsaGH.Helpers.Utility.IsInRange(method.TargetMassInZDirection, 0, 100)) {
+              this.AddRuntimeError("Target Mass participation ratio should be within the range of [0:100]");
+              validationStatus = false;
+            }
+          }
+          break;
+      }
+
+      double? dampingStiffness = parameter.ModalDamping.StiffnessProportion;
+      if (dampingStiffness.HasValue && !GsaGH.Helpers.Utility.IsInRange(dampingStiffness.Value, 0, 1)) {
+        this.AddRuntimeError("Damping stiffness should be within the range [0:1]");
+        validationStatus = false;
+      }
+
+      if (parameter.AdditionalMassDerivedFromLoads.ScaleFactor < 0) {
+        this.AddRuntimeError("Load scale factor should have positive value");
+        validationStatus = false;
+      }
+
+      if (parameter.MassOption.ScaleFactor < 0) {
+        this.AddRuntimeError("Mass scale factor should have positive value");
+        validationStatus = false;
+      }
+      return validationStatus;
     }
 
     public override void SetSelected(int i, int j) {
