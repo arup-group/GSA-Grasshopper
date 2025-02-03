@@ -60,7 +60,7 @@ namespace DocsGeneration {
 
       InitializeCore();
 
-      Utility.SetupUnitsDuringLoad();
+      OasysGH.Units.Utility.SetupUnitsDuringLoad();
     }
 
     public void AddPluginToGh() {

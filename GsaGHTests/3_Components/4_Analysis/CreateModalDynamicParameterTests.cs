@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
 using GsaAPI;
@@ -29,8 +30,23 @@ namespace GsaGHTests.Components.Analysis {
     private void PrepareComponent(ModalMassOption massOption, Direction direction) {
       _component = ComponentMother(massOption, direction);
       var _modalDynamicAnalysisGoo = (GsaModalDynamicGoo)ComponentTestHelper.GetOutput(_component);
-      _modalDynamicAnalysis = _modalDynamicAnalysisGoo.Value;
-      _modeCalculationStrategy = _modalDynamicAnalysis.ModeCalculationStrategy as ModeCalculationStrategyByNumberOfModes;
+      if (_modalDynamicAnalysisGoo != null) {
+        _modalDynamicAnalysis = _modalDynamicAnalysisGoo.Value;
+        _modeCalculationStrategy = _modalDynamicAnalysis.ModeCalculationStrategy as ModeCalculationStrategyByNumberOfModes;
+      }
+    }
+
+    private void SetNumberOfMode(double value) {
+      ComponentTestHelper.SetInput(_component, value, 0);
+    }
+
+    private void SetStiffness(double value) {
+      ComponentTestHelper.SetInput(_component, value, 4);
+    }
+
+    private void SetScaleFactor(double loadScaleFactor, double massScalefactor) {
+      ComponentTestHelper.SetInput(_component, loadScaleFactor, 2);
+      ComponentTestHelper.SetInput(_component, massScalefactor, 3);
     }
 
     public static GH_OasysComponent ComponentMother(ModalMassOption massOption, Direction direction) {
@@ -42,7 +58,7 @@ namespace GsaGHTests.Components.Analysis {
       ComponentTestHelper.SetInput(comp, "L1", index++);
       ComponentTestHelper.SetInput(comp, 1.1, index++);
       ComponentTestHelper.SetInput(comp, 1.2, index++);
-      ComponentTestHelper.SetInput(comp, 1.3, index);
+      ComponentTestHelper.SetInput(comp, 1, index);
 
       switch (massOption) {
         case ModalMassOption.LumpMassAtNode:
@@ -80,6 +96,27 @@ namespace GsaGHTests.Components.Analysis {
     }
 
     [Fact]
+    public void ComponentShouldReportErrorWhenNumberOfModeIsNegativeValue() {
+      SetNumberOfMode(-1);
+      ComponentTestHelper.ComputeOutput(_component);
+      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void ComponentShouldReportErrorWhenStiffnessIsNotInRange() {
+      SetStiffness(2);
+      ComponentTestHelper.ComputeOutput(_component);
+      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void ComponentShouldReportErrorWhenScaleFactorsAreNegative() {
+      SetScaleFactor(-1,-2);
+      ComponentTestHelper.ComputeOutput(_component);
+      Assert.Equal(2,_component.RuntimeMessages(GH_RuntimeMessageLevel.Error).Count);
+    }
+
+    [Fact]
     public void ComponentShouldReturnCorrectCaseDefinition() {
       Assert.Equal("L1", _modalDynamicAnalysis.AdditionalMassDerivedFromLoads.CaseDefinition);
     }
@@ -96,7 +133,7 @@ namespace GsaGHTests.Components.Analysis {
 
     [Fact]
     public void ComponentShouldReturnCorrectStiffnessProportion() {
-      Assert.Equal(1.3, _modalDynamicAnalysis.ModalDamping.StiffnessProportion);
+      Assert.Equal(1, _modalDynamicAnalysis.ModalDamping.StiffnessProportion);
     }
 
     [Fact]
@@ -156,11 +193,18 @@ namespace GsaGHTests.Components.Analysis {
     private void PrepareComponent(ModalMassOption massOption, Direction direction) {
       _component = ComponentMother(massOption, direction);
       var _modalDynamicAnalysisGoo = (GsaModalDynamicGoo)ComponentTestHelper.GetOutput(_component);
-      _modalDynamicAnalysis = _modalDynamicAnalysisGoo.Value;
-      _modeCalculationStrategy = _modalDynamicAnalysis.ModeCalculationStrategy as ModeCalculationStrategyByFrequency;
+      if (_modalDynamicAnalysisGoo != null) {
+        _modalDynamicAnalysis = _modalDynamicAnalysisGoo.Value;
+        _modeCalculationStrategy = _modalDynamicAnalysis.ModeCalculationStrategy as ModeCalculationStrategyByFrequency;
+      }
     }
 
-    public static GH_OasysComponent ComponentMother(ModalMassOption massOption= ModalMassOption.LumpMassAtNode, Direction direction= Direction.Y) {
+    private void SetFrequency(double lower, double upper) {
+      ComponentTestHelper.SetInput(_component, lower, 0);
+      ComponentTestHelper.SetInput(_component, upper, 1);
+    }
+
+    public static GH_OasysComponent ComponentMother(ModalMassOption massOption = ModalMassOption.LumpMassAtNode, Direction direction = Direction.Y) {
       var comp = new CreateModalDynamicParameter();
       comp.CreateAttributes();
       comp.SetSelected(0, 1);
@@ -171,7 +215,7 @@ namespace GsaGHTests.Components.Analysis {
       ComponentTestHelper.SetInput(comp, "L1", index++);
       ComponentTestHelper.SetInput(comp, 1.1, index++);
       ComponentTestHelper.SetInput(comp, 1.2, index++);
-      ComponentTestHelper.SetInput(comp, 1.3, index);
+      ComponentTestHelper.SetInput(comp, 1, index);
 
       switch (massOption) {
         case ModalMassOption.LumpMassAtNode:
@@ -214,6 +258,13 @@ namespace GsaGHTests.Components.Analysis {
     }
 
     [Fact]
+    public void ComponentShouldReportErrorFrequenciesAreNotCorrect() {
+      SetFrequency(6, 5);
+      ComponentTestHelper.ComputeOutput(_component);
+      Assert.Equal(2, _component.RuntimeMessages(GH_RuntimeMessageLevel.Error).Count);
+    }
+
+    [Fact]
     public void ComponentShouldReturnCorrectLowerFrequency() {
       Assert.Equal(5, _modeCalculationStrategy.LowerFrequency);
     }
@@ -235,7 +286,7 @@ namespace GsaGHTests.Components.Analysis {
 
     [Fact]
     public void ComponentShouldReturnCorrectStiffnessProportion() {
-      Assert.Equal(1.3, _modalDynamicAnalysis.ModalDamping.StiffnessProportion);
+      Assert.Equal(1, _modalDynamicAnalysis.ModalDamping.StiffnessProportion);
     }
 
     [Fact]
@@ -295,8 +346,10 @@ namespace GsaGHTests.Components.Analysis {
     private void PrepareComponent(ModalMassOption massOption, Direction direction) {
       _component = ComponentMother(massOption, direction);
       var _modalDynamicAnalysisGoo = (GsaModalDynamicGoo)ComponentTestHelper.GetOutput(_component);
-      _modalDynamicAnalysis = _modalDynamicAnalysisGoo.Value;
-      _modeCalculationStrategy = _modalDynamicAnalysis.ModeCalculationStrategy as ModeCalculationStrategyByMassParticipation;
+      if (_modalDynamicAnalysisGoo != null) {
+        _modalDynamicAnalysis = _modalDynamicAnalysisGoo.Value;
+        _modeCalculationStrategy = _modalDynamicAnalysis.ModeCalculationStrategy as ModeCalculationStrategyByMassParticipation;
+      }
     }
 
     public static GH_OasysComponent ComponentMother(ModalMassOption massOption, Direction direction) {
@@ -312,7 +365,7 @@ namespace GsaGHTests.Components.Analysis {
       ComponentTestHelper.SetInput(comp, "L1", index++);
       ComponentTestHelper.SetInput(comp, 1.1, index++);
       ComponentTestHelper.SetInput(comp, 1.2, index++);
-      ComponentTestHelper.SetInput(comp, 1.3, index);
+      ComponentTestHelper.SetInput(comp, 1, index);
 
       switch (massOption) {
         case ModalMassOption.LumpMassAtNode:
@@ -386,7 +439,7 @@ namespace GsaGHTests.Components.Analysis {
 
     [Fact]
     public void ComponentShouldReturnCorrectStiffnessProportion() {
-      Assert.Equal(1.3, _modalDynamicAnalysis.ModalDamping.StiffnessProportion);
+      Assert.Equal(1, _modalDynamicAnalysis.ModalDamping.StiffnessProportion);
     }
 
     [Fact]
