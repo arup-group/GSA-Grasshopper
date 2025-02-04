@@ -47,7 +47,7 @@ namespace GsaGH.Parameters {
     }
 
 
-    public ModeCalculationMethod Method() {
+    public ModeCalculationMethod ModeCalculationOption() {
 
       if (ModeCalculationStrategy is ModeCalculationStrategyByNumberOfModes) {
         return ModeCalculationMethod.NumberOfMode;
@@ -61,7 +61,7 @@ namespace GsaGH.Parameters {
     }
 
     public override string ToString() {
-      return Method().ToString();
+      return ModeCalculationOption().ToString();
     }
 
   }
