@@ -156,9 +156,6 @@ namespace GsaGH.Components {
       return true;
     }
 
-    private bool ValidateFrequencyRangeMethod(GsaModalDynamic parameter) {
-      return ValidateLowerFrequency(parameter) && ValidateUpperFrequency(parameter);
-    }
 
     private bool ValidateTargetMassMethod(GsaModalDynamic parameter) {
       var method = parameter.ModeCalculationStrategy as ModeCalculationStrategyByMassParticipation;
@@ -202,7 +199,14 @@ namespace GsaGH.Components {
           }
           break;
         case ModeCalculationMethod.FrquencyRange: {
-            validationStatus = ValidateFrequencyRangeMethod(parameter);
+            if (!ValidateLowerFrequency(parameter)) {
+              validationStatus = false;
+            }
+
+            if (!ValidateUpperFrequency(parameter)) {
+              validationStatus = false;
+            }
+
           }
           break;
         case ModeCalculationMethod.TargetMassRatio: {
