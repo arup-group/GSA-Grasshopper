@@ -125,60 +125,102 @@ namespace GsaGH.Components {
       da.SetData(0, new GsaModalDynamicGoo(taskParameter));
     }
 
-
-    private bool ValidateMassParticipation(GsaModalDynamic parameter) {
-      bool validationStatus = true;
-      switch (parameter.Method()) {
-        case ModeCalculationMethod.NumberOfMode: {
-            var method = parameter.ModeCalculationStrategy as ModeCalculationStrategyByNumberOfModes;
-            if (method.NumberOfModes < 1) {
-              this.AddRuntimeError("Number of mode should be greater than 1");
-              validationStatus = false;
-            }
-          }
-          break;
-        case ModeCalculationMethod.FrquencyRange: {
-            var method = parameter.ModeCalculationStrategy as ModeCalculationStrategyByFrequency;
-            double higherFrequency = method.HigherFrequency ?? double.MaxValue;
-            if (method.LowerFrequency.HasValue && (!GsaGH.Helpers.Utility.IsInRange
-              (method.LowerFrequency.Value, 0, higherFrequency) || GsaGH.Helpers.Utility.IsApproxEqual(method.LowerFrequency.Value, higherFrequency))) {
-              this.AddRuntimeError("Lower frquency should be positive value and less than higher frquency");
-              validationStatus = false;
-            }
-            double lowerFrequency = method.LowerFrequency ?? 0;
-            if (method.HigherFrequency.HasValue && (!GsaGH.Helpers.Utility.IsInRange
-              (method.HigherFrequency.Value, lowerFrequency, method.HigherFrequency.Value) || GsaGH.Helpers.Utility.IsApproxEqual(method.HigherFrequency.Value, lowerFrequency))) {
-              this.AddRuntimeError("Upper frquency should be positive value and greater than lower frquency");
-              validationStatus = false;
-            }
-
-          }
-          break;
-        case ModeCalculationMethod.TargetMassRatio: {
-            var method = parameter.ModeCalculationStrategy as ModeCalculationStrategyByMassParticipation;
-            if (!GsaGH.Helpers.Utility.IsInRange(method.TargetMassInXDirection, 0, 100) || !GsaGH.Helpers.Utility.IsInRange(method.TargetMassInYDirection, 0, 100) || !GsaGH.Helpers.Utility.IsInRange(method.TargetMassInZDirection, 0, 100)) {
-              this.AddRuntimeError("Target Mass participation ratio should be within the range of [0:100]");
-              validationStatus = false;
-            }
-          }
-          break;
+    private bool ValidateNumberOfModeMethod(GsaModalDynamic parameter) {
+      var method = parameter.ModeCalculationStrategy as ModeCalculationStrategyByNumberOfModes;
+      if (method.NumberOfModes < 1) {
+        this.AddRuntimeError("Number of mode should be greater than 1");
+        return false;
       }
+      return true;
+    }
 
+    private bool ValidateLowerFrequency(GsaModalDynamic parameter) {
+      var method = parameter.ModeCalculationStrategy as ModeCalculationStrategyByFrequency;
+      double higherFrequency = method.HigherFrequency ?? double.MaxValue;
+      if (method.LowerFrequency.HasValue && (!GsaGH.Helpers.Utility.IsInRange
+        (method.LowerFrequency.Value, 0, higherFrequency) || GsaGH.Helpers.Utility.IsApproxEqual(method.LowerFrequency.Value, higherFrequency))) {
+        this.AddRuntimeError("Lower frquency should be positive value and less than higher frquency");
+        return false;
+      }
+      return true;
+    }
+
+    private bool ValidateUpperFrequency(GsaModalDynamic parameter) {
+      var method = parameter.ModeCalculationStrategy as ModeCalculationStrategyByFrequency;
+      double lowerFrequency = method.LowerFrequency ?? 0;
+      if (method.HigherFrequency.HasValue && (!GsaGH.Helpers.Utility.IsInRange
+        (method.HigherFrequency.Value, lowerFrequency, method.HigherFrequency.Value) || GsaGH.Helpers.Utility.IsApproxEqual(method.HigherFrequency.Value, lowerFrequency))) {
+        this.AddRuntimeError("Upper frquency should be positive value and greater than lower frquency");
+        return false;
+      }
+      return true;
+    }
+
+    private bool ValidateFrequencyRangeMethod(GsaModalDynamic parameter) {
+      return ValidateLowerFrequency(parameter) && ValidateUpperFrequency(parameter);
+    }
+
+    private bool ValidateTargetMassMethod(GsaModalDynamic parameter) {
+      var method = parameter.ModeCalculationStrategy as ModeCalculationStrategyByMassParticipation;
+      if (!GsaGH.Helpers.Utility.IsInRange(method.TargetMassInXDirection, 0, 100) || !GsaGH.Helpers.Utility.IsInRange(method.TargetMassInYDirection, 0, 100) || !GsaGH.Helpers.Utility.IsInRange(method.TargetMassInZDirection, 0, 100)) {
+        this.AddRuntimeError("Target Mass participation ratio should be within the range of [0:100]");
+        return false;
+      }
+      return true;
+    }
+
+    private bool ValidateMassScalefactor(GsaModalDynamic parameter) {
+      if (parameter.MassOption.ScaleFactor < 0) {
+        this.AddRuntimeError("Mass scale factor should have positive value");
+        return false;
+      }
+      return true;
+    }
+
+    private bool ValidateLoadScalefactor(GsaModalDynamic parameter) {
+      if (parameter.AdditionalMassDerivedFromLoads.ScaleFactor < 0) {
+        this.AddRuntimeError("Load scale factor should have positive value");
+        return false;
+      }
+      return true;
+    }
+
+    private bool ValidateDampingStiffness(GsaModalDynamic parameter) {
       double? dampingStiffness = parameter.ModalDamping.StiffnessProportion;
       if (dampingStiffness.HasValue && !GsaGH.Helpers.Utility.IsInRange(dampingStiffness.Value, 0, 1)) {
         this.AddRuntimeError("Damping stiffness should be within the range [0:1]");
+        return false;
+      }
+      return true;
+    }
+
+    private bool ValidateMassParticipation(GsaModalDynamic parameter) {
+      bool validationStatus = true;
+      switch (parameter.ModeCalculationOption()) {
+        case ModeCalculationMethod.NumberOfMode: {
+            validationStatus = ValidateNumberOfModeMethod(parameter);
+          }
+          break;
+        case ModeCalculationMethod.FrquencyRange: {
+            validationStatus = ValidateFrequencyRangeMethod(parameter);
+          }
+          break;
+        case ModeCalculationMethod.TargetMassRatio: {
+            validationStatus = ValidateTargetMassMethod(parameter);
+          }
+          break;
+      }
+
+      if (!ValidateDampingStiffness(parameter)) { validationStatus = false; }
+
+      if (!ValidateLoadScalefactor(parameter)) {
         validationStatus = false;
       }
 
-      if (parameter.AdditionalMassDerivedFromLoads.ScaleFactor < 0) {
-        this.AddRuntimeError("Load scale factor should have positive value");
+      if (!ValidateMassScalefactor(parameter)) {
         validationStatus = false;
       }
 
-      if (parameter.MassOption.ScaleFactor < 0) {
-        this.AddRuntimeError("Mass scale factor should have positive value");
-        validationStatus = false;
-      }
       return validationStatus;
     }
 
@@ -225,29 +267,25 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
-
       int index = 0;
       if (_modeMethod == ModeCalculationMethod.NumberOfMode) {
-        CreateParameter.Create(Params, new Param_Integer(), index++, "Modes", "Md", "Set number of mode", GH_ParamAccess.item);
+        CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Modes", NickName = "Md", Description = "Set number of mode", Access = GH_ParamAccess.item, ParamType = new Param_Integer(), Optional = true });
       } else if (_modeMethod == ModeCalculationMethod.FrquencyRange) {
-        CreateParameter.Create(Params, new Param_Number(), index++, "Lower frequency", "LF", "Set lower frequency range", GH_ParamAccess.item);
-        CreateParameter.Create(Params, new Param_Number(), index++, "Upper frequency", "UF", "Set upper frequency range", GH_ParamAccess.item);
-        CreateParameter.Create(Params, new Param_Integer(), index++, "Limiting modes", "LM", "Limit maximum number of mode", GH_ParamAccess.item);
-
+        CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Lower frequency", NickName = "LF", Description = "Set lower frequency range", Access = GH_ParamAccess.item, ParamType = new Param_Number(), Optional = true });
+        CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Upper frequency", NickName = "UF", Description = "Set upper frequency range", Access = GH_ParamAccess.item, ParamType = new Param_Number(), Optional = true });
+        CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Limiting modes", NickName = "LM", Description = "Limit maximum number of mode", Access = GH_ParamAccess.item, ParamType = new Param_Integer(), Optional = true });
       } else {
-        CreateParameter.Create(Params, new Param_Number(), index++, "X-direction mass participation", "X", "Set x-direction mass participation", GH_ParamAccess.item);
-        CreateParameter.Create(Params, new Param_Number(), index++, "Y-direction mass participation", "Y", "Set y-direction mass participation", GH_ParamAccess.item);
-        CreateParameter.Create(Params, new Param_Number(), index++, "Z-direction mass participation", "Z", "Set z-direction mass participation", GH_ParamAccess.item);
-        CreateParameter.Create(Params, new Param_Integer(), index++, "Limiting modes", "LM", "Set limiting maximum number of mode", GH_ParamAccess.item);
-        CreateParameter.Create(Params, new Param_Boolean(), index++, "Skip modes with low mass participation", "MASIL", "Set the value to true to use the Masil algorithm", GH_ParamAccess.item);
+        CreateParameter.Create(Params, index++, new InputAttributes() { Name = "X-direction mass participation", NickName = "X", Description = "Set x-direction mass participation", Access = GH_ParamAccess.item, ParamType = new Param_Number(), Optional = true });
+        CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Y-direction mass participation", NickName = "Y", Description = "Set y-direction mass participation", Access = GH_ParamAccess.item, ParamType = new Param_Number(), Optional = true });
+        CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Z-direction mass participation", NickName = "Z", Description = "Set z-direction mass participation", Access = GH_ParamAccess.item, ParamType = new Param_Number(), Optional = true });
+        CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Limiting modes", NickName = "LM", Description = "Set limiting maximum number of mode", Access = GH_ParamAccess.item, ParamType = new Param_Integer(), Optional = true });
+        CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Skip modes with low mass participation", NickName = "MASIL", Description = "Set the value to true to use the Masil algorithm", Access = GH_ParamAccess.item, ParamType = new Param_Boolean(), Optional = true });
       }
-      CreateParameter.Create(Params, new Param_String(), index++, "Load case ", "LC", "Additional mass load case", GH_ParamAccess.item);
-      CreateParameter.Create(Params, new Param_Number(), index++, "Load scale factor", "LSF", "Set load scale factor", GH_ParamAccess.item);
-      CreateParameter.Create(Params, new Param_Number(), index++, "Mass scale factor", "MSF", "Set mass scale factor", GH_ParamAccess.item);
-      CreateParameter.Create(Params, new Param_Number(), index, "Damping stiffness proportion", "DSP", "Set model damping stiffness proportion", GH_ParamAccess.item);
-
+      CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Load case", NickName = "LC", Description = "Additional mass load case", Access = GH_ParamAccess.item, ParamType = new Param_String(), Optional = true });
+      CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Load scale factor", NickName = "LSF", Description = "Set load scale factor", Access = GH_ParamAccess.item, ParamType = new Param_Number(), Optional = true });
+      CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Mass scale factor", NickName = "MSF", Description = "Set mass scale factor", Access = GH_ParamAccess.item, ParamType = new Param_Number(), Optional = true });
+      CreateParameter.Create(Params, index, new InputAttributes() { Name = "Damping stiffness proportion", NickName = "DSP", Description = "Set model damping stiffness proportion", Access = GH_ParamAccess.item, ParamType = new Param_Number(), Optional = true });
     }
-
 
     protected override void InitialiseDropdowns() {
       _spacerDescriptions = new List<string>(new[] {
