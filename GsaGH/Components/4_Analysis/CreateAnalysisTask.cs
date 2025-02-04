@@ -216,7 +216,6 @@ namespace GsaGH.Components {
         case AnalysisTaskType.Static:
           task = AnalysisTaskFactory.CreateStaticAnalysisTask(name);
           break;
-
         case AnalysisTaskType.StaticPDelta:
           task = CreateStaticPDeltaTask(da, task, name);
           break;
@@ -226,14 +225,12 @@ namespace GsaGH.Components {
             return;
           }
           break;
-
         case AnalysisTaskType.ModalDynamic:
           if (!CreateModalDynamicTask(da, name, out task)) {
             return;
           }
           break;
         default:
-          this.AddRuntimeWarning(GetAnalysisCaseErrorMessage(_analysisTaskType));
           break;
       }
 
