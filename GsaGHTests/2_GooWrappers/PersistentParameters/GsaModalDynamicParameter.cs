@@ -47,7 +47,7 @@ namespace GsaGHTests.GooWrappers {
     }
 
     [Fact]
-    public void ParameterThenPluginInfoValueShouldBeValid() {
+    public void ParameterPluginInfoValueShouldBeValid() {
       GH_OasysComponent comp = CreateModalDynamicParameterByFrquencyRangeTest.ComponentMother();
       var output = (GsaModalDynamicGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Equal(PluginInfo.Instance, output.PluginInfo);
