@@ -25,8 +25,10 @@ namespace GsaGH.Helpers {
       if (task != null && !existingTasks.Keys.Contains(task.Id)) {
         int highestTask = existingTasks.Count;
         var analysisCases = new Dictionary<int, AnalysisCase>();
-        foreach (GsaAnalysisCase analysisCase in task.Cases) {
-          analysisCases.Add(analysisCase.Id, new AnalysisCase(analysisCase.Name, analysisCase.Definition));
+        if (task.Cases != null) {
+          foreach (GsaAnalysisCase analysisCase in task.Cases) {
+            analysisCases.Add(analysisCase.Id, new AnalysisCase(analysisCase.Name, analysisCase.Definition));
+          }
         }
         if (task.ApiTask != null) {
           if (analysisCases.Count == 0) {
@@ -41,7 +43,7 @@ namespace GsaGH.Helpers {
 
     public static void ImportAnalysisTask(GsaAnalysisTask task, Model model) {
       var gsaModel = new GsaModel(model);
-       ImportAnalysisTask(task, ref gsaModel);
+      ImportAnalysisTask(task, ref gsaModel);
     }
   }
 }

@@ -10,6 +10,7 @@ using GsaGH.Components;
 using GsaGH.Data;
 using GsaGH.Helpers;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 
 using GsaGHTests.Helpers;
 
@@ -23,9 +24,16 @@ namespace GsaGHTests.Components.Analysis {
     public CreateAnalysisTaskTests() { _component = CreateAnalysisTaskComponent(); }
 
     public void Dispose() {
-      _component.CreateAttributes();
-      _component.Params.Input.ForEach(x => x.Sources.Clear());
-      _component.Params.Input.ForEach(x => x.ClearData());
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing) {
+      if (disposing) {
+        _component.CreateAttributes();
+        _component.Params.Input.ForEach(x => x.Sources.Clear());
+        _component.Params.Input.ForEach(x => x.ClearData());
+      }
     }
 
     public static CreateAnalysisTask CreateAnalysisTaskComponent(bool withCases = true) {
@@ -39,6 +47,24 @@ namespace GsaGHTests.Components.Analysis {
         ComponentTestHelper.SetInput(component, GetDummyAnalysisCase(), 2);
       }
 
+      return component;
+    }
+
+    public static CreateAnalysisTask CreateAnalysisTaskComponent(ModeCalculationMethod modeMethod) {
+      var component = new CreateAnalysisTask();
+      component.CreateAttributes();
+      component.SetSelected(0, 3);
+      switch (modeMethod) {
+        case ModeCalculationMethod.NumberOfMode:
+          ComponentTestHelper.SetInput(component, ComponentTestHelper.GetOutput(CreateModalDynamicParameterByNumberOfModesTests.ComponentMother()), 2);
+          break;
+        case ModeCalculationMethod.FrquencyRange:
+          ComponentTestHelper.SetInput(component, ComponentTestHelper.GetOutput(CreateModalDynamicParameterByFrquencyRangeTest.ComponentMother()), 2);
+          break;
+        case ModeCalculationMethod.TargetMassRatio:
+          ComponentTestHelper.SetInput(component, ComponentTestHelper.GetOutput(CreateModalDynamicParameterByTargetMassParticipationTest.ComponentMother()), 2);
+          break;
+      }
       return component;
     }
 
@@ -102,10 +128,11 @@ namespace GsaGHTests.Components.Analysis {
 
     [Fact]
     public void ShouldAddRemarkForMissingAnalysisCase() {
-      SetToStatic();
-      _ = ComputeAndGetOutput();
-      Assert.True(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark).Count > 0);
-      Assert.Single(_component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+      CreateAnalysisTask component = CreateAnalysisTaskComponent(false);
+      component.SetSelected(0, 0);
+      ComponentTestHelper.ComputeOutput(component);
+      Assert.True(component.RuntimeMessages(GH_RuntimeMessageLevel.Remark).Count > 0);
+      Assert.Single(component.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
     }
 
     [Theory]

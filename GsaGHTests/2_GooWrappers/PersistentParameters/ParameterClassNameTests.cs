@@ -32,8 +32,10 @@ namespace GsaGHTests.Parameters {
         .Replace("GSA", "Gsa");
 
       // Test component name is equal to class name
+      if (paramName.Contains("Parameter")) {
+        paramName = paramName.Replace("Parameter", "").Trim();
+      }
       Assert.Equal(paramName + " Parameter", classNameSplit);
-
       // Test component icon is equal to class name
       ResourceManager rm = Resources.ResourceManager;
       string iconName = paramName.Replace(" ", string.Empty) + "Param";
