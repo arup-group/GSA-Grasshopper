@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 using GH_IO.Serialization;
-using GH_IO.Types;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Parameters;
@@ -145,7 +142,6 @@ namespace GsaGH.Components {
             case PDeltaCases.ResultCase:
               SetInputAttributes(2, _resultCaseAttributes);
               break;
-            default: break;
           }
 
           break;
@@ -157,8 +153,6 @@ namespace GsaGH.Components {
           break;
         case AnalysisTaskType.Static:
           SetInputAttributes(_casesParamIndex, _analysisCaseInputAttributes);
-          break;
-        default:
           break;
       }
     }
@@ -230,8 +224,6 @@ namespace GsaGH.Components {
             return;
           }
           break;
-        default:
-          break;
       }
 
       var gsaAnalysisTask = new GsaAnalysisTask {
@@ -275,8 +267,7 @@ namespace GsaGH.Components {
           new GsaAnalysisCase("", "Footfall")
         };
           break;
-        default:
-          break;
+
       }
       if (cases == null) {
         this.AddRuntimeRemark("Default Task has been created; it will by default contain all cases found in model");
@@ -303,7 +294,6 @@ namespace GsaGH.Components {
           task = AnalysisTaskFactory.CreateStaticPDeltaAnalysisTask(name,
             new GeometricStiffnessFromResultCase(resultCase));
           break;
-        default: break;
       }
 
       return task;
@@ -540,7 +530,6 @@ namespace GsaGH.Components {
               _casesParamIndex = 3;
               Params.RegisterInputParam(new Param_Integer());
               break;
-            default: break;
           }
 
           Params.RegisterInputParam(new Param_GenericObject());
@@ -560,13 +549,10 @@ namespace GsaGH.Components {
           Params.RegisterInputParam(FootfallInputManager._excitationForcesAttributes.ParamType);
           Params.RegisterInputParam(FootfallInputManager._dampingAttributes.ParamType);
           _casesParamIndex = !IsSelfExcitationSelected() ? 9 : 8;
-
           break;
         case AnalysisTaskType.ModalDynamic:
           Params.RegisterInputParam(new GsaModalDynamicParameter());
           _casesParamIndex = 2;
-          break;
-        default:
           break;
       }
     }
@@ -609,8 +595,6 @@ namespace GsaGH.Components {
         case AnalysisTaskType.Static:
           _dropDownItems.Add(_solverTypes.Keys.ToList());
           _selectedItems.Add(_dropDownItems[0][0]);
-          break;
-        default:
           break;
       }
       ReDrawComponent();
