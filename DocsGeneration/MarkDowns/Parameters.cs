@@ -4,14 +4,16 @@ using System.Collections.Generic;
 using DocsGeneration.Data;
 using DocsGeneration.MarkDowns.Helpers;
 
+using GsaGH;
+
 namespace DocsGeneration.MarkDowns {
   public class Parameters {
     public static void CreateOverview(Dictionary<string, List<Parameter>> parameters) {
-      string filePath = @"Output\gsagh-parameters.md";
+      string filePath = $@"{FileHelper.OutputPath}\gsagh-parameters.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = "# Parameters\n\n";
-      if (GsaGH.GsaGhInfo.isBeta) {
+      if (GsaGhInfo.isBeta) {
         text += StringHelper.AddBetaWarning();
         text += "\n";
       }
@@ -65,7 +67,7 @@ namespace DocsGeneration.MarkDowns {
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {parameter.Name}\n\n";
-      if (GsaGH.GsaGhInfo.isBeta) {
+      if (GsaGhInfo.isBeta) {
         text += StringHelper.AddBetaWarning();
       }
 

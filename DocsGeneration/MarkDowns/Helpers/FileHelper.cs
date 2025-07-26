@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -10,13 +11,16 @@ namespace DocsGeneration.MarkDowns.Helpers {
   public class FileHelper {
     public static string iconPath = "./images/";
     public static List<string> iconNames = new List<string>();
+    public static string OutputPath { get; private set; }
+      = GetOptionalPathForGeneration(Environment.GetCommandLineArgs());
+
     public static string CreateMarkDownFileName(Parameter parameter) {
       string fileLink = CreateFileName(parameter);
-      return $@"Output\{fileLink}.md";
+      return $@"{OutputPath}\{fileLink}.md";
     }
     public static string CreateMarkDownFileName(Component component) {
       string fileLink = CreateFileName(component);
-      return $@"Output\{fileLink}.md";
+      return $@"{OutputPath}\{fileLink}.md";
     }
 
     public static string CreateIconLink(Component component) {
@@ -48,7 +52,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
 
     public static void WriteIconNames() {
       string text = string.Join("\r\n", iconNames.Distinct().OrderBy(x => x));
-      Writer.Write($@"Output\Helper\iconNames.txt", text);
+      Writer.Write($@"{OutputPath}\Helper\iconNames.txt", text);
     }
 
     public static string CreateParameterLink(Parameter parameter, List<string> parameterNames) {
@@ -126,6 +130,17 @@ namespace DocsGeneration.MarkDowns.Helpers {
         (?<=[A-Za-z])(?=[^A-Za-z])",
         RegexOptions.IgnorePatternWhitespace);
       return r.Replace(s, spacer).Replace("Bool 6", "Bool6");
+    }
+
+    private static string GetOptionalPathForGeneration(string[] args) {
+      args = args.Skip(1).ToArray(); // skip the first argument which is the executable path
+      string outputPath = @"Output";
+      if (args.Length >= 2 && args[0] == "--output") {
+        outputPath = args[1];
+      }
+
+      Console.WriteLine($"Generating files into: {outputPath}");
+      return outputPath;
     }
   }
 }
