@@ -156,7 +156,7 @@ namespace DocsGeneration.MarkDowns {
     }
 
     private static void CreateComponentOverview(List<string> categories) {
-      string filePath = $@"{FileHelper.OutputPath}\gsagh-components.md";
+      string filePath = $@"{PathUtils.OutputPath}\gsagh-components.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = "# Components\n\n";
@@ -176,7 +176,7 @@ namespace DocsGeneration.MarkDowns {
 
     private static void CreateComponentOverview(
       string category, List<Component> components, List<string> parameterNames) {
-      string filePath = $@"{FileHelper.OutputPath}\gsagh-{category.ToLower()}-components-overview.md";
+      string filePath = $@"{PathUtils.OutputPath}\gsagh-{category.ToLower()}-components-overview.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {category} components \n\n";

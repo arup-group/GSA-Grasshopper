@@ -92,7 +92,7 @@ namespace DocsGeneration.MarkDowns {
 
       sb += "/*\n--- End of auto-generated text ---\n*/\n";
 
-      string filePath = $@"{FileHelper.OutputPath}\Helper\sidebar-gsagh.js";
+      string filePath = $@"{PathUtils.OutputPath}\Helper\sidebar-gsagh.js";
       string directory = Path.GetDirectoryName(filePath);
       if (!Directory.Exists(directory)) {
         Directory.CreateDirectory(directory);

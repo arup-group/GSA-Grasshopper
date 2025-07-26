@@ -9,7 +9,7 @@ using GsaGH;
 namespace DocsGeneration.MarkDowns {
   public class Parameters {
     public static void CreateOverview(Dictionary<string, List<Parameter>> parameters) {
-      string filePath = $@"{FileHelper.OutputPath}\gsagh-parameters.md";
+      string filePath = $@"{PathUtils.OutputPath}\gsagh-parameters.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = "# Parameters\n\n";
