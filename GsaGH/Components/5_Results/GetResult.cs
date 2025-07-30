@@ -19,7 +19,7 @@ using OasysGH.Components;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to select results from a GSA Model
+  ///   Component to select results from a GSA Model .
   /// </summary>
   public class GetResult : GH_OasysComponent {
     public override Guid ComponentGuid => new Guid("799e1ac7-a310-4a65-a737-f5f5d0077879");
