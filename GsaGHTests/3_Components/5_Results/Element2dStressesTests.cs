@@ -13,6 +13,7 @@ using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
+using GsaGHTests.TestHelpers;
 
 using OasysUnits;
 using OasysUnits.Units;
@@ -148,7 +149,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert Max in set
       double max = output.Max().As(PressureUnit.Megapascal);
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(max, 4));
     }
 
     [Theory]
@@ -189,7 +190,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert Max in set
       double max = output.Max().As(PressureUnit.Megapascal);
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(max, 4));
     }
 
     [Theory]
@@ -228,7 +229,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert Min in set
       double min = output.Min().As(PressureUnit.Megapascal);
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
 
     [Theory]
@@ -269,7 +270,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert Min in set
       double min = output.Min().As(PressureUnit.Megapascal);
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(min, 4));
     }
 
     private List<double> ExpectedAnalysisCaseValues(ResultTensor3 component, Layer2d layer) {

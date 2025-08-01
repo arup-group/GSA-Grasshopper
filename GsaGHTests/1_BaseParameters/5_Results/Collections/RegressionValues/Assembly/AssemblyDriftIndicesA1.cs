@@ -6,46 +6,46 @@ namespace GsaGHTests.Parameters.Results {
     // "assembly-simple.gwb" for Assembly 2 for analysis case A1
     internal static List<double> X() {
       return new List<double>() {
-        0.0,
-        989.4E-12,
-        796.7E-12,
-        -475.4E-12,
-        61.81E-12,
-        46.47E-12,
-        5.030E-12,
-        -17.16E-12,
-        -3.821E-12,
-        -69.82E-12,
+        0,
+        1.01E-09,
+        9.00E-10,
+        -4.642E-10,
+        5.01E-11,
+        3.65E-11,
+        -4.01E-12,
+        -2.67E-11,
+        -1.43E-11,
+        -6.26E-11,
       };
     }
 
     internal static List<double> Y() {
       return new List<double>() {
-        0.0,
-        -5.124E-6,
-        3.070E-6,
-        1.011E-6,
-        -132.1E-9,
-        -185.1E-9,
-        -189.6E-9,
-        -180.0E-9,
-        -172.4E-9,
-        -164.1E-9,
+        0,
+        -5.124E-06,
+        3.07E-06,
+        1.01E-06,
+        -1.32E-07,
+        -1.85E-07,
+        -1.90E-07,
+        -1.80E-07,
+        -1.72E-07,
+        -1.64E-07,
       };
     }
 
     internal static List<double> Xy() {
       return new List<double>() {
-        0.0,
-        -23.21E-6,
-        -5.124E-6,
-        -3.315E-6,
-        -4.195E-6,
-        -3.501E-6,
-        -2.762E-6,
-        -1.975E-6,
-        -1.217E-6,
-        -454.5E-9,
+        0,
+        5.124E-06,
+        3.07E-06,
+        1.01E-06,
+        1.32E-07,
+        1.85E-07,
+        1.90E-07,
+        1.80E-07,
+        1.72E-07,
+        1.64E-07,
       };
     }
   }
