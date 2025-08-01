@@ -6,8 +6,7 @@ using System.Linq;
 using GsaGH.Parameters.Results;
 
 using GsaGHTests.Helper;
-
-using OasysUnits;
+using GsaGHTests.TestHelpers;
 
 using Xunit;
 
@@ -33,7 +32,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max, 1E-6);
+      DoubleAssertHelper.Equals(expected, max);
     }
 
     [Theory]
@@ -55,7 +54,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max, 1E-6);
+      DoubleAssertHelper.Equals(expected, max);
     }
 
     [Theory]
@@ -77,7 +76,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min, 1E-6);
+      DoubleAssertHelper.Equals(expected, min);
     }
 
     [Theory]
@@ -99,7 +98,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min, 1E-6);
+      DoubleAssertHelper.Equals(expected, min);
     }
 
     [Theory]
@@ -126,7 +125,7 @@ namespace GsaGHTests.Parameters.Results {
       int position = 0;
       foreach (IInternalForce force in forceQuantity[0].Results.Values) {
         double x = TestsResultHelper.ResultsHelper(force, component);
-        Assert.Equal(expected[position++], x, 1E-6);
+        DoubleAssertHelper.Equals(expected[position++], x);
       }
     }
 
@@ -154,7 +153,7 @@ namespace GsaGHTests.Parameters.Results {
       int position = 0;
       foreach (IInternalForce force in forceQuantity[0].Results.Values) {
         double x = TestsResultHelper.ResultsHelper(force, component);
-        Assert.Equal(expected[position++], x, 1E-6);
+        DoubleAssertHelper.Equals(expected[position++], x);
       }
     }
 
