@@ -44,7 +44,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      DoubleAssertHelper.Equals(expected, max, 5);
+      DoubleAssertHelper.Equals(expected, max);
     }
 
     [Theory]
@@ -123,7 +123,7 @@ namespace GsaGHTests.Parameters.Results {
       int position = 0;
       foreach (Drift drift in driftQuantity[0].Results.Values) {
         double x = TestsResultHelper.ResultsHelper(drift, component);
-        DoubleAssertHelper.Equals(expected[position++], x, 5);
+        DoubleAssertHelper.Equals(expected[position++], x);
       }
     }
 

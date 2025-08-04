@@ -21,16 +21,6 @@ namespace GsaGHTests.TestHelpers {
         $"Values are not the same. Expected: {expected}, actual: {actual}");
     }
 
-    /// <summary>
-    ///   Asserts that two double values are equal to a specified number of decimal places.
-    ///   Throws an assertion failure if they are not equal within the given precision.
-    /// </summary>
-    /// <param name="expected">The expected double value.</param>
-    /// <param name="actual">The actual double value.</param>
-    /// <param name="precisionLevel">The number of decimal places for comparison precision.</param>
-    public static void Equals(double expected, double actual, int precisionLevel) {
-      Assert.True(_doubleComparer.IsEqualsAtPrecisionLevel(expected, actual, precisionLevel),
-        $"Values are not the same. Expected: {expected}, actual: {actual}");
-    }
+
   }
 }

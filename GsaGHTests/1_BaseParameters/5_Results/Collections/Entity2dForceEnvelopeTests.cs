@@ -40,7 +40,7 @@ namespace GsaGHTests.Parameters.Results {
         for (int vertex = 0; vertex < values[elementId].Count; vertex++) {
           double expected = TestsResultHelper.Envelope(expectedP1[i], expectedP2[i++], envelope);
           double actual = ResultHelper.RoundToSignificantDigits(values[elementId][vertex].Value, 4);
-          DoubleAssertHelper.Equals(expected, actual, 4);
+          DoubleAssertHelper.Equals(expected, actual);
         }
       }
     }
