@@ -16,6 +16,27 @@ namespace GsaGHTests.Helpers {
       Assert.Equal(expected, comparer.Equals(a, b));
     }
 
+    [Fact]
+    public void ValuesDifferByVeryLittleAndEpsilonIsZero() {
+      Assert.NotEqual(10.0, 10.000001, new DoubleComparer(0, true));
+    }
+
+    [Fact]
+    public void ValuesDifferLessThanEpsilonShouldBeConsideredEqualNoMargin() {
+      Assert.Equal(10.0, 10.01, new DoubleComparer());
+    }
+
+    [Fact]
+    public void ValuesDifferLessThanEpsilonShouldBeConsideredEqualWithMargin() {
+      Assert.Equal(10.0, 10.001, new DoubleComparer(0.1, true));
+    }
+
+    [Fact]
+    public void ValuesLargerThanEpsilonShouldBeConsideredEqual() {
+      double epsilon = 1f;
+      Assert.NotEqual(10.0, 10.0 + (epsilon * 2), new DoubleComparer(epsilon, true));
+    }
+
     [Theory]
     [InlineData(1.01, 1.02, 0.05, true)]
     [InlineData(1.01, 1.04, 0.05, false)]
