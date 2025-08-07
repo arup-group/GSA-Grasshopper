@@ -72,11 +72,10 @@
 
   <ItemGroup>
     <Reference Include="GsaAPI">
-      <HintPath>C:\Program Files\Oasys\GSA 10.2\GsaAPI.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\Program Files\Oasys\GSA 10.3\GsaAPI.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.Gsa_10_2">
-      <HintPath>C:\Program Files\Oasys\GSA 10.2\Interop.Gsa_10_2.dll</HintPath>
+    <Reference Include="Interop.Gsa_10_3">
+      <HintPath>..\..\..\Program Files\Oasys\GSA 10.3\Interop.Gsa_10_3.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.CSharp" />

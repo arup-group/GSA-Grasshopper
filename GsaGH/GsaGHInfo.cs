@@ -37,8 +37,8 @@ namespace GsaGH {
   public class GsaGhInfo : GH_AssemblyInfo {
     internal readonly struct GsaVersionRequired {
       internal static readonly int MajorVersion = 10;
-      internal static readonly int MinorVersion = 2;
-      internal static readonly int BuildVersion = 11;
+      internal static readonly int MinorVersion = 3;
+      internal static readonly int BuildVersion = 0;
       internal static readonly string MainVersion = $"{MajorVersion}.{MinorVersion}";
       internal static readonly string FullVersion = $"{MajorVersion}.{MinorVersion}.{BuildVersion}";
     }
