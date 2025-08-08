@@ -14,7 +14,7 @@ namespace IntegrationTests.Components {
     private static GH_Document document = null;
 
     [Theory]
-    [InlineData("RotationAngleTest", 0.994838, 6)]
+    [InlineData("RotationAngleTest", 0.994838)]
     [InlineData("paOrigX", 3.5)]
     [InlineData("paOrigY", 2.5)]
     [InlineData("paOrigZ", 0.0)]
@@ -23,27 +23,27 @@ namespace IntegrationTests.Components {
     [InlineData("paZZ", 1.0)]
     [InlineData("RotationAngleCheck", 0)]
     [InlineData("AxisRotationCheck", 0)]
-    public void Test(string groupIdentifier, object expected, int tolerance = 6) {
+    public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGhPrimitives(param, expected, tolerance);
+      Helper.TestGhPrimitives(param, expected);
     }
 
     [Theory]
-    [InlineData("elemOrigX", 3.5, 35, 2)]
-    [InlineData("elemOrigY", 2.5, 35, 2)]
-    [InlineData("elemOrigZ", 0.0, 35, 1)]
-    [InlineData("elemZX", 0.0, 35, 1)]
-    [InlineData("elemZY", 0.0, 35, 1)]
-    [InlineData("elemZZ", 1.0, 35, 1)]
+    [InlineData("elemOrigX", 3.5, 35)]
+    [InlineData("elemOrigY", 2.5, 35)]
+    [InlineData("elemOrigZ", 0.0, 35)]
+    [InlineData("elemZX", 0.0, 35)]
+    [InlineData("elemZY", 0.0, 35)]
+    [InlineData("elemZZ", 1.0, 35)]
     public void TestList(
-      string groupIdentifier, double expected, int listLength, int tolerance = 6) {
+      string groupIdentifier, double expected, int listLength) {
       var expecteds = new List<double>();
       for (int i = 0; i < listLength; i++) {
         expecteds.Add(expected);
       }
 
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGhPrimitives(param, expecteds.ToArray(), tolerance);
+      Helper.TestGhPrimitives(param, expecteds.ToArray());
     }
 
     private static GH_Document OpenDocument() {

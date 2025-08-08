@@ -13,6 +13,7 @@ using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
+using GsaGHTests.TestHelpers;
 
 using OasysUnits;
 using OasysUnits.Units;
@@ -89,20 +90,20 @@ namespace GsaGHTests.Components.Results {
       var resultSet = (IList<GH_Number>)ComponentTestHelper.GetListOutput(comp, 0);
       for (int i = 0; i < resultSet.Count; i++) {
         double value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
-        Assert.Equal(expected[i], value);
+        DoubleAssertHelper.Equals(expected[i], value);
       }
 
       // Assert Max in set
       comp.SetSelected(1, 1);
       resultSet = (IList<GH_Number>)ComponentTestHelper.GetListOutput(comp, 0);
       Assert.Single(resultSet);
-      Assert.Equal(expected.Max(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
+      DoubleAssertHelper.Equals(expected.Max(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
 
       // Assert Min in set
       comp.SetSelected(1, 7);
       resultSet = (IList<GH_Number>)ComponentTestHelper.GetListOutput(comp, 0);
       Assert.Single(resultSet);
-      Assert.Equal(expected.Min(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
+      DoubleAssertHelper.Equals(expected.Min(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
     }
 
     [Fact]
@@ -122,20 +123,20 @@ namespace GsaGHTests.Components.Results {
       var resultSet = (IList<GH_Number>)ComponentTestHelper.GetListOutput(comp, 0);
       for (int i = 0; i < resultSet.Count; i++) {
         double value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
-        Assert.Equal(expected[i], value);
+        DoubleAssertHelper.Equals(expected[i], value);
       }
 
       // Assert Max in set
       comp.SetSelected(1, 1);
       resultSet = (IList<GH_Number>)ComponentTestHelper.GetListOutput(comp, 0);
       Assert.Single(resultSet);
-      Assert.Equal(expected.Max(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
+      DoubleAssertHelper.Equals(expected.Max(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
 
       // Assert Min in set
       comp.SetSelected(1, 7);
       resultSet = (IList<GH_Number>)ComponentTestHelper.GetListOutput(comp, 0);
       Assert.Single(resultSet);
-      Assert.Equal(expected.Min(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
+      DoubleAssertHelper.Equals(expected.Min(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
     }
 
     [Fact]
@@ -159,43 +160,40 @@ namespace GsaGHTests.Components.Results {
       for (int i = 0; i < resultSetPeak.Count; i++) {
         double peak = ResultHelper.RoundToSignificantDigits(
           resultSetPeak[i].As(SpeedUnit.MeterPerSecond), 4);
-        Assert.Equal(expectedPeak[i], peak);
+        DoubleAssertHelper.Equals(expectedPeak[i], peak);
+
         double rms = ResultHelper.RoundToSignificantDigits(
           resultSetRMS[i].As(SpeedUnit.MeterPerSecond), 4);
-        Assert.Equal(expectedRMS[i], rms);
+        DoubleAssertHelper.Equals(expectedRMS[i], rms);
       }
 
       // Assert Max Peak in set
       comp.SetSelected(1, 2);
       resultSetPeak = ComponentTestHelper.GetResultOutput(comp, 1);
       Assert.Single(resultSetPeak);
-      Assert.Equal(expectedPeak.Max(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetPeak[0].As(SpeedUnit.MeterPerSecond), 4));
+      DoubleAssertHelper.Equals(expectedPeak.Max(),
+        ResultHelper.RoundToSignificantDigits(resultSetPeak[0].As(SpeedUnit.MeterPerSecond), 4));
 
       // Assert Max RMS in set
       comp.SetSelected(1, 3);
       resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 2);
       Assert.Single(resultSetRMS);
-      Assert.Equal(expectedRMS.Max(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetRMS[0].As(SpeedUnit.MeterPerSecond), 4));
+      DoubleAssertHelper.Equals(expectedRMS.Max(),
+        ResultHelper.RoundToSignificantDigits(resultSetRMS[0].As(SpeedUnit.MeterPerSecond), 4));
 
       // Assert Min Peak in set
       comp.SetSelected(1, 8);
       resultSetPeak = ComponentTestHelper.GetResultOutput(comp, 1);
       Assert.Single(resultSetPeak);
-      Assert.Equal(expectedPeak.Min(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetPeak[0].As(SpeedUnit.MeterPerSecond), 4));
+      DoubleAssertHelper.Equals(expectedPeak.Min(),
+        ResultHelper.RoundToSignificantDigits(resultSetPeak[0].As(SpeedUnit.MeterPerSecond), 4));
 
       // Assert Max RMS in set
       comp.SetSelected(1, 9);
       resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 2);
       Assert.Single(resultSetRMS);
-      Assert.Equal(expectedRMS.Min(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetRMS[0].As(SpeedUnit.MeterPerSecond), 4));
+      DoubleAssertHelper.Equals(expectedRMS.Min(),
+        ResultHelper.RoundToSignificantDigits(resultSetRMS[0].As(SpeedUnit.MeterPerSecond), 4));
     }
 
     [Fact]
@@ -219,43 +217,40 @@ namespace GsaGHTests.Components.Results {
       for (int i = 0; i < resultSetPeak.Count; i++) {
         double peak = ResultHelper.RoundToSignificantDigits(
           resultSetPeak[i].As(SpeedUnit.MeterPerSecond), 4);
-        Assert.Equal(expectedPeak[i], peak);
+        DoubleAssertHelper.Equals(expectedPeak[i], peak);
+
         double rms = ResultHelper.RoundToSignificantDigits(
           resultSetRMS[i].As(SpeedUnit.MeterPerSecond), 4);
-        Assert.Equal(expectedRMS[i], rms);
+        DoubleAssertHelper.Equals(expectedRMS[i], rms);
       }
 
       // Assert Max Peak in set
       comp.SetSelected(1, 2);
       resultSetPeak = ComponentTestHelper.GetResultOutput(comp, 1);
       Assert.Single(resultSetPeak);
-      Assert.Equal(expectedPeak.Max(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetPeak[0].As(SpeedUnit.MeterPerSecond), 4));
+      DoubleAssertHelper.Equals(expectedPeak.Max(),
+        ResultHelper.RoundToSignificantDigits(resultSetPeak[0].As(SpeedUnit.MeterPerSecond), 4));
 
       // Assert Max RMS in set
       comp.SetSelected(1, 3);
       resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 2);
       Assert.Single(resultSetRMS);
-      Assert.Equal(expectedRMS.Max(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetRMS[0].As(SpeedUnit.MeterPerSecond), 4));
+      DoubleAssertHelper.Equals(expectedRMS.Max(),
+        ResultHelper.RoundToSignificantDigits(resultSetRMS[0].As(SpeedUnit.MeterPerSecond), 4));
 
       // Assert Min Peak in set
       comp.SetSelected(1, 8);
       resultSetPeak = ComponentTestHelper.GetResultOutput(comp, 1);
       Assert.Single(resultSetPeak);
-      Assert.Equal(expectedPeak.Min(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetPeak[0].As(SpeedUnit.MeterPerSecond), 4));
+      DoubleAssertHelper.Equals(expectedPeak.Min(),
+        ResultHelper.RoundToSignificantDigits(resultSetPeak[0].As(SpeedUnit.MeterPerSecond), 4));
 
       // Assert Max RMS in set
       comp.SetSelected(1, 9);
       resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 2);
       Assert.Single(resultSetRMS);
-      Assert.Equal(expectedRMS.Min(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetRMS[0].As(SpeedUnit.MeterPerSecond), 4));
+      DoubleAssertHelper.Equals(expectedRMS.Min(),
+        ResultHelper.RoundToSignificantDigits(resultSetRMS[0].As(SpeedUnit.MeterPerSecond), 4));
     }
 
     [Fact]
@@ -275,47 +270,43 @@ namespace GsaGHTests.Components.Results {
       // Assert values
       List<IQuantity> resultSetPeak = ComponentTestHelper.GetResultOutput(comp, 3);
       List<IQuantity> resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 4);
-      Assert.Equal(resultSetPeak.Count, resultSetRMS.Count);
+      DoubleAssertHelper.Equals(resultSetPeak.Count, resultSetRMS.Count);
       for (int i = 0; i < resultSetPeak.Count; i++) {
         double peak = ResultHelper.RoundToSignificantDigits(
           resultSetPeak[i].As(AccelerationUnit.MeterPerSecondSquared), 4);
-        Assert.Equal(expectedPeak[i], peak);
+        DoubleAssertHelper.Equals(expectedPeak[i], peak);
         double rms = ResultHelper.RoundToSignificantDigits(
           resultSetRMS[i].As(AccelerationUnit.MeterPerSecondSquared), 4);
-        Assert.Equal(expectedRMS[i], rms);
+        DoubleAssertHelper.Equals(expectedRMS[i], rms);
       }
 
       // Assert Max Peak in set
       comp.SetSelected(1, 4);
       resultSetPeak = ComponentTestHelper.GetResultOutput(comp, 3);
       Assert.Single(resultSetPeak);
-      Assert.Equal(expectedPeak.Max(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetPeak[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
+      DoubleAssertHelper.Equals(expectedPeak.Max(),
+        ResultHelper.RoundToSignificantDigits(resultSetPeak[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
 
       // Assert Max RMS in set
       comp.SetSelected(1, 5);
       resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 4);
       Assert.Single(resultSetRMS);
-      Assert.Equal(expectedRMS.Max(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetRMS[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
+      DoubleAssertHelper.Equals(expectedRMS.Max(),
+        ResultHelper.RoundToSignificantDigits(resultSetRMS[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
 
       // Assert Min Peak in set
       comp.SetSelected(1, 10);
       resultSetPeak = ComponentTestHelper.GetResultOutput(comp, 3);
       Assert.Single(resultSetPeak);
-      Assert.Equal(expectedPeak.Min(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetPeak[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
+      DoubleAssertHelper.Equals(expectedPeak.Min(),
+        ResultHelper.RoundToSignificantDigits(resultSetPeak[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
 
       // Assert Min RMS in set
       comp.SetSelected(1, 11);
       resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 4);
       Assert.Single(resultSetRMS);
-      Assert.Equal(expectedRMS.Min(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetRMS[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
+      DoubleAssertHelper.Equals(expectedRMS.Min(),
+        ResultHelper.RoundToSignificantDigits(resultSetRMS[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
     }
 
     [Fact]
@@ -335,47 +326,43 @@ namespace GsaGHTests.Components.Results {
       // Assert values
       List<IQuantity> resultSetPeak = ComponentTestHelper.GetResultOutput(comp, 3);
       List<IQuantity> resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 4);
-      Assert.Equal(resultSetPeak.Count, resultSetRMS.Count);
+      DoubleAssertHelper.Equals(resultSetPeak.Count, resultSetRMS.Count);
       for (int i = 0; i < resultSetPeak.Count; i++) {
         double peak = ResultHelper.RoundToSignificantDigits(
           resultSetPeak[i].As(AccelerationUnit.MeterPerSecondSquared), 4);
-        Assert.Equal(expectedPeak[i], peak);
+        DoubleAssertHelper.Equals(expectedPeak[i], peak);
         double rms = ResultHelper.RoundToSignificantDigits(
           resultSetRMS[i].As(AccelerationUnit.MeterPerSecondSquared), 4);
-        Assert.Equal(expectedRMS[i], rms);
+        DoubleAssertHelper.Equals(expectedRMS[i], rms);
       }
 
       // Assert Max Peak in set
       comp.SetSelected(1, 4);
       resultSetPeak = ComponentTestHelper.GetResultOutput(comp, 3);
       Assert.Single(resultSetPeak);
-      Assert.Equal(expectedPeak.Max(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetPeak[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
+      DoubleAssertHelper.Equals(expectedPeak.Max(),
+        ResultHelper.RoundToSignificantDigits(resultSetPeak[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
 
       // Assert Max RMS in set
       comp.SetSelected(1, 5);
       resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 4);
       Assert.Single(resultSetRMS);
-      Assert.Equal(expectedRMS.Max(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetRMS[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
+      DoubleAssertHelper.Equals(expectedRMS.Max(),
+        ResultHelper.RoundToSignificantDigits(resultSetRMS[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
 
       // Assert Min Peak in set
       comp.SetSelected(1, 10);
       resultSetPeak = ComponentTestHelper.GetResultOutput(comp, 3);
       Assert.Single(resultSetPeak);
-      Assert.Equal(expectedPeak.Min(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetPeak[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
+      DoubleAssertHelper.Equals(expectedPeak.Min(),
+        ResultHelper.RoundToSignificantDigits(resultSetPeak[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
 
       // Assert Min RMS in set
       comp.SetSelected(1, 11);
       resultSetRMS = ComponentTestHelper.GetResultOutput(comp, 4);
       Assert.Single(resultSetRMS);
-      Assert.Equal(expectedRMS.Min(),
-        ResultHelper.RoundToSignificantDigits(
-          resultSetRMS[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
+      DoubleAssertHelper.Equals(expectedRMS.Min(),
+        ResultHelper.RoundToSignificantDigits(resultSetRMS[0].As(AccelerationUnit.MeterPerSecondSquared), 4));
     }
 
     [Fact]
@@ -395,20 +382,20 @@ namespace GsaGHTests.Components.Results {
       List<IQuantity> resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       for (int i = 0; i < resultSet.Count; i++) {
         double value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
-        Assert.Equal(expected[i], value);
+        DoubleAssertHelper.Equals(expected[i], value);
       }
 
       // Assert Max in set
       comp.SetSelected(1, 6);
       resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       Assert.Single(resultSet);
-      Assert.Equal(expected.Max(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
+      DoubleAssertHelper.Equals(expected.Max(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
 
       // Assert Min in set
       comp.SetSelected(1, 12);
       resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       Assert.Single(resultSet);
-      Assert.Equal(expected.Min(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
+      DoubleAssertHelper.Equals(expected.Min(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
     }
 
     [Fact]
@@ -428,20 +415,20 @@ namespace GsaGHTests.Components.Results {
       List<IQuantity> resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       for (int i = 0; i < resultSet.Count; i++) {
         double value = ResultHelper.RoundToSignificantDigits(resultSet[i].Value, 4);
-        Assert.Equal(expected[i], value);
+        DoubleAssertHelper.Equals(expected[i], value);
       }
 
       // Assert Max in set
       comp.SetSelected(1, 6);
       resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       Assert.Single(resultSet);
-      Assert.Equal(expected.Max(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
+      DoubleAssertHelper.Equals(expected.Max(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
 
       // Assert Min in set
       comp.SetSelected(1, 12);
       resultSet = ComponentTestHelper.GetResultOutput(comp, 6);
       Assert.Single(resultSet);
-      Assert.Equal(expected.Min(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
+      DoubleAssertHelper.Equals(expected.Min(), ResultHelper.RoundToSignificantDigits(resultSet[0].Value, 4));
     }
   }
 }

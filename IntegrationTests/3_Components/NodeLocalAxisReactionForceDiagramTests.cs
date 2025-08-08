@@ -35,7 +35,7 @@ namespace IntegrationTests.Components {
     [InlineData("A2z", -4.097553)]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
-      Helper.TestGhPrimitives(param, expected, 6);
+      Helper.TestGhPrimitives(param, expected);
     }
 
     private static GH_Document OpenDocument() {
