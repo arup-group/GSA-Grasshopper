@@ -6,31 +6,31 @@ namespace GsaGHTests.Parameters.Results {
     // "assembly-simple.gwb" for Assembly 2 for analysis case A1
     internal static List<double> XInMillimeter() {
       return new List<double>() {
-        0,
-        1.02E-06,
-        1.00E-06,
-        -5.157E-07,
-        5.56E-08,
-        4.05E-08,
-        -4.45E-09,
-        -2.97E-08,
-        -1.59E-08,
-        -6.32E-08
+        0.0,
+        999.4E-9,
+        885.3E-9,
+        -528.2E-9,
+        68.68E-9,
+        51.64E-9,
+        5.589E-9,
+        -19.06E-9,
+        -4.245E-9,
+        -70.53E-9,
       };
     }
 
     internal static List<double> YInMillimeter() {
       return new List<double>() {
-        0,
-        -0.005176,
+        0.0,
+        -0.005175,
         0.003411,
         0.001123,
-        -1.47E-04,
-        -2.06E-04,
-        -2.11E-04,
-        -2.00E-04,
-        -1.92E-04,
-        -1.66E-04
+        -146.8E-6,
+        -205.7E-6,
+        -210.7E-6,
+        -200.0E-6,
+        -191.6E-6,
+        -165.8E-6,
       };
     }
 

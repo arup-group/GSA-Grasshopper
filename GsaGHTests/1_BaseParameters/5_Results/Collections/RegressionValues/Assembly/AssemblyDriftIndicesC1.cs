@@ -30,7 +30,7 @@ namespace GsaGHTests.Parameters.Results {
         -6.77E-06,
         -6.94E-06,
         -7.08E-06,
-        -7.13E-06
+        -7.13E-06,
       };
     }
 
@@ -45,7 +45,7 @@ namespace GsaGHTests.Parameters.Results {
         6.80E-06,
         6.94E-06,
         7.09E-06,
-        7.15E-06
+        7.15E-06,
       };
     }
   }

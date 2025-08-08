@@ -6,16 +6,16 @@ namespace GsaGHTests.Parameters.Results {
     // "assembly-simple.gwb" for Assembly 2 for analysis case A1
     internal static List<double> XInMillimeter() {
       return new List<double>() {
-        -5.20E-07,
-        5.00E-07,
-        1.50E-06,
-        9.84E-07,
-        1.04E-06,
-        1.08E-06,
-        1.08E-06,
-        1.05E-06,
-        1.03E-06,
-        9.67E-07
+        -676.2E-9,
+        323.2E-9,
+        1.208E-6,
+        680.2E-9,
+        748.9E-9,
+        800.5E-9,
+        806.1E-9,
+        787.1E-9,
+        782.8E-9,
+        712.3E-9,
       };
     }
 
@@ -23,14 +23,14 @@ namespace GsaGHTests.Parameters.Results {
       return new List<double>() {
         0.001790,
         -0.003385,
-        25.56E-06,
+        25.80E-6,
         0.001149,
         0.001002,
-        796.2E-06,
-        585.5E-06,
-        385.5E-06,
-        194.0E-06,
-        28.21E-06
+        796.4E-6,
+        585.7E-6,
+        385.7E-6,
+        194.1E-6,
+        28.31E-6,
       };
     }
 
@@ -45,7 +45,7 @@ namespace GsaGHTests.Parameters.Results {
         -0.05776,
         -0.05995,
         -0.06131,
-        -0.06176
+        -0.06176,
       };
     }
 
@@ -56,11 +56,11 @@ namespace GsaGHTests.Parameters.Results {
         0.04245,
         0.04615,
         0.05081,
-        0.0547,
+        0.05470,
         0.05776,
         0.05995,
         0.06131,
-        0.06176
+        0.06176,
       };
     }
 
@@ -81,46 +81,46 @@ namespace GsaGHTests.Parameters.Results {
 
     internal static List<double> YyInRadian() {
       return new List<double>() {
-        1.31E-09,
-        1.518E-09,
-        1.62E-10,
-        2.12E-10,
-        1.09E-10,
-        3.36E-11,
-        -1.18E-11,
-        -4.55E-11,
-        -6.897E-11,
-        4.41E-11
+        1.336E-9,
+        1.575E-9,
+        187.3E-12,
+        231.1E-12,
+        124.1E-12,
+        47.66E-12,
+        0.0,
+        -35.90E-12,
+        -68.54E-12,
+        35.98E-12,
       };
     }
 
     internal static List<double> ZzInRadian() {
       return new List<double>() {
         0.0,
-        -1.336E-09,
-        -120.7E-12,
-        176.5E-12,
-        128.2E-12,
+        -1.311E-9,
+        0.0,
+        276.7E-12,
+        237.9E-12,
+        131.4E-12,
         0.0,
         0.0,
         0.0,
-        0.0,
-        0.0
+        225.1E-12,
       };
     }
 
     internal static List<double> XxyyzzInRadian() {
       return new List<double>() {
-        1.41E-05,
-        3.36E-06,
-        2.30E-06,
-        9.657E-08,
-        1.65E-07,
-        1.96E-07,
-        1.82E-07,
-        1.81E-07,
-        1.55E-07,
-        1.67E-07
+        14.10E-6,
+        3.360E-6,
+        2.303E-6,
+        96.59E-9,
+        165.2E-9,
+        196.0E-9,
+        182.4E-9,
+        180.7E-9,
+        155.3E-9,
+        167.3E-9,
       };
     }
   }

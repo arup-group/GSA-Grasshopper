@@ -10,7 +10,7 @@ using Xunit;
 
 namespace GsaGHTests.Parameters.Results {
   [Collection("GrasshopperFixture collection")]
-  public partial class AssemblyDiscplacementTests {
+  public partial class AssemblyDisplacementTests {
     [Fact]
     public void TakePositionsThrowsExceptionTest() {
       // Assemble
