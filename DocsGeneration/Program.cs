@@ -19,18 +19,18 @@ namespace DocsGeneration {
       List<Parameter> parameters = Parameter.GetParameters(typelist, components);
 
       // write individual files
-      MarkDowns.Components.CreateComponents(components, parameters);
-      MarkDowns.Parameters.CreateParameters(parameters);
-
-      // write overview files
-      Dictionary<string, List<Component>> sortedComponents = Component.SortComponents(components);
-      Dictionary<string, List<Parameter>> sortedParameters = Parameter.SortParameters(parameters);
-      MarkDowns.Components.CreateOverview(sortedComponents, parameters);
-      MarkDowns.Parameters.CreateOverview(sortedParameters);
-
-      // write sidebar
-      MarkDowns.SideBar.CreateSideBar(sortedComponents, sortedParameters);
-      FileHelper.WriteIconNames();
+      // MarkDowns.Components.CreateComponents(components, parameters);
+      // MarkDowns.Parameters.CreateParameters(parameters);
+      //
+      // // write overview files
+      // Dictionary<string, List<Component>> sortedComponents = Component.SortComponents(components);
+      // Dictionary<string, List<Parameter>> sortedParameters = Parameter.SortParameters(parameters);
+      // MarkDowns.Components.CreateOverview(sortedComponents, parameters);
+      // MarkDowns.Parameters.CreateOverview(sortedParameters);
+      //
+      // // write sidebar
+      // MarkDowns.SideBar.CreateSideBar(sortedComponents, sortedParameters);
+      // FileHelper.WriteIconNames();
     }
   }
 }
