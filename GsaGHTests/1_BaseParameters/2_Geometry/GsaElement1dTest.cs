@@ -1,4 +1,8 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
+
+using GsaAPI;
 
 using GsaGH.Parameters;
 
@@ -179,6 +183,54 @@ namespace GsaGHTests.Parameters {
 
       var dup = new GsaElement1d(orig);
       Assert.Equal(dup.Section.Guid, orig.Section.Guid);
+    }
+
+
+    [Fact]
+    public void ShouldCreateElementWithNoValidLine() {
+      var gsaElement = new GSAElement(new Element());
+      gsaElement.OrientationNode = 0;
+      gsaElement.Topology = new ReadOnlyCollection<int>(new List<int> { 2, 3 });
+      var element = new KeyValuePair<int, GSAElement>(0, gsaElement);
+      Dictionary<int, Node> nodes = new Dictionary<int, Node>();
+      var  p1 = new Node();
+      p1.Position = new Vector3() { X = 1, Y = 2, Z = 3 };
+      nodes.Add(0,p1 );
+      var  p2 = new Node();
+      p2.Position = new Vector3() { X = 4, Y = 5, Z = 6 };
+      nodes.Add(1, p2);
+
+      ReadOnlyCollection<double> localaxes = new ReadOnlyCollection<double>(new List<double> { 1, 0, 0, 0, 1, 0, 0, 0, 1 });
+      var section = new GsaSection();
+      var elem = new GsaElement1d(element, nodes, section, localaxes, LengthUnit.Meter);
+
+      Assert.Equal(elem.Line.PointAtStart, elem.Line.PointAtEnd);
+    }
+
+    [Fact]
+    public void ShouldCreateElementWithAValidLine() {
+      var gsaElement = new GSAElement(new Element());
+      gsaElement.OrientationNode = 0;
+      gsaElement.Topology = new ReadOnlyCollection<int>(new List<int> { 0, 1 });
+      var element = new KeyValuePair<int, GSAElement>(0, gsaElement);
+      Dictionary<int, Node> nodes = new Dictionary<int, Node>();
+      var  p1 = new Node();
+      p1.Position = new Vector3() { X = 1, Y = 2, Z = 3 };
+      nodes.Add(0,p1 );
+      var  p2 = new Node();
+      p2.Position = new Vector3() { X = 4, Y = 5, Z = 6 };
+      nodes.Add(1, p2);
+
+      ReadOnlyCollection<double> localaxes = new ReadOnlyCollection<double>(new List<double> { 1, 0, 0, 0, 1, 0, 0, 0, 1 });
+      var section = new GsaSection();
+      var elem = new GsaElement1d(element, nodes, section, localaxes, LengthUnit.Meter);
+
+      var pos1 = p1.Position;
+      Assert.Equal(elem.Line.PointAtStart, 
+          new Point3d() { X = pos1.X, Y = pos1.Y, Z = pos1.Z });
+      var pos2 = p2.Position;
+      Assert.Equal(elem.Line.PointAtEnd,
+          new Point3d() { X = pos2.X, Y = pos2.Y, Z = pos2.Z });
     }
   }
 }
