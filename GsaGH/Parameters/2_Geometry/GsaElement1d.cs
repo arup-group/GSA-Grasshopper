@@ -91,8 +91,9 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaElement1d(KeyValuePair<int, GSAElement> element, IReadOnlyDictionary<int, Node> nodes,
-      GsaSection section, ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
+    internal GsaElement1d(
+      KeyValuePair<int, GSAElement> element, IReadOnlyDictionary<int, Node> nodes, GsaSection section,
+      ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
       InitVariables(element, nodes, localAxes, modelUnit);
       Section = section;
     }
@@ -100,8 +101,9 @@ namespace GsaGH.Parameters {
     /// <summary>
     ///   Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaElement1d(KeyValuePair<int, GSAElement> element, IReadOnlyDictionary<int, Node> nodes,
-      GsaSpringProperty springProperty, ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
+    internal GsaElement1d(
+      KeyValuePair<int, GSAElement> element, IReadOnlyDictionary<int, Node> nodes, GsaSpringProperty springProperty,
+      ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) {
       InitVariables(element, nodes, localAxes, modelUnit);
       SpringProperty = springProperty;
     }
@@ -140,12 +142,19 @@ namespace GsaGH.Parameters {
       string type = Mappings._elementTypeMapping.FirstOrDefault(x => x.Value == ApiElement.Type).Key;
       string property = string.Empty;
       if (Section != null) {
-        property = Section.Id > 0 ? $"PB{Section.Id}"
-        : Section.ApiSection != null ? Section.ApiSection.Profile : string.Empty;
+        property = Section.Id > 0 ?
+          $"PB{Section.Id}" :
+          Section.ApiSection != null ?
+            Section.ApiSection.Profile :
+            string.Empty;
       } else if (SpringProperty != null) {
-        property = SpringProperty.Id > 0 ? $"SP{SpringProperty.Id}"
-        : SpringProperty.ApiProperty != null ? SpringProperty.ApiProperty.Name : string.Empty;
+        property = SpringProperty.Id > 0 ?
+          $"SP{SpringProperty.Id}" :
+          SpringProperty.ApiProperty != null ?
+            SpringProperty.ApiProperty.Name :
+            string.Empty;
       }
+
       return string.Join(" ", id, type, property).TrimSpaces();
     }
 
@@ -153,20 +162,17 @@ namespace GsaGH.Parameters {
       Bool6 s = ApiElement.GetEndRelease(0).Releases;
       Bool6 e = ApiElement.GetEndRelease(1).Releases;
 
-      if (s.X || s.Y || s.Z || s.XX || s.YY || s.ZZ
-        || e.X || e.Y || e.Z || e.XX || e.YY || e.ZZ) {
+      if (s.X || s.Y || s.Z || s.XX || s.YY || s.ZZ || e.X || e.Y || e.Z || e.XX || e.YY || e.ZZ) {
         var crv = new PolyCurve();
         crv.Append(Line);
-        ReleasePreview = new ReleasePreview(crv,
-          ApiElement.OrientationAngle * Math.PI / 180.0, s, e);
+        ReleasePreview = new ReleasePreview(crv, ApiElement.OrientationAngle * Math.PI / 180.0, s, e);
       } else {
         ReleasePreview = new ReleasePreview();
       }
     }
 
     private GsaOffset GetOffSetFromApiElement() {
-      return new GsaOffset(
-        ApiElement.Offset.X1, ApiElement.Offset.X2, ApiElement.Offset.Y, ApiElement.Offset.Z);
+      return new GsaOffset(ApiElement.Offset.X1, ApiElement.Offset.X2, ApiElement.Offset.Y, ApiElement.Offset.Z);
     }
 
     private void SetOffsetInApiElement(GsaOffset offset) {
@@ -196,9 +202,14 @@ namespace GsaGH.Parameters {
         OrientationNode = new GsaNode(Nodes.Point3dFromNode(nodes[ApiElement.OrientationNode], modelUnit));
       }
 
-      Line = new LineCurve(new Line(Nodes.Point3dFromNode(nodes[ApiElement.Topology[0]], modelUnit),
-        Nodes.Point3dFromNode(nodes[ApiElement.Topology[1]], modelUnit)));
-      LocalAxes = new LocalAxes(localAxes);
+      if (nodes.TryGetValue(ApiElement.Topology[0], out Node node1)
+        && nodes.TryGetValue(ApiElement.Topology[1], out Node node2)) {
+        {
+          Line = new LineCurve(new Line(Nodes.Point3dFromNode(node1, modelUnit),
+            Nodes.Point3dFromNode(node2, modelUnit)));
+          LocalAxes = new LocalAxes(localAxes);
+        }
+      }
     }
 
     private void SetOffsets(Element elem) {
