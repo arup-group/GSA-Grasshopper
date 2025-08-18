@@ -3,15 +3,9 @@
     <TargetFramework>net48</TargetFramework>
     <PlatformTarget>x64</PlatformTarget>
     <Platforms>x64</Platforms>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Rhino.Inside" Version="7.0.0" />
+    <PackageReference Include="Rhino.Inside" Version="7.0.0" PrivateAssets="all"/>
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GsaGH\GsaGH.csproj">
-      <Private>True</Private>
-    </ProjectReference>
-   </ItemGroup>
 </Project>

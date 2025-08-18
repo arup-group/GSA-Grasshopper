@@ -3,34 +3,38 @@ using System.Collections.Generic;
 using System.Reflection;
 
 using DocsGeneration.Data;
-using DocsGeneration.Helpers;
+using DocsGeneration.MarkDowns;
 using DocsGeneration.MarkDowns.Helpers;
 
 namespace DocsGeneration {
-  public class Program {
-    public static void Main() {
-      // setup
-      var dll = new GsaGhDll();
-      Assembly gsaGH = dll.Load();
+  public static class GenerateDocumentation {
 
+    public static void Generate(Configuration config) {
       // reflect
-      Type[] typelist = gsaGH.GetTypes();
+      Type[] typelist = config.Assembly.GetTypes();
       List<Component> components = Component.GetComponents(typelist);
       List<Parameter> parameters = Parameter.GetParameters(typelist, components);
 
       // write individual files
-      MarkDowns.Components.CreateComponents(components, parameters);
-      MarkDowns.Parameters.CreateParameters(parameters);
+      Components.CreateComponents(components, parameters);
+      Parameters.CreateParameters(parameters);
 
       // write overview files
       Dictionary<string, List<Component>> sortedComponents = Component.SortComponents(components);
       Dictionary<string, List<Parameter>> sortedParameters = Parameter.SortParameters(parameters);
-      MarkDowns.Components.CreateOverview(sortedComponents, parameters);
-      MarkDowns.Parameters.CreateOverview(sortedParameters);
+      Components.CreateOverview(sortedComponents, parameters);
+      Parameters.CreateOverview(sortedParameters);
 
       // write sidebar
-      MarkDowns.SideBar.CreateSideBar(sortedComponents, sortedParameters);
+      SideBar.CreateSideBar(sortedComponents, sortedParameters);
       FileHelper.WriteIconNames();
     }
+  }
+
+  public class Configuration {
+    public bool GenerateE2ETestData { get; set; } = false;
+    public string CustomOutputPath { get; set; } = "Output";
+
+    public Assembly Assembly { get; set; }
   }
 }

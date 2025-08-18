@@ -4,8 +4,6 @@ using System.Text.RegularExpressions;
 
 using DocsGeneration.Data;
 
-using GsaGH.Helpers;
-
 namespace DocsGeneration.MarkDowns.Helpers {
   public class FileHelper {
     public static string iconPath = "./images/";
