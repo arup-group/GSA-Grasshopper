@@ -223,5 +223,99 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(elem.Line.PointAtEnd,
           new Point3d() { X = pos2.X, Y = pos2.Y, Z = pos2.Z });
     }
+
+    [Fact]
+    public void TestToString_SectionWithId() {
+      var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
+      var elem = new GsaElement1d(new LineCurve(ln)) {
+        Id = 123,
+        Section = new GsaSection(5) // Section with ID > 0
+      };
+
+      string result = elem.ToString();
+      Assert.Contains("PB5", result);
+    }
+
+    [Fact]
+    public void TestToString_SectionWithProfile() {
+      var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
+      var elem = new GsaElement1d(new LineCurve(ln)) {
+        Id = 123,
+        Section = new GsaSection("STD R 200 100") // Section with profile but no ID
+      };
+
+      string result = elem.ToString();
+      Assert.Contains("STD R 200 100", result);
+    }
+
+    [Fact]
+    public void TestToString_SpringPropertyWithId() {
+      var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
+      var elem = new GsaElement1d(new LineCurve(ln)) {
+        Id = 123,
+        SpringProperty = new GsaSpringProperty(7) // SpringProperty with ID > 0
+      };
+
+      string result = elem.ToString();
+      Assert.Contains("SP7", result);
+    }
+
+    [Fact]
+    public void TestToString_SpringPropertyWithName() {
+      var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
+      var elem = new GsaElement1d(new LineCurve(ln)) {
+        Id = 123,
+        SpringProperty = new GsaSpringProperty() // SpringProperty with ApiProperty.Name
+      };
+      elem.SpringProperty.ApiProperty.Name = "MySpringProperty";
+
+      string result = elem.ToString();
+      Assert.Contains("MySpringProperty", result);
+    }
+
+    [Fact]
+    public void TestToString_SectionWithIdZero() {
+      var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
+      var elem = new GsaElement1d(new LineCurve(ln)) {
+        Id = 123,
+        Section = new GsaSection("STD I 1000 500 10 5") // Section with profile
+      };
+      elem.Section.Id = 0; // Set ID to 0 to test fallback to profile
+
+      string result = elem.ToString();
+      Assert.Contains("STD I 1000 500 10 5", result);
+      Assert.DoesNotContain("PB0", result);
+    }
+
+    [Fact]
+    public void TestToString_SpringPropertyWithIdZero() {
+      var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
+      var elem = new GsaElement1d(new LineCurve(ln)) {
+        Id = 123,
+        SpringProperty = new GsaSpringProperty() // SpringProperty without ID
+      };
+      elem.SpringProperty.Id = 0; // Set ID to 0 to test fallback to Name
+      elem.SpringProperty.ApiProperty.Name = "TestSpring";
+
+      string result = elem.ToString();
+      Assert.Contains("TestSpring", result);
+      Assert.DoesNotContain("SP0", result);
+    }
+
+    [Fact]
+    public void TestToString_NoSectionNoSpringProperty() {
+      var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
+      var elem = new GsaElement1d(new LineCurve(ln)) {
+        Id = 123
+        // No Section or SpringProperty
+      };
+
+      string result = elem.ToString();
+      Assert.Contains("ID:123", result);
+      Assert.Contains("BEAM", result); // Default element type
+      // Should not contain any property strings
+      Assert.DoesNotContain("PB", result);
+      Assert.DoesNotContain("SP", result);
+    }
   }
 }
