@@ -186,17 +186,16 @@ namespace GsaGHTests.Parameters {
     }
 
 
-    public GsaElement1d GetElement(List<int> topo, out  Dictionary<int, Node> nodes)
-    {
+    public GsaElement1d GetElement(List<int> topo, out Dictionary<int, Node> nodes) {
       var gsaElement = new GSAElement(new Element());
       gsaElement.OrientationNode = 0;
       gsaElement.Topology = new ReadOnlyCollection<int>(topo);
       var element = new KeyValuePair<int, GSAElement>(0, gsaElement);
       nodes = new Dictionary<int, Node>();
-      var  p1 = new Node();
+      var p1 = new Node();
       p1.Position = new Vector3() { X = 1, Y = 2, Z = 3 };
-      nodes.Add(0,p1 );
-      var  p2 = new Node();
+      nodes.Add(0, p1);
+      var p2 = new Node();
       p2.Position = new Vector3() { X = 4, Y = 5, Z = 6 };
       nodes.Add(1, p2);
 
@@ -217,11 +216,54 @@ namespace GsaGHTests.Parameters {
 
       var elem = GetElement(new List<int> { 0, 1 }, out var nodes);
       var pos1 = nodes[0].Position;
-      Assert.Equal(elem.Line.PointAtStart, 
+      Assert.Equal(elem.Line.PointAtStart,
           new Point3d() { X = pos1.X, Y = pos1.Y, Z = pos1.Z });
       var pos2 = nodes[1].Position;
       Assert.Equal(elem.Line.PointAtEnd,
           new Point3d() { X = pos2.X, Y = pos2.Y, Z = pos2.Z });
+    }
+
+    private GsaElement1d GetBasicElement() {
+      return new GsaElement1d(new LineCurve(new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10))));
+    }
+
+    [Fact]
+    public void ShouldCreateElementWithSection() {
+      var elem = GetBasicElement();
+      elem.Id = 1;
+      elem.Section = new GsaSection();
+      elem.Section.Id = 2;
+
+      Assert.Contains("PB", elem.ToString());
+    }
+
+    [Fact]
+    public void ShouldCreateElementWithSectionNoId() {
+      var elem = GetBasicElement();
+      elem.Id = 1;
+      elem.Section = new GsaSection();
+      var asd = elem.Section.ApiSection.Profile = "TESTSECTION";
+      Assert.Contains("TESTSECTION", elem.ToString());
+    }
+
+    [Fact]
+    public void ShouldCreateElementWithSpring() {
+      var elem = GetBasicElement();
+      elem.Id = 1;
+      elem.SpringProperty = new GsaSpringProperty(2);
+
+      Assert.Contains("SP", elem.ToString());
+    }
+
+    [Fact]
+    public void ShouldCreateElementWithSpringNoId() {
+      var elem = GetBasicElement();
+      elem.Id = 1;
+      elem.SpringProperty = new GsaSpringProperty();
+      elem.SpringProperty.ApiProperty = new AxialSpringProperty() { Stiffness = 1000 };
+      elem.SpringProperty.ApiProperty.Name = "Test";
+
+      Assert.Contains("Test", elem.ToString());
     }
   }
 }
