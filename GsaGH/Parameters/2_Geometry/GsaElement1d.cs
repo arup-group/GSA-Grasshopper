@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 
@@ -25,6 +26,7 @@ namespace GsaGH.Parameters
     /// <para>Element1Ds are one-dimensional stick elements (representing <see href="https://docs.oasys-software.com/structural/gsa/references/element-types.html#element-types">1D Element Types</see>) used by the solver for analysis.</para>
     /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
     /// </summary>
+    [SuppressMessage("SonarAnalyzer.CSharp", "S101", Justification = "Project-specific naming convention")]
     public class GsaElement1d
     {
         public GSAElement ApiElement { get; internal set; }
