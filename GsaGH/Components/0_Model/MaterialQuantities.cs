@@ -90,45 +90,47 @@ namespace GsaGH.Components {
       var quantities = new GsaGH.Helpers.Import.MaterialQuantities(modelGoo.Value, layer, list, this);
       var steel = new DataTree<GH_UnitNumber>();
       foreach (KeyValuePair<int, Mass> kvp in quantities.SteelQuantities) {
-        var path = new GH_Path(kvp.Key);
+        var path = new GH_Path(kvp.Key, this.RunCount);
         steel.Add(new GH_UnitNumber(kvp.Value), path);
       }
 
       var concrete = new DataTree<GH_UnitNumber>();
       foreach (KeyValuePair<int, Mass> kvp in quantities.ConcreteQuantities) {
-        var path = new GH_Path(kvp.Key);
+        var path = new GH_Path(kvp.Key, this.RunCount);
         concrete.Add(new GH_UnitNumber(kvp.Value), path);
       }
 
       var frp = new DataTree<GH_UnitNumber>();
       foreach (KeyValuePair<int, Mass> kvp in quantities.FrpQuantities) {
-        var path = new GH_Path(kvp.Key);
+        var path = new GH_Path(kvp.Key, this.RunCount);
         frp.Add(new GH_UnitNumber(kvp.Value), path);
       }
 
       var aluminium = new DataTree<GH_UnitNumber>();
       foreach (KeyValuePair<int, Mass> kvp in quantities.AluminiumQuantities) {
-        var path = new GH_Path(kvp.Key);
+        var path = new GH_Path(kvp.Key, this.RunCount);
         aluminium.Add(new GH_UnitNumber(kvp.Value), path);
       }
 
       var timber = new DataTree<GH_UnitNumber>();
       foreach (KeyValuePair<int, Mass> kvp in quantities.TimberQuantities) {
-        var path = new GH_Path(kvp.Key);
+        var path = new GH_Path(kvp.Key, this.RunCount);
         timber.Add(new GH_UnitNumber(kvp.Value), path);
       }
 
       var glass = new DataTree<GH_UnitNumber>();
       foreach (KeyValuePair<int, Mass> kvp in quantities.GlassQuantities) {
-        var path = new GH_Path(kvp.Key);
+        var path = new GH_Path(kvp.Key, this.RunCount);
         glass.Add(new GH_UnitNumber(kvp.Value), path);
       }
 
       var custom = new DataTree<GH_UnitNumber>();
       foreach (KeyValuePair<int, Mass> kvp in quantities.CustomMaterialQuantities) {
-        var path = new GH_Path(kvp.Key);
+        var path = new GH_Path(kvp.Key, this.RunCount);
         custom.Add(new GH_UnitNumber(kvp.Value), path);
       }
+
+
 
       da.SetDataTree(0, steel);
       da.SetDataTree(1, concrete);
