@@ -240,9 +240,9 @@ namespace GsaGH.Parameters
             if (nodes.TryGetValue(ApiElement.Topology[0], out Node node1)
               && nodes.TryGetValue(ApiElement.Topology[1], out Node node2))
             {
-                ne = new LineCurve(new Line(Nodes.Point3dFromNode(node1, modelUnit),
-                  des.Point3dFromNode(node2, modelUnit)));
-                calAxes = new LocalAxes(localAxes);
+                Line = new LineCurve(new Line(Nodes.Point3dFromNode(node1, modelUnit),
+                Nodes.Point3dFromNode(node2, modelUnit)));
+                LocalAxes = new LocalAxes(localAxes);
             }
         }
 
