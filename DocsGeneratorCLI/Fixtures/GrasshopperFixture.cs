@@ -16,12 +16,14 @@ namespace DocsGeneratorCLI {
     private RhinoCore _core;
     private GH_RhinoScriptInterface _ghPlugin;
     private bool _isDisposed;
+    private readonly string _linkFileName;
 
     static GrasshopperFixture() {
       Resolver.Initialize();
     }
 
-    public GrasshopperFixture() {
+    public GrasshopperFixture(string fileName) {
+      _linkFileName = $"{fileName}Tests.ghlink";
       AddPluginToGh();
       LoadRefs();
       Assembly.LoadFile(Path.Combine(GrasshopperInstallPath, "GsaAPI.dll"));
@@ -34,8 +36,7 @@ namespace DocsGeneratorCLI {
         "Grasshopper", "Libraries");
       Directory.CreateDirectory(linkFilePath);
 
-      const string LinkFileName = "GsaGhTests.ghlink";
-      string fullPath = Path.Combine(linkFilePath, LinkFileName);
+      string fullPath = Path.Combine(linkFilePath, _linkFileName);
 
       using (StreamWriter writer = File.CreateText(fullPath)) {
         writer.Write(Environment.CurrentDirectory);
@@ -48,7 +49,7 @@ namespace DocsGeneratorCLI {
 
       string linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Grasshopper", "Libraries");
-      File.Delete(Path.Combine(linkFilePath, "GsaGhTests.ghlink"));
+      File.Delete(Path.Combine(linkFilePath, _linkFileName));
     }
 
     private void LoadRefs() {

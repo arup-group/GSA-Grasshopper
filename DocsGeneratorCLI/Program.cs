@@ -12,8 +12,6 @@ namespace DocsGeneratorCLI {
         "--project",
         "GsaGH",
         "--generate-e2e",
-        "--output",
-        "DocsOutput",
       };
 #endif
 
@@ -37,14 +35,17 @@ namespace DocsGeneratorCLI {
     }
 
     private static CommandArguments ParseArguments(CommanderParser<CommandArguments> parser, string[] args) {
+      Console.WriteLine("Parsing arguments...");
       return parser.Add(args).Parse();
     }
 
     private static Configuration BuildConfig(CommandArguments args) {
+      Console.WriteLine("Building configuration...");
       return ConfigurationBuilder.BuildConfiguration(args);
     }
 
     private static void RunGeneration(Configuration config) {
+      Console.WriteLine("Generating documentation...");
       GenerateDocumentation.Generate(config);
     }
 

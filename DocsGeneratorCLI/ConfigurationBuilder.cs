@@ -20,10 +20,23 @@ namespace DocsGeneratorCLI {
 
     private static string ResolveOutputPath(CommandArguments args) {
       return args.GenerateE2ETestData ?
-        Path.Combine("DocsGeneration.E2ETests", "TestReferences", args.ProjectName) :
+        Path.Combine(GetGsaGrasshopperRoot(), "DocsGeneration.E2ETests", "TestReferences", args.ProjectName) :
         !string.IsNullOrWhiteSpace(args.CustomOutputPath) ?
           args.CustomOutputPath :
           "Output";
+    }
+
+    private static string GetGsaGrasshopperRoot() {
+      string assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+      var dir = new DirectoryInfo(assemblyLocation);
+      while (dir != null && dir.Name != "DocsGeneratorCLI") {
+        dir = dir.Parent;
+      }
+
+      dir = dir?.Parent; // move up to the root of the GSA-Grasshopper project
+      return dir == null ? throw new DirectoryNotFoundException("Couldn't find GSA-Grasshopper in path provided.") :
+        dir.FullName;
     }
   }
 }
