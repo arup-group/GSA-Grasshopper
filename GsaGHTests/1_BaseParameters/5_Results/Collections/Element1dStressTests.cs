@@ -8,6 +8,7 @@ using GsaAPI;
 using GsaGH.Parameters.Results;
 
 using GsaGHTests.Helper;
+using GsaGHTests.TestHelpers;
 
 using Xunit;
 
@@ -68,7 +69,8 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+
+      DoubleAssertHelper.Equals(expected, max);
     }
 
     [Theory]
@@ -94,7 +96,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      DoubleAssertHelper.Equals(expected, max);
     }
 
     [Theory]
@@ -180,7 +182,7 @@ namespace GsaGHTests.Parameters.Results {
         k => (double)k / (positionsCount - 1)).ToList();
         foreach (double position in positions) {
           double x = TestsResultHelper.ResultsHelper(stressQuantity[0].Results[position], component);
-          Assert.Equal(expected[i++], x);
+          DoubleAssertHelper.Equals(expected[i++], x);
         }
       }
     }
