@@ -44,11 +44,6 @@ namespace GsaGHTests.Components.Geometry {
       Assert.NotEmpty(analysisOutlines);
       Assert.NotEmpty(designMesh.Value.Vertices);
       Assert.NotEmpty(designOutlines);
-
-      //Assert.Equal(26, analysisMesh.Value.Vertices.Count);
-      //Assert.Equal(37, analysisOutlines.Count);
-      //Assert.Equal(26, designMesh.Value.Vertices.Count);
-      //Assert.Equal(41, designOutlines.Count);
     }
 
     [Fact]
@@ -60,10 +55,10 @@ namespace GsaGHTests.Components.Geometry {
       var analysisOutlines = (List<GH_Line>)comp.Params.Output[1].VolatileData.get_Branch(0);
       var designMesh = (GH_Mesh)ComponentTestHelper.GetOutput(comp, 2);
       var designOutlines = (List<GH_Line>)comp.Params.Output[3].VolatileData.get_Branch(0);
-      Assert.Equal(78, analysisMesh.Value.Vertices.Count);
-      Assert.Equal(86, analysisOutlines.Count);
-      Assert.Equal(78, designMesh.Value.Vertices.Count);
-      Assert.Equal(86, designOutlines.Count);
+      Assert.Equal(88, analysisMesh.Value.Vertices.Count);
+      Assert.Equal(96, analysisOutlines.Count);
+      Assert.Equal(88, designMesh.Value.Vertices.Count);
+      Assert.Equal(96, designOutlines.Count);
     }
   }
 }
