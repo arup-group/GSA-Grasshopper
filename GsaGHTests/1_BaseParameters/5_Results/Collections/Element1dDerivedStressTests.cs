@@ -8,6 +8,7 @@ using GsaAPI;
 using GsaGH.Parameters.Results;
 
 using GsaGHTests.Helper;
+using GsaGHTests.TestHelpers;
 
 using Xunit;
 
@@ -63,7 +64,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      DoubleAssertHelper.Equals(expected, max);
     }
 
     [Theory]
@@ -84,7 +85,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      DoubleAssertHelper.Equals(expected, max);
     }
 
     [Theory]
@@ -104,7 +105,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      DoubleAssertHelper.Equals(expected, min);
     }
 
     [Theory]
@@ -125,7 +126,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      DoubleAssertHelper.Equals(expected, min);
     }
 
     [Theory]
@@ -155,7 +156,7 @@ namespace GsaGHTests.Parameters.Results {
         k => (double)k / (positionsCount - 1)).ToList();
         foreach (double position in positions) {
           double x = TestsResultHelper.ResultsHelper(stressQuantity[0].Results[position], component);
-          Assert.Equal(expected[i++], x);
+          DoubleAssertHelper.Equals(expected[i++], x);
         }
       }
     }
@@ -189,9 +190,9 @@ namespace GsaGHTests.Parameters.Results {
         k => (double)k / (positionsCount - 1)).ToList();
         foreach (double position in positions) {
           double perm1 = TestsResultHelper.ResultsHelper(displacementQuantity[0].Results[position], component);
-          Assert.Equal(expectedP1[i], perm1);
+          DoubleAssertHelper.Equals(expectedP1[i], perm1);
           double perm2 = TestsResultHelper.ResultsHelper(displacementQuantity[1].Results[position], component);
-          Assert.Equal(expectedP2[i++], perm2);
+          DoubleAssertHelper.Equals(expectedP2[i++], perm2);
         }
       }
     }
