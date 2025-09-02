@@ -17,4 +17,18 @@ Refer to [Node](/references/hidr-data-node.md) to read more.
 
 
 
+## Properties
 
+|<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
+| ----------- | ----------- | ----------- | ----------- |
+|![IntegerParam](./images/IntegerParam.png) |`Integer` |**Node number** |Original Node number (ID) if Node ever belonged to a GSA Model |
+|![PointParam](./images/PointParam.png) |`Point` |**Node Position** |Position (x, y, z) of Node. Setting a new position will clear any existing ID |
+|![PlaneParam](./images/PlaneParam.png) |`Plane` |**Node local axis** |Local axis (Plane) of Node |
+|![Bool6Param](./images/Bool6Param.png) |[Bool6](gsagh-bool6-parameter.md) |**Node Restraints** |Restraints (Bool6) of Node |
+|![IntegerParam](./images/IntegerParam.png) |`Integer` |**Damper Property** |Damper Property reference |
+|![IntegerParam](./images/IntegerParam.png) |`Integer` |**Mass Property** |Mass Property reference |
+|![SpringPropertyParam](./images/SpringPropertyParam.png) |[Spring Property](gsagh-spring-property-parameter.md) |**Spring Property** |GSA Spring Property parameter |
+|![TextParam](./images/TextParam.png) |`Text` |**Node Name** |Name of Node |
+|![ColourParam](./images/ColourParam.png) |`Colour` |**Node Colour** |colour of node |
+
+_Note: the above properties can be retrieved using the [Edit Node](gsagh-edit-node-component.md) component_
