@@ -55,11 +55,8 @@ namespace DocsGeneration.Data {
     }
 
     private static string CleanUpName(string s) {
-      s = s.Replace("Goo", string.Empty)
-       .Replace("Gsa", string.Empty)
-       .Replace("GH_", string.Empty)
-       .Replace("String", "Text")
-       .Replace("Parameter", string.Empty);
+      s = s.Replace("Goo", string.Empty).Replace("Gsa", string.Empty).Replace("GH_", string.Empty)
+       .Replace("String", "Text").Replace("Parameter", string.Empty);
       return s;
     }
 
