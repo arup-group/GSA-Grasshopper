@@ -46,13 +46,16 @@ namespace DocsGeneration.E2ETests {
       private void RunGenerator() {
         string generatorExePath = GetGeneratorPath();
 
+        if (!File.Exists(generatorExePath)) {
+          throw new FileNotFoundException("Couldn't find DocsGeneration.exe", generatorExePath);
+        }
+
         var startInfo = new ProcessStartInfo {
           FileName = generatorExePath,
-          Arguments = "--test",
+          Arguments = $"--output {generatedDir}",
           RedirectStandardOutput = true,
           RedirectStandardError = true,
           UseShellExecute = false,
-          CreateNoWindow = true,
         };
 
         using var process = new Process {

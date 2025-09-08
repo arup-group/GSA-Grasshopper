@@ -28,6 +28,7 @@ namespace DocsGeneration {
       // write sidebar
       SideBar.CreateSideBar(sortedComponents, sortedParameters);
       FileHelper.WriteIconNames();
+      return 0;
     }
   }
 

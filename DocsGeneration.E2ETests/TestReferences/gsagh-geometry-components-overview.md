@@ -1,12 +1,20 @@
 # Geometry components 
 <!--- This file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration --->
 
+#### Primary
+
+|<img width="20"/>   |<img width="200"/> Name |<img width="1000"/> Description |
+| ----------- | ----------- | ----------- |
+|![Create Support](./images/CreateSupport.png) |[Create Support](gsagh-create-support-component.md) |Create [Node](gsagh-node-parameter.md) Support  |
+|![Edit Node](./images/EditNode.png) |[Edit Node](gsagh-edit-node-component.md) |Modify [Node](gsagh-node-parameter.md)  |
+
 #### Secondary
 
 |<img width="20"/>   |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- |
 |![Create 1D Element](./images/Create1dElement.png) |[Create 1D Element](gsagh-create-1d-element-component.md) |Create 1D Element |
 |![Create 2D Element](./images/Create2dElement.png) |[Create 2D Element](gsagh-create-2d-element-component.md) |Create 2D Element |
+|![Edit 1D Element](./images/Edit1dElement.png) |[Edit 1D Element](gsagh-edit-1d-element-component.md) |Modify 1D Element |
 |![Edit 2D Element](./images/Edit2dElement.png) |[Edit 2D Element](gsagh-edit-2d-element-component.md) |Modify 2D Element |
 |![Edit 3D Element](./images/Edit3dElement.png) |[Edit 3D Element](gsagh-edit-3d-element-component.md) |Modify 3D Element |
 
@@ -17,6 +25,7 @@
 |![Create 1D Member](./images/Create1dMember.png) |[Create 1D Member](gsagh-create-1d-member-component.md) |Create 1D Member |
 |![Create 2D Member](./images/Create2dMember.png) |[Create 2D Member](gsagh-create-2d-member-component.md) |Create Member 2D |
 |![Create 3D Member](./images/Create3dMember.png) |[Create 3D Member](gsagh-create-3d-member-component.md) |Create Member 3D |
+|![Edit 1D Member](./images/Edit1dMember.png) |[Edit 1D Member](gsagh-edit-1d-member-component.md) |Modify 1D Member |
 |![Edit 2D Member](./images/Edit2dMember.png) |[Edit 2D Member](gsagh-edit-2d-member-component.md) |Modify 2D Member |
 |![Edit 3D Member](./images/Edit3dMember.png) |[Edit 3D Member](gsagh-edit-3d-member-component.md) |Modify 3D Member |
 
