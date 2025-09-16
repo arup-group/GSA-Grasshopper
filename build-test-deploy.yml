@@ -14,7 +14,7 @@ pool: 'rhino-compute'
 steps:
 - powershell: |
     Get-ChildItem *.msi -Recurse | Remove-Item
-    aws s3 cp s3://oasys-installer-store/GSA/10.2/10.2.16/10.2.16.30/2025-06-10/110197/ . --exclude "*" --include *Arup*.msi --recursive
+    aws s3 cp s3://oasys-installer-store/GSA/latest/ . --exclude "*" --include *Arup*.msi --recursive
     Get-ChildItem *.msi | Rename-Item -NewName gsa.msi
   displayName: 'Download GSA latest'
   failOnStderr: true
