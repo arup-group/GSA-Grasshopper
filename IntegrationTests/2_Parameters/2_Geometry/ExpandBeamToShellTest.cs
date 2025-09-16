@@ -3,6 +3,11 @@ using System.Reflection;
 
 using Grasshopper.Kernel;
 
+using OasysGH.Units;
+
+using OasysUnits;
+using OasysUnits.Units;
+
 using Xunit;
 
 namespace IntegrationTests.Parameters {
@@ -36,6 +41,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("RHS", 0)]
     [InlineData("T", 0)]
     public void Test(string groupIdentifier, object expected) {
+      DefaultUnits.Tolerance = Length.From(0.001f, LengthUnit.Meter);
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);
     }
@@ -52,8 +58,7 @@ namespace IntegrationTests.Parameters {
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
       fileName = fileName.Replace("Test", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
-       .Parent.FullName;
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
       string path = Path.Combine(new string[] {
         solutiondir,
         "ExampleFiles",
