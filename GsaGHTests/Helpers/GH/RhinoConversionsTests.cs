@@ -69,7 +69,7 @@ namespace GsaGHTests.Helpers.GH {
     [Fact]
     public void ConvertMem2dCrvSmallException() {
       var circle = new Circle(Plane.WorldXY, 0.9);
-      Assert.Throws<FailedToSplitVoid>(
+      Assert.Throws<FailedToSplitVoidException>(
         () => RhinoConversions.ConvertMem2dCrv(circle.ToNurbsCurve(), parameter: 1.2)
       );
     }

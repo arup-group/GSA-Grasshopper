@@ -420,7 +420,7 @@ namespace GsaGH.Helpers.GH {
             segments = segments[0].Split(t);
           }
           if (! success || segments == null) {
-            throw new FailedToSplitVoid(midPoint);
+            throw new FailedToSplitVoidException(midPoint);
           }
         }
       }
@@ -811,8 +811,8 @@ namespace GsaGH.Helpers.GH {
     }
   }
 
-    public class FailedToSplitVoid : Exception {
-      public FailedToSplitVoid(double midPoint) : base($"Failed to Split Void, using Mid Point at: {midPoint}") { }
+    public class FailedToSplitVoidException : Exception {
+      public FailedToSplitVoidException(double midPoint) : base($"Failed to Split Void, using Mid Point at: {midPoint}") { }
 
     }
 }
