@@ -65,7 +65,7 @@ namespace GsaGHTests.Helpers.GH {
       Assert.Equal(5, result.Item2.Count);
       Assert.Equal(5, result.Item3.Count);
     }
-    
+
     [Fact]
     public void ConvertMem2dCrvSmallException() {
       var circle = new Circle(Plane.WorldXY, 0.9);
