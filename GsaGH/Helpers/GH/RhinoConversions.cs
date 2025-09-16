@@ -420,10 +420,11 @@ namespace GsaGH.Helpers.GH {
             segments = segments[0].Split(t);
           }
           if (! success || segments == null) {
-            throw new Exception($"Failed to Split Void, using Mid Point at: {midPoint}");
+            throw new FailedToSplitVoid(midPoint);
           }
         }
       }
+
 
       var crvType = new List<string>();
       var point3ds = new Point3dList();
@@ -809,4 +810,9 @@ namespace GsaGH.Helpers.GH {
       return new List<List<int>> { topo };
     }
   }
+
+    public class FailedToSplitVoid : Exception {
+      public FailedToSplitVoid(double midPoint) : base($"Failed to Split Void, using Mid Point at: {midPoint}") { }
+
+    }
 }
