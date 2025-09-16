@@ -7,7 +7,7 @@ on:
 
 jobs:
   pushYakPackage:
-    runs-on: windows-latest
+    runs-on: windows-2022
     env:
       YAK_TOKEN: ${{ secrets.YAK_TOKEN }} 
     steps:
