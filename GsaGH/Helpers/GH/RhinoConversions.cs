@@ -402,7 +402,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     public static Tuple<PolyCurve, Point3dList, List<string>> ConvertMem2dCrv(
-      Curve curve, double tolerance = -1) {
+      Curve curve, double tolerance = -1, double parameter = 0.5) {
       if (tolerance < 0) {
         tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
       }
@@ -414,12 +414,12 @@ namespace GsaGH.Helpers.GH {
 
       if (segments.Length == 1) {
         if (segments[0].IsClosed) {
-          double midPoint = segments[0].GetLength() / 2;
+          double midPoint = segments[0].GetLength() * parameter;
           bool success = segments[0].LengthParameter(midPoint, out double t);
           if (success) {
             segments = segments[0].Split(t);
           }
-          if(! success || segments == null) {
+          if (! success || segments == null) {
             throw new Exception($"Failed to Split Void, using Mid Point at: {midPoint}");
           }
         }
