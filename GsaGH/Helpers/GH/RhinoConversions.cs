@@ -414,7 +414,14 @@ namespace GsaGH.Helpers.GH {
 
       if (segments.Length == 1) {
         if (segments[0].IsClosed) {
-          segments = segments[0].Split(0.5);
+          double midPoint = segments[0].GetLength() / 2;
+          bool success = segments[0].LengthParameter(midPoint, out double t);
+          if (success) {
+            segments = segments[0].Split(t);
+          }
+          if(! success || segments == null) {
+            throw new Exception($"Failed to Split Void, using Mid Point at: {midPoint}");
+          }
         }
       }
 
@@ -423,7 +430,7 @@ namespace GsaGH.Helpers.GH {
 
       foreach (Curve segment in segments) {
         point3ds.Add(segment.PointAtStart);
-        crvType.Add("");
+        crvType.Add(string.Empty);
         if (!segment.IsArc()) {
           continue;
         }
@@ -433,7 +440,7 @@ namespace GsaGH.Helpers.GH {
       }
 
       point3ds.Add(segments[segments.Length - 1].PointAtEnd);
-      crvType.Add("");
+      crvType.Add(string.Empty);
 
       return new Tuple<PolyCurve, Point3dList, List<string>>(polyCurve, point3ds, crvType);
     }
