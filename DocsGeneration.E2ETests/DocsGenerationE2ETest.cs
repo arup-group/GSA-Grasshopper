@@ -46,10 +46,6 @@ namespace DocsGeneration.E2ETests {
       private void RunGenerator() {
         string generatorExePath = GetGeneratorPath();
 
-        if (!File.Exists(generatorExePath)) {
-          throw new FileNotFoundException("Couldn't find DocsGeneration.exe", generatorExePath);
-        }
-
         var startInfo = new ProcessStartInfo {
           FileName = generatorExePath,
           Arguments = $"--output {generatedDir}",
@@ -79,7 +75,7 @@ namespace DocsGeneration.E2ETests {
         process.WaitForExit();
 
         if (process.ExitCode != 0) {
-          throw new Exception($"DocsGeneration.exe exited with code: {process.ExitCode}");
+          throw new Exception($"DocsGeneratorCLI.exe exited with code: {process.ExitCode}");
         }
       }
 
@@ -90,7 +86,7 @@ namespace DocsGeneration.E2ETests {
           "Debug", "net48", "DocsGeneration.exe"));
 
         return !File.Exists(generatorPath) ?
-          throw new FileNotFoundException("Couldn't find: DocsGeneration.exe", generatorPath) : generatorPath;
+          throw new FileNotFoundException("Couldn't find: DocsGeneratorCLI.exe", generatorPath) : generatorPath;
       }
 
       private static string[] GetRelativeMarkdownFilePaths(string rootDirectory) {
@@ -120,7 +116,7 @@ namespace DocsGeneration.E2ETests {
           string expectedContent = File.ReadAllText(expectedPath);
           string actualContent = File.ReadAllText(generatedPath);
 
-          if (expectedContent == actualContent) {
+          if (expectedContent.Equals(actualContent)) {
             continue;
           }
 

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 using Grasshopper.Plugin;
+
+using Microsoft.Win32;
 
 using OasysGH.Units;
 
@@ -19,16 +22,56 @@ namespace DocsGeneratorCLI {
     private readonly string _linkFileName;
 
     static GrasshopperFixture() {
-      Resolver.Initialize();
+      InitRhinoLibrary();
     }
 
     public GrasshopperFixture(string fileName) {
+      InitRhinoLibrary();
       _linkFileName = $"{fileName}Tests.ghlink";
       AddPluginToGh();
       LoadRefs();
       Assembly.LoadFile(Path.Combine(GrasshopperInstallPath, "GsaAPI.dll"));
       InitializeCore();
       Utility.SetupUnitsDuringLoad();
+    }
+
+    private static void InitRhinoLibrary() {
+      string rhinoSystemPath = GetRhinoSystemPath();
+      string currentPath = Environment.GetEnvironmentVariable("PATH") ?? "";
+
+      if (!currentPath.Split(';').Contains(rhinoSystemPath, StringComparer.OrdinalIgnoreCase)) {
+        Environment.SetEnvironmentVariable("PATH", currentPath + ";" + rhinoSystemPath,
+          EnvironmentVariableTarget.Process);
+      }
+
+      Resolver.Initialize();
+    }
+
+    private static string GetRhinoSystemPath() {
+      string[] versions = {
+        "7.0",
+        "8.0",
+      };
+
+      foreach (string version in versions) {
+        using (RegistryKey key = Registry.LocalMachine.OpenSubKey($@"SOFTWARE\McNeel\Rhinoceros\{version}\Install")) {
+          if (key == null) {
+            continue;
+          }
+
+          object installPath = key.GetValue("InstallPath");
+          if (!(installPath is string path)) {
+            continue;
+          }
+
+          string systemFolder = Path.Combine(path, "System");
+          if (Directory.Exists(systemFolder)) {
+            return systemFolder;
+          }
+        }
+      }
+
+      return null;
     }
 
     public void AddPluginToGh() {
@@ -57,6 +100,8 @@ namespace DocsGeneratorCLI {
       string pathvar = Environment.GetEnvironmentVariable(name) ?? "";
       string value = pathvar + ";" + GrasshopperInstallPath + "\\";
       Environment.SetEnvironmentVariable(name, value, EnvironmentVariableTarget.Process);
+      Console.WriteLine("PATH ENV after loadrefs :");
+      Console.WriteLine(Environment.GetEnvironmentVariable("PATH"));
     }
 
     private void Dispose(bool disposing) {
