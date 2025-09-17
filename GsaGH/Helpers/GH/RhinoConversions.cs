@@ -402,7 +402,7 @@ namespace GsaGH.Helpers.GH {
     }
 
     public static Tuple<PolyCurve, Point3dList, List<string>> ConvertMem2dCrv(
-      Curve curve, double tolerance = -1) {
+      Curve curve, double tolerance = -1, double parameter = 0.5) {
       if (tolerance < 0) {
         tolerance = DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry);
       }
@@ -414,16 +414,24 @@ namespace GsaGH.Helpers.GH {
 
       if (segments.Length == 1) {
         if (segments[0].IsClosed) {
-          segments = segments[0].Split(0.5);
+          double midPoint = segments[0].GetLength() * parameter;
+          bool success = segments[0].LengthParameter(midPoint, out double t);
+          if (success) {
+            segments = segments[0].Split(t);
+          }
+          if (! success || segments == null) {
+            throw new FailedToSplitVoidException(midPoint);
+          }
         }
       }
+
 
       var crvType = new List<string>();
       var point3ds = new Point3dList();
 
       foreach (Curve segment in segments) {
         point3ds.Add(segment.PointAtStart);
-        crvType.Add("");
+        crvType.Add(string.Empty);
         if (!segment.IsArc()) {
           continue;
         }
@@ -433,7 +441,7 @@ namespace GsaGH.Helpers.GH {
       }
 
       point3ds.Add(segments[segments.Length - 1].PointAtEnd);
-      crvType.Add("");
+      crvType.Add(string.Empty);
 
       return new Tuple<PolyCurve, Point3dList, List<string>>(polyCurve, point3ds, crvType);
     }
@@ -802,4 +810,9 @@ namespace GsaGH.Helpers.GH {
       return new List<List<int>> { topo };
     }
   }
+
+    public class FailedToSplitVoidException : Exception {
+      public FailedToSplitVoidException(double midPoint) : base($"Failed to Split Void, using Mid Point at: {midPoint}") { }
+
+    }
 }
