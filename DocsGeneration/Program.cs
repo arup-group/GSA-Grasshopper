@@ -9,7 +9,7 @@ using DocsGeneration.MarkDowns.Helpers;
 
 namespace DocsGeneration {
   public class Program {
-    public static int Main() {
+    public static void Main() {
       // setup
       var dll = new GsaGhDll();
       Assembly gsaGH = dll.Load();
@@ -32,7 +32,6 @@ namespace DocsGeneration {
       // write sidebar
       SideBar.CreateSideBar(sortedComponents, sortedParameters);
       FileHelper.WriteIconNames();
-      return 0;
     }
   }
 }
