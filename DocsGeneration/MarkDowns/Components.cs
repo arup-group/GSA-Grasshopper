@@ -5,6 +5,7 @@ using System.Linq;
 using DocsGeneration.Data;
 using DocsGeneration.MarkDowns.Helpers;
 
+using GsaGH;
 using GsaGH.Components.Helpers;
 using GsaGH.Helpers;
 
@@ -41,7 +42,7 @@ namespace DocsGeneration.MarkDowns {
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {component.Name}\n\n";
-      if (GsaGH.GsaGhInfo.isBeta) {
+      if (GsaGhInfo.isBeta) {
         text += StringHelper.AddBetaWarning();
       }
 
@@ -155,11 +156,11 @@ namespace DocsGeneration.MarkDowns {
     }
 
     private static void CreateComponentOverview(List<string> categories) {
-      string filePath = $@"Output\gsagh-components.md";
+      string filePath = $@"{PathUtils.OutputPath}\gsagh-components.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = "# Components\n\n";
-      if (GsaGH.GsaGhInfo.isBeta) {
+      if (GsaGhInfo.isBeta) {
         text += StringHelper.AddBetaWarning();
         text += "\n";
       }
@@ -175,7 +176,7 @@ namespace DocsGeneration.MarkDowns {
 
     private static void CreateComponentOverview(
       string category, List<Component> components, List<string> parameterNames) {
-      string filePath = $@"Output\gsagh-{category.ToLower()}-components-overview.md";
+      string filePath = $@"{PathUtils.OutputPath}\gsagh-{category.ToLower()}-components-overview.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {category} components \n\n";

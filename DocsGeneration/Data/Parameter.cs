@@ -40,15 +40,23 @@ namespace DocsGeneration.Data {
     }
 
     private string GetParameterType(Type type) {
-      if (type.BaseType.GenericTypeArguments[0].Name == "IGH_Goo") {
+      if (type.BaseType?.GenericTypeArguments == null || !type.BaseType.GenericTypeArguments.Any()) {
+        return CleanUpName(type.BaseType.Name);
+      }
+
+      if (type.BaseType.GenericTypeArguments[0]?.Name == "IGH_Goo") {
         return "Generic";
       }
 
-      string s = type.BaseType.GenericTypeArguments[0].Name
-        .Replace("Goo", string.Empty).Replace("Gsa", string.Empty)
-        .Replace("GH_", string.Empty).Replace("String", "Text"); ;
+      string s = CleanUpName(type.BaseType.GenericTypeArguments[0].Name);
       s = CheckIfUnitNumber(s);
 
+      return s;
+    }
+
+    private static string CleanUpName(string s) {
+      s = s.Replace("Goo", string.Empty).Replace("Gsa", string.Empty).Replace("GH_", string.Empty)
+       .Replace("String", "Text").Replace("Parameter", string.Empty);
       return s;
     }
 
@@ -151,9 +159,11 @@ namespace DocsGeneration.Data {
       Console.WriteLine($"Finding parameters...");
       var parameters = new List<Parameter>();
       foreach (Type type in typelist) {
-        if (type.BaseType == null || !type.BaseType.Name.StartsWith("GH_OasysPersistent")) {
+        if (type.BaseType == null || !(type.Name.Contains("GsaRestraintParameter")
+          || type.Name.Contains("GsaReleaseParameter") || type.BaseType.Name.StartsWith("GH_OasysPersistent"))) {
           continue;
         }
+        // workaround for GsaRestraintParameter and GsaReleaseParameter that do not inherit from GH_OasysPersistentParam. Need to find a better solution.
 
         try {
           var param = new Parameter(type, true);
