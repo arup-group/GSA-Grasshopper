@@ -82,6 +82,7 @@ steps:
     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\integration  .\IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\documentatione2e  .\DocsGeneration.E2ETests\bin\Release\net8.0\DocsGeneration.E2ETests.dll
+    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\documentatione2e  .\DocsGeneration.E2ETests\bin\Release\net8.0\DocsGeneration.E2ETests.dll
   displayName: dotnet tests
   failOnStderr: true
 
@@ -204,7 +205,7 @@ steps:
   displayName: Package NuGet
 
 - powershell: |
-    .\DocsGeneration\bin\x64\Debug\net48\DocsGeneration.exe
+    .\DocsGeneration\bin\x64\Release\net48\DocsGeneration.exe
     Compress-Archive -Path .\Output -DestinationPath .\results\$(dotSeparatedTag)-docs.zip -Force
   displayName: Generate docs site
   failOnStderr: true
