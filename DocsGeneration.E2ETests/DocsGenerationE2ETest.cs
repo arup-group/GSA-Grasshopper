@@ -73,26 +73,10 @@ namespace DocsGeneration.E2ETests {
           }
         };
 
-        bool processStarted = process.Start();
-        if (!processStarted) {
-          throw new Exception("Failed to start DocsGeneration.exe");
-        }
-
+        process.Start();
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();
-
-        bool processExited = process.WaitForExit(600000); // waits max 10mins
-        if (!processExited) {
-          if (!process.HasExited) {
-            try {
-              process.Kill();
-            } catch (InvalidOperationException) {
-              //process could have exited between the HasExited check and the Kill call
-            }
-          }
-
-          throw new Exception("DocsGeneration.exe timed out and was killed.");
-        }
+        process.WaitForExit();
 
         if (process.ExitCode != 0) {
           throw new Exception($"DocsGeneration.exe exited with code: {process.ExitCode}");

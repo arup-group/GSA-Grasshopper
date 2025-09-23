@@ -9,6 +9,8 @@
 
 Analysis Case definition, for instance `L1` for LoadCase 1 or `L1 + L2` for combining multiple load cases in one Analysis case. Refer to [Analysis cases](/references/analysiscases.md) to read more.
 
+
+
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

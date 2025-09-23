@@ -11,6 +11,8 @@ A Section is used by [Element 1D](gsagh-element-1d-parameter.md) and [Member 1D]
 
 Refer to [Sections](/references/hidr-data-sect-lib.md) to read more.
 
+
+
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

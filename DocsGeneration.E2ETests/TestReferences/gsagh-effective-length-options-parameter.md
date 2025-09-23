@@ -9,6 +9,8 @@
 
 Effective length calculation options are part of a [Member 1D](gsagh-member-1d-parameter.md). These options are available for 1D members when the section material is steel. They define the properties relating to design from the interaction of the member with the rest of the structure. Refer to [Member Design properties](/references/hidd-page-member-steel.md) to read more.
 
+
+
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

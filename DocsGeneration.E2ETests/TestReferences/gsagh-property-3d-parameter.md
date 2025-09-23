@@ -9,6 +9,8 @@
 
 A 3D Property is used by [Element 3D](gsagh-element-3d-parameter.md) and [Member 3D](gsagh-member-3d-parameter.md) and simply contains information about [Material](gsagh-material-parameter.md). Refer to [3D Element Properties](/references/hidr-data-pr-3d.md) to read more.
 
+
+
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

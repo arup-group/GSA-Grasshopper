@@ -17,6 +17,8 @@ The Grasshopper plugin will automatically create a fitting Grid Plane Surface wh
 
 Grid Plane Surfaces can also be created independently using the [Create Grid Plane](gsagh-create-grid-plane-component.md) and [Create Grid Surface](gsagh-create-grid-surface-component.md) components.
 
+
+
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

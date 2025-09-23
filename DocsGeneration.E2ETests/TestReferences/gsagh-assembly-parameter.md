@@ -9,6 +9,8 @@
 
 Assemblies are a way to define an entity that is formed from a collection of elements or members and can be thought of as a superelement. This is not an analysis entity but rather a convenience for post-processing, such as cut section forces. Typical uses of assemblies include cores, where the core is modelled with 2D finite elements; trusses, where the truss is modelled with top and bottom chords; and bracing. In both these cases the assembly is identified by a list of included elements. Unlike the analysis elements, an assembly does not have a clearly define orientation and location of reference point so these must be defined explicitly. Refer to [Assemblies](/references/hidr-data-assembly.md) to read more.
 
+
+
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

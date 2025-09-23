@@ -9,6 +9,8 @@
 
 A Section Modifier is part of a [Section](gsagh-section-parameter.md) and can be used to modify property's analytical properties without changing the `Profile` or [Material](gsagh-material-parameter.md). By default the Section Modifier is unmodified. Refer to [Section Modifiers](/references/hidr-data-sect-lib.md#modifiers) to read more.
 
+
+
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

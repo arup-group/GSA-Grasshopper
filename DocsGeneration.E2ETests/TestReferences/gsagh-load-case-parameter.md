@@ -9,6 +9,8 @@
 
 When [Load](gsagh-load-parameter.md)s are applied to the model they are assigned to a load case. Load cases are a convenient way of grouping together a collection of loads that are to be considered acting together, for instance dead loads or live loads. In GSA, the load cases are only used to group loading and are not used directly for analysis. Refer to [Load Case Specification](/references/hidr-data-load-title.md) to read more.
 
+
+
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

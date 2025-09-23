@@ -11,6 +11,8 @@ An Entity List is expressed as a string of text in a specific syntax along with 
 
 Lists (of nodes, elements, members or cases) are used, for example, when a particular load is to be applied to one or several elements. To define a series of items the list can either specify each individually or, if applicable, use a more concise [syntax](/references/listsandembeddedlists.md).
 
+
+
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

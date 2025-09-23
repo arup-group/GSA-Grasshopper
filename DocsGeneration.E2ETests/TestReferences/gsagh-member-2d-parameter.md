@@ -11,7 +11,9 @@
 
  A Member2D is the planar/area geometry resembling for instance a slab or a wall. It can be defined geometrically from a planar Brep. 
 
- Refer to [2D Members](/explanations/members-2d.md) to read more.
+ Refer to [2D Members](/explanations/members-2d.md) to read more. 
+
+
 
 ## Properties
 
