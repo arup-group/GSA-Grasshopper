@@ -19,8 +19,6 @@ Grid loading is a different type of loading which is applied to a [Grid Plane Su
 
 Gravity is the final load type create with the [Create Gravity Load](gsagh-create-gravity-load-component.md) component. This is different from the other load types as it is specified as an acceleration (in g). This is normally used to model the dead weight of the structure by specifying a gravity load of −1 × g in the z direction.
 
-
-
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

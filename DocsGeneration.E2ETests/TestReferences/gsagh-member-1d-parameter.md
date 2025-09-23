@@ -11,9 +11,7 @@
 
  A Member1D is the linear geometry resembling for instance a column or a beam. They can be defined geometrically by a PolyCurve consisting of either multiple line segments or a single arc. 
 
- Refer to [1D Members](/explanations/members-1d.md) to read more. 
-
-
+ Refer to [1D Members](/explanations/members-1d.md) to read more.
 
 ## Properties
 

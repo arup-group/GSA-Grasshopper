@@ -11,8 +11,6 @@ An analysis task is a package of work for the solver. Thus we can have a static 
 
 Refer to [Analysis Tasks](/references/analysistasks.md) to read more.
 
-
-
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

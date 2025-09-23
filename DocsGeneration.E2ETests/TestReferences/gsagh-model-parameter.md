@@ -12,5 +12,3 @@ A GSA model is the main parameter that associates with a GSA model file. Data an
 If the model has been analysed you can use the [Select Result](gsagh-select-result-component.md) component to explore the Models structural performance and behaviour.
 
 
-
-

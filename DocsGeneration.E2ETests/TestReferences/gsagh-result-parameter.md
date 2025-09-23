@@ -19,5 +19,3 @@ The following result types can be extracted if they are present in the model:
 All result values from the [.NET API](/references/dotnet-api/introduction.md) have been wrapped in [Unit Number](/references/gsagh/gsagh-unitnumber-parameter.md) and can be converted into different measures as you work. The Result parameter caches the result values.
 
 
-
-

@@ -13,8 +13,6 @@ Use the [Get Model Materials](gsagh-get-model-materials-component.md) to get all
 
 Refer to [Materials](/references/hidr-data-mat-steel.md) to read more.
 
-
-
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

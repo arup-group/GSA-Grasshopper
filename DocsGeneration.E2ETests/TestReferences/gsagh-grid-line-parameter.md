@@ -9,8 +9,6 @@
 
 Grid Lines can be used to aid visual representation of a [Model](gsagh-model-parameter.md). Refer to [Grid lines](/references/hidr-data-grid-line.md) to read more.
 
-
-
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

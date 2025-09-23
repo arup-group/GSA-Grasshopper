@@ -13,8 +13,6 @@ Element1Ds are one-dimensional stick elements (representing [1D Element Types](/
 
 Refer to [Elements](/references/hidr-data-element.md) to read more.
 
-
-
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
