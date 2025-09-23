@@ -11,8 +11,6 @@ A 2D property is used by [Element 2D](gsagh-element-2d-parameter.md) and [Member
 
 Refer to [2D Element Properties](/references/hidr-data-pr-2d.md) to read more.
 
-
-
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

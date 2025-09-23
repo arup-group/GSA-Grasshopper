@@ -13,8 +13,6 @@ Combination cases are similar to analysis cases but differ in two respects:
 
 Refer to [Combination Cases](/references/hidr-data-comb-case.md) to read more.
 
-
-
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |

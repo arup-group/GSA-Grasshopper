@@ -9,8 +9,6 @@
 
 A spring is a general type of element which can be used to model both simple springs and more sophisticated types of behaviour. Spring properties describe those behaviours. Refer to [Spring Properties](/references/hidr-data-pr-spring/) to read more.
 
-
-
 ## Properties
 
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
