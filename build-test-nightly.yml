@@ -14,6 +14,14 @@ variables:
 pool: 'rhino-compute'
 
 steps:
+- script: |
+    echo "Killing leftover processes..."
+    taskkill /F /IM DocsGeneration.exe || echo "Process not found"
+  displayName: 'Kill leftover DocsGeneration.exe'
+  
+- checkout: self
+  clean: true
+  
 - powershell: |
     Get-ChildItem *.msi -Recurse | Remove-Item
     aws s3 cp s3://oasys-installer-store/GSA/nightly . --exclude "*" --include *Arup*.msi --recursive
