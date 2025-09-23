@@ -13,16 +13,17 @@ pool: 'rhino-compute'
 
 steps:
 - powershell: |
-    Write-Host "Killing leftover DocsGeneration.exe (if any)..."
-    $proc = Get-Process -Name "DocsGeneration" -ErrorAction SilentlyContinue
-    if ($proc) {
-        Stop-Process -Id $proc.Id -Force
-        Write-Host "Process killed."
+    Write-Host "Killing leftover DocsGeneration.exe processes..."
+    $procs = Get-Process -Name "DocsGeneration" -ErrorAction SilentlyContinue
+    if ($procs) {
+        $procs | Stop-Process -Force
+        Write-Host "Killed leftover DocsGeneration.exe."
     } else {
         Write-Host "No running DocsGeneration.exe found."
     }
-  displayName: 'Kill DocsGeneration.exe (PowerShell)'
-  
+  displayName: 'Kill leftover DocsGeneration.exe'
+  continueOnError: true
+
 - checkout: self
   clean: true
   
