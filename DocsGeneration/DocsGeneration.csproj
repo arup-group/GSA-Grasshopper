@@ -4,6 +4,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <Platforms>x64</Platforms>
     <OutputType>Library</OutputType>
+    <Optimize>False</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Rhino.Inside" Version="7.0.0" PrivateAssets="all"/>
