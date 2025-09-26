@@ -24,6 +24,8 @@ The GSA plugin introduces a new set of custom Grasshopper parameters. Parameters
 |![Property2dModifierParam](./images/Property2dModifierParam.png) |[Property 2D Modifier](gsagh-property-2d-modifier-parameter.md) |Property 2D Modifier parameter |
 |![Property2dParam](./images/Property2dParam.png) |[Property 2D](gsagh-property-2d-parameter.md) |2D Property (Area) parameter |
 |![Property3dParam](./images/Property3dParam.png) |[Property 3D](gsagh-property-3d-parameter.md) |3D Property (Volumetric) parameter |
+|![Bool6Param](./images/Bool6Param.png) |[Release](gsagh-release-parameter.md) |releases containing six booleans representing the status |
+|![Bool6Param](./images/Bool6Param.png) |[Restraint](gsagh-restraint-parameter.md) |Bool6 containing six booleans representing a node restraint |
 |![SectionModifierParam](./images/SectionModifierParam.png) |[Section Modifier](gsagh-section-modifier-parameter.md) |Section Modifier parameter |
 |![SectionParam](./images/SectionParam.png) |[Section](gsagh-section-parameter.md) |Section Property (Beam) parameter |
 |![SpringPropertyParam](./images/SpringPropertyParam.png) |[Spring Property](gsagh-spring-property-parameter.md) |Spring Property parameter |

@@ -46,13 +46,16 @@ namespace DocsGeneration.E2ETests {
       private void RunGenerator() {
         string generatorExePath = GetGeneratorPath();
 
+        if (!File.Exists(generatorExePath)) {
+          throw new FileNotFoundException("Couldn't find DocsGeneration.exe", generatorExePath);
+        }
+
         var startInfo = new ProcessStartInfo {
           FileName = generatorExePath,
-          Arguments = "--test",
+          Arguments = $"--output {generatedDir}",
           RedirectStandardOutput = true,
           RedirectStandardError = true,
           UseShellExecute = false,
-          CreateNoWindow = true,
         };
 
         using var process = new Process {
@@ -81,22 +84,13 @@ namespace DocsGeneration.E2ETests {
       }
 
       private static string GetGeneratorPath() {
-        DirectoryInfo directoryInfo = GetGsaGrasshopperRoot();
-
-        string generatorPath = Path.Combine(directoryInfo.FullName, "DocsGeneration", "bin", "x64", "Debug", "net48",
-          "DocsGeneration.exe");
+        string gsaGrasshopperRepoRoot
+          = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
+        string generatorPath = Path.GetFullPath(Path.Combine(gsaGrasshopperRepoRoot, "DocsGeneration", "bin", "x64",
+          "Debug", "net48", "DocsGeneration.exe"));
 
         return !File.Exists(generatorPath) ?
           throw new FileNotFoundException("Couldn't find: DocsGeneration.exe", generatorPath) : generatorPath;
-      }
-
-      private static DirectoryInfo GetGsaGrasshopperRoot() {
-        var directoryInfo = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directoryInfo != null && directoryInfo.Name != "GSA-Grasshopper") {
-          directoryInfo = directoryInfo.Parent; // find the GSA-Grasshopper directory
-        }
-
-        return directoryInfo ?? throw new DirectoryNotFoundException("Couldn't find GSA-Grasshopper in path provided.");
       }
 
       private static string[] GetRelativeMarkdownFilePaths(string rootDirectory) {
