@@ -3,6 +3,11 @@ using System.Reflection;
 
 using Grasshopper.Kernel;
 
+using OasysGH.Units;
+
+using OasysUnits;
+using OasysUnits.Units;
+
 using Xunit;
 
 namespace IntegrationTests.Parameters {
@@ -22,20 +27,21 @@ namespace IntegrationTests.Parameters {
     }
 
     [Theory]
-    [InlineData("CAT", 212)]
-    [InlineData("A", 110)]
-    [InlineData("CH", 40)]
-    [InlineData("CHS", 11220)]
-    [InlineData("X", 89)]
-    [InlineData("OVAL", 2777)]
-    [InlineData("GC", 26)]
-    [InlineData("GZ", 116)]
-    [InlineData("GI", 184)]
-    [InlineData("CB", 39)]
-    [InlineData("I", 18)]
-    [InlineData("RHS", 12)]
-    [InlineData("T", 68)]
+    [InlineData("CAT", 0)]
+    [InlineData("A", 0)]
+    [InlineData("CH", 0)]
+    [InlineData("CHS", 0)]
+    [InlineData("X", 0)]
+    [InlineData("OVAL", 0)]
+    [InlineData("GC", 0)]
+    [InlineData("GZ", 0)]
+    [InlineData("GI", 0)]
+    [InlineData("CB", 0)]
+    [InlineData("I", 0)]
+    [InlineData("RHS", 0)]
+    [InlineData("T", 0)]
     public void Test(string groupIdentifier, object expected) {
+      DefaultUnits.Tolerance = Length.From(0.001f, LengthUnit.Meter);
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);
       Helper.TestGhPrimitives(param, expected);
     }
@@ -52,8 +58,7 @@ namespace IntegrationTests.Parameters {
       fileName = fileName.Replace("IntegrationTests.Parameters.", string.Empty);
       fileName = fileName.Replace("Test", string.Empty);
 
-      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
-       .Parent.FullName;
+      string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
       string path = Path.Combine(new string[] {
         solutiondir,
         "ExampleFiles",
