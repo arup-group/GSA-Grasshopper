@@ -7,6 +7,7 @@ namespace DocsGeneration.E2ETests {
         "\r\n",
         "\n",
       };
+
       private readonly string expectedDir = Path.Combine(AppContext.BaseDirectory, "TestReferences");
       private readonly string generatedDir = Path.Combine(AppContext.BaseDirectory, "test-artifacts", "generated");
 
