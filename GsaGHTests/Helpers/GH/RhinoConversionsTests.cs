@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using GsaAPI;
-
 using GsaGH.Helpers.GH;
 
 using Rhino.Collections;
@@ -53,6 +51,27 @@ namespace GsaGHTests.Helpers.GH {
       Assert.Equal(string.Empty, mem1d.Item3[0]);
       Assert.Equal("A", mem1d.Item3[1]);
       Assert.Equal(string.Empty, mem1d.Item3[2]);
+    }
+
+
+    [Theory]
+    [InlineData(0.03)]
+    [InlineData(0.07)]
+    [InlineData(0.09)]
+    public void ConvertMem2dCrvSmallCircle(double radius) {
+      var circle = new Circle(Plane.WorldXY, radius);
+      var result = RhinoConversions.ConvertMem2dCrv(circle.ToNurbsCurve());
+      Assert.Equal(1, result.Item1.SpanCount);
+      Assert.Equal(5, result.Item2.Count);
+      Assert.Equal(5, result.Item3.Count);
+    }
+
+    [Fact]
+    public void ConvertMem2dCrvSmallException() {
+      var circle = new Circle(Plane.WorldXY, 0.9);
+      Assert.Throws<FailedToSplitVoidException>(
+        () => RhinoConversions.ConvertMem2dCrv(circle.ToNurbsCurve(), parameter: 1.2)
+      );
     }
 
     private void TestPoint(Point3d expected, Point3d actual) {
