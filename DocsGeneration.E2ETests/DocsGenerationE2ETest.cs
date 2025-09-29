@@ -74,8 +74,6 @@ namespace DocsGeneration.E2ETests {
         };
 
         process.Start();
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
         process.WaitForExit();
 
         if (process.ExitCode != 0) {
