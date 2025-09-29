@@ -29,5 +29,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DocsGeneration\DocsGeneration.csproj" />
+  </ItemGroup>
+
 
 </Project>

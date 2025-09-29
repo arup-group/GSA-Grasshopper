@@ -84,13 +84,18 @@ namespace DocsGeneration.E2ETests {
       }
 
       private static string GetGeneratorPath() {
+#if DEBUG
+        string config = "Debug";
+#else
+        string config = "Release";
+#endif
         string gsaGrasshopperRepoRoot
-          = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".."));
+          = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
         string generatorPath = Path.GetFullPath(Path.Combine(gsaGrasshopperRepoRoot, "DocsGeneration", "bin", "x64",
-          "Debug", "net48", "DocsGeneration.exe"));
+          config, "net48", "DocsGeneration.exe"));
 
         return !File.Exists(generatorPath) ?
-          throw new FileNotFoundException("Couldn't find: DocsGeneration.exe", generatorPath) : generatorPath;
+          throw new FileNotFoundException($"Couldn't find: DocsGeneration.exe full: {generatorPath}", generatorPath) : generatorPath;
       }
 
       private static string[] GetRelativeMarkdownFilePaths(string rootDirectory) {
