@@ -80,7 +80,7 @@ steps:
   env:
     MSBUILDDISABLENODEREUSE: 1
     
-- task: VSBuild@2
+- task: VSBuild@1
   displayName: 'Building project in Debug'
   inputs:
     solution: 'GsaGH.sln'
