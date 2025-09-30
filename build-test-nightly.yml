@@ -79,11 +79,22 @@ steps:
     clean: true
   env:
     MSBUILDDISABLENODEREUSE: 1
+    
+- task: VSBuild@2
+  displayName: 'Building project in Debug'
+  inputs:
+    solution: 'GsaGH.sln'
+    msbuildArgs: '/p:AppxBundlePlatforms="x64" /p:AppxPackageDir="$(build.artifactStagingDirectory)\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /m /nr:false /p:TreatWarningsAsErrors="true"'
+    platform: 'x64'
+    configuration: 'Debug'
+    clean: true
+  env:
+    MSBUILDDISABLENODEREUSE: 1
 
 - powershell: |
     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\integration  .\IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
-    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\documentatione2e  .\DocsGeneration.E2ETests\bin\x64\Release\net8.0\DocsGeneration.E2ETests.dll
+    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\documentatione2e  .\DocsGeneration.E2ETests\bin\x64\Debug\net8.0\DocsGeneration.E2ETests.dll
   displayName: dotnet tests
   failOnStderr: true
 
