@@ -1,4 +1,10 @@
+﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Xunit;
 
 namespace DocsGeneration.E2ETests {
   public class DocsGenerationE2ETest {
@@ -11,11 +17,11 @@ namespace DocsGeneration.E2ETests {
       private readonly string generatedDir = Path.Combine(AppContext.BaseDirectory, "test-artifacts", "generated");
 
       [Fact]
-      public void Should_Generate_Files_Matching_Expected() {
+      public async Task Should_Generate_Files_Matching_Expected() {
         PrepareOutputDirectory();
 
         try {
-          RunGenerator();
+          await RunGenerator();
 
           string[] expectedFiles = GetRelativeMarkdownFilePaths(expectedDir);
           string[] generatedFiles = GetRelativeMarkdownFilePaths(generatedDir);
@@ -43,7 +49,7 @@ namespace DocsGeneration.E2ETests {
         }
       }
 
-      private void RunGenerator() {
+      private async Task RunGenerator() {
         string generatorExePath = GetGeneratorPath();
 
         if (!File.Exists(generatorExePath)) {
@@ -56,28 +62,36 @@ namespace DocsGeneration.E2ETests {
           RedirectStandardOutput = true,
           RedirectStandardError = true,
           UseShellExecute = false,
+          CreateNoWindow = false,
         };
 
-        using var process = new Process {
+        var process = new Process {
           StartInfo = startInfo,
         };
 
-        process.OutputDataReceived += (s, e) => {
-          if (!string.IsNullOrEmpty(e.Data)) {
-            Console.WriteLine(e.Data);
-          }
-        };
-        process.ErrorDataReceived += (s, e) => {
-          if (!string.IsNullOrEmpty(e.Data)) {
-            Console.Error.WriteLine(e.Data);
-          }
-        };
+        try {
+          process.OutputDataReceived += (s, e) => {
+            if (!string.IsNullOrEmpty(e.Data)) {
+              Console.WriteLine(e.Data);
+            }
+          };
+          process.ErrorDataReceived += (s, e) => {
+            if (!string.IsNullOrEmpty(e.Data)) {
+              Console.Error.WriteLine(e.Data);
+            }
+          };
 
-        process.Start();
-        process.WaitForExit();
+          process.Start();
 
-        if (process.ExitCode != 0) {
-          throw new Exception($"DocsGeneration.exe exited with code: {process.ExitCode}");
+          process.BeginOutputReadLine();
+          process.BeginErrorReadLine();
+
+          await Task.Run(process.WaitForExit);
+          if (process.ExitCode != 0) {
+            throw new Exception($"DocsGeneration.exe exited with code:  {process.ExitCode}");
+          }
+        } finally {
+          process.Dispose();
         }
       }
 
@@ -87,18 +101,35 @@ namespace DocsGeneration.E2ETests {
 #else
         string config = "Release";
 #endif
-        string gsaGrasshopperRepoRoot
-          = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
-        string generatorPath = Path.GetFullPath(Path.Combine(gsaGrasshopperRepoRoot, "DocsGeneration", "bin", "x64",
-          config, "net48", "DocsGeneration.exe"));
+        int maxLevelUp = 3;
+        string gsaGrasshopperRepoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", ".."));
+        string generatorPath = string.Empty;
+        do {
+          generatorPath = Path.GetFullPath(Path.Combine(gsaGrasshopperRepoRoot, "DocsGeneration", "bin", "x64", config,
+            "net48", "DocsGeneration.exe"));
 
-        return !File.Exists(generatorPath) ?
-          throw new FileNotFoundException($"Couldn't find: DocsGeneration.exe full: {generatorPath}", generatorPath) : generatorPath;
+          if (File.Exists(generatorPath)) {
+            return generatorPath;
+          }
+
+          gsaGrasshopperRepoRoot = Path.GetFullPath(Path.Combine(gsaGrasshopperRepoRoot, ".."));
+
+          maxLevelUp--;
+        } while (maxLevelUp >= 0);
+
+        throw new FileNotFoundException($"Couldn't find: DocsGeneration.exe full: {generatorPath}", generatorPath);
       }
 
       private static string[] GetRelativeMarkdownFilePaths(string rootDirectory) {
         return Directory.GetFiles(rootDirectory, "*.*", SearchOption.AllDirectories)
-         .Select(path => Path.GetRelativePath(rootDirectory, path)).OrderBy(path => path).ToArray();
+         .Select(path => GetRelativePath(rootDirectory, path)).OrderBy(path => path).ToArray();
+      }
+
+      private static string GetRelativePath(string rootDirectory, string fullPath) {
+        var rootUri = new Uri(rootDirectory + Path.DirectorySeparatorChar);
+        var fileUri = new Uri(fullPath);
+        Uri relativeUri = rootUri.MakeRelativeUri(fileUri);
+        return Uri.UnescapeDataString(relativeUri.ToString()).Replace('/', Path.DirectorySeparatorChar);
       }
 
       private static void AssertFilesCountMatch(string[] expectedFiles, string[] generatedFiles) {
@@ -155,3 +186,4 @@ namespace DocsGeneration.E2ETests {
     }
   }
 }
+
