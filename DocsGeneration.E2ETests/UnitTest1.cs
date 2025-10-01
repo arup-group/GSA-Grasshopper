@@ -180,7 +180,7 @@ namespace DocsGeneration.E2ETests {
           int diffLine = i + 1;
           string message
             = $"Difference in file: '{relativePath}'\nLine {diffLine}:\nExpected: '{expectedLine}'\nFound:    '{actualLine}'";
-          Assert.True(false, message);
+          Assert.Fail(message);
         }
       }
     }
