@@ -37,3 +37,5 @@ Get GSA Grid Plane Surface Properties
 |![NumberParam](./images/NumberParam.png) |`Number` |**Span Direction** |Grid Surface Span Direction |
 |![TextParam](./images/TextParam.png) |`Text` |**Expansion Type** |Grid Surface Expansion Type |
 |![BooleanParam](./images/BooleanParam.png) |`Boolean` |**Simplified Tributary Area** |Grid Surface Simplified Tributary Area |
+
+

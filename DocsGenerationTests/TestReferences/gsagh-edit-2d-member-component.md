@@ -57,3 +57,5 @@ _Note: This component can preview 3D Sections, right-click the middle of the com
 |![ColourParam](./images/ColourParam.png) |`Colour` |**Member Colour** |Member Colour |
 |![BooleanParam](./images/BooleanParam.png) |`Boolean` |**Dummy Member** |if Member is Dummy |
 |![TextParam](./images/TextParam.png) |`Text` |**Topology** |the Member's original topology list referencing node IDs in Model that Model was created from |
+
+

@@ -7,7 +7,7 @@
 
 ## Description
 
-Elements in GSA are geometrical objects used for Analysis. Elements must be split at intersections with other elements to connect to each other or 'node out'.
+Elements in GSA are geometrical objects used for Analysis. Elements must be split at intersections with other elements to connect to each other or 'node out'. 
 
 Element1Ds are one-dimensional stick elements (representing [1D Element Types](/references/element-types.md#element-types)) used by the solver for analysis.
 

@@ -23,3 +23,5 @@ Show the ID of a Node, Element, or Member parameters, or get Result or Diagram v
 |![AnnotationParam](./images/AnnotationParam.png) |`Annotation` _Tree_ |**Annotations** |Annotations for the GSA object |
 |![PointParam](./images/PointParam.png) |`Point` _Tree_ |**Position** |The (centre/mid) location(s) of the object(s) |
 |![TextParam](./images/TextParam.png) |`Text` _Tree_ |**Text** |The objects ID(s) or the result/diagram value(s) |
+
+

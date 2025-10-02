@@ -7,7 +7,7 @@
 
 ## Description
 
-A Design Task is collection of specifications that guide the automated, iterative design or checking of members. A Design Task is analogous to an Analysis Task in that there can be multiple Design Tasks all of which are saved with the model. Design Tasks must be executed to carry out either a design or a check based on the parameters defined in the task.
+A Design Task is collection of specifications that guide the automated, iterative design or checking of members. A Design Task is analogous to an Analysis Task in that there can be multiple Design Tasks all of which are saved with the model. Design Tasks must be executed to carry out either a design or a check based on the parameters defined in the task. 
 
 In Grasshopper, it is only possible to create steel design tasks.
 

@@ -22,3 +22,5 @@ Get information about a GSA Analysis Case
 |![TextParam](./images/TextParam.png) |`Text` |**Name** |Analysis Case Name |
 |![TextParam](./images/TextParam.png) |`Text` |**Definition** |The definition of the analysis case |
 |![IntegerParam](./images/IntegerParam.png) |`Integer` |**CaseID** |The Case number if the Analysis Case ever belonged to a model |
+
+

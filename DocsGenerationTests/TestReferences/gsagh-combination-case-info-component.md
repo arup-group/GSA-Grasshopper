@@ -22,3 +22,5 @@ Get information about a GSA Combination Case
 |![IntegerParam](./images/IntegerParam.png) |`Integer` |**ID** |Combination Case number |
 |![TextParam](./images/TextParam.png) |`Text` |**Name** |Combination Case Name |
 |![TextParam](./images/TextParam.png) |`Text` |**Description** |The description should take the form: 1.5A1 + 0.4A3.<br />Use 'or' for enveloping cases eg (1 or -1.4)A1,<br />'to' for enveloping a range of cases eg (C1 to C3) |
+
+

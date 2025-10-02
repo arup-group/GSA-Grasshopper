@@ -28,3 +28,5 @@ Modify a GSA Material
 |![TextParam](./images/TextParam.png) |`Text` |**Material Name** |the Material's Name |
 |![MaterialParam](./images/MaterialParam.png) |[Material](gsagh-material-parameter.md) |**Custom Material** |A copy of this material as a Custom material. |
 |![TextParam](./images/TextParam.png) |`Text` |**Material Type** |Material Type |
+
+

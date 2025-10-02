@@ -26,3 +26,5 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 Grafted by Section ID. |
 |![GenericParam](./images/GenericParam.png) |`Generic` _Tree_ |**2D Property Quantities** |Total Area per 2D Property from GSA Model.
 Grafted by Property ID. |
+
+

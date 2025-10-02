@@ -21,3 +21,5 @@ Create a GSA Steel Section Pool
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![SectionParam](./images/SectionParam.png) |[Section](gsagh-section-parameter.md) |**Section** |GSA Section Property (Beam) parameter |
+
+

@@ -25,3 +25,5 @@ Get the information of a GSA Grid Line
 |![TextParam](./images/TextParam.png) |`Text` |**Shape** |Specifies whether the grid line is a straight line or circular arc |
 |![NumberParam](./images/NumberParam.png) |`Number` |**Orientation** |The angle of inclination of a straight line or the start angle of a circular arc |
 |![NumberParam](./images/NumberParam.png) |`Number` |**Angle** |The end angle of a circular arc (not required for straight grid lines) |
+
+

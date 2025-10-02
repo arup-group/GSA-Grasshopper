@@ -32,3 +32,5 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |![GenericParam](./images/GenericParam.png) |`Generic` _Tree_ |**Major Effective Span Ratio** |The ratio between effective and total length of the member |
 |![GenericParam](./images/GenericParam.png) |`Generic` _Tree_ |**Major Effective Span Ratio,** |The ratio between effective and span length |
 |![GenericParam](./images/GenericParam.png) |`Generic` _Tree_ |**Major Slenderness Ratio** |The ratio between effective and span length |
+
+

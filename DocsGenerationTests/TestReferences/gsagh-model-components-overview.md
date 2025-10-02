@@ -1,4 +1,4 @@
-# Model components
+# Model components 
 <!--- This file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration --->
 
 #### Primary
@@ -50,3 +50,5 @@
 | ----------- | ----------- | ----------- |
 |![Model Titles](./images/ModelTitles.png) |[Model Titles](gsagh-model-titles-component.md) |Get or set the titles in a [Model](gsagh-model-parameter.md)  |
 |![Model Units](./images/ModelUnits.png) |[Model Units](gsagh-model-units-component.md) |Get or set the units used by when opening this [Model](gsagh-model-parameter.md)  |
+
+

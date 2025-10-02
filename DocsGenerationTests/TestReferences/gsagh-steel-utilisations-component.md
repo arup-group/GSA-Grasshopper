@@ -36,3 +36,5 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |![GenericParam](./images/GenericParam.png) |`Generic` _List_ |**LateralTorsionalBuckling** |Lateral Torsional Buckling Utilisation ratio |
 |![GenericParam](./images/GenericParam.png) |`Generic` _List_ |**TorsionalBuckling** |Torsional Buckling Utilisation ratio |
 |![GenericParam](./images/GenericParam.png) |`Generic` _List_ |**FlexuralBuckling** |Flexural Buckling Utilisation ratio |
+
+

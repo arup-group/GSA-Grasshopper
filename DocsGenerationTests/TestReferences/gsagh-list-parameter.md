@@ -7,7 +7,7 @@
 
 ## Description
 
-An Entity List is expressed as a string of text in a specific syntax along with the List Type. In Grasshopper, a Entity List can also contain a copy of all the items in the list.
+An Entity List is expressed as a string of text in a specific syntax along with the List Type. In Grasshopper, a Entity List can also contain a copy of all the items in the list. 
 
 Lists (of nodes, elements, members or cases) are used, for example, when a particular load is to be applied to one or several elements. To define a series of items the list can either specify each individually or, if applicable, use a more concise [syntax](/references/listsandembeddedlists.md).
 

@@ -25,3 +25,5 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![GridPlaneSurfaceParam](./images/GridPlaneSurfaceParam.png) |[Grid Plane Surface](gsagh-grid-plane-surface-parameter.md) |**Grid Plane** |GSA Grid Plane |
+
+

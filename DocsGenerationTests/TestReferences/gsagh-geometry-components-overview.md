@@ -1,4 +1,4 @@
-# Geometry components
+# Geometry components 
 <!--- This file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration --->
 
 #### Primary
@@ -59,3 +59,5 @@
 | ----------- | ----------- | ----------- |
 |![Local Axes](./images/LocalAxes.png) |[Local Axes](gsagh-local-axes-component.md) |Get the local axes from a 1D Element or Member |
 |![Section Alignment](./images/SectionAlignment.png) |[Section Alignment](gsagh-section-alignment-component.md) |Automatically create Offset based on desired Alignment and Section profile |
+
+

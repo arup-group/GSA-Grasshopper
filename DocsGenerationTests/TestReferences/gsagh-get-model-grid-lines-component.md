@@ -20,3 +20,5 @@ Get Grid Lines from a GSA model.
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![GridLineParam](./images/GridLineParam.png) |[Grid Line](gsagh-grid-line-parameter.md) _List_ |**GSA Grid Line** |Grid Lines from GSA Model |
+
+

@@ -77,7 +77,7 @@ steps:
     clean: true
   env:
     MSBUILDDISABLENODEREUSE: 1
-
+    
 - task: VSBuild@1
   displayName: 'Building project in Debug'
   inputs:

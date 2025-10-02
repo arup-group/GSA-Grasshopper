@@ -38,3 +38,5 @@ Is Constant for Face Equation load. |
 |![LoadParam](./images/LoadParam.png) |`Load   Value  [k N , k N /m , k N /m ²]` |**Load Value** |Value at Point 4.
 Units of the equation for Face Equation load |
 |![GridPlaneSurfaceParam](./images/GridPlaneSurfaceParam.png) |[Grid Plane Surface](gsagh-grid-plane-surface-parameter.md) |**Grid Plane Surface** |GSA Grid Plane Surface parameter |
+
+

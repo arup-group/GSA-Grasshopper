@@ -23,3 +23,5 @@ _Note: This component can preview 3D Sections, right-click the middle of the com
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![Element1dParam](./images/Element1dParam.png) |[Element 1D](gsagh-element-1d-parameter.md) |**Element 1D** |GSA 1D Element parameter |
+
+

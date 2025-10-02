@@ -27,8 +27,10 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 +ve stresses: tensile |
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Pressure ` _Tree_ |**Elastic Shear Z** |The maximum elastic shear stresses in local Z-axis
 +ve stresses: tensile |
-|![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Pressure ` _Tree_ |**Torsional** |Torsional stress: St = Mxx/Ct
+|![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Pressure ` _Tree_ |**Torsional** |Torsional stress: St = Mxx/Ct 
 where Ct is the ‘torsion modulus’. (Refer to the GSA manual for details.)  |
-|![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Pressure ` _Tree_ |**von Mises** |Von Mises stress: This is calculated assuming the maximum through thickness stress and torsional stress coexist.
-In most cases this is an over-estimate of the von Mises stress.
+|![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Pressure ` _Tree_ |**von Mises** |Von Mises stress: This is calculated assuming the maximum through thickness stress and torsional stress coexist. 
+In most cases this is an over-estimate of the von Mises stress. 
 Von Mises stress is not calculated for cases with enveloping operators in them. |
+
+

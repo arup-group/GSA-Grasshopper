@@ -23,3 +23,5 @@ Get Analysis Tasks and their Cases from GSA model
 |![AnalysisCaseParam](./images/AnalysisCaseParam.png) |[Analysis Case](gsagh-analysis-case-parameter.md) _List_ |**Analysis Cases** |List of Analysis Cases in model |
 |![CombinationCaseParam](./images/CombinationCaseParam.png) |[Combination Case](gsagh-combination-case-parameter.md) _List_ |**Combination Cases** |List of Combination Cases in model |
 |![DesignTaskParam](./images/DesignTaskParam.png) |[Design Task](gsagh-design-task-parameter.md) _List_ |**Design Tasks** |List of Steel Design Tasks in model |
+
+

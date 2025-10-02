@@ -7,15 +7,15 @@
 
 ## Description
 
-A Load parameter can contain [Node Loads](/references/nodalloading-data.md), [Beam Loads](/references/beamloading-data.md), [2D Element Loads](/references/2delementloading-data.md), [Grid Loads](/references/gridloading-data.md), and [Gravity Loads](/references/hidr-data-gravity.md),
+A Load parameter can contain [Node Loads](/references/nodalloading-data.md), [Beam Loads](/references/beamloading-data.md), [2D Element Loads](/references/2delementloading-data.md), [Grid Loads](/references/gridloading-data.md), and [Gravity Loads](/references/hidr-data-gravity.md), 
 
 GSA provides a number of different ways to apply loads to a model.
 
-The simplest option is use the [Create Node Load](gsagh-create-node-load-component.md) component to create nodal loading where forces are applied directly to nodes. This is not recommended for 2D and 3D elements.
+The simplest option is use the [Create Node Load](gsagh-create-node-load-component.md) component to create nodal loading where forces are applied directly to nodes. This is not recommended for 2D and 3D elements. 
 
-The next level of loading applies loads to the elements, either use the [Create Beam Load](gsagh-create-beam-load-component.md) component, or [Create Face Load](gsagh-create-face-load-component.md) component. In the solver these use shape functions to give loading on the nodes compatible with the elements to which the load is applied.
+The next level of loading applies loads to the elements, either use the [Create Beam Load](gsagh-create-beam-load-component.md) component, or [Create Face Load](gsagh-create-face-load-component.md) component. In the solver these use shape functions to give loading on the nodes compatible with the elements to which the load is applied. 
 
-Grid loading is a different type of loading which is applied to a [Grid Plane Surface](gsagh-grid-plane-surface-parameter.md). An algorithm then distributes this loading from the grid surface to the surrounding elements. This can be useful for models where floor slabs are not modelled explicitly.
+Grid loading is a different type of loading which is applied to a [Grid Plane Surface](gsagh-grid-plane-surface-parameter.md). An algorithm then distributes this loading from the grid surface to the surrounding elements. This can be useful for models where floor slabs are not modelled explicitly. 
 
 Gravity is the final load type create with the [Create Gravity Load](gsagh-create-gravity-load-component.md) component. This is different from the other load types as it is specified as an acceleration (in g). This is normally used to model the dead weight of the structure by specifying a gravity load of −1 × g in the z direction.
 

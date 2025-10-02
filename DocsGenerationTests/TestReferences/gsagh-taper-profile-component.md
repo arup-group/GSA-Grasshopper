@@ -21,3 +21,5 @@ Create a Profile that tapers along its length from start and end profiles
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![TextParam](./images/TextParam.png) |`Text` |**Tapered Profile** |Profile tapering along the length of its element |
+
+

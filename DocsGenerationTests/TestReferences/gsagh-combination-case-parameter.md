@@ -7,7 +7,7 @@
 
 ## Description
 
-Combination cases are similar to analysis cases but differ in two respects:
+Combination cases are similar to analysis cases but differ in two respects: 
 - Results for combination cases are inferred from analysis case results and not calculated explicitly.
 - Combination cases can be enveloping cases, as described in [Enveloping](/references/envelopingingsa.md) in GSA.
 

@@ -7,7 +7,7 @@
 
 ## Description
 
-A 2D property is used by [Element 2D](gsagh-element-2d-parameter.md) and [Member 2D](gsagh-member-2d-parameter.md) and generally contains information about it's the Area Property's `Thickness` and [Material](gsagh-material-parameter.md). 2D Properties can also be used to create LoadPanels, use the [Create 2D Property](gsagh-create-2d-property-component.md) component and select `LoadPanel` from the dropdown list.
+A 2D property is used by [Element 2D](gsagh-element-2d-parameter.md) and [Member 2D](gsagh-member-2d-parameter.md) and generally contains information about it's the Area Property's `Thickness` and [Material](gsagh-material-parameter.md). 2D Properties can also be used to create LoadPanels, use the [Create 2D Property](gsagh-create-2d-property-component.md) component and select `LoadPanel` from the dropdown list. 
 
 Refer to [2D Element Properties](/references/hidr-data-pr-2d.md) to read more.
 

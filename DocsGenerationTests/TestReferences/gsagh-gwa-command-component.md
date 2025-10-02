@@ -22,3 +22,5 @@ Create a model from a GWA string, inject data into a model using GWA command, or
 | ----------- | ----------- | ----------- | ----------- |
 |![ModelParam](./images/ModelParam.png) |[Model](gsagh-model-parameter.md) |**Model** |GSA Model parameter |
 |![GenericParam](./images/GenericParam.png) |`Generic` |**Returned result** |The 'variant' return value from executing a GWA command issued to GSA. <br />The syntax of the command is based on GWA syntax and the units follow the GWA unit syntax; –<br />Refer to the “GSA Keywords” document for details.<br />Note that locale is set to use '.' as decimal separator.<br />Right-click -> Help for further infor on GWA Commands. |
+
+

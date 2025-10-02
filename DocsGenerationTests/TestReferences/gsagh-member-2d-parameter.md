@@ -7,11 +7,11 @@
 
 ## Description
 
-[Members](/references/hidr-data-member.md) in GSA are geometrical objects used in the Design Layer. Members can automatically intersect with other members. Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can automatically be created from Members used for analysis.
+[Members](/references/hidr-data-member.md) in GSA are geometrical objects used in the Design Layer. Members can automatically intersect with other members. Members are as such more closely related to building objects, like a beam, column, slab or wall. Elements can automatically be created from Members used for analysis. 
 
- A Member2D is the planar/area geometry resembling for instance a slab or a wall. It can be defined geometrically from a planar Brep.
+ A Member2D is the planar/area geometry resembling for instance a slab or a wall. It can be defined geometrically from a planar Brep. 
 
- Refer to [2D Members](/explanations/members-2d.md) to read more.
+ Refer to [2D Members](/explanations/members-2d.md) to read more. 
 
 
 

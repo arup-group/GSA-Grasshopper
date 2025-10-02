@@ -30,3 +30,5 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |![TextParam](./images/TextParam.png) |`Text` _List_ |**Warnings** |Analysis Task Warnings |
 |![TextParam](./images/TextParam.png) |`Text` _List_ |**Remarks** |Analysis Task Notes and Remarks |
 |![TextParam](./images/TextParam.png) |`Text` _List_ |**Logs** |Analysis Task logs |
+
+

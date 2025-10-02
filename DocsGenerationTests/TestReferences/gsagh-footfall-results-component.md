@@ -30,3 +30,5 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |![IntegerParam](./images/IntegerParam.png) |`Integer` _Tree_ |**Critical Node** |* The node ID of the critical frequency |
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Frequency ` _Tree_ |**Critical Frequency** |* The critical frequency |
 |![IntegerParam](./images/IntegerParam.png) |`Integer` _Tree_ |**Node IDs** |Node IDs for each result value |
+
+
