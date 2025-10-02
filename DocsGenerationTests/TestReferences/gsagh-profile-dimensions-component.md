@@ -29,5 +29,3 @@ Get GSA Section Dimensions
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Length ` |**Radius** |Section Root Radius (only applicable to catalogue profiles) or hole size for cellular/castellated beams |
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Length ` |**Spacing** |Spacing/pitch |
 |![TextParam](./images/TextParam.png) |`Text` |**Type** |Profile type description |
-
-

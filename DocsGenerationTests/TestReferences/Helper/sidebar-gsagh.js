@@ -1,5 +1,5 @@
 /*
- --- Start of auto-generated text --- 
+ --- Start of auto-generated text ---
 This part of the sidebar file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration
 */
 {

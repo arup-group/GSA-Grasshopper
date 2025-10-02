@@ -1,4 +1,4 @@
-# Properties components 
+# Properties components
 <!--- This file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration --->
 
 #### Primary
@@ -60,5 +60,3 @@
 |![Create Offset](./images/CreateOffset.png) |[Create Offset](gsagh-create-offset-component.md) |Create an [Offset](gsagh-offset-parameter.md)  |
 |![Edit Bool6](./images/EditBool6.png) |[Edit Bool6](gsagh-edit-bool6-component.md) |Modify a [Bool6](gsagh-bool6-parameter.md) or just get information about existing  |
 |![Edit Offset](./images/EditOffset.png) |[Edit Offset](gsagh-edit-offset-component.md) |Modify [Offset](gsagh-offset-parameter.md) or just get information about existing  |
-
-

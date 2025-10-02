@@ -34,5 +34,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Frequency ` |**Frequency** |Frequency of selected LoadCase / mode |
 |![NumberParam](./images/NumberParam.png) |`Number` |**Load Factor** |Load Factor for selected LoadCase / mode |
 |![NumberParam](./images/NumberParam.png) |`Number` |**Eigenvalue** |Eigenvalue for selected LoadCase / mode |
-
-

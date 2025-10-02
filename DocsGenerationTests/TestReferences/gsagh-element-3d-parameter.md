@@ -7,7 +7,7 @@
 
 ## Description
 
-Elements in GSA are geometrical objects used for Analysis. Elements must be split at intersections with other elements to connect to each other or 'node out'. 
+Elements in GSA are geometrical objects used for Analysis. Elements must be split at intersections with other elements to connect to each other or 'node out'.
 
 In Grasshopper, an Element3D is a collection of 3D Elements (mesh solids representing [Brick, Wedge, Pyramid or Tetra Elements](/references/element-types.md#brick-wedge-pyramid-and-tetra-elements)) used for FE analysis. In GSA, a 3D Element is just a single closed mesh, but for Rhino performance reasons we have made Element3D an [Ngon Mesh](https://docs.mcneel.com/rhino/7/help/en-us/popup_moreinformation/ngon.htm) that can contain more than one closed mesh.
 

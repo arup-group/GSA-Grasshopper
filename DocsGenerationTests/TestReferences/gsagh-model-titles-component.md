@@ -32,5 +32,3 @@ Get or set the titles in a GSA Model
 |![TextParam](./images/TextParam.png) |`Text` |**Sub Title** |Get Sub Title for this GSA Model |
 |![TextParam](./images/TextParam.png) |`Text` |**Calc Header** |Get Calculation Heading for this GSA Model |
 |![TextParam](./images/TextParam.png) |`Text` |**Notes** |Get Notes for this GSA Model |
-
-

@@ -23,5 +23,3 @@ Get AnalysisCase or Combination Result from an analysed GSA model
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![ResultParam](./images/ResultParam.png) |[Result](gsagh-result-parameter.md) |**Result** |GSA Result |
-
-

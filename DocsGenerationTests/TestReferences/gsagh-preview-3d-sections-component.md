@@ -25,5 +25,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |![LineParam](./images/LineParam.png) |`Line` _List_ |**AnalysisLayer Outlines** |The Analyis layer 3D Sections' outlines |
 |![MeshParam](./images/MeshParam.png) |`Mesh` |**DesignLayer Mesh** |Design layer 3D Section Mesh |
 |![LineParam](./images/LineParam.png) |`Line` _List_ |**DesignLayer Outlines** |The Design layer 3D Sections' outlines |
-
-

@@ -8,5 +8,3 @@
 ## Description
 
 A Bool6 contains six booleans to set releases in [Element 1D](gsagh-element-1d-parameter.md)s and [Member 1D](gsagh-member-1d-parameter.md)s, or restraints in [Node](gsagh-node-parameter.md)s.
-
-

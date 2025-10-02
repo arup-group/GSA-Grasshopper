@@ -22,5 +22,3 @@ Get the local axes from a 1D Element or Member
 |![VectorParam](./images/VectorParam.png) |`Vector` |**Local X** |Element1D or Member1D's local X-axis |
 |![VectorParam](./images/VectorParam.png) |`Vector` |**Local Y** |Element1D or Member1D's local X-axis |
 |![VectorParam](./images/VectorParam.png) |`Vector` |**Local Z** |Element1D or Member1D's local X-axis |
-
-

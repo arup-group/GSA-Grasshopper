@@ -25,5 +25,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![Property2dParam](./images/Property2dParam.png) |[Property 2D](gsagh-property-2d-parameter.md) |**Property 2D** |GSA 2D Property (Area) parameter |
-
-

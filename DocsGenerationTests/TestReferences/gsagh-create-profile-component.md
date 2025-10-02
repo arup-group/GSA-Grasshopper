@@ -21,5 +21,3 @@ Create Profile text-string for a GSA Section
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![GenericParam](./images/GenericParam.png) |`Generic` _Tree_ |**Profile** |Profile for a GSA Section |
-
-

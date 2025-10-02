@@ -75,5 +75,3 @@ Examples:
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![EffectiveLengthOptionsParam](./images/EffectiveLengthOptionsParam.png) |[Effective Length Options](gsagh-effective-length-options-parameter.md) |**Effective Length Options** |GSA 1D Member Design Options for Effective Length, Restraints and Buckling Factors parameter |
-
-

@@ -28,5 +28,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |![Element2dParam](./images/Element2dParam.png) |[Element 2D](gsagh-element-2d-parameter.md) |**2D Elements** |GSA 2D Elements |
 |![NodeParam](./images/NodeParam.png) |[Node](gsagh-node-parameter.md) _List_ |**Incl. Nodes** |Inclusion Nodes |
 |![Element1dParam](./images/Element1dParam.png) |[Element 1D](gsagh-element-1d-parameter.md) _List_ |**Incl. Element1Ds** |Inclusion 1D Elements created from 1D Members |
-
-

@@ -32,5 +32,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Moment ` _Tree_ |**Moment ZZ** |* Nodal Moment around Z-axis |
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Moment ` _Tree_ |**Moment &#124;M&#124;** |* Combined &#124;XXYYZZ&#124; Nodal Moment |
 |![IntegerParam](./images/IntegerParam.png) |`Integer` _List_ |**Element IDs** |Element IDs for each result value |
-
-

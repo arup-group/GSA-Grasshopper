@@ -13,7 +13,7 @@ A grid plane defines the geometry of a surface, and the load behaviour of the gr
 
 In Grasshopper, a Grid Plane Surface contains both the information of what in GSA is known as a [Grid Plane](/references/hidr-data-grid-plane.md) and a [Grid Surface](/references/hidr-data-grid-surface.md)
 
-The Grasshopper plugin will automatically create a fitting Grid Plane Surface when using the [Create Grid Point Load](gsagh-create-grid-point-load-component.md), [Create Grid Line Load](gsagh-create-grid-line-load-component.md) or [Create Grid Area Load](gsagh-create-grid-area-load-component.md) components. 
+The Grasshopper plugin will automatically create a fitting Grid Plane Surface when using the [Create Grid Point Load](gsagh-create-grid-point-load-component.md), [Create Grid Line Load](gsagh-create-grid-line-load-component.md) or [Create Grid Area Load](gsagh-create-grid-area-load-component.md) components.
 
 Grid Plane Surfaces can also be created independently using the [Create Grid Plane](gsagh-create-grid-plane-component.md) and [Create Grid Surface](gsagh-create-grid-surface-component.md) components.
 

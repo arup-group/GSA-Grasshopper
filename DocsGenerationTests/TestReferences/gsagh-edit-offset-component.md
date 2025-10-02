@@ -28,5 +28,3 @@ Modify GSA Offset or just get information about existing
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Length ` |**X2** |`X2` - End axial offset |
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Length ` |**Y** |`Y` Offset |
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Length ` |**Z** |`Z` Offset |
-
-

@@ -28,5 +28,3 @@ Get GSA Steel Design Tasks information
 |![BooleanParam](./images/BooleanParam.png) |`Boolean` |**Grouped Design** |If true, Members with the same pool are assigned the same section |
 |![TextParam](./images/TextParam.png) |`Text` |**Primary Objective** |Primary design optimisation objective |
 |![TextParam](./images/TextParam.png) |`Text` |**Secondary Objective** |Secondary design optimisation objective |
-
-

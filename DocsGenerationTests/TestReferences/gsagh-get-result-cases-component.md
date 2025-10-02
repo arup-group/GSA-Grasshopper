@@ -22,5 +22,3 @@ Get Analysis or Combination Case IDs from a GSA model with Results
 |![TextParam](./images/TextParam.png) |`Text` _List_ |**Result Type** |Result type |
 |![IntegerParam](./images/IntegerParam.png) |`Integer` _List_ |**Case** |Case ID(s) - to be read in conjunction with Type output  |
 |![IntegerParam](./images/IntegerParam.png) |`Integer` _Tree_ |**Permutation** |Permutations (only applicable for combination cases). Data as a Tree where each path {i} corrosponds to the Combination Case ID. |
-
-

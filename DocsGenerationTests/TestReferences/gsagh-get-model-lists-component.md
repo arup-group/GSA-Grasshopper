@@ -20,5 +20,3 @@ Get Entity Lists from GSA model
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![ListParam](./images/ListParam.png) |[List](gsagh-list-parameter.md) _List_ |**GSA List** |Lists from GSA Model |
-
-

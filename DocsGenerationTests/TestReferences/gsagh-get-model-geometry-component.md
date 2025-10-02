@@ -32,5 +32,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |![Member2dParam](./images/Member2dParam.png) |[Member 2D](gsagh-member-2d-parameter.md) _List_ |**2D Members** |2D Members (Design Layer) from GSA Model imported to selected unit |
 |![Member3dParam](./images/Member3dParam.png) |[Member 3D](gsagh-member-3d-parameter.md) _List_ |**3D Members** |3D Members (Design Layer) from GSA Model imported to selected unit |
 |![AssemblyParam](./images/AssemblyParam.png) |[Assembly](gsagh-assembly-parameter.md) _List_ |**Assemblies** |Assemblies from GSA Model |
-
-

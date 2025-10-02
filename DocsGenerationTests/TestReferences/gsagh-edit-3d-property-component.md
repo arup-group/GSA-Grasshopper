@@ -30,5 +30,3 @@ Modify a GSA 3D Property
 |![IntegerParam](./images/IntegerParam.png) |`Integer` |**Axis** |Axis: Global (0) or Topological (-1) |
 |![TextParam](./images/TextParam.png) |`Text` |**Prop3d Name** |Name of 3D Proerty |
 |![ColourParam](./images/ColourParam.png) |`Colour` |**Prop3d Colour** |3D Property Colour |
-
-

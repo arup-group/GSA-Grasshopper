@@ -32,5 +32,3 @@ Modify a GSA Bool6 or just get information about existing
 |![BooleanParam](./images/BooleanParam.png) |`Boolean` |**XX** |Release or restraint for rotation around X-axis |
 |![BooleanParam](./images/BooleanParam.png) |`Boolean` |**YY** |Release or restraint for rotation around Y-axis |
 |![BooleanParam](./images/BooleanParam.png) |`Boolean` |**ZZ** |Release or restraint for rotation around Z-axis |
-
-

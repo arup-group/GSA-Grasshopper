@@ -31,5 +31,3 @@ Get GSA Section Modifier
 |![BooleanParam](./images/BooleanParam.png) |`Boolean` |**Principal Bending Axis** |If 'true' GSA will use Principal (u,v) Axis for Bending. If false, Local (y,z) Axis will be used |
 |![BooleanParam](./images/BooleanParam.png) |`Boolean` |**Reference Point Centroid** |If 'true' GSA will use the Centroid as Analysis Reference Point. If false, the specified point will be used |
 |![GenericParam](./images/GenericParam.png) |`Generic` |**Stress Option Type** |the Stress Option Type:<br />0: No Calculation<br />1: Use Modified section properties<br />2: Use Unmodified section properties |
-
-

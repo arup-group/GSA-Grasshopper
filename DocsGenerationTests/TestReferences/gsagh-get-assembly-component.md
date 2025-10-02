@@ -30,5 +30,3 @@ Get GSA Assembly
 |![IntegerParam](./images/IntegerParam.png) |`Integer` _List_ |**Internal Topology** |List of nodes that define the curve of the Assembly |
 |![IntegerParam](./images/IntegerParam.png) |`Integer` |**Curve Fit** |Curve Fit for curved elements<br />Lagrange Interpolation (2) or Circular Arc (1) |
 |![GenericParam](./images/GenericParam.png) |`Generic` |**Definition** |Assembly definition |
-
-

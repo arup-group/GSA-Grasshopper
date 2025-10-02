@@ -27,5 +27,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |![TextParam](./images/TextParam.png) |`Text` |**Definition** |List Definition |
 |![GenericParam](./images/GenericParam.png) |`Generic` _List_ |**List Objects** |Expanded objects contained in the input list |
 |![IntegerParam](./images/IntegerParam.png) |`Integer` _List_ |**Expand List** |Expanded list IDs |
-
-

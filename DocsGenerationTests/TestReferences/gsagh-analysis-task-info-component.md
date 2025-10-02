@@ -23,5 +23,3 @@ Get information about a GSA Analysis Task
 |![AnalysisCaseParam](./images/AnalysisCaseParam.png) |[Analysis Case](gsagh-analysis-case-parameter.md) _List_ |**Analysis Case(s)** |List of GSA Analysis Case |
 |![TextParam](./images/TextParam.png) |`Text` |**Solver Type** |Solver Type |
 |![IntegerParam](./images/IntegerParam.png) |`Integer` |**Task ID** |The Task number of the Analysis Task |
-
-

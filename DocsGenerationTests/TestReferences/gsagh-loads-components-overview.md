@@ -1,4 +1,4 @@
-# Loads components 
+# Loads components
 <!--- This file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration --->
 
 #### Primary
@@ -35,5 +35,3 @@
 | ----------- | ----------- | ----------- |
 |![Grid Plane Surface Properties](./images/GridPlaneSurfaceProperties.png) |[Grid Plane Surface Properties](gsagh-grid-plane-surface-properties-component.md) |Get Grid Plane Surface Properties |
 |![Load Properties](./images/LoadProperties.png) |[Load Properties](gsagh-load-properties-component.md) |Get properties of a [Load](gsagh-load-parameter.md)  |
-
-

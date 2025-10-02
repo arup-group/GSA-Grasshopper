@@ -20,5 +20,3 @@ Expand 1D Entities to 2D Entities from profile, orientation and offset
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![Member2dParam](./images/Member2dParam.png) |[Member 2D](gsagh-member-2d-parameter.md) _List_ |**Member 2D** |GSA 2D Member parameter |
-
-

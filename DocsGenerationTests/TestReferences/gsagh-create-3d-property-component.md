@@ -20,5 +20,3 @@ Create GSA 3D Property
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![Property3dParam](./images/Property3dParam.png) |[Property 3D](gsagh-property-3d-parameter.md) |**Property 3D** |GSA 3D Property (Volumetric) parameter |
-
-

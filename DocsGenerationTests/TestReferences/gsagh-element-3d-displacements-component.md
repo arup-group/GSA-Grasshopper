@@ -31,5 +31,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 
 
 _* DataTree organised as { `CaseID` ; `Permutation` ; `ElementID` } fx. `{1;2;3}` is Case 1, Permutation 2, Element 3, where each branch contains a list of results in the following order: `Vertex(1)`, `Vertex(2)`, ..., `Vertex(i)`, `Centre`_
-
-

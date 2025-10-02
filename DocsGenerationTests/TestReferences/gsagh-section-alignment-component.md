@@ -25,5 +25,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 | ----------- | ----------- | ----------- | ----------- |
 |![GenericParam](./images/GenericParam.png) |`Generic` |**Element/Member 1D/2D** |Element1D, Element2D, Member1D or Member2D with new Offset corrosponding to alignment input. |
 |![OffsetParam](./images/OffsetParam.png) |[Offset](gsagh-offset-parameter.md) _List_ |**Offset** |Applied Offset |
-
-

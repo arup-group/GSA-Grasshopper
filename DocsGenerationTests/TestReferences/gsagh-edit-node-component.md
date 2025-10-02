@@ -38,5 +38,3 @@ Modify GSA Node
 |![SpringPropertyParam](./images/SpringPropertyParam.png) |[Spring Property](gsagh-spring-property-parameter.md) |**Spring Property** |GSA Spring Property parameter |
 |![TextParam](./images/TextParam.png) |`Text` |**Node Name** |Name of Node |
 |![ColourParam](./images/ColourParam.png) |`Colour` |**Node Colour** |colour of node |
-
-

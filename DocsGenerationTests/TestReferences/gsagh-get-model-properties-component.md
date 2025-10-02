@@ -23,5 +23,3 @@ Get Sections, 2D, 3D and Spring Properties from a GSA model
 |![Property2dParam](./images/Property2dParam.png) |[Property 2D](gsagh-property-2d-parameter.md) _List_ |**2D Properties** |2D Properties from GSA Model |
 |![Property3dParam](./images/Property3dParam.png) |[Property 3D](gsagh-property-3d-parameter.md) _List_ |**3D Properties** |3D Properties from GSA Model |
 |![SpringPropertyParam](./images/SpringPropertyParam.png) |[Spring Property](gsagh-spring-property-parameter.md) _List_ |**Spring Properties** |Spring Properties from GSA Model |
-
-

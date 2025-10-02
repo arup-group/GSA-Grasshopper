@@ -1,4 +1,4 @@
-# Results components 
+# Results components
 <!--- This file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration --->
 
 #### Primary
@@ -63,5 +63,3 @@
 |![Steel Design Effective Length](./images/SteelDesignEffectiveLength.png) |[Steel Design Effective Length](gsagh-steel-design-effective-length-component.md) |Steel Design Effective Length result values |
 |![Steel Utilisations](./images/SteelUtilisations.png) |[Steel Utilisations](gsagh-steel-utilisations-component.md) |Steel Utilisation result values |
 |![Total Loads and Reactions](./images/TotalLoadsAndReactions.png) |[Total Loads and Reactions](gsagh-total-loads-and-reactions-component.md) |Get Total Loads and Reaction Results from a [Model](gsagh-model-parameter.md)  |
-
-

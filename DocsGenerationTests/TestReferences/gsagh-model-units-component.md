@@ -50,5 +50,3 @@ Get or set the units used by GSA when opening this GSA Model
 |![TextParam](./images/TextParam.png) |`Text` |**Time Medium** |Get Time Medium Unitfor this GSA Model |
 |![TextParam](./images/TextParam.png) |`Text` |**Time Short** |Get Time Short Unit for this GSA Model |
 |![TextParam](./images/TextParam.png) |`Text` |**Velocity** |Get Velocity Unit for this GSA Model |
-
-

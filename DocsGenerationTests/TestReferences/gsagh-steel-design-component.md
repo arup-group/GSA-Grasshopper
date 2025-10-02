@@ -15,7 +15,7 @@ Optimise or check the steel sections in a Model
 | ----------- | ----------- | ----------- | ----------- |
 |![ModelParam](./images/ModelParam.png) |[Model](gsagh-model-parameter.md) |**Model** |Model parameter |
 |![IntegerParam](./images/IntegerParam.png) |`Integer` |**Task number** |[Optional] The ID of the Task to Design or Check.By default the first steel task will be run. |
-|![IntegerParam](./images/IntegerParam.png) |`Integer` |**Iterations** |Set this input iterate through the steps 
+|![IntegerParam](./images/IntegerParam.png) |`Integer` |**Iterations** |Set this input iterate through the steps
 A) Design -> B) ElementsFromMembers -> C) Analyse -> A) Design
 To only run the above loop once set the input to 1. |
 |![BooleanParam](./images/BooleanParam.png) |`Boolean` |**Check only** |Set to true to only perform a check of the section capacities |
@@ -29,5 +29,3 @@ To only run the above loop once set the input to 1. |
 |![TextParam](./images/TextParam.png) |`Text` _List_ |**Warnings** |Analysis Task Warnings |
 |![TextParam](./images/TextParam.png) |`Text` _List_ |**Remarks** |Analysis Task Notes and Remarks |
 |![TextParam](./images/TextParam.png) |`Text` _List_ |**Logs** |Analysis Task logs |
-
-

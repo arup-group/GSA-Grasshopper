@@ -25,5 +25,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![ListParam](./images/ListParam.png) |[List](gsagh-list-parameter.md) |**GSA List** |GSA Entity List parameter.<br />You can add a GSA List to a model through the 'GSA' input. |
-
-

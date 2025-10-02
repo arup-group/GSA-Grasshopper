@@ -40,5 +40,3 @@ Modify GSA Section
 |![IntegerParam](./images/IntegerParam.png) |`Integer` |**Section Pool** |Section pool |
 |![TextParam](./images/TextParam.png) |`Text` |**Section Name** |Section name |
 |![ColourParam](./images/ColourParam.png) |`Colour` |**Section Colour** |Section colour |
-
-

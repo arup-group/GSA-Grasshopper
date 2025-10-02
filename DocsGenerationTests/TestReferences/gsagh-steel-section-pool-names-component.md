@@ -25,5 +25,3 @@ Get or set the Steel Section Pool Names of a GSA Model
 |![IntegerParam](./images/IntegerParam.png) |`Integer` _List_ |**List of IDs** |List of IDs for Steel Section Pool Names |
 |![TextParam](./images/TextParam.png) |`Text` _List_ |**Names** |List of Names for each section pool name ID) |
 |![SectionParam](./images/SectionParam.png) |[Section](gsagh-section-parameter.md) _Tree_ |**Section** |GSA Section Property (Beam) parameter |
-
-

@@ -30,5 +30,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |![LoadParam](./images/LoadParam.png) |[Load](gsagh-load-parameter.md) _List_ |**Grid Line Loads** |Grid Line Loads from GSA Model |
 |![LoadParam](./images/LoadParam.png) |[Load](gsagh-load-parameter.md) _List_ |**Grid Area Loads** |Grid Area Loads from GSA Model |
 |![GridPlaneSurfaceParam](./images/GridPlaneSurfaceParam.png) |[Grid Plane Surface](gsagh-grid-plane-surface-parameter.md) _List_ |**Grid Plane Surfaces** |Grid Plane Surfaces from GSA Model |
-
-

@@ -27,5 +27,3 @@ Get Standard and Custom Materials from a GSA model
 |![MaterialParam](./images/MaterialParam.png) |[Material](gsagh-material-parameter.md) _List_ |**Glass** |Standard Glass Materials from GSA Model |
 |![MaterialParam](./images/MaterialParam.png) |[Material](gsagh-material-parameter.md) _List_ |**Fabric** |Standard Fabric Materials from GSA Model |
 |![MaterialParam](./images/MaterialParam.png) |[Material](gsagh-material-parameter.md) _List_ |**Custom** |Custom Analysis Materials from GSA Model |
-
-

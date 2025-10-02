@@ -28,5 +28,3 @@ _This component can preview 3D Sections, right-click the middle of the component
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![Member2dParam](./images/Member2dParam.png) |[Member 2D](gsagh-member-2d-parameter.md) |**Member 2D** |GSA 2D Member parameter |
-
-

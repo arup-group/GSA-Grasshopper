@@ -7,7 +7,7 @@
 
 ## Description
 
-Elements in GSA are geometrical objects used for Analysis. Elements must be split at intersections with other elements to connect to each other or 'node out'. 
+Elements in GSA are geometrical objects used for Analysis. Elements must be split at intersections with other elements to connect to each other or 'node out'.
 
 In Grasshopper, an Element2D parameter is a collection of 2D Elements (mesh faces representing [Quad or Triangle Elements](/references/element-types.md#quad-and-triangle-elements)) used for FE analysis. In GSA a 2D element is just a single face, but for Rhino performance reasons we have made the Element2D parameter a mesh that can contain more than one Element/Face.
 

@@ -21,5 +21,3 @@ Create a GSA Analysis Case
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![AnalysisCaseParam](./images/AnalysisCaseParam.png) |[Analysis Case](gsagh-analysis-case-parameter.md) |**Analysis Case** |GSA Analysis Case parameter |
-
-

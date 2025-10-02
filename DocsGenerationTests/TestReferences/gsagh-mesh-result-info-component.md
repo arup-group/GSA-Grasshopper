@@ -22,5 +22,3 @@ Get Element 2D or Element 3D Contour Result values
 |![MeshParam](./images/MeshParam.png) |`Mesh` |**Mesh** |Mesh |
 |![PointParam](./images/PointParam.png) |`Point` _List_ |**Vertices** |Mesh vertices |
 |![GenericParam](./images/GenericParam.png) |`Generic` _List_ |**Result Values** |Result value at each Mesh Vertex as UnitNumber |
-
-

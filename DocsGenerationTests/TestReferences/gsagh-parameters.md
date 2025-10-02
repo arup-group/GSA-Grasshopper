@@ -66,5 +66,3 @@ The GSA plugin introduces a new set of custom Grasshopper parameters. Parameters
 |<img width="20"/>   |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- |
 |![ResultParam](./images/ResultParam.png) |[Result](gsagh-result-parameter.md) |Result parameter |
-
-

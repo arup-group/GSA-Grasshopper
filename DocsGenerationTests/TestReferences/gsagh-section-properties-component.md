@@ -42,5 +42,3 @@ Get GSA Section Properties
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Length ` |**Radius of Gyration in z** |Radius of Gyration in z-direction |
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Surface Area / Unit Length ` |**Surface Area / Unit Length** |Section Surface Area per Unit Length |
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Volume / Unit Length ` |**Volume / Unit Length** |Section Volume per Unit Length |
-
-

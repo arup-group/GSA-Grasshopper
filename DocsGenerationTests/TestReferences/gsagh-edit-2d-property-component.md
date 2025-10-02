@@ -44,5 +44,3 @@ Modify GSA 2D Property
 |![Property2dModifierParam](./images/Property2dModifierParam.png) |[Property 2D Modifier](gsagh-property-2d-modifier-parameter.md) |**Property 2D Modifier** |GSA Property 2D Modifier parameter |
 |![GenericParam](./images/GenericParam.png) |`Generic` |**Support Type** |Support Type |
 |![IntegerParam](./images/IntegerParam.png) |`Integer` |**Reference Edge** |Reference Edge for Load Panels with support type other than Auto and All Edges |
-
-

@@ -37,5 +37,3 @@ Get GSA Spring Property
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Length ` |**Lockup +ve** |Lockup +ve |
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Force Per Length ` |**Coeff. of Friction** |Coefficient of Friction |
 |![GenericParam](./images/GenericParam.png) |`Generic` |**Damping Ratio** |[Optional] Damping Ratio (Default = 0.0 -> 0%) |
-
-

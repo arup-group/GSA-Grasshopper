@@ -22,5 +22,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
 | ----------- | ----------- | ----------- | ----------- |
 |![ModelParam](./images/ModelParam.png) |[Model](gsagh-model-parameter.md) |**Model** |GSA Model parameter |
-
-

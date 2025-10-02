@@ -62,5 +62,3 @@ C1 and C2 stresses are not calculated for cases with enveloping operators in the
 |![UnitNumber](./images/UnitParam.png) |[Unit Number](gsagh-unitnumber-parameter.md)  ` Pressure ` _Tree_ |**Combined C2** |C2 is the minimum extreme fibre longitudinal stress due to axial forces and transverse bending
 C1 and C2 stresses are not calculated for cases with enveloping operators in them.
 +ve stresses: tensile |
-
-

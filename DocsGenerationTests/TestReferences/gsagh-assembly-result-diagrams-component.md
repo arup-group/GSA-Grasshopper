@@ -28,5 +28,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 | ----------- | ----------- | ----------- | ----------- |
 |![DiagramParam](./images/DiagramParam.png) |`Diagram` _List_ |**Diagram lines** |Lines of the GSA Result Diagram |
 |![AnnotationParam](./images/AnnotationParam.png) |`Annotation` _List_ |**Annotations** |Annotations for the diagram |
-
-

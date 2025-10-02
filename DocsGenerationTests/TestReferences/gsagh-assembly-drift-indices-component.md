@@ -25,5 +25,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |![GenericParam](./images/GenericParam.png) |`Generic` _Tree_ |**Drift Index X** |Drift Index in Local Assembly X-direction<br />DataTree organised as { `CaseID` ; `Permutation` ; `AssemblyID` } <br />fx. `{1;2;3}` is Case 1, Permutation 2, Assembly 3, where each <br />branch contains a list of results per assembly position/storey. |
 |![GenericParam](./images/GenericParam.png) |`Generic` _Tree_ |**Drift Index Y** |Drift Index in Local Assembly Y-direction<br />DataTree organised as { `CaseID` ; `Permutation` ; `AssemblyID` } <br />fx. `{1;2;3}` is Case 1, Permutation 2, Assembly 3, where each <br />branch contains a list of results per assembly position/storey. |
 |![GenericParam](./images/GenericParam.png) |`Generic` _Tree_ |**Drift Index XY** |Drift Index in Local Assembly XY-plane<br />DataTree organised as { `CaseID` ; `Permutation` ; `AssemblyID` } <br />fx. `{1;2;3}` is Case 1, Permutation 2, Assembly 3, where each <br />branch contains a list of results per assembly position/storey. |
-
-

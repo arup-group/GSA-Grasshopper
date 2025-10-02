@@ -26,5 +26,3 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 |![AnnotationParam](./images/AnnotationParam.png) |`Annotation` _Tree_ |**Annotations** |Annotations for the GSA object |
 |![PointParam](./images/PointParam.png) |`Point` _Tree_ |**Position** |The (centre/mid) location(s) of the object(s) |
 |![TextParam](./images/TextParam.png) |`Text` _Tree_ |**Text** |The objects ID(s) or the result/diagram value(s) |
-
-

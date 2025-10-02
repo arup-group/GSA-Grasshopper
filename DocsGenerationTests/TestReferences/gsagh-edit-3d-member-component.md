@@ -39,5 +39,3 @@ Modify GSA 3D Member
 |![ColourParam](./images/ColourParam.png) |`Colour` |**Member Colour** |Member Colour |
 |![BooleanParam](./images/BooleanParam.png) |`Boolean` |**Dummy Member** |if Member is Dummy |
 |![TextParam](./images/TextParam.png) |`Text` |**Topology** |the Member's original topology list referencing node IDs in Model that Model was created from |
-
-

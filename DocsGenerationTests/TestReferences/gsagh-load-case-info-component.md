@@ -22,5 +22,3 @@ Get the parameters of a Load Case
 |![IntegerParam](./images/IntegerParam.png) |`Integer` |**Case ID** |Load Case number |
 |![TextParam](./images/TextParam.png) |`Text` |**Name** |Load Case Name |
 |![TextParam](./images/TextParam.png) |`Text` |**Type** |Load Case Type |
-
-

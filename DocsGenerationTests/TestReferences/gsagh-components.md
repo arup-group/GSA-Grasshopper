@@ -16,5 +16,3 @@
 [Results components](gsagh-results-components-overview.md)
 
 [Display components](gsagh-display-components-overview.md)
-
-
