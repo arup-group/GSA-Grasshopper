@@ -359,3 +359,4 @@ dist/*
 /GsaGHTests/TestHelpers/DawnCache
 /GsaGHTests/TestHelpers/GPUCache
 *.lok
+Output
