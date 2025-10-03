@@ -51,7 +51,6 @@ namespace GsaGH.Helpers.GsaCOM {
       gsa.SaveAs(tempPath);
       var gsaGh = new GsaModel();
       gsaGh.ApiModel.Open(tempPath);
-
       return gsaGh;
     }
 
