@@ -203,7 +203,7 @@ steps:
   displayName: Package NuGet
 
 - powershell: |
-    .\DocsGeneration\bin\x64\Debug\net48\DocsGeneration.exe
+    .\DocsGeneration\bin\x64\Release\net48\DocsGeneration.exe
     Compress-Archive -Path .\Output -DestinationPath .\results\$(dotSeparatedTag)-docs.zip -Force
   displayName: Generate docs site
   failOnStderr: true
