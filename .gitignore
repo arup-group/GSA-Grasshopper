@@ -355,7 +355,9 @@ dist/*
 /IntegrationTests/obj
 /UnitTestGsaGH/bin/x64/Debug
 /DocsGeneration/bin
-/DocsGeneration.E2ETests/bin
+/DocsGeneration/obj
+/DocsGenerationE2ETests/bin
+/DocsGenerationE2ETests/obj
 /GsaGHTests/TestHelpers/DawnCache
 /GsaGHTests/TestHelpers/GPUCache
 *.lok

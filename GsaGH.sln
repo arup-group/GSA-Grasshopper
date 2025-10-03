@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationTests", "Integra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocsGeneration", "DocsGeneration\DocsGeneration.csproj", "{CE6A25DE-7C37-4F5D-899B-1EACB83876BC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocsGenerationE2ETests", "DocsGenerationE2ETests\DocsGenerationE2ETests.csproj", "{DFABE660-244C-4784-8C16-E2B69996AF3F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -33,6 +35,10 @@ Global
 		{CE6A25DE-7C37-4F5D-899B-1EACB83876BC}.Debug|x64.Build.0 = Debug|x64
 		{CE6A25DE-7C37-4F5D-899B-1EACB83876BC}.Release|x64.ActiveCfg = Release|x64
 		{CE6A25DE-7C37-4F5D-899B-1EACB83876BC}.Release|x64.Build.0 = Release|x64
+		{DFABE660-244C-4784-8C16-E2B69996AF3F}.Debug|x64.ActiveCfg = Debug|x64
+		{DFABE660-244C-4784-8C16-E2B69996AF3F}.Debug|x64.Build.0 = Debug|x64
+		{DFABE660-244C-4784-8C16-E2B69996AF3F}.Release|x64.ActiveCfg = Release|x64
+		{DFABE660-244C-4784-8C16-E2B69996AF3F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
