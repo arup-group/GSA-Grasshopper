@@ -34,7 +34,7 @@ namespace DocsGeneration.E2ETests {
         success = false;
       }
       finally {
-        CleanupGeneratedDirectory();
+        // CleanupGeneratedDirectory();
       }
 
       if (success) {
