@@ -77,22 +77,10 @@ steps:
     clean: true
   env:
     MSBUILDDISABLENODEREUSE: 1
-    
-- task: VSBuild@1
-  displayName: 'Building project in Debug'
-  inputs:
-    solution: 'GsaGH.sln'
-    msbuildArgs: '/p:AppxBundlePlatforms="x64" /p:AppxPackageDir="$(build.artifactStagingDirectory)\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /m /nr:false /p:TreatWarningsAsErrors="true"'
-    platform: 'x64'
-    configuration: 'Debug'
-    clean: true
-  env:
-    MSBUILDDISABLENODEREUSE: 1
 
 - powershell: |
     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\integration  .\IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
-    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\documentatione2e  .\DocsGenerationE2ETests\bin\x64\Debug\net48\DocsGenerationE2ETests.dll
   displayName: dotnet tests
   failOnStderr: true
 
@@ -213,17 +201,6 @@ steps:
     & 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' GsaGH.csproj /t:pack /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg /p:DebugType=portable /property:Configuration=Debug
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
   displayName: Package NuGet
-
-- powershell: |
-    .\DocsGeneration\bin\x64\Debug\net48\DocsGeneration.exe
-    Compress-Archive -Path .\Output -DestinationPath .\results\$(dotSeparatedTag)-docs.zip -Force
-  displayName: Generate docs site
-  failOnStderr: true
-
-- publish: $(System.DefaultWorkingDirectory)\results\$(dotSeparatedTag)-docs.zip
-  displayName: Publish Docs artifact
-  artifact: Docs
-  continueOnError: false
 
 - task: GitHubRelease@1
   displayName: 'Publishing assets to Github'
