@@ -6,16 +6,22 @@ using System.Xml;
 
 namespace DocsGeneratorCLI {
   public class GsaGhDll {
+#pragma warning disable S1104 // Fields should not have public accessibility
+#pragma warning disable S2223 // Non-constant static fields should not be visible
     public static Assembly GsaGH;
     public static string PluginPath;
     public static XmlDocument GsaGhXml;
     public const string GsaGhName = "GsaGH";
-
+#pragma warning restore S1104 // Fields should not have public accessibility
+#pragma warning restore S2223 // Non-constant static fields should not be visible
+#pragma warning disable S2696 // Instance members should not write to "static" fields
     public Assembly Load() {
       Console.WriteLine($"==> [{GsaGhName}] Start loading...");
 
       Console.WriteLine("Loading Rhino/Grasshopper fixture");
+#pragma warning disable S1481 // Unused local variables should be removed
       var grasshopper = new GrasshopperFixture("GsaGh");
+#pragma warning restore S1481 // Unused local variables should be removed
 
       PluginPath = GetPluginDirectory();
       string dllPath = TryFindDll() ?? TryBuildAndFindDll();
@@ -36,11 +42,11 @@ namespace DocsGeneratorCLI {
 
     // === Submethods ===
 
-    private string GetPluginDirectory() {
+    private static string GetPluginDirectory() {
       return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
     }
 
-    private string TryFindDll() {
+    private static string TryFindDll() {
       string[] searchPaths = {
         Path.Combine(PluginPath, $"{GsaGhName}.dll"),
         Path.Combine(PluginPath, "..", GsaGhName, "bin", "Debug", $"{GsaGhName}.dll"),
@@ -74,7 +80,7 @@ namespace DocsGeneratorCLI {
       return File.Exists(dllPath) ? dllPath : null;
     }
 
-    private string FindCsproj() {
+    private static string FindCsproj() {
       string[] candidates = {
         Path.Combine(PluginPath, "..", GsaGhName, $"{GsaGhName}.csproj"),
         Path.Combine(PluginPath, "..", "..", GsaGhName, $"{GsaGhName}.csproj"),
@@ -92,7 +98,7 @@ namespace DocsGeneratorCLI {
       return null;
     }
 
-    private void BuildProject(string csprojPath) {
+    private static void BuildProject(string csprojPath) {
       var startInfo = new ProcessStartInfo {
         FileName = "cmd.exe",
         Arguments = $"/c msbuild \"{csprojPath}\" /p:Configuration=Debug",
@@ -122,16 +128,18 @@ namespace DocsGeneratorCLI {
       }
     }
 
-    private Assembly LoadAssembly(string dllPath) {
+    private static Assembly LoadAssembly(string dllPath) {
       try {
+#pragma warning disable S3885 // "Assembly.Load" should be used
         return Assembly.LoadFrom(dllPath);
+#pragma warning restore S3885 // "Assembly.Load" should be used
       } catch (Exception e) {
         Console.WriteLine($"Fail to load DLL: {e.Message}");
         throw;
       }
     }
 
-    private void LoadXmlIfExists(string dllPath) {
+    private static void LoadXmlIfExists(string dllPath) {
       string xmlPath = Path.Combine(Path.GetDirectoryName(dllPath), $"{GsaGhName}.xml");
 
       if (!File.Exists(xmlPath)) {
@@ -148,7 +156,7 @@ namespace DocsGeneratorCLI {
       }
     }
 
-    private void UpdateEnvironmentPath(string path) {
+    private static void UpdateEnvironmentPath(string path) {
       const string name = "PATH";
       string current = Environment.GetEnvironmentVariable(name) ?? "";
 
@@ -156,6 +164,6 @@ namespace DocsGeneratorCLI {
         Environment.SetEnvironmentVariable(name, current + ";" + path);
       }
     }
-
+#pragma warning restore S2696 // Instance members should not write to "static" fields
   }
 }

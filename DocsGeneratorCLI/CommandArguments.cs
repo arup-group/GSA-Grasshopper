@@ -3,6 +3,7 @@
 namespace DocsGeneratorCLI {
   public class CommandArguments {
 
+#pragma warning disable S1104 // Fields should not have public accessibility
     [Parameter("-o", "--output", Description = "Generate documentation into custom  output")]
     public string CustomOutputPath = "Output";
     [Parameter("-e", "--generate-e2e",
@@ -13,5 +14,6 @@ namespace DocsGeneratorCLI {
       Description = "\"Name of the project to generate documentation forCurrently,  only 'GsaGH' is supported.",
       Required = Required.Yes)]
     public string ProjectName;
+#pragma warning restore S1104 // Fields should not have public accessibility
   }
 }

@@ -9,13 +9,13 @@ using Microsoft.Win32;
 
 using OasysGH.Units;
 
-using Rhino;
 using Rhino.Runtime.InProcess;
 
 using RhinoInside;
 
 namespace DocsGeneratorCLI {
-  public class GrasshopperFixture : IDisposable {
+  public sealed class GrasshopperFixture : IDisposable {
+
     private RhinoCore _core;
     private GH_RhinoScriptInterface _ghPlugin;
     private bool _isDisposed;
@@ -30,7 +30,9 @@ namespace DocsGeneratorCLI {
       _linkFileName = $"{fileName}Tests.ghlink";
       AddPluginToGh();
       LoadRefs();
+#pragma warning disable S3885 // "Assembly.Load" should be used
       Assembly.LoadFile(Path.Combine(GrasshopperInstallPath, "GsaAPI.dll"));
+#pragma warning restore S3885 // "Assembly.Load" should be used
       InitializeCore();
       Utility.SetupUnitsDuringLoad();
     }
@@ -95,7 +97,7 @@ namespace DocsGeneratorCLI {
       File.Delete(Path.Combine(linkFilePath, _linkFileName));
     }
 
-    private void LoadRefs() {
+    private static void LoadRefs() {
       const string name = "PATH";
       string pathvar = Environment.GetEnvironmentVariable(name) ?? "";
       string value = pathvar + ";" + GrasshopperInstallPath + "\\";
@@ -123,15 +125,8 @@ namespace DocsGeneratorCLI {
       _core = new RhinoCore();
     }
 
-    private void InitializeGrasshopperPlugin() {
-      if (_core == null) {
-        InitializeCore();
-      }
-
-      _ghPlugin = RhinoApp.GetPlugInObject("Grasshopper") as GH_RhinoScriptInterface;
-      _ghPlugin?.RunHeadless();
-    }
-
+#pragma warning disable S1075 // URIs should not be hardcoded
     private const string GrasshopperInstallPath = @"C:\Program Files\Oasys\GSA 10.2";
+#pragma warning restore S1075 // URIs should not be hardcoded
   }
 }

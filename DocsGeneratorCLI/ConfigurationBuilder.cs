@@ -19,11 +19,11 @@ namespace DocsGeneratorCLI {
     }
 
     private static string ResolveOutputPath(CommandArguments args) {
-      return args.GenerateE2ETestData ?
-        Path.Combine(GetGsaGrasshopperRoot(), "DocsGeneration.E2ETests", "TestReferences", args.ProjectName) :
-        !string.IsNullOrWhiteSpace(args.CustomOutputPath) ?
-          args.CustomOutputPath :
-          "Output";
+      string testPath = Path.Combine(GetGsaGrasshopperRoot(), "DocsGeneration.E2ETests", "TestReferences",
+        args.ProjectName);
+      string customOutputPath = !string.IsNullOrWhiteSpace(args.CustomOutputPath) ? args.CustomOutputPath : "Output";
+
+      return args.GenerateE2ETestData ? testPath : customOutputPath;
     }
 
     private static string GetGsaGrasshopperRoot() {
