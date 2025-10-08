@@ -9,4 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Rhino.Inside" Version="7.0.0" PrivateAssets="all"/>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GsaGH\GsaGH.csproj" />
+  </ItemGroup>
 </Project>
