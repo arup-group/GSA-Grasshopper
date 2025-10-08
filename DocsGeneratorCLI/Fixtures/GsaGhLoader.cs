@@ -66,7 +66,7 @@ namespace DocsGeneratorCLI {
       return null;
     }
 
-    private string TryBuildAndFindDll() {
+    private static string TryBuildAndFindDll() {
       string csprojPath = FindCsproj();
       if (csprojPath == null) {
         Console.WriteLine($"Didn't found {GsaGhName}.csproj");
