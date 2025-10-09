@@ -130,42 +130,42 @@ namespace GsaGH.Components {
       }
       GsaAssembly assembly = assemblyGoo.Value;
 
-      var entities = new GsaList("", assembly.ApiAssembly.EntityList, assembly.ApiAssembly.EntityType);
-      da.SetDataList(0, new List<object>() { assembly.ApiAssembly.Name }, 0);
-      da.SetDataList(2, new List<object>() { new GsaListGoo(entities) }, 2);
-      da.SetDataList(3, new List<object>() { assembly.ApiAssembly.Topology1 }, 3);
-      da.SetDataList(4, new List<object>() { assembly.ApiAssembly.Topology2 }, 4);
-      da.SetDataList(5, new List<object>() { assembly.ApiAssembly.OrientationNode }, 5);
-      da.SetDataList(6, new List<object>() { new Length(assembly.ApiAssembly.ExtentY, LengthUnit.Meter).ToUnit(_lengthUnit) }, 6);
-      da.SetDataList(7, new List<object>() { new Length(assembly.ApiAssembly.ExtentZ, LengthUnit.Meter).ToUnit(_lengthUnit) }, 7);
+      var entities = new GsaList(string.Empty, assembly.ApiAssembly.EntityList, assembly.ApiAssembly.EntityType);
+      da.SetDataList(0, new List<object>() { assembly.ApiAssembly.Name });
+      da.SetDataList(2, new List<object>() { new GsaListGoo(entities) });
+      da.SetDataList(3, new List<object>() { assembly.ApiAssembly.Topology1 });
+      da.SetDataList(4, new List<object>() { assembly.ApiAssembly.Topology2 });
+      da.SetDataList(5, new List<object>() { assembly.ApiAssembly.OrientationNode });
+      da.SetDataList(6, new List<object>() { new Length(assembly.ApiAssembly.ExtentY, LengthUnit.Meter).ToUnit(_lengthUnit) } );
+      da.SetDataList(7, new List<object>() { new Length(assembly.ApiAssembly.ExtentZ, LengthUnit.Meter).ToUnit(_lengthUnit) });
 
       switch (assembly.ApiAssembly) {
         case AssemblyByExplicitPositions byExplicitPositions:
-          da.SetDataList(1, new List<object>() { "By explicit positions" }, 1);
-          da.SetDataList(8, byExplicitPositions.InternalTopology, 8);
-          da.SetDataList(9, new List<object>() { byExplicitPositions.CurveFit }, 9);
-          da.SetDataList(10, byExplicitPositions.Positions, 10);
+          da.SetDataList(1, new List<object>() { "By explicit positions" });
+          da.SetDataList(8, byExplicitPositions.InternalTopology);
+          da.SetDataList(9, new List<object>() { byExplicitPositions.CurveFit });
+          da.SetDataList(10, byExplicitPositions.Positions);
           break;
 
         case AssemblyByNumberOfPoints byNumberOfPoints:
-          da.SetDataList(1, new List<object>() { "By number of points" }, 1);
-          da.SetDataList(8, byNumberOfPoints.InternalTopology, 8);
-          da.SetDataList(9, new List<object>() { byNumberOfPoints.CurveFit }, 9);
-          da.SetDataList(10, new List<object>() { byNumberOfPoints.NumberOfPoints }, 10);
+          da.SetDataList(1, new List<object>() { "By number of points" });
+          da.SetDataList(8, byNumberOfPoints.InternalTopology);
+          da.SetDataList(9, new List<object>() { byNumberOfPoints.CurveFit });
+          da.SetDataList(10, new List<object>() { byNumberOfPoints.NumberOfPoints });
           break;
 
         case AssemblyBySpacingOfPoints bySpacingOfPoints:
-          da.SetDataList(1, new List<object>() { "By spacing of points" }, 1);
-          da.SetDataList(8, bySpacingOfPoints.InternalTopology, 8);
-          da.SetDataList(9, new List<object>() { bySpacingOfPoints.CurveFit }, 9);
-          da.SetDataList(10, new List<object>() { new Length(bySpacingOfPoints.Spacing, LengthUnit.Meter).ToUnit(_lengthUnit) }, 10);
+          da.SetDataList(1, new List<object>() { "By spacing of points" });
+          da.SetDataList(8, bySpacingOfPoints.InternalTopology);
+          da.SetDataList(9, new List<object>() { bySpacingOfPoints.CurveFit });
+          da.SetDataList(10, new List<object>() { new Length(bySpacingOfPoints.Spacing, LengthUnit.Meter).ToUnit(_lengthUnit) });
           break;
 
         case AssemblyByStorey byStorey:
-          da.SetDataList(1, new List<object>() { "By storey" }, 1);
-          da.SetDataList(8, null, 8);
-          da.SetDataList(9, null, 9);
-          da.SetDataList(10, new List<object>() { byStorey.StoreyList }, 10);
+          da.SetDataList(1, new List<object>() { "By storey" });
+          da.SetDataList(8, null);
+          da.SetDataList(9, null);
+          da.SetDataList(10, new List<object>() { byStorey.StoreyList });
           break;
       }
     }
