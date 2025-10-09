@@ -1,0 +1,50 @@
+---
+name: JIRA checks
+
+on:
+  merge_group:
+  pull_request:
+    # checks might do limited checking for drafts -> explicitly add non-default types here
+    types:
+      [
+        opened,
+        reopened,
+        synchronize,
+        ready_for_review,
+        converted_to_draft,
+        edited,
+      ]
+  workflow_dispatch:
+
+concurrency:
+  group: sanity_${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  jira_checks:
+    name: JIRA issue checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check JIRA ticket status and branch name
+        uses: arup-group/oasys-jira-actions/check@v3.4.0
+        # skip for dependabot PRs and in case of merge_group events
+        # 1. there will not be a continously "In Progress" issue for updates from dependabot
+        # 2. The Action does not have (easy) access to the PR context in the merge_group.
+        #    The PR must have passed this check to be put into the merge_group though.
+        if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'jira[bot]' && github.event_name != 'merge_group' }}
+        id: check_jira
+        with:
+          valid-branch-names: task|test|bugfix|feature|hotfix|epic|debt
+          jira-username: automation@arup.com
+          jira-password: ${{ secrets.JIRA_PASSWORD }}
+          branch_to_check: refs/heads/${{ github.event.pull_request.head.ref }}
+          pr_title: ${{ github.event.pull_request.title }}
+          pattern: "^([a-zA-Z0-9]+-[0-9]+)[-|: ].*$"
+      - name: Add link to JIRA ticket in PR description
+        uses: arup-group/oasys-jira-actions/add-backlink@v3.4.0
+        # if previous step found a JIRA ticket (step not skipped and jira_issue_key is not empty)
+        if: ${{ steps.check_jira.outputs.jira_issue_key != '' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-key: ${{ steps.check_jira.outputs.jira_issue_key }}
