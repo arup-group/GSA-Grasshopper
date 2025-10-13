@@ -4,7 +4,7 @@ using System.Reflection;
 
 using Grasshopper.Plugin;
 
-using GsaGH.Helpers;
+using GsaGH.Helpers.GsaCOM;
 
 using Interop.Gsa_10_2;
 
