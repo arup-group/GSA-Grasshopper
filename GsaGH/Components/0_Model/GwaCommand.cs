@@ -7,6 +7,7 @@ using Grasshopper.Kernel;
 
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
+using GsaGH.Helpers.GsaCOM;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 

@@ -10,8 +10,8 @@ using Grasshopper;
 using Grasshopper.Kernel;
 
 using GsaGH.Graphics.Menu;
-using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
+using GsaGH.Helpers.GsaCOM;
 using GsaGH.Properties;
 
 using OasysGH;
