@@ -11,6 +11,9 @@ variables:
 
 pool: 'rhino-compute'
 
+workspace:
+  clean: all
+
 steps:
 - powershell: |
     Get-ChildItem *.msi -Recurse | Remove-Item
