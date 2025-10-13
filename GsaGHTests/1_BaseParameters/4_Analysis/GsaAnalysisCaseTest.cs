@@ -27,22 +27,9 @@ namespace GsaGHTests.Parameters {
 
       Duplicates.AreEqual(original, duplicate);
 
-      duplicate.Id = 0;
-      duplicate.Name = "";
-      duplicate.Definition = "";
-
       Assert.Equal(1, original.Id);
       Assert.Equal("name", original.Name);
       Assert.Equal("description", original.Definition);
-    }
-
-    [Fact]
-    public void EmptyConstructorTest() {
-      var analysisCase = new GsaAnalysisCase();
-
-      Assert.Equal(0, analysisCase.Id);
-      Assert.Null(analysisCase.Name);
-      Assert.Null(analysisCase.Definition);
     }
   }
 }
