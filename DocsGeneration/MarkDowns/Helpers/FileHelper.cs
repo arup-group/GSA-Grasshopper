@@ -10,13 +10,14 @@ namespace DocsGeneration.MarkDowns.Helpers {
   public class FileHelper {
     public static string iconPath = "./images/";
     public static List<string> iconNames = new List<string>();
+
     public static string CreateMarkDownFileName(Parameter parameter) {
       string fileLink = CreateFileName(parameter);
-      return $@"Output\{fileLink}.md";
+      return $@"{PathUtils.OutputPath}\{fileLink}.md";
     }
     public static string CreateMarkDownFileName(Component component) {
       string fileLink = CreateFileName(component);
-      return $@"Output\{fileLink}.md";
+      return $@"{PathUtils.OutputPath}\{fileLink}.md";
     }
 
     public static string CreateIconLink(Component component) {
@@ -48,7 +49,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
 
     public static void WriteIconNames() {
       string text = string.Join("\r\n", iconNames.Distinct().OrderBy(x => x));
-      Writer.Write($@"Output\Helper\iconNames.txt", text);
+      Writer.Write($@"{PathUtils.OutputPath}\Helper\iconNames.txt", text);
     }
 
     public static string CreateParameterLink(Parameter parameter, List<string> parameterNames) {
