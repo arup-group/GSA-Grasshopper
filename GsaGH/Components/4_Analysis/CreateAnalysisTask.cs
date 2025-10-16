@@ -249,12 +249,9 @@ namespace GsaGH.Components {
           this.AddRuntimeRemark("Default Task has been created; it will by default contain all cases found in model");
         }
       } else {
-        cases = new List<GsaAnalysisCase>();
-        var footfallAnalysisCase = new GsaAnalysisCase {
-          Name = name,
-          Definition = "Footfall",
+        cases = new List<GsaAnalysisCase> {
+          new GsaAnalysisCase(name, "Footfall")
         };
-        cases.Add(footfallAnalysisCase);
       }
 
       return true;
