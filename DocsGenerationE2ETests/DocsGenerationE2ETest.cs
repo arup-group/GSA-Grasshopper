@@ -101,8 +101,7 @@ namespace DocsGenerationE2ETests {
         string gsaGrasshopperRepoRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".."));
         string generatorPath = string.Empty;
         do {
-          generatorPath = Path.GetFullPath(Path.Combine(gsaGrasshopperRepoRoot, "DocsGeneratorCLI.exe", "bin", "x64", config,
-            "net48", "DocsGeneration.exe"));
+          generatorPath = Path.GetFullPath(Path.Combine(gsaGrasshopperRepoRoot, "DocsGeneratorCLI", "bin", config, "DocsGeneratorCLI.exe"));
 
           if (File.Exists(generatorPath)) {
             return generatorPath;
