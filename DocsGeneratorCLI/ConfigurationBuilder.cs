@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Reflection;
 
 using DocsGeneration;
@@ -6,16 +7,13 @@ using DocsGeneration;
 namespace DocsGeneratorCLI {
   public static class ConfigurationBuilder {
     public static Configuration BuildConfiguration(CommandArguments args) {
-      var projectTarget = ProjectTarget.FromString(args.ProjectName);
-      Assembly assembly = projectTarget.LoadAssembly();
+      var projectTarget = ProjectTarget.LoadProjectTargetFromString(args.ProjectName);
 
       string outputPath = ResolveOutputPath(args);
 
-      return new Configuration {
-        Assembly = assembly,
-        GenerateE2ETestData = args.GenerateE2ETestData,
-        CustomOutputPath = outputPath,
-      };
+      return Configuration.Instance.SetAssembly(projectTarget.Assembly).SetGenerateE2ETestData(args.GenerateE2ETestData)
+       .SetCustomOutputPath(outputPath).SetResultNotes(projectTarget.Notes.ToList()).SetIsBeta(projectTarget.IsBeta)
+       .SetXml(projectTarget.XmlDoc);
     }
 
     private static string ResolveOutputPath(CommandArguments args) {
@@ -35,7 +33,7 @@ namespace DocsGeneratorCLI {
       }
 
       dir = dir?.Parent; // move up to the root of the GSA-Grasshopper project
-      return dir == null ? throw new DirectoryNotFoundException("Couldn't find GSA-Grasshopper in path provided.") :
+      return dir == null ? throw new DirectoryNotFoundException("Couldn't find GSA-Grasshopper root directory.") :
         dir.FullName;
     }
   }

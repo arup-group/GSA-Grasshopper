@@ -5,9 +5,7 @@ using System.Linq;
 using DocsGeneration.Data;
 using DocsGeneration.MarkDowns.Helpers;
 
-using GsaGH;
-using GsaGH.Components.Helpers;
-using GsaGH.Helpers;
+using Helpers;
 
 namespace DocsGeneration.MarkDowns {
   public class Components {
@@ -42,7 +40,7 @@ namespace DocsGeneration.MarkDowns {
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {component.Name}\n\n";
-      if (GsaGhInfo.isBeta) {
+      if (Configuration.Instance.IsBeta) {
         text += StringHelper.AddBetaWarning();
       }
 
@@ -136,20 +134,15 @@ namespace DocsGeneration.MarkDowns {
     private static string CheckForResultNote(ref string description) {
       string noteOut = string.Empty;
 
-      var notesToCheckFor = new List<string>() {
-        ResultNotes.NoteNodeResults,
-        ResultNotes.Note1dResults,
-        ResultNotes.Note2dForceResults,
-        ResultNotes.Note2dStressResults,
-        ResultNotes.Note3dStressResults,
-        ResultNotes.Note2dResults,
-      };
+      List<string> notesToCheckFor = Configuration.Instance.ResultNotes;
 
       foreach (string note in notesToCheckFor) {
-        if (description.Contains(note)) {
-          description = "* " + description.Replace(note, string.Empty);
-          noteOut = note;
+        if (!description.Contains(note)) {
+          continue;
         }
+
+        description = "* " + description.Replace(note, string.Empty);
+        noteOut = note;
       }
 
       return noteOut;
@@ -160,7 +153,7 @@ namespace DocsGeneration.MarkDowns {
       Console.WriteLine($"Writing {filePath}");
 
       string text = "# Components\n\n";
-      if (GsaGhInfo.isBeta) {
+      if (Configuration.Instance.IsBeta) {
         text += StringHelper.AddBetaWarning();
         text += "\n";
       }

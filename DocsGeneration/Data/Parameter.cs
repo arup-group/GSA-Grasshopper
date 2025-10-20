@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 
 using DocsGeneration.Data.Helpers;
-using DocsGeneration.Helpers;
 
 using Grasshopper.Kernel;
 
@@ -138,10 +137,10 @@ namespace DocsGeneration.Data {
               //object gooValue = gooProperty.GetValue(gooType, null);
               Type valueType = gooProperty.PropertyType;
               string path = "T:" + valueType.FullName;
-              XmlNode xmlDocuOfMethod = GsaGhDll.GsaGhXml.SelectSingleNode(
-                  "//member[@name='" + path + "']");
-              string text = xmlDocuOfMethod.InnerXml
-              .Replace("<summary>", string.Empty).Replace("</summary>", string.Empty);
+              XmlNode xmlDocuOfMethod
+                = Configuration.Instance.XmlDocument.SelectSingleNode("//member[@name='" + path + "']");
+              string text = xmlDocuOfMethod.InnerXml.Replace("<summary>", string.Empty)
+               .Replace("</summary>", string.Empty);
               string cleanStr = Regex.Replace(text, @"\s+", " ");
               return cleanStr.Trim();
             }

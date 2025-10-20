@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml;
 
 using DocsGeneration.Data;
 using DocsGeneration.MarkDowns;
@@ -38,9 +39,44 @@ namespace DocsGeneration {
   }
 
   public class Configuration {
-    public bool GenerateE2ETestData { get; set; } = false;
-    public string CustomOutputPath { get; set; } = "Output";
+    private static readonly Lazy<Configuration> _instance = new Lazy<Configuration>(() => new Configuration());
 
-    public Assembly Assembly { get; set; }
+    public static Configuration Instance => _instance.Value;
+    public bool GenerateE2ETestData { get; private set; } = false;
+    public string CustomOutputPath { get; private set; } = "Output";
+    public Assembly Assembly { get; private set; }
+    public List<string> ResultNotes { get; private set; } = new List<string>();
+    public bool IsBeta { get; private set; } = false;
+    public XmlDocument XmlDocument { get; private set; }
+
+    public Configuration SetGenerateE2ETestData(bool value) {
+      GenerateE2ETestData = value;
+      return this;
+    }
+
+    public Configuration SetCustomOutputPath(string path) {
+      CustomOutputPath = path;
+      return this;
+    }
+
+    public Configuration SetAssembly(Assembly assembly) {
+      Assembly = assembly;
+      return this;
+    }
+
+    public Configuration SetResultNotes(List<string> resultNotes) {
+      ResultNotes = resultNotes;
+      return this;
+    }
+
+    public Configuration SetIsBeta(bool isBeta) {
+      IsBeta = isBeta;
+      return this;
+    }
+
+    public Configuration SetXml(XmlDocument xmlDoc) {
+      XmlDocument = xmlDoc;
+      return this;
+    }
   }
 }
