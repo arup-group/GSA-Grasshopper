@@ -57,7 +57,7 @@ namespace DocsGeneratorCLI {
 
     protected override bool GetBetaValue() {
       Type type = Assembly.GetType("GsaGH.GsaGhInfo");
-      bool isBeta = type.GetFields(BindingFlags.Static)
+      bool isBeta = type.GetFields(BindingFlags.Static | BindingFlags.NonPublic)
        .Where(field => field.FieldType == typeof(bool) && field.Name == "isBeta")
        .Select(field => (bool)field.GetValue(null)).First();
       return isBeta;
@@ -86,7 +86,7 @@ namespace DocsGeneratorCLI {
       }
 
       var notes = new List<string>();
-      FieldInfo[] noteFields = resultNotesType.GetFields(BindingFlags.Public | BindingFlags.Static);
+      FieldInfo[] noteFields = resultNotesType.GetFields(BindingFlags.NonPublic | BindingFlags.Static);
       notes.AddRange(noteFields.Where(field => field.FieldType == typeof(string))
        .Select(field => (string)field.GetValue(null)));
       Notes = notes;
