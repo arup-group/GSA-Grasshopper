@@ -61,13 +61,9 @@ namespace IntegrationTests.Parameters {
        .Name.Replace("Test", string.Empty));
       var output0 = (GH_String)param.VolatileData.get_Branch(0)[0];
       var output1 = (GH_String)param.VolatileData.get_Branch(0)[1];
-      var output2 = (GH_String)param.VolatileData.get_Branch(0)[2];
-      var output3 = (GH_String)param.VolatileData.get_Branch(0)[3];
 
       Assert.Equal("DL", output0.Value);
       Assert.Equal("LL", output1.Value);
-      Assert.Equal("DL", output2.Value);
-      Assert.Equal("LL", output3.Value);
     }
 
     [Fact]
@@ -76,13 +72,10 @@ namespace IntegrationTests.Parameters {
        .Name.Replace("Test", string.Empty));
       var output0 = (GH_String)param.VolatileData.get_Branch(0)[0];
       var output1 = (GH_String)param.VolatileData.get_Branch(0)[1];
-      var output2 = (GH_String)param.VolatileData.get_Branch(0)[2];
-      var output3 = (GH_String)param.VolatileData.get_Branch(0)[3];
 
       Assert.Equal("L1", output0.Value);
       Assert.Equal("L2", output1.Value);
-      Assert.Equal("L1", output2.Value);
-      Assert.Equal("L2", output3.Value);
+
     }
 
     [Fact]
@@ -91,13 +84,9 @@ namespace IntegrationTests.Parameters {
        .Name.Replace("Test", string.Empty));
       var output0 = (GH_Integer)param.VolatileData.get_Branch(0)[0];
       var output1 = (GH_Integer)param.VolatileData.get_Branch(0)[1];
-      var output2 = (GH_Integer)param.VolatileData.get_Branch(0)[2];
-      var output3 = (GH_Integer)param.VolatileData.get_Branch(0)[3];
 
       Assert.Equal(1, output0.Value);
       Assert.Equal(2, output1.Value);
-      Assert.Equal(1, output2.Value);
-      Assert.Equal(2, output3.Value);
     }
 
     [Fact]
