@@ -15,7 +15,7 @@ namespace DocsGeneratorCLI {
 #pragma warning restore S1104 // Fields should not have public accessibility
 #pragma warning restore S2223 // Non-constant static fields should not be visible
 #pragma warning disable S2696 // Instance members should not write to "static" fields
-    public Assembly Load() {
+    public static Assembly Load() {
       Console.WriteLine($"==> [{GsaGhName}] Start loading...");
 
       Console.WriteLine("Loading Rhino/Grasshopper fixture");

@@ -69,7 +69,7 @@ namespace DocsGeneratorCLI {
       }
 
       Console.WriteLine("Loading GsaGH assembly...");
-      Assembly = new GsaGhDll().Load();
+      Assembly = GsaGhDll.Load();
       return Assembly;
     }
 
@@ -135,7 +135,7 @@ namespace DocsGeneratorCLI {
     protected override Assembly LoadAssembly() {
       Console.WriteLine("Loading AdSecGH assembly...");
       // placeholder 
-      return new GsaGhDll().Load();
+      return GsaGhDll.Load();
     }
 
     protected override void SetupResultNotes() {
