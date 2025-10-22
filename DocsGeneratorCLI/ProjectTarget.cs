@@ -73,6 +73,14 @@ namespace DocsGeneratorCLI {
       return Assembly;
     }
 
+    /// <summary>
+    ///   Initializes and sets the result notes by retrieving static string fields from the
+    ///   'ResultNotes' type within the loaded assembly. It excludes fields with "Assembly" in their name.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if the assembly is not loaded.</exception>
+    /// <remarks>
+    ///   If the 'ResultNotes' type is not found in the assembly, a warning is logged, and the method execution is halted.
+    /// </remarks>
     protected override void SetupResultNotes() {
       if (Assembly == null) {
         throw new InvalidOperationException("Assembly not loaded.");
@@ -87,7 +95,7 @@ namespace DocsGeneratorCLI {
 
       var notes = new List<string>();
       FieldInfo[] noteFields = resultNotesType.GetFields(BindingFlags.NonPublic | BindingFlags.Static);
-      notes.AddRange(noteFields.Where(field => field.FieldType == typeof(string))
+      notes.AddRange(noteFields.Where(field => field.FieldType == typeof(string) && !field.Name.Contains("Assembly"))
        .Select(field => (string)field.GetValue(null)));
       Notes = notes;
     }
