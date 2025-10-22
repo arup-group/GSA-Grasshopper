@@ -7,9 +7,20 @@ using System.Reflection;
 using Xunit;
 
 namespace GsaGHTests.Helpers {
-  public class Duplicates {
+  public static class Duplicates {
+
+    public static bool AreEqual<T>(ICollection<T> objA, ICollection<T> objB) {
+      Assert.Equal(objA.Count, objB.Count);
+      for (int i = 0; i < objA.Count; i++) {
+        if (!AreEqual(objA.ElementAt(i), objB.ElementAt(i))) { return false; }
+      }
+      return true;
+    }
 
     public static bool AreEqual(object objA, object objB, List<string> excluded = null) {
+      if (excluded == null) {
+        excluded = new List<string>() { "Guid" };
+      }
       Assert.Equal(objA.ToString(), objB.ToString());
 
       Type typeA = objA.GetType();
@@ -123,7 +134,9 @@ namespace GsaGHTests.Helpers {
           } else {
             AreEqual(objPropertyValueA, objPropertyValueB, excluded);
           }
-        } catch (TargetParameterCountException) { }
+        } catch (TargetParameterCountException) {
+          return false;
+        }
       }
 
       return true;

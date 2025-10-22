@@ -6,6 +6,7 @@ using GsaAPI;
 
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GsaApi.EnumMappings;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helper;
@@ -129,6 +130,39 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(LengthUnit.Foot, m.ModelUnit);
 
       Assert.Equal(LengthUnit.Foot, UnitMapping.GetUnit(m.ApiModel.UiUnits().LengthLarge));
+    }
+
+    [Fact]
+    public void ShouldNotHaveAnyTasks() {
+      GsaAnalysis gsaAnalysis = null;
+      var assembly = new ModelAssembly(null, null, null, null, null, null, gsaAnalysis, LengthUnit.Meter, Length.Zero,
+        false, null);
+      var model = new GsaModel(assembly.GetModel());
+      List<GsaAnalysisTaskGoo> importedTasks = model.GetAnalysisTasksAndCombinations().Item1;
+      Assert.Empty(importedTasks);
+      Assert.Empty(importedTasks);
+    }
+
+    [Fact]
+    public void AnalysisTaskAndCasesCanBeImportedFromSeedModel() {
+      //seed model to read existing analysis task
+      var seedModel = new GsaModel();
+      seedModel.ApiModel.Open(GsaFile.SteelDesignComplex);
+      List<GsaAnalysisTaskGoo> seedTasks = seedModel.GetAnalysisTasksAndCombinations().Item1;
+      var analysis = new GsaAnalysis();
+      foreach (GsaAnalysisTaskGoo task in seedTasks) {
+        analysis.AnalysisTasks.Add(task.Value);
+      }
+
+      //import into new model
+      var assembly = new ModelAssembly(null, null, null, null, null, null, analysis,
+        LengthUnit.Meter, Length.Zero, false, null);
+      var model = new GsaModel(assembly.GetModel());
+
+      List<GsaAnalysisTaskGoo> importedTasks = model.GetAnalysisTasksAndCombinations().Item1;
+
+      Assert.True(Duplicates.AreEqual(seedTasks, importedTasks));
+
     }
   }
 }
