@@ -186,152 +186,152 @@ namespace GsaGH.Components {
       _selectedItems[i] = _dropDownItems[i][j];
       switch (i) {
         case 0: {
-          switch (j) {
-            case 0:
-              if (_dropDownItems[1] != _displacement) {
-                while (_dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
-                {
-                  _dropDownItems.RemoveAt(2);
-                  _selectedItems.RemoveAt(2);
-                  _spacerDescriptions.RemoveAt(2);
+            switch (j) {
+              case 0:
+                if (_dropDownItems[1] != _displacement) {
+                  while (_dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
+                  {
+                    _dropDownItems.RemoveAt(2);
+                    _selectedItems.RemoveAt(2);
+                    _spacerDescriptions.RemoveAt(2);
+                  }
+
+                  _dropDownItems[1] = _displacement;
+                  _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
+
+                  _disp = (DisplayValue)3;
+                  _isShear = false;
+                  _flayer = 0;
+                  DisplacementModeClicked();
                 }
 
-                _dropDownItems[1] = _displacement;
-                _selectedItems[1] = _dropDownItems[1][3]; // Resolved XYZ
+                break;
 
-                _disp = (DisplayValue)3;
-                _isShear = false;
-                _flayer = 0;
-                DisplacementModeClicked();
-              }
+              case 1:
+                if (_dropDownItems[1] != _force) {
+                  while (_dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
+                  {
+                    _dropDownItems.RemoveAt(2);
+                    _selectedItems.RemoveAt(2);
+                    _spacerDescriptions.RemoveAt(2);
+                  }
 
-              break;
+                  _dropDownItems[1] = _force;
+                  _selectedItems[1] = _dropDownItems[1][0];
 
-            case 1:
-              if (_dropDownItems[1] != _force) {
-                while (_dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
-                {
-                  _dropDownItems.RemoveAt(2);
-                  _selectedItems.RemoveAt(2);
-                  _spacerDescriptions.RemoveAt(2);
+                  _disp = 0;
+                  _isShear = false;
+                  _flayer = 0;
+                  ForceModeClicked();
                 }
 
-                _dropDownItems[1] = _force;
-                _selectedItems[1] = _dropDownItems[1][0];
+                break;
 
-                _disp = 0;
-                _isShear = false;
-                _flayer = 0;
-                ForceModeClicked();
-              }
+              case 2:
+                if (_dropDownItems[1] != _stress) {
+                  if (_dropDownItems.Count < 3) {
+                    _dropDownItems.Insert(2, _layer); //insert layer dropdown as third dd list
+                    _spacerDescriptions.Insert(2, "Layer");
+                  }
 
-              break;
+                  _dropDownItems[1] = _stress;
+                  _selectedItems[1] = _dropDownItems[1][0];
 
-            case 2:
-              if (_dropDownItems[1] != _stress) {
-                if (_dropDownItems.Count < 3) {
-                  _dropDownItems.Insert(2, _layer); //insert layer dropdown as third dd list
-                  _spacerDescriptions.Insert(2, "Layer");
+                  if (_selectedItems.Count < 3) {
+                    _selectedItems.Insert(2, _dropDownItems[2][1]);
+                  } else {
+                    _selectedItems[2] = _dropDownItems[2][1];
+                  }
+
+                  _disp = 0;
+                  _isShear = false;
+                  StressModeClicked();
                 }
 
-                _dropDownItems[1] = _stress;
-                _selectedItems[1] = _dropDownItems[1][0];
+                break;
 
-                if (_selectedItems.Count < 3) {
-                  _selectedItems.Insert(2, _dropDownItems[2][1]);
-                } else {
-                  _selectedItems[2] = _dropDownItems[2][1];
+              case 3:
+                if (_dropDownItems[1] != _footfall) {
+                  while (_dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
+                  {
+                    _dropDownItems.RemoveAt(2);
+                    _selectedItems.RemoveAt(2);
+                    _spacerDescriptions.RemoveAt(2);
+                  }
+
+                  _dropDownItems[1] = _footfall;
+                  _selectedItems[1] = _dropDownItems[1][0];
+
+                  _disp = 0;
+                  _isShear = false;
+                  _flayer = 0;
+                  FootfallModeClicked();
                 }
 
-                _disp = 0;
-                _isShear = false;
-                StressModeClicked();
-              }
+                break;
+            }
 
-              break;
-
-            case 3:
-              if (_dropDownItems[1] != _footfall) {
-                while (_dropDownItems.Count > 2) // if coming from stress we remove the layer dropdown
-                {
-                  _dropDownItems.RemoveAt(2);
-                  _selectedItems.RemoveAt(2);
-                  _spacerDescriptions.RemoveAt(2);
-                }
-
-                _dropDownItems[1] = _footfall;
-                _selectedItems[1] = _dropDownItems[1][0];
-
-                _disp = 0;
-                _isShear = false;
-                _flayer = 0;
-                FootfallModeClicked();
-              }
-
-              break;
+            break;
           }
-
-          break;
-        }
         case 1: {
-          bool redraw = false;
-          _selectedItems[1] = _dropDownItems[1][j];
-          if (_mode == FoldMode.Displacement) {
-            if (((int)_disp > 3) & (j < 4)) {
-              redraw = true;
-              _slider = true;
-            }
-
-            if (((int)_disp < 4) & (j > 3)) {
-              redraw = true;
-              _slider = false;
-            }
-          }
-
-          _disp = (DisplayValue)j;
-          if (_dropDownItems[1] != _displacement) {
-            _isShear = false;
-            if (_mode == FoldMode.Force) {
-              if ((j == 3) | (j == 4)) {
-                _disp = (DisplayValue)j - 3;
-                _isShear = true;
-              } else if (j > 4) {
-                _disp = j switch {
-                  8 => DisplayValue.ResXyz,
-                  9 => DisplayValue.ResXxyyzz,
-                  _ => (DisplayValue)j - 1,
-                };
+            bool redraw = false;
+            _selectedItems[1] = _dropDownItems[1][j];
+            if (_mode == FoldMode.Displacement) {
+              if (((int)_disp > 3) & (j < 4)) {
+                redraw = true;
+                _slider = true;
               }
-            } else if (_mode == FoldMode.Force || _mode == FoldMode.Stress) {
-              if (j > 2) {
-                _disp = (DisplayValue)j + 1;
+
+              if (((int)_disp < 4) & (j > 3)) {
+                redraw = true;
+                _slider = false;
               }
             }
-          }
 
-          if (redraw) {
-            ReDrawComponent();
-          }
+            _disp = (DisplayValue)j;
+            if (_dropDownItems[1] != _displacement) {
+              _isShear = false;
+              if (_mode == FoldMode.Force) {
+                if ((j == 3) | (j == 4)) {
+                  _disp = (DisplayValue)j - 3;
+                  _isShear = true;
+                } else if (j > 4) {
+                  _disp = j switch {
+                    8 => DisplayValue.ResXyz,
+                    9 => DisplayValue.ResXxyyzz,
+                    _ => (DisplayValue)j - 1,
+                  };
+                }
+              } else if (_mode == FoldMode.Force || _mode == FoldMode.Stress) {
+                if (j > 2) {
+                  _disp = (DisplayValue)j + 1;
+                }
+              }
+            }
 
-          break;
-        }
+            if (redraw) {
+              ReDrawComponent();
+            }
+
+            break;
+          }
         case 2 when _mode == FoldMode.Stress: {
-          switch (j) {
-            case 0:
-              _flayer = Layer2d.Top;
-              break;
+            switch (j) {
+              case 0:
+                _flayer = Layer2d.Top;
+                break;
 
-            case 1:
-              _flayer = Layer2d.Middle;
-              break;
+              case 1:
+                _flayer = Layer2d.Middle;
+                break;
 
-            case 2:
-              _flayer = Layer2d.Bottom;
-              break;
+              case 2:
+                _flayer = Layer2d.Bottom;
+                break;
+            }
+
+            break;
           }
-
-          break;
-        }
       }
 
       base.UpdateUI();
@@ -644,8 +644,8 @@ namespace GsaGH.Components {
 
             case DisplayValue.Xx:
               _resType = "2D Moment, Mx";
-              dmax = moments.GetExtrema(moments.Max.Mx).Mx.As(_forceUnit);
-              dmin = moments.GetExtrema(moments.Min.Mx).Mx.As(_forceUnit);
+              dmax = moments.Max.Mx == null ? double.NaN : moments.GetExtrema(moments.Max.Mx).Mx.As(_forceUnit);
+              dmin = moments.Min.Mx == null ? double.NaN : moments.GetExtrema(moments.Min.Mx).Mx.As(_forceUnit);
               momentSelector = (r) => r.Mx.ToUnit(_forceUnit);
               break;
 
@@ -677,10 +677,11 @@ namespace GsaGH.Components {
               momentSelector = (r) => r.WoodArmerY.ToUnit(_forceUnit);
               break;
           }
-
-          values = shearSelector != null ?
+          if (!double.IsNaN(dmax)) {
+            values = shearSelector != null ?
             ResultsUtility.GetResultComponent(shears.Subset, shearSelector, permutations, _envelopeType) :
             GetResultComponent(forceSelector, forces, permutations, moments, momentSelector);
+          }
           break;
 
         case FoldMode.Stress:
@@ -751,191 +752,196 @@ namespace GsaGH.Components {
       }
 
       int significantDigits = 0;
-      if (customMinMax != Interval.Unset) {
-        dmin = customMinMax.Min;
-        dmax = customMinMax.Max;
-        List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
-        significantDigits = (int)rounded[2];
-      } else {
-        if (enveloped) {
-          dmax = values.Values.Select(x => x.Max()).Max().Value;
-          dmin = values.Values.Select(x => x.Min()).Min().Value;
-        }
-
-        List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
-        dmax = rounded[0];
-        dmin = rounded[1];
-        significantDigits = (int)rounded[2];
-      }
-
       var resultMeshes = new MeshResultGoo(new Mesh(), new List<IList<IQuantity>>(), new List<Point3dList>(),
-        new List<int>());
-      var meshes = new ConcurrentDictionary<int, Mesh>();
-      meshes.AsParallel().AsOrdered();
-      values.AsParallel().AsOrdered();
-      var verticies = new ConcurrentDictionary<int, Point3dList>();
-      verticies.AsParallel().AsOrdered();
-
-      LengthUnit lengthUnit = result.Model.ModelUnit;
-
-      Parallel.ForEach(elems.Keys, key => {
-        var element = new GSAElement(elems[key]);
-        if (element.Topology.Count < 3) {
-          return;
-        }
-
-        Mesh tempmesh = GsaElementFactory.GetMeshFromApiElement2d(element, nodes, lengthUnit);
-        if (tempmesh == null) {
-          return;
-        }
-
-        List<Vector3d> transformation = null;
-        if (_mode == FoldMode.Displacement) {
-          switch (_disp) {
-            case DisplayValue.X:
-              transformation = values[key].Select(item => new Vector3d(item.As(lengthUnit) * _defScale, 0, 0)).ToList();
-              break;
-            case DisplayValue.Y:
-              transformation = values[key].Select(item => new Vector3d(0, item.As(lengthUnit) * _defScale, 0)).ToList();
-              break;
-            case DisplayValue.Z:
-              transformation = values[key].Select(item => new Vector3d(0, 0, item.As(lengthUnit) * _defScale)).ToList();
-              break;
-            case DisplayValue.ResXyz:
-              transformation = new List<Vector3d>();
-              for (int i = 0; i < valuesXyz[key].x.Count; i++) {
-                transformation.Add(new Vector3d(valuesXyz[key].x[i] * _defScale, valuesXyz[key].y[i] * _defScale,
-                  valuesXyz[key].z[i] * _defScale));
-              }
-
-              break;
-          }
-        }
-
-        for (int i = 0; i < values[key].Count - 1; i++) {
-          double tnorm = (2 * (values[key][i].Value - dmin) / (dmax - dmin)) - 1;
-          Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
-          tempmesh.VertexColors.Add(col);
-          if (transformation == null) {
-            continue;
+       new List<int>());
+      var ts = new List<GH_UnitNumber>();
+      var cs = new List<Color>();
+      if (!double.IsNaN(dmax)) {
+        if (customMinMax != Interval.Unset) {
+          dmin = customMinMax.Min;
+          dmax = customMinMax.Max;
+          List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
+          significantDigits = (int)rounded[2];
+        } else {
+          if (enveloped) {
+            dmax = values.Values.Select(x => x.Max()).Max().Value;
+            dmin = values.Values.Select(x => x.Min()).Min().Value;
           }
 
-          Point3f def = tempmesh.Vertices[i];
-          def.Transform(Transform.Translation(transformation[i]));
-          tempmesh.Vertices[i] = def;
+          List<double> rounded = ResultHelper.SmartRounder(dmax, dmin);
+          dmax = rounded[0];
+          dmin = rounded[1];
+          significantDigits = (int)rounded[2];
         }
 
-        if (values[key].Count == 9) {
-          // add the value/colour at the centre point if quad-8 (as it already has a vertex here)
-          double tnorm = (2 * (values[key].Last().Value - dmin) / (dmax - dmin)) - 1;
-          Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
-          tempmesh.VertexColors.Add(col);
-          if (transformation != null) {
-            Point3f def = tempmesh.Vertices[8];
-            def.Transform(Transform.Translation(transformation.Last()));
-            tempmesh.Vertices[8] = def;
-          }
-        }
 
-        if (values[key].Count == 1) {
-          // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
-          double tnorm = (2 * (values[key][0].Value - dmin) / (dmax - dmin)) - 1;
-          Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
-          for (int i = 0; i < tempmesh.Vertices.Count; i++) {
-            tempmesh.VertexColors.SetColor(i, col);
+        var meshes = new ConcurrentDictionary<int, Mesh>();
+        meshes.AsParallel().AsOrdered();
+        values.AsParallel().AsOrdered();
+        var verticies = new ConcurrentDictionary<int, Point3dList>();
+        verticies.AsParallel().AsOrdered();
+
+        LengthUnit lengthUnit = result.Model.ModelUnit;
+
+        Parallel.ForEach(elems.Keys, key => {
+          var element = new GSAElement(elems[key]);
+          if (element.Topology.Count < 3) {
+            return;
           }
 
-          verticies[key] = tempmesh.Ngons.Count == 0 ? new Point3dList() {
+          Mesh tempmesh = GsaElementFactory.GetMeshFromApiElement2d(element, nodes, lengthUnit);
+          if (tempmesh == null) {
+            return;
+          }
+
+          List<Vector3d> transformation = null;
+          if (_mode == FoldMode.Displacement) {
+            switch (_disp) {
+              case DisplayValue.X:
+                transformation = values[key].Select(item => new Vector3d(item.As(lengthUnit) * _defScale, 0, 0)).ToList();
+                break;
+              case DisplayValue.Y:
+                transformation = values[key].Select(item => new Vector3d(0, item.As(lengthUnit) * _defScale, 0)).ToList();
+                break;
+              case DisplayValue.Z:
+                transformation = values[key].Select(item => new Vector3d(0, 0, item.As(lengthUnit) * _defScale)).ToList();
+                break;
+              case DisplayValue.ResXyz:
+                transformation = new List<Vector3d>();
+                for (int i = 0; i < valuesXyz[key].x.Count; i++) {
+                  transformation.Add(new Vector3d(valuesXyz[key].x[i] * _defScale, valuesXyz[key].y[i] * _defScale,
+                    valuesXyz[key].z[i] * _defScale));
+                }
+
+                break;
+            }
+          }
+
+          for (int i = 0; i < values[key].Count - 1; i++) {
+            double tnorm = (2 * (values[key][i].Value - dmin) / (dmax - dmin)) - 1;
+            Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
+            tempmesh.VertexColors.Add(col);
+            if (transformation == null) {
+              continue;
+            }
+
+            Point3f def = tempmesh.Vertices[i];
+            def.Transform(Transform.Translation(transformation[i]));
+            tempmesh.Vertices[i] = def;
+          }
+
+          if (values[key].Count == 9) {
+            // add the value/colour at the centre point if quad-8 (as it already has a vertex here)
+            double tnorm = (2 * (values[key].Last().Value - dmin) / (dmax - dmin)) - 1;
+            Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
+            tempmesh.VertexColors.Add(col);
+            if (transformation != null) {
+              Point3f def = tempmesh.Vertices[8];
+              def.Transform(Transform.Translation(transformation.Last()));
+              tempmesh.Vertices[8] = def;
+            }
+          }
+
+          if (values[key].Count == 1) {
+            // if analysis settings is set to '2D element forces and 2D/3D stresses at centre only'
+            double tnorm = (2 * (values[key][0].Value - dmin) / (dmax - dmin)) - 1;
+            Color col = double.IsNaN(tnorm) ? Color.Transparent : ghGradient.ColourAt(tnorm);
+            for (int i = 0; i < tempmesh.Vertices.Count; i++) {
+              tempmesh.VertexColors.SetColor(i, col);
+            }
+
+            verticies[key] = tempmesh.Ngons.Count == 0 ? new Point3dList() {
             new Point3d(tempmesh.Vertices.Select(pt => pt.X).Average(), tempmesh.Vertices.Select(pt => pt.Y).Average(),
               tempmesh.Vertices.Select(pt => pt.Z).Average()),
           } : new Point3dList() {
             new Point3d(tempmesh.Vertices.Last().X, tempmesh.Vertices.Last().Y, tempmesh.Vertices.Last().Z),
           };
-        } else {
-          verticies[key] = new Point3dList(tempmesh.Vertices.Select(pt => (Point3d)pt).ToList());
+          } else {
+            verticies[key] = new Point3dList(tempmesh.Vertices.Select(pt => (Point3d)pt).ToList());
+          }
+
+          meshes[key] = tempmesh;
+        });
+
+        resultMeshes.AddRange(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList(),
+          meshes.Keys.ToList());
+
+        int gripHeight = _contourLegendManager.Configuration.ActualHeight / ghGradient.GripCount;
+        var legendValues = new List<string>();
+        var legendValuePositionsY = new List<int>();
+
+
+
+        for (int i = 0; i < ghGradient.GripCount; i++) {
+          double t = dmin + ((dmax - dmin) / ((double)ghGradient.GripCount - 1) * i);
+          if (t > 1) {
+            double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
+            scl = Math.Max(scl, 1);
+            t = scl * Math.Round(t / scl, 3);
+          } else {
+            t = Math.Round(t, significantDigits);
+          }
+
+          Color gradientColor = ghGradient.ColourAt((2 * (double)i / ((double)ghGradient.GripCount - 1)) - 1);
+          cs.Add(gradientColor);
+
+          int startY = i * gripHeight;
+          int endY = startY + gripHeight;
+          _gradients.Add((startY, endY, gradientColor));
+
+          switch (_mode) {
+            case FoldMode.Displacement when (int)_disp < 4: {
+                var displacement = new Length(t, _lengthResultUnit);
+                legendValues.Add(displacement.ToString("f" + significantDigits));
+                ts.Add(new GH_UnitNumber(displacement));
+                break;
+              }
+            case FoldMode.Displacement: {
+                var rotation = new Angle(t, AngleUnit.Radian);
+                legendValues.Add(rotation.ToString("s" + significantDigits));
+                ts.Add(new GH_UnitNumber(rotation));
+                break;
+              }
+            case FoldMode.Force when ((int)_disp < 3) | _isShear: {
+                var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
+                legendValues.Add(forcePerLength.ToString("s" + significantDigits));
+                ts.Add(new GH_UnitNumber(forcePerLength));
+                break;
+              }
+            case FoldMode.Force: {
+                legendValues.Add(
+                  new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)).ToString("s" + significantDigits) + "/"
+                  + Length.GetAbbreviation(lengthUnit));
+                var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
+                ts.Add(new GH_UnitNumber(moment));
+                break;
+              }
+            case FoldMode.Stress: {
+                var stress = new Pressure(t, _stressUnitResult);
+                legendValues.Add(stress.ToString("s" + significantDigits));
+                ts.Add(new GH_UnitNumber(stress));
+                Message = Pressure.GetAbbreviation(_stressUnitResult);
+                break;
+              }
+            case FoldMode.Footfall: {
+                var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
+                legendValues.Add(responseFactor.ToString("s" + significantDigits));
+                ts.Add(new GH_UnitNumber(responseFactor));
+                break;
+              }
+          }
+
+          if (Math.Abs(t) > 1) {
+            // remove thousand separator
+            legendValues[i] = legendValues[i].Replace(",", string.Empty);
+          }
+
+          legendValuePositionsY.Add(_contourLegendManager.Configuration.ActualHeight - startY + (gripHeight / 2) - 2);
         }
 
-        meshes[key] = tempmesh;
-      });
+        _contourLegendManager.Configuration.SetTextValues(legendValues).SetValuePositionsY(legendValuePositionsY);
 
-      resultMeshes.AddRange(meshes.Values.ToList(), values.Values.ToList(), verticies.Values.ToList(),
-        meshes.Keys.ToList());
-
-      int gripHeight = _contourLegendManager.Configuration.ActualHeight / ghGradient.GripCount;
-      var legendValues = new List<string>();
-      var legendValuePositionsY = new List<int>();
-
-      var ts = new List<GH_UnitNumber>();
-      var cs = new List<Color>();
-
-      for (int i = 0; i < ghGradient.GripCount; i++) {
-        double t = dmin + ((dmax - dmin) / ((double)ghGradient.GripCount - 1) * i);
-        if (t > 1) {
-          double scl = Math.Pow(10, Math.Floor(Math.Log10(Math.Abs(t))) + 1);
-          scl = Math.Max(scl, 1);
-          t = scl * Math.Round(t / scl, 3);
-        } else {
-          t = Math.Round(t, significantDigits);
-        }
-
-        Color gradientColor = ghGradient.ColourAt((2 * (double)i / ((double)ghGradient.GripCount - 1)) - 1);
-        cs.Add(gradientColor);
-
-        int startY = i * gripHeight;
-        int endY = startY + gripHeight;
-        _gradients.Add((startY, endY, gradientColor));
-
-        switch (_mode) {
-          case FoldMode.Displacement when (int)_disp < 4: {
-            var displacement = new Length(t, _lengthResultUnit);
-            legendValues.Add(displacement.ToString("f" + significantDigits));
-            ts.Add(new GH_UnitNumber(displacement));
-            break;
-          }
-          case FoldMode.Displacement: {
-            var rotation = new Angle(t, AngleUnit.Radian);
-            legendValues.Add(rotation.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(rotation));
-            break;
-          }
-          case FoldMode.Force when ((int)_disp < 3) | _isShear: {
-            var forcePerLength = new ForcePerLength(t, _forcePerLengthUnit);
-            legendValues.Add(forcePerLength.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(forcePerLength));
-            break;
-          }
-          case FoldMode.Force: {
-            legendValues.Add(
-              new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit)).ToString("s" + significantDigits) + "/"
-              + Length.GetAbbreviation(lengthUnit));
-            var moment = new Moment(t, UnitsHelper.GetMomentUnit(_forceUnit, lengthUnit));
-            ts.Add(new GH_UnitNumber(moment));
-            break;
-          }
-          case FoldMode.Stress: {
-            var stress = new Pressure(t, _stressUnitResult);
-            legendValues.Add(stress.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(stress));
-            Message = Pressure.GetAbbreviation(_stressUnitResult);
-            break;
-          }
-          case FoldMode.Footfall: {
-            var responseFactor = new Ratio(t, RatioUnit.DecimalFraction);
-            legendValues.Add(responseFactor.ToString("s" + significantDigits));
-            ts.Add(new GH_UnitNumber(responseFactor));
-            break;
-          }
-        }
-
-        if (Math.Abs(t) > 1) {
-          // remove thousand separator
-          legendValues[i] = legendValues[i].Replace(",", string.Empty);
-        }
-
-        legendValuePositionsY.Add(_contourLegendManager.Configuration.ActualHeight - startY + (gripHeight / 2) - 2);
       }
-
-      _contourLegendManager.Configuration.SetTextValues(legendValues).SetValuePositionsY(legendValuePositionsY);
 
       da.SetData(0, resultMeshes);
       da.SetDataList(1, cs);
