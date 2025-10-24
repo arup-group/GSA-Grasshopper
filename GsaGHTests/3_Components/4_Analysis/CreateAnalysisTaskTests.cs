@@ -391,6 +391,26 @@ namespace GsaGHTests.Components.Analysis {
       }
     }
 
+    [Theory]
+    [InlineData(1,2,300)]
+    [InlineData(1, 200, 3)]
+    [InlineData(100, 2, 3)]
+    public void WrongFootfallDataReturnNullOutput(int direction, int weighingOption, int excitationForce) {
+      SetFootfall();
+      SetExcitationRigorous();
+      ComponentTestHelper.SetInput(_component, 2, 2);
+      ComponentTestHelper.SetInput(_component, "All", 3);
+      ComponentTestHelper.SetInput(_component, "All", 4);
+      ComponentTestHelper.SetInput(_component, 100, 5);
+      ComponentTestHelper.SetInput(_component, 76.5, 6);
+      ComponentTestHelper.SetInput(_component, direction, 7);
+      ComponentTestHelper.SetInput(_component, weighingOption, 8);
+      ComponentTestHelper.SetInput(_component, excitationForce, 9);
+      ComponentTestHelper.SetInput(_component, 2.2, 10);
+      GsaAnalysisTaskGoo output = ComputeAndGetOutput();
+      Assert.Null(output);
+    }
+
     [Fact]
     public void CreateFootfallRigorousComponentTest() {
       SetFootfall();

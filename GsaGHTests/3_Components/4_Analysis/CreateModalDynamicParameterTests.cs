@@ -408,6 +408,13 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(ModeCalculationMethod.FrquencyRange, modaldynamic.ModeCalculationOption());
     }
 
+    [Fact]
+    public void WrongModalDynamicDataReturnNullOutput() {
+      CreateAnalysisTask analysisTaskComponent = CreateAnalysisTaskTests.CreateAnalysisTaskComponent((ModeCalculationMethod)100);
+      object task = ComponentTestHelper.GetOutput(analysisTaskComponent);
+      Assert.Null(task);
+    }
+
   }
 
   [Collection("GrasshopperFixture collection")]
