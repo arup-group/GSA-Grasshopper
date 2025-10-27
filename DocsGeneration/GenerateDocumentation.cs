@@ -14,18 +14,18 @@ namespace DocsGeneration {
       try {
         // reflect
         Type[] typelist = config.Assembly.GetTypes();
-        List<Component> components = Component.GetComponents(typelist);
-        List<Parameter> parameters = Parameter.GetParameters(typelist, components);
+        List<Component> components = Component.GetComponents(typelist, config);
+        List<Parameter> parameters = Parameter.GetParameters(typelist, components, config);
 
         // write individual files
-        Components.CreateComponents(components, parameters);
-        Parameters.CreateParameters(parameters);
+        Components.CreateComponents(components, parameters, config);
+        Parameters.CreateParameters(parameters, config);
 
         // write overview files
         Dictionary<string, List<Component>> sortedComponents = Component.SortComponents(components);
         Dictionary<string, List<Parameter>> sortedParameters = Parameter.SortParameters(parameters);
-        Components.CreateOverview(sortedComponents, parameters);
-        Parameters.CreateOverview(sortedParameters);
+        Components.CreateOverview(sortedComponents, parameters, config);
+        Parameters.CreateOverview(sortedParameters, config);
 
         // write sidebar
         SideBar.CreateSideBar(sortedComponents, sortedParameters);
@@ -38,45 +38,12 @@ namespace DocsGeneration {
     }
   }
 
-  public class Configuration {
-    private static readonly Lazy<Configuration> _instance = new Lazy<Configuration>(() => new Configuration());
-
-    public static Configuration Instance => _instance.Value;
-    public bool GenerateE2ETestData { get; private set; } = false;
-    public string CustomOutputPath { get; private set; } = "Output";
-    public Assembly Assembly { get; private set; }
-    public List<string> ResultNotes { get; private set; } = new List<string>();
-    public bool IsBeta { get; private set; } = false;
-    public XmlDocument XmlDocument { get; private set; }
-
-    public Configuration SetGenerateE2ETestData(bool value) {
-      GenerateE2ETestData = value;
-      return this;
-    }
-
-    public Configuration SetCustomOutputPath(string path) {
-      CustomOutputPath = path;
-      return this;
-    }
-
-    public Configuration SetAssembly(Assembly assembly) {
-      Assembly = assembly;
-      return this;
-    }
-
-    public Configuration SetResultNotes(List<string> resultNotes) {
-      ResultNotes = resultNotes;
-      return this;
-    }
-
-    public Configuration SetIsBeta(bool isBeta) {
-      IsBeta = isBeta;
-      return this;
-    }
-
-    public Configuration SetXml(XmlDocument xmlDoc) {
-      XmlDocument = xmlDoc;
-      return this;
-    }
+  public struct Configuration {
+    public bool GenerateE2ETestData { get; set; }
+    public string CustomOutputPath { get; set; }
+    public Assembly Assembly { get; set; }
+    public List<string> ResultNotes { get; set; }
+    public bool IsBeta { get; set; }
+    public XmlDocument XmlDocument { get; set; }
   }
 }

@@ -6,12 +6,12 @@ using DocsGeneration.MarkDowns.Helpers;
 
 namespace DocsGeneration.MarkDowns {
   public class Parameters {
-    public static void CreateOverview(Dictionary<string, List<Parameter>> parameters) {
+    public static void CreateOverview(Dictionary<string, List<Parameter>> parameters, Configuration config) {
       string filePath = $@"{PathUtils.OutputPath}\gsagh-parameters.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = "# Parameters\n\n";
-      if (Configuration.Instance.IsBeta) {
+      if (config.IsBeta) {
         text += StringHelper.AddBetaWarning();
         text += "\n";
       }
@@ -49,25 +49,23 @@ namespace DocsGeneration.MarkDowns {
       Writer.Write(filePath, text);
     }
 
-    public static void CreateParameters(List<Parameter> parameters) {
+    public static void CreateParameters(List<Parameter> parameters, Configuration config) {
       var parameterNames = new List<string>();
       foreach (Parameter parameter in parameters) {
         parameterNames.Add(parameter.Name.ToUpper());
       }
 
       foreach (Parameter parameter in parameters) {
-        CreateParameter(parameter, parameterNames);
+        CreateParameter(parameter, parameterNames, config.IsBeta);
       }
     }
 
-    private static void CreateParameter(Parameter parameter, List<string> parmeterNames) {
+    private static void CreateParameter(Parameter parameter, List<string> parmeterNames, bool isBeta) {
       string filePath = FileHelper.CreateMarkDownFileName(parameter);
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {parameter.Name}\n\n";
-      if (Configuration.Instance.IsBeta) {
-        text += StringHelper.AddBetaWarning();
-      }
+      text += isBeta ? StringHelper.AddBetaWarning() : string.Empty;
 
       var iconHeaders = new List<string>() {
         "Icon"

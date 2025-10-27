@@ -10,8 +10,8 @@ using Helpers;
 namespace DocsGeneration.MarkDowns {
   public class Components {
     public static void CreateOverview(
-      Dictionary<string, List<Component>> components, List<Parameter> parameters) {
-      CreateComponentOverview(components.Keys.ToList());
+      Dictionary<string, List<Component>> components, List<Parameter> parameters, Configuration config) {
+      CreateComponentOverview(components.Keys.ToList(), config.IsBeta);
 
       var parameterNames = new List<string>();
       foreach (Parameter parameter in parameters) {
@@ -23,26 +23,23 @@ namespace DocsGeneration.MarkDowns {
       }
     }
 
-    public static void CreateComponents(
-      List<Component> components, List<Parameter> parameters) {
+    public static void CreateComponents(List<Component> components, List<Parameter> parameters, Configuration config) {
       var parameterNames = new List<string>();
       foreach (Parameter parameter in parameters) {
         parameterNames.Add(parameter.Name.ToUpper());
       }
 
       foreach (Component parameter in components) {
-        CreateComponent(parameter, parameterNames);
+        CreateComponent(parameter, parameterNames, config);
       }
     }
 
-    private static void CreateComponent(Component component, List<string> parmeterNames) {
+    private static void CreateComponent(Component component, List<string> parmeterNames, Configuration config) {
       string filePath = FileHelper.CreateMarkDownFileName(component);
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {component.Name}\n\n";
-      if (Configuration.Instance.IsBeta) {
-        text += StringHelper.AddBetaWarning();
-      }
+      text += config.IsBeta ? StringHelper.AddBetaWarning() : string.Empty;
 
       var iconHeaders = new List<string>() {
         "Icon"
@@ -111,7 +108,7 @@ namespace DocsGeneration.MarkDowns {
         string note = string.Empty;
         foreach (Parameter property in component.Outputs) {
           string description = property.Description;
-          note = CheckForResultNote(ref description);
+          note = CheckForResultNote(ref description, config.ResultNotes);
 
           table.AddRow(new List<string>() {
             FileHelper.CreateIconLink(property),
@@ -131,10 +128,8 @@ namespace DocsGeneration.MarkDowns {
       Writer.Write(filePath, text);
     }
 
-    private static string CheckForResultNote(ref string description) {
+    private static string CheckForResultNote(ref string description, List<string> notesToCheckFor) {
       string noteOut = string.Empty;
-
-      List<string> notesToCheckFor = Configuration.Instance.ResultNotes;
 
       foreach (string note in notesToCheckFor) {
         if (!description.Contains(note)) {
@@ -148,12 +143,12 @@ namespace DocsGeneration.MarkDowns {
       return noteOut;
     }
 
-    private static void CreateComponentOverview(List<string> categories) {
+    private static void CreateComponentOverview(List<string> categories, bool isBeta) {
       string filePath = $@"{PathUtils.OutputPath}\gsagh-components.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = "# Components\n\n";
-      if (Configuration.Instance.IsBeta) {
+      if (isBeta) {
         text += StringHelper.AddBetaWarning();
         text += "\n";
       }

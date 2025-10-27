@@ -11,9 +11,14 @@ namespace DocsGeneratorCLI {
 
       string outputPath = ResolveOutputPath(args);
 
-      return Configuration.Instance.SetAssembly(projectTarget.Assembly).SetGenerateE2ETestData(args.GenerateE2ETestData)
-       .SetCustomOutputPath(outputPath).SetResultNotes(projectTarget.Notes.ToList()).SetIsBeta(projectTarget.IsBeta)
-       .SetXml(projectTarget.XmlDoc);
+      return new Configuration {
+        Assembly = projectTarget.Assembly,
+        ResultNotes = projectTarget.Notes.ToList(),
+        XmlDocument = projectTarget.XmlDoc,
+        GenerateE2ETestData = args.GenerateE2ETestData,
+        IsBeta = projectTarget.IsBeta,
+        CustomOutputPath = outputPath,
+      };
     }
 
     private static string ResolveOutputPath(CommandArguments args) {
