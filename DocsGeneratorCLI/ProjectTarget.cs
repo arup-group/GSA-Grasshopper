@@ -18,7 +18,8 @@ namespace DocsGeneratorCLI {
 
     protected abstract Assembly LoadAssembly();
     protected abstract void SetupResultNotes();
-    protected abstract bool GetBetaValue();
+    protected abstract void SetBetaValue();
+    protected abstract void SetXmlDocumentation();
     private static readonly Dictionary<string, ProjectTarget> _lookup = CreateLookup();
 
     private static Dictionary<string, ProjectTarget> CreateLookup() {
@@ -38,8 +39,8 @@ namespace DocsGeneratorCLI {
       if (target != null) {
         target.LoadAssembly();
         target.SetupResultNotes();
-        target.GetBetaValue();
-        target.XmlDoc = GsaGhDll.GsaGhXml;
+        target.SetBetaValue();
+        target.SetXmlDocumentation();
       } else {
         throw new KeyNotFoundException($"Unsupported project: {input}");
       }
@@ -55,12 +56,12 @@ namespace DocsGeneratorCLI {
   public class GsaGhProject : ProjectTarget {
     public GsaGhProject() : base("GsaGH") { }
 
-    protected override bool GetBetaValue() {
+    protected override void SetBetaValue() {
       Type type = Assembly.GetType("GsaGH.GsaGhInfo");
       bool isBeta = type.GetFields(BindingFlags.Static | BindingFlags.NonPublic)
        .Where(field => field.FieldType == typeof(bool) && field.Name == "isBeta")
        .Select(field => (bool)field.GetValue(null)).First();
-      return isBeta;
+      IsBeta = isBeta;
     }
 
     protected override Assembly LoadAssembly() {
@@ -123,23 +124,29 @@ namespace DocsGeneratorCLI {
         => fieldsDict.TryGetValue(name, out FieldInfo field) ? field :
           throw new InvalidOperationException($"Field '{name}' not found in the assembly.")).ToList();
     }
+
+    protected override void SetXmlDocumentation() {
+      XmlDoc = GsaGhDll.GsaGhXml;
+    }
   }
 
   public class AdSecGhProject : ProjectTarget {
     public AdSecGhProject() : base("AdSecGH") { }
 
-    protected override bool GetBetaValue() {
+    protected override Assembly LoadAssembly() {
       throw new NotImplementedException();
     }
 
-    protected override Assembly LoadAssembly() {
-      Console.WriteLine("Loading AdSecGH assembly...");
-      // placeholder 
-      return GsaGhDll.Load();
+    protected override void SetBetaValue() {
+      throw new NotImplementedException();
     }
 
     protected override void SetupResultNotes() {
-      Notes = Array.Empty<string>();
+      throw new NotImplementedException();
+    }
+
+    protected override void SetXmlDocumentation() {
+      throw new NotImplementedException();
     }
   }
 }

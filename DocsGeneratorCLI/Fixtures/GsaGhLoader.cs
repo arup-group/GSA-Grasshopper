@@ -6,15 +6,11 @@ using System.Xml;
 
 namespace DocsGeneratorCLI {
   public class GsaGhDll {
-#pragma warning disable S1104 // Fields should not have public accessibility
-#pragma warning disable S2223 // Non-constant static fields should not be visible
-    public static Assembly GsaGH;
-    public static string PluginPath;
-    public static XmlDocument GsaGhXml;
+    private static Assembly GsaGH;
+    private static string PluginPath;
+    public static XmlDocument GsaGhXml { get; private set; }
     public const string GsaGhName = "GsaGH";
-#pragma warning restore S1104 // Fields should not have public accessibility
-#pragma warning restore S2223 // Non-constant static fields should not be visible
-#pragma warning disable S2696 // Instance members should not write to "static" fields
+
     public static Assembly Load() {
       Console.WriteLine($"==> [{GsaGhName}] Start loading...");
 
@@ -69,7 +65,7 @@ namespace DocsGeneratorCLI {
     private static string TryBuildAndFindDll() {
       string csprojPath = FindCsproj();
       if (csprojPath == null) {
-        Console.WriteLine($"Didn't found {GsaGhName}.csproj");
+        Console.WriteLine($"Didn't find {GsaGhName}.csproj");
         return null;
       }
 
@@ -120,7 +116,7 @@ namespace DocsGeneratorCLI {
             Console.WriteLine("Build failed:");
             Console.WriteLine(error);
           } else {
-            Console.WriteLine("Build succeded.");
+            Console.WriteLine("Build succeeded.");
           }
         }
       } catch (Exception ex) {
@@ -164,6 +160,5 @@ namespace DocsGeneratorCLI {
         Environment.SetEnvironmentVariable(name, current + ";" + path);
       }
     }
-#pragma warning restore S2696 // Instance members should not write to "static" fields
   }
 }
