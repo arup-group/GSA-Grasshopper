@@ -1,4 +1,4 @@
-# Analysis components 
+# Analysis components
 <!--- This file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration --->
 
 #### Primary
@@ -21,6 +21,7 @@
 | ----------- | ----------- | ----------- |
 |![Analysis Case Info](./images/AnalysisCaseInfo.png) |[Analysis Case Info](gsagh-analysis-case-info-component.md) |Get information about an Analysis Case |
 |![Create Analysis Case](./images/CreateAnalysisCase.png) |[Create Analysis Case](gsagh-create-analysis-case-component.md) |Create an Analysis Case |
+|![Create Modal Dynamic Parameter](./images/CreateModalDynamicParameter.png) |[Create Modal Dynamic Parameter](gsagh-create-modal-dynamic-parameter-component.md) |Create modal dynamic analysis parameters |
 
 #### Quarternary
 
@@ -36,5 +37,3 @@
 |![Create Steel Design Task](./images/CreateSteelDesignTask.png) |[Create Steel Design Task](gsagh-create-steel-design-task-component.md) |Create a Steel Design Task |
 |![Create Steel Section Pool](./images/CreateSteelSectionPool.png) |[Create Steel Section Pool](gsagh-create-steel-section-pool-component.md) |Create a Steel Section Pool |
 |![Design Task Info](./images/DesignTaskInfo.png) |[Design Task Info](gsagh-design-task-info-component.md) |Get Steel Design Tasks information |
-
-
