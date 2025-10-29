@@ -95,7 +95,7 @@ namespace DocsGeneratorCLI {
 
     private static void BuildProject(string csprojPath) {
       var startInfo = new ProcessStartInfo {
-        FileName = "cmd.exe",
+        FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "cmd.exe"),
         Arguments = $"/c msbuild \"{csprojPath}\" /p:Configuration=Debug",
         RedirectStandardOutput = true,
         RedirectStandardError = true,
