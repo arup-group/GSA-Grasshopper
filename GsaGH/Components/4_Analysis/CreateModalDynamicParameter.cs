@@ -16,13 +16,10 @@ using GsaGH.Parameters.Enums;
 
 using System.Linq;
 using Grasshopper.Kernel.Parameters;
-using Rhino.PlugIns;
-using Grasshopper;
-using GsaGH.Helpers;
 
 namespace GsaGH.Components {
   /// <summary>
-  ///   Component to create a GSA Analysis Case
+  ///   Component to create a modal dynamic parameter
   /// </summary>
   public class CreateModalDynamicParameter : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("75bf6454-92c4-4a3c-8abf-75f1d449cb85");

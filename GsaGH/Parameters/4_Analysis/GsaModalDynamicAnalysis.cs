@@ -5,7 +5,7 @@ using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// <para>Analysis <see href="https://docs.oasys-software.com/structural/gsa/references/element-types.html#element-types">parameter</see> used in modal analysis.</para>
+  /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidd-anal-gss-dyn">modal dynamic parameter</see> to read more.</para>
   /// </summary>
   public class GsaModalDynamic {
     public ModeCalculationStrategy ModeCalculationStrategy { get; internal set; }
@@ -13,9 +13,6 @@ namespace GsaGH.Parameters {
     public AdditionalMassDerivedFromLoads AdditionalMassDerivedFromLoads { get; internal set; }
     public ModalDamping ModalDamping { get; internal set; }
 
-    /// <summary>
-    /// Empty constructor instantiating a new API object
-    /// </summary>
     public GsaModalDynamic(ModeCalculationMethod modeMethod = ModeCalculationMethod.NumberOfMode) {
       switch (modeMethod) {
         case ModeCalculationMethod.NumberOfMode:

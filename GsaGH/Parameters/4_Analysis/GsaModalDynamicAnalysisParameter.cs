@@ -2,15 +2,12 @@
 using System.Drawing;
 
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 
 using GsaGH.Helpers.GH;
-using GsaGH.Helpers.Graphics;
 using GsaGH.Properties;
 
-using OasysGH;
 using OasysGH.Parameters;
-using OasysGH.Units;
+
 
 namespace GsaGH.Parameters {
   /// <summary>
