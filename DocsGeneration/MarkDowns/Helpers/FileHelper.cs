@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 using DocsGeneration.Data;
 
-using GsaGH.Helpers;
+using Helpers;
 
 namespace DocsGeneration.MarkDowns.Helpers {
   public class FileHelper {

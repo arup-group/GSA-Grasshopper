@@ -52,10 +52,6 @@ namespace DocsGenerationE2ETests {
       private async Task RunGenerator() {
         string generatorExePath = GetGeneratorPath();
 
-        if (!File.Exists(generatorExePath)) {
-          throw new FileNotFoundException("Couldn't find DocsGeneration.exe", generatorExePath);
-        }
-
         var startInfo = new ProcessStartInfo {
           FileName = generatorExePath,
           Arguments = $"--output {generatedDir}",
@@ -88,7 +84,7 @@ namespace DocsGenerationE2ETests {
 
           await Task.Run(process.WaitForExit);
           if (process.ExitCode != 0) {
-            throw new Exception($"DocsGeneration.exe exited with code:  {process.ExitCode}");
+            throw new Exception($"DocsGeneratorCLI.exe exited with code:  {process.ExitCode}");
           }
         } finally {
           process.Dispose();
@@ -105,8 +101,7 @@ namespace DocsGenerationE2ETests {
         string gsaGrasshopperRepoRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".."));
         string generatorPath = string.Empty;
         do {
-          generatorPath = Path.GetFullPath(Path.Combine(gsaGrasshopperRepoRoot, "DocsGeneration", "bin", "x64", config,
-            "net48", "DocsGeneration.exe"));
+          generatorPath = Path.GetFullPath(Path.Combine(gsaGrasshopperRepoRoot, "DocsGeneratorCLI", "bin", config, "DocsGeneratorCLI.exe"));
 
           if (File.Exists(generatorPath)) {
             return generatorPath;
@@ -117,7 +112,7 @@ namespace DocsGenerationE2ETests {
           maxLevelUp--;
         } while (maxLevelUp >= 0);
 
-        throw new FileNotFoundException($"Couldn't find: DocsGeneration.exe full: {generatorPath}", generatorPath);
+        throw new FileNotFoundException($"Couldn't find: DocsGeneratorCLI.exe full: {generatorPath}", generatorPath);
       }
 
       private static string[] GetRelativeMarkdownFilePaths(string rootDirectory) {
@@ -154,7 +149,7 @@ namespace DocsGenerationE2ETests {
           string expectedContent = File.ReadAllText(expectedPath);
           string actualContent = File.ReadAllText(generatedPath);
 
-          if (expectedContent == actualContent) {
+          if (expectedContent.Equals(actualContent)) {
             continue;
           }
 

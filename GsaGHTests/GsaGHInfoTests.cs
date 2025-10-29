@@ -31,6 +31,11 @@ namespace GsaGHTests {
       Assert.NotNull(info.Icon);
     }
 
+    [Fact]
+    public void GsaGhInfoGuidIsNotChangedTest() {
+      Assert.Equal("a3b08c32-f7de-4b00-b415-f8b466f05e9f", guid.ToString());
+    }
+
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -40,11 +45,6 @@ namespace GsaGHTests {
       string expectedString = isBeta ? GrasshopperVersion + "-beta" : GrasshopperVersion;
 
       Assert.Equal(expectedString, info.Version);
-    }
-
-    [Fact]
-    public void GsaGhInfoGuidIsNotChangedTest() {
-      Assert.Equal("a3b08c32-f7de-4b00-b415-f8b466f05e9f", guid.ToString());
     }
 
     [Fact]
