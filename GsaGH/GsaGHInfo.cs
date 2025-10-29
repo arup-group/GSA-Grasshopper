@@ -15,12 +15,12 @@ using GsaGH.Helpers.GsaCOM;
 using GsaGH.Properties;
 
 using OasysGH;
+using OasysGH.Helpers;
 
 using Rhino;
 
 using static GsaGH.GsaGhInfo;
 
-using PostHog = OasysGH.Helpers.PostHog;
 using Utility = OasysGH.Utility;
 
 namespace GsaGH {
@@ -58,7 +58,7 @@ namespace GsaGH {
       + $"{PluginName} should not be relied upon without thorough and independent checking. "
       + $"{PluginName} {GrasshopperVersion} requires {ProductName} {GsaVersionRequired.FullVersion} or higher installed.";
     internal static Guid guid = new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f");
-    internal static bool isBeta = false;
+    internal const bool isBeta = false;
     public override string AuthorContact => Contact;
     public override string AuthorName => Company;
     public override string Description
@@ -74,6 +74,7 @@ namespace GsaGH {
     public override Guid Id => guid;
     public override string Name => ProductName;
     public override string Version => isBeta ? GrasshopperVersion + "-beta" : GrasshopperVersion;
+    public bool IsBeta => isBeta;
   }
 
   public class AddReferencePriority : GH_AssemblyPriority {
