@@ -5,8 +5,7 @@ using System.Reflection;
 using System.Xml;
 
 namespace DocsGeneratorCLI {
-  public class GsaGhDll {
-    private static Assembly GsaGH;
+  public static class GsaGhDll {
     private static string PluginPath;
     public static XmlDocument GsaGhXml { get; private set; }
     public const string GsaGhName = "GsaGH";
@@ -29,7 +28,7 @@ namespace DocsGeneratorCLI {
 
       UpdateEnvironmentPath(Path.GetDirectoryName(dllPath));
 
-      GsaGH = LoadAssembly(dllPath);
+      Assembly GsaGH = LoadAssembly(dllPath);
       LoadXmlIfExists(dllPath);
 
       Console.WriteLine($"Finished loading {GsaGhName}");
