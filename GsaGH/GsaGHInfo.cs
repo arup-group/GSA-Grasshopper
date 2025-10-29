@@ -74,7 +74,7 @@ namespace GsaGH {
     public override Guid Id => guid;
     public override string Name => ProductName;
     public override string Version => isBeta ? GrasshopperVersion + "-beta" : GrasshopperVersion;
-    public bool IsBeta => isBeta;
+    public static bool IsBeta => isBeta;
   }
 
   public class AddReferencePriority : GH_AssemblyPriority {
