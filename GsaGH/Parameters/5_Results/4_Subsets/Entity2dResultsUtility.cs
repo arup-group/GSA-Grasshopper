@@ -23,8 +23,12 @@ namespace GsaGH.Parameters.Results {
       }
 
       if (permutations.Count == 1) {
-        Parallel.ForEach(subset, kvp =>
-        vals.TryAdd(kvp.Key, kvp.Value[permutations[0] - 1].Results().Select(selector).ToList()));
+        Parallel.ForEach(subset, kvp => {
+          int idx = permutations[0] - 1;
+          if (idx >= 0 && idx < kvp.Value.Count && kvp.Value[idx] != null) {
+            vals.TryAdd(kvp.Key, kvp.Value[idx].Results().Select(selector).ToList());
+          }
+        });
         return vals;
       }
 

@@ -8,6 +8,9 @@ namespace GsaGH.Parameters.Results {
 
     internal static IList<IMeshQuantity<IMoment2d>> CreateMoment(
       ReadOnlyCollection<Tensor2> results) {
+      if(results.Count == 0) {
+        return new List<IMeshQuantity<IMoment2d>>();
+      }
       return new List<IMeshQuantity<IMoment2d>>() {
         CreateMomentFromApiCollection(results)
       };
