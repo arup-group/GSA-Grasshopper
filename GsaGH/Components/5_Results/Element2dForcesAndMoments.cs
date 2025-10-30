@@ -315,7 +315,6 @@ namespace GsaGH.Components {
           if (key != null) {
             int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
             var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
-            string warningMessage = string.Empty;
             try {
               IForce2d forceExtrema = forces.GetExtrema(key);
               outX.Add(new GH_UnitNumber(forceExtrema.Nx.ToUnit(_forceUnit)), path);

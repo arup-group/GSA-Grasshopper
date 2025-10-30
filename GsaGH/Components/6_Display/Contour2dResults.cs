@@ -745,7 +745,7 @@ namespace GsaGH.Components {
           IEntity0dResultSubset<IFootfall, ResultFootfall<Entity0dExtremaKey>> nodeFootfall
             = nodeFootfallCache.ResultSubset(nodeIds);
           dmax = ResultHelper.GetSafeExtrema(nodeFootfall.Max.MaximumResponseFactor, key => nodeFootfall.GetExtrema(key).MaximumResponseFactor);
-          dmin = ResultHelper.GetSafeExtrema(nodeFootfall.Min.MaximumResponseFactor, key => nodeFootfall.GetExtrema(key).MaximumResponseFactor); ;
+          dmin = ResultHelper.GetSafeExtrema(nodeFootfall.Min.MaximumResponseFactor, key => nodeFootfall.GetExtrema(key).MaximumResponseFactor);
           break;
       }
 
