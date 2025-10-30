@@ -21,6 +21,7 @@
 | ----------- | ----------- | ----------- |
 |![Analysis Case Info](./images/AnalysisCaseInfo.png) |[Analysis Case Info](gsagh-analysis-case-info-component.md) |Get information about an Analysis Case |
 |![Create Analysis Case](./images/CreateAnalysisCase.png) |[Create Analysis Case](gsagh-create-analysis-case-component.md) |Create an Analysis Case |
+|![Create Modal Dynamic Parameter](./images/CreateModalDynamicParameter.png) |[Create Modal Dynamic Parameter](gsagh-create-modal-dynamic-parameter-component.md) |Create modal dynamic analysis parameters |
 
 #### Quarternary
 

@@ -60,6 +60,7 @@ The GSA plugin introduces a new set of custom Grasshopper parameters. Parameters
 |![AnalysisTaskParam](./images/AnalysisTaskParam.png) |[Analysis Task](gsagh-analysis-task-parameter.md) |Analysis Task parameter |
 |![CombinationCaseParam](./images/CombinationCaseParam.png) |[Combination Case](gsagh-combination-case-parameter.md) |Combination Case parameter |
 |![DesignTaskParam](./images/DesignTaskParam.png) |[Design Task](gsagh-design-task-parameter.md) |Design Task parameter |
+|![ModalDynamicParam](./images/ModalDynamicParam.png) |[Modal Dynamic Parameter](gsagh-modal-dynamic-parameter-parameter.md) |modal dynamic analysis parameters |
 
 ## Results
 
