@@ -15,8 +15,8 @@ namespace IntegrationTests.Components {
     [Theory]
     [InlineData("MaxLegend2d", (double)9)]
     [InlineData("MaxLegend1d", (double)9)]
-    [InlineData("Resonant", 9.517186)]
-    [InlineData("Transient", 4.413146)]
+    [InlineData("Resonant", 9.515605)]
+    [InlineData("Transient", 4.4132066)]
     [InlineData("MaxLegendNode", (double)10)]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);

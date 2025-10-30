@@ -5,8 +5,8 @@ using GsaGH.Parameters;
 
 using Interop.Gsa_10_2;
 
-namespace GsaGH.Helpers {
-  public sealed class GsaComObject {
+namespace GsaGH.Helpers.GsaCOM {
+  public static class GsaComObject {
     public static ComAuto Instance => lazy.Value;
     private static readonly Lazy<ComAuto> lazy = new Lazy<ComAuto>(() => new ComAuto());
   }
@@ -16,8 +16,7 @@ namespace GsaGH.Helpers {
     private static string tempPath = Path.GetTempPath() + guid.ToString() + ".gwb";
 
     internal static ComAuto GetGsaComModel(GsaModel model) {
-      ComAuto gsa = GsaComObject.Instance;
-
+      ComAuto gsa = GsaComInstance();
       if (model == null) {
         gsa.NewFile();
         return gsa;
@@ -41,12 +40,17 @@ namespace GsaGH.Helpers {
       return gsa;
     }
 
+    private static ComAuto GsaComInstance() {
+      ComAuto gsa = GsaCOM.GsaComObject.Instance;
+      gsa.DisplayGsaWindow(false);
+      return gsa;
+    }
+
     internal static GsaModel GetGsaGhModel() {
-      ComAuto gsa = GsaComObject.Instance;
+      ComAuto gsa = GsaComInstance();
       gsa.SaveAs(tempPath);
       var gsaGh = new GsaModel();
       gsaGh.ApiModel.Open(tempPath);
-
       return gsaGh;
     }
 
@@ -55,7 +59,7 @@ namespace GsaGH.Helpers {
         File.Delete(tempPath);
       }
 
-      GsaComObject.Instance.Close();
+      GsaCOM.GsaComObject.Instance.Close();
     }
   }
 }

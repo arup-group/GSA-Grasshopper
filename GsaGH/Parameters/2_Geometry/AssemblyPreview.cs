@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading.Tasks;
 
 using GsaAPI;
@@ -58,7 +59,8 @@ namespace GsaGH.Parameters {
       temp.ExtentZ = assembly.ExtentZ;
 
       model.AddAssembly(temp);
-      model.SaveAs(assembly.Name + " test.gwb");
+      string assemblyName = assembly.Name + " test.gwb";
+      model.SaveAs(assemblyName);
 
       var spec = new GraphicSpecification() {
         Entities = new EntityList() {
@@ -68,6 +70,7 @@ namespace GsaGH.Parameters {
         }
       };
       CreateGraphics(model, spec);
+      File.Delete(assemblyName);
     }
 
     private static ConcurrentBag<Line> CreateOutlines(ReadOnlyCollection<GsaAPI.Line> lines) {

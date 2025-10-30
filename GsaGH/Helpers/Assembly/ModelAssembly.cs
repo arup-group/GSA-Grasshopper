@@ -29,7 +29,6 @@ namespace GsaGH.Helpers.Assembly {
     private GsaIntDictionary<Axis> _axes;
     private GsaGuidIntListDictionary<GSAElement> _elements;
     private GsaIntDictionary<GridLine> _gridLines;
-    private GsaModel _gsaModel;
     private GsaGuidDictionary<EntityList> _lists;
     private ConcurrentDictionary<int, ConcurrentBag<int>> memberElementRelationship;
     private GsaGuidDictionary<Member> _members;
@@ -251,23 +250,8 @@ namespace GsaGH.Helpers.Assembly {
     private void ConvertAndAssembleAnalysisTasks(List<GsaAnalysisTask> analysisTasks) {
       // Set Analysis Tasks in model
       if (analysisTasks != null) {
-        ReadOnlyDictionary<int, AnalysisTask> existingTasks = _model.AnalysisTasks();
         foreach (GsaAnalysisTask task in analysisTasks) {
-          if (!existingTasks.Keys.Contains(task.Id)) {
-            task.Id = _model.AddAnalysisTask(task.ApiTask);
-          }
-
-          if (task.Cases == null || task.Cases.Count == 0) {
-            task.CreateDefaultCases(_gsaModel);
-          }
-
-          if (task.Cases == null) {
-            continue;
-          }
-
-          foreach (GsaAnalysisCase ca in task.Cases) {
-            _model.AddAnalysisCaseToTask(task.Id, ca.Name, ca.Definition);
-          }
+          TaskHelper.ImportAnalysisTask(task, _model);
         }
       }
     }
@@ -610,7 +594,6 @@ namespace GsaGH.Helpers.Assembly {
     private void SetupModel(GsaModel model, LengthUnit unit) {
       model ??= new GsaModel();
       _model = model.ApiModel;
-      _gsaModel = model;
       _unit = unit;
       _model.UiUnits().LengthLarge = UnitMapping.GetApiUnit(_unit);
       UiUnits units = _model.UiUnits();
