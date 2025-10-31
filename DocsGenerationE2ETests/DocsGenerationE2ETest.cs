@@ -54,7 +54,7 @@ namespace DocsGenerationE2ETests {
 
         var startInfo = new ProcessStartInfo {
           FileName = generatorExePath,
-          Arguments = $"--output {generatedDir}",
+          Arguments = $"--output {generatedDir} --project GsaGH",
           RedirectStandardOutput = true,
           RedirectStandardError = true,
           UseShellExecute = false,

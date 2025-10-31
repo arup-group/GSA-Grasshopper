@@ -1,16 +1,16 @@
-﻿using Commander.NET.Attributes;
+﻿using CommandLine;
 
 namespace DocsGeneratorCLI {
-  public class CommandArguments {
-    [Parameter("-o", "--output", Description = "Generate documentation into custom  output")]
+  public class Options {
+    [Option('o', "output", Required = false, HelpText = "Generate documentation into custom  output")]
     public string CustomOutputPath { get; set; } = "Output";
 
-    [Parameter("-e", "--generate-e2e", Description = "Generate files DocsGeneration.E2ETests.TestReferences directory")]
+    [Option('e', "generate-e2e", HelpText = "Generate files DocsGeneration.E2ETests.TestReferences directory")]
     public bool GenerateE2ETestData { get; set; } = false;
 
-    [Parameter("-p", "--project",
-      Description = "Name of the project to generate documentation for. Currently, only 'GsaGH' is supported.",
-      Required = Required.Yes)]
+    [Option('p', "project",
+      HelpText = "Name of the project to generate documentation for. Currently, only 'GsaGH' is supported.",
+      Required = true)]
     public string ProjectName { get; set; }
   }
 }

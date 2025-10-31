@@ -6,7 +6,7 @@ using DocsGeneration;
 
 namespace DocsGeneratorCLI {
   public static class ConfigurationBuilder {
-    public static Configuration BuildConfiguration(CommandArguments args) {
+    public static Configuration BuildConfiguration(Options args) {
       var projectTarget = ProjectTarget.LoadProjectTargetFromString(args.ProjectName);
 
       string outputPath = ResolveOutputPath(args);
@@ -21,7 +21,7 @@ namespace DocsGeneratorCLI {
       };
     }
 
-    private static string ResolveOutputPath(CommandArguments args) {
+    private static string ResolveOutputPath(Options args) {
       string testPath = Path.Combine(GetGsaGrasshopperRoot(), "DocsGeneration.E2ETests", "TestReferences",
         args.ProjectName);
       string customOutputPath = !string.IsNullOrWhiteSpace(args.CustomOutputPath) ? args.CustomOutputPath : "Output";
