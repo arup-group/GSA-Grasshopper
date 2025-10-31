@@ -8,7 +8,6 @@ using Grasshopper.Kernel.Types;
 
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
-using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 
 using OasysGH;

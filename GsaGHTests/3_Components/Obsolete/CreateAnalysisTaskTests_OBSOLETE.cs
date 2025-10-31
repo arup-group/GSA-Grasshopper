@@ -1,6 +1,5 @@
 ﻿using GsaGH.Components;
 using GsaGH.Parameters;
-using GsaGH.Parameters.Enums;
 
 using GsaGHTests.Helpers;
 

@@ -62,7 +62,7 @@ namespace GsaGHTests {
 
       InitializeCore();
 
-      OasysGH.Units.Utility.SetupUnitsDuringLoad();
+      Utility.SetupUnitsDuringLoad();
     }
 
     public void AddPluginToGh() {
