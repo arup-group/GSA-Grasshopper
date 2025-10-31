@@ -37,6 +37,9 @@ namespace DocsGeneration.Data {
       Exception exception = null;
       const int timeoutMs = 30000; // 30 seconds timeout
 
+      // Note: Task.Run provides timeout detection but cannot forcibly terminate
+      // truly blocking operations. It allows the main thread to detect timeouts
+      // and continue, preventing the entire process from hanging indefinitely.
       var task = Task.Run(() => {
         try {
           result = (GH_Component)Activator.CreateInstance(type, null);

@@ -30,14 +30,18 @@ namespace DocsGeneratorCLI {
             }, cts.Token);
 
             try {
-              task.Wait(cts.Token);
+              task.Wait();
               exitCode = task.Result;
             } catch (OperationCanceledException) {
               Console.Error.WriteLine($"Documentation generation timed out after {overallTimeoutMinutes} minutes");
               exitCode = -1;
             } catch (AggregateException ae) {
               foreach (var ex in ae.InnerExceptions) {
-                Console.Error.WriteLine($"Error: {ex.Message}\n{ex.StackTrace}");
+                if (ex is OperationCanceledException) {
+                  Console.Error.WriteLine($"Documentation generation timed out after {overallTimeoutMinutes} minutes");
+                } else {
+                  Console.Error.WriteLine($"Error: {ex.Message}\n{ex.StackTrace}");
+                }
               }
               exitCode = -1;
             }
