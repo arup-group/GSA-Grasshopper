@@ -97,9 +97,9 @@ namespace DocsGeneration.MarkDowns {
       if (!Directory.Exists(directory)) {
         Directory.CreateDirectory(directory);
       }
-      var js = new StreamWriter(filePath);
-      js.Write(sb);
-      js.Close();
+      using (var js = new StreamWriter(filePath)) {
+        js.Write(sb);
+      }
     }
 
     private static string AddLine(int indentation, string text) {
