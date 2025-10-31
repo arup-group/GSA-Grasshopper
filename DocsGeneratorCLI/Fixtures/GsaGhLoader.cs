@@ -8,10 +8,9 @@ namespace DocsGeneratorCLI {
   public static class GsaGhDll {
     private static string PluginPath;
     public static XmlDocument GsaGhXml { get; private set; }
-    public const string GsaGhName = "GsaGH";
 
-    public static Assembly Load() {
-      Console.WriteLine($"==> [{GsaGhName}] Start loading...");
+    public static Assembly Load(string gsaGhName) {
+      Console.WriteLine($"==> [{gsaGhName}] Start loading...");
 
       Console.WriteLine("Loading Rhino/Grasshopper fixture");
 #pragma warning disable S1481 // Unused local variables should be removed
@@ -19,19 +18,19 @@ namespace DocsGeneratorCLI {
 #pragma warning restore S1481 // Unused local variables should be removed
 
       PluginPath = GetPluginDirectory();
-      string dllPath = TryFindDll() ?? TryBuildAndFindDll();
+      string dllPath = TryFindDll(gsaGhName) ?? TryBuildAndFindDll(gsaGhName);
 
       if (dllPath == null) {
-        Console.WriteLine($"Couldn't find {GsaGhName}.dll");
+        Console.WriteLine($"Couldn't find {gsaGhName}.dll");
         return null;
       }
 
       UpdateEnvironmentPath(Path.GetDirectoryName(dllPath));
 
       Assembly GsaGH = LoadAssembly(dllPath);
-      LoadXmlIfExists(dllPath);
+      LoadXmlIfExists(dllPath, gsaGhName);
 
-      Console.WriteLine($"Finished loading {GsaGhName}");
+      Console.WriteLine($"Finished loading {gsaGhName}");
       return GsaGH;
     }
 
@@ -41,11 +40,11 @@ namespace DocsGeneratorCLI {
       return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
     }
 
-    private static string TryFindDll() {
+    private static string TryFindDll(string gsaGhName) {
       string[] searchPaths = {
-        Path.Combine(PluginPath, $"{GsaGhName}.dll"),
-        Path.Combine(PluginPath, "..", GsaGhName, "bin", "Debug", $"{GsaGhName}.dll"),
-        Path.Combine(PluginPath, "..", "..", GsaGhName, "bin", "Debug", $"{GsaGhName}.dll"),
+        Path.Combine(PluginPath, $"{gsaGhName}.dll"),
+        Path.Combine(PluginPath, "..", gsaGhName, "bin", "Debug", $"{gsaGhName}.dll"),
+        Path.Combine(PluginPath, "..", "..", gsaGhName, "bin", "Debug", $"{gsaGhName}.dll"),
       };
 
       foreach (string path in searchPaths) {
@@ -61,8 +60,8 @@ namespace DocsGeneratorCLI {
       return null;
     }
 
-    private static string TryBuildAndFindDll() {
-      string csprojPath = FindCsproj();
+    private static string TryBuildAndFindDll(string GsaGhName) {
+      string csprojPath = FindCsproj(GsaGhName);
       if (csprojPath == null) {
         Console.WriteLine($"Didn't find {GsaGhName}.csproj");
         return null;
@@ -75,7 +74,7 @@ namespace DocsGeneratorCLI {
       return File.Exists(dllPath) ? dllPath : null;
     }
 
-    private static string FindCsproj() {
+    private static string FindCsproj(string GsaGhName) {
       string[] candidates = {
         Path.Combine(PluginPath, "..", GsaGhName, $"{GsaGhName}.csproj"),
         Path.Combine(PluginPath, "..", "..", GsaGhName, $"{GsaGhName}.csproj"),
@@ -134,7 +133,7 @@ namespace DocsGeneratorCLI {
       }
     }
 
-    private static void LoadXmlIfExists(string dllPath) {
+    private static void LoadXmlIfExists(string dllPath, string GsaGhName) {
       string xmlPath = Path.Combine(Path.GetDirectoryName(dllPath), $"{GsaGhName}.xml");
 
       if (!File.Exists(xmlPath)) {

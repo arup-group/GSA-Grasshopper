@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -7,8 +9,11 @@ using DocsGeneration;
 namespace DocsGeneratorCLI {
   public static class ConfigurationBuilder {
     public static Configuration BuildConfiguration(Options args) {
-      var projectTarget = ProjectTarget.LoadProjectTargetFromString(args.ProjectName);
+      if (string.IsNullOrWhiteSpace(args.ProjectName)) {
+        throw new ArgumentException("Project name cannot be null or empty.");
+      }
 
+      var projectTarget = new GsaGhProject(args.ProjectName);
       string outputPath = ResolveOutputPath(args);
 
       return new Configuration {
