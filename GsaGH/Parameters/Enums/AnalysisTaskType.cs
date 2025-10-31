@@ -1,4 +1,4 @@
-﻿namespace GsaGH.Parameters.Enums {
+﻿namespace GsaGH.Parameters {
   public enum AnalysisTaskType {
     Static = 1,
     Buckling = 3,
@@ -18,11 +18,5 @@
     Envelope = 37,
     ModelStability = 39,
     ModelStabilityPDelta = 40,
-  }
-
-  public enum ModeCalculationMethod {
-    NumberOfMode = 1,
-    FrquencyRange = 2,
-    TargetMassRatio = 3,
   }
 }
