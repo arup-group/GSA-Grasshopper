@@ -58,8 +58,8 @@ namespace DocsGeneratorCLI {
 
     protected override void SetBetaValue() {
       Type type = Assembly.GetType("GsaGH.GsaGhInfo");
-      bool isBeta = type.GetFields(BindingFlags.Static | BindingFlags.NonPublic)
-       .Where(field => field.FieldType == typeof(bool) && field.Name == "isBeta")
+      bool isBeta = type.GetProperties(BindingFlags.Static | BindingFlags.Public)
+       .Where(field => field.PropertyType == typeof(bool) && field.Name == "IsBeta")
        .Select(field => (bool)field.GetValue(null)).First();
       IsBeta = isBeta;
     }

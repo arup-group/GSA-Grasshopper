@@ -15,12 +15,12 @@ using GsaGH.Helpers.GsaCOM;
 using GsaGH.Properties;
 
 using OasysGH;
+using OasysGH.Helpers;
 
 using Rhino;
 
 using static GsaGH.GsaGhInfo;
 
-using PostHog = OasysGH.Helpers.PostHog;
 using Utility = OasysGH.Utility;
 
 namespace GsaGH {
@@ -74,6 +74,7 @@ namespace GsaGH {
     public override Guid Id => guid;
     public override string Name => ProductName;
     public override string Version => isBeta ? GrasshopperVersion + "-beta" : GrasshopperVersion;
+    public static bool IsBeta => isBeta;
   }
 
   public class AddReferencePriority : GH_AssemblyPriority {
