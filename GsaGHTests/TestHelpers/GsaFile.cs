@@ -110,6 +110,16 @@ namespace GsaGHTests.Helper {
       }
     }
 
+    internal static string FabricMaterialModel {
+      get {
+        if (_assemblyByStorey == string.Empty) {
+          _assemblyByStorey = FilePath("fabric_material_model.gwb");
+        }
+
+        return _assemblyByStorey;
+      }
+    }
+
     private static string FilePath(string fileName) {
       string solutiondir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent
        .FullName;

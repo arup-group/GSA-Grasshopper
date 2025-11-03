@@ -81,6 +81,21 @@ namespace GsaGHTests.Parameters {
       return (GsaResultGoo)ComponentTestHelper.GetOutput(getResults);
     }
 
+    public static GsaResultGoo FabricModelResultsMother() {
+      var open = new OpenModel();
+      open.CreateAttributes();
+      string file = GsaFile.FabricMaterialModel;
+      ComponentTestHelper.SetInput(open, file);
+      var model = (GsaModelGoo)ComponentTestHelper.GetOutput(open);
+      var getResults = new GetResult();
+      getResults.CreateAttributes();
+
+      ComponentTestHelper.SetInput(getResults, model);
+      ComponentTestHelper.SetInput(getResults, "A1", 1);
+
+      return (GsaResultGoo)ComponentTestHelper.GetOutput(getResults);
+    }
+
     public static GsaResultGoo NodeAndElement3dCombinationResultsMother() {
       var open = new OpenModel();
       open.CreateAttributes();
