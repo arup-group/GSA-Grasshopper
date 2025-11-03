@@ -111,11 +111,7 @@ namespace GsaGH.Helpers.GsaApi {
       if (key == null) {
         return double.NaN;
       }
-      try {
-        return getValue(key);
-      } catch (Exception) {
-        return double.NaN;
-      }
+      return getValue(key);
     }
   }
 }
