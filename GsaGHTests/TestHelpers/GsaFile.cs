@@ -12,6 +12,7 @@ namespace GsaGHTests.Helper {
     private static string _basicFrame = string.Empty;
     private static string _assemblySimple = string.Empty;
     private static string _assemblyByStorey = string.Empty;
+    private static string _fabricMaterialModel = string.Empty;
 
     internal static string SteelDesignComplex {
       get {
@@ -112,11 +113,11 @@ namespace GsaGHTests.Helper {
 
     internal static string FabricMaterialModel {
       get {
-        if (_assemblyByStorey == string.Empty) {
-          _assemblyByStorey = FilePath("fabric_material_model.gwb");
+        if (_fabricMaterialModel == string.Empty) {
+          _fabricMaterialModel = FilePath("fabric_material_model.gwb");
         }
 
-        return _assemblyByStorey;
+        return _fabricMaterialModel;
       }
     }
 
