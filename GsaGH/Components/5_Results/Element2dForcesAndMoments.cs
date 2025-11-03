@@ -38,8 +38,6 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Element2dForcesAndMoments;
     private ForcePerLengthUnit _forceUnit = DefaultUnits.ForcePerLengthUnit;
     private ForceUnit _momentUnit = DefaultUnits.ForceUnit;
-    private const string ForceComponentWarning = "Result is not available for the force component";
-    private const string ShearComponentWarning = "Result is not available for the shear component";
     private const string MomentComponentWarning = "Result is not available for the moment component";
 
 
@@ -237,21 +235,17 @@ namespace GsaGH.Components {
                  .Subset) {
                   foreach (int p in permutations) {
                     int idx = p - 1;
-                    if (idx >= 0 && idx < kvp.Value.Count) {
-                      var path = new GH_Path(result.CaseId,
-                      result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
-                      outX.AddRange(
-                        kvp.Value[idx].Results()
-                         .Select(r => new GH_UnitNumber(r.Nx.ToUnit(_forceUnit))), path);
-                      outY.AddRange(
-                        kvp.Value[idx].Results()
-                         .Select(r => new GH_UnitNumber(r.Ny.ToUnit(_forceUnit))), path);
-                      outXy.AddRange(
-                        kvp.Value[idx].Results()
-                         .Select(r => new GH_UnitNumber(r.Nxy.ToUnit(_forceUnit))), path);
-                    } else {
-                      this.AddRuntimeWarning(ForceComponentWarning);
-                    }
+                    var path = new GH_Path(result.CaseId,
+                    result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
+                    outX.AddRange(
+                      kvp.Value[idx].Results()
+                       .Select(r => new GH_UnitNumber(r.Nx.ToUnit(_forceUnit))), path);
+                    outY.AddRange(
+                      kvp.Value[idx].Results()
+                       .Select(r => new GH_UnitNumber(r.Ny.ToUnit(_forceUnit))), path);
+                    outXy.AddRange(
+                      kvp.Value[idx].Results()
+                       .Select(r => new GH_UnitNumber(r.Nxy.ToUnit(_forceUnit))), path);
                   }
                 }
 
@@ -262,18 +256,14 @@ namespace GsaGH.Components {
                  .Subset) {
                   foreach (int p in permutations) {
                     int idx = p - 1;
-                    if (idx >= 0 && idx < kvp.Value.Count) {
-                      var path = new GH_Path(result.CaseId,
-                      result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
-                      outQx.AddRange(
-                        kvp.Value[idx].Results()
-                         .Select(r => new GH_UnitNumber(r.Qx.ToUnit(_forceUnit))), path);
-                      outQy.AddRange(
-                        kvp.Value[idx].Results()
-                         .Select(r => new GH_UnitNumber(r.Qy.ToUnit(_forceUnit))), path);
-                    } else {
-                      this.AddRuntimeWarning(ShearComponentWarning);
-                    }
+                    var path = new GH_Path(result.CaseId,
+                    result.SelectedPermutationIds == null ? 0 : p, kvp.Key);
+                    outQx.AddRange(
+                      kvp.Value[idx].Results()
+                       .Select(r => new GH_UnitNumber(r.Qx.ToUnit(_forceUnit))), path);
+                    outQy.AddRange(
+                      kvp.Value[idx].Results()
+                       .Select(r => new GH_UnitNumber(r.Qy.ToUnit(_forceUnit))), path);
                   }
                 }
 
@@ -315,23 +305,15 @@ namespace GsaGH.Components {
           if (key != null) {
             int perm = result.CaseType == CaseType.AnalysisCase ? 0 : 1;
             var path = new GH_Path(result.CaseId, key.Permutation + perm, key.Id);
-            try {
-              IForce2d forceExtrema = forces.GetExtrema(key);
-              outX.Add(new GH_UnitNumber(forceExtrema.Nx.ToUnit(_forceUnit)), path);
-              outY.Add(new GH_UnitNumber(forceExtrema.Ny.ToUnit(_forceUnit)), path);
-              outXy.Add(new GH_UnitNumber(forceExtrema.Nxy.ToUnit(_forceUnit)), path);
-            } catch (Exception) {
-              this.AddRuntimeWarning(ForceComponentWarning);
-            }
 
-            try {
-              IShear2d shearExtrema = shears.GetExtrema(key);
-              outQx.Add(new GH_UnitNumber(shearExtrema.Qx.ToUnit(_forceUnit)), path);
-              outQy.Add(new GH_UnitNumber(shearExtrema.Qy.ToUnit(_forceUnit)), path);
-            } catch (Exception) {
-              this.AddRuntimeWarning(ShearComponentWarning);
-            }
+            IForce2d forceExtrema = forces.GetExtrema(key);
+            outX.Add(new GH_UnitNumber(forceExtrema.Nx.ToUnit(_forceUnit)), path);
+            outY.Add(new GH_UnitNumber(forceExtrema.Ny.ToUnit(_forceUnit)), path);
+            outXy.Add(new GH_UnitNumber(forceExtrema.Nxy.ToUnit(_forceUnit)), path);
 
+            IShear2d shearExtrema = shears.GetExtrema(key);
+            outQx.Add(new GH_UnitNumber(shearExtrema.Qx.ToUnit(_forceUnit)), path);
+            outQy.Add(new GH_UnitNumber(shearExtrema.Qy.ToUnit(_forceUnit)), path);
 
             try {
               IMoment2d momentExtrema = moments.GetExtrema(key);
