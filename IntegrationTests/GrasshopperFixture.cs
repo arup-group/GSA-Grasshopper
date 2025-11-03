@@ -4,7 +4,7 @@ using System.Reflection;
 
 using Grasshopper.Plugin;
 
-using GsaGH.Helpers;
+using GsaGH.Helpers.GsaCOM;
 
 using Interop.Gsa_10_2;
 
@@ -68,7 +68,7 @@ namespace IntegrationTests {
       InitializeCore();
 
       // setup headless units
-      Utility.SetupUnitsDuringLoad();
+     OasysGH.Units.Utility.SetupUnitsDuringLoad();
     }
 
     // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources

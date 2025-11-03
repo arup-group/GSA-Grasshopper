@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 
 using DocsGeneration.Data.Helpers;
-using DocsGeneration.Helpers;
 
 using Grasshopper.Kernel;
 
@@ -22,7 +21,8 @@ namespace DocsGeneration.Data {
     public string ParameterType { get; set; }
     public List<Parameter> Properties { get; set; }
     public Component PropertiesComponent { get; set; }
-    public Parameter(Type type, bool summary = false) {
+
+    public Parameter(Type type, Configuration config, bool summary = false) {
       var persistentParam = (IGH_Param)Activator.CreateInstance(type, null);
       Name = persistentParam.Name.Replace("parameter", string.Empty).Trim();
       if (Name.Contains('[')) {
@@ -35,20 +35,28 @@ namespace DocsGeneration.Data {
       ParameterType = GetParameterType(type);
 
       if (summary && SubCategory > 0) {
-        Summary = GetClassSummary(persistentParam.GetType());
+        Summary = GetClassSummary(persistentParam.GetType(), config.XmlDocument);
       }
     }
 
     private string GetParameterType(Type type) {
-      if (type.BaseType.GenericTypeArguments[0].Name == "IGH_Goo") {
+      if (type.BaseType?.GenericTypeArguments == null || !type.BaseType.GenericTypeArguments.Any()) {
+        return CleanUpName(type.BaseType.Name);
+      }
+
+      if (type.BaseType.GenericTypeArguments[0]?.Name == "IGH_Goo") {
         return "Generic";
       }
 
-      string s = type.BaseType.GenericTypeArguments[0].Name
-        .Replace("Goo", string.Empty).Replace("Gsa", string.Empty)
-        .Replace("GH_", string.Empty).Replace("String", "Text"); ;
+      string s = CleanUpName(type.BaseType.GenericTypeArguments[0].Name);
       s = CheckIfUnitNumber(s);
 
+      return s;
+    }
+
+    private static string CleanUpName(string s) {
+      s = s.Replace("Goo", string.Empty).Replace("Gsa", string.Empty).Replace("GH_", string.Empty)
+       .Replace("String", "Text").Replace("Parameter", string.Empty);
       return s;
     }
 
@@ -117,7 +125,7 @@ namespace DocsGeneration.Data {
       return s;
     }
 
-    private string GetClassSummary(Type paramType) {
+    private string GetClassSummary(Type paramType, XmlDocument document) {
       PropertyInfo[] paramPropertyInfo = paramType.GetProperties(
             BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
       foreach (PropertyInfo paramProperty in paramPropertyInfo) {
@@ -130,10 +138,9 @@ namespace DocsGeneration.Data {
               //object gooValue = gooProperty.GetValue(gooType, null);
               Type valueType = gooProperty.PropertyType;
               string path = "T:" + valueType.FullName;
-              XmlNode xmlDocuOfMethod = GsaGhDll.GsaGhXml.SelectSingleNode(
-                  "//member[@name='" + path + "']");
-              string text = xmlDocuOfMethod.InnerXml
-              .Replace("<summary>", string.Empty).Replace("</summary>", string.Empty);
+              XmlNode xmlDocuOfMethod = document.SelectSingleNode("//member[@name='" + path + "']");
+              string text = xmlDocuOfMethod.InnerXml.Replace("<summary>", string.Empty)
+               .Replace("</summary>", string.Empty);
               string cleanStr = Regex.Replace(text, @"\s+", " ");
               return cleanStr.Trim();
             }
@@ -147,16 +154,18 @@ namespace DocsGeneration.Data {
       return Name;
     }
 
-    public static List<Parameter> GetParameters(Type[] typelist, List<Component> components) {
+    public static List<Parameter> GetParameters(Type[] typelist, List<Component> components, Configuration config) {
       Console.WriteLine($"Finding parameters...");
       var parameters = new List<Parameter>();
       foreach (Type type in typelist) {
-        if (type.BaseType == null || !type.BaseType.Name.StartsWith("GH_OasysPersistent")) {
+        if (type.BaseType == null || !(type.Name.Contains("GsaRestraintParameter")
+          || type.Name.Contains("GsaReleaseParameter") || type.BaseType.Name.StartsWith("GH_OasysPersistent"))) {
           continue;
         }
+        // workaround for GsaRestraintParameter and GsaReleaseParameter that do not inherit from GH_OasysPersistentParam. Need to find a better solution.
 
         try {
-          var param = new Parameter(type, true);
+          var param = new Parameter(type, config, true);
           if (param.SubCategory > 0) {
             param.UpdateParameters(components);
             parameters.Add(param);

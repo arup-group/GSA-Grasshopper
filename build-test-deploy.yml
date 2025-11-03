@@ -11,6 +11,9 @@ variables:
 
 pool: 'rhino-compute'
 
+workspace:
+  clean: all
+
 steps:
 - powershell: |
     Get-ChildItem *.msi -Recurse | Remove-Item
@@ -201,17 +204,6 @@ steps:
     & 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' GsaGH.csproj /t:pack /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg /p:DebugType=portable /property:Configuration=Debug
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
   displayName: Package NuGet
-
-- powershell: |
-    .\DocsGeneration\bin\x64\Debug\net48\DocsGeneration.exe
-    Compress-Archive -Path .\Output -DestinationPath .\results\$(dotSeparatedTag)-docs.zip -Force
-  displayName: Generate docs site
-  failOnStderr: true
-
-- publish: $(System.DefaultWorkingDirectory)\results\$(dotSeparatedTag)-docs.zip
-  displayName: Publish Docs artifact
-  artifact: Docs
-  continueOnError: false
 
 - task: GitHubRelease@1
   displayName: 'Publishing assets to Github'

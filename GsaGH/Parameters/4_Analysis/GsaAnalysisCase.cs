@@ -1,4 +1,8 @@
-﻿using GsaGH.Helpers;
+﻿using System.Xml.Linq;
+
+using GsaAPI;
+
+using GsaGH.Helpers;
 
 namespace GsaGH.Parameters {
   /// <summary>
@@ -6,21 +10,20 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/analysiscases.html">Analysis cases</see> to read more.</para>
   /// </summary>
   public class GsaAnalysisCase {
-    public string Definition { get; set; }
-    public string Name { get; set; }
+    private AnalysisCase ApiCase { get; set; }
     internal int Id { get; set; } = 0;
-
-    public GsaAnalysisCase() { }
-
+    public string Definition => ApiCase.Description;
+    public string Name => ApiCase.Name;
+    private GsaAnalysisCase() {
+      ApiCase = new AnalysisCase(string.Empty, string.Empty);
+    }
     public GsaAnalysisCase(string name, string description) {
-      Name = name;
-      Definition = description;
+      ApiCase = new AnalysisCase(name, description);
     }
 
-    internal GsaAnalysisCase(int id, string name, string description = "") {
+    internal GsaAnalysisCase(int id, string name, string description) {
       Id = id;
-      Name = name;
-      Definition = description;
+      ApiCase = new AnalysisCase(name, description);
     }
 
     public GsaAnalysisCase Duplicate() {
@@ -37,7 +40,6 @@ namespace GsaGH.Parameters {
       if (Definition != null) {
         s += " " + Definition;
       }
-
       return string.Join(" ", id, s).TrimSpaces();
     }
   }

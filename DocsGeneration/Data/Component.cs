@@ -15,7 +15,8 @@ namespace DocsGeneration.Data {
     public string ComponentType { get; set; }
     public List<Parameter> Inputs { get; set; } = new List<Parameter>();
     public List<Parameter> Outputs { get; set; } = new List<Parameter>();
-    public Component(Type type) {
+
+    public Component(Type type, Configuration config) {
       var componentObject = (GH_Component)Activator.CreateInstance(type, null);
       Name = componentObject.Name;
       NickName = componentObject.NickName;
@@ -25,15 +26,15 @@ namespace DocsGeneration.Data {
       ComponentType = type.BaseType.Name
         .Replace("GH_", string.Empty).Replace("Oasys", string.Empty)
         .Replace("TaskCapableComponent`1", "DropDownComponent");
-      Inputs = GetInputOutputParameters(componentObject.Params.Input);
-      Outputs = GetInputOutputParameters(componentObject.Params.Output);
+      Inputs = GetInputOutputParameters(componentObject.Params.Input, config);
+      Outputs = GetInputOutputParameters(componentObject.Params.Output, config);
     }
 
     public override string ToString() {
       return Name;
     }
 
-    public static List<Component> GetComponents(Type[] typelist) {
+    public static List<Component> GetComponents(Type[] typelist, Configuration config) {
       Console.WriteLine($"Finding components...");
       var components = new List<Component>();
       foreach (Type type in typelist) {
@@ -47,7 +48,7 @@ namespace DocsGeneration.Data {
           }
 
           try {
-            var comp = new Component(type);
+            var comp = new Component(type, config);
             components.Add(comp);
             Console.WriteLine($"Added {comp.Name} component");
           } catch (Exception) {
@@ -86,13 +87,13 @@ namespace DocsGeneration.Data {
       return dict;
     }
 
-    public List<Parameter> GetInputOutputParameters(List<IGH_Param> parameters) {
+    public List<Parameter> GetInputOutputParameters(List<IGH_Param> parameters, Configuration config) {
       var outparams = new List<Parameter>();
       foreach (IGH_Param param in parameters) {
-        var parameter = new Parameter(param.GetType()) {
+        var parameter = new Parameter(param.GetType(), config) {
           Name = param.Name,
           NickName = param.NickName,
-          Description = param.Description
+          Description = param.Description,
         };
         if (parameter.ParameterType == "Generic" &&
           parameter.Name.Contains("[")) {
