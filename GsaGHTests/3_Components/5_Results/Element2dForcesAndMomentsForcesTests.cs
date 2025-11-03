@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 
 using GsaGH.Components;
@@ -193,6 +195,24 @@ namespace GsaGHTests.Components.Results {
       // Assert Min in set
       double min = output.Min().As(ForcePerLengthUnit.KilonewtonPerMeter);
       Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+    }
+
+    [Fact]
+    public void Element2dForcesElement2dIdsShouldNotThrowException() {
+     int dropdownItemsCount = 21;
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.FabricMaterialModel, 1);
+      var comp = new Element2dForcesAndMoments();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, "pa", 1);
+      for (int i = 0; i < dropdownItemsCount; i++) {
+        ShouldNotThrowException(comp, 0, i);
+      }
+    }
+
+    private void ShouldNotThrowException(Element2dForcesAndMoments component, int i, int j) {
+      component.SetSelected(i, j);
+      Exception ex = Record.Exception(() => component.Params.Output[0].CollectData());
+      Assert.Null(ex);
     }
 
     private List<double> ExpectedAnalysisCaseValues(ResultTensor2InAxis component) {

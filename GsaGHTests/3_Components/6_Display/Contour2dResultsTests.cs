@@ -177,5 +177,77 @@ namespace GsaGHTests.Components.Display {
       Assert.NotNull(resultsGoo);
       ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
+
+    [Fact]
+    public void ContourResultsComponentShouldNotThrowException() {
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.FabricModelResultsMother());
+
+      //displacement
+      ShouldNotThrowException(comp, 0, 0);
+
+      ShouldNotThrowException(comp, 1, 0);
+      ShouldNotThrowException(comp, 1, 1);
+      ShouldNotThrowException(comp, 1, 2);
+      ShouldNotThrowException(comp, 1, 3);
+
+      //forces
+      ShouldNotThrowException(comp, 0, 1);
+
+      ShouldNotThrowException(comp, 1, 0);
+      ShouldNotThrowException(comp, 1, 1);
+      ShouldNotThrowException(comp, 1, 2);
+      ShouldNotThrowException(comp, 1, 3);
+      ShouldNotThrowException(comp, 1, 4);
+      ShouldNotThrowException(comp, 1, 5);
+      ShouldNotThrowException(comp, 1, 6);
+      ShouldNotThrowException(comp, 1, 7);
+      ShouldNotThrowException(comp, 1, 8);
+      ShouldNotThrowException(comp, 1, 9);
+
+      //strress
+      ShouldNotThrowException(comp, 0, 2);
+      ShouldNotThrowException(comp, 2, 0);
+
+      ShouldNotThrowException(comp, 1, 0);
+      ShouldNotThrowException(comp, 1, 1);
+      ShouldNotThrowException(comp, 1, 2);
+      ShouldNotThrowException(comp, 1, 3);
+      ShouldNotThrowException(comp, 1, 4);
+      ShouldNotThrowException(comp, 1, 5);
+
+      ShouldNotThrowException(comp, 2, 1);
+
+      ShouldNotThrowException(comp, 1, 0);
+      ShouldNotThrowException(comp, 1, 1);
+      ShouldNotThrowException(comp, 1, 2);
+      ShouldNotThrowException(comp, 1, 3);
+      ShouldNotThrowException(comp, 1, 4);
+      ShouldNotThrowException(comp, 1, 5);
+
+      ShouldNotThrowException(comp, 2, 2);
+
+      ShouldNotThrowException(comp, 1, 0);
+      ShouldNotThrowException(comp, 1, 1);
+      ShouldNotThrowException(comp, 1, 2);
+      ShouldNotThrowException(comp, 1, 3);
+      ShouldNotThrowException(comp, 1, 4);
+      ShouldNotThrowException(comp, 1, 5);
+
+      //footfall
+      ShouldNotThrowException(comp, 0, 3);
+      ShouldNotThrowException(comp, 1, 0);
+      ShouldNotThrowException(comp, 1, 1);
+    }
+
+    private void ShouldNotThrowException(Contour2dResults component, int i, int j) {
+      component.SetSelected(i, j);
+      var resultsGoo = (MeshResultGoo)ComponentTestHelper.GetOutput(component);
+      if(resultsGoo == null) {
+        Assert.Single(component.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+        Assert.Contains("Result is not available for the selected component", component.RuntimeMessages(GH_RuntimeMessageLevel.Warning)[0]);
+      }
+    }
+
   }
 }

@@ -7,6 +7,9 @@ namespace GsaGH.Parameters.Results {
   internal static partial class Entity2dResultsFactory {
     internal static IList<IMeshQuantity<IStress>> CreateStresses(
       ReadOnlyCollection<Tensor3> results) {
+      if (results.Count == 0) {
+        return new List<IMeshQuantity<IStress>>();
+      }
       return new List<IMeshQuantity<IStress>> {
               CreateFromApiCollection(results)
              };

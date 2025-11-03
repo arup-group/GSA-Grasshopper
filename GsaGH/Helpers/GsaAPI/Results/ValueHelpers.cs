@@ -106,5 +106,12 @@ namespace GsaGH.Helpers.GsaApi {
 
       return roundedvals;
     }
+
+    public static double GetSafeExtrema<T>(T key, Func<T, double> getValue) where T : class {
+      if (key == null) {
+        return double.NaN;
+      }
+      return getValue(key);
+    }
   }
 }
