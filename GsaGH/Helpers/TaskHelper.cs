@@ -37,6 +37,11 @@ namespace GsaGH.Helpers {
       }
     }
 
+    public static void ImportAnalysisTask(GsaAnalysisTask task, Model model) {
+      var gsaModel = new GsaModel(model);
+      ImportAnalysisTask(task, ref gsaModel);
+    }
+
     private static Dictionary<int, AnalysisCase> BuildCustomCases(GsaAnalysisTask task, ref int highestCaseId) {
       var analysisCases = new Dictionary<int, AnalysisCase>();
       if (task.Cases != null) {
@@ -46,11 +51,6 @@ namespace GsaGH.Helpers {
         }
       }
       return analysisCases;
-    }
-
-    public static void ImportAnalysisTask(GsaAnalysisTask task, Model model) {
-      var gsaModel = new GsaModel(model);
-      ImportAnalysisTask(task, ref gsaModel);
     }
   }
 }
