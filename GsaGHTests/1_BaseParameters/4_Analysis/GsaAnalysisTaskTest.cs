@@ -100,5 +100,32 @@ namespace GsaGHTests.Parameters {
       Assert.Null(task.ApiTask);
       Assert.Empty(task.Cases);
     }
+
+    [Fact]
+    public void AnalysisTaskWithCustomCasesAssignsCorrectCaseIds() {
+
+      var model = new GsaModel();
+      AnalysisTask apiTask = AnalysisTaskFactory.CreateStaticAnalysisTask("CustomTask");
+      var gsaTask = new GsaAnalysisTask(apiTask, model.ApiModel);
+
+      gsaTask.Cases.Add(new GsaAnalysisCase("CaseA", "L1"));
+      gsaTask.Cases.Add(new GsaAnalysisCase("CaseB", "L2"));
+      TaskHelper.ImportAnalysisTask(gsaTask, ref model);
+
+      Assert.True(gsaTask.Id > 0);
+      AnalysisTask importedTask = model.ApiModel.AnalysisTasks()[gsaTask.Id];
+      Assert.Equal("CustomTask", importedTask.Name);
+      Assert.Equal(2, importedTask.Cases.Count);
+
+      ReadOnlyCollection<int> caseIds = importedTask.Cases;
+      Assert.Equal(1, caseIds[0]);
+      Assert.Equal(2, caseIds[1]);
+
+      ReadOnlyDictionary<int, AnalysisCase> casesDict = model.ApiModel.AnalysisCases();
+      Assert.Equal("CaseA", casesDict[1].Name);
+      Assert.Equal("L1", casesDict[1].Description);
+      Assert.Equal("CaseB", casesDict[2].Name);
+      Assert.Equal("L2", casesDict[2].Description);
+    }
   }
 }
