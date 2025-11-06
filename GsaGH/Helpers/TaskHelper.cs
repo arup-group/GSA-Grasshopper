@@ -24,12 +24,7 @@ namespace GsaGH.Helpers {
       ReadOnlyDictionary<int, AnalysisTask> existingTasks = model.ApiModel.AnalysisTasks();
       if (task != null && !existingTasks.Keys.Contains(task.Id)) {
         int highestTask = existingTasks.Count;
-        var analysisCases = new Dictionary<int, AnalysisCase>();
-        if (task.Cases != null) {
-          foreach (GsaAnalysisCase analysisCase in task.Cases) {
-            analysisCases.Add(analysisCase.Id, new AnalysisCase(analysisCase.Name, analysisCase.Definition));
-          }
-        }
+        Dictionary<int, AnalysisCase> analysisCases = BuildCustomCases(task);
         if (task.ApiTask != null) {
           if (analysisCases.Count == 0) {
             AddAnalysisTask(task, model);
@@ -44,6 +39,18 @@ namespace GsaGH.Helpers {
     public static void ImportAnalysisTask(GsaAnalysisTask task, Model model) {
       var gsaModel = new GsaModel(model);
       ImportAnalysisTask(task, ref gsaModel);
+    }
+
+    private static Dictionary<int, AnalysisCase> BuildCustomCases(GsaAnalysisTask task) {
+      if (task.Cases == null || task.Cases.Count == 0) {
+        return new Dictionary<int, AnalysisCase>();
+      }
+      return task.Cases
+        .Select((c, i) => new { Index = i, Case = c })
+        .ToDictionary(
+          x => x.Index,
+          x => new AnalysisCase(x.Case.Name, x.Case.Definition)
+        );
     }
   }
 }
