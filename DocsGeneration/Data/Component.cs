@@ -83,10 +83,8 @@ namespace DocsGeneration.Data {
             Console.WriteLine($"Added {comp.Name} component");
           } catch (TimeoutException ex) {
             Console.Error.WriteLine($"Timeout creating component {type.Name}: {ex.Message}");
-            continue;
           } catch (Exception ex) {
             Console.Error.WriteLine($"Error creating component {type.Name}: {ex.Message}");
-            continue;
           }
         }
       }

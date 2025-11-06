@@ -19,32 +19,8 @@ namespace DocsGeneratorCLI {
           // Set overall timeout for the entire documentation generation process
           const int overallTimeoutMinutes = 30;
           using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(overallTimeoutMinutes))) {
-            var task = Task.Run(() => {
-              try {
-                GenerateDocumentation.Generate(config);
-                return 0;
-              } catch (Exception e) {
-                Console.Error.WriteLine($"Error during documentation generation: {e.Message}\n{e.StackTrace}");
-                return -1;
-              }
-            }, cts.Token);
-
-            try {
-              task.Wait();
-              exitCode = task.Result;
-            } catch (OperationCanceledException) {
-              Console.Error.WriteLine($"Documentation generation timed out after {overallTimeoutMinutes} minutes");
-              exitCode = -1;
-            } catch (AggregateException ae) {
-              foreach (var ex in ae.InnerExceptions) {
-                if (ex is OperationCanceledException) {
-                  Console.Error.WriteLine($"Documentation generation timed out after {overallTimeoutMinutes} minutes");
-                } else {
-                  Console.Error.WriteLine($"Error: {ex.Message}\n{ex.StackTrace}");
-                }
-              }
-              exitCode = -1;
-            }
+            var task = CreateTask(config, cts);
+            exitCode = RunTask(task, overallTimeoutMinutes);
           }
         });
       } finally {
@@ -61,6 +37,42 @@ namespace DocsGeneratorCLI {
       }
 
       return exitCode;
+    }
+
+    private static int RunTask(Task<int> task, int overallTimeoutMinutes)
+    {
+      int exitCode;
+      try {
+        task.Wait();
+        exitCode = task.Result;
+      } catch (OperationCanceledException) {
+        Console.Error.WriteLine($"Documentation generation timed out after {overallTimeoutMinutes} minutes");
+        exitCode = -1;
+      } catch (AggregateException ae) {
+        foreach (var ex in ae.InnerExceptions) {
+          if (ex is OperationCanceledException) {
+            Console.Error.WriteLine($"Documentation generation timed out after {overallTimeoutMinutes} minutes");
+          } else {
+            Console.Error.WriteLine($"Error: {ex.Message}\n{ex.StackTrace}");
+          }
+        }
+        exitCode = -1;
+      }
+
+      return exitCode;
+    }
+
+    private static Task<int> CreateTask(Configuration config, CancellationTokenSource cts)
+    {
+      return Task.Run(() => {
+        try {
+          GenerateDocumentation.Generate(config);
+          return 0;
+        } catch (Exception e) {
+          Console.Error.WriteLine($"Error during documentation generation: {e.Message}\n{e.StackTrace}");
+          return -1;
+        }
+      }, cts.Token);
     }
   }
 }
