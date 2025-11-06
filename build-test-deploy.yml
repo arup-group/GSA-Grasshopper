@@ -196,8 +196,15 @@ steps:
     $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
     Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
     ..\yak build --platform win
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
+    New-Item -ItemType Directory -Path $(System.DefaultWorkingDirectory)\results\yak
+    Copy-Item $yakCurrentVersName $(System.DefaultWorkingDirectory)\results\yak\$yakCurrentVersName
+    Copy-Item $yakRh7Name $(System.DefaultWorkingDirectory)\results\yak\$yakRh7Name
   displayName: Package yak
+
+- publish: $(System.DefaultWorkingDirectory)\results\yak\
+  displayName: Publish Yak Package to Azure
+  artifact: Yak Package
+  continueOnError: false
 
 - powershell: |
     cd GsaGH
