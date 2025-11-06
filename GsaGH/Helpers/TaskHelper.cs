@@ -21,11 +21,10 @@ namespace GsaGH.Helpers {
     }
 
     public static void ImportAnalysisTask(GsaAnalysisTask task, ref GsaModel model) {
-      int highestCaseId = model.ApiModel.AnalysisCases().Count;
       ReadOnlyDictionary<int, AnalysisTask> existingTasks = model.ApiModel.AnalysisTasks();
       if (task != null && !existingTasks.Keys.Contains(task.Id)) {
         int highestTask = existingTasks.Count;
-        Dictionary<int, AnalysisCase> analysisCases = BuildCustomCases(task, ref highestCaseId);
+        Dictionary<int, AnalysisCase> analysisCases = BuildCustomCases(task);
         if (task.ApiTask != null) {
           if (analysisCases.Count == 0) {
             AddAnalysisTask(task, model);
@@ -42,15 +41,16 @@ namespace GsaGH.Helpers {
       ImportAnalysisTask(task, ref gsaModel);
     }
 
-    private static Dictionary<int, AnalysisCase> BuildCustomCases(GsaAnalysisTask task, ref int highestCaseId) {
-      var analysisCases = new Dictionary<int, AnalysisCase>();
-      if (task.Cases != null) {
-        foreach (GsaAnalysisCase analysisCase in task.Cases) {
-          highestCaseId = analysisCase.Id == 0 ? highestCaseId + 1 : analysisCase.Id;
-          analysisCases.Add(highestCaseId, new AnalysisCase(analysisCase.Name, analysisCase.Definition));
-        }
+    private static Dictionary<int, AnalysisCase> BuildCustomCases(GsaAnalysisTask task) {
+      if (task.Cases == null || task.Cases.Count == 0) {
+        return new Dictionary<int, AnalysisCase>();
       }
-      return analysisCases;
+      return task.Cases
+        .Select((c, i) => new { Index = i, Case = c })
+        .ToDictionary(
+          x => x.Index,
+          x => new AnalysisCase(x.Case.Name, x.Case.Definition)
+        );
     }
   }
 }
