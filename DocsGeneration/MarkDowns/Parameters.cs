@@ -7,7 +7,7 @@ using DocsGeneration.MarkDowns.Helpers;
 namespace DocsGeneration.MarkDowns {
   public class Parameters {
     public static void CreateOverview(Dictionary<string, List<Parameter>> parameters, Configuration config) {
-      string filePath = $@"{config.OutputPath}\gsagh-parameters.md";
+      string filePath = $@"{config.OutputPath}\{config.ProjectName.ToLower()}-parameters.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = "# Parameters\n\n";
