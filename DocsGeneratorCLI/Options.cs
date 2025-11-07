@@ -9,7 +9,7 @@ namespace DocsGeneratorCLI {
     public bool UpdateTestReferences { get; set; } = false;
 
     [Option('p', "project",
-      HelpText = "Name of the project to generate documentation for. Currently, only 'GsaGH' is supported.",
+      HelpText = "Name of the project to generate documentation for. Acceptable values GsaGh (Released), AdSecGh (WIP)",
       Required = true)]
     public string ProjectName { get; set; }
   }
