@@ -15,15 +15,21 @@ namespace DocsGeneratorCLI {
     public GsaGhProject(string projectName) {
       Assembly = GsaGhDll.LoadGhAndPassAssembly(projectName);
 
-      SetupResultNotes();
-      SetBetaValue();
-      SetXmlDocumentation();
+      SetupResultNotes(projectName);
+      SetBetaValue(projectName);
+      SetXmlDocumentation(projectName);
     }
 
-    public void SetBetaValue() {
-      Type type = Assembly.GetType("GsaGH.GsaGhInfo");
-      bool isBeta = type.GetProperties(BindingFlags.Static | BindingFlags.Public)
-       .Where(field => field.PropertyType == typeof(bool) && field.Name == "IsBeta")
+    public void SetBetaValue(string projectName) {
+      Type type = Assembly.GetType($"{projectName}.{projectName}Info");
+      var properties = type.GetProperties(BindingFlags.Static | BindingFlags.Public);
+      if (properties == null || properties.Length == 0) {
+        Console.WriteLine($"Warning no properties found on {projectName}Info, setting IsBeta to true");
+        IsBeta = true;
+        return;
+      }
+
+      bool isBeta = properties.Where(field => field.PropertyType == typeof(bool) && field.Name == "IsBeta")
        .Select(field => (bool)field.GetValue(null)).First();
       IsBeta = isBeta;
     }
@@ -32,17 +38,18 @@ namespace DocsGeneratorCLI {
     ///   Initializes and sets the result notes by retrieving static string fields from the
     ///   'ResultNotes' type within the loaded assembly. It excludes fields with "Assembly" in their name.
     /// </summary>
+    /// <param name="projectName"></param>
     /// <exception cref="InvalidOperationException">Thrown if the assembly is not loaded.</exception>
     /// <remarks>
     ///   If the 'ResultNotes' type is not found in the assembly, a warning is logged, and the method execution is halted.
     /// </remarks>
-    public void SetupResultNotes() {
+    public void SetupResultNotes(string projectName) {
       if (Assembly == null) {
         throw new InvalidOperationException("Assembly not loaded.");
       }
 
       Console.WriteLine("Setting up result notes...");
-      Type resultNotesType = Assembly.GetType("GsaGH.Components.Helpers.ResultNotes");
+      Type resultNotesType = Assembly.GetType($"{projectName}.jComponents.Helpers.ResultNotes");
       if (resultNotesType == null) {
         Console.WriteLine("Warning: ResultNotes type not found in assembly.");
         return;
@@ -79,7 +86,8 @@ namespace DocsGeneratorCLI {
           throw new InvalidOperationException($"Field '{name}' not found in the assembly.")).ToList();
     }
 
-    public void SetXmlDocumentation() {
+    // TODO: update for adsecgh
+    public void SetXmlDocumentation(string projectName) {
       XmlDoc = GsaGhDll.GsaGhXml;
     }
   }

@@ -60,6 +60,7 @@ namespace DocsGeneration {
   public struct Configuration {
     public bool GenerateE2ETestData { get; set; }
     public string OutputPath { get; set; }
+    public string ProjectName { get; set; }
     public Assembly Assembly { get; set; }
     public List<string> ResultNotes { get; set; }
     public bool IsBeta { get; set; }

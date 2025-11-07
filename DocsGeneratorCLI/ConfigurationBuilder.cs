@@ -15,6 +15,7 @@ namespace DocsGeneratorCLI {
       var projectTarget = new GsaGhProject(args.ProjectName);
 
       return new Configuration {
+        ProjectName = args.ProjectName,
         Assembly = projectTarget.Assembly,
         ResultNotes = projectTarget.Notes.ToList(),
         XmlDocument = projectTarget.XmlDoc,
