@@ -11,14 +11,14 @@ namespace DocsGeneration.MarkDowns.Helpers {
     public static string iconPath = "./images/";
     public static List<string> iconNames = new List<string>();
 
-    public static string CreateMarkDownFileName(Parameter parameter, string outputPath) {
-      string fileLink = CreateFileName(parameter.Name, "parameter");
-      return $@"{outputPath}\{fileLink}.md";
+    public static string CreateMarkDownFileName(Parameter parameter, Configuration config) {
+      string fileLink = CreateFileName(parameter.Name, "parameter", config.ProjectName);
+      return $@"{config.OutputPath}\{fileLink}.md";
     }
 
-    public static string CreateMarkDownFileName(Component component, string outputPath) {
-      string fileLink = CreateFileName(component.Name, "component");
-      return $@"{outputPath}\{fileLink}.md";
+    public static string CreateMarkDownFileName(Component component, Configuration config) {
+      string fileLink = CreateFileName(component.Name, "component", config.ProjectName);
+      return $@"{config.OutputPath}\{fileLink}.md";
     }
 
     public static string CreateIconLink(Component component) {
@@ -52,7 +52,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
       Writer.Write($@"{outputPath}\Helper\iconNames.txt", text);
     }
 
-    public static string CreateParameterLink(Parameter parameter, List<string> parameterNames) {
+    public static string CreateParameterLink(Parameter parameter, List<string> parameterNames, Configuration config) {
       string parameterName = parameter.ParameterType;
       parameterName = parameterName.Replace(" (List)", string.Empty);
       parameterName = parameterName.Replace(" (Tree)", string.Empty);
@@ -61,7 +61,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
       string tree = parameter.ParameterType.Contains(" (Tree)") ? " _Tree_" : string.Empty;
 
       if (parameterNames.Contains(parameterName.ToUpper())) {
-        string fileName = CreateFileName(parameterName, "parameter");
+        string fileName = CreateFileName(parameterName, "parameter", config.ProjectName);
 
         parameterName = parameterName.Replace(" 3d", " 3D").Replace(" 2d", " 2D").Replace(" 1d", " 1D");
 
@@ -86,25 +86,25 @@ namespace DocsGeneration.MarkDowns.Helpers {
       return fileLink.TrimStart('/');
     }
 
-    public static string CreatePageLink(Parameter parameter) {
-      string fileName = CreateFileName(parameter);
+    public static string CreatePageLink(Parameter parameter, string projectName) {
+      string fileName = CreateFileName(parameter, projectName);
       return $"[{parameter.Name}]({fileName}.md)";
     }
 
-    public static string CreatePageLink(Component component) {
-      string fileName = CreateFileName(component);
+    public static string CreatePageLink(Component component, Configuration config) {
+      string fileName = CreateFileName(component, config.ProjectName);
       return $"[{component.Name}]({fileName}.md)";
     }
 
-    public static string CreateFileName(Component component) {
-      return CreateFileName(component.Name, "component");
+    public static string CreateFileName(Component component, string projectName) {
+      return CreateFileName(component.Name, "component", projectName);
     }
 
-    public static string CreateFileName(Parameter parameter) {
-      return CreateFileName(parameter.Name, "parameter");
+    public static string CreateFileName(Parameter parameter, string projectName) {
+      return CreateFileName(parameter.Name, "parameter", projectName);
     }
 
-    internal static string CreateFileName(string name, string postfix, string prefix = "gsagh") {
+    internal static string CreateFileName(string name, string postfix, string prefix) {
       string spacer = "-";
       return $"{prefix.ToLower()}{spacer}" + $"{name.Replace(" ", "-").ToLower()}{spacer}" + $"{postfix.ToLower()}";
     }

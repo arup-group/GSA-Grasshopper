@@ -32,8 +32,8 @@ namespace DocsGeneration.MarkDowns.Helpers {
       return $"_{text}_";
     }
 
-    public static string SummaryDescription(string str) {
-      string markdown = ConvertSummaryToMarkup(str);
+    public static string SummaryDescription(string str, Configuration config) {
+      string markdown = ConvertSummaryToMarkup(str, config);
       return $"## Description\n\n{markdown}\n\n";
     }
 
@@ -114,7 +114,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
         || word.StartsWith("u");
     }
 
-    private static string ConvertSummaryToMarkup(string str) {
+    private static string ConvertSummaryToMarkup(string str, Configuration config) {
       str = str.Replace("</para>", "\n\n").Replace("<para>", string.Empty);
       str = str.Replace("IGsaLoad", "GsaLoad");
       str = str.Replace("IGsaResult", "GsaResult");
@@ -159,7 +159,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
               reference = reference.Replace("T:", string.Empty).Replace("\"", string.Empty).Replace(" ", string.Empty);
               ;
               string[] typeSplit = reference.Split('.');
-              string markdownLink = SortReference(typeSplit[0], typeSplit[1], typeSplit.Last());
+              string markdownLink = SortReference(typeSplit[0], typeSplit[1], typeSplit.Last(), config);
               markdownLink = markdownLink.Replace(" 3d", " 3D").Replace(" 2d", " 2D").Replace(" 1d", " 1D");
               str += markdownLink;
               if (refAndRest.Length > 1) {
@@ -212,7 +212,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
       return str;
     }
 
-    private static string SortReference(string nameSpace, string type, string name) {
+    private static string SortReference(string nameSpace, string type, string name, Configuration config) {
       switch (nameSpace) {
         case "GsaAPI":
           string apiLink = "https://docs.oasys-software.com/structural/gsa/references/dotnet-api/data-classes.html#"
@@ -227,7 +227,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
 
         case "GsaGH":
           name = name.Replace("Gsa", string.Empty);
-          string link = FileHelper.CreateFileName(FileHelper.SplitCamelCase(name, "-"), type.TrimEnd('s'));
+          string link = FileHelper.CreateFileName(FileHelper.SplitCamelCase(name, "-"), type.TrimEnd('s'), config.ProjectName);
           name = FileHelper.SplitCamelCase(name, " ");
           return $"[{name}]({link}.md)";
       }

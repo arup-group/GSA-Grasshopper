@@ -39,7 +39,7 @@ namespace DocsGeneration.MarkDowns {
         foreach (Parameter parameter in parameters[header]) {
           table.AddRow(new List<string>(){
             FileHelper.CreateIconLink(parameter),
-            FileHelper.CreatePageLink(parameter),
+            FileHelper.CreatePageLink(parameter, config.ProjectName),
             parameter.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty)
           });
         }
@@ -61,7 +61,7 @@ namespace DocsGeneration.MarkDowns {
     }
 
     private static void CreateParameter(Parameter parameter, List<string> parameterNames, Configuration config) {
-      string filePath = FileHelper.CreateMarkDownFileName(parameter, config.OutputPath);
+      string filePath = FileHelper.CreateMarkDownFileName(parameter, config);
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {parameter.Name}\n\n";
@@ -85,7 +85,7 @@ namespace DocsGeneration.MarkDowns {
           "*(c) Giles Rocholl / Arup*");
       }
 
-      text += StringHelper.SummaryDescription(parameter.Summary);
+      text += StringHelper.SummaryDescription(parameter.Summary, config);
 
       if (parameter.Properties != null && parameter.Properties.Count != 0) {
         var headers = new List<string>() {
@@ -106,7 +106,7 @@ namespace DocsGeneration.MarkDowns {
         foreach (Parameter property in parameter.Properties) {
           table.AddRow(new List<string>() {
             FileHelper.CreateIconLink(property),
-            FileHelper.CreateParameterLink(property, parameterNames),
+            FileHelper.CreateParameterLink(property, parameterNames, config),
             StringHelper.MakeBold(property.Name),
             property.Description,
          });
@@ -115,7 +115,7 @@ namespace DocsGeneration.MarkDowns {
         text += table.Finalise();
 
         if (parameter.PropertiesComponent != null) {
-          string link = FileHelper.CreatePageLink(parameter.PropertiesComponent);
+          string link = FileHelper.CreatePageLink(parameter.PropertiesComponent, config);
           string note = $"Note: the above properties can be retrieved using the {link} component";
           text += StringHelper.MakeItalic(note);
         }

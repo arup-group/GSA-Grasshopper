@@ -11,7 +11,7 @@ namespace DocsGeneration.MarkDowns {
   public class Components {
     public static void CreateOverview(
       Dictionary<string, List<Component>> components, List<Parameter> parameters, Configuration config) {
-      CreateComponentOverview(components.Keys.ToList(), config.IsBeta, config.OutputPath);
+      CreateComponentOverview(components.Keys.ToList(), config);
 
       var parameterNames = new List<string>();
       foreach (Parameter parameter in parameters) {
@@ -19,7 +19,7 @@ namespace DocsGeneration.MarkDowns {
       }
 
       foreach (KeyValuePair<string, List<Component>> kvp in components) {
-        CreateComponentOverview(kvp.Key, kvp.Value, parameterNames, config.OutputPath);
+        CreateComponentOverview(kvp.Key, kvp.Value, parameterNames, config);
       }
     }
 
@@ -35,7 +35,7 @@ namespace DocsGeneration.MarkDowns {
     }
 
     private static void CreateComponent(Component component, List<string> parmeterNames, Configuration config) {
-      string filePath = FileHelper.CreateMarkDownFileName(component, config.OutputPath);
+      string filePath = FileHelper.CreateMarkDownFileName(component, config);
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {component.Name}\n\n";
@@ -93,7 +93,7 @@ namespace DocsGeneration.MarkDowns {
         foreach (Parameter property in component.Inputs) {
           table.AddRow(new List<string>() {
             FileHelper.CreateIconLink(property),
-            FileHelper.CreateParameterLink(property, parmeterNames),
+            FileHelper.CreateParameterLink(property, parmeterNames, config),
             StringHelper.MakeBold(property.Name),
             property.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty),
          });
@@ -112,7 +112,7 @@ namespace DocsGeneration.MarkDowns {
 
           table.AddRow(new List<string>() {
             FileHelper.CreateIconLink(property),
-            FileHelper.CreateParameterLink(property, parmeterNames),
+            FileHelper.CreateParameterLink(property, parmeterNames, config),
             StringHelper.MakeBold(property.Name),
             description,
           });
@@ -143,28 +143,29 @@ namespace DocsGeneration.MarkDowns {
       return noteOut;
     }
 
-    private static void CreateComponentOverview(List<string> categories, bool isBeta, string OutputPath) {
-      string filePath = $@"{OutputPath}\gsagh-components.md";
+    private static void CreateComponentOverview(List<string> categories, Configuration config) {
+      string lowerCaseName = config.ProjectName.ToLower();
+      string filePath = $@"{config.OutputPath}\{lowerCaseName}-components.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = "# Components\n\n";
-      if (isBeta) {
+      if (config.IsBeta) {
         text += StringHelper.AddBetaWarning();
         text += "\n";
       }
 
-      text += "![GsaGH-Ribbon](./images/RibbonLayout.gif)\n\n";
+      text += $"![{config.ProjectName}-Ribbon](./images/RibbonLayout.gif)\n\n";
 
       foreach (string category in categories) {
-        text += $"[{category} components](gsagh-{category.ToLower()}-components-overview.md)\n\n";
+        text += $"[{category} components]({lowerCaseName}-{category.ToLower()}-components-overview.md)\n\n";
       }
 
       Writer.Write(filePath, text);
     }
 
     private static void CreateComponentOverview(
-      string category, List<Component> components, List<string> parameterNames, string outputPath) {
-      string filePath = $@"{outputPath}\gsagh-{category.ToLower()}-components-overview.md";
+      string category, List<Component> components, List<string> parameterNames, Configuration config) {
+      string filePath = $@"{config.OutputPath}\{config.ProjectName.ToLower()}-{category.ToLower()}-components-overview.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {category} components \n\n";
@@ -200,7 +201,7 @@ namespace DocsGeneration.MarkDowns {
 
           table.AddRow(new List<string>(){
             FileHelper.CreateIconLink(component),
-            FileHelper.CreatePageLink(component),
+            FileHelper.CreatePageLink(component, config),
             StringHelper.ComponentDescription(component.Description, parameterNames)
           });
         }
