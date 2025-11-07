@@ -10,7 +10,7 @@ namespace DocsGeneratorCLI {
     private static GrasshopperFixture _grasshopperFixture;
     public static XmlDocument GsaGhXml { get; private set; }
 
-    public static Assembly Load(string gsaGhName) {
+    public static Assembly LoadGhAndPassAssembly(string gsaGhName) {
       Console.WriteLine($"==> [{gsaGhName}] Start loading...");
 
       Console.WriteLine("Loading Rhino/Grasshopper fixture");

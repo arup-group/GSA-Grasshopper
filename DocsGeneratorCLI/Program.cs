@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,19 +10,23 @@ using DocsGeneration;
 
 namespace DocsGeneratorCLI {
   public static class Program {
+
     private static int Main(string[] args) {
       Console.WriteLine("Documentation Generator, based on code!");
       int exitCode = 1;
-      
+
       try {
         Parser.Default.ParseArguments<Options>(args).WithParsed(o => {
           var config = ConfigurationBuilder.BuildConfiguration(o);
-          
-          // Set overall timeout for the entire documentation generation process
-          const int overallTimeoutMinutes = 30;
+          const int overallTimeoutMinutes = 2; // Set overall timeout to 2 minutes
           using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(overallTimeoutMinutes))) {
             var task = CreateTask(config, cts);
             exitCode = RunTask(task, overallTimeoutMinutes);
+            if (o.UpdateTestReferences) {
+              Console.WriteLine("Copying generated files to E2E test references...");
+              var referencePath = ConfigurationBuilder.GetTestReferencePath(o.ProjectName);
+              CopyDirectory(o.Output, referencePath);
+            }
           }
         });
       } finally {
@@ -30,7 +36,7 @@ namespace DocsGeneratorCLI {
         } catch (Exception ex) {
           Console.Error.WriteLine($"Error during cleanup: {ex.Message}");
         }
-        
+
         // Ensure all console output is flushed before exiting
         Console.Out.Flush();
         Console.Error.Flush();
@@ -39,8 +45,22 @@ namespace DocsGeneratorCLI {
       return exitCode;
     }
 
-    private static int RunTask(Task<int> task, int overallTimeoutMinutes)
-    {
+    public static void CopyDirectory(string sourceDir, string destinationDir) {
+      var dir = new DirectoryInfo(sourceDir);
+      if (!dir.Exists) {
+        throw new DirectoryNotFoundException($"Source directory not found: {sourceDir}");
+      }
+
+      DirectoryInfo[] dirs = dir.GetDirectories();
+      Directory.CreateDirectory(destinationDir);
+
+      foreach (FileInfo file in dir.GetFiles()) {
+        string targetFilePath = Path.Combine(destinationDir, file.Name);
+        file.CopyTo(targetFilePath, true);
+      }
+    }
+
+    private static int RunTask(Task<int> task, int overallTimeoutMinutes) {
       int exitCode;
       try {
         task.Wait();
@@ -56,14 +76,14 @@ namespace DocsGeneratorCLI {
             Console.Error.WriteLine($"Error: {ex.Message}\n{ex.StackTrace}");
           }
         }
+
         exitCode = -1;
       }
 
       return exitCode;
     }
 
-    private static Task<int> CreateTask(Configuration config, CancellationTokenSource cts)
-    {
+    private static Task<int> CreateTask(Configuration config, CancellationTokenSource cts) {
       return Task.Run(() => {
         try {
           GenerateDocumentation.Generate(config);

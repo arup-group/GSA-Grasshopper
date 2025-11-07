@@ -14,24 +14,21 @@ namespace DocsGeneratorCLI {
       }
 
       var projectTarget = new GsaGhProject(args.ProjectName);
-      string outputPath = ResolveOutputPath(args);
 
       return new Configuration {
         Assembly = projectTarget.Assembly,
         ResultNotes = projectTarget.Notes.ToList(),
         XmlDocument = projectTarget.XmlDoc,
-        GenerateE2ETestData = args.GenerateE2ETestData,
+        GenerateE2ETestData = args.UpdateTestReferences,
         IsBeta = projectTarget.IsBeta,
-        CustomOutputPath = outputPath,
+        OutputPath = args.Output,
       };
     }
 
-    private static string ResolveOutputPath(Options args) {
-      string testPath = Path.Combine(GetGsaGrasshopperRoot(), "DocsGeneration.E2ETests", "TestReferences",
-        args.ProjectName);
-      string customOutputPath = !string.IsNullOrWhiteSpace(args.CustomOutputPath) ? args.CustomOutputPath : "Output";
-
-      return args.GenerateE2ETestData ? testPath : customOutputPath;
+    public static string GetTestReferencePath(string projectName)
+    {
+      return Path.Combine(GetGsaGrasshopperRoot(), "DocsGeneration.E2ETests", "TestReferences",
+        projectName);
     }
 
     private static string GetGsaGrasshopperRoot() {

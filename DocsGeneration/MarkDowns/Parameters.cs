@@ -7,7 +7,7 @@ using DocsGeneration.MarkDowns.Helpers;
 namespace DocsGeneration.MarkDowns {
   public class Parameters {
     public static void CreateOverview(Dictionary<string, List<Parameter>> parameters, Configuration config) {
-      string filePath = $@"{PathUtils.OutputPath}\gsagh-parameters.md";
+      string filePath = $@"{config.OutputPath}\gsagh-parameters.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = "# Parameters\n\n";
@@ -56,16 +56,16 @@ namespace DocsGeneration.MarkDowns {
       }
 
       foreach (Parameter parameter in parameters) {
-        CreateParameter(parameter, parameterNames, config.IsBeta);
+        CreateParameter(parameter, parameterNames, config);
       }
     }
 
-    private static void CreateParameter(Parameter parameter, List<string> parmeterNames, bool isBeta) {
-      string filePath = FileHelper.CreateMarkDownFileName(parameter);
+    private static void CreateParameter(Parameter parameter, List<string> parameterNames, Configuration config) {
+      string filePath = FileHelper.CreateMarkDownFileName(parameter, config.OutputPath);
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {parameter.Name}\n\n";
-      text += isBeta ? StringHelper.AddBetaWarning() : string.Empty;
+      text += config.IsBeta ? StringHelper.AddBetaWarning() : string.Empty;
 
       var iconHeaders = new List<string>() {
         "Icon"
@@ -106,7 +106,7 @@ namespace DocsGeneration.MarkDowns {
         foreach (Parameter property in parameter.Properties) {
           table.AddRow(new List<string>() {
             FileHelper.CreateIconLink(property),
-            FileHelper.CreateParameterLink(property, parmeterNames),
+            FileHelper.CreateParameterLink(property, parameterNames),
             StringHelper.MakeBold(property.Name),
             property.Description,
          });

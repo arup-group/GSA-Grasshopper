@@ -13,7 +13,7 @@ namespace DocsGeneratorCLI {
     public XmlDocument XmlDoc { get; protected set; }
 
     public GsaGhProject(string projectName) {
-      Assembly = GsaGhDll.Load(projectName);
+      Assembly = GsaGhDll.LoadGhAndPassAssembly(projectName);
 
       SetupResultNotes();
       SetBetaValue();

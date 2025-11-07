@@ -28,8 +28,8 @@ namespace DocsGeneration {
         Parameters.CreateOverview(sortedParameters, config);
 
         // write sidebar
-        SideBar.CreateSideBar(sortedComponents, sortedParameters);
-        FileHelper.WriteIconNames();
+        SideBar.CreateSideBar(sortedComponents, sortedParameters, config);
+        FileHelper.WriteIconNames(config.OutputPath);
         return 0;
       } catch (Exception e) {
         Console.WriteLine($"Failed to generate documentation.\nStackTrace: {e.StackTrace}");
@@ -40,7 +40,7 @@ namespace DocsGeneration {
 
   public struct Configuration {
     public bool GenerateE2ETestData { get; set; }
-    public string CustomOutputPath { get; set; }
+    public string OutputPath { get; set; }
     public Assembly Assembly { get; set; }
     public List<string> ResultNotes { get; set; }
     public bool IsBeta { get; set; }

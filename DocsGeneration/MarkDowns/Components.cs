@@ -11,7 +11,7 @@ namespace DocsGeneration.MarkDowns {
   public class Components {
     public static void CreateOverview(
       Dictionary<string, List<Component>> components, List<Parameter> parameters, Configuration config) {
-      CreateComponentOverview(components.Keys.ToList(), config.IsBeta);
+      CreateComponentOverview(components.Keys.ToList(), config.IsBeta, config.OutputPath);
 
       var parameterNames = new List<string>();
       foreach (Parameter parameter in parameters) {
@@ -19,7 +19,7 @@ namespace DocsGeneration.MarkDowns {
       }
 
       foreach (KeyValuePair<string, List<Component>> kvp in components) {
-        CreateComponentOverview(kvp.Key, kvp.Value, parameterNames);
+        CreateComponentOverview(kvp.Key, kvp.Value, parameterNames, config.OutputPath);
       }
     }
 
@@ -35,7 +35,7 @@ namespace DocsGeneration.MarkDowns {
     }
 
     private static void CreateComponent(Component component, List<string> parmeterNames, Configuration config) {
-      string filePath = FileHelper.CreateMarkDownFileName(component);
+      string filePath = FileHelper.CreateMarkDownFileName(component, config.OutputPath);
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {component.Name}\n\n";
@@ -143,8 +143,8 @@ namespace DocsGeneration.MarkDowns {
       return noteOut;
     }
 
-    private static void CreateComponentOverview(List<string> categories, bool isBeta) {
-      string filePath = $@"{PathUtils.OutputPath}\gsagh-components.md";
+    private static void CreateComponentOverview(List<string> categories, bool isBeta, string OutputPath) {
+      string filePath = $@"{OutputPath}\gsagh-components.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = "# Components\n\n";
@@ -163,8 +163,8 @@ namespace DocsGeneration.MarkDowns {
     }
 
     private static void CreateComponentOverview(
-      string category, List<Component> components, List<string> parameterNames) {
-      string filePath = $@"{PathUtils.OutputPath}\gsagh-{category.ToLower()}-components-overview.md";
+      string category, List<Component> components, List<string> parameterNames, string outputPath) {
+      string filePath = $@"{outputPath}\gsagh-{category.ToLower()}-components-overview.md";
       Console.WriteLine($"Writing {filePath}");
 
       string text = $"# {category} components \n\n";

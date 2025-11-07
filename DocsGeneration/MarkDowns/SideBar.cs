@@ -11,7 +11,7 @@ namespace DocsGeneration.MarkDowns {
 
     public static void CreateSideBar(
       Dictionary<string, List<Component>> components,
-      Dictionary<string, List<Parameter>> parameters) {
+      Dictionary<string, List<Parameter>> parameters, Configuration config) {
       Console.WriteLine($"Writing sidebar");
       // intro
       string sb = "/*\n --- Start of auto-generated text --- \n" +
@@ -34,7 +34,7 @@ namespace DocsGeneration.MarkDowns {
       ind += 2;
       foreach (string key in parameters.Keys) {
         foreach (Parameter parameter in parameters[key]) {
-          string file = FileHelper.CreateSideBarFileName(parameter);
+          string file = FileHelper.CreateSideBarFileName(FileHelper.CreateFileName(parameter));
           sb += AddLine(ind, $"'{page}{file}',");
         }
       }
@@ -69,7 +69,7 @@ namespace DocsGeneration.MarkDowns {
               continue;
             }
 
-            string file = FileHelper.CreateSideBarFileName(component);
+            string file = FileHelper.CreateSideBarFileName(FileHelper.CreateFileName(component));
             sb += AddLine(ind, $"'{page}{file}',");
           }
         }
@@ -92,7 +92,7 @@ namespace DocsGeneration.MarkDowns {
 
       sb += "/*\n--- End of auto-generated text ---\n*/\n";
 
-      string filePath = $@"{PathUtils.OutputPath}\Helper\sidebar-gsagh.js";
+      string filePath = $@"{config.OutputPath}\Helper\sidebar-gsagh.js";
       string directory = Path.GetDirectoryName(filePath);
       if (!Directory.Exists(directory)) {
         Directory.CreateDirectory(directory);

@@ -11,24 +11,23 @@ namespace DocsGeneration.MarkDowns.Helpers {
     public static string iconPath = "./images/";
     public static List<string> iconNames = new List<string>();
 
-    public static string CreateMarkDownFileName(Parameter parameter) {
-      string fileLink = CreateFileName(parameter);
-      return $@"{PathUtils.OutputPath}\{fileLink}.md";
+    public static string CreateMarkDownFileName(Parameter parameter, string outputPath) {
+      string fileLink = CreateFileName(parameter.Name, "parameter");
+      return $@"{outputPath}\{fileLink}.md";
     }
-    public static string CreateMarkDownFileName(Component component) {
-      string fileLink = CreateFileName(component);
-      return $@"{PathUtils.OutputPath}\{fileLink}.md";
+
+    public static string CreateMarkDownFileName(Component component, string outputPath) {
+      string fileLink = CreateFileName(component.Name, "component");
+      return $@"{outputPath}\{fileLink}.md";
     }
 
     public static string CreateIconLink(Component component) {
-      string name = component.Name
-          .Replace("3D", "3d")
-          .Replace("2D", "2d")
-          .Replace("1D", "1d");
+      string name = component.Name.Replace("3D", "3d").Replace("2D", "2d").Replace("1D", "1d");
       name = name.ToPascalCase();
       iconNames.Add(name);
       return $"![{component.Name}]({iconPath}{name}.png)";
     }
+
     public static string CreateIconLink(Parameter parameter) {
       if (parameter.ParameterType.StartsWith("UnitNumber")) {
         iconNames.Add("UnitParam");
@@ -41,15 +40,16 @@ namespace DocsGeneration.MarkDowns.Helpers {
       if (name.Contains("LoadValue") && name.Contains("kN,kN/m,kN/m²")) {
         name = "Load";
       }
+
       name = $"{name}Param";
       iconNames.Add(name);
       // ![Material](./images/gsagh/MaterialParam.png)
       return $"![{name}]({iconPath}{name}.png)";
     }
 
-    public static void WriteIconNames() {
+    public static void WriteIconNames(string outputPath) {
       string text = string.Join("\r\n", iconNames.Distinct().OrderBy(x => x));
-      Writer.Write($@"{PathUtils.OutputPath}\Helper\iconNames.txt", text);
+      Writer.Write($@"{outputPath}\Helper\iconNames.txt", text);
     }
 
     public static string CreateParameterLink(Parameter parameter, List<string> parameterNames) {
@@ -63,10 +63,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
       if (parameterNames.Contains(parameterName.ToUpper())) {
         string fileName = CreateFileName(parameterName, "parameter");
 
-        parameterName = parameterName
-          .Replace(" 3d", " 3D")
-          .Replace(" 2d", " 2D")
-          .Replace(" 1d", " 1D");
+        parameterName = parameterName.Replace(" 3d", " 3D").Replace(" 2d", " 2D").Replace(" 1d", " 1D");
 
         return $"[{parameterName}]({fileName}.md)" + list + tree;
       }
@@ -84,14 +81,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
       return parameterName + list + tree;
     }
 
-    public static string CreateSideBarFileName(Component component) {
-      return CreateSideBarFileName(CreateFileName(component));
-    }
-    public static string CreateSideBarFileName(Parameter parameter) {
-      return CreateSideBarFileName(CreateFileName(parameter));
-    }
-
-    private static string CreateSideBarFileName(string fileLink) {
+    public static string CreateSideBarFileName(string fileLink) {
       fileLink = fileLink.Replace(@"\", "/");
       return fileLink.TrimStart('/');
     }
@@ -100,23 +90,23 @@ namespace DocsGeneration.MarkDowns.Helpers {
       string fileName = CreateFileName(parameter);
       return $"[{parameter.Name}]({fileName}.md)";
     }
+
     public static string CreatePageLink(Component component) {
       string fileName = CreateFileName(component);
       return $"[{component.Name}]({fileName}.md)";
     }
 
-    private static string CreateFileName(Component component) {
+    public static string CreateFileName(Component component) {
       return CreateFileName(component.Name, "component");
     }
-    private static string CreateFileName(Parameter parameter) {
+
+    public static string CreateFileName(Parameter parameter) {
       return CreateFileName(parameter.Name, "parameter");
     }
+
     internal static string CreateFileName(string name, string postfix, string prefix = "gsagh") {
       string spacer = "-";
-      return
-        $"{prefix.ToLower()}{spacer}" +
-        $"{name.Replace(" ", "-").ToLower()}{spacer}" +
-        $"{postfix.ToLower()}";
+      return $"{prefix.ToLower()}{spacer}" + $"{name.Replace(" ", "-").ToLower()}{spacer}" + $"{postfix.ToLower()}";
     }
 
     internal static string SplitCamelCase(string s, string spacer) {
@@ -124,8 +114,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
       var r = new Regex(@"
         (?<=[A-Z])(?=[A-Z][a-z]) |
         (?<=[^A-Z])(?=[A-Z]) |
-        (?<=[A-Za-z])(?=[^A-Za-z])",
-        RegexOptions.IgnorePatternWhitespace);
+        (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
       return r.Replace(s, spacer).Replace("Bool 6", "Bool6");
     }
   }
