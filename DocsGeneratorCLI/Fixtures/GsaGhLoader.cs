@@ -7,15 +7,14 @@ using System.Xml;
 namespace DocsGeneratorCLI {
   public static class GsaGhDll {
     private static string PluginPath;
+    private static GrasshopperFixture _grasshopperFixture;
     public static XmlDocument GsaGhXml { get; private set; }
 
     public static Assembly Load(string gsaGhName) {
       Console.WriteLine($"==> [{gsaGhName}] Start loading...");
 
       Console.WriteLine("Loading Rhino/Grasshopper fixture");
-#pragma warning disable S1481 // Unused local variables should be removed
-      var grasshopper = new GrasshopperFixture("GsaGh");
-#pragma warning restore S1481 // Unused local variables should be removed
+      _grasshopperFixture = new GrasshopperFixture("GsaGh");
 
       PluginPath = GetPluginDirectory();
       string dllPath = TryFindDll(gsaGhName) ?? TryBuildAndFindDll(gsaGhName);
@@ -32,6 +31,11 @@ namespace DocsGeneratorCLI {
 
       Console.WriteLine($"Finished loading {gsaGhName}");
       return GsaGH;
+    }
+
+    public static void Cleanup() {
+      _grasshopperFixture?.Dispose();
+      _grasshopperFixture = null;
     }
 
     // === Submethods ===

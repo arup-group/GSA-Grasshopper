@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 using DocsGeneration.Data.Helpers;
 
@@ -17,7 +19,7 @@ namespace DocsGeneration.Data {
     public List<Parameter> Outputs { get; set; } = new List<Parameter>();
 
     public Component(Type type, Configuration config) {
-      var componentObject = (GH_Component)Activator.CreateInstance(type, null);
+      var componentObject = CreateComponentWithTimeout(type);
       Name = componentObject.Name;
       NickName = componentObject.NickName;
       Description = componentObject.Description;
@@ -28,6 +30,34 @@ namespace DocsGeneration.Data {
         .Replace("TaskCapableComponent`1", "DropDownComponent");
       Inputs = GetInputOutputParameters(componentObject.Params.Input, config);
       Outputs = GetInputOutputParameters(componentObject.Params.Output, config);
+    }
+
+    private static GH_Component CreateComponentWithTimeout(Type type) {
+      GH_Component result = null;
+      Exception exception = null;
+      const int timeoutMs = 30000; // 30 seconds timeout
+
+      // Note: Task.Run provides timeout detection but cannot forcibly terminate
+      // truly blocking operations. It allows the main thread to detect timeouts
+      // and continue, preventing the entire process from hanging indefinitely.
+      var task = Task.Run(() => {
+        try {
+          result = (GH_Component)Activator.CreateInstance(type, null);
+        } catch (Exception ex) {
+          exception = ex;
+        }
+      });
+
+      if (!task.Wait(timeoutMs)) {
+        throw new TimeoutException($"Component instantiation timed out for type: {type.Name}. " +
+          "This may indicate an infinite loop or deadlock in the component's constructor.");
+      }
+
+      if (exception != null) {
+        throw new InvalidOperationException($"Failed to create component instance for type: {type.Name}", exception);
+      }
+
+      return result;
     }
 
     public override string ToString() {
@@ -51,8 +81,10 @@ namespace DocsGeneration.Data {
             var comp = new Component(type, config);
             components.Add(comp);
             Console.WriteLine($"Added {comp.Name} component");
-          } catch (Exception) {
-            continue;
+          } catch (TimeoutException ex) {
+            Console.Error.WriteLine($"Timeout creating component {type.Name}: {ex.Message}");
+          } catch (Exception ex) {
+            Console.Error.WriteLine($"Error creating component {type.Name}: {ex.Message}");
           }
         }
       }
