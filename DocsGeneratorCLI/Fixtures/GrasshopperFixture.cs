@@ -85,7 +85,9 @@ namespace DocsGeneratorCLI {
 
       using (StreamWriter writer = File.CreateText(fullPath)) {
         writer.Write(Environment.CurrentDirectory);
-        Console.WriteLine($"GH load directory from: {Environment.CurrentDirectory}");
+        var cliPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        writer.Write(cliPath);
+        Console.WriteLine($"GH load directory from: {Environment.CurrentDirectory} and {cliPath}");
       }
     }
 

@@ -147,7 +147,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandArguments.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="ConfigurationBuilder.cs" />
     <Compile Include="Fixtures\GrasshopperFixture.cs" />
     <Compile Include="Fixtures\GsaGhLoader.cs" />
