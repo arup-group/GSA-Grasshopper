@@ -10,26 +10,26 @@ namespace DocsGeneratorCLI {
     private static GrasshopperFixture _grasshopperFixture;
     public static XmlDocument GsaGhXml { get; private set; }
 
-    public static Assembly LoadGhAndPassAssembly(string gsaGhName) {
-      Console.WriteLine($"==> [{gsaGhName}] Start loading...");
+    public static Assembly LoadGhAndPassAssembly(string projectName) {
+      Console.WriteLine($"==> [{projectName}] Start loading...");
 
       Console.WriteLine("Loading Rhino/Grasshopper fixture");
-      _grasshopperFixture = new GrasshopperFixture("GsaGh");
+      _grasshopperFixture = new GrasshopperFixture(projectName);
 
       PluginPath = GetPluginDirectory();
-      string dllPath = TryFindDll(gsaGhName) ?? TryBuildAndFindDll(gsaGhName);
+      string dllPath = TryFindDll(projectName) ?? TryBuildAndFindDll(projectName);
 
       if (dllPath == null) {
-        Console.WriteLine($"Couldn't find {gsaGhName}.dll");
+        Console.WriteLine($"Couldn't find {projectName}.dll");
         return null;
       }
 
-      UpdateEnvironmentPath(Path.GetDirectoryName(dllPath));
+      // UpdateEnvironmentPath(Path.GetDirectoryName(dllPath));
 
       Assembly GsaGH = LoadAssembly(dllPath);
-      LoadXmlIfExists(dllPath, gsaGhName);
+      LoadXmlIfExists(dllPath, projectName);
 
-      Console.WriteLine($"Finished loading {gsaGhName}");
+      Console.WriteLine($"Finished loading {projectName}");
       return GsaGH;
     }
 
@@ -41,7 +41,7 @@ namespace DocsGeneratorCLI {
     // === Submethods ===
 
     private static string GetPluginDirectory() {
-      return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "";
+      return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
     }
 
     private static string TryFindDll(string gsaGhName) {
@@ -52,8 +52,10 @@ namespace DocsGeneratorCLI {
       };
 
       foreach (string path in searchPaths) {
+        Console.WriteLine($"Looking at path: {path}");
         string full = Path.GetFullPath(path);
         if (!File.Exists(full)) {
+          Console.WriteLine($"Couldn't find {gsaGhName}.dll");
           continue;
         }
 
@@ -154,13 +156,13 @@ namespace DocsGeneratorCLI {
       }
     }
 
-    private static void UpdateEnvironmentPath(string path) {
-      const string name = "PATH";
-      string current = Environment.GetEnvironmentVariable(name) ?? "";
-
-      if (!current.Contains(path)) {
-        Environment.SetEnvironmentVariable(name, current + ";" + path);
-      }
-    }
+    // private static void UpdateEnvironmentPath(string path) {
+    //   const string name = "PATH";
+    //   string current = Environment.GetEnvironmentVariable(name) ?? "";
+    //
+    //   if (!current.Contains(path)) {
+    //     Environment.SetEnvironmentVariable(name, current + ";" + path);
+    //   }
+    // }
   }
 }
