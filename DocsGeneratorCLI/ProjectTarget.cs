@@ -22,16 +22,24 @@ namespace DocsGeneratorCLI {
 
     public void SetBetaValue(string projectName) {
       Type type = Assembly.GetType($"{projectName}.{projectName}Info");
+      if (type == null) {
+        return;
+      }
+
       var properties = type.GetProperties(BindingFlags.Static | BindingFlags.Public);
       if (properties == null || properties.Length == 0) {
-        Console.WriteLine($"Warning no properties found on {projectName}Info, setting IsBeta to true");
-        IsBeta = true;
+        cannotFindBeta(projectName);
         return;
       }
 
       bool isBeta = properties.Where(field => field.PropertyType == typeof(bool) && field.Name == "IsBeta")
        .Select(field => (bool)field.GetValue(null)).First();
       IsBeta = isBeta;
+    }
+
+    private void cannotFindBeta(string projectName) {
+      Console.WriteLine($"Warning no properties found on {projectName}Info, setting IsBeta to true");
+      IsBeta = true;
     }
 
     /// <summary>
