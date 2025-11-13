@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 
+using GH_IO.Serialization;
+
+using Grasshopper.GUI.HTML;
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
@@ -331,7 +334,7 @@ namespace GsaGHTests.Components.Analysis {
     [Fact]
     public void ComponentShouldReportErrorIfFrequenciesAreNotCorrect() {
       SetFrequency(6, 5);
-      Assert.Equal(2,_component.RuntimeMessages(GH_RuntimeMessageLevel.Error).Count);
+      Assert.Equal(2, _component.RuntimeMessages(GH_RuntimeMessageLevel.Error).Count);
     }
 
     [Fact]
@@ -580,5 +583,31 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(ModeCalculationMethod.TargetMassRatio, modaldynamic.ModeCalculationOption());
     }
 
+    public static string GetRandomPath() {
+      return Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".gh");
+    }
+
+    [Fact]
+    public void ShouldSerializeAndDeseialize() {
+      var original = new CreateModalDynamicParameter();
+      original.SetSelected(0, 1);
+      original.SetSelected(1, 1);
+      original.SetSelected(2, 2);
+
+      var doc = new GH_DocumentIO {
+        Document = new GH_Document()
+      };
+      doc.Document.AddObject(original, false);
+      string randomPath = GetRandomPath();
+      doc.SaveQuiet(randomPath);
+      doc.Open(randomPath);
+      var loadedComponent = (CreateModalDynamicParameter)doc.Document.FindComponent(original.InstanceGuid);
+
+      Assert.Equal(original.Params.Count(), loadedComponent.Params.Count());
+      Assert.Equal(original.SelectedItems[0], loadedComponent.SelectedItems[0]);
+      Assert.Equal(original.SelectedItems[1], loadedComponent.SelectedItems[1]);
+      Assert.Equal(original.SelectedItems[2], loadedComponent.SelectedItems[2]);
+
+    }
   }
 }
