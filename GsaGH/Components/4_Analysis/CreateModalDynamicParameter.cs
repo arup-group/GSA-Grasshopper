@@ -268,6 +268,7 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
+      UnregisterParameters();
       int index = 0;
       if (_modeMethod == ModeCalculationMethod.NumberOfMode) {
         CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Modes", NickName = "Md", Description = "Set number of mode", Access = GH_ParamAccess.item, ParamType = new Param_Integer(), Optional = true });
@@ -286,6 +287,12 @@ namespace GsaGH.Components {
       CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Load scale factor", NickName = "LSF", Description = "Set load scale factor", Access = GH_ParamAccess.item, ParamType = new Param_Number(), Optional = true });
       CreateParameter.Create(Params, index++, new InputAttributes() { Name = "Mass scale factor", NickName = "MSF", Description = "Set mass scale factor", Access = GH_ParamAccess.item, ParamType = new Param_Number(), Optional = true });
       CreateParameter.Create(Params, index, new InputAttributes() { Name = "Damping stiffness proportion", NickName = "DSP", Description = "Set model damping stiffness proportion", Access = GH_ParamAccess.item, ParamType = new Param_Number(), Optional = true });
+    }
+
+    protected override void UpdateUIFromSelectedItems() {
+
+      _modeMethod = GetModeStrategy(_selectedItems[0]);
+      base.UpdateUIFromSelectedItems();
     }
 
     protected override void InitialiseDropdowns() {
