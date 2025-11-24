@@ -118,11 +118,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var elem = new GsaElement2d();
+      var elem = new GsaElement2D();
 
       GsaElement2dGoo element2dGoo = null;
       if (da.GetData(0, ref element2dGoo)) {
-        elem = new GsaElement2d(element2dGoo.Value);
+        elem = new GsaElement2D(element2dGoo.Value);
       }
 
       // #### inputs ####

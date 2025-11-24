@@ -39,7 +39,7 @@ namespace GsaGH.Parameters {
     public Mesh Mesh { get; set; }
     public IEnumerable<Line> Outlines { get; set; }
 
-    public Section3dPreview(GsaElement1d elem) {
+    public Section3dPreview(GsaElement1D elem) {
       if (elem.ApiElement == null || !GsaSection.IsValidProfile(elem.Section.ApiSection.Profile)) {
         return;
       }
@@ -48,17 +48,17 @@ namespace GsaGH.Parameters {
       CreateGraphics(model, Layer.Analysis, DimensionType.OneDimensional);
     }
 
-    public Section3dPreview(GsaElement2d elem) {
+    public Section3dPreview(GsaElement2D elem) {
       Model model = AssembleTempModel(elem);
       CreateGraphics(model, Layer.Analysis, DimensionType.TwoDimensional);
     }
 
-    public Section3dPreview(GsaMember1d mem) {
+    public Section3dPreview(GsaMember1D mem) {
       Model model = AssembleTempModel(mem);
       CreateGraphics(model, Layer.Design, DimensionType.OneDimensional);
     }
 
-    public Section3dPreview(GsaMember2d mem) {
+    public Section3dPreview(GsaMember2D mem) {
       Model model = AssembleTempModel(mem);
       CreateGraphics(model, Layer.Design, DimensionType.TwoDimensional);
     }
@@ -154,7 +154,7 @@ namespace GsaGH.Parameters {
       Outlines = lns;
     }
 
-    private static Model AssembleTempModel(GsaElement1d elem) {
+    private static Model AssembleTempModel(GsaElement1D elem) {
       var model = new Model();
       LengthUnit unit = DefaultUnits.LengthUnitGeometry;
       var topo = new List<int> {
@@ -168,7 +168,7 @@ namespace GsaGH.Parameters {
       return model;
     }
 
-    private static Model AssembleTempModel(GsaMember1d mem) {
+    private static Model AssembleTempModel(GsaMember1D mem) {
       var model = new Model();
       LengthUnit unit = DefaultUnits.LengthUnitGeometry;
       string topo = string.Empty;
@@ -184,7 +184,7 @@ namespace GsaGH.Parameters {
       return model;
     }
 
-    private static Model AssembleTempModel(GsaElement2d elem) {
+    private static Model AssembleTempModel(GsaElement2D elem) {
       var model = new Model();
       LengthUnit unit = DefaultUnits.LengthUnitGeometry;
       for (int i = 0; i < elem.ApiElements.Count; i++) {
@@ -206,7 +206,7 @@ namespace GsaGH.Parameters {
       return model;
     }
 
-    private static Model AssembleTempModel(GsaMember2d mem) {
+    private static Model AssembleTempModel(GsaMember2D mem) {
       var model = new Model();
       LengthUnit unit = DefaultUnits.LengthUnitGeometry;
       string topo = string.Empty;

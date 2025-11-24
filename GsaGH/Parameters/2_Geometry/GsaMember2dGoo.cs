@@ -17,15 +17,15 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Goo wrapper class, makes sure <see cref="GsaMember2d" /> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaMember2D" /> can be used in Grasshopper.
   /// </summary>
-  public class GsaMember2dGoo : GH_OasysGeometricGoo<GsaMember2d>, IGH_PreviewData {
+  public class GsaMember2dGoo : GH_OasysGeometricGoo<GsaMember2D>, IGH_PreviewData {
     public static string Description => "GSA 2D Member";
     public static string Name => "Member 2D";
     public static string NickName => "M2D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public GsaMember2dGoo(GsaMember2d item) : base(item) { }
+    public GsaMember2dGoo(GsaMember2D item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Brep))) {
@@ -194,7 +194,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      var mem = new GsaMember2d(Value) {
+      var mem = new GsaMember2D(Value) {
         Id = 0
       };
 
@@ -231,7 +231,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      var mem = new GsaMember2d(Value) {
+      var mem = new GsaMember2D(Value) {
         Id = 0
       };
 

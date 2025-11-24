@@ -24,19 +24,19 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void ComponentReturnValidMaterialTypeForMember() {
-      GsaMember3d output = _helper.GetMemberOutput();
+      GsaMember3D output = _helper.GetMemberOutput();
       Assert.Equal(MatType.Concrete, output.Prop3d.Material.MaterialType);
     }
 
     [Fact]
     public void ComponentReturnValidMeshSizeForMember() {
-      GsaMember3d output = _helper.GetMemberOutput();
+      GsaMember3D output = _helper.GetMemberOutput();
       Assert.Equal(0.5, output.ApiMember.MeshSize);
     }
 
     [Fact]
     public void ComponentReturnValiGroupValueForMember() {
-      GsaMember3d output = _helper.GetMemberOutput();
+      GsaMember3D output = _helper.GetMemberOutput();
       Assert.Equal(1, output.ApiMember.Group);
     }
 
@@ -118,19 +118,19 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void EditMember3dReturnValidMaterialTypeForMember() {
-      GsaMember3d output = _helper.GetMemberOutput();
+      GsaMember3D output = _helper.GetMemberOutput();
       Assert.Equal(MatType.Concrete, output.Prop3d.Material.MaterialType);
     }
 
     [Fact]
     public void EditMember3dReturnValidMeshSizeForMember() {
-      GsaMember3d output = _helper.GetMemberOutput();
+      GsaMember3D output = _helper.GetMemberOutput();
       Assert.Equal(0.7, output.ApiMember.MeshSize);
     }
 
     [Fact]
     public void EditMember3dReturnValiGroupValueForMember() {
-      GsaMember3d output = _helper.GetMemberOutput();
+      GsaMember3D output = _helper.GetMemberOutput();
       Assert.Equal(1, output.ApiMember.Group);
     }
 
@@ -211,7 +211,7 @@ namespace GsaGHTests.Components.Geometry {
       return comp;
     }
 
-    public GsaMember3d GetMemberOutput() {
+    public GsaMember3D GetMemberOutput() {
       return ComponentTestHelper.GetMember3dOutput(_component, 0);
     }
 

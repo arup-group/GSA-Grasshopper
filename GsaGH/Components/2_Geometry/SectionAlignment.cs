@@ -90,10 +90,10 @@ namespace GsaGH.Components {
         return;
       }
 
-      GsaMember1d mem1d = null;
-      GsaElement1d elem1d = null;
-      GsaMember2d mem2d = null;
-      GsaElement2d elem2d = null;
+      GsaMember1D mem1d = null;
+      GsaElement1D elem1d = null;
+      GsaMember2D mem2d = null;
+      GsaElement2D elem2d = null;
 
       bool oneD = true;
 

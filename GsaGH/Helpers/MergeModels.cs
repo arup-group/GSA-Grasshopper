@@ -59,7 +59,7 @@ namespace GsaGH.Helpers {
       }).ToList();
       var elem2ds = elements.Element2ds.Select(n => n.Value).
         OrderByDescending(x => x.Ids.First()).ToList();
-      foreach (GsaElement2d elem2d in elem2ds) {
+      foreach (GsaElement2D elem2d in elem2ds) {
         elem2d.Ids.Select(c => {
           c = 0;
           return c;
@@ -67,7 +67,7 @@ namespace GsaGH.Helpers {
       }
       var elem3ds = elements.Element3ds.Select(n => n.Value).
         OrderByDescending(x => x.Ids.First()).ToList();
-      foreach (GsaElement3d elem3d in elem3ds) {
+      foreach (GsaElement3D elem3d in elem3ds) {
         elem3d.Ids.Select(c => {
           c = 0;
           return c;

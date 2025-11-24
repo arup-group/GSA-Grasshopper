@@ -37,7 +37,7 @@ namespace GsaGH.Parameters {
     protected override GsaElement1dGoo PreferredCast(object data) {
       var ln = new Line();
       if (GH_Convert.ToLine(data, ref ln, GH_Conversion.Both)) {
-        return new GsaElement1dGoo(new GsaElement1d(new LineCurve(ln)));
+        return new GsaElement1dGoo(new GsaElement1D(new LineCurve(ln)));
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Element1d");

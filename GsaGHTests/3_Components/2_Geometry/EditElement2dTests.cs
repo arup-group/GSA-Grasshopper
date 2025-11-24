@@ -75,8 +75,8 @@ namespace GsaGHTests.Components.Geometry {
       var mesh = Mesh.CreateFromPlanarBoundary(CreateElement2dTests.Get2dPolyline(),
         MeshingParameters.DefaultAnalysisMesh, 0.001);
 
-      var fe2dElement = new GsaElement2d(mesh);
-      var fe2dLoadPanel = new GsaElement2d(CreateElement2dTests.Get2dPolyline());
+      var fe2dElement = new GsaElement2D(mesh);
+      var fe2dLoadPanel = new GsaElement2D(CreateElement2dTests.Get2dPolyline());
 
       GH_OasysComponent feComponet = ComponentMother();
 

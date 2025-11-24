@@ -38,7 +38,7 @@ namespace GsaGH.Parameters {
     protected override GsaMember1dGoo PreferredCast(object data) {
       Curve crv = null;
       if (GH_Convert.ToCurve(data, ref crv, GH_Conversion.Both)) {
-        return new GsaMember1dGoo(new GsaMember1d(crv));
+        return new GsaMember1dGoo(new GsaMember1D(crv));
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Member1d");

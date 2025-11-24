@@ -10,7 +10,6 @@ using Grasshopper.Kernel.Data;
 
 using GsaAPI;
 
-using GsaGH.Components;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
@@ -30,7 +29,7 @@ namespace GsaGH.Parameters {
   /// <para>In Grasshopper, an Element2D parameter is a collection of 2D Elements (mesh faces representing <see href="https://docs.oasys-software.com/structural/gsa/references/element-types.html#quad-and-triangle-elements">Quad or Triangle Elements</see>) used for FE analysis. In GSA a 2D element is just a single face, but for Rhino performance reasons we have made the Element2D parameter a mesh that can contain more than one Element/Face.</para>
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   /// </summary>
-  public class GsaElement2d : GsaGeometryBase {
+  public class GsaElement2D : GsaGeometryBase {
     public List<GSAElement> ApiElements { get; internal set; }
     public List<int> Ids { get; set; } = new List<int>();
     public Guid Guid { get; private set; } = Guid.NewGuid();
@@ -49,7 +48,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Empty constructor instantiating a list of new API objects
     /// </summary>
-    public GsaElement2d() {
+    public GsaElement2D() {
       ApiElements = new List<GSAElement>();
     }
 
@@ -57,7 +56,7 @@ namespace GsaGH.Parameters {
     /// Create new instance by casting from a Mesh
     /// </summary>
     /// <param name="mesh"></param>
-    public GsaElement2d(Mesh mesh) {
+    public GsaElement2D(Mesh mesh) {
       Mesh = mesh.DuplicateMesh();
       Mesh.Compact();
       Mesh.Vertices.CombineIdentical(true, false);
@@ -73,7 +72,7 @@ namespace GsaGH.Parameters {
     /// Create new instance by casting from a Polyline
     /// </summary>
     /// <param name="curve"></param>
-    public GsaElement2d(Curve curve) {
+    public GsaElement2D(Curve curve) {
       Curve = curve.DuplicateCurve();
       ApiElements = new List<GSAElement> {
         new GSAElement(new LoadPanelElement()),
@@ -87,7 +86,7 @@ namespace GsaGH.Parameters {
     /// Create a duplicate instance from another instance
     /// </summary>
     /// <param name="other"></param>
-    public GsaElement2d(GsaElement2d other) : base(other.LengthUnit) {
+    public GsaElement2D(GsaElement2D other) : base(other.LengthUnit) {
       Ids = other.Ids;
       Mesh = (Mesh)other.Mesh.DuplicateShallow();
       Curve = other.Curve.DuplicateCurve();
@@ -101,7 +100,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaElement2d(
+    internal GsaElement2D(
       ConcurrentDictionary<int, GSAElement> elements, Mesh mesh, ConcurrentDictionary<int, GsaProperty2d> prop2ds, LengthUnit modelUnit) : base(modelUnit) {
       Mesh = mesh;
       Topology = new Point3dList(mesh.Vertices.ToPoint3dArray());
@@ -116,7 +115,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaElement2d(int id, GSAElement element, Curve curve, GsaProperty2d prop2d, LengthUnit modelUnit) : base(modelUnit) {
+    internal GsaElement2D(int id, GSAElement element, Curve curve, GsaProperty2d prop2d, LengthUnit modelUnit) : base(modelUnit) {
       Curve = curve;
       ApiElements = new List<GSAElement>() { element };
       Topology = RhinoConversions.LoadPanelTopo(curve);

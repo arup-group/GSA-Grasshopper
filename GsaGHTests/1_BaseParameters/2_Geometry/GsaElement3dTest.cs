@@ -15,11 +15,11 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaElement3dTest {
-    private readonly GsaElement3d _element3d;
+    private readonly GsaElement3D _element3d;
 
     public GsaElement3dTest() {
       var mesh = new Mesh();
-      _element3d = new GsaElement3d(mesh);
+      _element3d = new GsaElement3D(mesh);
     }
 
     public static GsaElement3dGoo CreateFromElementsFromMembers() {
@@ -34,9 +34,9 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void DuplicateTest() {
-      GsaElement3d original = CreateFromElementsFromMembers().Value;
+      GsaElement3D original = CreateFromElementsFromMembers().Value;
 
-      var duplicate = new GsaElement3d(original);
+      var duplicate = new GsaElement3D(original);
 
       Duplicates.AreEqual(original, duplicate, new List<string> { "Guid" });
     }

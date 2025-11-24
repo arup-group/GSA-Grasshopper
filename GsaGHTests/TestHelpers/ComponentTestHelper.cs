@@ -243,22 +243,22 @@ namespace GsaGHTests.Helpers {
 
     #region Goos output
 
-    public static GsaElement1d GetElement1dOutput(GH_OasysComponent component, int index) {
+    public static GsaElement1D GetElement1dOutput(GH_OasysComponent component, int index) {
       var element = (GsaElement1dGoo)GetOutput(component, index);
       return element.Value;
     }
 
-    public static GsaMember1d GetMember1dOutput(GH_OasysComponent component, int index) {
+    public static GsaMember1D GetMember1dOutput(GH_OasysComponent component, int index) {
       var member = (GsaMember1dGoo)GetOutput(component, index);
       return member.Value;
     }
 
-    public static GsaMember2d GetMember2dOutput(GH_OasysComponent component, int index) {
+    public static GsaMember2D GetMember2dOutput(GH_OasysComponent component, int index) {
       var member = (GsaMember2dGoo)GetOutput(component, index);
       return member.Value;
     }
 
-    public static GsaMember3d GetMember3dOutput(GH_OasysComponent component, int index) {
+    public static GsaMember3D GetMember3dOutput(GH_OasysComponent component, int index) {
       var member = (GsaMember3dGoo)GetOutput(component, index);
       return member.Value;
     }

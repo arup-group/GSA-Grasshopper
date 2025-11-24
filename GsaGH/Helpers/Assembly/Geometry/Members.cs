@@ -21,7 +21,7 @@ namespace GsaGH.Helpers.Assembly {
       }
     }
 
-    private void ConvertMember1d(GsaMember1d member1d) {
+    private void ConvertMember1d(GsaMember1D member1d) {
       Member apiMember = member1d.DuplicateApiObject();
       apiMember.MeshSize = new Length(member1d.ApiMember.MeshSize, _unit).Meters;
 
@@ -72,18 +72,18 @@ namespace GsaGH.Helpers.Assembly {
       AddMember(member1d.Id, member1d.Guid, apiMember);
     }
 
-    private void ConvertMember1ds(List<GsaMember1d> member1ds) {
+    private void ConvertMember1ds(List<GsaMember1D> member1ds) {
       if (member1ds == null) {
         return;
       }
 
       member1ds = member1ds.OrderByDescending(x => x.Id).ToList();
-      foreach (GsaMember1d member in member1ds.Where(member => member != null)) {
+      foreach (GsaMember1D member in member1ds.Where(member => member != null)) {
         ConvertMember1d(member);
       }
     }
 
-    private void ConvertMember2d(GsaMember2d member2d) {
+    private void ConvertMember2d(GsaMember2D member2d) {
       Member apiMember = member2d.DuplicateApiObject();
       apiMember.MeshSize = new Length(member2d.ApiMember.MeshSize, _unit).Meters;
 
@@ -122,18 +122,18 @@ namespace GsaGH.Helpers.Assembly {
       AddMember(member2d.Id, member2d.Guid, apiMember);
     }
 
-    private void ConvertMember2ds(List<GsaMember2d> member2ds) {
+    private void ConvertMember2ds(List<GsaMember2D> member2ds) {
       if (member2ds == null) {
         return;
       }
 
       member2ds = member2ds.OrderByDescending(x => x.Id).ToList();
-      foreach (GsaMember2d member2d in member2ds.Where(member2d => member2d != null)) {
+      foreach (GsaMember2D member2d in member2ds.Where(member2d => member2d != null)) {
         ConvertMember2d(member2d);
       }
     }
 
-    private void ConvertMember3d(GsaMember3d member3d) {
+    private void ConvertMember3d(GsaMember3D member3d) {
       Member apiMember = member3d.DuplicateApiObject();
       apiMember.MeshSize = new Length(member3d.ApiMember.MeshSize, _unit).Meters;
 
@@ -157,13 +157,13 @@ namespace GsaGH.Helpers.Assembly {
       AddMember(member3d.Id, member3d.Guid, apiMember);
     }
 
-    private void ConvertMember3ds(List<GsaMember3d> member3ds) {
+    private void ConvertMember3ds(List<GsaMember3D> member3ds) {
       if (member3ds == null) {
         return;
       }
 
       member3ds = member3ds.OrderByDescending(x => x.Id).ToList();
-      foreach (GsaMember3d member3d in member3ds.Where(member3d => member3d != null)) {
+      foreach (GsaMember3D member3d in member3ds.Where(member3d => member3d != null)) {
         ConvertMember3d(member3d);
       }
     }

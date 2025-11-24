@@ -32,31 +32,31 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void ComponentReturnValidMemberBrepAreaValue() {
-      GsaMember2d output = _helper.GetMemberOutput();
+      GsaMember2D output = _helper.GetMemberOutput();
       Assert.Equal(100, output.Brep.GetArea());
     }
 
     [Fact]
     public void ComponentReturnPlateTypeForMember() {
-      GsaMember2d output = _helper.GetMemberOutput();
+      GsaMember2D output = _helper.GetMemberOutput();
       Assert.Equal(Property2D_Type.PLATE, output.Prop2d.ApiProp2d.Type);
     }
 
     [Fact]
     public void ComponentReturnValidMemberThickness() {
-      GsaMember2d output = _helper.GetMemberOutput();
+      GsaMember2D output = _helper.GetMemberOutput();
       Assert.Equal(new Length(14, LengthUnit.Inch), output.Prop2d.Thickness);
     }
 
     [Fact]
     public void ComponentReturnValidMemberMeshSize() {
-      GsaMember2d output = _helper.GetMemberOutput();
+      GsaMember2D output = _helper.GetMemberOutput();
       Assert.Equal(0.5, output.ApiMember.MeshSize);
     }
 
     [Fact]
     public void ComponentReturnDefaultMemberGroupValue() {
-      GsaMember2d output = _helper.GetMemberOutput();
+      GsaMember2D output = _helper.GetMemberOutput();
       Assert.Equal(1, output.ApiMember.Group);
     }
 
@@ -206,31 +206,31 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void EditMemberReturnValidMemberBrepAreaValue() {
-      GsaMember2d output = _helper.GetMemberOutput();
+      GsaMember2D output = _helper.GetMemberOutput();
       Assert.Equal(16, output.Brep.GetArea());
     }
 
     [Fact]
     public void EditMemberReturnShellTypeForMember() {
-      GsaMember2d output = _helper.GetMemberOutput();
+      GsaMember2D output = _helper.GetMemberOutput();
       Assert.Equal(Property2D_Type.SHELL, output.Prop2d.ApiProp2d.Type);
     }
 
     [Fact]
     public void EditMemberReturnValidMemberThickness() {
-      GsaMember2d output = _helper.GetMemberOutput();
+      GsaMember2D output = _helper.GetMemberOutput();
       Assert.Equal(new Length(200, LengthUnit.Millimeter), output.Prop2d.Thickness);
     }
 
     [Fact]
     public void EditMemberReturnValidMemberMeshSize() {
-      GsaMember2d output = _helper.GetMemberOutput();
+      GsaMember2D output = _helper.GetMemberOutput();
       Assert.Equal(0.7, output.ApiMember.MeshSize);
     }
 
     [Fact]
     public void EditMemberReturnDefaultMemberGroupValue() {
-      GsaMember2d output = _helper.GetMemberOutput();
+      GsaMember2D output = _helper.GetMemberOutput();
       Assert.Equal(1, output.ApiMember.Group);
     }
 
@@ -369,19 +369,19 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void EditMemberReturnOneElementInInclusionPointsList() {
-      GsaMember2d output = _helper.GetMemberOutput();
+      GsaMember2D output = _helper.GetMemberOutput();
       Assert.Single(output.InclusionPoints);
     }
 
     [Fact]
     public void EditMemberReturnOneElementInInclusionLineList() {
-      GsaMember2d output = _helper.GetMemberOutput();
+      GsaMember2D output = _helper.GetMemberOutput();
       Assert.Single(output.InclusionLines);
     }
 
     [Fact]
     public void EditMemberReturnDefaultGroupValue() {
-      GsaMember2d output = _helper.GetMemberOutput();
+      GsaMember2D output = _helper.GetMemberOutput();
       Assert.Equal(1, output.ApiMember.Group);
     }
 
@@ -490,7 +490,7 @@ namespace GsaGHTests.Components.Geometry {
       return _component;
     }
 
-    public GsaMember2d GetMemberOutput() {
+    public GsaMember2D GetMemberOutput() {
       return ComponentTestHelper.GetMember2dOutput(_component, 0);
     }
 

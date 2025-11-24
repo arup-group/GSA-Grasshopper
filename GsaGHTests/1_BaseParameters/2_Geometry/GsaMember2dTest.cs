@@ -34,7 +34,7 @@ namespace GsaGHTests.Parameters {
       var inclpts = new Point3dList();
       var inclcrvs = new List<Curve>();
 
-      var mem = new GsaMember2d(brep, inclcrvs, inclpts) {
+      var mem = new GsaMember2D(brep, inclcrvs, inclpts) {
         Id = 4,
         Offset = new GsaOffset(0, 0, 0, -0.45),
         Prop2d = new GsaProperty2d(2)
@@ -88,7 +88,7 @@ namespace GsaGHTests.Parameters {
       var line = new LineCurve(new Point3d(1, 2, 0), new Point3d(3, 2, 0));
       inclcrvs.Add(line);
 
-      var original = new GsaMember2d(brep, inclcrvs, inclpts) {
+      var original = new GsaMember2D(brep, inclcrvs, inclpts) {
         Id = 13,
         Offset = new GsaOffset(0.33, 0, 0, 0, LengthUnit.Meter),
         Prop2d = new GsaProperty2d(3)
@@ -100,7 +100,7 @@ namespace GsaGHTests.Parameters {
       original.ApiMember.Type2D = AnalysisOrder.RIGID_DIAPHRAGM;
       original.ApiMember.Type = MemberType.GENERIC_2D;
 
-      var dup = new GsaMember2d(original);
+      var dup = new GsaMember2D(original);
 
       Assert.Equal(original.Brep.Vertices[0].Location.X, dup.Topology[0].X);
       Assert.Equal(original.Brep.Vertices[0].Location.Y, dup.Topology[0].Y);
@@ -184,7 +184,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void CheckBrepShouldBeCalledWhenInputBrepIsInvalid() {
-      Assert.Throws<NullReferenceException>(() => new GsaMember2d(null));
+      Assert.Throws<NullReferenceException>(() => new GsaMember2D(null));
     }
   }
 }

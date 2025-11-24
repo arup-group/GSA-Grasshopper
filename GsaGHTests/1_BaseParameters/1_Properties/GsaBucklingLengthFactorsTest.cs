@@ -15,7 +15,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void AssembleWitMemberTest() {
-      var m1d = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0))) {
+      var m1d = new GsaMember1D(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0))) {
         ApiMember = {
           MomentAmplificationFactorStrongAxis = 1.5,
           MomentAmplificationFactorWeakAxis = 2.5,
@@ -49,7 +49,7 @@ namespace GsaGHTests.Parameters {
     [Theory]
     [InlineData(1, 2, 3)]
     public void ConstructorTest2(double factor1, double factor2, double factor3) {
-      var member = new GsaMember1d {
+      var member = new GsaMember1D {
         ApiMember = {
           MomentAmplificationFactorStrongAxis = factor1,
           MomentAmplificationFactorWeakAxis = factor2,
@@ -67,7 +67,7 @@ namespace GsaGHTests.Parameters {
     [Theory]
     [InlineData(1, 2, 3)]
     public void ConstructorTest3(double factor1, double factor2, double factor3) {
-      var member = new GsaMember1d {
+      var member = new GsaMember1D {
         PolyCurve = new PolyCurve(),
         ApiMember = {
           MomentAmplificationFactorStrongAxis = factor1,
@@ -86,7 +86,7 @@ namespace GsaGHTests.Parameters {
     [Theory]
     [InlineData(1, 2, 3)]
     public void DuplicateTest(double factor1, double factor2, double factor3) {
-      var member = new GsaMember1d {
+      var member = new GsaMember1D {
         ApiMember = {
           MomentAmplificationFactorStrongAxis = factor1,
           MomentAmplificationFactorWeakAxis = factor2,

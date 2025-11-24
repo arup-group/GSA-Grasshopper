@@ -18,7 +18,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void AssembleWithElementTest() {
-      var e1d = new GsaElement1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0))) {
+      var e1d = new GsaElement1D(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0))) {
         ReleaseStart = new GsaBool6(true, false, true, false, true, false),
         ReleaseEnd = new GsaBool6(false, true, false, true, false, true),
       };
@@ -35,7 +35,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void AssembleWitMemberTest() {
-      var m1d = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0))) {
+      var m1d = new GsaMember1D(new LineCurve(new Point3d(0, 0, 0), new Point3d(10, 0, 0))) {
         ReleaseStart = new GsaBool6(true, false, true, false, true, false),
         ReleaseEnd = new GsaBool6(false, true, false, true, false, true),
       };

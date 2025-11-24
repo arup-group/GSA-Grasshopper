@@ -23,7 +23,7 @@ namespace GsaGHTests.Helpers.Import {
     public void ImportElement1dTest() {
       var model = new GsaModel(ImportElementsMotherModel());
       var elements = new Elements(model);
-      GsaElement1d elem = elements.Element1ds.First().Value;
+      GsaElement1D elem = elements.Element1ds.First().Value;
       Assert.Equal("EN 1993-1-1:2005", elem.Section.Material.SteelDesignCodeName);
       Assert.Equal("STD R 800 400", elem.Section.ApiSection.Profile);
       Duplicates.AreEqual(model.Materials.SteelMaterials[1], elem.Section.Material);
@@ -37,7 +37,7 @@ namespace GsaGHTests.Helpers.Import {
     public void ImportElement2dTest() {
       var model = new GsaModel(ImportElementsMotherModel());
       var elements = new Elements(model);
-      GsaElement2d elem = elements.Element2ds.Where(x => x.Value.IsLoadPanel == false).First().Value;
+      GsaElement2D elem = elements.Element2ds.Where(x => x.Value.IsLoadPanel == false).First().Value;
       Assert.Equal("EC2-1-1", elem.Prop2ds[0].Material.ConcreteDesignCodeName);
       Assert.Equal(200, elem.Prop2ds[0].Thickness.Millimeters);
       Duplicates.AreEqual(model.Materials.ConcreteMaterials[1], elem.Prop2ds[0].Material);
@@ -53,7 +53,7 @@ namespace GsaGHTests.Helpers.Import {
     public void ImportLoadPanelTest() {
       var model = new GsaModel(ImportElementsMotherModel());
       var elements = new Elements(model);
-      GsaElement2d elem = elements.Element2ds.Where(x => x.Value.IsLoadPanel).First().Value;
+      GsaElement2D elem = elements.Element2ds.Where(x => x.Value.IsLoadPanel).First().Value;
       Assert.Equal(Property2D_Type.LOAD, elem.Prop2ds[0].ApiProp2d.Type);
       var polyline = new Rhino.Geometry.Polyline();
       elem.Curve.TryGetPolyline(out polyline);
@@ -67,7 +67,7 @@ namespace GsaGHTests.Helpers.Import {
     public void ImportElement3dTest() {
       var model = new GsaModel(ImportElementsMotherModel());
       var elements = new Elements(model);
-      GsaElement3d elem = elements.Element3ds.First().Value;
+      GsaElement3D elem = elements.Element3ds.First().Value;
       Assert.Equal(MatType.Timber, elem.Prop3ds[0].Material.MaterialType);
       Duplicates.AreEqual(model.Materials.TimberMaterials[1], elem.Prop3ds[0].Material);
       Duplicates.AreEqual(model.Prop3ds[5].Value, elem.Prop3ds[0]);

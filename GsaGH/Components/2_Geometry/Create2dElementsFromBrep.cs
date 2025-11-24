@@ -164,18 +164,18 @@ namespace GsaGH.Components {
 
       ghTypes = new List<GH_ObjectWrapper>();
       var crvs = new List<Curve>();
-      var elem1ds = new List<GsaElement1d>();
-      var mem1ds = new List<GsaMember1d>();
+      var elem1ds = new List<GsaElement1D>();
+      var mem1ds = new List<GsaMember1D>();
       if (da.GetDataList(2, ghTypes)) {
         foreach (GH_ObjectWrapper ghType in ghTypes) {
           Curve crv = null;
           switch (ghType.Value) {
             case GsaElement1dGoo element1DGoo: {
-              elem1ds.Add(new GsaElement1d(element1DGoo.Value));
+              elem1ds.Add(new GsaElement1D(element1DGoo.Value));
               break;
             }
             case GsaMember1dGoo member1DGoo: {
-              mem1ds.Add(new GsaMember1d(member1DGoo.Value));
+              mem1ds.Add(new GsaMember1D(member1DGoo.Value));
               break;
             }
             default: {
@@ -216,9 +216,9 @@ namespace GsaGH.Components {
         return;
       }
 
-      Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> tuple = GetElement2dFromBrep(brep, pts, nodes, crvs,
+      Tuple<GsaElement2D, List<GsaNode>, List<GsaElement1D>> tuple = GetElement2dFromBrep(brep, pts, nodes, crvs,
         elem1ds, mem1ds, meshSize.As(_lengthUnit), _lengthUnit, ToleranceMenu.Tolerance);
-      GsaElement2d elem2d = tuple.Item1;
+      GsaElement2D elem2d = tuple.Item1;
 
       var prop2Ds = new List<GsaProperty2d>();
       for (int i = 0; i < elem2d.ApiElements.Count; i++) {
@@ -254,10 +254,10 @@ namespace GsaGH.Components {
       base.UpdateUIFromSelectedItems();
     }
 
-    private Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>> GetElement2dFromBrep(
-      Brep brep, Point3dList points, List<GsaNode> nodes, List<Curve> curves, List<GsaElement1d> elem1ds,
-      List<GsaMember1d> mem1ds, double meshSize, LengthUnit unit, Length tolerance) {
-      var gsaElement2D = new GsaElement2d();
+    private Tuple<GsaElement2D, List<GsaNode>, List<GsaElement1D>> GetElement2dFromBrep(
+      Brep brep, Point3dList points, List<GsaNode> nodes, List<Curve> curves, List<GsaElement1D> elem1ds,
+      List<GsaMember1D> mem1ds, double meshSize, LengthUnit unit, Length tolerance) {
+      var gsaElement2D = new GsaElement2D();
 
       MeshMode2d meshMode2d = MeshMode2d.Tri;
       if (_selectedItems[0] == _meshMode[1]) {
@@ -268,7 +268,7 @@ namespace GsaGH.Components {
         meshMode2d = MeshMode2d.Quad;
       }
 
-      Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> tuple = RhinoConversions.ConvertBrepToMesh(brep, points, nodes,
+      Tuple<Mesh, List<GsaNode>, List<GsaElement1D>> tuple = RhinoConversions.ConvertBrepToMesh(brep, points, nodes,
         curves, elem1ds, mem1ds, meshSize, unit, tolerance, meshMode2d);
       gsaElement2D.Mesh = tuple.Item1;
       Tuple<List<GSAElement>, Point3dList, List<List<int>>> convertMesh
@@ -277,7 +277,7 @@ namespace GsaGH.Components {
       gsaElement2D.Topology = convertMesh.Item2;
       gsaElement2D.TopoInt = convertMesh.Item3;
       gsaElement2D.Ids = new List<int>(new int[gsaElement2D.Mesh.Faces.Count]);
-      return new Tuple<GsaElement2d, List<GsaNode>, List<GsaElement1d>>(gsaElement2D, tuple.Item2, tuple.Item3);
+      return new Tuple<GsaElement2D, List<GsaNode>, List<GsaElement1D>>(gsaElement2D, tuple.Item2, tuple.Item3);
     }
   }
 }

@@ -28,14 +28,14 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void DuplicateTest() {
-      var original = new GsaElement2d(new Mesh());
-      var duplicate = new GsaElement2d(original);
+      var original = new GsaElement2D(new Mesh());
+      var duplicate = new GsaElement2D(original);
       Duplicates.AreEqual(original, duplicate, new List<string>() {
         "Guid"
       });
 
-      GsaElement2d originalLoadPanel = CreateLoadPanel();
-      var duplicateLoadPanel = new GsaElement2d(originalLoadPanel);
+      GsaElement2D originalLoadPanel = CreateLoadPanel();
+      var duplicateLoadPanel = new GsaElement2D(originalLoadPanel);
       Duplicates.AreEqual(originalLoadPanel, duplicateLoadPanel, new List<string>() {
         "Guid", "Offset", "OrientationNode", "Release", "GetEndRelease"
       });
@@ -47,7 +47,7 @@ namespace GsaGHTests.Parameters {
       var mesh = Mesh.CreateFromPlanarBoundary(CreateElement2dTests.Get2dPolyline(),
         MeshingParameters.DefaultAnalysisMesh, 0.001);
 
-      var elem = new GsaElement2d(mesh);
+      var elem = new GsaElement2D(mesh);
       int initialElementId = 14;
       int initialSectionId = 3;
       var groupId = new List<int>();
@@ -126,7 +126,7 @@ namespace GsaGHTests.Parameters {
       var mesh = Mesh.CreateFromPlanarBoundary(CreateElement2dTests.Get2dPolyline(),
         MeshingParameters.DefaultAnalysisMesh, 0.001);
 
-      var origi = new GsaElement2d(mesh) {
+      var origi = new GsaElement2D(mesh) {
         Prop2ds = new List<GsaProperty2d>()
       };
       int initialElementId = 3;
@@ -149,7 +149,7 @@ namespace GsaGHTests.Parameters {
       origi.ApiElements.SetMembers(name);
       origi.ApiElements.SetMembers(off);
 
-      var dup = new GsaElement2d(origi);
+      var dup = new GsaElement2D(origi);
 
       for (int i = 0; i < dup.Topology.Count; i++) {
         Assert.Equal(mesh.Vertices[i].X, dup.Topology[i].X);
@@ -250,7 +250,7 @@ namespace GsaGHTests.Parameters {
     [InlineData(true)]
     [InlineData(false)]
     public void CreateSectionNotNull(bool isLoadPanel) {
-      GsaElement2d element = null;
+      GsaElement2D element = null;
       if (isLoadPanel) {
         element = CreateLoadPanel();
       } else {
@@ -265,7 +265,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void DuplicateApiObjectReturnsValidObjectForQuad4Type() {
-      GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
+      GsaElement2D ele = CreateSampleElement2dWithQuad4Type();
 
       List<GSAElement> list = ele.DuplicateApiObjects();
 
@@ -289,7 +289,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void GetCenterPointsReturnsValidPointsForQuad4Type() {
-      GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
+      GsaElement2D ele = CreateSampleElement2dWithQuad4Type();
 
       Point3dList points = ele.GetCenterPoints();
 
@@ -310,7 +310,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void GetTopologyIDsIsValid() {
-      GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
+      GsaElement2D ele = CreateSampleElement2dWithQuad4Type();
 
       DataTree<int> topology = ele.GetTopologyIDs();
       Assert.NotNull(topology);
@@ -323,13 +323,13 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void ToStringReturnsValidString() {
-      GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
+      GsaElement2D ele = CreateSampleElement2dWithQuad4Type();
       Assert.Equal("Quad-4 N:25 E:2", ele.ToString());
     }
 
     [Fact]
     public void UpdateMeshColoursChangeColor() {
-      GsaElement2d ele = CreateSampleElement2dWithQuad4Type();
+      GsaElement2D ele = CreateSampleElement2dWithQuad4Type();
       ele.ApiElements[0].Colour = Color.DarkCyan;
       ele.ApiElements[1].Colour = Color.DarkBlue;
 
@@ -341,11 +341,11 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(Color.DarkBlue.ToArgb(), ele.Mesh.VertexColors[1].ToArgb());
     }
 
-    private GsaElement2d CreateSampleElement2dWithQuad4Type() {
+    private GsaElement2D CreateSampleElement2dWithQuad4Type() {
       var mesh = Mesh.CreateFromPlanarBoundary(CreateElement2dTests.Get2dPolyline(),
         MeshingParameters.DefaultAnalysisMesh, 0.001);
 
-      var elem = new GsaElement2d(mesh);
+      var elem = new GsaElement2D(mesh);
       int initialElementId = 14;
       int initialSectionId = 3;
       var groupId = new List<int>();
@@ -378,8 +378,8 @@ namespace GsaGHTests.Parameters {
       return elem;
     }
 
-    private GsaElement2d CreateLoadPanel() {
-      var element = new GsaElement2d(CreateElement2dTests.Get2dPolyline());
+    private GsaElement2D CreateLoadPanel() {
+      var element = new GsaElement2D(CreateElement2dTests.Get2dPolyline());
       int initialElementId = 14;
       int sectionId = 3;
       var groups = new List<int>();
@@ -403,7 +403,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void GetCenterPointsReturnsValidPointsForLoadPanel() {
-      GsaElement2d loadPanel = CreateLoadPanel();
+      GsaElement2D loadPanel = CreateLoadPanel();
       Point3dList points = loadPanel.GetCenterPoints();
       Assert.NotNull(points);
       Assert.Single(points);
@@ -414,13 +414,13 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void GeometryTypeOfLoadPanelElementIsCurve() {
-      var loadPanel = new GsaElement2d(CreateElement2dTests.Get2dPolyline());
+      var loadPanel = new GsaElement2D(CreateElement2dTests.Get2dPolyline());
       Assert.Equal(typeof(PolylineCurve), loadPanel.Geometry().GetType());
     }
 
     [Fact]
     public void GeometryTypeOfFeaElementIsMesh() {
-      var feElement = new GsaElement2d(CreateElement2dTests.GetMesh());
+      var feElement = new GsaElement2D(CreateElement2dTests.GetMesh());
       Assert.Equal(typeof(Mesh), feElement.Geometry().GetType());
     }
   }

@@ -17,7 +17,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// A 2D property is used by <see cref="GsaElement2d"/> and <see cref="GsaMember2d"/> and generally contains information about it's the Area Property's `Thickness` and <see cref="GsaMaterial"/>.
+  /// A 2D property is used by <see cref="GsaElement2D"/> and <see cref="GsaMember2D"/> and generally contains information about it's the Area Property's `Thickness` and <see cref="GsaMaterial"/>.
   /// <para>2D Properties can also be used to create LoadPanels, use the <see cref="Components.Create2dProperty"/> component and select `LoadPanel` from the dropdown list. </para>
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-pr-2d.html">2D Element Properties</see> to read more.</para>
   /// </summary>

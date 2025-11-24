@@ -82,11 +82,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var elem = new GsaElement3d();
+      var elem = new GsaElement3D();
 
       GsaElement3dGoo element3dGoo = null;
       if (da.GetData(0, ref element3dGoo)) {
-        elem = new GsaElement3d(element3dGoo.Value);
+        elem = new GsaElement3D(element3dGoo.Value);
       }
 
       // 1 ID

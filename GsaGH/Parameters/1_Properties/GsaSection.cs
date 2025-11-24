@@ -11,7 +11,7 @@ using LengthUnit = OasysUnits.Units.LengthUnit;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// A Section is used by <see cref="GsaElement1d"/> and <see cref="GsaMember1d"/> and generally contains information about it's `Profile` and <see cref="GsaMaterial"/>.
+  /// A Section is used by <see cref="GsaElement1D"/> and <see cref="GsaMember1D"/> and generally contains information about it's `Profile` and <see cref="GsaMaterial"/>.
   /// <para>Use the <see cref="Components.CreateProfile"/> component to create Catalogue and custom profiles.</para>
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-sect-lib.html">Sections</see> to read more.</para>
   /// </summary>

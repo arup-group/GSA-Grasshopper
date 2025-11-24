@@ -168,7 +168,7 @@ namespace GsaGH.Components {
     protected override void SolveInternal(IGH_DataAccess da) {
       GH_Curve ghcrv = null;
       da.GetData(0, ref ghcrv);
-      var mem = new GsaMember1d(ghcrv.Value);
+      var mem = new GsaMember1D(ghcrv.Value);
 
       if (mem.PolyCurve.GetLength() < DefaultUnits.Tolerance.As(DefaultUnits.LengthUnitGeometry)) {
         this.AddRuntimeRemark(

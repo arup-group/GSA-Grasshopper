@@ -17,7 +17,7 @@ namespace GsaGH.Helpers.Assembly {
       }
     }
 
-    private void ConvertElement1d(GsaElement1d element1d) {
+    private void ConvertElement1d(GsaElement1D element1d) {
       GSAElement apiElement = element1d.DuplicateApiObject();
       var topo = new List<int> {
         AddNode(element1d.Line.PointAtStart),
@@ -38,18 +38,18 @@ namespace GsaGH.Helpers.Assembly {
       AddElement(element1d.Id, element1d.Guid, apiElement, true);
     }
 
-    private void ConvertElement1ds(List<GsaElement1d> element1ds) {
+    private void ConvertElement1ds(List<GsaElement1D> element1ds) {
       if (element1ds == null) {
         return;
       }
 
       element1ds = element1ds.OrderByDescending(x => x.Id).ToList();
-      foreach (GsaElement1d element1d in element1ds.Where(element1d => element1d != null)) {
+      foreach (GsaElement1D element1d in element1ds.Where(element1d => element1d != null)) {
         ConvertElement1d(element1d);
       }
     }
 
-    private void ConvertElement2d(GsaElement2d element2d) {
+    private void ConvertElement2d(GsaElement2D element2d) {
       List<GSAElement> apiElems = element2d.DuplicateApiObjects();
       for (int i = 0; i < apiElems.Count; i++) {
         GSAElement apiMeshElement = apiElems[i];
@@ -71,20 +71,20 @@ namespace GsaGH.Helpers.Assembly {
       }
     }
 
-    private void ConvertElement2ds(List<GsaElement2d> element2ds) {
+    private void ConvertElement2ds(List<GsaElement2D> element2ds) {
       if (element2ds == null) {
         return;
       }
 
       element2ds = element2ds.OrderByDescending(e => e.Ids.First()).ToList();
-      foreach (GsaElement2d element2d in element2ds) {
+      foreach (GsaElement2D element2d in element2ds) {
         if (element2d != null) {
           ConvertElement2d(element2d);
         }
       }
     }
 
-    private void ConvertElement3d(GsaElement3d element3d) {
+    private void ConvertElement3d(GsaElement3D element3d) {
       List<GSAElement> apiElems = element3d.DuplicateApiObjects();
       for (int i = 0; i < apiElems.Count; i++) {
         GSAElement apiMeshElement = apiElems[i];
@@ -105,13 +105,13 @@ namespace GsaGH.Helpers.Assembly {
       }
     }
 
-    private void ConvertElement3ds(List<GsaElement3d> element3ds) {
+    private void ConvertElement3ds(List<GsaElement3D> element3ds) {
       if (element3ds == null) {
         return;
       }
 
       element3ds = element3ds.OrderByDescending(e => e.Ids.First()).ToList();
-      foreach (GsaElement3d element3d in element3ds) {
+      foreach (GsaElement3D element3d in element3ds) {
         if (element3d != null) {
           ConvertElement3d(element3d);
         }

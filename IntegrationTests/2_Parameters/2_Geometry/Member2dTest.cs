@@ -24,7 +24,7 @@ namespace IntegrationTests.Parameters {
     public void Member2dDuplicateTest() {
       IGH_Param param = Helper.FindParameter(Document, "Member2d");
       var goo = (GsaMember2dGoo)ComponentTestHelper.GetOutput(param);
-      GsaMember2d mem = goo.Value;
+      GsaMember2D mem = goo.Value;
       Assert.Equal(2, mem.Brep.Loops.Count);
       Assert.Equal(2, mem.InclusionPoints.Count);
       Assert.Equal(2, mem.InclusionLines.Count);

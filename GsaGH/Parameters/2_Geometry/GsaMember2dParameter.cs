@@ -39,7 +39,7 @@ namespace GsaGH.Parameters {
     protected override GsaMember2dGoo PreferredCast(object data) {
       var brep = new Brep();
       if (GH_Convert.ToBrep(data, ref brep, GH_Conversion.Both)) {
-        return new GsaMember2dGoo(new GsaMember2d(brep, new List<Curve>(), new Point3dList()));
+        return new GsaMember2dGoo(new GsaMember2D(brep, new List<Curve>(), new Point3dList()));
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Member2d");

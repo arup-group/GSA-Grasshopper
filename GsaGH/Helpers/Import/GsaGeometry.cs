@@ -5,12 +5,12 @@ using GsaGH.Parameters;
 namespace GsaGH.Helpers.Import {
   internal class GsaGeometry {
     internal List<GsaNode> Nodes { get; set; } = new List<GsaNode>();
-    internal List<GsaElement1d> Element1ds { get; set; } = new List<GsaElement1d>();
-    internal List<GsaElement2d> Element2ds { get; set; } = new List<GsaElement2d>();
-    internal List<GsaElement3d> Element3ds { get; set; } = new List<GsaElement3d>();
-    internal List<GsaMember1d> Member1ds { get; set; } = new List<GsaMember1d>();
-    internal List<GsaMember2d> Member2ds { get; set; } = new List<GsaMember2d>();
-    internal List<GsaMember3d> Member3ds { get; set; } = new List<GsaMember3d>();
+    internal List<GsaElement1D> Element1ds { get; set; } = new List<GsaElement1D>();
+    internal List<GsaElement2D> Element2ds { get; set; } = new List<GsaElement2D>();
+    internal List<GsaElement3D> Element3ds { get; set; } = new List<GsaElement3D>();
+    internal List<GsaMember1D> Member1ds { get; set; } = new List<GsaMember1D>();
+    internal List<GsaMember2D> Member2ds { get; set; } = new List<GsaMember2D>();
+    internal List<GsaMember3D> Member3ds { get; set; } = new List<GsaMember3D>();
     internal List<GsaAssembly> Assemblies { get; set; } = new List<GsaAssembly>();
 
     internal bool IsNullOrEmpty() {

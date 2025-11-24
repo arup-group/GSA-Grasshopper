@@ -7,10 +7,10 @@ using Xunit;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class Member2DSetPropertyTests {
-    private GsaMember2d _member;
+    private GsaMember2D _member;
 
     public Member2DSetPropertyTests() {
-      _member = new GsaMember2d();
+      _member = new GsaMember2D();
     }
 
     [Fact]

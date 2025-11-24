@@ -42,16 +42,16 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      GsaMember3d member;
+      GsaMember3D member;
       var brep = new Brep();
       var mesh = new Mesh();
 
       var ghTyp = new GH_ObjectWrapper();
       da.GetData(0, ref ghTyp);
       if (GH_Convert.ToBrep(ghTyp.Value, ref brep, GH_Conversion.Both)) {
-        member = new GsaMember3d(brep);
+        member = new GsaMember3D(brep);
       } else if (GH_Convert.ToMesh(ghTyp.Value, ref mesh, GH_Conversion.Both)) {
-        member = new GsaMember3d(mesh);
+        member = new GsaMember3D(mesh);
       } else {
         this.AddRuntimeError($"Unable to convert Geometry input ({ghTyp.GetTypeName()}) to a 3D Member");
         return;
