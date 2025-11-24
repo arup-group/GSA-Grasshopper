@@ -1,8 +1,13 @@
 ﻿
 using System;
 
+using OasysGH.Units;
+
+using OasysUnits.Units;
+
 namespace GsaGH.Helpers {
   public static class Utility {
+    public static LengthUnit ModelGeometryLengthUnit = DefaultUnits.LengthUnitGeometry;
     public static bool IsInRange(double value, double min, double max) {
       float epsilon = 10e-12f;
       return value <= max + epsilon && value >= min - epsilon;

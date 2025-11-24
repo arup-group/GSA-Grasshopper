@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -35,6 +34,7 @@ using Rhino.Display;
 using Rhino.Geometry;
 
 using LengthUnit = OasysUnits.Units.LengthUnit;
+using Utility = GsaGH.Helpers.Utility;
 
 namespace GsaGH.Components {
   /// <summary>
@@ -676,7 +676,7 @@ namespace GsaGH.Components {
       if (model.ModelUnit != _lengthUnit) {
         model.ModelUnit = _lengthUnit;
       }
-
+      Utility.ModelGeometryLengthUnit = model.ModelUnit;
       _boundingBox = model.BoundingBox;
 
       try {
@@ -779,48 +779,48 @@ namespace GsaGH.Components {
       }
     }
 
-private void DrawGraphicMesh(IGH_PreviewArgs args, ConcurrentBag<GeometryBase> geometryEntities) {
-  if (geometryEntities.IsNullOrEmpty()) {
-    return;
-  }
+    private void DrawGraphicMesh(IGH_PreviewArgs args, ConcurrentBag<GeometryBase> geometryEntities) {
+      if (geometryEntities.IsNullOrEmpty()) {
+        return;
+      }
 
-  foreach (GeometryBase entity in geometryEntities.Where(entity => entity != null)) {
-    switch (entity) {
-      case Curve curve:
-        double tollerance = Rhino.RhinoDoc.ActiveDoc != null ? Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance :
-          0.001;
-        Brep[] PlanerBrep = Brep.CreatePlanarBreps(curve, tollerance);
-        foreach (Brep brep in PlanerBrep) {
-          DisplayMaterial displayMaterialLoadPanel = Attributes.Selected ? Colours.Element2dFaceSelectedLoadPanel : Colours.Element2dFaceLoadPanel;
-          args.Display.DrawBrepShaded(brep, displayMaterialLoadPanel);
+      foreach (GeometryBase entity in geometryEntities.Where(entity => entity != null)) {
+        switch (entity) {
+          case Curve curve:
+            double tollerance = Rhino.RhinoDoc.ActiveDoc != null ? Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance :
+              0.001;
+            Brep[] PlanerBrep = Brep.CreatePlanarBreps(curve, tollerance);
+            foreach (Brep brep in PlanerBrep) {
+              DisplayMaterial displayMaterialLoadPanel = Attributes.Selected ? Colours.Element2dFaceSelectedLoadPanel : Colours.Element2dFaceLoadPanel;
+              args.Display.DrawBrepShaded(brep, displayMaterialLoadPanel);
+            }
+            break;
+          case Mesh mesh:
+            DisplayMaterial displayMaterialFEA
+              = Attributes.Selected ? Colours.Element2dFaceSelected : Colours.Element2dFace;
+            args.Display.DrawMeshShaded(mesh, displayMaterialFEA);
+            break;
+          default: break;
         }
-        break;
-      case Mesh mesh:
-        DisplayMaterial displayMaterialFEA
-          = Attributes.Selected ? Colours.Element2dFaceSelected : Colours.Element2dFace;
-        args.Display.DrawMeshShaded(mesh, displayMaterialFEA);
-        break;
-      default: break;
+      }
     }
-  }
-}
 
-private static void DrawGraphicWire(IGH_PreviewArgs args, ConcurrentBag<GeometryBase> geometryEntities, Color colour, int wireDensity = -1) {
-  if (geometryEntities.IsNullOrEmpty()) {
-    return;
-  }
-  foreach (GeometryBase entity in geometryEntities.Where(entity => entity != null)) {
-    switch (entity) {
-      case Curve curve:
-        args.Display.DrawCurve(curve, colour, wireDensity);
-        break;
-      case Mesh mesh:
-        args.Display.DrawMeshWires(mesh, colour, wireDensity);
-        break;
-      default: break;
+    private static void DrawGraphicWire(IGH_PreviewArgs args, ConcurrentBag<GeometryBase> geometryEntities, Color colour, int wireDensity = -1) {
+      if (geometryEntities.IsNullOrEmpty()) {
+        return;
+      }
+      foreach (GeometryBase entity in geometryEntities.Where(entity => entity != null)) {
+        switch (entity) {
+          case Curve curve:
+            args.Display.DrawCurve(curve, colour, wireDensity);
+            break;
+          case Mesh mesh:
+            args.Display.DrawMeshWires(mesh, colour, wireDensity);
+            break;
+          default: break;
+        }
+      }
     }
-  }
-}
 
   }
 }

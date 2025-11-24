@@ -15,9 +15,10 @@ using GsaGH.Properties;
 
 using OasysGH;
 using OasysGH.Components;
-using OasysGH.Units;
 
 using OasysUnits;
+
+using Utility = GsaGH.Helpers.Utility;
 
 namespace GsaGH.Components {
   public class Preview3dSections : GH_OasysDropDownComponent {
@@ -158,7 +159,7 @@ namespace GsaGH.Components {
         }
 
         // Assemble model
-        var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, mem1ds, mem2ds, DefaultUnits.LengthUnitGeometry);
+        var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, mem1ds, mem2ds, Utility.ModelGeometryLengthUnit);
         GsaAPI.Model previewModel = assembly.GetModel();
 
         var steps = new List<int> {
@@ -172,7 +173,7 @@ namespace GsaGH.Components {
               }
 
               _analysisSection3dPreview =
-                new Section3dPreview(previewModel, model.ModelUnit, Layer.Analysis);
+                new Section3dPreview(previewModel, Utility.ModelGeometryLengthUnit, Layer.Analysis);
               break;
 
             case 1:
@@ -181,7 +182,7 @@ namespace GsaGH.Components {
               }
 
               _designSection3dPreview =
-                new Section3dPreview(previewModel, model.ModelUnit, Layer.Design);
+                new Section3dPreview(previewModel, Utility.ModelGeometryLengthUnit, Layer.Design);
               break;
           }
         });
