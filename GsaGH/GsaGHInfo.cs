@@ -45,7 +45,7 @@ namespace GsaGH {
 
     internal const string Company = "Oasys";
     internal const string Contact = "https://www.oasys-software.com/";
-    internal const string Copyright = "Copyright © Oasys 1985 - 2024";
+    internal const string Copyright = "Copyright © Oasys 1985 - 2025";
     public const string PluginName = "GsaGH";
     public const string ProductName = "GSA";
     internal const string TermsConditions
