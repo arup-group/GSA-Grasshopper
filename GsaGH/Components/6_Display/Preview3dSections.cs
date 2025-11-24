@@ -80,10 +80,10 @@ namespace GsaGH.Components {
       var unitsName = new HashSet<string>();
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(0, ghTypes)) {
-        var elem1ds = new List<GsaElement1D>();
-        var elem2ds = new List<GsaElement2D>();
-        var mem1ds = new List<GsaMember1D>();
-        var mem2ds = new List<GsaMember2D>();
+        var elem1ds = new List<GsaElement1d>();
+        var elem2ds = new List<GsaElement2d>();
+        var mem1ds = new List<GsaMember1d>();
+        var mem2ds = new List<GsaMember2d>();
         var models = new List<GsaModel>();
         var lists = new List<GsaList>();
         for (int i = 0; i < ghTypes.Count; i++) {

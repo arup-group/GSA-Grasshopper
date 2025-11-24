@@ -5,6 +5,7 @@ using System.Linq;
 
 using GsaAPI;
 
+using GsaGH.Components;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
@@ -35,7 +36,7 @@ namespace GsaGH.Parameters {
   ///     more.
   ///   </para>
   /// </summary>
-  public class GsaMember2D : GsaGeometryBase {
+  public class GsaMember2d : GsaGeometryBase {
     public Member ApiMember { get; internal set; }
     public int Id { get; set; } = 0;
     public Guid Guid { get; private set; } = Guid.NewGuid();
@@ -66,12 +67,12 @@ namespace GsaGH.Parameters {
     /// <summary>
     ///   Empty constructor instantiating a new API object
     /// </summary>
-    public GsaMember2D() { ApiMember = MemberHelper.CreateDefaultApiMember(MemberType.GENERIC_2D); }
+    public GsaMember2d() { ApiMember = MemberHelper.CreateDefaultApiMember(MemberType.GENERIC_2D); }
 
     /// <summary>
     ///   Create new instance by casting from a Brep with optional inclusion geometry
     /// </summary>
-    public GsaMember2D(
+    public GsaMember2d(
       Brep brep, List<Curve> includeCurves = null, Point3dList includePoints = null) {
       ApiMember = MemberHelper.CreateDefaultApiMember(MemberType.GENERIC_2D);
 
@@ -99,7 +100,7 @@ namespace GsaGH.Parameters {
     /// Create a duplicate instance from another instance
     /// </summary>
     /// <param name="other"></param>
-    public GsaMember2D(GsaMember2D other) : base(other.LengthUnit) {
+    public GsaMember2d(GsaMember2d other) : base(other.LengthUnit) {
       Id = other.Id;
       ApiMember = other.DuplicateApiObject();
 
@@ -126,7 +127,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaMember2D(
+    internal GsaMember2d(
       KeyValuePair<int, Member> mem, Point3dList topology, List<string> topologyType,
       List<Point3dList> voidTopology, List<List<string>> voidTopologyType,
       List<Point3dList> inlcusionLinesTopology, List<List<string>> inclusionTopologyType,

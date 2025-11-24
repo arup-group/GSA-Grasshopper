@@ -30,49 +30,49 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void ComponentReturnValidElementLinePointAtStartXValue() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(0, element.Line.PointAtStart.X, 6);
     }
 
     [Fact]
     public void ComponentReturnValidElementLinePointAtStartYValue() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(-1, element.Line.PointAtStart.Y, 6);
     }
 
     [Fact]
     public void ComponentReturnValidElementLinePointAtStartZValue() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(0, element.Line.PointAtStart.Z, 6);
     }
 
     [Fact]
     public void ComponentReturnValidElementLinePointAtEndXValue() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(7, element.Line.PointAtEnd.X, 6);
     }
 
     [Fact]
     public void ComponentReturnValidElementLinePointAtEndYValue() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(3, element.Line.PointAtEnd.Y, 6);
     }
 
     [Fact]
     public void ComponentReturnValidElementLinePointAtEndZValue() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(1, element.Line.PointAtEnd.Z, 6);
     }
 
     [Fact]
     public void ComponentReturnValidSectionProfile() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal("STD CH(ft) 1 2 3 4", element.Section.ApiSection.Profile);
     }
 
     [Fact]
     public void ComponentReturnValidApiElementGroupValue() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(1, element.ApiElement.Group);
     }
 
@@ -294,49 +294,49 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtStartValueX() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(0, element.Line.PointAtStart.X);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtStartValueY() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(0, element.Line.PointAtStart.Y);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtStartValueZ() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(0, element.Line.PointAtStart.Z);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtEndValueX() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(1, element.Line.PointAtEnd.X);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtEndValueY() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(2, element.Line.PointAtEnd.Y);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtEndValueZ() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(3, element.Line.PointAtEnd.Z);
     }
 
     [Fact]
     public void EditElementShouldReturnValidSectionProfileFromElement() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(_helper.DefaultSection, element.Section.ApiSection.Profile);
     }
 
     [Fact]
     public void EditElementShouldReturnValidGroupValueFromElement() {
-      GsaElement1D element = _helper.GetElementOutput();
+      GsaElement1d element = _helper.GetElementOutput();
       Assert.Equal(7, element.ApiElement.Group);
     }
 
@@ -560,49 +560,49 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void EditElementShouldReturnValidLinePointAtStartXValue() {
-      GsaElement1D output = _helper.GetElementOutput();
+      GsaElement1d output = _helper.GetElementOutput();
       Assert.Equal(0, output.Line.PointAtStart.X, 6);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLinePointAtStartYValue() {
-      GsaElement1D output = _helper.GetElementOutput();
+      GsaElement1d output = _helper.GetElementOutput();
       Assert.Equal(-1, output.Line.PointAtStart.Y, 6);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLinePointAtStartZValue() {
-      GsaElement1D output = _helper.GetElementOutput();
+      GsaElement1d output = _helper.GetElementOutput();
       Assert.Equal(0, output.Line.PointAtStart.Z, 6);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLinePointAtEndXValue() {
-      GsaElement1D output = _helper.GetElementOutput();
+      GsaElement1d output = _helper.GetElementOutput();
       Assert.Equal(7, output.Line.PointAtEnd.X, 6);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLinePointAtEndYValue() {
-      GsaElement1D output = _helper.GetElementOutput();
+      GsaElement1d output = _helper.GetElementOutput();
       Assert.Equal(3, output.Line.PointAtEnd.Y, 6);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLinePointAtEndZValue() {
-      GsaElement1D output = _helper.GetElementOutput();
+      GsaElement1d output = _helper.GetElementOutput();
       Assert.Equal(1, output.Line.PointAtEnd.Z, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnNullElementSection() {
-      GsaElement1D output = _helper.GetElementOutput();
+      GsaElement1d output = _helper.GetElementOutput();
       Assert.Null(output.Section);
     }
 
     [Fact]
     public void EditElement1dShouldReturnDefaultElementGrupForElement() {
-      GsaElement1D output = _helper.GetElementOutput();
+      GsaElement1d output = _helper.GetElementOutput();
       Assert.Equal(1, output.ApiElement.Group);
     }
 
@@ -912,7 +912,7 @@ namespace GsaGHTests.Components.Geometry {
       return comp;
     }
 
-    public GsaElement1D GetElementOutput() {
+    public GsaElement1d GetElementOutput() {
       return ComponentTestHelper.GetElement1dOutput(_component, 0);
     }
 

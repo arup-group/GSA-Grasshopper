@@ -18,7 +18,7 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new SectionAlignment();
       comp.CreateAttributes();
 
-      var member = new GsaMember1D(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10))) {
+      var member = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10))) {
         Section = new GsaSection("CAT HE HE300.B"),
       };
       var goo = new GsaMember1dGoo(member);
@@ -108,7 +108,7 @@ namespace GsaGHTests.Components.Geometry {
     [InlineData("STD TR(cm) 20 10 20", 100, 100)]
     [InlineData("STD T(cm) 20 20 2 2", 100, 100)]
     public void AlignmentProfileTest(string profile, double expectedY, double expectedZ) {
-      var member = new GsaMember1D(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10))) {
+      var member = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10))) {
         Section = new GsaSection(profile),
       };
       var goo = new GsaMember1dGoo(member);
@@ -128,7 +128,7 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new SectionAlignment();
       comp.CreateAttributes();
 
-      var element = new GsaElement1D(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10))) {
+      var element = new GsaElement1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10))) {
         Section = new GsaSection("CAT HE HE300.B"),
       };
       var goo = new GsaElement1dGoo(element);
@@ -189,7 +189,7 @@ namespace GsaGHTests.Components.Geometry {
     public void SectionAlignmentMember1dNoProfileErrorTest() {
       var comp = new SectionAlignment();
       comp.CreateAttributes();
-      var member = new GsaMember1D(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10)));
+      var member = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10)));
       var goo = new GsaMember1dGoo(member);
       ComponentTestHelper.SetInput(comp, goo);
       ComponentTestHelper.SetInput(comp, "Top-Left", 1);
@@ -218,7 +218,7 @@ namespace GsaGHTests.Components.Geometry {
     public void SectionAlignmentElement1dNoProfileErrorTest() {
       var comp = new SectionAlignment();
       comp.CreateAttributes();
-      var element = new GsaElement1D(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10)));
+      var element = new GsaElement1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10)));
       var goo = new GsaElement1dGoo(element);
       ComponentTestHelper.SetInput(comp, goo);
       ComponentTestHelper.SetInput(comp, "Top-Left", 1);
@@ -249,7 +249,7 @@ namespace GsaGHTests.Components.Geometry {
       comp.CreateAttributes();
       var brep = Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(10, 0, 0),
           new Point3d(10, 10, 0), new Point3d(0, 10, 0), 1);
-      var member = new GsaMember2D(brep);
+      var member = new GsaMember2d(brep);
       var goo = new GsaMember2dGoo(member);
       ComponentTestHelper.SetInput(comp, goo);
       ComponentTestHelper.SetInput(comp, "Top-Left", 1);
@@ -284,7 +284,7 @@ namespace GsaGHTests.Components.Geometry {
       mesh.Vertices.Add(new Point3d(1, 1, 0));
       mesh.Vertices.Add(new Point3d(0, 1, 0));
       mesh.Faces.AddFace(0, 1, 2, 3);
-      var element = new GsaElement2D(mesh);
+      var element = new GsaElement2d(mesh);
       var goo = new GsaElement2dGoo(element);
       ComponentTestHelper.SetInput(comp, goo);
       ComponentTestHelper.SetInput(comp, "Top-Left", 1);

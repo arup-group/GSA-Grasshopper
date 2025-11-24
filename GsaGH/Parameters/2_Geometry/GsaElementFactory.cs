@@ -20,12 +20,12 @@ namespace GsaGH.Parameters {
       Parallel.ForEach(elements, item => {
         if (item.Value.Type == ElementType.SPRING) {
           GsaSpringProperty springProperty = model.GetSpringProperty(item.Value);
-          var elem = new GsaElement1D(
+          var elem = new GsaElement1d(
             item, model.ApiNodes, springProperty, model.ApiElementLocalAxes[item.Key], model.ModelUnit);
           elem1dGoos.Add(new GsaElement1dGoo(elem));
         } else {
           GsaSection section = model.GetSection(item.Value);
-          var elem = new GsaElement1D(
+          var elem = new GsaElement1d(
             item, model.ApiNodes, section, model.ApiElementLocalAxes[item.Key], model.ModelUnit);
           elem1dGoos.Add(new GsaElement1dGoo(elem));
         }
@@ -41,7 +41,7 @@ namespace GsaGH.Parameters {
         if(elem.Value.IsLoadPanel) {
           GsaProperty2d prop2d = model.GetProp2d(elem.Value);
           Curve polyline = GetPolylineFromApiElement2d(elem.Value, nodes, model.ModelUnit);
-          var element2D = new GsaElement2D(elem.Key, elem.Value, polyline, prop2d, model.ModelUnit);
+          var element2D = new GsaElement2d(elem.Key, elem.Value, polyline, prop2d, model.ModelUnit);
           elem2dGoos.Add(new GsaElement2dGoo(element2D));
         }
       });
@@ -107,12 +107,12 @@ namespace GsaGH.Parameters {
             prop2Ds.TryGetValue(key, out GsaProperty2d prop);
             var propList = new ConcurrentDictionary<int, GsaProperty2d>();
             propList.TryAdd(key, prop);
-            var singleelement2D = new GsaElement2D(apiElems, mesh, propList,model.ModelUnit);
+            var singleelement2D = new GsaElement2d(apiElems, mesh, propList,model.ModelUnit);
             elem2dGoos.Add(new GsaElement2dGoo(singleelement2D));
           }
         } else {
           // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
-          var element2D = new GsaElement2D(elems, m, prop2Ds, model.ModelUnit);
+          var element2D = new GsaElement2d(elems, m, prop2Ds, model.ModelUnit);
 
           elem2dGoos.Add(new GsaElement2dGoo(element2D));
         }
@@ -185,12 +185,12 @@ namespace GsaGH.Parameters {
             prop3Ds.TryGetValue(key, out GsaProperty3d prop);
             var propList = new ConcurrentDictionary<int, GsaProperty3d>();
             propList.TryAdd(key, prop);
-            var singleelement3D = new GsaElement3D(apiElems, mesh, propList, model.ModelUnit);
+            var singleelement3D = new GsaElement3d(apiElems, mesh, propList, model.ModelUnit);
             elem3dGoos.Add(new GsaElement3dGoo(singleelement3D));
           }
         } else {
           // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
-          var element3D = new GsaElement3D(elems, m, prop3Ds, model.ModelUnit);
+          var element3D = new GsaElement3d(elems, m, prop3Ds, model.ModelUnit);
           elem3dGoos.Add(new GsaElement3dGoo(element3D));
         }
       });

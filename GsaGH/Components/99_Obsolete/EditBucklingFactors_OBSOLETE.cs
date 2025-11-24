@@ -77,7 +77,7 @@ namespace GsaGH.Components {
         fls.EquivalentUniformMomentFactor = lt;
       }
 
-      var designprops = new GsaEffectiveLengthOptions(new GsaMember1D()) {
+      var designprops = new GsaEffectiveLengthOptions(new GsaMember1d()) {
         BucklingFactors = fls
       };
 

@@ -66,8 +66,8 @@ namespace GsaGH.Components {
         return;
       }
 
-      GsaMember1D member;
-      GsaElement1D element;
+      GsaMember1d member;
+      GsaElement1d element;
       Point3d midPt;
       double size;
       Parameters.LocalAxes axes;

@@ -183,11 +183,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var mem = new GsaMember1D();
+      var mem = new GsaMember1d();
 
       GsaMember1dGoo member1dGoo = null;
       if (da.GetData(0, ref member1dGoo)) {
-        mem = new GsaMember1D(member1dGoo.Value);
+        mem = new GsaMember1d(member1dGoo.Value);
       }
 
       GH_String ghstring = null;

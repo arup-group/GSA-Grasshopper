@@ -38,12 +38,12 @@ namespace GsaGH.Parameters {
     protected override GsaMember3dGoo PreferredCast(object data) {
       var brep = new Brep();
       if (GH_Convert.ToBrep(data, ref brep, GH_Conversion.Both)) {
-        return new GsaMember3dGoo(new GsaMember3D(brep));
+        return new GsaMember3dGoo(new GsaMember3d(brep));
       }
 
       var mesh = new Mesh();
       if (GH_Convert.ToMesh(data, ref mesh, GH_Conversion.Both)) {
-        return new GsaMember3dGoo(new GsaMember3D(mesh));
+        return new GsaMember3dGoo(new GsaMember3d(mesh));
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Member3d");

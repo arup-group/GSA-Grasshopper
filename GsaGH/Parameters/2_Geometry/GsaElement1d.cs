@@ -28,7 +28,7 @@ namespace GsaGH.Parameters
     /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
     /// </summary>
     [SuppressMessage("SonarAnalyzer.CSharp", "S101", Justification = "Project-specific naming convention")]
-    public class GsaElement1D : GsaGeometryBase {
+    public class GsaElement1d : GsaGeometryBase {
         public GSAElement ApiElement { get; internal set; }
         public int Id { get; set; } = 0;
         public Guid Guid { get; private set; } = Guid.NewGuid();
@@ -66,7 +66,7 @@ namespace GsaGH.Parameters
         /// <summary>
         /// Empty constructor instantiating a new API object
         /// </summary>
-        public GsaElement1D() {
+        public GsaElement1d() {
             SetDefaultApiElement();
         }
 
@@ -74,7 +74,7 @@ namespace GsaGH.Parameters
         /// Create new instance by casting from a Line
         /// </summary>
         /// <param name="line"></param>
-        public GsaElement1D(LineCurve line) {
+        public GsaElement1d(LineCurve line) {
             Id = Id;
             Line = line;
             SetDefaultApiElement();
@@ -85,7 +85,7 @@ namespace GsaGH.Parameters
         ///   Create a duplicate instance from another instance
         /// </summary>
         /// <param name="other"></param>
-        public GsaElement1D(GsaElement1D other) : base(other.LengthUnit) {
+        public GsaElement1d(GsaElement1d other) : base(other.LengthUnit) {
             Id = other.Id;
             ApiElement = other.DuplicateApiObject();
             LocalAxes = other.LocalAxes;
@@ -99,7 +99,7 @@ namespace GsaGH.Parameters
         /// <summary>
         /// Create a new instance from an API object from an existing model
         /// </summary>
-        internal GsaElement1D(
+        internal GsaElement1d(
           KeyValuePair<int, GSAElement> element, IReadOnlyDictionary<int, Node> nodes, GsaSection section,
           ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) : base(modelUnit) {
             InitVariables(element, nodes, localAxes, modelUnit);
@@ -109,7 +109,7 @@ namespace GsaGH.Parameters
         /// <summary>
         ///   Create a new instance from an API object from an existing model
         /// </summary>
-        internal GsaElement1D(
+        internal GsaElement1d(
           KeyValuePair<int, GSAElement> element, IReadOnlyDictionary<int, Node> nodes, GsaSpringProperty springProperty,
           ReadOnlyCollection<double> localAxes, LengthUnit modelUnit) : base(modelUnit) {
             InitVariables(element, nodes, localAxes, modelUnit);

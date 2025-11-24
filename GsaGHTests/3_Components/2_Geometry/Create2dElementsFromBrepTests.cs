@@ -59,14 +59,14 @@ namespace GsaGHTests.Components.Geometry {
         new Point2d(5, 5),
         new Point2d(9, 9)
       };
-      var mem1d = new GsaMember1D(brep.Surfaces[0].InterpolatedCurveOnSurfaceUV(crvUVs, 1));
+      var mem1d = new GsaMember1d(brep.Surfaces[0].InterpolatedCurveOnSurfaceUV(crvUVs, 1));
 
       var crvUVs2 = new List<Point2d> {
         new Point2d(0, 0),
         new Point2d(0, 1),
       };
       Curve edge = brep.Surfaces[0].InterpolatedCurveOnSurfaceUV(crvUVs, 1);
-      var e1d = new GsaElement1D(new LineCurve(edge.PointAtStart, edge.PointAtEnd));
+      var e1d = new GsaElement1d(new LineCurve(edge.PointAtStart, edge.PointAtEnd));
 
       ComponentTestHelper.SetInput(comp, brep, 0);
       ComponentTestHelper.SetInput(comp, new GsaNodeGoo(node), 1);

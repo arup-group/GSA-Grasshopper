@@ -36,7 +36,7 @@ namespace GsaGH.Parameters {
   ///     more.
   ///   </para>
   /// </summary>
-  public class GsaMember3D {
+  public class GsaMember3d {
     public Member ApiMember { get; internal set; }
     public int Id { get; set; } = 0;
     public Guid Guid { get; private set; } = Guid.NewGuid();
@@ -49,12 +49,12 @@ namespace GsaGH.Parameters {
     /// <summary>
     ///   Empty constructor instantiating a new API object
     /// </summary>
-    public GsaMember3D() { ApiMember = MemberHelper.CreateDefaultApiMember(MemberType.GENERIC_3D); }
+    public GsaMember3d() { ApiMember = MemberHelper.CreateDefaultApiMember(MemberType.GENERIC_3D); }
 
     /// <summary>
     /// Create new instance by casting from a Mesh
     /// </summary>
-    public GsaMember3D(Mesh mesh) {
+    public GsaMember3d(Mesh mesh) {
       ApiMember = MemberHelper.CreateDefaultApiMember(MemberType.GENERIC_3D);
       SolidMesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
       UpdatePreview();
@@ -63,7 +63,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create new instance by casting from a Brep
     /// </summary>
-    public GsaMember3D(Brep brep) {
+    public GsaMember3d(Brep brep) {
       ApiMember = MemberHelper.CreateDefaultApiMember(MemberType.GENERIC_3D);
       SolidMesh = RhinoConversions.ConvertBrepToTriMeshSolid(brep);
       UpdatePreview();
@@ -73,7 +73,7 @@ namespace GsaGH.Parameters {
     /// Create a duplicate instance from another instance
     /// </summary>
     /// <param name="other"></param>
-    public GsaMember3D(GsaMember3D other) {
+    public GsaMember3d(GsaMember3d other) {
       Id = other.Id;
       ApiMember = other.DuplicateApiObject();
       SolidMesh = (Mesh)other.SolidMesh?.DuplicateShallow();
@@ -86,7 +86,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaMember3D(Member member, int id, Mesh mesh, GsaProperty3d prop, LengthUnit modelUnit) {
+    internal GsaMember3d(Member member, int id, Mesh mesh, GsaProperty3d prop, LengthUnit modelUnit) {
       ApiMember = member;
       Id = id;
       SolidMesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);

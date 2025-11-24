@@ -12,15 +12,15 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Goo wrapper class, makes sure <see cref="GsaElement1D" /> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaElement1d" /> can be used in Grasshopper.
   /// </summary>
-  public class GsaElement1dGoo : GH_OasysGeometricGoo<GsaElement1D> {
+  public class GsaElement1dGoo : GH_OasysGeometricGoo<GsaElement1d> {
     public static string Description => "GSA 1D Element";
     public static string Name => "Element 1D";
     public static string NickName => "E1D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public GsaElement1dGoo(GsaElement1D item) : base(item) { }
+    public GsaElement1dGoo(GsaElement1d item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Line))) {
@@ -110,7 +110,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      var elem = new GsaElement1D(Value) {
+      var elem = new GsaElement1d(Value) {
         Id = 0,
       };
       LineCurve xLn = elem.Line;
@@ -122,7 +122,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      var elem = new GsaElement1D(Value) {
+      var elem = new GsaElement1d(Value) {
         Id = 0,
       };
       LineCurve xLn = elem.Line;

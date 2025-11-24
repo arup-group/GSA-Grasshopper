@@ -41,7 +41,7 @@ namespace GsaGH.Parameters {
         if (mesh.IsClosed) {
           var ngons = mesh.GetNgonAndFacesEnumerable().ToList();
           if (ngons.Count != ngons.Select(f => f.FaceCount).Sum()) {
-            return new GsaElement3dGoo(new GsaElement3D(mesh));
+            return new GsaElement3dGoo(new GsaElement3d(mesh));
           }
         }
         mes = "Mesh must be a closed (solid) Ngon Mesh";

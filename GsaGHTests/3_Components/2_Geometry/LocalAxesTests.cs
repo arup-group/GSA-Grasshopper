@@ -17,7 +17,7 @@ namespace GsaGHTests.Components.Geometry {
     public void MemberLocalAxesTest() {
       var comp = new LocalAxes();
       comp.CreateAttributes();
-      var member = new GsaMember1D(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10)));
+      var member = new GsaMember1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10)));
       var goo = new GsaMember1dGoo(member);
       ComponentTestHelper.SetInput(comp, goo);
 
@@ -44,7 +44,7 @@ namespace GsaGHTests.Components.Geometry {
     public void ElementLocalAxesTest() {
       var comp = new LocalAxes();
       comp.CreateAttributes();
-      var element = new GsaElement1D(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10)));
+      var element = new GsaElement1d(new LineCurve(new Point3d(0, 0, 0), new Point3d(0, 0, 10)));
       var goo = new GsaElement1dGoo(element);
       ComponentTestHelper.SetInput(comp, goo);
 

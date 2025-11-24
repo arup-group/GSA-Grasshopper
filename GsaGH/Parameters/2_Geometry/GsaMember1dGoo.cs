@@ -15,15 +15,15 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Goo wrapper class, makes sure <see cref="GsaMember1D" /> can be used in Grasshopper.
+  /// Goo wrapper class, makes sure <see cref="GsaMember1d" /> can be used in Grasshopper.
   /// </summary>
-  public class GsaMember1dGoo : GH_OasysGeometricGoo<GsaMember1D> {
+  public class GsaMember1dGoo : GH_OasysGeometricGoo<GsaMember1d> {
     public static string Description => "GSA 1D Member";
     public static string Name => "Member 1D";
     public static string NickName => "M1D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public GsaMember1dGoo(GsaMember1D item) : base(item) { }
+    public GsaMember1dGoo(GsaMember1d item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Curve))) {
@@ -130,7 +130,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      var mem = new GsaMember1D(Value) {
+      var mem = new GsaMember1d(Value) {
         Id = 0,
       };
       mem.Topology?.Morph(xmorph);
@@ -145,7 +145,7 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Transform(Transform xform) {
       var xpts = new Point3dList(Value.Topology);
       xpts.Transform(xform);
-      var mem = new GsaMember1D(Value) {
+      var mem = new GsaMember1d(Value) {
         Id = 0,
         Topology = xpts
       };

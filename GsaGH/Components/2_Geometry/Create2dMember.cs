@@ -92,7 +92,7 @@ namespace GsaGH.Components {
         crvs = ghcrvs.Select(crv => crv.Value).ToList();
       }
 
-      var member2d = new GsaMember2D(ghbrep.Value, crvs, points);
+      var member2d = new GsaMember2d(ghbrep.Value, crvs, points);
 
       GsaProperty2dGoo prop2dGoo = null;
       if (da.GetData(3, ref prop2dGoo)) {

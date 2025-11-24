@@ -16,15 +16,15 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Goo wrapper class, makes sure <see cref="GsaElement3D" /> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaElement3d" /> can be used in Grasshopper.
   /// </summary>
-  public class GsaElement3dGoo : GH_OasysGeometricGoo<GsaElement3D>, IGH_PreviewData {
+  public class GsaElement3dGoo : GH_OasysGeometricGoo<GsaElement3d>, IGH_PreviewData {
     public static string Description => "GSA 3D Element(s)";
     public static string Name => "Element 3D";
     public static string NickName => "E3D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public GsaElement3dGoo(GsaElement3D item) : base(item) { }
+    public GsaElement3dGoo(GsaElement3d item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
@@ -70,7 +70,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      var elem = new GsaElement3D(Value) {
+      var elem = new GsaElement3d(Value) {
         Ids = new List<int>(new int[Value.NgonMesh.Faces.Count]),
       };
       elem.Topology?.Morph(xmorph);
@@ -83,7 +83,7 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Transform(Transform xform) {
       var xpts = new Point3dList(Value.Topology);
       xpts.Transform(xform);
-      var elem = new GsaElement3D(Value) {
+      var elem = new GsaElement3d(Value) {
         Ids = new List<int>(new int[Value.NgonMesh.Faces.Count]),
         Topology = xpts
       };

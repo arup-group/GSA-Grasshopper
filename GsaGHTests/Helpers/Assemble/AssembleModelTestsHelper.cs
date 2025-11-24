@@ -32,7 +32,7 @@ namespace GsaGHTests.Helpers.Export {
     }
 
     internal void TestElement1d(
-      GsaElement1D expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
+      GsaElement1d expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, Element> apiElements = actualModel.ApiModel.Elements();
       Assert.True(apiElements.ContainsKey(expectedId),
         "Element with id " + expectedId + " is not present in model");
@@ -82,7 +82,7 @@ namespace GsaGHTests.Helpers.Export {
     }
 
     internal void TestElement2d(
-      GsaElement2D expected, LengthUnit unit, List<int> expectedIds, GsaModel actualModel) {
+      GsaElement2d expected, LengthUnit unit, List<int> expectedIds, GsaModel actualModel) {
       ReadOnlyDictionary<int, Element> apiElements = actualModel.ApiModel.Elements();
       ReadOnlyDictionary<int, Node> apiNodes = actualModel.ApiModel.Nodes();
 
@@ -117,7 +117,7 @@ namespace GsaGHTests.Helpers.Export {
     }
 
     internal void TestMember1d(
-      GsaMember1D expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
+      GsaMember1d expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, Member> apiElements = actualModel.ApiModel.Members();
       Assert.True(apiElements.ContainsKey(expectedId),
         "Member with id " + expectedId + " is not present in model");
@@ -171,7 +171,7 @@ namespace GsaGHTests.Helpers.Export {
     }
 
     internal void TestMember2d(
-      GsaMember2D expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
+      GsaMember2d expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, Member> apiElements = actualModel.ApiModel.Members();
       Assert.True(apiElements.ContainsKey(expectedId),
         "Member with id " + expectedId + " is not present in model");
@@ -201,7 +201,7 @@ namespace GsaGHTests.Helpers.Export {
     }
 
     internal void TestMember3d(
-      GsaMember3D expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
+      GsaMember3d expected, LengthUnit unit, int expectedId, GsaModel actualModel) {
       ReadOnlyDictionary<int, Member> apiElements = actualModel.ApiModel.Members();
       Assert.True(apiElements.ContainsKey(expectedId),
         "Member with id " + expectedId + " is not present in model");

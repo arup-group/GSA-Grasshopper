@@ -90,9 +90,9 @@ namespace GsaGH.Helpers.GH {
       return null;
     }
 
-    internal static Tuple<Mesh, List<GsaNode>, List<GsaElement1D>> ConvertBrepToMesh(
+    internal static Tuple<Mesh, List<GsaNode>, List<GsaElement1d>> ConvertBrepToMesh(
       Brep brep, Point3dList points, List<GsaNode> inNodes, List<Curve> inCurves,
-      List<GsaElement1D> inElem1ds, List<GsaMember1D> inMem1ds, double meshSize, LengthUnit unit,
+      List<GsaElement1d> inElem1ds, List<GsaMember1d> inMem1ds, double meshSize, LengthUnit unit,
       Length tolerance, MeshMode2d meshMode) {
       bool convertNonPlanarQuads = meshMode == MeshMode2d.Mixed;
       Brep inBrep = brep.DuplicateBrep();
@@ -110,7 +110,7 @@ namespace GsaGH.Helpers.GH {
       }
 
       if (inElem1ds != null) {
-        foreach (GsaElement1D elem in inElem1ds) {
+        foreach (GsaElement1d elem in inElem1ds) {
           finalNodes.Add(elem.Line.PointAtEnd);
           finalNodes.Add(elem.Line.PointAtEnd);
           unroller.AddFollowingGeometry(elem.Line);
@@ -119,7 +119,7 @@ namespace GsaGH.Helpers.GH {
       }
 
       if (inMem1ds != null) {
-        foreach (GsaMember1D mem1d in inMem1ds) {
+        foreach (GsaMember1d mem1d in inMem1ds) {
           foreach (Point3d ctrlPt in mem1d.Topology) {
             finalNodes.Add(ctrlPt);
           }
@@ -155,8 +155,8 @@ namespace GsaGH.Helpers.GH {
       }
 
       var curves = new List<Curve>();
-      var elem1ds = new List<GsaElement1D>();
-      var mem1ds = new List<GsaMember1D>();
+      var elem1ds = new List<GsaElement1d>();
+      var mem1ds = new List<GsaMember1d>();
       int nCrvs = inCurves?.Count ?? 0;
       int nElem1ds = inElem1ds?.Count ?? 0;
       var elemSections = new Dictionary<int, GsaSection>();
@@ -179,7 +179,7 @@ namespace GsaGH.Helpers.GH {
             break;
 
           case 2:
-            var mem1d = new GsaMember1D(crv) {
+            var mem1d = new GsaMember1d(crv) {
               ApiMember = inMem1ds[id - nCrvs - nElem1ds].DuplicateApiObject(),
               Id = memid,
             };
@@ -210,7 +210,7 @@ namespace GsaGH.Helpers.GH {
         nodes.Add(inNodes[i]);
       }
 
-      var mem = new GsaMember2D(flattened[0], curves, inclusionPoints);
+      var mem = new GsaMember2d(flattened[0], curves, inclusionPoints);
       mem.ApiMember.MeshSize = new Length(meshSize, unit).Meters;
       mem.ApiMember.MeshMode2d = meshMode;
 
@@ -218,7 +218,7 @@ namespace GsaGH.Helpers.GH {
         Nodes = nodes,
         Element1ds = elem1ds,
         Member1ds = mem1ds,
-        Member2ds = new List<GsaMember2D> { mem }
+        Member2ds = new List<GsaMember2d> { mem }
       };
       var assembly = new ModelAssembly(null, null, null, geometry, null, null, null, unit,
         tolerance, true, null);
@@ -275,12 +275,12 @@ namespace GsaGH.Helpers.GH {
         }
       }
 
-      List<GsaElement1D> outElem1ds = null;
+      List<GsaElement1d> outElem1ds = null;
       if (inclCrvs == null || inclCrvs.Length <= 0) {
-        return new Tuple<Mesh, List<GsaNode>, List<GsaElement1D>>(mesh, outNodes, outElem1ds);
+        return new Tuple<Mesh, List<GsaNode>, List<GsaElement1d>>(mesh, outNodes, outElem1ds);
       }
 
-      outElem1ds = new List<GsaElement1D>();
+      outElem1ds = new List<GsaElement1d>();
       var element1ds = elements.Element1ds.ToDictionary(x => x.Value.Id, x => x.Value);
       foreach (KeyValuePair<int, Element> kvp in model.Elements()) {
         Element elem = kvp.Value;
@@ -304,7 +304,7 @@ namespace GsaGH.Helpers.GH {
         outElem1ds.Add(element1ds[kvp.Key]);
       }
 
-      return new Tuple<Mesh, List<GsaNode>, List<GsaElement1D>>(mesh, outNodes, outElem1ds);
+      return new Tuple<Mesh, List<GsaNode>, List<GsaElement1d>>(mesh, outNodes, outElem1ds);
     }
 
     public static Mesh ConvertBrepToTriMeshSolid(Brep brep) {

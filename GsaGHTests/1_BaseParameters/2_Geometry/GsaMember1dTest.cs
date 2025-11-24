@@ -18,7 +18,7 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void CloneApiObjectTest() {
-      var member1d = new GsaMember1D();
+      var member1d = new GsaMember1d();
       member1d.ApiMember.Name = "Name";
       Member original = member1d.ApiMember;
       Member duplicate = member1d.DuplicateApiObject();
@@ -28,20 +28,20 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void CloneTest() {
-      var original = new GsaMember1D();
+      var original = new GsaMember1d();
       original.ApiMember.Name = "Name";
 
-      var duplicate = new GsaMember1D(original);
+      var duplicate = new GsaMember1d(original);
 
       Duplicates.AreEqual(original, duplicate, new List<string>() { "Guid" });
     }
 
     [Fact]
     public void DuplicateTest() {
-      var original = new GsaMember1D();
+      var original = new GsaMember1d();
       original.ApiMember.Name = "Name";
 
-      GsaMember1D duplicate = original;
+      GsaMember1d duplicate = original;
 
       Assert.Equal(original, duplicate);
     }
@@ -57,7 +57,7 @@ namespace GsaGHTests.Parameters {
 
       var crv = new PolylineCurve(pts);
 
-      var mem = new GsaMember1D(crv) {
+      var mem = new GsaMember1d(crv) {
         ApiMember = new Member() {
           Colour = Color.Red,
           Name = "gemma",
@@ -99,7 +99,7 @@ namespace GsaGHTests.Parameters {
       };
       var crv = NurbsCurve.Create(false, 1, pts);
 
-      var orig = new GsaMember1D(crv) {
+      var orig = new GsaMember1d(crv) {
         ApiMember = new Member() {
           Colour = Color.Green,
           Name = "Sally",
@@ -113,7 +113,7 @@ namespace GsaGHTests.Parameters {
         Section = new GsaSection(4),
       };
 
-      var dup = new GsaMember1D(orig);
+      var dup = new GsaMember1d(orig);
 
       Assert.Equal(Color.FromArgb(255, 0, 128, 0), (Color)dup.ApiMember.Colour);
       Assert.Equal(2, dup.Id);

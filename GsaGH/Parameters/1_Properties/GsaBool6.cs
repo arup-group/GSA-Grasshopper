@@ -2,7 +2,7 @@
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// A Bool6 contains six booleans to set releases in <see cref="GsaElement1D"/>s and <see cref="GsaMember1D"/>s, or restraints in <see cref="GsaNode"/>s.
+  /// A Bool6 contains six booleans to set releases in <see cref="GsaElement1d"/>s and <see cref="GsaMember1d"/>s, or restraints in <see cref="GsaNode"/>s.
   /// </summary>
   public class GsaBool6 {
     public Bool6 ApiBool6 { get; set; }

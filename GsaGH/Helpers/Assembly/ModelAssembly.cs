@@ -42,9 +42,9 @@ namespace GsaGH.Helpers.Assembly {
     private bool _isSeedModel = true;
 
     // assembly for local axis
-    internal ModelAssembly(GsaMember1D member) {
+    internal ModelAssembly(GsaMember1d member) {
       SetupModel(null, LengthUnit.Meter);
-      var mem1ds = new List<GsaMember1D>() {
+      var mem1ds = new List<GsaMember1d>() {
         member
       };
       ConvertMembers(mem1ds, null, null);
@@ -52,9 +52,9 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     // assembly for local axis
-    internal ModelAssembly(GsaElement1D element) {
+    internal ModelAssembly(GsaElement1d element) {
       SetupModel(null, LengthUnit.Meter);
-      var elem1ds = new List<GsaElement1D>() {
+      var elem1ds = new List<GsaElement1d>() {
         element
       };
       ConvertElements(elem1ds, null, null);
@@ -62,9 +62,9 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     // assembly for preview
-    internal ModelAssembly(GsaModel model, List<GsaList> lists, List<GsaElement1D> elem1ds,
-      List<GsaElement2D> elem2ds, List<GsaMember1D> mem1ds,
-      List<GsaMember2D> mem2ds, LengthUnit modelUnit) {
+    internal ModelAssembly(GsaModel model, List<GsaList> lists, List<GsaElement1d> elem1ds,
+      List<GsaElement2d> elem2ds, List<GsaMember1d> mem1ds,
+      List<GsaMember2d> mem2ds, LengthUnit modelUnit) {
       SetupModel(model, modelUnit);
       ConvertElements(elem1ds, elem2ds, null);
       ConvertMembers(mem1ds, mem2ds, null);
@@ -346,7 +346,7 @@ namespace GsaGH.Helpers.Assembly {
       }
     }
 
-    private void ConvertElements(List<GsaElement1D> element1ds, List<GsaElement2D> element2ds, List<GsaElement3D> element3ds) {
+    private void ConvertElements(List<GsaElement1d> element1ds, List<GsaElement2d> element2ds, List<GsaElement3d> element3ds) {
       if ((!element1ds.IsNullOrEmpty()) || (!element2ds.IsNullOrEmpty())
         || (!element3ds.IsNullOrEmpty())) {
         _deleteResults = true;
@@ -357,7 +357,7 @@ namespace GsaGH.Helpers.Assembly {
       ConvertElement3ds(element3ds);
 
       if (!element2ds.IsNullOrEmpty()) {
-        foreach (GsaElement2D e2d in element2ds) {
+        foreach (GsaElement2d e2d in element2ds) {
           int expectedCollapsedNodeCount = e2d.Mesh.TopologyVertices.Count;
           int actualNodeCount = e2d.TopoInt.Sum(topoint => topoint.Count);
           int difference = actualNodeCount - expectedCollapsedNodeCount;
@@ -366,7 +366,7 @@ namespace GsaGH.Helpers.Assembly {
       }
 
       if (!element3ds.IsNullOrEmpty()) {
-        foreach (GsaElement3D e3d in element3ds) {
+        foreach (GsaElement3d e3d in element3ds) {
           int expectedCollapsedNodeCount = e3d.NgonMesh.TopologyVertices.Count;
           int actualNodeCount = e3d.TopoInt.Sum(topoint => topoint.Count);
           int difference = actualNodeCount - expectedCollapsedNodeCount;
@@ -430,7 +430,7 @@ namespace GsaGH.Helpers.Assembly {
       }
     }
 
-    private void ConvertMembers(List<GsaMember1D> member1ds, List<GsaMember2D> member2ds, List<GsaMember3D> member3ds) {
+    private void ConvertMembers(List<GsaMember1d> member1ds, List<GsaMember2d> member2ds, List<GsaMember3d> member3ds) {
       if ((!member1ds.IsNullOrEmpty()) || (!member2ds.IsNullOrEmpty())
         || (!member3ds.IsNullOrEmpty())) {
         _deleteResults = true;

@@ -120,8 +120,8 @@ namespace GsaGH.Components {
       var ghTyp = new GH_ObjectWrapper();
       da.GetData(0, ref ghTyp);
 
-      GsaMember1D member;
-      GsaElement1D element;
+      GsaMember1d member;
+      GsaElement1d element;
       GsaSection section;
       Curve crv;
       Parameters.LocalAxes axes;
@@ -197,7 +197,7 @@ namespace GsaGH.Components {
         return;
       }
 
-      var mem2ds = new List<GsaMember2D>();
+      var mem2ds = new List<GsaMember2d>();
       LengthUnit unit = LengthUnit.Meter;
       crv.LengthParameter(offset.X1.As(_lengthUnit), out double t0);
       crv.LengthParameter(crv.GetLength() - offset.X2.As(_lengthUnit), out double t1);
@@ -878,8 +878,8 @@ namespace GsaGH.Components {
       Brep[] sweep = sweepOneRail.PerformSweep(crv, ln);
       return sweep[0];
     }
-    private GsaMember2D CreateMember2d(Brep brep, double thickness, GsaSection section) {
-      return new GsaMember2D(brep) {
+    private GsaMember2d CreateMember2d(Brep brep, double thickness, GsaSection section) {
+      return new GsaMember2d(brep) {
         Prop2d = new GsaProperty2d(new Length(thickness, _lengthUnit)) {
           Material = section.Material
         }

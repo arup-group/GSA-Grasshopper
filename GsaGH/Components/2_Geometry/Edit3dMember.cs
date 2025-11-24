@@ -100,11 +100,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var mem = new GsaMember3D();
+      var mem = new GsaMember3d();
 
       GsaMember3dGoo member3dGoo = null;
       if (da.GetData(0, ref member3dGoo)) {
-        mem = new GsaMember3D(member3dGoo.Value);
+        mem = new GsaMember3d(member3dGoo.Value);
       }
 
       int id = 0;

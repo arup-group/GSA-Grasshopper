@@ -140,11 +140,11 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
-      var elem = new GsaElement1D();
+      var elem = new GsaElement1d();
 
       GsaElement1dGoo element1dGoo = null;
       if (da.GetData(0, ref element1dGoo)) {
-        elem = new GsaElement1D(element1dGoo.Value);
+        elem = new GsaElement1d(element1dGoo.Value);
       }
 
       var ghString = new GH_String();

@@ -9,7 +9,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// Effective length calculation options are part of a <see cref="GsaMember1D"/>. These options are available for 1D members when the section material is steel. They define the properties relating to design from the interaction of the member with the rest of the structure.
+  /// Effective length calculation options are part of a <see cref="GsaMember1d"/>. These options are available for 1D members when the section material is steel. They define the properties relating to design from the interaction of the member with the rest of the structure.
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidd-page-member-steel.html">Member Design properties</see> to read more.</para>
   /// </summary>
   public class GsaEffectiveLengthOptions {
@@ -18,7 +18,7 @@ namespace GsaGH.Parameters {
 
     public GsaEffectiveLengthOptions() { }
 
-    public GsaEffectiveLengthOptions(GsaMember1D member) {
+    public GsaEffectiveLengthOptions(GsaMember1d member) {
       BucklingFactors = new GsaBucklingFactors(member);
       EffectiveLength = member.ApiMember.EffectiveLength;
     }

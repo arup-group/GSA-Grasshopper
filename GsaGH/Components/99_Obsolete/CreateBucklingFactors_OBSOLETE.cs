@@ -63,7 +63,7 @@ namespace GsaGH.Components {
         fls.EquivalentUniformMomentFactor = input;
       }
 
-      var leff = new GsaEffectiveLengthOptions(new GsaMember1D()) {
+      var leff = new GsaEffectiveLengthOptions(new GsaMember1d()) {
         BucklingFactors = fls
       };
 

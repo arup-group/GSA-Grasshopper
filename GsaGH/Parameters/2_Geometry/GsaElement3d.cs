@@ -25,7 +25,7 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   ///
   /// </summary>
-  public class GsaElement3D : GsaGeometryBase {
+  public class GsaElement3d : GsaGeometryBase {
     public List<GSAElement> ApiElements { get; internal set; }
     public List<int> Ids { get; set; } = new List<int>();
     public Guid Guid { get; private set; } = Guid.NewGuid();
@@ -48,7 +48,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Empty constructor instantiating a list of new API objects
     /// </summary>
-    public GsaElement3D() {
+    public GsaElement3d() {
       ApiElements = new List<GSAElement>();
     }
 
@@ -56,7 +56,7 @@ namespace GsaGH.Parameters {
     /// Create new instance by casting from a Mesh
     /// </summary>
     /// <param name="mesh"></param>
-    public GsaElement3D(Mesh mesh) {
+    public GsaElement3d(Mesh mesh) {
       if (mesh.IsClosed) {
         NgonMesh = mesh;
       } else {
@@ -73,7 +73,7 @@ namespace GsaGH.Parameters {
     /// Create a duplicate instance from another instance
     /// </summary>
     /// <param name="other"></param>
-    public GsaElement3D(GsaElement3D other) : base(other.LengthUnit) {
+    public GsaElement3d(GsaElement3d other) : base(other.LengthUnit) {
       Ids = other.Ids;
       NgonMesh = (Mesh)other.NgonMesh.DuplicateShallow();
       ApiElements = other.DuplicateApiObjects();
@@ -86,7 +86,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaElement3D(ConcurrentDictionary<int, GSAElement> elements, Mesh mesh,
+    internal GsaElement3d(ConcurrentDictionary<int, GSAElement> elements, Mesh mesh,
       ConcurrentDictionary<int, GsaProperty3d> prop3ds, LengthUnit modelUnit) : base(modelUnit) {
       NgonMesh = mesh;
       InitVariablesFromMesh(mesh, false);

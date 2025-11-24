@@ -13,15 +13,15 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Goo wrapper class, makes sure <see cref="GsaMember3D" /> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaMember3d" /> can be used in Grasshopper.
   /// </summary>
-  public class GsaMember3dGoo : GH_OasysGeometricGoo<GsaMember3D>, IGH_PreviewData {
+  public class GsaMember3dGoo : GH_OasysGeometricGoo<GsaMember3d>, IGH_PreviewData {
     public static string Description => "GSA 3D Member";
     public static string Name => "Member 3D";
     public static string NickName => "M3D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public GsaMember3dGoo(GsaMember3D item) : base(item) { }
+    public GsaMember3dGoo(GsaMember3d item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (typeof(TQ).IsAssignableFrom(typeof(GH_Mesh))) {
@@ -122,7 +122,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      var mem = new GsaMember3D(Value) {
+      var mem = new GsaMember3d(Value) {
         Id = 0
       };
 
@@ -132,7 +132,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Transform(Transform xform) {
-      var mem = new GsaMember3D(Value) {
+      var mem = new GsaMember3d(Value) {
         Id = 0
       };
 

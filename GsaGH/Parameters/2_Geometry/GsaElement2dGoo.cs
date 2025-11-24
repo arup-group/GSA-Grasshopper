@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
+using System.Security.Cryptography;
 
 using Grasshopper;
 using Grasshopper.Kernel;
@@ -15,15 +17,15 @@ using Rhino.Geometry;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  ///   Goo wrapper class, makes sure <see cref="GsaElement2D" /> can be used in Grasshopper.
+  ///   Goo wrapper class, makes sure <see cref="GsaElement2d" /> can be used in Grasshopper.
   /// </summary>
-  public class GsaElement2dGoo : GH_OasysGeometricGoo<GsaElement2D>, IGH_PreviewData {
+  public class GsaElement2dGoo : GH_OasysGeometricGoo<GsaElement2d>, IGH_PreviewData {
     public static string Description => "GSA 2D Element(s)";
     public static string Name => "Element 2D";
     public static string NickName => "E2D";
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
 
-    public GsaElement2dGoo(GsaElement2D item) : base(item) { }
+    public GsaElement2dGoo(GsaElement2d item) : base(item) { }
 
     public override bool CastTo<TQ>(ref TQ target) {
       if (Value != null) {
@@ -102,7 +104,7 @@ namespace GsaGH.Parameters {
     }
 
     public override IGH_GeometricGoo Morph(SpaceMorph xmorph) {
-      var elem = new GsaElement2D(Value) {
+      var elem = new GsaElement2d(Value) {
         Ids = new List<int>(new int[Value.IsLoadPanel ? 1 : Value.Mesh.Faces.Count]),
       };
       elem.Topology?.Morph(xmorph);
@@ -123,7 +125,7 @@ namespace GsaGH.Parameters {
     public override IGH_GeometricGoo Transform(Transform xform) {
       var xpts = new Point3dList(Value.Topology);
       xpts.Transform(xform);
-      var elem = new GsaElement2D(Value) {
+      var elem = new GsaElement2d(Value) {
         Ids = new List<int>(new int[Value.IsLoadPanel ? 1 : Value.Mesh.Faces.Count]),
         Topology = xpts
       };

@@ -36,7 +36,7 @@ namespace GsaGH.Parameters {
   ///     more.
   ///   </para>
   /// </summary>
-  public class GsaMember1D : GsaGeometryBase {
+  public class GsaMember1d : GsaGeometryBase {
     public Member ApiMember { get; internal set; }
     public int Id { get; set; } = 0;
     public Guid Guid { get; private set; } = Guid.NewGuid();
@@ -72,7 +72,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     ///   Empty constructor instantiating a new API object
     /// </summary>
-    public GsaMember1D() {
+    public GsaMember1d() {
       CreateDefaultApiMember();
     }
 
@@ -80,7 +80,7 @@ namespace GsaGH.Parameters {
     /// Create new instance by casting from a Curve
     /// </summary>
     /// <param name="crv"></param>
-    public GsaMember1D(Curve crv) {
+    public GsaMember1d(Curve crv) {
       CreateDefaultApiMember();
       UpdateGeometry(crv);
       UpdateReleasesPreview();
@@ -90,7 +90,7 @@ namespace GsaGH.Parameters {
     ///   Create a duplicate instance from another instance
     /// </summary>
     /// <param name="other"></param>
-    public GsaMember1D(GsaMember1D other) : base(other.LengthUnit) {
+    public GsaMember1d(GsaMember1d other) : base(other.LengthUnit) {
       Id = other.Id;
       ApiMember = other.DuplicateApiObject();
       LocalAxes = other.LocalAxes;
@@ -106,7 +106,7 @@ namespace GsaGH.Parameters {
     /// <summary>
     /// Create a new instance from an API object from an existing model
     /// </summary>
-    internal GsaMember1D(KeyValuePair<int, Member> mem, Point3dList topology,
+    internal GsaMember1d(KeyValuePair<int, Member> mem, Point3dList topology,
       List<string> topoType, ReadOnlyCollection<double> localAxis, GsaNode orientationNode,
       LengthUnit modelUnit, GsaSpringProperty springProperty = null) : base(modelUnit) {
       Id = mem.Key;

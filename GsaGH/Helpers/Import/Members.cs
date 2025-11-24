@@ -70,7 +70,7 @@ namespace GsaGH.Helpers.Import {
                   model.ApiNodes[item.Value.OrientationNode], model.ModelUnit));
               }
 
-              var mem1d = new GsaMember1D(
+              var mem1d = new GsaMember1d(
                 item, topopts, topoType, model.ApiMemberLocalAxes[item.Key], orientationNode, model.ModelUnit) {
                 Section = model.GetSection(item.Value)
               };
@@ -124,7 +124,7 @@ namespace GsaGH.Helpers.Import {
               }
 
               GsaProperty2d prop2d = model.GetProp2d(item.Value);
-              var mem2d = new GsaMember2D(item, topopts, topoType, voidTopo, voidTopoType,
+              var mem2d = new GsaMember2d(item, topopts, topoType, voidTopo, voidTopoType,
                 incLinesTopo, inclLinesTopoType, inclPts, prop2d, model.ModelUnit);
               Member2ds.Add(new GsaMember2dGoo(mem2d));
               break;
@@ -154,7 +154,7 @@ namespace GsaGH.Helpers.Import {
           m.Append(mList);
 
           GsaProperty3d prop = model.GetProp3d(item.Value);
-          var mem3d = new GsaMember3D(item.Value, item.Key, m, prop, model.ModelUnit);
+          var mem3d = new GsaMember3d(item.Value, item.Key, m, prop, model.ModelUnit);
           Member3ds.Add(new GsaMember3dGoo(mem3d));
         }
       });

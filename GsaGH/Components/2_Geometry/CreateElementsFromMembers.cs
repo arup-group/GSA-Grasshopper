@@ -141,19 +141,19 @@ namespace GsaGH.Components {
       }
 
       var member1dGoos = new List<GsaMember1dGoo>();
-      var member1ds = new List<GsaMember1D>();
+      var member1ds = new List<GsaMember1d>();
       if (da.GetDataList(1, member1dGoos)) {
         member1ds = member1dGoos.ConvertAll(x => x.Value);
       }
 
       var member2dGoos = new List<GsaMember2dGoo>();
-      var member2ds = new List<GsaMember2D>();
+      var member2ds = new List<GsaMember2d>();
       if (da.GetDataList(2, member2dGoos)) {
         member2ds = member2dGoos.ConvertAll(x => x.Value);
       }
 
       var member3dGoos = new List<GsaMember3dGoo>();
-      var member3ds = new List<GsaMember3D>();
+      var member3ds = new List<GsaMember3d>();
       if (da.GetDataList(3, member3dGoos)) {
         member3ds = member3dGoos.ConvertAll(x => x.Value);
       }

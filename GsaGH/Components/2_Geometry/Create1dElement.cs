@@ -53,7 +53,7 @@ namespace GsaGH.Components {
     protected override void SolveInstance(IGH_DataAccess da) {
       GH_Line ghln = null;
       da.GetData(0, ref ghln);
-      var elem = new GsaElement1D(new LineCurve(ghln.Value));
+      var elem = new GsaElement1d(new LineCurve(ghln.Value));
 
       GsaPropertyGoo sectionGoo = null;
       if (da.GetData(1, ref sectionGoo)) {

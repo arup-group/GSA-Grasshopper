@@ -3,7 +3,7 @@ using OasysUnits.Units;
 
 namespace GsaGH.Parameters {
   /// <summary>
-  /// An Offset will locally move the <see cref="GsaSection"/> or <see cref="GsaProperty2d"/> away from the centre of the local axis in <see cref="GsaElement1D"/>, <see cref="GsaMember1D"/>, <see cref="GsaElement2D"/>, or <see cref="GsaMember2D"/>.
+  /// An Offset will locally move the <see cref="GsaSection"/> or <see cref="GsaProperty2d"/> away from the centre of the local axis in <see cref="GsaElement1d"/>, <see cref="GsaMember1d"/>, <see cref="GsaElement2d"/>, or <see cref="GsaMember2d"/>.
   /// </summary>
   public class GsaOffset {
     public Length X1 { get; set; } = Length.Zero;

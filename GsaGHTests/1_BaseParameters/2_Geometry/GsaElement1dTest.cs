@@ -23,7 +23,7 @@ namespace GsaGHTests.Parameters {
     public void TestCreateGsaElem1dFromLn() {
       var ln = new Line(new Point3d(1, 4, 6), new Point3d(-2, 3, -5));
 
-      var elem = new GsaElement1D(new LineCurve(ln)) {
+      var elem = new GsaElement1d(new LineCurve(ln)) {
         Id = 66,
         Section = new GsaSection(3),
       };
@@ -57,7 +57,7 @@ namespace GsaGHTests.Parameters {
     public void TestCreateGsaElem1dGetReleases() {
       var ln = new Line(new Point3d(1, 4, 6), new Point3d(-2, 3, -5));
 
-      var elem = new GsaElement1D(new LineCurve(ln));
+      var elem = new GsaElement1d(new LineCurve(ln));
 
       GsaBool6 rel1 = elem.ReleaseStart;
       Assert.False(rel1.X);
@@ -72,7 +72,7 @@ namespace GsaGHTests.Parameters {
     public void TestDuplicateElem1d() {
       var ln = new Line(new Point3d(2, -1, 0), new Point3d(2, -1, 4));
 
-      var orig = new GsaElement1D(new LineCurve(ln)) {
+      var orig = new GsaElement1d(new LineCurve(ln)) {
         Id = 3,
         Section = new GsaSection(7)
       };
@@ -85,7 +85,7 @@ namespace GsaGHTests.Parameters {
       orig.Offset = offset;
       orig.OrientationAngle = new Angle(-0.14, AngleUnit.Radian);
 
-      var dup = new GsaElement1D(orig);
+      var dup = new GsaElement1d(orig);
 
       orig.Line = new LineCurve(new Line(new Point3d(1, 1, -4), new Point3d(1, 1, 0)));
       orig.Id = 5;
@@ -134,11 +134,11 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestDuplicateElem1dChangeDuplicateSection() {
       var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
-      var orig = new GsaElement1D(new LineCurve(ln)) {
+      var orig = new GsaElement1d(new LineCurve(ln)) {
         Section = new GsaSection("STD R 200 100")
       };
 
-      var dup = new GsaElement1D(orig) {
+      var dup = new GsaElement1d(orig) {
         Section = new GsaSection("STD I 1000 500 10 5")
       };
 
@@ -149,11 +149,11 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestDuplicateElem1dChangeApiSection() {
       var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
-      var orig = new GsaElement1D(new LineCurve(ln)) {
+      var orig = new GsaElement1d(new LineCurve(ln)) {
         Section = new GsaSection("STD R 200 100")
       };
 
-      var dup = new GsaElement1D(orig);
+      var dup = new GsaElement1d(orig);
       dup.Section.ApiSection.Profile = "STD I 1000 500 10 5";
 
       Assert.Equal("STD I 1000 500 10 5", orig.Section.ApiSection.Profile);
@@ -163,11 +163,11 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestDuplicateElem1dChangeOriginalSection() {
       var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
-      var orig = new GsaElement1D(new LineCurve(ln)) {
+      var orig = new GsaElement1d(new LineCurve(ln)) {
         Section = new GsaSection("STD R 200 100")
       };
 
-      var dup = new GsaElement1D(orig);
+      var dup = new GsaElement1d(orig);
       orig.Section = new GsaSection("STD I 1000 500 10 5");
 
       Assert.Equal("STD R 200 100", dup.Section.ApiSection.Profile);
@@ -177,16 +177,16 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void TestDuplicateElem1dSection() {
       var ln = new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10));
-      var orig = new GsaElement1D(new LineCurve(ln)) {
+      var orig = new GsaElement1d(new LineCurve(ln)) {
         Section = new GsaSection("STD R 200 100")
       };
 
-      var dup = new GsaElement1D(orig);
+      var dup = new GsaElement1d(orig);
       Assert.Equal(dup.Section.Guid, orig.Section.Guid);
     }
 
 
-    public GsaElement1D GetElement(List<int> topo, out Dictionary<int, Node> nodes) {
+    public GsaElement1d GetElement(List<int> topo, out Dictionary<int, Node> nodes) {
       var gsaElement = new GSAElement(new Element());
       gsaElement.OrientationNode = 0;
       gsaElement.Topology = new ReadOnlyCollection<int>(topo);
@@ -201,7 +201,7 @@ namespace GsaGHTests.Parameters {
 
       ReadOnlyCollection<double> localaxes = new ReadOnlyCollection<double>(new List<double> { 1, 0, 0, 0, 1, 0, 0, 0, 1 });
       var section = new GsaSection();
-      var elem = new GsaElement1D(element, nodes, section, localaxes, LengthUnit.Meter);
+      var elem = new GsaElement1d(element, nodes, section, localaxes, LengthUnit.Meter);
       return elem;
     }
 
@@ -223,8 +223,8 @@ namespace GsaGHTests.Parameters {
           new Point3d() { X = pos2.X, Y = pos2.Y, Z = pos2.Z });
     }
 
-    private GsaElement1D GetBasicElement() {
-      return new GsaElement1D(new LineCurve(new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10))));
+    private GsaElement1d GetBasicElement() {
+      return new GsaElement1d(new LineCurve(new Line(new Point3d(0, 0, 0), new Point3d(0, 0, 10))));
     }
 
     [Fact]

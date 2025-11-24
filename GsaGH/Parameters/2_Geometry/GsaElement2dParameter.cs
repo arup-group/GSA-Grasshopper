@@ -37,7 +37,7 @@ namespace GsaGH.Parameters {
     protected override GsaElement2dGoo PreferredCast(object data) {
       var mesh = new Mesh();
       if (GH_Convert.ToMesh(data, ref mesh, GH_Conversion.Both)) {
-        return new GsaElement2dGoo(new GsaElement2D(mesh));
+        return new GsaElement2dGoo(new GsaElement2d(mesh));
       }
 
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Element2d");
