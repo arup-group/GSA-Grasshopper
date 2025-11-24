@@ -17,6 +17,7 @@ using GsaGH.Helpers.GsaApi;
 using Rhino.Collections;
 using Rhino.Geometry;
 
+using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Parameters {
   /// <summary>
   /// <para>Elements in GSA are geometrical objects used for Analysis. Elements must be split at intersections with other elements to connect to each other or 'node out'. </para>
@@ -24,7 +25,7 @@ namespace GsaGH.Parameters {
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   ///
   /// </summary>
-  public class GsaElement3d {
+  public class GsaElement3d : GsaGeometryBase {
     public List<GSAElement> ApiElements { get; internal set; }
     public List<int> Ids { get; set; } = new List<int>();
     public Guid Guid { get; private set; } = Guid.NewGuid();
@@ -72,7 +73,7 @@ namespace GsaGH.Parameters {
     /// Create a duplicate instance from another instance
     /// </summary>
     /// <param name="other"></param>
-    public GsaElement3d(GsaElement3d other) {
+    public GsaElement3d(GsaElement3d other) : base(other.LengthUnit) {
       Ids = other.Ids;
       NgonMesh = (Mesh)other.NgonMesh.DuplicateShallow();
       ApiElements = other.DuplicateApiObjects();
@@ -86,7 +87,7 @@ namespace GsaGH.Parameters {
     /// Create a new instance from an API object from an existing model
     /// </summary>
     internal GsaElement3d(ConcurrentDictionary<int, GSAElement> elements, Mesh mesh,
-      ConcurrentDictionary<int, GsaProperty3d> prop3ds) {
+      ConcurrentDictionary<int, GsaProperty3d> prop3ds, LengthUnit modelUnit) : base(modelUnit) {
       NgonMesh = mesh;
       InitVariablesFromMesh(mesh, false);
       ApiElements = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();

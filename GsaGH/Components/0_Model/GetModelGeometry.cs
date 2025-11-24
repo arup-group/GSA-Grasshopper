@@ -676,7 +676,6 @@ namespace GsaGH.Components {
       if (model.ModelUnit != _lengthUnit) {
         model.ModelUnit = _lengthUnit;
       }
-      Utility.ModelGeometryLengthUnit = model.ModelUnit;
       _boundingBox = model.BoundingBox;
 
       try {

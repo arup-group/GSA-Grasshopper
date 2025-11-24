@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Grasshopper.Kernel;
@@ -15,11 +16,11 @@ using GsaGH.Properties;
 
 using OasysGH;
 using OasysGH.Components;
+using OasysGH.Units;
 
 using OasysUnits;
 
-using Utility = GsaGH.Helpers.Utility;
-
+using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Components {
   public class Preview3dSections : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("a3f80eb4-c876-4582-ad7a-d2bb9acf5c8d");
@@ -28,6 +29,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Preview3dSections;
     private Section3dPreview _analysisSection3dPreview;
     private Section3dPreview _designSection3dPreview;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public Preview3dSections() : base("Preview 3D Sections", "Preview3d",
       "Show the 3D cross-section of 1D/2D GSA Elements and Members in a GSA model.",
@@ -75,6 +77,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
+      var unitsName = new HashSet<string>();
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(0, ghTypes)) {
         var elem1ds = new List<GsaElement1d>();
@@ -93,6 +96,7 @@ namespace GsaGH.Components {
 
           switch (ghTyp.Value) {
             case GsaModelGoo modelGoo:
+              unitsName.Add(Length.GetAbbreviation(modelGoo.Value.ModelUnit));
               models.Add(modelGoo.Value);
               break;
 
@@ -101,18 +105,22 @@ namespace GsaGH.Components {
               break;
 
             case GsaElement1dGoo element1dGoo:
+              unitsName.Add(Length.GetAbbreviation(element1dGoo.Value.LengthUnit));
               elem1ds.Add(element1dGoo.Value);
               break;
 
             case GsaElement2dGoo element2dGoo:
+              unitsName.Add(Length.GetAbbreviation(element2dGoo.Value.LengthUnit));
               elem2ds.Add(element2dGoo.Value);
               break;
 
             case GsaMember1dGoo member1dGoo:
+              unitsName.Add(Length.GetAbbreviation(member1dGoo.Value.LengthUnit));
               mem1ds.Add(member1dGoo.Value);
               break;
 
             case GsaMember2dGoo member2dGoo:
+              unitsName.Add(Length.GetAbbreviation(member2dGoo.Value.LengthUnit));
               mem2ds.Add(member2dGoo.Value);
               break;
 
@@ -127,6 +135,12 @@ namespace GsaGH.Components {
               }
           }
         }
+
+        if (unitsName.Count > 1) {
+          this.AddRuntimeError("Multiple length units detected which is not allowed");
+        }
+
+        _lengthUnit = OasysUnitsSetup.Default.UnitParser.Parse<LengthUnit>(unitsName.First());
 
         if (!(elem1ds.Count > 0)) {
           elem1ds = null;
@@ -159,7 +173,7 @@ namespace GsaGH.Components {
         }
 
         // Assemble model
-        var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, mem1ds, mem2ds, Utility.ModelGeometryLengthUnit);
+        var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);
         GsaAPI.Model previewModel = assembly.GetModel();
 
         var steps = new List<int> {
@@ -173,7 +187,7 @@ namespace GsaGH.Components {
               }
 
               _analysisSection3dPreview =
-                new Section3dPreview(previewModel, Utility.ModelGeometryLengthUnit, Layer.Analysis);
+                new Section3dPreview(previewModel, _lengthUnit, Layer.Analysis);
               break;
 
             case 1:
@@ -182,7 +196,7 @@ namespace GsaGH.Components {
               }
 
               _designSection3dPreview =
-                new Section3dPreview(previewModel, Utility.ModelGeometryLengthUnit, Layer.Design);
+                new Section3dPreview(previewModel, _lengthUnit, Layer.Design);
               break;
           }
         });

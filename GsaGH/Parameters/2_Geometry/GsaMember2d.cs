@@ -5,6 +5,7 @@ using System.Linq;
 
 using GsaAPI;
 
+using GsaGH.Components;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
@@ -35,7 +36,7 @@ namespace GsaGH.Parameters {
   ///     more.
   ///   </para>
   /// </summary>
-  public class GsaMember2d {
+  public class GsaMember2d : GsaGeometryBase {
     public Member ApiMember { get; internal set; }
     public int Id { get; set; } = 0;
     public Guid Guid { get; private set; } = Guid.NewGuid();
@@ -99,7 +100,7 @@ namespace GsaGH.Parameters {
     /// Create a duplicate instance from another instance
     /// </summary>
     /// <param name="other"></param>
-    public GsaMember2d(GsaMember2d other) {
+    public GsaMember2d(GsaMember2d other) : base(other.LengthUnit) {
       Id = other.Id;
       ApiMember = other.DuplicateApiObject();
 
@@ -130,7 +131,7 @@ namespace GsaGH.Parameters {
       KeyValuePair<int, Member> mem, Point3dList topology, List<string> topologyType,
       List<Point3dList> voidTopology, List<List<string>> voidTopologyType,
       List<Point3dList> inlcusionLinesTopology, List<List<string>> inclusionTopologyType,
-      Point3dList includePoints, GsaProperty2d prop2d, LengthUnit modelUnit) {
+      Point3dList includePoints, GsaProperty2d prop2d, LengthUnit modelUnit) : base(modelUnit) {
       ApiMember = mem.Value;
       ApiMember.MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
       ApiMember.Group = mem.Value.Group;
