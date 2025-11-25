@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 
 using GsaAPI;
 
-using GsaGH.Components;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
@@ -36,6 +36,7 @@ namespace GsaGH.Parameters {
   ///     more.
   ///   </para>
   /// </summary>
+  [SuppressMessage("SonarAnalyzer.CSharp", "S101", Justification = "Project-specific naming convention")]
   public class GsaMember2d : GsaGeometryBase {
     public Member ApiMember { get; internal set; }
     public int Id { get; set; } = 0;

@@ -185,12 +185,12 @@ namespace GsaGH.Parameters {
             prop3Ds.TryGetValue(key, out GsaProperty3d prop);
             var propList = new ConcurrentDictionary<int, GsaProperty3d>();
             propList.TryAdd(key, prop);
-            var singleelement3D = new GsaElement3d(apiElems, mesh, propList, model.ModelUnit);
+            var singleelement3D = new GsaElement3d(apiElems, mesh, propList);
             elem3dGoos.Add(new GsaElement3dGoo(singleelement3D));
           }
         } else {
           // create new element from api-element, id, mesh (takes care of topology lists etc) and prop2d
-          var element3D = new GsaElement3d(elems, m, prop3Ds, model.ModelUnit);
+          var element3D = new GsaElement3d(elems, m, prop3Ds);
           elem3dGoos.Add(new GsaElement3dGoo(element3D));
         }
       });

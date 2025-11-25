@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 
@@ -10,7 +11,6 @@ using Grasshopper.Kernel.Data;
 
 using GsaAPI;
 
-using GsaGH.Components;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi;
@@ -30,6 +30,7 @@ namespace GsaGH.Parameters {
   /// <para>In Grasshopper, an Element2D parameter is a collection of 2D Elements (mesh faces representing <see href="https://docs.oasys-software.com/structural/gsa/references/element-types.html#quad-and-triangle-elements">Quad or Triangle Elements</see>) used for FE analysis. In GSA a 2D element is just a single face, but for Rhino performance reasons we have made the Element2D parameter a mesh that can contain more than one Element/Face.</para>
   /// <para>Refer to <see href="https://docs.oasys-software.com/structural/gsa/references/hidr-data-element.html">Elements</see> to read more.</para>
   /// </summary>
+  [SuppressMessage("SonarAnalyzer.CSharp", "S101", Justification = "Project-specific naming convention")]
   public class GsaElement2d : GsaGeometryBase {
     public List<GSAElement> ApiElements { get; internal set; }
     public List<int> Ids { get; set; } = new List<int>();
