@@ -9,7 +9,7 @@ using Grasshopper.Kernel;
 
 namespace GsaGH.Graphics {
   internal partial class AboutBox : Form {
-    public string AssemblyCompany => "Copyright © Oasys 1985 - 2024";
+    public string AssemblyCompany => "Copyright © Oasys 1985 - 2025";
     public string AssemblyDescription
       => "GSA is the software of choice for advanced analysis and design of buildings, bridges and tensile structures. "
         + "It provides a complete toolkit, with a comprehensive suite of analysis options. Designed by engineers for engineers.";
