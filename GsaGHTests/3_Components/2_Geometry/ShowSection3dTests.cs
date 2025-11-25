@@ -105,6 +105,7 @@ namespace GsaGHTests.Components.Geometry {
       var preview = new Section3dPreview(element);
       preview.Scale(LengthUnit.Meter);
       Assert.True(true);
+      rhinoDoc.Dispose();
     }
   }
 }
