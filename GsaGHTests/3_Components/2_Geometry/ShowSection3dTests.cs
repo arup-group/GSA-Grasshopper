@@ -90,8 +90,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.GetOutput(componenet);
       IList<string> message = componenet.RuntimeMessages(GH_RuntimeMessageLevel.Error);
       Assert.Single(message);
-      Assert.Equal("The detection of multiple length units in the geometrical entity is not allowed", message[0]);
-
+      Assert.Contains("Multiple length units have been detected", message[0]);
     }
 
     [Fact]
