@@ -137,7 +137,7 @@ namespace GsaGH.Components {
         }
 
         if (unitsName.Count > 1) {
-          this.AddRuntimeError("Multiple length units detected which is not allowed");
+          this.AddRuntimeError("Multiple length units have been detected, which is not permitted in geometric entities");
         }
 
         _lengthUnit = OasysUnitsSetup.Default.UnitParser.Parse<LengthUnit>(unitsName.First());
