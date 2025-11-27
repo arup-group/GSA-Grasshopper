@@ -36,11 +36,9 @@ if (-not (Validate-VersionFormat $newVersion)) {
     exit
 }
 
-$currentYear = 9999#(Get-Date).Year
+$currentYear = (Get-Date).Year
 
-# ---------------------------------------------------
-# ONE unified data structure for all updates
-# ---------------------------------------------------
+# Define updates
 $updates = @(
     # Version updates
     @{
@@ -78,13 +76,10 @@ $updates = @(
     @{
         FilePath = "LICENSE"
         SearchPattern = '2020-\d{4}'
-        ReplacementPattern = "2020 - $currentYear"
+        ReplacementPattern = "2020-$currentYear"
     }
 )
 
-# ---------------------------------------------------
-# One loop
-# ---------------------------------------------------
 foreach ($item in $updates) {
     Update-FileContent `
         -filePath $item.FilePath `
