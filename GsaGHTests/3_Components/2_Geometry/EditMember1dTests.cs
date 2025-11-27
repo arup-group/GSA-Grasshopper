@@ -1091,6 +1091,14 @@ namespace GsaGHTests.Components.Geometry {
       GsaBool6 releaseOutput = _helper.GetEndReleaseOutput();
       Assert.Equal(releaseInput, releaseOutput);
     }
+
+    [Fact]
+    public void Output3_IsGsaPropertyParameter() {
+      GH_OasysComponent component = _helper.GetComponent();
+      IGH_Param param = component.Params.Output[3];
+      Assert.NotNull(param);
+      Assert.IsType<GsaPropertyParameter>(param);
+    }
   }
 
   public class EditMember1dTestsHelper {
