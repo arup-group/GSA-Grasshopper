@@ -36,7 +36,7 @@ namespace GsaGH.Parameters {
   ///     more.
   ///   </para>
   /// </summary>
-  public class GsaMember1d {
+  public class GsaMember1d : GsaGeometryBase {
     public Member ApiMember { get; internal set; }
     public int Id { get; set; } = 0;
     public Guid Guid { get; private set; } = Guid.NewGuid();
@@ -90,7 +90,7 @@ namespace GsaGH.Parameters {
     ///   Create a duplicate instance from another instance
     /// </summary>
     /// <param name="other"></param>
-    public GsaMember1d(GsaMember1d other) {
+    public GsaMember1d(GsaMember1d other) : base(other.LengthUnit) {
       Id = other.Id;
       ApiMember = other.DuplicateApiObject();
       LocalAxes = other.LocalAxes;
@@ -108,7 +108,7 @@ namespace GsaGH.Parameters {
     /// </summary>
     internal GsaMember1d(KeyValuePair<int, Member> mem, Point3dList topology,
       List<string> topoType, ReadOnlyCollection<double> localAxis, GsaNode orientationNode,
-      LengthUnit modelUnit, GsaSpringProperty springProperty = null) {
+      LengthUnit modelUnit, GsaSpringProperty springProperty = null) : base(modelUnit) {
       Id = mem.Key;
       ApiMember = mem.Value;
       ApiMember.MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
