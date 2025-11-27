@@ -19,6 +19,18 @@ namespace GsaGH.Parameters {
       return new GsaPropertyGoo(Value);
     }
 
+    public override bool CastTo<Q>(ref Q target) {
+      switch (target) {
+        case GH_Integer integer:
+          if (Value is GsaSection section) {
+            integer.Value = section.Id;
+            return true;
+          }
+          break;
+      }
+      return base.CastTo(ref target);
+    }
+
     public override string ToString() {
       if (Value == null) {
         return "Null";
