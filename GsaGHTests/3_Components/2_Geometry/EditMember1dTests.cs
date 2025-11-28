@@ -2,6 +2,7 @@
 using System.Drawing;
 
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 
 using GsaAPI;
@@ -10,8 +11,10 @@ using GsaGH.Components;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
+using GsaGHTests.Parameters;
 
 using OasysGH.Components;
+using OasysGH.Parameters;
 
 using Rhino.Geometry;
 
@@ -1098,6 +1101,14 @@ namespace GsaGHTests.Components.Geometry {
       IGH_Param param = component.Params.Output[3];
       Assert.NotNull(param);
       Assert.IsType<GsaPropertyParameter>(param);
+    }
+
+    [Fact]
+    public void CastAnnotation3dToUnitNumberTest() {
+      var section = (GsaPropertyGoo)ComponentTestHelper.GetOutput(_helper.GetComponent(), 3);
+      var sectionId = new GH_Integer();
+      section.CastTo(ref sectionId);
+      Assert.Equal(0, sectionId.Value);
     }
   }
 
