@@ -20,11 +20,9 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<Q>(ref Q target) {
-      if (typeof(Q).IsAssignableFrom(typeof(GH_Integer))) {
-        if (Value != null) {
-          target = (Q)(object)new GH_Integer(Value.Id);
-          return true;
-        }
+      if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)) && Value != null) {
+        target = (Q)(object)new GH_Integer(Value.Id);
+        return true;
       }
 
       target = default;
