@@ -20,15 +20,15 @@ namespace GsaGH.Parameters {
     }
 
     public override bool CastTo<Q>(ref Q target) {
-      switch (target) {
-        case GH_Integer integer:
-          if (Value is GsaSection section) {
-            integer.Value = section.Id;
-            return true;
-          }
-          break;
+      if (typeof(Q).IsAssignableFrom(typeof(GH_Integer))) {
+        if (Value != null) {
+          target = (Q)(object)new GH_Integer(Value.Id);
+          return true;
+        }
       }
-      return base.CastTo(ref target);
+
+      target = default;
+      return false;
     }
 
     public override string ToString() {

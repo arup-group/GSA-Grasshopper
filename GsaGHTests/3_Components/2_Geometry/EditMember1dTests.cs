@@ -1114,9 +1114,16 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void GsaPropertyGooCanCastId() {
       var section = (GsaPropertyGoo)ComponentTestHelper.GetOutput(_helper.GetComponent(), 3);
-      var sectionId = new GH_Integer();
-      section.CastTo(ref sectionId);
-      Assert.Equal(0, sectionId.Value);
+      var target = new GH_Integer();
+      section.CastTo(ref target);
+      Assert.Equal(0, target.Value);
+    }
+
+    [Fact]
+    public void GsaPropertyGooReturnFalseIfCastIsNotSupported() {
+      var section = (GsaPropertyGoo)ComponentTestHelper.GetOutput(_helper.GetComponent(), 3);
+      var target = new GH_String();
+      Assert.False(section.CastTo(ref target));
     }
 
   }
