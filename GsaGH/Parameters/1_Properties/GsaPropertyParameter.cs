@@ -31,7 +31,8 @@ namespace GsaGH.Parameters {
       switch (data) {
         case GsaSectionGoo section:
           return new GsaPropertyGoo(section.Value);
-
+        case GsaPropertyGoo gsaProperty:
+          return new GsaPropertyGoo(gsaProperty.Value);
         case GsaSpringPropertyGoo springProperty:
           return new GsaPropertyGoo(springProperty.Value);
       }

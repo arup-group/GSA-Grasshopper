@@ -121,7 +121,7 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void ComponentReturnValidSection() {
-      GsaSection output = _helper.GetSectionOutput();
+      var output = (GsaSection)_helper.GetSectionOutput();
       Assert.Equal(_helper.DefaultMemberProfile, output.ApiSection.Profile);
     }
 
@@ -455,7 +455,7 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void EditMember1dReturnValidSection() {
-      GsaSection output = _helper.GetSectionOutput();
+      var output = (GsaSection)_helper.GetSectionOutput();
       Assert.Equal(_helper.MemberProfile, output.ApiSection.Profile);
     }
 
@@ -787,7 +787,7 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void EditMember1dReturnValidSection() {
-      GsaSpringProperty output = _helper.GetSpringPropertyOutput();
+      var output = (GsaSpringProperty)_helper.GetSectionOutput();
       Assert.NotNull(output);
     }
 
@@ -1096,7 +1096,7 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     [Fact]
-    public void Output3_IsGsaPropertyParameter() {
+    public void Output3_IsGenericParameterType() {
       GH_OasysComponent component = _helper.GetComponent();
       IGH_Param param = component.Params.Output[3];
       Assert.NotNull(param);
@@ -1104,12 +1104,21 @@ namespace GsaGHTests.Components.Geometry {
     }
 
     [Fact]
-    public void CastAnnotation3dToUnitNumberTest() {
+    public void Input3_IsGenericParameterType() {
+      GH_OasysComponent component = _helper.GetComponent();
+      IGH_Param param = component.Params.Input[3];
+      Assert.NotNull(param);
+      Assert.IsType<GsaPropertyParameter>(param);
+    }
+
+    [Fact]
+    public void GsaPropertyGooCanCastId() {
       var section = (GsaPropertyGoo)ComponentTestHelper.GetOutput(_helper.GetComponent(), 3);
       var sectionId = new GH_Integer();
       section.CastTo(ref sectionId);
       Assert.Equal(0, sectionId.Value);
     }
+
   }
 
   public class EditMember1dTestsHelper {
@@ -1147,12 +1156,8 @@ namespace GsaGHTests.Components.Geometry {
       return ComponentTestHelper.GetCurveOutput(_component, 2);
     }
 
-    public GsaSection GetSectionOutput() {
+    public IGsaProperty GetSectionOutput() {
       return ComponentTestHelper.GetSectionOutput(_component, 3);
-    }
-
-    public GsaSpringProperty GetSpringPropertyOutput() {
-      return ComponentTestHelper.GetSpringPropertyOutput(_component, 3);
     }
 
     public int GetMemberGroupOutput() {
