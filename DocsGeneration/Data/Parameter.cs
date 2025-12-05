@@ -24,7 +24,7 @@ namespace DocsGeneration.Data {
 
     public Parameter(Type type, Configuration config, bool summary = false) {
       var persistentParam = (IGH_Param)Activator.CreateInstance(type, null);
-      Name = persistentParam.Name.Replace("parameter", string.Empty).Trim();
+      Name = Regex.Replace(persistentParam.Name, "parameter", string.Empty, RegexOptions.IgnoreCase).Trim();
       if (Name.Contains('[')) {
         Name = Name.Split('[')[0];
       }
