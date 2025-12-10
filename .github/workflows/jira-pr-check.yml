@@ -1,4 +1,6 @@
 name: Check Jira key in PR title exists and is valid
+permissions:
+  contents: read
 
 # Runs when opening or changing a PR
 on: 
