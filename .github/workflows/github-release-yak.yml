@@ -1,4 +1,6 @@
 name: Push GsaGH yak package
+permissions:
+  contents: read
 
 # On run when release is published
 on:
@@ -23,4 +25,4 @@ jobs:
       - name: Push yak file
         run: |
           curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
-          ls *.yak |% {.\yak push $_.FullName}
+          ls ./*.yak |% {.\yak push $_.FullName}
