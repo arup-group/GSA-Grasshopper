@@ -223,162 +223,203 @@ namespace GsaGH.Components {
 
     private void SetOutputForCATProfile(IGH_DataAccess da, List<double> sqlValues, LengthUnit unit) {
       int i = 0;
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(_lengthUnit))); //Depth
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Width
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Width Top
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Width Bottom
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(_lengthUnit))); //Flange Thk Top
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[3], unit).ToUnit(_lengthUnit))); //Flange Thk Bottom
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[2], unit).ToUnit(_lengthUnit))); //Web Thk Bottom
-      da.SetData(i++,
-        sqlValues.Count > 4 ? new GH_UnitNumber(new Length(sqlValues[4], unit).ToUnit(_lengthUnit)) :
-          new GH_UnitNumber(Length.Zero.ToUnit(_lengthUnit))); // welded section don´t have a root radius
-      //Root radius
-      da.SetData(i, null); //Spacing
+
+      double?[] values = {
+        sqlValues[0], // Depth
+        sqlValues[1], // Width
+        sqlValues[1], // Width Top
+        sqlValues[1], // Width Bottom
+        sqlValues[3], // Flange Thk Top
+        sqlValues[3], // Flange Thk Bottom
+        sqlValues[2], // Web Thk Bottom
+        sqlValues.Count > 4 ? sqlValues[4] : (double?)0, // Root radius
+        null, // Spacing
+      };
+
+      SetUnitOutputs(da, unit, values, ref i);
     }
 
     private void SetOutputForCAT3ValuesProfile(IGH_DataAccess da, List<double> sqlValues, LengthUnit unit) {
       int i = 0;
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(_lengthUnit))); //Depth
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Width
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Width Top
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Width Bottom
-      da.SetData(i++, null); //Flange Thk Top
-      da.SetData(i++, null); //Flange Thk Bottom
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[2], unit).ToUnit(_lengthUnit))); //Web Thk Bottom
-      da.SetData(i++,
-        sqlValues.Count > 4 ? new GH_UnitNumber(new Length(sqlValues[4], unit).ToUnit(_lengthUnit)) :
-          new GH_UnitNumber(Length.Zero.ToUnit(_lengthUnit))); // welded section don´t have a root radius
-      //Root radius
-      da.SetData(i, null); //Spacing
+
+      double?[] values = {
+        sqlValues[0], // Depth
+        sqlValues[1], // Width
+        sqlValues[1], // Width Top
+        sqlValues[1], // Width Bottom
+        null, // Flange Thk Top
+        null, // Flange Thk Bottom
+        sqlValues[2], // Web Thk Bottom
+        sqlValues.Count > 4 ? sqlValues[4] : (double?)0, // Root radius
+        null, // Spacing
+      };
+
+      SetUnitOutputs(da, unit, values, ref i);
     }
 
     private void SetOutputForCAT2ValuesProfile(IGH_DataAccess da, List<double> sqlValues, LengthUnit unit) {
       int i = 0;
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[0], unit).ToUnit(_lengthUnit))); //Depth
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Width
-      da.SetData(i++, null); //Width Top
-      da.SetData(i++, null); //Width Bottom
-      da.SetData(i++, null); //Flange Thk Top
-      da.SetData(i++, null); //Flange Thk Bottom
-      da.SetData(i++, new GH_UnitNumber(new Length(sqlValues[1], unit).ToUnit(_lengthUnit))); //Web Thk Bottom
-      da.SetData(i++, null); //root radius
-      da.SetData(i, null); //Spacing
+
+      double?[] values = {
+        sqlValues[0], // Depth
+        sqlValues[1], // Width
+        null, // Width Top
+        null, // Width Bottom
+        null, // Flange Thk Top
+        null, // Flange Thk Bottom
+        sqlValues[1], // Web Thk Bottom
+        null, // Root radius
+        null, // Spacing
+      };
+
+      SetUnitOutputs(da, unit, values, ref i);
     }
 
     private void SetOutputForITSectionProfile(IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
       int i = 0;
-      SetOutput(da, i++, parts[2], unit); //Depth
-      SetOutput(da, i++, parts[3], unit); //Width
-      SetOutput(da, i++, parts[3], unit); //Width Top
-      SetOutput(da, i++, parts[4], unit); //Width Bottom
-      SetOutput(da, i++, parts[5], unit); //Flange Thk Top
-      da.SetData(i++, null); //Flange Thk Bottom
-      SetOutput(da, i++, parts[4], unit); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+      string[] values = {
+        parts[2], //Depth
+        parts[3], //Width
+        parts[3], //Width Top
+        parts[4], //Width Bottom
+        parts[5], //Flange Thk Top
+        null, //Flange Thk Bottom
+        parts[4], //Web Thk Bottom
+        null, //Root radius
+        null, //Spacing
+      };
+      SetUnitOutputs(da, unit, values, ref i);
       da.SetData(i, type[0]);
     }
 
     private void SetOutputForITrapezoidProfile(IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
       int i = 0;
+
       double top = double.Parse(parts[3], CultureInfo.InvariantCulture);
       double bottom = double.Parse(parts[4], CultureInfo.InvariantCulture);
-      var length = new Length(Math.Max(top, bottom), unit);
-      SetOutput(da, i++, parts[2], unit); //Depth
-      da.SetData(i++, new GH_UnitNumber(length.ToUnit(_lengthUnit))); //Width
-      SetOutput(da, i++, parts[3], unit); //Width Top
-      SetOutput(da, i++, parts[4], unit); //Width Bottom
-      da.SetData(i++, null); //Flange Thk Top
-      da.SetData(i++, null); //Flange Thk Bottom
-      da.SetData(i++, null); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+      var width = new Length(Math.Max(top, bottom), unit);
+
+      string[] values = {
+        parts[2], // Depth
+        null, // Placeholder for Width, 
+        parts[3], // Width Top
+        parts[4], // Width Bottom
+        null, // Flange Thk Top
+        null, // Flange Thk Bottom
+        null, // Web Thk Bottom
+        null, // Root radius
+        null, // Spacing
+      };
+
+      SetUnitOutputs(da, unit, values, ref i);
+
+      da.SetData(1, new GH_UnitNumber(width.ToUnit(_lengthUnit)));
       da.SetData(i, type[0]);
     }
 
     private void SetOutputForIStadiumProfile(IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
       int i = 0;
-      SetOutput(da, i++, parts[2], unit); //Depth
-      SetOutput(da, i++, parts[3], unit); //Width
-      da.SetData(i++, null); //Width Top
-      da.SetData(i++, null); //Width Bottom
-      da.SetData(i++, null); //Flange Thk Top
-      da.SetData(i++, null); //Flange Thk Bottom
-      da.SetData(i++, null); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+      string[] values = {
+        parts[2], //Depth
+        parts[3], //Width
+        null, //Width Top
+        null, //Width Bottom
+        null, //Flange Thk Top
+        null, //Flange Thk Bottom
+        null, //Web Thk Bottom
+        null, //Root radius
+        null, //Spacing
+      };
+
+      SetUnitOutputs(da, unit, values, ref i);
       da.SetData(i, type[0]);
     }
 
     private void SetOutputForISheetPileProfile(IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
       int i = 0;
-      SetOutput(da, i++, parts[2], unit); //Depth
-      SetOutput(da, i++, parts[3], unit); //Width
-      SetOutput(da, i++, parts[4], unit); //Width Top
-      SetOutput(da, i++, parts[5], unit); //Width Bottom
-      SetOutput(da, i++, parts[6], unit); //Flange Thk Top
-      SetOutput(da, i++, parts[6], unit); //Flange Thk Bottom
-      SetOutput(da, i++, parts[7], unit); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+      string[] values = {
+        parts[2], //Depth
+        parts[3], //Width
+        parts[4], //Width Top
+        parts[5], //Width Bottom
+        parts[6], //Flange Thk Top
+        parts[6], //Flange Thk Bottom
+        parts[7], //Web Thk Bottom
+        null, //Root radius
+        null, //Spacing
+      };
+
+      SetUnitOutputs(da, unit, values, ref i);
+
       da.SetData(i, type[0]);
     }
 
     private void SetOutputForISecantPileProfile(
       IGH_DataAccess da, string[] parts, LengthUnit unit, string profile, string[] type) {
       int i = 0;
-      SetOutput(da, i++, parts[2], unit); //Depth/Diameter
-      Length length;
+      double width = 0;
+      int count = int.Parse(parts[4], CultureInfo.InvariantCulture);
+      double spacing = double.Parse(parts[3], CultureInfo.InvariantCulture);
+
       if (profile.StartsWith("STD SPW")) {
         // STD SPW 250 100 4
-        int count = int.Parse(parts[4], CultureInfo.InvariantCulture);
-        double spacing = double.Parse(parts[3], CultureInfo.InvariantCulture);
-        length = new Length(count * spacing, unit);
+        width = count * spacing;
       } else {
         // STD SP 250 100 4
-        int count = int.Parse(parts[4], CultureInfo.InvariantCulture);
-        double spacing = double.Parse(parts[3], CultureInfo.InvariantCulture);
         double diameter = double.Parse(parts[2], CultureInfo.InvariantCulture);
-        length = new Length(((count - 1) * spacing) + diameter, unit);
+        width = ((count - 1) * spacing) + diameter;
       }
 
-      da.SetData(i++, new GH_UnitNumber(length.ToUnit(_lengthUnit))); //Width
-      da.SetData(i++, null); //Width Top
-      da.SetData(i++, null); //Width Bottom
-      da.SetData(i++, null); //Flange Thk Top
-      da.SetData(i++, null); //Flange Thk Bottom
-      da.SetData(i++, null); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      SetOutput(da, i++, parts[3], unit); //Spacing
+      string[] values = {
+        parts[2], //Depth
+        null, //Width
+        null, //Width Top
+        null, //Width Bottom
+        null, //Flange Thk Top
+        null, //Flange Thk Bottom
+        null, //Web Thk Bottom
+        null, //Root radius
+        parts[3], //Spacing
+      };
+
+      SetUnitOutputs(da, unit, values, ref i);
+      SetOutput(da, 1, width, unit);
       da.SetData(i, type[0]);
     }
 
     private void SetOutputForIRectoEllipseProfile(IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
       int i = 0;
-      SetOutput(da, i++, parts[2], unit); //Depth
-      SetOutput(da, i++, parts[4], unit); //Width
-      SetOutput(da, i++, parts[3], unit); //Width Top
-      SetOutput(da, i++, parts[5], unit); //Width Bottom
-      da.SetData(i++, null); //Flange Thk Top
-      da.SetData(i++, null); //Flange Thk Bottom
-      da.SetData(i++, null); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+      string[] values = {
+        parts[2], //Depth
+        parts[4], //Width
+        parts[3], //Width Top
+        parts[5], //Width Bottom
+        null, //Flange Thk Top
+        null, //Flange Thk Bottom
+        null, //Web Thk Bottom
+        null, //Root radius
+        null, //Spacing
+      };
+
+      SetUnitOutputs(da, unit, values, ref i);
       da.SetData(i, type[0]);
     }
 
     private void SetOutputForIRectangleProfile(IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
       int i = 0;
-      SetOutput(da, i++, parts[2], unit); //Depth/Diameter
-      SetOutput(da, i++, parts[3], unit); //Width
-      SetOutput(da, i++, parts[3], unit); //Width Top
-      SetOutput(da, i++, parts[3], unit); //Width Bottom
-      da.SetData(i++, null); //Flange Thk Top
-      da.SetData(i++, null); //Flange Thk Bottom
-      da.SetData(i++, null); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+      string[] values = {
+        parts[2], //Depth/Diameter
+        parts[3], //Width
+        parts[3], //Width Top
+        parts[3], //Width Bottom
+        null, //Flange Thk Top
+        null, //Flange Thk Bottom
+        null, //Web Thk Bottom
+        null, //Root radius
+        null, //Spacing
+      };
+
+      SetUnitOutputs(da, unit, values, ref i);
       da.SetData(i, type[0]);
     }
 
@@ -394,15 +435,19 @@ namespace GsaGH.Components {
 
     private void SetOutputForIIBeamCellularProfile(IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
       int i = 0;
-      SetOutput(da, i++, parts[2], unit); //Depth/Diameter
-      SetOutput(da, i++, parts[3], unit); //Width
-      SetOutput(da, i++, parts[3], unit); //Width Top
-      SetOutput(da, i++, parts[3], unit); //Width Bottom
-      SetOutput(da, i++, parts[5], unit); //Flange Thk Top
-      SetOutput(da, i++, parts[5], unit); //Flange Thk Bottom
-      SetOutput(da, i++, parts[4], unit); //Web Thk Bottom
-      SetOutput(da, i++, parts[6], unit); //hole size
-      SetOutput(da, i++, parts[7], unit); //pitch
+      string[] values = {
+        parts[2], //Depth/Diameter
+        parts[3], //Width
+        parts[3], //Width Top
+        parts[3], //Width Bottom
+        parts[5], //Flange Thk Top
+        parts[5], //Flange Thk Bottom
+        parts[4], //Web Thk Bottom
+        parts[6], //hole size
+        parts[7], //pitch
+      };
+
+      SetUnitOutputs(da, unit, values, ref i);
       da.SetData(i, type[0]);
     }
 
@@ -411,16 +456,22 @@ namespace GsaGH.Components {
       int i = 0;
       double top = double.Parse(parts[3], CultureInfo.InvariantCulture);
       double bottom = double.Parse(parts[4], CultureInfo.InvariantCulture);
-      var length = new Length(Math.Max(top, bottom), unit);
-      SetOutput(da, i++, parts[2], unit); //Depth
-      da.SetData(i++, new GH_UnitNumber(length.ToUnit(_lengthUnit))); //Width
-      SetOutput(da, i++, parts[3], unit); //Width Top
-      SetOutput(da, i++, parts[4], unit); //Width Bottom
-      SetOutput(da, i++, parts[6], unit); //Flange Thk Top
-      SetOutput(da, i++, parts[7], unit); //Flange Thk Bottom
-      SetOutput(da, i++, parts[5], unit); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+
+      string[] values = {
+        parts[2], //Depth
+        null, //Width
+        parts[3], //Width Top
+        parts[4], //Width Bottom
+        parts[6], //Flange Thk Top
+        parts[7], //Flange Thk Bottom
+        parts[5], //Web Thk Bottom
+        null, //Root radius
+        null, //Spacing
+      };
+
+      SetUnitOutputs(da, unit, values, ref i);
+      SetOutput(da, 1, Math.Max(top, bottom), unit); //Width
+
       da.SetData(i, type[0]);
     }
 
@@ -428,30 +479,39 @@ namespace GsaGH.Components {
       int i = 0;
       double top = double.Parse(parts[3], CultureInfo.InvariantCulture);
       double bottom = double.Parse(parts[4], CultureInfo.InvariantCulture);
-      var length = new Length(top + bottom, unit);
-      SetOutput(da, i++, parts[2], unit); //Depth
-      da.SetData(i++, new GH_UnitNumber(length.ToUnit(_lengthUnit))); //Width
-      SetOutput(da, i++, parts[3], unit); //Width Top
-      SetOutput(da, i++, parts[4], unit); //Width Bottom
-      SetOutput(da, i++, parts[5], unit); //Flange Thk Top
-      SetOutput(da, i++, parts[6], unit); //Flange Thk Bottom
-      SetOutput(da, i++, parts[7], unit); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+      double width = top + bottom;
+
+      string[] values = {
+        parts[2], //Depth
+        null, //Width
+        parts[3], //Width Top
+        parts[4], //Width Bottom
+        parts[5], //Flange Thk Top
+        parts[6], //Flange Thk Bottom
+        parts[7], //Web Thk Bottom
+        null, //Root radius
+        null, //Spacing
+      };
+      SetUnitOutputs(da, unit, values, ref i);
+      SetOutput(da, 1, width, unit); //Width
+
       da.SetData(i, type[0]);
     }
 
     private void SetOutputForIGeneralCProfile(IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
       int i = 0;
-      SetOutput(da, i++, parts[2], unit); //Depth/Diameter
-      SetOutput(da, i++, parts[3], unit); //Width
-      SetOutput(da, i++, parts[3], unit); //Width Top
-      SetOutput(da, i++, parts[3], unit); //Width Bottom
-      SetOutput(da, i++, parts[4], unit); //Flange Thk Top
-      SetOutput(da, i++, parts[4], unit); //Flange Thk Bottom
-      SetOutput(da, i++, parts[5], unit); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+      string[] values = {
+        parts[2], //Depth
+        parts[3], //Width
+        parts[3], //Width Top
+        parts[3], //Width Bottom
+        parts[4], //Flange Thk Top
+        parts[4], //Flange Thk Bottom
+        parts[5], //Web Thk Bottom
+        null, //Root radius
+        null, //Spacing
+      };
+      SetUnitOutputs(da, unit, values, ref i);
       da.SetData(i, type[0]);
     }
 
@@ -461,72 +521,90 @@ namespace GsaGH.Components {
 
     private void SetOutputForIEllipseHollowProfile(IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
       int i = 0;
-      SetOutput(da, i++, parts[2], unit); //Depth
-      SetOutput(da, i++, parts[3], unit); //Width
-      SetOutput(da, i++, parts[3], unit); //Width Top
-      SetOutput(da, i++, parts[3], unit); //Width Bottom
-      SetOutput(da, i++, parts[4], unit); //Flange Thk Top
-      SetOutput(da, i++, parts[4], unit); //Flange Thk Bottom
-      SetOutput(da, i++, parts[4], unit); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+      string[] values = {
+        parts[2], //Depth
+        parts[3], //Width
+        parts[3], //Width Top
+        parts[3], //Width Bottom
+        parts[4], //Flange Thk Top
+        parts[4], //Flange Thk Bottom
+        parts[4], //Web Thk Bottom
+        null, //Root radius
+        null, //Spacing
+      };
+      SetUnitOutputs(da, unit, values, ref i);
       da.SetData(i, type[0]);
     }
 
     private void SetOutputForICruciformSymmetricalProfile(
       IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
       int i = 0;
-      SetOutput(da, i++, parts[2], unit); //Depth
-      SetOutput(da, i++, parts[3], unit); //Width
-      SetOutput(da, i++, parts[3], unit); //Width Top
-      SetOutput(da, i++, parts[3], unit); //Width Bottom
-      SetOutput(da, i++, parts[5], unit); //Flange Thk Top
-      SetOutput(da, i++, parts[5], unit); //Flange Thk Bottom
-      SetOutput(da, i++, parts[4], unit); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+      string[] values = {
+        parts[2], //Depth
+        parts[3], //Width
+        parts[3], //Width Top
+        parts[3], //Width Bottom
+        parts[5], //Flange Thk Top
+        parts[5], //Flange Thk Bottom
+        parts[4], //Web Thk Bottom
+        null, //Root radius
+        null, //Spacing
+      };
+
+      SetUnitOutputs(da, unit, values, ref i);
       da.SetData(i, type[0]);
     }
 
     private void SetOutputForCircleProfile(IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
       int i = 0;
-      SetOutput(da, i++, parts[2], unit); //Depth
-      da.SetData(i++, null); //Width
-      da.SetData(i++, null); //Width Top
-      da.SetData(i++, null); //Width Bottom
-      da.SetData(i++, null); //Flange Thk Top
-      da.SetData(i++, null); //Flange Thk Bottom
-      da.SetData(i++, null); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+      string[] values = {
+        parts[2], //Depth
+        null, //Width
+        null, //Width Top
+        null, //Width Bottom
+        null, //Flange Thk Top
+        null, //Flange Thk Bottom
+        null, //Web Thk Bottom
+        null, //Root radius
+        null, //Spacing
+      };
+
+      SetUnitOutputs(da, unit, values, ref i);
       da.SetData(i, type[0]);
     }
 
     private void SetOutputForCircleHollowProfile(IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
       int i = 0;
-      SetOutput(da, i++, parts[2], unit); //Depth
-      da.SetData(i++, null); //Width
-      da.SetData(i++, null); //Width Top
-      da.SetData(i++, null); //Width Bottom
-      da.SetData(i++, null); //Flange Thk Top
-      da.SetData(i++, null); //Flange Thk Bottom
-      SetOutput(da, i++, parts[3], unit); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+      string[] values = {
+        parts[2], //Depth
+        null, //Width
+        null, //Width Top
+        null, //Width Bottom
+        null, //Flange Thk Top
+        null, //Flange Thk Bottom
+        parts[3], //Web Thk Bottom
+        null, //Root radius
+        null, //Spacing
+      };
+      SetUnitOutputs(da, unit, values, ref i);
       da.SetData(i, type[0]);
     }
 
     private void SetOutputForAngleProfile(IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
       int i = 0;
-      SetOutput(da, i++, parts[2], unit); //Depth
-      SetOutput(da, i++, parts[3], unit); //Width
-      SetOutput(da, i++, parts[3], unit); //Width Top
-      SetOutput(da, i++, parts[3], unit); //Width Bottom
-      SetOutput(da, i++, parts[5], unit); //Flange Thk Top
-      SetOutput(da, i++, parts[5], unit); //Flange Thk Bottom
-      SetOutput(da, i++, parts[4], unit); //Web Thk Bottom
-      da.SetData(i++, null); //Root radius
-      da.SetData(i++, null); //Spacing
+
+      string[] values = {
+        parts[2], //Depth
+        parts[3], //Width
+        parts[3], //Width Top
+        parts[3], //Width Bottom
+        parts[5], //Flange Thk Top
+        parts[5], //Flange Thk Bottom
+        parts[4], //Web Thk Bottom
+        null, //Root radius
+        null, //Spacing
+      };
+      SetUnitOutputs(da, unit, values, ref i);
       da.SetData(i, type[0]);
     }
 
@@ -546,5 +624,31 @@ namespace GsaGH.Components {
       var length = new Length(val, unit);
       da.SetData(outputId, new GH_UnitNumber(length.ToUnit(_lengthUnit)));
     }
+
+    private void SetOutput(IGH_DataAccess da, int outputId, double value, LengthUnit unit) {
+      var length = new Length(value, unit);
+      da.SetData(outputId, new GH_UnitNumber(length.ToUnit(_lengthUnit)));
+    }
+
+    private void SetUnitOutputs(IGH_DataAccess da, LengthUnit unit, IList<double?> values, ref int index) {
+      foreach (double? value in values) {
+        if (value.HasValue) {
+          SetOutput(da, index++, value.Value, unit);
+        } else {
+          da.SetData(index++, null);
+        }
+      }
+    }
+
+    private void SetUnitOutputs(IGH_DataAccess da, LengthUnit unit, IList<string> values, ref int index) {
+      foreach (string value in values) {
+        if (!string.IsNullOrEmpty(value)) {
+          SetOutput(da, index++, value, unit);
+        } else {
+          da.SetData(index++, null);
+        }
+      }
+    }
+
   }
 }
