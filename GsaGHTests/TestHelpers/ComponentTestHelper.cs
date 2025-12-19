@@ -288,8 +288,8 @@ namespace GsaGHTests.Helpers {
       return orientation.Value;
     }
 
-    public static GsaSection GetSectionOutput(GH_OasysComponent component, int index) {
-      var section = (GsaSectionGoo)GetOutput(component, index);
+    public static IGsaProperty GetSectionOutput(GH_OasysComponent component, int index) {
+      var section = (GsaPropertyGoo)GetOutput(component, index);
       return section.Value;
     }
 
