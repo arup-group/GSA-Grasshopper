@@ -32,31 +32,32 @@ namespace DocsGeneration.Data {
       NickName = persistentParam.NickName;
       Description = persistentParam.Description;
       SubCategory = Exposure.GetExposure(persistentParam.Exposure);
-      ParameterType = GetParameterType(type);
+      ParameterType = GetParameterType(type, config.ProjectName);
 
       if (summary && SubCategory > 0) {
         Summary = GetClassSummary(persistentParam.GetType(), config.XmlDocument);
       }
     }
 
-    private string GetParameterType(Type type) {
+    private string GetParameterType(Type type, string projectName) {
       if (type.BaseType?.GenericTypeArguments == null || !type.BaseType.GenericTypeArguments.Any()) {
-        return CleanUpName(type.BaseType.Name);
+        return CleanUpName(type.BaseType.Name, projectName);
       }
 
       if (type.BaseType.GenericTypeArguments[0]?.Name == "IGH_Goo") {
         return "Generic";
       }
 
-      string s = CleanUpName(type.BaseType.GenericTypeArguments[0].Name);
+      string s = CleanUpName(type.BaseType.GenericTypeArguments[0].Name, projectName);
       s = CheckIfUnitNumber(s);
 
       return s;
     }
 
-    private static string CleanUpName(string s) {
+    private static string CleanUpName(string s, string projectName) {
       s = s.Replace("Goo", string.Empty).Replace("Gsa", string.Empty).Replace("GH_", string.Empty)
-       .Replace("String", "Text").Replace("Parameter", string.Empty);
+       .Replace("String", "Text").Replace("Parameter", string.Empty)
+       .Replace("AdSec", string.Empty);
       return s;
     }
 
