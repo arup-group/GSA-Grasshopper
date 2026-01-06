@@ -105,8 +105,6 @@ namespace DocsGeneratorCLI {
       string pathvar = Environment.GetEnvironmentVariable(name) ?? string.Empty;
       string value = $"{pathvar};{GSA_INSTALL_PATH}\\";
       Environment.SetEnvironmentVariable(name, value, EnvironmentVariableTarget.Process);
-      Console.WriteLine("PATH ENV after loadrefs :");
-      Console.WriteLine(Environment.GetEnvironmentVariable("PATH"));
     }
 
     private void Dispose(bool disposing) {

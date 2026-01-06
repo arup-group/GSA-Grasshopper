@@ -127,7 +127,7 @@ namespace DocsGeneration.Data {
 
     private string GetClassSummary(Type paramType, XmlDocument document) {
       PropertyInfo[] paramPropertyInfo = paramType.GetProperties(
-            BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+        BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
       foreach (PropertyInfo paramProperty in paramPropertyInfo) {
         if (paramProperty.Name == "PersistentData") {
           Type gooType = paramProperty.DeclaringType.GenericTypeArguments[0];
@@ -135,18 +135,32 @@ namespace DocsGeneration.Data {
             BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
           foreach (PropertyInfo gooProperty in gooPropertyInfo) {
             if (gooProperty.Name == "Value") {
-              //object gooValue = gooProperty.GetValue(gooType, null);
               Type valueType = gooProperty.PropertyType;
-              string path = "T:" + valueType.FullName;
-              XmlNode xmlDocuOfMethod = document.SelectSingleNode("//member[@name='" + path + "']");
-              string text = xmlDocuOfMethod.InnerXml.Replace("<summary>", string.Empty)
-               .Replace("</summary>", string.Empty);
-              string cleanStr = Regex.Replace(text, @"\s+", " ");
-              return cleanStr.Trim();
+              string fullName = valueType.FullName;
+              string path = "T:" + fullName;
+              XmlNode xmlDocOfMethod = document.SelectSingleNode("//member[@name='" + path + "']");
+              if (xmlDocOfMethod != null) {
+                string text = xmlDocOfMethod.InnerXml.Replace("<summary>", string.Empty)
+                 .Replace("</summary>", string.Empty);
+                string cleanStr = Regex.Replace(text, @"\s+", " ");
+                return cleanStr.Trim();
+              } else {
+                // Try and grab the documentation from the parameter
+                string path2 = "T:" + paramType.FullName;
+                XmlNode xmlDocOfMethod2 = document.SelectSingleNode("//member[@name='" + path2 + "']");
+                if (xmlDocOfMethod2 == null) {
+                  return string.Empty;
+                }
+                string text = xmlDocOfMethod2.InnerXml.Replace("<summary>", string.Empty)
+                 .Replace("</summary>", string.Empty);
+                string cleanStr = Regex.Replace(text, @"\s+", " ");
+                return cleanStr.Trim();
+              }
             }
           }
         }
       }
+
       return string.Empty;
     }
 
@@ -159,7 +173,11 @@ namespace DocsGeneration.Data {
       var parameters = new List<Parameter>();
       foreach (Type type in typelist) {
         if (type.BaseType == null || !(type.Name.Contains("GsaRestraintParameter")
-          || type.Name.Contains("GsaReleaseParameter") || type.BaseType.Name.StartsWith("GH_OasysPersistent"))) {
+            || type.Name.Contains("GsaReleaseParameter") || type.BaseType.Name.StartsWith("GH_OasysPersistent")
+            || type.BaseType.Name.StartsWith("GH_PersistentParam")
+            || type.BaseType.Name.StartsWith("GH_PersistentGeometryParam")
+            // || type.BaseType.Name.StartsWith("GH_GeometricGoo")
+          )) {
           continue;
         }
         // workaround for GsaRestraintParameter and GsaReleaseParameter that do not inherit from GH_OasysPersistentParam. Need to find a better solution.
@@ -171,7 +189,8 @@ namespace DocsGeneration.Data {
             parameters.Add(param);
             Console.WriteLine($"Added {param.Name} parameter");
           }
-        } catch (Exception) {
+        } catch (Exception e) {
+          Console.WriteLine($"Could not create parameter for type {type.Name}: {e.Message}");
           continue;
         }
       }
@@ -183,46 +202,24 @@ namespace DocsGeneration.Data {
     public static Dictionary<string, List<Parameter>> SortParameters(List<Parameter> parameters) {
       Console.WriteLine($"Sorting parameters by sub-category");
       var dict = new Dictionary<string, List<Parameter>>() {
-        {
-          "Model", new List<Parameter>()
-        }, {
-          "Properties", new List<Parameter>()
-        }, {
-          "Geometry", new List<Parameter>()
-        }, {
-          "Loads", new List<Parameter>()
-        }, {
-          "Analysis", new List<Parameter>()
-        }, {
-          "Results", new List<Parameter>()
-        }, {
-          "Display", new List<Parameter>()
-        },
+        { "Model", new List<Parameter>() },
+        { "Properties", new List<Parameter>() },
+        { "Geometry", new List<Parameter>() },
+        { "Loads", new List<Parameter>() },
+        { "Analysis", new List<Parameter>() },
+        { "Results", new List<Parameter>() },
+        { "Display", new List<Parameter>() },
       };
 
       foreach (Parameter parameter in parameters) {
         switch (parameter.SubCategory) {
-          case 1:
-            dict["Model"].Add(parameter);
-            break;
-          case 2:
-            dict["Properties"].Add(parameter);
-            break;
-          case 3:
-            dict["Geometry"].Add(parameter);
-            break;
-          case 4:
-            dict["Loads"].Add(parameter);
-            break;
-          case 5:
-            dict["Analysis"].Add(parameter);
-            break;
-          case 6:
-            dict["Results"].Add(parameter);
-            break;
-          case 7:
-            dict["Display"].Add(parameter);
-            break;
+          case 1: dict["Model"].Add(parameter); break;
+          case 2: dict["Properties"].Add(parameter); break;
+          case 3: dict["Geometry"].Add(parameter); break;
+          case 4: dict["Loads"].Add(parameter); break;
+          case 5: dict["Analysis"].Add(parameter); break;
+          case 6: dict["Results"].Add(parameter); break;
+          case 7: dict["Display"].Add(parameter); break;
         }
       }
 
@@ -239,9 +236,11 @@ namespace DocsGeneration.Data {
       if (parameterName.Contains("1D")) {
         parameterName = "1D" + parameterName.Replace("1D", string.Empty);
       }
+
       if (parameterName.Contains("2D")) {
         parameterName = "2D" + parameterName.Replace("2D", string.Empty);
       }
+
       if (parameterName.Contains("3D")) {
         parameterName = "3D" + parameterName.Replace("3D", string.Empty);
       }
@@ -249,8 +248,7 @@ namespace DocsGeneration.Data {
       foreach (Component component in components) {
         string componentName = component.Name.ToUpper().Replace(" ", string.Empty);
         if (componentName.Contains("EDIT") && componentName.Contains(parameterName)) {
-          Properties = CleanOutputParams(
-            component.Outputs.GetRange(1, component.Outputs.Count - 1));
+          Properties = CleanOutputParams(component.Outputs.GetRange(1, component.Outputs.Count - 1));
           PropertiesComponent = component;
           return;
         }
