@@ -47,16 +47,16 @@ namespace GsaGHTests.Parameters {
         = AnalysisOrder.LINEAR; // if prop2d == Load Panel -> AnalysisOrder.LoadPanel
       mem.ApiMember.Type = MemberType.SLAB;
 
-      Assert.Equal(mem.Brep.Vertices[0].Location.X, mem.Topology[0].X);
-      Assert.Equal(mem.Brep.Vertices[0].Location.Y, mem.Topology[0].Y);
-      Assert.Equal(mem.Brep.Vertices[1].Location.X, mem.Topology[1].X);
-      Assert.Equal(mem.Brep.Vertices[1].Location.Y, mem.Topology[1].Y);
-      Assert.Equal(mem.Brep.Vertices[2].Location.X, mem.Topology[2].X);
-      Assert.Equal(mem.Brep.Vertices[2].Location.Y, mem.Topology[2].Y);
-      Assert.Equal(mem.Brep.Vertices[3].Location.X, mem.Topology[3].X);
-      Assert.Equal(mem.Brep.Vertices[3].Location.Y, mem.Topology[3].Y);
-      Assert.Equal(mem.Brep.Vertices[0].Location.X, mem.Topology[4].X);
-      Assert.Equal(mem.Brep.Vertices[0].Location.Y, mem.Topology[4].Y);
+      Assert.Equal(mem.Brep.Vertices[0].Location.X, mem.Topology[0].X, DoubleComparer.Default);
+      Assert.Equal(mem.Brep.Vertices[0].Location.Y, mem.Topology[0].Y, DoubleComparer.Default);
+      Assert.Equal(mem.Brep.Vertices[1].Location.X, mem.Topology[1].X, DoubleComparer.Default);
+      Assert.Equal(mem.Brep.Vertices[1].Location.Y, mem.Topology[1].Y, DoubleComparer.Default);
+      Assert.Equal(mem.Brep.Vertices[2].Location.X, mem.Topology[2].X, DoubleComparer.Default);
+      Assert.Equal(mem.Brep.Vertices[2].Location.Y, mem.Topology[2].Y, DoubleComparer.Default);
+      Assert.Equal(mem.Brep.Vertices[3].Location.X, mem.Topology[3].X, DoubleComparer.Default);
+      Assert.Equal(mem.Brep.Vertices[3].Location.Y, mem.Topology[3].Y, DoubleComparer.Default);
+      Assert.Equal(mem.Brep.Vertices[0].Location.X, mem.Topology[4].X, DoubleComparer.Default);
+      Assert.Equal(mem.Brep.Vertices[0].Location.Y, mem.Topology[4].Y, DoubleComparer.Default);
 
       Assert.Equal(Color.FromArgb(255, 255, 255, 255), mem.ApiMember.Colour);
       Assert.Equal(4, mem.Id);
@@ -102,16 +102,16 @@ namespace GsaGHTests.Parameters {
 
       var dup = new GsaMember2d(original);
 
-      Assert.Equal(original.Brep.Vertices[0].Location.X, dup.Topology[0].X);
-      Assert.Equal(original.Brep.Vertices[0].Location.Y, dup.Topology[0].Y);
-      Assert.Equal(original.Brep.Vertices[1].Location.X, dup.Topology[1].X);
-      Assert.Equal(original.Brep.Vertices[1].Location.Y, dup.Topology[1].Y);
-      Assert.Equal(original.Brep.Vertices[2].Location.X, dup.Topology[2].X);
-      Assert.Equal(original.Brep.Vertices[2].Location.Y, dup.Topology[2].Y);
-      Assert.Equal(original.Brep.Vertices[3].Location.X, dup.Topology[3].X);
-      Assert.Equal(original.Brep.Vertices[3].Location.Y, dup.Topology[3].Y);
-      Assert.Equal(original.Brep.Vertices[0].Location.X, dup.Topology[4].X);
-      Assert.Equal(original.Brep.Vertices[0].Location.Y, dup.Topology[4].Y);
+      Assert.Equal(original.Brep.Vertices[0].Location.X, dup.Topology[0].X, DoubleComparer.Default);
+      Assert.Equal(original.Brep.Vertices[0].Location.Y, dup.Topology[0].Y, DoubleComparer.Default);
+      Assert.Equal(original.Brep.Vertices[1].Location.X, dup.Topology[1].X, DoubleComparer.Default);
+      Assert.Equal(original.Brep.Vertices[1].Location.Y, dup.Topology[1].Y, DoubleComparer.Default);
+      Assert.Equal(original.Brep.Vertices[2].Location.X, dup.Topology[2].X, DoubleComparer.Default);
+      Assert.Equal(original.Brep.Vertices[2].Location.Y, dup.Topology[2].Y, DoubleComparer.Default);
+      Assert.Equal(original.Brep.Vertices[3].Location.X, dup.Topology[3].X, DoubleComparer.Default);
+      Assert.Equal(original.Brep.Vertices[3].Location.Y, dup.Topology[3].Y, DoubleComparer.Default);
+      Assert.Equal(original.Brep.Vertices[0].Location.X, dup.Topology[4].X, DoubleComparer.Default);
+      Assert.Equal(original.Brep.Vertices[0].Location.Y, dup.Topology[4].Y, DoubleComparer.Default);
       Assert.Equal(1, dup.InclusionLinesTopology[0][0].X, DoubleComparer.Default);
       Assert.Equal(2, dup.InclusionLinesTopology[0][0].Y, DoubleComparer.Default);
       Assert.Equal(3, dup.InclusionLinesTopology[0][1].X, DoubleComparer.Default);

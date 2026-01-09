@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
+using GsaGH.Helpers;
 using GsaGH.Parameters.Results;
 
 using GsaGHTests.Helper;
-using GsaGHTests.TestHelpers;
+
 
 using Xunit;
 
@@ -32,7 +33,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      DoubleAssertHelper.Equals(expected, max);
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -54,7 +55,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      DoubleAssertHelper.Equals(expected, max);
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -76,7 +77,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      DoubleAssertHelper.Equals(expected, min);
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Theory]
@@ -98,7 +99,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      DoubleAssertHelper.Equals(expected, min);
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Theory]
@@ -125,7 +126,7 @@ namespace GsaGHTests.Parameters.Results {
       int position = 0;
       foreach (IInternalForce force in forceQuantity[0].Results.Values) {
         double x = TestsResultHelper.ResultsHelper(force, component);
-        DoubleAssertHelper.Equals(expected[position++], x);
+        Assert.Equal(expected[position++], x, DoubleComparer.Default);
       }
     }
 
@@ -153,7 +154,7 @@ namespace GsaGHTests.Parameters.Results {
       int position = 0;
       foreach (IInternalForce force in forceQuantity[0].Results.Values) {
         double x = TestsResultHelper.ResultsHelper(force, component);
-        DoubleAssertHelper.Equals(expected[position++], x);
+        Assert.Equal(expected[position++], x, DoubleComparer.Default);
       }
     }
 

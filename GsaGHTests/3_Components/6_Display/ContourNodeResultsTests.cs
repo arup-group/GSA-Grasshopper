@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
@@ -145,7 +145,7 @@ namespace GsaGHTests.Components.Display {
     public void UpdateMomentTest() {
       var comp = new ContourNodeResults();
       ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dCombinationResultsMother());
-      comp.UpdateMoment("N·cm");
+      comp.UpdateMoment("N�cm");
     }
 
     private void SetSelectedDrawViewportMeshesAndWiresTest(ContourNodeResults comp, int i, int j) {

@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
+using GsaGH.Helpers;
 using GsaGH.Parameters.Results;
 
 using GsaGHTests.Helper;
-using GsaGHTests.TestHelpers;
+
 
 using Xunit;
 
@@ -82,7 +83,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      DoubleAssertHelper.Equals(expected, max);
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -119,7 +120,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      DoubleAssertHelper.Equals(expected, max);
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -154,7 +155,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      DoubleAssertHelper.Equals(expected, min);
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Theory]
@@ -191,7 +192,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      DoubleAssertHelper.Equals(expected, min);
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Theory]
@@ -232,7 +233,7 @@ namespace GsaGHTests.Parameters.Results {
         Assert.Single(stressQuantity);
         foreach (IStress stress in stressQuantity[0].Results()) {
           double x = TestsResultHelper.ResultsHelper(stress, component);
-          DoubleAssertHelper.Equals(expected[i++], x);
+          Assert.Equal(expected[i++], x, DoubleComparer.Default);
         }
       }
     }
@@ -278,7 +279,7 @@ namespace GsaGHTests.Parameters.Results {
 
         foreach (IStress stress in stressQuantity[0].Results()) {
           double perm1 = TestsResultHelper.ResultsHelper(stress, component);
-          DoubleAssertHelper.Equals(expectedP1[i++], perm1);
+          Assert.Equal(expectedP1[i++], perm1, DoubleComparer.Default);
         }
       }
 
@@ -288,7 +289,7 @@ namespace GsaGHTests.Parameters.Results {
 
         foreach (IStress stress in stressQuantity[1].Results()) {
           double perm2 = TestsResultHelper.ResultsHelper(stress, component);
-          DoubleAssertHelper.Equals(expectedP2[i++], perm2);
+          Assert.Equal(expectedP2[i++], perm2, DoubleComparer.Default);
         }
       }
     }

@@ -1,5 +1,6 @@
 ﻿using GsaAPI;
 
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using OasysUnits;
@@ -23,11 +24,11 @@ namespace GsaGHTests.Parameters {
 
       var modifier = new GsaProperty2dModifier(prop2d.PropertyModifier);
 
-      Assert.Equal(0.1, modifier.InPlane.As(RatioUnit.DecimalFraction));
-      Assert.Equal(0.1, modifier.Bending.As(RatioUnit.DecimalFraction));
-      Assert.Equal(0.1, modifier.Shear.As(RatioUnit.DecimalFraction));
-      Assert.Equal(0.1, modifier.Volume.As(RatioUnit.DecimalFraction));
-      Assert.Equal(0.1, modifier.AdditionalMass.As(AreaDensityUnit.KilogramPerSquareMeter));
+      Assert.Equal(0.1, modifier.InPlane.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(0.1, modifier.Bending.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(0.1, modifier.Shear.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(0.1, modifier.Volume.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(0.1, modifier.AdditionalMass.As(AreaDensityUnit.KilogramPerSquareMeter), DoubleComparer.Default);
       Assert.Equal(
         "In-plane:10% Bending:10% Shear:10% Volume:10% Add.Mass:0.1kg/m²",
         modifier.ToString());
@@ -44,11 +45,11 @@ namespace GsaGHTests.Parameters {
 
       var modifier = new GsaProperty2dModifier(prop2d.PropertyModifier);
 
-      Assert.Equal(0.1, modifier.InPlane.As(LengthUnit.Meter));
-      Assert.Equal(0.1, modifier.Bending.As(VolumeUnit.CubicMeter));
-      Assert.Equal(0.1, modifier.Shear.As(LengthUnit.Meter));
-      Assert.Equal(0.1, modifier.Volume.As(LengthUnit.Meter));
-      Assert.Equal(0.1, modifier.AdditionalMass.As(AreaDensityUnit.KilogramPerSquareMeter));
+      Assert.Equal(0.1, modifier.InPlane.As(LengthUnit.Meter), DoubleComparer.Default);
+      Assert.Equal(0.1, modifier.Bending.As(VolumeUnit.CubicMeter), DoubleComparer.Default);
+      Assert.Equal(0.1, modifier.Shear.As(LengthUnit.Meter), DoubleComparer.Default);
+      Assert.Equal(0.1, modifier.Volume.As(LengthUnit.Meter), DoubleComparer.Default);
+      Assert.Equal(0.1, modifier.AdditionalMass.As(AreaDensityUnit.KilogramPerSquareMeter), DoubleComparer.Default);
       Assert.Equal(
         "In-plane:0.1m²/m Bending:0.1m⁴/m Shear:0.1m²/m Volume:0.1m³/m² Add.Mass:0.1kg/m²",
         modifier.ToString());
@@ -59,7 +60,7 @@ namespace GsaGHTests.Parameters {
       var modifier = new GsaProperty2dModifier {
         AdditionalMass = new AreaDensity(1, AreaDensityUnit.KilogramPerSquareMeter),
       };
-      Assert.Equal(1, modifier.AdditionalMass.As(AreaDensityUnit.KilogramPerSquareMeter));
+      Assert.Equal(1, modifier.AdditionalMass.As(AreaDensityUnit.KilogramPerSquareMeter), DoubleComparer.Default);
     }
 
     [Fact]
@@ -67,7 +68,7 @@ namespace GsaGHTests.Parameters {
       var modifier = new GsaProperty2dModifier {
         Bending = new Ratio(2, RatioUnit.DecimalFraction),
       };
-      Assert.Equal(2, modifier.Bending.As(RatioUnit.DecimalFraction));
+      Assert.Equal(2, modifier.Bending.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
     }
 
     [Fact]
@@ -75,7 +76,7 @@ namespace GsaGHTests.Parameters {
       var modifier = new GsaProperty2dModifier {
         Bending = new Volume(1, VolumeUnit.CubicMeter),
       };
-      Assert.Equal(1, modifier.Bending.As(VolumeUnit.CubicMeter));
+      Assert.Equal(1, modifier.Bending.As(VolumeUnit.CubicMeter), DoubleComparer.Default);
     }
 
     [Fact]
@@ -83,7 +84,7 @@ namespace GsaGHTests.Parameters {
       var modifier = new GsaProperty2dModifier {
         Volume = new Ratio(2, RatioUnit.DecimalFraction),
       };
-      Assert.Equal(2, modifier.Volume.As(RatioUnit.DecimalFraction));
+      Assert.Equal(2, modifier.Volume.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
     }
 
     [Fact]
@@ -91,7 +92,7 @@ namespace GsaGHTests.Parameters {
       var modifier = new GsaProperty2dModifier {
         Volume = new Length(1, LengthUnit.Meter),
       };
-      Assert.Equal(1, modifier.Volume.As(LengthUnit.Meter));
+      Assert.Equal(1, modifier.Volume.As(LengthUnit.Meter), DoubleComparer.Default);
     }
 
     [Fact]
@@ -99,7 +100,7 @@ namespace GsaGHTests.Parameters {
       var modifier = new GsaProperty2dModifier {
         Shear = new Ratio(2, RatioUnit.DecimalFraction),
       };
-      Assert.Equal(2, modifier.Shear.As(RatioUnit.DecimalFraction));
+      Assert.Equal(2, modifier.Shear.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
     }
 
     [Fact]
@@ -107,7 +108,7 @@ namespace GsaGHTests.Parameters {
       var modifier = new GsaProperty2dModifier {
         Shear = new Length(1, LengthUnit.Meter),
       };
-      Assert.Equal(1, modifier.Shear.As(LengthUnit.Meter));
+      Assert.Equal(1, modifier.Shear.As(LengthUnit.Meter), DoubleComparer.Default);
     }
 
     [Fact]
@@ -115,7 +116,7 @@ namespace GsaGHTests.Parameters {
       var modifier = new GsaProperty2dModifier {
         InPlane = new Ratio(2, RatioUnit.DecimalFraction),
       };
-      Assert.Equal(2, modifier.InPlane.As(RatioUnit.DecimalFraction));
+      Assert.Equal(2, modifier.InPlane.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
     }
 
     [Fact]
@@ -123,7 +124,7 @@ namespace GsaGHTests.Parameters {
       var modifier = new GsaProperty2dModifier {
         InPlane = new Length(1, LengthUnit.Meter),
       };
-      Assert.Equal(1, modifier.InPlane.As(LengthUnit.Meter));
+      Assert.Equal(1, modifier.InPlane.As(LengthUnit.Meter), DoubleComparer.Default);
     }
   }
 }

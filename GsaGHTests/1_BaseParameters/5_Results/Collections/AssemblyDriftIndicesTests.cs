@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
+using GsaGH.Helpers;
 using GsaGH.Parameters.Results;
 
 using GsaGHTests.Helper;
@@ -28,7 +29,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max, 1E-6);
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -45,7 +46,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max, 1E-5);
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -62,7 +63,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min, 1E-6);
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Theory]
@@ -101,7 +102,7 @@ namespace GsaGHTests.Parameters.Results {
       int position = 0;
       foreach (DriftIndex drift in driftQuantity[0].Results.Values) {
         double x = TestsResultHelper.ResultsHelper(drift, component);
-        Assert.Equal(expected[position++], x, 1E-6);
+        Assert.Equal(expected[position++], x, DoubleComparer.Default);
       }
     }
 
@@ -124,7 +125,7 @@ namespace GsaGHTests.Parameters.Results {
       int position = 0;
       foreach (DriftIndex drift in driftQuantity[0].Results.Values) {
         double x = TestsResultHelper.ResultsHelper(drift, component);
-        Assert.Equal(expected[position++], x, 1E-5);
+        Assert.Equal(expected[position++], x, DoubleComparer.Default);
       }
     }
 

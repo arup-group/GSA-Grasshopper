@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
 
@@ -40,8 +41,8 @@ namespace GsaGHTests.Parameters.Results {
         IEnumerable<int> positions = Enumerable.Range(0, positionsCount);
         foreach (int position in positions) {
           double expected = TestsResultHelper.Envelope(expectedP1[i], expectedP2[i++], envelope);
-          double actual = ResultHelper.RoundToSignificantDigits(values[elementId][position].Value, 4);
-          Assert.Equal(expected, actual, 4);
+          double actual = values[elementId][position].Value;
+          Assert.Equal(expected, actual, DoubleComparer.Default);
         }
       }
     }
@@ -68,8 +69,8 @@ namespace GsaGHTests.Parameters.Results {
         IEnumerable<int> positions = Enumerable.Range(0, positionsCount);
         foreach (int position in positions) {
           double expected = TestsResultHelper.Envelope(expectedP1[i], expectedP2[i++], envelope);
-          double actual = ResultHelper.RoundToSignificantDigits(values[elementId][position].Value, 4);
-          Assert.Equal(expected, actual, 4);
+          double actual = values[elementId][position].Value;
+          Assert.Equal(expected, actual, DoubleComparer.Default);
         }
       }
     }

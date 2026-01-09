@@ -1,4 +1,4 @@
-ï»¿using GsaGH.Components;
+using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 
@@ -41,9 +41,9 @@ namespace GsaGHTests.Components.Display {
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       comp.SetSelected(0, 3); // Force
       comp.SetSelected(1, 4); // Moment Myy
-      comp.UpdateMoment("MNÂ·m");
+      comp.UpdateMoment("MN·m");
       comp.Params.Output[0].CollectData();
-      Assert.Equal("MNÂ·m", comp.Message);
+      Assert.Equal("MN·m", comp.Message);
     }
   }
 }

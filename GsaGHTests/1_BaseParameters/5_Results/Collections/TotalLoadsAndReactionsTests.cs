@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
 
@@ -32,9 +33,9 @@ namespace GsaGHTests.Parameters.Results {
 
       IEffectiveMass actual = result.GlobalResults.EffectiveMass;
 
-      Assert.Equal(expected[0], RoundTo4SigDigits(actual.X.ToUnit(MassUnit.Tonne)));
-      Assert.Equal(expected[1], RoundTo4SigDigits(actual.Y.ToUnit(MassUnit.Tonne)));
-      Assert.Equal(expected[2], RoundTo4SigDigits(actual.Z.ToUnit(MassUnit.Tonne)));
+      Assert.Equal(expected[0], RoundTo4SigDigits(actual.X.ToUnit(MassUnit.Tonne)), DoubleComparer.Default);
+      Assert.Equal(expected[1], RoundTo4SigDigits(actual.Y.ToUnit(MassUnit.Tonne)), DoubleComparer.Default);
+      Assert.Equal(expected[2], RoundTo4SigDigits(actual.Z.ToUnit(MassUnit.Tonne)), DoubleComparer.Default);
     }
 
     [Fact]
@@ -44,7 +45,7 @@ namespace GsaGHTests.Parameters.Results {
 
       double? actual = result.GlobalResults.Eigenvalue;
 
-      Assert.Equal(expected, actual);
+      Assert.Equal(expected, actual, DoubleComparer.Default);
     }
 
     [Fact]
@@ -54,7 +55,7 @@ namespace GsaGHTests.Parameters.Results {
 
       Frequency actual = result.GlobalResults.Frequency;
 
-      Assert.Equal(expected, RoundTo4SigDigits(actual));
+      Assert.Equal(expected, RoundTo4SigDigits(actual), DoubleComparer.Default);
     }
 
     [Fact]
@@ -85,7 +86,7 @@ namespace GsaGHTests.Parameters.Results {
       ForcePerLength actual
         = result.GlobalResults.ModalStiffness.ToUnit(ForcePerLengthUnit.KilonewtonPerMeter);
 
-      Assert.Equal(expected, RoundTo4SigDigits(actual));
+      Assert.Equal(expected, RoundTo4SigDigits(actual), DoubleComparer.Default);
     }
 
     [Fact]
@@ -95,7 +96,7 @@ namespace GsaGHTests.Parameters.Results {
 
       Mass actual = result.GlobalResults.ModalMass;
 
-      Assert.Equal(expected, RoundTo4SigDigits(actual.ToUnit(MassUnit.Tonne)));
+      Assert.Equal(expected, RoundTo4SigDigits(actual.ToUnit(MassUnit.Tonne)), DoubleComparer.Default);
     }
 
     [Fact]
@@ -115,14 +116,14 @@ namespace GsaGHTests.Parameters.Results {
 
       IReactionForce actual = result.GlobalResults.TotalLoad;
 
-      Assert.Equal(expected[0], RoundTo4SigDigits(actual.XToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[1], RoundTo4SigDigits(actual.YToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[2], RoundTo4SigDigits(actual.ZToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[3], RoundTo4SigDigits(actual.XyzToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[4], RoundTo4SigDigits(actual.XxToUnit(MomentUnit.KilonewtonMeter)));
-      Assert.Equal(expected[5], RoundTo4SigDigits(actual.YyToUnit(MomentUnit.KilonewtonMeter)));
-      Assert.Equal(expected[6], RoundTo4SigDigits(actual.ZzToUnit(MomentUnit.KilonewtonMeter)));
-      Assert.Equal(expected[7], RoundTo4SigDigits(actual.XxyyzzToUnit(MomentUnit.KilonewtonMeter)));
+      Assert.Equal(expected[0], RoundTo4SigDigits(actual.XToUnit(ForceUnit.Kilonewton)), DoubleComparer.Default);
+      Assert.Equal(expected[1], RoundTo4SigDigits(actual.YToUnit(ForceUnit.Kilonewton)), DoubleComparer.Default);
+      Assert.Equal(expected[2], RoundTo4SigDigits(actual.ZToUnit(ForceUnit.Kilonewton)), DoubleComparer.Default);
+      Assert.Equal(expected[3], RoundTo4SigDigits(actual.XyzToUnit(ForceUnit.Kilonewton)), DoubleComparer.Default);
+      Assert.Equal(expected[4], RoundTo4SigDigits(actual.XxToUnit(MomentUnit.KilonewtonMeter)), DoubleComparer.Default);
+      Assert.Equal(expected[5], RoundTo4SigDigits(actual.YyToUnit(MomentUnit.KilonewtonMeter)), DoubleComparer.Default);
+      Assert.Equal(expected[6], RoundTo4SigDigits(actual.ZzToUnit(MomentUnit.KilonewtonMeter)), DoubleComparer.Default);
+      Assert.Equal(expected[7], RoundTo4SigDigits(actual.XxyyzzToUnit(MomentUnit.KilonewtonMeter)), DoubleComparer.Default);
     }
 
     [Fact]
@@ -132,18 +133,18 @@ namespace GsaGHTests.Parameters.Results {
 
       IReactionForce actual = result.GlobalResults.TotalReaction;
 
-      Assert.Equal(expected[0], RoundTo4SigDigits(actual.XToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[1], RoundTo4SigDigits(actual.YToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[2], RoundTo4SigDigits(actual.ZToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[3], RoundTo4SigDigits(actual.XyzToUnit(ForceUnit.Kilonewton)));
-      Assert.Equal(expected[4], RoundTo4SigDigits(actual.XxToUnit(MomentUnit.KilonewtonMeter)));
-      Assert.Equal(expected[5], RoundTo4SigDigits(actual.YyToUnit(MomentUnit.KilonewtonMeter)));
-      Assert.Equal(expected[6], RoundTo4SigDigits(actual.ZzToUnit(MomentUnit.KilonewtonMeter)));
-      Assert.Equal(expected[7], RoundTo4SigDigits(actual.XxyyzzToUnit(MomentUnit.KilonewtonMeter)));
+      Assert.Equal(expected[0], RoundTo4SigDigits(actual.XToUnit(ForceUnit.Kilonewton)), DoubleComparer.Default);
+      Assert.Equal(expected[1], RoundTo4SigDigits(actual.YToUnit(ForceUnit.Kilonewton)), DoubleComparer.Default);
+      Assert.Equal(expected[2], RoundTo4SigDigits(actual.ZToUnit(ForceUnit.Kilonewton)), DoubleComparer.Default);
+      Assert.Equal(expected[3], RoundTo4SigDigits(actual.XyzToUnit(ForceUnit.Kilonewton)), DoubleComparer.Default);
+      Assert.Equal(expected[4], RoundTo4SigDigits(actual.XxToUnit(MomentUnit.KilonewtonMeter)), DoubleComparer.Default);
+      Assert.Equal(expected[5], RoundTo4SigDigits(actual.YyToUnit(MomentUnit.KilonewtonMeter)), DoubleComparer.Default);
+      Assert.Equal(expected[6], RoundTo4SigDigits(actual.ZzToUnit(MomentUnit.KilonewtonMeter)), DoubleComparer.Default);
+      Assert.Equal(expected[7], RoundTo4SigDigits(actual.XxyyzzToUnit(MomentUnit.KilonewtonMeter)), DoubleComparer.Default);
     }
 
     private double RoundTo4SigDigits(IQuantity quantity) {
-      return ResultHelper.RoundToSignificantDigits(quantity.Value, 4);
+      return quantity.Value;
     }
   }
 }
