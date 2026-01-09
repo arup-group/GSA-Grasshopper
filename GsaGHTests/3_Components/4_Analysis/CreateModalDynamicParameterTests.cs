@@ -1,20 +1,13 @@
-﻿using System.IO;
+using System.IO;
 using System.Linq;
-
-using GH_IO.Serialization;
-
-using Grasshopper.GUI.HTML;
 using Grasshopper.Kernel;
-
 using GsaAPI;
 
 using GsaGH.Components;
 using GsaGH.Parameters;
-using GsaGH.Parameters.Enums;
-
-using GsaGHTests.Helpers;
-
 using Xunit;
+using GsaGH.Parameters.Enums;
+using GsaGHTests.Helpers;
 
 namespace GsaGHTests.Components.Analysis {
 

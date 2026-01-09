@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 using GsaAPI;
@@ -9,7 +9,7 @@ using Xunit;
 
 using EntityType = GsaGH.Parameters.EntityType;
 using LengthUnit = OasysUnits.Units.LengthUnit;
-
+using GsaGH.Helpers;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaListTest {
@@ -66,7 +66,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(2, nodes.Count);
       Assert.Equal(1, ((GsaNodeGoo)nodes[0]).Value.Id);
       Assert.Equal(3, ((GsaNodeGoo)nodes[1]).Value.Id);
-      Assert.Equal(3.5, ((GsaNodeGoo)nodes[1]).Value.Point.Z);
+      Assert.Equal(3.5, ((GsaNodeGoo)nodes[1]).Value.Point.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -111,7 +111,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(1, ((GsaElement1dGoo)elems[0]).Value.Id);
       Assert.Equal(2, ((GsaElement1dGoo)elems[1]).Value.Id);
       Assert.Equal(4, ((GsaElement2dGoo)elems[2]).Value.Ids[0]);
-      Assert.Equal(10, ((GsaElement1dGoo)elems[1]).Value.Line.PointAtStart.X);
+      Assert.Equal(10, ((GsaElement1dGoo)elems[1]).Value.Line.PointAtStart.X, DoubleComparer.Default);
     }
 
     [Fact]
@@ -152,9 +152,9 @@ namespace GsaGHTests.Parameters {
       List<object> mems = list.GetListObjects(LengthUnit.Meter);
       Assert.Equal(2, mems.Count);
       Assert.Equal(3, ((GsaMember1dGoo)mems[0]).Value.Id);
-      Assert.Equal(10, ((GsaMember1dGoo)mems[0]).Value.Topology[0].X);
+      Assert.Equal(10, ((GsaMember1dGoo)mems[0]).Value.Topology[0].X, DoubleComparer.Default);
       Assert.Equal(2, ((GsaMember2dGoo)mems[1]).Value.Id);
-      Assert.Equal(3.5, ((GsaMember2dGoo)mems[1]).Value.Topology[3].Z);
+      Assert.Equal(3.5, ((GsaMember2dGoo)mems[1]).Value.Topology[3].Z, DoubleComparer.Default);
     }
   }
 }

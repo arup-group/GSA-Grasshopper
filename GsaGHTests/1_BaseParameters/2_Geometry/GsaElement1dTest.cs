@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 
@@ -15,7 +15,7 @@ using Xunit;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
-
+using GsaGH.Helpers;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaElement1dTest {
@@ -35,12 +35,12 @@ namespace GsaGHTests.Parameters {
       elem.Offset = offset;
       elem.OrientationAngle = new Angle(90, AngleUnit.Degree);
 
-      Assert.Equal(1, elem.Line.PointAtStart.X);
-      Assert.Equal(4, elem.Line.PointAtStart.Y);
-      Assert.Equal(6, elem.Line.PointAtStart.Z);
-      Assert.Equal(-2, elem.Line.PointAtEnd.X);
-      Assert.Equal(3, elem.Line.PointAtEnd.Y);
-      Assert.Equal(-5, elem.Line.PointAtEnd.Z);
+      Assert.Equal(1, elem.Line.PointAtStart.X, DoubleComparer.Default);
+      Assert.Equal(4, elem.Line.PointAtStart.Y, DoubleComparer.Default);
+      Assert.Equal(6, elem.Line.PointAtStart.Z, DoubleComparer.Default);
+      Assert.Equal(-2, elem.Line.PointAtEnd.X, DoubleComparer.Default);
+      Assert.Equal(3, elem.Line.PointAtEnd.Y, DoubleComparer.Default);
+      Assert.Equal(-5, elem.Line.PointAtEnd.Z, DoubleComparer.Default);
 
       Assert.Equal(66, elem.Id);
       Assert.Equal(3, elem.Section.Id);
@@ -48,7 +48,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(4, elem.ApiElement.Group);
       Assert.True(elem.ApiElement.IsDummy);
       Assert.Equal("EltonJohn", elem.ApiElement.Name);
-      Assert.Equal(14.3, elem.Offset.Y.Value);
+      Assert.Equal(14.3, elem.Offset.Y.Value, DoubleComparer.Default);
       Assert.Equal(90, elem.OrientationAngle.Degrees);
       Assert.Equal(3, elem.Section.Id);
     }

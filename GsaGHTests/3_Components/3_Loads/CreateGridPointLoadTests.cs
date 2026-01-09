@@ -1,13 +1,19 @@
-﻿using GsaGH.Components;
+using GsaGH.Components;
+
 using GsaGH.Parameters;
+
 using GsaGH.Parameters.Enums;
+
 
 using GsaGHTests.Helpers;
 
+
 using Rhino.Geometry;
 
-using Xunit;
 
+using GsaGH.Helpers;
+
+using Xunit;
 namespace GsaGHTests.Components.Loads {
   [Collection("GrasshopperFixture collection")]
   public class CreateGridPointLoadTests {
@@ -22,8 +28,8 @@ namespace GsaGHTests.Components.Loads {
       var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
       var load = (GsaGridPointLoad)output.Value;
       Assert.Equal(7, load.LoadCase.Id);
-      Assert.Equal(10, load.ApiLoad.X);
-      Assert.Equal(5, load.ApiLoad.Y);
+      Assert.Equal(10, load.ApiLoad.X, DoubleComparer.Default);
+      Assert.Equal(5, load.ApiLoad.Y, DoubleComparer.Default);
       Assert.Equal("myGridPointLoad", load.ApiLoad.Name);
       Assert.Equal(-5000, load.ApiLoad.Value);
       Assert.Equal(ReferenceType.None, load.ReferenceType);

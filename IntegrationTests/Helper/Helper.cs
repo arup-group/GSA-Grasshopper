@@ -73,7 +73,6 @@ namespace IntegrationTests {
     }
 
     public static void TestGhPrimitives(IGH_Param param, object expected) {
-      var comparer = new DoubleComparer();
       if (expected.GetType() == typeof(string)) {
         var valOut = (GH_String)param.VolatileData.get_Branch(0)[0];
         Assert.Equal(expected, valOut.Value);
@@ -82,7 +81,7 @@ namespace IntegrationTests {
         Assert.Equal(expected, valOut.Value);
       } else if (expected.GetType() == typeof(double)) {
         var valOut = (GH_Number)param.VolatileData.get_Branch(0)[0];
-        Assert.Equal((double)expected, valOut.Value, comparer);
+        Assert.Equal((double)expected, valOut.Value, DoubleComparer.Default);
       } else if (expected.GetType() == typeof(bool)) {
         var valOut = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
         Assert.Equal(expected, valOut.Value);
@@ -104,7 +103,7 @@ namespace IntegrationTests {
       } else if (expected.GetType() == typeof(double[])) {
         for (int i = 0; i < ((double[])expected).Length; i++) {
           var valOut = (GH_Number)param.VolatileData.get_Branch(0)[i];
-          Assert.Equal(((double[])expected)[i], valOut.Value, comparer);
+          Assert.Equal(((double[])expected)[i], valOut.Value, DoubleComparer.Default);
         }
       } else {
         Assert.Fail("Expected type not found!");
@@ -138,6 +137,6 @@ namespace IntegrationTests {
         }
       }
     }
-    
+
   }
 }

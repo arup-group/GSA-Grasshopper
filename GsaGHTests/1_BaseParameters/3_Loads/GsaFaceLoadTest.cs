@@ -1,4 +1,4 @@
-﻿using GsaAPI;
+using GsaAPI;
 
 using GsaGH.Parameters;
 
@@ -7,7 +7,7 @@ using GsaGHTests.Helpers;
 using Xunit;
 
 using LoadCaseType = GsaGH.Parameters.LoadCaseType;
-
+using GsaGH.Helpers;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaFaceLoadTest {
@@ -139,8 +139,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("name", original.ApiLoad.Name);
       Assert.False(original.ApiLoad.IsProjected);
       Assert.Equal(0, original.ApiLoad.Value(0));
-      Assert.Equal(0.5, original.ApiLoad.Position.X);
-      Assert.Equal(0.5, original.ApiLoad.Position.Y);
+      Assert.Equal(0.5, original.ApiLoad.Position.X, DoubleComparer.Default);
+      Assert.Equal(0.5, original.ApiLoad.Position.Y, DoubleComparer.Default);
     }
 
     [Fact]

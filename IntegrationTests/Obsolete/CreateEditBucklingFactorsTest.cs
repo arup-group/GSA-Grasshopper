@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
 
+using GsaGH.Helpers;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
@@ -23,15 +24,15 @@ namespace IntegrationTests.Obsolete {
 
       IGH_Param y = Helper.FindParameter(doc, "TestLsy");
       var outputY = (GH_Number)y.VolatileData.get_Branch(0)[0];
-      Assert.Equal(0.9, outputY.Value);
+      Assert.Equal(0.9, outputY.Value, DoubleComparer.Default);
 
       IGH_Param z = Helper.FindParameter(doc, "TestLsz");
       var outputZ = (GH_Number)z.VolatileData.get_Branch(0)[0];
-      Assert.Equal(1.5, outputZ.Value);
+      Assert.Equal(1.5, outputZ.Value, DoubleComparer.Default);
 
       IGH_Param lt = Helper.FindParameter(doc, "TestLtb");
       var outputLtb = (GH_Number)lt.VolatileData.get_Branch(0)[0];
-      Assert.Equal(2.0, outputLtb.Value);
+      Assert.Equal(2.0, outputLtb.Value, DoubleComparer.Default);
 
       IGH_Param integ = Helper.FindParameter(doc, "null tests");
       var outputInteger = (GH_Integer)integ.VolatileData.get_Branch(0)[0];

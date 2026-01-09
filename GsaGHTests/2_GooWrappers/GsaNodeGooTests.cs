@@ -1,14 +1,20 @@
-﻿using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel.Types;
+
 
 using GsaGH.Parameters;
 
+
 using GsaGHTests.Components.Geometry;
+
 using GsaGHTests.Helpers;
+
 
 using OasysGH.Components;
 
-using Xunit;
 
+using GsaGH.Helpers;
+
+using Xunit;
 namespace GsaGHTests.GooWrappers {
   [Collection("GrasshopperFixture collection")]
   public class GsaNodeGooTests {
@@ -36,9 +42,9 @@ namespace GsaGHTests.GooWrappers {
 
       var pt = new GH_Point();
       Assert.True(output.CastTo(ref pt));
-      Assert.Equal(0, pt.Value.X);
-      Assert.Equal(-1, pt.Value.Y);
-      Assert.Equal(0, pt.Value.Z);
+      Assert.Equal(0, pt.Value.X, DoubleComparer.Default);
+      Assert.Equal(-1, pt.Value.Y, DoubleComparer.Default);
+      Assert.Equal(0, pt.Value.Z, DoubleComparer.Default);
     }
   }
 }

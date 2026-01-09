@@ -1,7 +1,8 @@
-﻿using GsaAPI;
+using GsaAPI;
 
 using GsaGH.Components;
 using GsaGH.Parameters;
+using GsaGH.Helpers;
 
 using GsaGHTests.Helpers;
 
@@ -112,11 +113,11 @@ namespace GsaGHTests.Components.Geometry {
 
       var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       var specific = (EffectiveLengthFromUserSpecifiedValue)output.Value.EffectiveLength;
-      Assert.Equal(0.1, specific.EffectiveLengthAboutY.Value);
+      Assert.Equal(0.1, specific.EffectiveLengthAboutY.Value, DoubleComparer.Default);
       Assert.Equal(EffectiveLengthOptionType.Absolute, specific.EffectiveLengthAboutY.Option);
-      Assert.Equal(0.2, specific.EffectiveLengthAboutZ.Value);
+      Assert.Equal(0.2, specific.EffectiveLengthAboutZ.Value, DoubleComparer.Default);
       Assert.Equal(EffectiveLengthOptionType.Absolute, specific.EffectiveLengthAboutZ.Option);
-      Assert.Equal(1.5, specific.EffectiveLengthLaterialTorsional.Value);
+      Assert.Equal(1.5, specific.EffectiveLengthLaterialTorsional.Value, DoubleComparer.Default);
       Assert.Equal(EffectiveLengthOptionType.Absolute, specific.EffectiveLengthLaterialTorsional.Option);
     }
 
@@ -131,11 +132,11 @@ namespace GsaGHTests.Components.Geometry {
 
       var output = (GsaEffectiveLengthOptionsGoo)ComponentTestHelper.GetOutput(comp);
       var specific = (EffectiveLengthFromUserSpecifiedValue)output.Value.EffectiveLength;
-      Assert.Equal(0.1, specific.EffectiveLengthAboutY.Value);
+      Assert.Equal(0.1, specific.EffectiveLengthAboutY.Value, DoubleComparer.Default);
       Assert.Equal(EffectiveLengthOptionType.Relative, specific.EffectiveLengthAboutY.Option);
-      Assert.Equal(0.2, specific.EffectiveLengthAboutZ.Value);
+      Assert.Equal(0.2, specific.EffectiveLengthAboutZ.Value, DoubleComparer.Default);
       Assert.Equal(EffectiveLengthOptionType.Relative, specific.EffectiveLengthAboutZ.Option);
-      Assert.Equal(1.5, specific.EffectiveLengthLaterialTorsional.Value);
+      Assert.Equal(1.5, specific.EffectiveLengthLaterialTorsional.Value, DoubleComparer.Default);
       Assert.Equal(EffectiveLengthOptionType.Relative, specific.EffectiveLengthLaterialTorsional.Option);
     }
 

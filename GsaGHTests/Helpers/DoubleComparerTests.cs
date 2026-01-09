@@ -23,7 +23,7 @@ namespace GsaGHTests.Helpers {
 
     [Fact]
     public void ValuesDifferLessThanEpsilonShouldBeConsideredEqualNoMargin() {
-      Assert.Equal(10.0, 10.01, new DoubleComparer());
+      Assert.Equal(10.0, 10.01, DoubleComparer.Default);
     }
 
     [Fact]

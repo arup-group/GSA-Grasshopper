@@ -1,13 +1,13 @@
-﻿using System.Drawing;
+using System.Drawing;
 
 using GsaGH.Parameters;
+using GsaGH.Helpers;
 
 using GsaGHTests.Helpers;
 
 using Rhino.Geometry;
 
 using Xunit;
-
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaNodeTest {
@@ -25,13 +25,13 @@ namespace GsaGHTests.Parameters {
     public void TestCreateGsaNodeFromPt() {
       var node = new GsaNode(new Point3d(10, 15, 7.8));
 
-      Assert.Equal(10, node.Point.X);
-      Assert.Equal(15, node.Point.Y);
-      Assert.Equal(7.8, node.Point.Z);
+      Assert.Equal(10, node.Point.X, DoubleComparer.Default);
+      Assert.Equal(15, node.Point.Y, DoubleComparer.Default);
+      Assert.Equal(7.8, node.Point.Z, DoubleComparer.Default);
 
-      Assert.Equal(10, node.Point.X);
-      Assert.Equal(15, node.Point.Y);
-      Assert.Equal(7.8, node.Point.Z);
+      Assert.Equal(10, node.Point.X, DoubleComparer.Default);
+      Assert.Equal(15, node.Point.Y, DoubleComparer.Default);
+      Assert.Equal(7.8, node.Point.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -55,9 +55,9 @@ namespace GsaGHTests.Parameters {
       node.LocalAxis = pln;
       node.Id = id;
 
-      Assert.Equal(-40, node.Point.X);
+      Assert.Equal(-40, node.Point.X, DoubleComparer.Default);
       Assert.Equal(-3.654, node.Point.Y);
-      Assert.Equal(-99, node.Point.Z);
+      Assert.Equal(-99, node.Point.Z, DoubleComparer.Default);
 
       Assert.Equal(44, node.Id);
 
@@ -71,9 +71,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(-40, node.LocalAxis.OriginX);
       Assert.Equal(-3.654, node.LocalAxis.OriginY);
       Assert.Equal(-99, node.LocalAxis.OriginZ);
-      Assert.Equal(0, node.LocalAxis.Normal.X);
-      Assert.Equal(1, node.LocalAxis.Normal.Y);
-      Assert.Equal(0, node.LocalAxis.Normal.Z);
+      Assert.Equal(0, node.LocalAxis.Normal.X, DoubleComparer.Default);
+      Assert.Equal(1, node.LocalAxis.Normal.Y, DoubleComparer.Default);
+      Assert.Equal(0, node.LocalAxis.Normal.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -91,8 +91,8 @@ namespace GsaGHTests.Parameters {
         Restraint = bool6,
       };
 
-      Assert.Equal(5.3, node.Point.X);
-      Assert.Equal(9.9, node.Point.Y);
+      Assert.Equal(5.3, node.Point.X, DoubleComparer.Default);
+      Assert.Equal(9.9, node.Point.Y, DoubleComparer.Default);
       Assert.Equal(2017, node.Point.Z);
       Assert.True(node.Restraint.X);
       Assert.False(node.Restraint.Y);

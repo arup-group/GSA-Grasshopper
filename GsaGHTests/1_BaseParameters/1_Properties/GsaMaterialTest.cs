@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GsaAPI;
 using GsaAPI.Materials;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
@@ -131,10 +132,10 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(MatType.Custom, material.MaterialType);
       Assert.Equal(99, material.Id);
       Assert.Equal("myMat", material.Name);
-      Assert.Equal(0.05, material.AnalysisMaterial.CoefficientOfThermalExpansion);
-      Assert.Equal(7800, material.AnalysisMaterial.Density);
-      Assert.Equal(205000, material.AnalysisMaterial.ElasticModulus);
-      Assert.Equal(0.3, material.AnalysisMaterial.PoissonsRatio);
+      Assert.Equal(0.05, material.AnalysisMaterial.CoefficientOfThermalExpansion, DoubleComparer.Default);
+      Assert.Equal(7800, material.AnalysisMaterial.Density, DoubleComparer.Default);
+      Assert.Equal(205000, material.AnalysisMaterial.ElasticModulus, DoubleComparer.Default);
+      Assert.Equal(0.3, material.AnalysisMaterial.PoissonsRatio, DoubleComparer.Default);
       DuplicateTest(material);
     }
 
@@ -233,10 +234,10 @@ namespace GsaGHTests.Parameters {
 
     private void AnalysisMaterialIsEqualTest(GsaMaterial material) {
       Assert.Equal("myMat", material.AnalysisMaterial.Name);
-      Assert.Equal(0.05, material.AnalysisMaterial.CoefficientOfThermalExpansion);
-      Assert.Equal(7800, material.AnalysisMaterial.Density);
-      Assert.Equal(205000, material.AnalysisMaterial.ElasticModulus);
-      Assert.Equal(0.3, material.AnalysisMaterial.PoissonsRatio);
+      Assert.Equal(0.05, material.AnalysisMaterial.CoefficientOfThermalExpansion, DoubleComparer.Default);
+      Assert.Equal(7800, material.AnalysisMaterial.Density, DoubleComparer.Default);
+      Assert.Equal(205000, material.AnalysisMaterial.ElasticModulus, DoubleComparer.Default);
+      Assert.Equal(0.3, material.AnalysisMaterial.PoissonsRatio, DoubleComparer.Default);
       DuplicateTest(material);
     }
 

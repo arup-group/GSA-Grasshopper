@@ -1,6 +1,7 @@
 ﻿using Grasshopper.Kernel.Types;
 
 using GsaGH.Components;
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
@@ -57,14 +58,14 @@ namespace GsaGHTests.Properties {
       var stressOptOut = (GH_Integer)ComponentTestHelper.GetOutput(comp, i++);
 
       Duplicates.AreEqual(modifier, modifierdGoo.Value);
-      Assert.Equal(1.2, areaOut.Value.As(RatioUnit.DecimalFraction), 6);
-      Assert.Equal(1.3, i11Out.Value.As(RatioUnit.DecimalFraction), 6);
-      Assert.Equal(1.4, i22Out.Value.As(RatioUnit.DecimalFraction), 6);
-      Assert.Equal(0.9, jOut.Value.As(RatioUnit.DecimalFraction), 6);
-      Assert.Equal(1.1, k11Out.Value.As(RatioUnit.DecimalFraction), 6);
-      Assert.Equal(0.1, k22Out.Value.As(RatioUnit.DecimalFraction), 6);
-      Assert.Equal(0.8, volOut.Value.As(RatioUnit.DecimalFraction), 6);
-      Assert.Equal(5, addMassOut.Value.As(LinearDensityUnit.KilogramPerMeter), 6);
+      Assert.Equal(1.2, areaOut.Value.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(1.3, i11Out.Value.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(1.4, i22Out.Value.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(0.9, jOut.Value.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(1.1, k11Out.Value.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(0.1, k22Out.Value.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(0.8, volOut.Value.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(5, addMassOut.Value.As(LinearDensityUnit.KilogramPerMeter), DoubleComparer.Default);
       Assert.True(isBendingOut.Value);
       Assert.False(isRefPtOut.Value);
       Assert.Equal(1, stressOptOut.Value);

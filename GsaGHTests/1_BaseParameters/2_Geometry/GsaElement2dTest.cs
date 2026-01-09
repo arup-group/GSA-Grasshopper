@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 
@@ -117,7 +117,7 @@ namespace GsaGHTests.Parameters {
         Assert.Equal(22, elem.ApiElements[i].Group);
         Assert.True(elem.ApiElements[i].IsDummy);
         Assert.Equal("Shahin", elem.ApiElements[i].Name);
-        Assert.Equal(0.1, elem.Offsets[i].Z.Value);
+        Assert.Equal(0.1, elem.Offsets[i].Z.Value, DoubleComparer.Default);
       }
     }
 
@@ -407,9 +407,9 @@ namespace GsaGHTests.Parameters {
       Point3dList points = loadPanel.GetCenterPoints();
       Assert.NotNull(points);
       Assert.Single(points);
-      Assert.Equal(0.5, points[0].X);
-      Assert.Equal(0.5, points[0].Y);
-      Assert.Equal(0, points[0].Z);
+      Assert.Equal(0.5, points[0].X, DoubleComparer.Default);
+      Assert.Equal(0.5, points[0].Y, DoubleComparer.Default);
+      Assert.Equal(0, points[0].Z, DoubleComparer.Default);
     }
 
     [Fact]

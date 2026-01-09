@@ -1,13 +1,13 @@
-﻿using GsaGH.Components;
+using GsaGH.Components;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
+using GsaGH.Helpers;
 
 using GsaGHTests.Helpers;
 
 using Rhino.Geometry;
 
 using Xunit;
-
 namespace GsaGHTests.Components.Loads {
   [Collection("GrasshopperFixture collection")]
   public class CreateNodeLoadTests {
@@ -22,9 +22,9 @@ namespace GsaGHTests.Components.Loads {
       var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
       var load = (GsaNodeLoad)output.Value;
       Assert.Equal(7, load.LoadCase.Id);
-      Assert.Equal(10, load._refPoint.X);
-      Assert.Equal(5, load._refPoint.Y);
-      Assert.Equal(-1, load._refPoint.Z);
+      Assert.Equal(10, load._refPoint.X, DoubleComparer.Default);
+      Assert.Equal(5, load._refPoint.Y, DoubleComparer.Default);
+      Assert.Equal(-1, load._refPoint.Z, DoubleComparer.Default);
       Assert.Equal("myNodeLoad", load.ApiLoad.Name);
       Assert.Equal(-5000, load.ApiLoad.Value);
       Assert.Equal(NodeLoadType.NodeLoad, load.Type);
@@ -44,9 +44,9 @@ namespace GsaGHTests.Components.Loads {
       var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
       var load = (GsaNodeLoad)output.Value;
       Assert.Equal(7, load.LoadCase.Id);
-      Assert.Equal(10, load._refPoint.X);
-      Assert.Equal(5, load._refPoint.Y);
-      Assert.Equal(-1, load._refPoint.Z);
+      Assert.Equal(10, load._refPoint.X, DoubleComparer.Default);
+      Assert.Equal(5, load._refPoint.Y, DoubleComparer.Default);
+      Assert.Equal(-1, load._refPoint.Z, DoubleComparer.Default);
       Assert.Equal("myNodeLoad", load.ApiLoad.Name);
       Assert.Equal(-5000, load.ApiLoad.Value);
       Assert.Equal(NodeLoadType.NodeLoad, load.Type);
@@ -66,9 +66,9 @@ namespace GsaGHTests.Components.Loads {
       var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
       var load = (GsaNodeLoad)output.Value;
       Assert.Equal(7, load.LoadCase.Id);
-      Assert.Equal(10, load._refPoint.X);
-      Assert.Equal(5, load._refPoint.Y);
-      Assert.Equal(-1, load._refPoint.Z);
+      Assert.Equal(10, load._refPoint.X, DoubleComparer.Default);
+      Assert.Equal(5, load._refPoint.Y, DoubleComparer.Default);
+      Assert.Equal(-1, load._refPoint.Z, DoubleComparer.Default);
       Assert.Equal("myNodeLoad", load.ApiLoad.Name);
       Assert.Equal(-0.005, load.ApiLoad.Value);
       Assert.Equal(NodeLoadType.AppliedDisp, load.Type);
@@ -88,9 +88,9 @@ namespace GsaGHTests.Components.Loads {
       var output = (GsaLoadGoo)ComponentTestHelper.GetOutput(comp);
       var load = (GsaNodeLoad)output.Value;
       Assert.Equal(7, load.LoadCase.Id);
-      Assert.Equal(10, load._refPoint.X);
-      Assert.Equal(5, load._refPoint.Y);
-      Assert.Equal(-1, load._refPoint.Z);
+      Assert.Equal(10, load._refPoint.X, DoubleComparer.Default);
+      Assert.Equal(5, load._refPoint.Y, DoubleComparer.Default);
+      Assert.Equal(-1, load._refPoint.Z, DoubleComparer.Default);
       Assert.Equal("myNodeLoad", load.ApiLoad.Name);
       Assert.Equal(-0.005, load.ApiLoad.Value);
       Assert.Equal(NodeLoadType.Settlement, load.Type);
