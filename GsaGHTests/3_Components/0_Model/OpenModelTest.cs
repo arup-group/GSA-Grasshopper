@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using GsaGH.Components;
 using GsaGH.Parameters;

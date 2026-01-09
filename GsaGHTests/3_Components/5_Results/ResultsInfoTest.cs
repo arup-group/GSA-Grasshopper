@@ -1,4 +1,4 @@
-﻿using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 
 using GsaGH.Components;

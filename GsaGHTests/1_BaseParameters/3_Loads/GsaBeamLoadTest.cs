@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 
 using GsaAPI;
 
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
@@ -70,31 +71,31 @@ namespace GsaGHTests.Parameters {
       Assert.True(original.ApiLoad.IsProjected);
       switch (original.ApiLoad.Type) {
         case BeamLoadType.POINT:
-          Assert.Equal(0, original.ApiLoad.Position(0));
-          Assert.Equal(0, original.ApiLoad.Value(0));
+          Assert.Equal(0, original.ApiLoad.Position(0), DoubleComparer.Default);
+          Assert.Equal(0, original.ApiLoad.Value(0), DoubleComparer.Default);
           break;
 
         case BeamLoadType.UNIFORM:
-          Assert.Equal(0, original.ApiLoad.Value(0));
+          Assert.Equal(0, original.ApiLoad.Value(0), DoubleComparer.Default);
           break;
 
         case BeamLoadType.LINEAR:
-          Assert.Equal(0, original.ApiLoad.Position(0));
-          Assert.Equal(0, original.ApiLoad.Value(1));
+          Assert.Equal(0, original.ApiLoad.Position(0), DoubleComparer.Default);
+          Assert.Equal(0, original.ApiLoad.Value(1), DoubleComparer.Default);
           break;
 
         case BeamLoadType.PATCH:
-          Assert.Equal(0, original.ApiLoad.Position(0));
-          Assert.Equal(0, original.ApiLoad.Position(1));
-          Assert.Equal(0, original.ApiLoad.Value(0));
-          Assert.Equal(0, original.ApiLoad.Value(1));
+          Assert.Equal(0, original.ApiLoad.Position(0), DoubleComparer.Default);
+          Assert.Equal(0, original.ApiLoad.Position(1), DoubleComparer.Default);
+          Assert.Equal(0, original.ApiLoad.Value(0), DoubleComparer.Default);
+          Assert.Equal(0, original.ApiLoad.Value(1), DoubleComparer.Default);
           break;
 
         case BeamLoadType.TRILINEAR:
-          Assert.Equal(0, original.ApiLoad.Position(0));
-          Assert.Equal(0, original.ApiLoad.Position(1));
-          Assert.Equal(0, original.ApiLoad.Value(0));
-          Assert.Equal(0, original.ApiLoad.Value(1));
+          Assert.Equal(0, original.ApiLoad.Position(0), DoubleComparer.Default);
+          Assert.Equal(0, original.ApiLoad.Position(1), DoubleComparer.Default);
+          Assert.Equal(0, original.ApiLoad.Value(0), DoubleComparer.Default);
+          Assert.Equal(0, original.ApiLoad.Value(1), DoubleComparer.Default);
           break;
       }
     }

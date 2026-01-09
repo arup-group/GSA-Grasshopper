@@ -1,14 +1,15 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
 
 using GsaGHTests.Helper;
-using GsaGHTests.TestHelpers;
+
 
 using OasysUnits;
 using OasysUnits.Units;
@@ -38,8 +39,8 @@ namespace GsaGHTests.Parameters.Results {
       foreach (int elementId in elementIds) {
         for (int vertex = 0; vertex < values[elementId].Count; vertex++) {
           double expected = TestsResultHelper.Envelope(expectedP1[i], expectedP2[i++], envelope);
-          double actual = ResultHelper.RoundToSignificantDigits(values[elementId][vertex].Value, 4);
-          DoubleAssertHelper.Equals(expected, actual);
+          double actual = values[elementId][vertex].Value;
+          Assert.Equal(expected, actual, DoubleComparer.Default);
         }
       }
     }

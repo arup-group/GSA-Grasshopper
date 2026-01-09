@@ -23,21 +23,6 @@ namespace GsaGH.Helpers {
       return Equals(x.Value, y.Value);
     }
 
-    public int GetHashCode(double? value) {
-      if (!value.HasValue) {
-        return 0;
-      }
-      return GetHashCode(value.Value);
-    }
-
-
-    public bool Equals(double x, double? y) {
-      if (!y.HasValue) {
-        return false;
-      }
-      return Equals(x, y.Value);
-    }
-
     public bool Equals(double x, double y) {
       x = Math.Round(x, _roundOff);
       y = Math.Round(y, _roundOff);
@@ -58,6 +43,13 @@ namespace GsaGH.Helpers {
       return false;
     }
 
+
+    public int GetHashCode(double? value) {
+      if (!value.HasValue) {
+        return 0;
+      }
+      return GetHashCode(value.Value);
+    }
     public int GetHashCode(double value) {
       // Group values into buckets of size `_epsilon`
       double normalized = Math.Round(value / _epsilon) * _epsilon;

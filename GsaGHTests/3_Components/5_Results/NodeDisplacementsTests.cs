@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -6,6 +6,7 @@ using System.Linq;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
@@ -126,7 +127,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert Max in set
       double max = output.Max().As(Unit(component));
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -153,7 +154,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert Max in set
       double max = output.Max().As(Unit(component));
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -179,7 +180,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert Min in set
       double min = output.Min().As(Unit(component));
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Theory]
@@ -207,7 +208,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert Min in set
       double min = output.Min().As(Unit(component));
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Theory]
@@ -233,8 +234,8 @@ namespace GsaGHTests.Components.Results {
       // Assert result values
       int i = 0;
       foreach (IQuantity value in output) {
-        double x = ResultHelper.RoundToSignificantDigits(value.As(Unit(component)), 4);
-        Assert.Equal(expected[i++], x);
+        double x = value.As(Unit(component));
+        Assert.Equal(expected[i++], x, DoubleComparer.Default);
       }
     }
 
@@ -262,8 +263,8 @@ namespace GsaGHTests.Components.Results {
 
       // Assert result values
       for (int i = 0; i < output.Count; i++) {
-        double perm = ResultHelper.RoundToSignificantDigits(output[i].As(Unit(component)), 4);
-        Assert.Equal(expectedP1[i], perm);
+        double perm = output[i].As(Unit(component));
+        Assert.Equal(expectedP1[i], perm, DoubleComparer.Default);
       }
 
       var p2 = new GH_Path(4, 2);
@@ -271,8 +272,8 @@ namespace GsaGHTests.Components.Results {
 
       // Assert result values
       for (int i = 0; i < output.Count; i++) {
-        double perm = ResultHelper.RoundToSignificantDigits(output[i].As(Unit(component)), 4);
-        Assert.Equal(expectedP2[i], perm);
+        double perm = output[i].As(Unit(component));
+        Assert.Equal(expectedP2[i], perm, DoubleComparer.Default);
       }
     }
 

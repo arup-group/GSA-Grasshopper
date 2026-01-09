@@ -6,6 +6,8 @@ using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
+
 using Xunit;
 
 namespace IntegrationTests.ExampleFiles {
@@ -29,7 +31,7 @@ namespace IntegrationTests.ExampleFiles {
     public void MaxDeformationAssert() {
       IGH_Param param = Helper.FindParameter(Document(), "MaxU");
       var output = (GH_Number)param.VolatileData.get_Branch(0)[0];
-      Assert.Equal(6.914599, output.Value, 6);
+      Assert.Equal(6.914599, output.Value, DoubleComparer.Default);
     }
 
     [Fact]

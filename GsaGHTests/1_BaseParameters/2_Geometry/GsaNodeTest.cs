@@ -68,9 +68,9 @@ namespace GsaGHTests.Parameters {
       Assert.False(node.Restraint.Yy);
       Assert.True(node.Restraint.Zz);
 
-      Assert.Equal(-40, node.LocalAxis.OriginX);
-      Assert.Equal(-3.654, node.LocalAxis.OriginY);
-      Assert.Equal(-99, node.LocalAxis.OriginZ);
+      Assert.Equal(-40, node.LocalAxis.OriginX, DoubleComparer.Default);
+      Assert.Equal(-3.654, node.LocalAxis.OriginY, DoubleComparer.Default);
+      Assert.Equal(-99, node.LocalAxis.OriginZ, DoubleComparer.Default);
       Assert.Equal(0, node.LocalAxis.Normal.X, DoubleComparer.Default);
       Assert.Equal(1, node.LocalAxis.Normal.Y, DoubleComparer.Default);
       Assert.Equal(0, node.LocalAxis.Normal.Z, DoubleComparer.Default);
@@ -117,12 +117,12 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(node.Point.Y, duplicate.Point.Y);
       Assert.Equal(node.Point.Z, duplicate.Point.Z);
 
-      Assert.Equal(duplicate.LocalAxis.OriginX, node.LocalAxis.OriginX);
-      Assert.Equal(duplicate.LocalAxis.OriginY, node.LocalAxis.OriginY);
-      Assert.Equal(duplicate.LocalAxis.OriginZ, node.LocalAxis.OriginZ);
-      Assert.Equal(duplicate.LocalAxis.Normal.X, node.LocalAxis.Normal.X);
-      Assert.Equal(duplicate.LocalAxis.Normal.Y, node.LocalAxis.Normal.Y);
-      Assert.Equal(duplicate.LocalAxis.Normal.Z, node.LocalAxis.Normal.Z);
+      Assert.Equal(duplicate.LocalAxis.OriginX, node.LocalAxis.OriginX, DoubleComparer.Default);
+      Assert.Equal(duplicate.LocalAxis.OriginY, node.LocalAxis.OriginY, DoubleComparer.Default);
+      Assert.Equal(duplicate.LocalAxis.OriginZ, node.LocalAxis.OriginZ, DoubleComparer.Default);
+      Assert.Equal(duplicate.LocalAxis.Normal.X, node.LocalAxis.Normal.X, DoubleComparer.Default);
+      Assert.Equal(duplicate.LocalAxis.Normal.Y, node.LocalAxis.Normal.Y, DoubleComparer.Default);
+      Assert.Equal(duplicate.LocalAxis.Normal.Z, node.LocalAxis.Normal.Z, DoubleComparer.Default);
 
       Assert.Equal(node.Id, duplicate.Id);
       Assert.Equal(node.ApiNode.Colour, duplicate.ApiNode.Colour);

@@ -6,6 +6,8 @@ using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
+
 using Xunit;
 
 namespace IntegrationTests.Components {
@@ -41,7 +43,7 @@ namespace IntegrationTests.Components {
       -11.74,
       -17.42,
       -20.36,
-    }, 2)]
+    })]
     [InlineData("MyContoursCentrePointValues", new double[] {
       2.814,
       10.57,
@@ -68,13 +70,13 @@ namespace IntegrationTests.Components {
       -11.74,
       -17.42,
       -20.36,
-    }, 2)]
-    public void Elem2dContourForcesTests(string name, double[] expectedVals, int precision = 6) {
+    })]
+    public void Elem2dContourForcesTests(string name, double[] expectedVals) {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
       for (int i = 0; i < expectedVals.Length; i++) {
-        Assert.Equal(expectedVals[i], output[i].Value, precision);
+        Assert.Equal(expectedVals[i], output[i].Value, DoubleComparer.Default);
       }
     }
 
@@ -88,8 +90,8 @@ namespace IntegrationTests.Components {
       IGH_Param param3 = Helper.FindParameter(doc, "ResultScaled");
       var output3 = (GH_Number)param3.VolatileData.get_Branch(0)[0];
 
-      Assert.Equal(output1.Value, output3.Value, 4);
-      Assert.Equal(output2.Value, output3.Value, 4);
+      Assert.Equal(output1.Value, output3.Value, DoubleComparer.Default);
+      Assert.Equal(output2.Value, output3.Value, DoubleComparer.Default);
     }
 
     [Fact]
@@ -110,7 +112,7 @@ namespace IntegrationTests.Components {
         -71.63,
       };
       for (int i = 0; i < expectedVals.Count; i++) {
-        Assert.Equal(expectedVals[i], output[i].Value, 2);
+        Assert.Equal(expectedVals[i], output[i].Value, DoubleComparer.Default);
       }
     }
 
@@ -125,7 +127,7 @@ namespace IntegrationTests.Components {
       0.0,
       0.0,
       0.0,
-    }, 1)]
+    })]
     [InlineData("Uy", new double[] {
       0.0,
       0.0,
@@ -136,7 +138,7 @@ namespace IntegrationTests.Components {
       0.0,
       0.0,
       0.0,
-    }, 1)]
+    })]
     [InlineData("Uz", new double[] {
       -0.7564,
       -0.8108,
@@ -147,7 +149,7 @@ namespace IntegrationTests.Components {
       -0.8548,
       -0.7972,
       -0.8401,
-    }, 4)]
+    })]
     [InlineData("U", new double[] {
       0.7564,
       0.8108,
@@ -158,13 +160,13 @@ namespace IntegrationTests.Components {
       0.8548,
       0.7972,
       0.8401,
-    }, 4)]
-    public void Elem2dDisplacementTests(string name, double[] expectedVals, int precision = 6) {
+    })]
+    public void Elem2dDisplacementTests(string name, double[] expectedVals) {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
       for (int i = 0; i < expectedVals.Length; i++) {
-        Assert.Equal(expectedVals[i], output[i].Value, precision);
+        Assert.Equal(expectedVals[i], output[i].Value, DoubleComparer.Default);
       }
     }
 

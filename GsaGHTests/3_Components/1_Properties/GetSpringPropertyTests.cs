@@ -1,4 +1,4 @@
-锘縰sing GsaGH.Components;
+using GsaGH.Components;
 
 using Xunit;
 
@@ -10,21 +10,21 @@ namespace GsaGHTests.Components.Properties {
     public void UpdateLengthTest() {
       var comp = new GetSpringProperty();
       comp.UpdateLength("mm");
-      Assert.Equal("kN/m, N路m/rad, mm", comp.Message);
+      Assert.Equal("kN/m, N穖/rad, mm", comp.Message);
     }
 
     [Fact]
     public void UpdateStiffnessTest() {
       var comp = new GetSpringProperty();
       comp.UpdateStiffness("N/m");
-      Assert.Equal("N/m, N路m/rad, cm", comp.Message);
+      Assert.Equal("N/m, N穖/rad, cm", comp.Message);
     }
 
     [Fact]
     public void UpdateRotationalStiffnessTest() {
       var comp = new GetSpringProperty();
-      comp.UpdateRotationalStiffness("kN路m/rad");
-      Assert.Equal("kN/m, kN路m/rad, cm", comp.Message);
+      comp.UpdateRotationalStiffness("kN穖/rad");
+      Assert.Equal("kN/m, kN穖/rad, cm", comp.Message);
     }
   }
 }
