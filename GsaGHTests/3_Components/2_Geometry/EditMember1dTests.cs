@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 
 using Grasshopper.Kernel;
@@ -17,6 +17,7 @@ using Rhino.Geometry;
 
 using Xunit;
 
+using GsaGH.Helpers;
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class EditMember1dTests_WithoutSettingInputs {
@@ -29,37 +30,37 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void ComponentReturnValidMemberPolyCurvePointAtStartXValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(0, output.PolyCurve.PointAtStart.X, 6);
+      Assert.Equal(0, output.PolyCurve.PointAtStart.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void ComponentReturnValidMemberPolyCurvePointAtStartYValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(-1, output.PolyCurve.PointAtStart.Y, 6);
+      Assert.Equal(-1, output.PolyCurve.PointAtStart.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void ComponentReturnValidMemberPolyCurvePointAtStartZValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(0, output.PolyCurve.PointAtStart.Z, 6);
+      Assert.Equal(0, output.PolyCurve.PointAtStart.Z, DoubleComparer.Default);
     }
 
     [Fact]
     public void ComponentReturnValidMemberPolyCurvePointAtEndXValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(7, output.PolyCurve.PointAtEnd.X, 6);
+      Assert.Equal(7, output.PolyCurve.PointAtEnd.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void ComponentReturnValidMemberPolyCurvePointAtEndYValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(3, output.PolyCurve.PointAtEnd.Y, 6);
+      Assert.Equal(3, output.PolyCurve.PointAtEnd.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void ComponentReturnValidMemberPolyCurvePointAtEndZValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(1, output.PolyCurve.PointAtEnd.Z, 6);
+      Assert.Equal(1, output.PolyCurve.PointAtEnd.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -83,37 +84,37 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void ComponentReturnValidMemberCurvePointAtStartXValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(0, output.PointAtStart.X, 6);
+      Assert.Equal(0, output.PointAtStart.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void ComponentReturnValidMemberCurvePointAtStartYValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(-1, output.PointAtStart.Y, 6);
+      Assert.Equal(-1, output.PointAtStart.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void ComponentReturnValidMemberCurvePointAtStartZValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(0, output.PointAtStart.Z, 6);
+      Assert.Equal(0, output.PointAtStart.Z, DoubleComparer.Default);
     }
 
     [Fact]
     public void ComponentReturnValidMemberCurvePointAtEndXValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(7, output.PointAtEnd.X, 6);
+      Assert.Equal(7, output.PointAtEnd.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void ComponentReturnValidMemberCurvePointAtEndYValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(3, output.PointAtEnd.Y, 6);
+      Assert.Equal(3, output.PointAtEnd.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void ComponentReturnValidMemberCurvePointAtEndZValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(1, output.PointAtEnd.Z, 6);
+      Assert.Equal(1, output.PointAtEnd.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -143,25 +144,25 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void ComponentReturnValidOffsetX1Value() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.X1.Value, 6);
+      Assert.Equal(0, output.X1.Value, DoubleComparer.Default);
     }
 
     [Fact]
     public void ComponentReturnValidOffsetX2Value() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.X2.Value, 6);
+      Assert.Equal(0, output.X2.Value, DoubleComparer.Default);
     }
 
     [Fact]
     public void ComponentReturnValidOffsetYValue() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.Y.Value, 6);
+      Assert.Equal(0, output.Y.Value, DoubleComparer.Default);
     }
 
     [Fact]
     public void ComponentReturnValidOffsetZValue() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.Z.Value, 6);
+      Assert.Equal(0, output.Z.Value, DoubleComparer.Default);
     }
 
     [Fact]
@@ -263,7 +264,7 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void ComponentReturnValidAngle() {
       double output = _helper.GetAngleOutput();
-      Assert.Equal(0, output, 6);
+      Assert.Equal(0, output, DoubleComparer.Default);
     }
 
     [Fact]
@@ -275,7 +276,7 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void ComponentReturnValidMeshSize() {
       double output = _helper.GetMeshSizeOutput();
-      Assert.Equal(0.5, output, 6);
+      Assert.Equal(0.5, output, DoubleComparer.Default);
     }
 
     [Fact]
@@ -363,37 +364,37 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMember1dReturnValidMemberPolyCurvePointAtStartXValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(0, output.PolyCurve.PointAtStart.X, 6);
+      Assert.Equal(0, output.PolyCurve.PointAtStart.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberPolyCurvePointAtStartYValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(0, output.PolyCurve.PointAtStart.Y, 6);
+      Assert.Equal(0, output.PolyCurve.PointAtStart.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberPolyCurvePointAtStartZValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(0, output.PolyCurve.PointAtStart.Z, 6);
+      Assert.Equal(0, output.PolyCurve.PointAtStart.Z, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberPolyCurvePointAtEndXValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(1, output.PolyCurve.PointAtEnd.X, 6);
+      Assert.Equal(1, output.PolyCurve.PointAtEnd.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberPolyCurvePointAtEndYValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(2, output.PolyCurve.PointAtEnd.Y, 6);
+      Assert.Equal(2, output.PolyCurve.PointAtEnd.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberPolyCurvePointAtEndZValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(3, output.PolyCurve.PointAtEnd.Z, 6);
+      Assert.Equal(3, output.PolyCurve.PointAtEnd.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -417,37 +418,37 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMember1dReturnValidMemberCurvePointAtStartXValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(0, output.PointAtStart.X, 6);
+      Assert.Equal(0, output.PointAtStart.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberCurvePointAtStartYValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(0, output.PointAtStart.Y, 6);
+      Assert.Equal(0, output.PointAtStart.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberCurvePointAtStartZValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(0, output.PointAtStart.Z, 6);
+      Assert.Equal(0, output.PointAtStart.Z, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberCurvePointAtEndXValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(1, output.PointAtEnd.X, 6);
+      Assert.Equal(1, output.PointAtEnd.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberCurvePointAtEndYValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(2, output.PointAtEnd.Y, 6);
+      Assert.Equal(2, output.PointAtEnd.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberCurvePointAtEndZValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(3, output.PointAtEnd.Z, 6);
+      Assert.Equal(3, output.PointAtEnd.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -477,25 +478,25 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMember1dReturnValidOffsetX1Value() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(1, output.X1.Value, 6);
+      Assert.Equal(1, output.X1.Value, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidOffsetX2Value() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(2, output.X2.Value, 6);
+      Assert.Equal(2, output.X2.Value, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidOffsetYValue() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(3, output.Y.Value, 6);
+      Assert.Equal(3, output.Y.Value, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidOffsetZValue() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(4, output.Z.Value, 6);
+      Assert.Equal(4, output.Z.Value, DoubleComparer.Default);
     }
 
     [Fact]
@@ -597,25 +598,25 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMember1dReturnValidAngle() {
       double output = _helper.GetAngleOutput();
-      Assert.Equal(Math.PI, output, 6);
+      Assert.Equal(Math.PI, output, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidOrientationX() {
       GsaNode output = _helper.GetOrientationOutput();
-      Assert.Equal(1, output.Point.X);
+      Assert.Equal(1, output.Point.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidOrientationY() {
       GsaNode output = _helper.GetOrientationOutput();
-      Assert.Equal(2, output.Point.Y);
+      Assert.Equal(2, output.Point.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidOrientationZ() {
       GsaNode output = _helper.GetOrientationOutput();
-      Assert.Equal(3, output.Point.Z);
+      Assert.Equal(3, output.Point.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -627,7 +628,7 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMember1dReturnValidMeshSize() {
       double output = _helper.GetMeshSizeOutput();
-      Assert.Equal(0.7, output, 6);
+      Assert.Equal(0.7, output, DoubleComparer.Default);
     }
 
     [Fact]
@@ -695,37 +696,37 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMember1dReturnValidMemberPolyCurvePointAtStartXValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(0, output.PolyCurve.PointAtStart.X, 6);
+      Assert.Equal(0, output.PolyCurve.PointAtStart.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberPolyCurvePointAtStartYValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(-1, output.PolyCurve.PointAtStart.Y, 6);
+      Assert.Equal(-1, output.PolyCurve.PointAtStart.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberPolyCurvePointAtStartZValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(0, output.PolyCurve.PointAtStart.Z, 6);
+      Assert.Equal(0, output.PolyCurve.PointAtStart.Z, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberPolyCurvePointAtEndXValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(7, output.PolyCurve.PointAtEnd.X, 6);
+      Assert.Equal(7, output.PolyCurve.PointAtEnd.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberPolyCurvePointAtEndYValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(3, output.PolyCurve.PointAtEnd.Y, 6);
+      Assert.Equal(3, output.PolyCurve.PointAtEnd.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberPolyCurvePointAtEndZValue() {
       GsaMember1d output = _helper.GetMemberOutput();
-      Assert.Equal(1, output.PolyCurve.PointAtEnd.Z, 6);
+      Assert.Equal(1, output.PolyCurve.PointAtEnd.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -749,37 +750,37 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMember1dReturnValidMemberCurvePointAtStartXValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(0, output.PointAtStart.X, 6);
+      Assert.Equal(0, output.PointAtStart.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberCurvePointAtStartYValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(-1, output.PointAtStart.Y, 6);
+      Assert.Equal(-1, output.PointAtStart.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberCurvePointAtStartZValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(0, output.PointAtStart.Z, 6);
+      Assert.Equal(0, output.PointAtStart.Z, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberCurvePointAtEndXValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(7, output.PointAtEnd.X, 6);
+      Assert.Equal(7, output.PointAtEnd.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberCurvePointAtEndYValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(3, output.PointAtEnd.Y, 6);
+      Assert.Equal(3, output.PointAtEnd.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidMemberCurvePointAtEndZValue() {
       Curve output = _helper.GetMemberCurveOutput();
-      Assert.Equal(1, output.PointAtEnd.Z, 6);
+      Assert.Equal(1, output.PointAtEnd.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -809,25 +810,25 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMember1dReturnValidOffsetX1Value() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.X1.Value, 6);
+      Assert.Equal(0, output.X1.Value, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidOffsetX2Value() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.X2.Value, 6);
+      Assert.Equal(0, output.X2.Value, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidOffsetYValue() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.Y.Value, 6);
+      Assert.Equal(0, output.Y.Value, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditMember1dReturnValidOffsetZValue() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.Z.Value, 6);
+      Assert.Equal(0, output.Z.Value, DoubleComparer.Default);
     }
 
     [Fact]
@@ -929,7 +930,7 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMember1dReturnValidAngle() {
       double output = _helper.GetAngleOutput();
-      Assert.Equal(0, output, 6);
+      Assert.Equal(0, output, DoubleComparer.Default);
     }
 
     [Fact]
@@ -941,7 +942,7 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMember1dReturnValidMeshSize() {
       double output = _helper.GetMeshSizeOutput();
-      Assert.Equal(0.5, output, 6);
+      Assert.Equal(0.5, output, DoubleComparer.Default);
     }
 
     [Fact]

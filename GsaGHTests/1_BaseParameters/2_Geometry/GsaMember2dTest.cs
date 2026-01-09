@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -13,7 +13,7 @@ using Xunit;
 
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Polyline = Rhino.Geometry.Polyline;
-
+using GsaGH.Helpers;
 namespace GsaGHTests.Parameters {
 
   [Collection("GrasshopperFixture collection")]
@@ -112,19 +112,19 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(original.Brep.Vertices[3].Location.Y, dup.Topology[3].Y);
       Assert.Equal(original.Brep.Vertices[0].Location.X, dup.Topology[4].X);
       Assert.Equal(original.Brep.Vertices[0].Location.Y, dup.Topology[4].Y);
-      Assert.Equal(1, dup.InclusionLinesTopology[0][0].X);
-      Assert.Equal(2, dup.InclusionLinesTopology[0][0].Y);
-      Assert.Equal(3, dup.InclusionLinesTopology[0][1].X);
-      Assert.Equal(2, dup.InclusionLinesTopology[0][1].Y);
-      Assert.Equal(1, dup.InclusionPoints[0].X);
-      Assert.Equal(1, dup.InclusionPoints[0].Y);
+      Assert.Equal(1, dup.InclusionLinesTopology[0][0].X, DoubleComparer.Default);
+      Assert.Equal(2, dup.InclusionLinesTopology[0][0].Y, DoubleComparer.Default);
+      Assert.Equal(3, dup.InclusionLinesTopology[0][1].X, DoubleComparer.Default);
+      Assert.Equal(2, dup.InclusionLinesTopology[0][1].Y, DoubleComparer.Default);
+      Assert.Equal(1, dup.InclusionPoints[0].X, DoubleComparer.Default);
+      Assert.Equal(1, dup.InclusionPoints[0].Y, DoubleComparer.Default);
 
       Assert.Equal(Color.FromArgb(255, 0, 0, 255), dup.ApiMember.Colour);
       Assert.Equal(13, dup.Id);
       Assert.Equal(1.56, dup.ApiMember.MeshSize);
       Assert.Equal("ehbaba", dup.ApiMember.Name);
       Assert.False(dup.ApiMember.IsDummy);
-      Assert.Equal(0.33, dup.Offset.X1.Value);
+      Assert.Equal(0.33, dup.Offset.X1.Value, DoubleComparer.Default);
       Assert.Equal(3, dup.Prop2d.Id);
       Assert.Equal(AnalysisOrder.RIGID_DIAPHRAGM, dup.ApiMember.Type2D);
       Assert.Equal(MemberType.GENERIC_2D, dup.ApiMember.Type);
@@ -166,7 +166,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(1.56, dup.ApiMember.MeshSize);
       Assert.Equal("ehbaba", dup.ApiMember.Name);
       Assert.False(dup.ApiMember.IsDummy);
-      Assert.Equal(0.33, dup.Offset.X1.Meters);
+      Assert.Equal(0.33, dup.Offset.X1.Meters, DoubleComparer.Default);
       Assert.Equal(44, dup.Prop2d.Id);
       Assert.Equal(AnalysisOrder.RIGID_DIAPHRAGM, dup.ApiMember.Type2D);
       Assert.Equal(MemberType.GENERIC_2D, dup.ApiMember.Type);
@@ -176,7 +176,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, original.ApiMember.MeshSize);
       Assert.Equal("Persepolis", original.ApiMember.Name);
       Assert.True(original.ApiMember.IsDummy);
-      Assert.Equal(0.12, original.Offset.X1.Value);
+      Assert.Equal(0.12, original.Offset.X1.Value, DoubleComparer.Default);
       Assert.Equal(44, original.Prop2d.Id);
       Assert.Equal(AnalysisOrder.QUADRATIC, original.ApiMember.Type2D);
       Assert.Equal(MemberType.WALL, original.ApiMember.Type);

@@ -1,4 +1,4 @@
-﻿using GsaAPI;
+using GsaAPI;
 
 using GsaGH.Parameters;
 
@@ -11,7 +11,7 @@ using Xunit;
 using static GsaAPI.GridSurface;
 
 using LengthUnit = OasysUnits.Units.LengthUnit;
-
+using GsaGH.Helpers;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaGridPlaneSurfaceTest {
@@ -132,15 +132,15 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(Span_Type.TWO_WAY, gps.GridSurface.SpanType);
       Assert.Equal(0.01, gps.GridSurface.Tolerance);
       Axis axis = gps.GetAxis(LengthUnit.Meter);
-      Assert.Equal(0, axis.Origin.X);
-      Assert.Equal(0, axis.Origin.Y);
-      Assert.Equal(0, axis.Origin.Z);
-      Assert.Equal(1, axis.XVector.X);
-      Assert.Equal(0, axis.XVector.Y);
-      Assert.Equal(0, axis.XVector.Z);
-      Assert.Equal(0, axis.XYPlane.X);
-      Assert.Equal(1, axis.XYPlane.Y);
-      Assert.Equal(0, axis.XYPlane.Z);
+      Assert.Equal(0, axis.Origin.X, DoubleComparer.Default);
+      Assert.Equal(0, axis.Origin.Y, DoubleComparer.Default);
+      Assert.Equal(0, axis.Origin.Z, DoubleComparer.Default);
+      Assert.Equal(1, axis.XVector.X, DoubleComparer.Default);
+      Assert.Equal(0, axis.XVector.Y, DoubleComparer.Default);
+      Assert.Equal(0, axis.XVector.Z, DoubleComparer.Default);
+      Assert.Equal(0, axis.XYPlane.X, DoubleComparer.Default);
+      Assert.Equal(1, axis.XYPlane.Y, DoubleComparer.Default);
+      Assert.Equal(0, axis.XYPlane.Z, DoubleComparer.Default);
       Assert.Equal(0, gps.GridSurfaceId);
       Assert.Equal(0, gps.GridPlaneId);
     }

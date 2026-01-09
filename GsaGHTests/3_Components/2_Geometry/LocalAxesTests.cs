@@ -1,4 +1,4 @@
-﻿using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel.Types;
 
 using GsaGH.Parameters;
 
@@ -9,7 +9,7 @@ using Rhino.Geometry;
 using Xunit;
 
 using LocalAxes = GsaGH.Components.LocalAxes;
-
+using GsaGH.Helpers;
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class LocalAxesTests {
@@ -25,17 +25,17 @@ namespace GsaGHTests.Components.Geometry {
       var vectorY = (GH_Vector)ComponentTestHelper.GetOutput(comp, 1);
       var vectorZ = (GH_Vector)ComponentTestHelper.GetOutput(comp, 2);
 
-      Assert.Equal(0, vectorX.Value.X);
-      Assert.Equal(0, vectorX.Value.Y);
-      Assert.Equal(1, vectorX.Value.Z);
+      Assert.Equal(0, vectorX.Value.X, DoubleComparer.Default);
+      Assert.Equal(0, vectorX.Value.Y, DoubleComparer.Default);
+      Assert.Equal(1, vectorX.Value.Z, DoubleComparer.Default);
 
-      Assert.Equal(0, vectorY.Value.X);
-      Assert.Equal(1, vectorY.Value.Y);
-      Assert.Equal(0, vectorY.Value.Z);
+      Assert.Equal(0, vectorY.Value.X, DoubleComparer.Default);
+      Assert.Equal(1, vectorY.Value.Y, DoubleComparer.Default);
+      Assert.Equal(0, vectorY.Value.Z, DoubleComparer.Default);
 
-      Assert.Equal(-1, vectorZ.Value.X);
-      Assert.Equal(0, vectorZ.Value.Y);
-      Assert.Equal(0, vectorZ.Value.Z);
+      Assert.Equal(-1, vectorZ.Value.X, DoubleComparer.Default);
+      Assert.Equal(0, vectorZ.Value.Y, DoubleComparer.Default);
+      Assert.Equal(0, vectorZ.Value.Z, DoubleComparer.Default);
 
       ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
@@ -52,17 +52,17 @@ namespace GsaGHTests.Components.Geometry {
       var vectorY = (GH_Vector)ComponentTestHelper.GetOutput(comp, 1);
       var vectorZ = (GH_Vector)ComponentTestHelper.GetOutput(comp, 2);
 
-      Assert.Equal(0, vectorX.Value.X);
-      Assert.Equal(0, vectorX.Value.Y);
-      Assert.Equal(1, vectorX.Value.Z);
+      Assert.Equal(0, vectorX.Value.X, DoubleComparer.Default);
+      Assert.Equal(0, vectorX.Value.Y, DoubleComparer.Default);
+      Assert.Equal(1, vectorX.Value.Z, DoubleComparer.Default);
 
-      Assert.Equal(0, vectorY.Value.X);
-      Assert.Equal(1, vectorY.Value.Y);
-      Assert.Equal(0, vectorY.Value.Z);
+      Assert.Equal(0, vectorY.Value.X, DoubleComparer.Default);
+      Assert.Equal(1, vectorY.Value.Y, DoubleComparer.Default);
+      Assert.Equal(0, vectorY.Value.Z, DoubleComparer.Default);
 
-      Assert.Equal(-1, vectorZ.Value.X);
-      Assert.Equal(0, vectorZ.Value.Y);
-      Assert.Equal(0, vectorZ.Value.Z);
+      Assert.Equal(-1, vectorZ.Value.X, DoubleComparer.Default);
+      Assert.Equal(0, vectorZ.Value.Y, DoubleComparer.Default);
+      Assert.Equal(0, vectorZ.Value.Z, DoubleComparer.Default);
 
       ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }

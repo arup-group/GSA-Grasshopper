@@ -3,6 +3,7 @@ using System.Drawing;
 
 using GsaAPI;
 
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
@@ -37,9 +38,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, original.Id);
       Assert.False(original.IsReferencedById);
       Assert.Equal(Color.FromArgb(255, 255, 255, 0), original.ApiProperty.Colour);
-      Assert.Equal(0.1, original.ApiProperty.DampingRatio, 8);
+      Assert.Equal(0.1, original.ApiProperty.DampingRatio, DoubleComparer.Default);
       Assert.Equal("Name", original.ApiProperty.Name);
-      Assert.Equal(1.2, ((AxialSpringProperty)original.ApiProperty).Stiffness, 8);
+      Assert.Equal(1.2, ((AxialSpringProperty)original.ApiProperty).Stiffness, DoubleComparer.Default);
     }
 
     [Fact]
@@ -67,9 +68,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, original.Id);
       Assert.False(original.IsReferencedById);
       Assert.Equal(Color.FromArgb(255, 255, 255, 0), original.ApiProperty.Colour);
-      Assert.Equal(0.1, original.ApiProperty.DampingRatio, 8);
+      Assert.Equal(0.1, original.ApiProperty.DampingRatio, DoubleComparer.Default);
       Assert.Equal("Name", original.ApiProperty.Name);
-      Assert.Equal(1.2, ((TorsionalSpringProperty)original.ApiProperty).Stiffness, 8);
+      Assert.Equal(1.2, ((TorsionalSpringProperty)original.ApiProperty).Stiffness, DoubleComparer.Default);
     }
 
     [Fact]
@@ -107,14 +108,14 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, original.Id);
       Assert.False(original.IsReferencedById);
       Assert.Equal(Color.FromArgb(255, 255, 255, 0), original.ApiProperty.Colour);
-      Assert.Equal(0.1, original.ApiProperty.DampingRatio, 8);
+      Assert.Equal(0.1, original.ApiProperty.DampingRatio, DoubleComparer.Default);
       Assert.Equal("Name", original.ApiProperty.Name);
-      Assert.Equal(1.2, ((GeneralSpringProperty)original.ApiProperty).StiffnessX);
-      Assert.Equal(2.2, ((GeneralSpringProperty)original.ApiProperty).StiffnessY);
-      Assert.Equal(3.2, ((GeneralSpringProperty)original.ApiProperty).StiffnessZ);
-      Assert.Equal(4.2, ((GeneralSpringProperty)original.ApiProperty).StiffnessXX);
-      Assert.Equal(4.2, ((GeneralSpringProperty)original.ApiProperty).StiffnessYY);
-      Assert.Equal(4.2, ((GeneralSpringProperty)original.ApiProperty).StiffnessZZ);
+      Assert.Equal(1.2, ((GeneralSpringProperty)original.ApiProperty).StiffnessX, DoubleComparer.Default);
+      Assert.Equal(2.2, ((GeneralSpringProperty)original.ApiProperty).StiffnessY, DoubleComparer.Default);
+      Assert.Equal(3.2, ((GeneralSpringProperty)original.ApiProperty).StiffnessZ, DoubleComparer.Default);
+      Assert.Equal(4.2, ((GeneralSpringProperty)original.ApiProperty).StiffnessXX, DoubleComparer.Default);
+      Assert.Equal(4.2, ((GeneralSpringProperty)original.ApiProperty).StiffnessYY, DoubleComparer.Default);
+      Assert.Equal(4.2, ((GeneralSpringProperty)original.ApiProperty).StiffnessZZ, DoubleComparer.Default);
     }
 
     [Fact]
@@ -152,7 +153,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, original.Id);
       Assert.False(original.IsReferencedById);
       Assert.Equal(Color.FromArgb(255, 255, 255, 0), original.ApiProperty.Colour);
-      Assert.Equal(0.1, original.ApiProperty.DampingRatio, 8);
+      Assert.Equal(0.1, original.ApiProperty.DampingRatio, DoubleComparer.Default);
       Assert.Equal("Name", original.ApiProperty.Name);
       Assert.Equal(1, ((GeneralSpringProperty)original.ApiProperty).SpringCurveX);
       Assert.Equal(2, ((GeneralSpringProperty)original.ApiProperty).SpringCurveY);
@@ -187,7 +188,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, original.Id);
       Assert.False(original.IsReferencedById);
       Assert.Equal(Color.FromArgb(255, 255, 255, 0), original.ApiProperty.Colour);
-      Assert.Equal(0.1, original.ApiProperty.DampingRatio, 8);
+      Assert.Equal(0.1, original.ApiProperty.DampingRatio, DoubleComparer.Default);
       Assert.Equal("Name", original.ApiProperty.Name);
       Assert.Equal(2, ((MatrixSpringProperty)original.ApiProperty).SpringMatrix);
     }
@@ -217,9 +218,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, original.Id);
       Assert.False(original.IsReferencedById);
       Assert.Equal(Color.FromArgb(255, 255, 255, 0), original.ApiProperty.Colour);
-      Assert.Equal(0.1, original.ApiProperty.DampingRatio, 8);
+      Assert.Equal(0.1, original.ApiProperty.DampingRatio, DoubleComparer.Default);
       Assert.Equal("Name", original.ApiProperty.Name);
-      Assert.Equal(1.2, ((TensionSpringProperty)original.ApiProperty).Stiffness, 8);
+      Assert.Equal(1.2, ((TensionSpringProperty)original.ApiProperty).Stiffness, DoubleComparer.Default);
     }
 
     [Fact]
@@ -247,9 +248,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, original.Id);
       Assert.False(original.IsReferencedById);
       Assert.Equal(Color.FromArgb(255, 255, 255, 0), original.ApiProperty.Colour);
-      Assert.Equal(0.1, original.ApiProperty.DampingRatio, 8);
+      Assert.Equal(0.1, original.ApiProperty.DampingRatio, DoubleComparer.Default);
       Assert.Equal("Name", original.ApiProperty.Name);
-      Assert.Equal(1.2, ((CompressionSpringProperty)original.ApiProperty).Stiffness, 8);
+      Assert.Equal(1.2, ((CompressionSpringProperty)original.ApiProperty).Stiffness, DoubleComparer.Default);
     }
 
     [Fact]
@@ -275,7 +276,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, original.Id);
       Assert.False(original.IsReferencedById);
       Assert.Equal(Color.FromArgb(255, 255, 255, 0), original.ApiProperty.Colour);
-      Assert.Equal(0.1, original.ApiProperty.DampingRatio, 8);
+      Assert.Equal(0.1, original.ApiProperty.DampingRatio, DoubleComparer.Default);
       Assert.Equal("Name", original.ApiProperty.Name);
     }
 
@@ -308,11 +309,11 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, original.Id);
       Assert.False(original.IsReferencedById);
       Assert.Equal(Color.FromArgb(255, 255, 255, 0), original.ApiProperty.Colour);
-      Assert.Equal(0.1, original.ApiProperty.DampingRatio, 8);
+      Assert.Equal(0.1, original.ApiProperty.DampingRatio, DoubleComparer.Default);
       Assert.Equal("Name", original.ApiProperty.Name);
-      Assert.Equal(1.2, ((LockupSpringProperty)original.ApiProperty).Stiffness, 8);
-      Assert.Equal(2.1, ((LockupSpringProperty)original.ApiProperty).NegativeLockup, 8);
-      Assert.Equal(3.1, ((LockupSpringProperty)original.ApiProperty).PositiveLockup, 8);
+      Assert.Equal(1.2, ((LockupSpringProperty)original.ApiProperty).Stiffness, DoubleComparer.Default);
+      Assert.Equal(2.1, ((LockupSpringProperty)original.ApiProperty).NegativeLockup, DoubleComparer.Default);
+      Assert.Equal(3.1, ((LockupSpringProperty)original.ApiProperty).PositiveLockup, DoubleComparer.Default);
     }
 
     [Fact]
@@ -340,9 +341,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, original.Id);
       Assert.False(original.IsReferencedById);
       Assert.Equal(Color.FromArgb(255, 255, 255, 0), original.ApiProperty.Colour);
-      Assert.Equal(0.1, original.ApiProperty.DampingRatio, 8);
+      Assert.Equal(0.1, original.ApiProperty.DampingRatio, DoubleComparer.Default);
       Assert.Equal("Name", original.ApiProperty.Name);
-      Assert.Equal(1.2, ((GapSpringProperty)original.ApiProperty).Stiffness, 8);
+      Assert.Equal(1.2, ((GapSpringProperty)original.ApiProperty).Stiffness, DoubleComparer.Default);
     }
 
     [Fact]
@@ -376,12 +377,12 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0, original.Id);
       Assert.False(original.IsReferencedById);
       Assert.Equal(Color.FromArgb(255, 255, 255, 0), original.ApiProperty.Colour);
-      Assert.Equal(0.1, original.ApiProperty.DampingRatio, 8);
+      Assert.Equal(0.1, original.ApiProperty.DampingRatio, DoubleComparer.Default);
       Assert.Equal("Name", original.ApiProperty.Name);
-      Assert.Equal(1.2, ((FrictionSpringProperty)original.ApiProperty).StiffnessX, 8);
-      Assert.Equal(2.2, ((FrictionSpringProperty)original.ApiProperty).StiffnessY, 8);
-      Assert.Equal(3.2, ((FrictionSpringProperty)original.ApiProperty).StiffnessZ, 8);
-      Assert.Equal(0.1, ((FrictionSpringProperty)original.ApiProperty).FrictionCoefficient, 8);
+      Assert.Equal(1.2, ((FrictionSpringProperty)original.ApiProperty).StiffnessX, DoubleComparer.Default);
+      Assert.Equal(2.2, ((FrictionSpringProperty)original.ApiProperty).StiffnessY, DoubleComparer.Default);
+      Assert.Equal(3.2, ((FrictionSpringProperty)original.ApiProperty).StiffnessZ, DoubleComparer.Default);
+      Assert.Equal(0.1, ((FrictionSpringProperty)original.ApiProperty).FrictionCoefficient, DoubleComparer.Default);
     }
 
     [Fact]

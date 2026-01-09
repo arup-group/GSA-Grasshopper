@@ -1,4 +1,4 @@
-﻿using GsaAPI;
+using GsaAPI;
 
 using GsaGH.Parameters;
 
@@ -8,7 +8,7 @@ using Xunit;
 
 using LoadCaseType = GsaGH.Parameters.LoadCaseType;
 using NodeLoadType = GsaGH.Parameters.NodeLoadType;
-
+using GsaGH.Helpers;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaNodeLoadTest {
@@ -75,7 +75,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(Direction.X, original.ApiLoad.Direction);
       Assert.Equal("all", original.ApiLoad.Nodes);
       Assert.Equal("name", original.ApiLoad.Name);
-      Assert.Equal(97.5, original.ApiLoad.Value);
+      Assert.Equal(97.5, original.ApiLoad.Value, DoubleComparer.Default);
     }
 
     [Fact]

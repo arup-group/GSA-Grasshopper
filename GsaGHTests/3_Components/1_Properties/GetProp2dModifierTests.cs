@@ -1,4 +1,5 @@
 ﻿using GsaGH.Components;
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
@@ -40,11 +41,11 @@ namespace GsaGHTests.Properties {
       var volume = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 3);
       var addMass = (GH_UnitNumber)ComponentTestHelper.GetOutput(comp, 4);
 
-      Assert.Equal(1.2, inplane.Value.As(RatioUnit.DecimalFraction), 6);
-      Assert.Equal(1.3, bending.Value.As(RatioUnit.DecimalFraction), 6);
-      Assert.Equal(1.4, shear.Value.As(RatioUnit.DecimalFraction), 6);
-      Assert.Equal(1.5, volume.Value.As(RatioUnit.DecimalFraction), 6);
-      Assert.Equal(6, addMass.Value.As(AreaDensityUnit.KilogramPerSquareMeter), 6);
+      Assert.Equal(1.2, inplane.Value.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(1.3, bending.Value.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(1.4, shear.Value.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(1.5, volume.Value.As(RatioUnit.DecimalFraction), DoubleComparer.Default);
+      Assert.Equal(6, addMass.Value.As(AreaDensityUnit.KilogramPerSquareMeter), DoubleComparer.Default);
     }
   }
 }

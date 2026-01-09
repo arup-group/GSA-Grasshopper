@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 
 using Grasshopper.Kernel;
@@ -17,8 +17,7 @@ using Rhino.Geometry;
 
 using Xunit;
 
-using Line = Rhino.Geometry.Line;
-
+using GsaGH.Helpers;
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class EditElement1dTests_WithoutSettingInputs {
@@ -84,37 +83,37 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void ComponentReturnValidLineFromXValue() {
-      Line line = _helper.GetLineOutput();
+      Rhino.Geometry.Line line = _helper.GetLineOutput();
       Assert.Equal(0, line.From.X, 6);
     }
 
     [Fact]
     public void ComponentReturnValidLineFromYValue() {
-      Line line = _helper.GetLineOutput();
+      Rhino.Geometry.Line line = _helper.GetLineOutput();
       Assert.Equal(-1, line.From.Y, 6);
     }
 
     [Fact]
     public void ComponentReturnValidLineFromZValue() {
-      Line line = _helper.GetLineOutput();
+      Rhino.Geometry.Line line = _helper.GetLineOutput();
       Assert.Equal(0, line.From.Z, 6);
     }
 
     [Fact]
     public void ComponentReturnValidLineToXValue() {
-      Line line = _helper.GetLineOutput();
+      Rhino.Geometry.Line line = _helper.GetLineOutput();
       Assert.Equal(7, line.To.X, 6);
     }
 
     [Fact]
     public void ComponentReturnValidLineToYValue() {
-      Line line = _helper.GetLineOutput();
+      Rhino.Geometry.Line line = _helper.GetLineOutput();
       Assert.Equal(3, line.To.Y, 6);
     }
 
     [Fact]
     public void ComponentReturnValidLineToZValue() {
-      Line line = _helper.GetLineOutput();
+      Rhino.Geometry.Line line = _helper.GetLineOutput();
       Assert.Equal(1, line.To.Z, 6);
     }
 
@@ -295,37 +294,37 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtStartValueX() {
       GsaElement1d element = _helper.GetElementOutput();
-      Assert.Equal(0, element.Line.PointAtStart.X);
+      Assert.Equal(0, element.Line.PointAtStart.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtStartValueY() {
       GsaElement1d element = _helper.GetElementOutput();
-      Assert.Equal(0, element.Line.PointAtStart.Y);
+      Assert.Equal(0, element.Line.PointAtStart.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtStartValueZ() {
       GsaElement1d element = _helper.GetElementOutput();
-      Assert.Equal(0, element.Line.PointAtStart.Z);
+      Assert.Equal(0, element.Line.PointAtStart.Z, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtEndValueX() {
       GsaElement1d element = _helper.GetElementOutput();
-      Assert.Equal(1, element.Line.PointAtEnd.X);
+      Assert.Equal(1, element.Line.PointAtEnd.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtEndValueY() {
       GsaElement1d element = _helper.GetElementOutput();
-      Assert.Equal(2, element.Line.PointAtEnd.Y);
+      Assert.Equal(2, element.Line.PointAtEnd.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditElementShouldReturnValidElementLinePointAtEndValueZ() {
       GsaElement1d element = _helper.GetElementOutput();
-      Assert.Equal(3, element.Line.PointAtEnd.Z);
+      Assert.Equal(3, element.Line.PointAtEnd.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -348,38 +347,38 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void EditElementShouldReturnValidLineFromXValue() {
-      Line output = _helper.GetLineOutput();
-      Assert.Equal(0, output.From.X);
+      Rhino.Geometry.Line output = _helper.GetLineOutput();
+      Assert.Equal(0, output.From.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLineFromYValue() {
-      Line output = _helper.GetLineOutput();
-      Assert.Equal(0, output.From.Y);
+      Rhino.Geometry.Line output = _helper.GetLineOutput();
+      Assert.Equal(0, output.From.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLineFromZValue() {
-      Line output = _helper.GetLineOutput();
-      Assert.Equal(0, output.From.Z);
+      Rhino.Geometry.Line output = _helper.GetLineOutput();
+      Assert.Equal(0, output.From.Z, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLineToXValue() {
-      Line output = _helper.GetLineOutput();
-      Assert.Equal(1, output.To.X);
+      Rhino.Geometry.Line output = _helper.GetLineOutput();
+      Assert.Equal(1, output.To.X, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLineToYValue() {
-      Line output = _helper.GetLineOutput();
-      Assert.Equal(2, output.To.Y);
+      Rhino.Geometry.Line output = _helper.GetLineOutput();
+      Assert.Equal(2, output.To.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditElementShouldReturnValidLineToZValue() {
-      Line output = _helper.GetLineOutput();
-      Assert.Equal(3, output.To.Z);
+      Rhino.Geometry.Line output = _helper.GetLineOutput();
+      Assert.Equal(3, output.To.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -505,13 +504,13 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditElementShouldReturnValidOrientationYValue() {
       GsaNode output = _helper.GetOrientationOutput();
-      Assert.Equal(2, output.Point.Y);
+      Assert.Equal(2, output.Point.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void EditElementShouldReturnValidOrientationZValue() {
       GsaNode output = _helper.GetOrientationOutput();
-      Assert.Equal(3, output.Point.Z);
+      Assert.Equal(3, output.Point.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -614,37 +613,37 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void EditElement1dShouldReturnValidLineFromXValue() {
-      Line output = _helper.GetLineOutput();
+      Rhino.Geometry.Line output = _helper.GetLineOutput();
       Assert.Equal(0, output.From.X, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidLineFromYValue() {
-      Line output = _helper.GetLineOutput();
+      Rhino.Geometry.Line output = _helper.GetLineOutput();
       Assert.Equal(-1, output.From.Y, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidLineFromZValue() {
-      Line output = _helper.GetLineOutput();
+      Rhino.Geometry.Line output = _helper.GetLineOutput();
       Assert.Equal(0, output.From.Z, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidLineToXValue() {
-      Line output = _helper.GetLineOutput();
+      Rhino.Geometry.Line output = _helper.GetLineOutput();
       Assert.Equal(7, output.To.X, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidLineToYValue() {
-      Line output = _helper.GetLineOutput();
+      Rhino.Geometry.Line output = _helper.GetLineOutput();
       Assert.Equal(3, output.To.Y, 6);
     }
 
     [Fact]
     public void EditElement1dShouldReturnValidLineToZValue() {
-      Line output = _helper.GetLineOutput();
+      Rhino.Geometry.Line output = _helper.GetLineOutput();
       Assert.Equal(1, output.To.Z, 6);
     }
 
@@ -920,7 +919,7 @@ namespace GsaGHTests.Components.Geometry {
       return ComponentTestHelper.GetIntOutput(_component, 1);
     }
 
-    public Line GetLineOutput() {
+    public Rhino.Geometry.Line GetLineOutput() {
       return ComponentTestHelper.GetLineOutput(_component, 2);
     }
 

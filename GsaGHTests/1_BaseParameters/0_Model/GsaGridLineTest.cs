@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using GsaAPI;
 
@@ -10,8 +10,9 @@ using Rhino.Geometry;
 
 using Xunit;
 
+using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
-
+using GsaGH.Helpers;
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaGridLineTest {
@@ -44,14 +45,14 @@ namespace GsaGHTests.Parameters {
       var gridline = new GsaGridLine(arc, "Arc");
 
       Assert.True(gridline.Curve.GetLength(0) > 0);
-      Assert.Equal(arc.Length, gridline.Curve.GetLength(0));
+      Assert.Equal(arc.Length, gridline.Curve.GetLength(0), DoubleComparer.Default);
       Assert.Equal("Arc", gridline.GridLine.Label);
       Assert.Equal(GridLineShape.Arc, gridline.GridLine.Shape);
-      Assert.Equal(0, gridline.GridLine.X);
-      Assert.Equal(0, gridline.GridLine.Y);
-      Assert.Equal(0.5, gridline.GridLine.Length);
-      Assert.Equal(0, gridline.GridLine.Theta1);
-      Assert.Equal(45, gridline.GridLine.Theta2);
+      Assert.Equal(0, gridline.GridLine.X, DoubleComparer.Default);
+      Assert.Equal(0, gridline.GridLine.Y, DoubleComparer.Default);
+      Assert.Equal(0.5, gridline.GridLine.Length, DoubleComparer.Default);
+      Assert.Equal(0, gridline.GridLine.Theta1, DoubleComparer.Default);
+      Assert.Equal(45, gridline.GridLine.Theta2, DoubleComparer.Default);
     }
 
     [Fact]
@@ -63,11 +64,11 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(10, gridline.Curve.GetLength(0));
       Assert.Equal("Line", gridline.GridLine.Label);
       Assert.Equal(GridLineShape.Line, gridline.GridLine.Shape);
-      Assert.Equal(10, gridline.GridLine.X);
-      Assert.Equal(15, gridline.GridLine.Y);
-      Assert.Equal(10, gridline.GridLine.Length);
-      Assert.Equal(0, gridline.GridLine.Theta1);
-      Assert.Equal(0, gridline.GridLine.Theta2);
+      Assert.Equal(10, gridline.GridLine.X, DoubleComparer.Default);
+      Assert.Equal(15, gridline.GridLine.Y, DoubleComparer.Default);
+      Assert.Equal(10, gridline.GridLine.Length, DoubleComparer.Default);
+      Assert.Equal(0, gridline.GridLine.Theta1, DoubleComparer.Default);
+      Assert.Equal(0, gridline.GridLine.Theta2, DoubleComparer.Default);
     }
   }
 }

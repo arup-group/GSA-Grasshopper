@@ -1,5 +1,6 @@
-﻿using GsaGH.Components;
+using GsaGH.Components;
 using GsaGH.Parameters;
+using GsaGH.Helpers;
 
 using GsaGHTests.Components.Properties;
 using GsaGHTests.Helpers;
@@ -31,12 +32,12 @@ namespace GsaGHTests.Components.Geometry {
         ComponentTestHelper.GetOutput(CreateBool6Tests.ComponentMother()), 2);
 
       var output = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(0, output.Value.ApiNode.Position.X);
-      Assert.Equal(-1, output.Value.ApiNode.Position.Y);
-      Assert.Equal(0, output.Value.ApiNode.Position.Z);
-      Assert.Equal(0, output.Value.Point.X);
-      Assert.Equal(-1, output.Value.Point.Y);
-      Assert.Equal(0, output.Value.Point.Z);
+      Assert.Equal(0, output.Value.ApiNode.Position.X, DoubleComparer.Default);
+      Assert.Equal(-1, output.Value.ApiNode.Position.Y, DoubleComparer.Default);
+      Assert.Equal(0, output.Value.ApiNode.Position.Z, DoubleComparer.Default);
+      Assert.Equal(0, output.Value.Point.X, DoubleComparer.Default);
+      Assert.Equal(-1, output.Value.Point.Y, DoubleComparer.Default);
+      Assert.Equal(0, output.Value.Point.Z, DoubleComparer.Default);
       Assert.True(output.Value.IsSupport);
       Duplicates.AreEqual(new GsaBool6(true, true, true, true, true, true), output.Value.Restraint);
       Assert.Equal(0, output.Value.Id);
@@ -51,12 +52,12 @@ namespace GsaGHTests.Components.Geometry {
       GH_OasysComponent comp = ComponentMother();
 
       var output = (GsaNodeGoo)ComponentTestHelper.GetOutput(comp);
-      Assert.Equal(0, output.Value.ApiNode.Position.X);
-      Assert.Equal(-1, output.Value.ApiNode.Position.Y);
-      Assert.Equal(0, output.Value.ApiNode.Position.Z);
-      Assert.Equal(0, output.Value.Point.X);
-      Assert.Equal(-1, output.Value.Point.Y);
-      Assert.Equal(0, output.Value.Point.Z);
+      Assert.Equal(0, output.Value.ApiNode.Position.X, DoubleComparer.Default);
+      Assert.Equal(-1, output.Value.ApiNode.Position.Y, DoubleComparer.Default);
+      Assert.Equal(0, output.Value.ApiNode.Position.Z, DoubleComparer.Default);
+      Assert.Equal(0, output.Value.Point.X, DoubleComparer.Default);
+      Assert.Equal(-1, output.Value.Point.Y, DoubleComparer.Default);
+      Assert.Equal(0, output.Value.Point.Z, DoubleComparer.Default);
       Assert.False(output.Value.IsSupport);
       Duplicates.AreEqual(new GsaBool6(), output.Value.Restraint);
       Assert.Equal(0, output.Value.Id);
