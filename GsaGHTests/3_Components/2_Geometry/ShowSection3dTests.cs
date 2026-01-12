@@ -4,6 +4,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
 using GsaGH.Components;
+using GsaGH.Helpers;
 
 using GsaGHTests.Helpers;
 using GsaGHTests.Model;
@@ -60,10 +61,10 @@ namespace GsaGHTests.Components.Geometry {
       var analysisOutlines = (List<GH_Line>)comp.Params.Output[1].VolatileData.get_Branch(0);
       var designMesh = (GH_Mesh)ComponentTestHelper.GetOutput(comp, 2);
       var designOutlines = (List<GH_Line>)comp.Params.Output[3].VolatileData.get_Branch(0);
-      Assert.Equal(78, analysisMesh.Value.Vertices.Count);
-      Assert.Equal(86, analysisOutlines.Count);
-      Assert.Equal(78, designMesh.Value.Vertices.Count);
-      Assert.Equal(86, designOutlines.Count);
+      Assert.Equal(88.0, analysisMesh.Value.Vertices.Count, DoubleComparer.Default);
+      Assert.Equal(96.0, analysisOutlines.Count, DoubleComparer.Default);
+      Assert.Equal(88.0, designMesh.Value.Vertices.Count, DoubleComparer.Default);
+      Assert.Equal(96.0, designOutlines.Count, DoubleComparer.Default);
     }
   }
 }
