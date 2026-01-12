@@ -16,35 +16,35 @@ namespace DocsGeneration.MarkDowns {
         text += "\n";
       }
 
-      text += "The GSA plugin introduces a new set of custom Grasshopper parameters. Parameters are what is passed from one component's output to another component's input.\n" +
-      "![Parameters](https://developer.rhino3d.com/api/grasshopper/media/ParameterKinds.png)\n" +
-      "\n" +
-      "## Custom GSA Parameters" +
-      "\n\n";
+      text
+        += "The GSA plugin introduces a new set of custom Grasshopper parameters. Parameters are what is passed from one component's output to another component's input.\n"
+        + "![Parameters](https://developer.rhino3d.com/api/grasshopper/media/ParameterKinds.png)\n" + "\n"
+        + "## Custom GSA Parameters" + "\n\n";
 
       var tableHeaders = new List<string>() {
         " ", // icon
         "Name",
-        "Description"
+        "Description",
       };
 
       var widths = new List<int>() {
         Table.IconWidth,
         Table.NameWidth,
-        Table.DescriptionWidth
+        Table.DescriptionWidth,
       };
 
-      foreach (string header in parameters.Keys) {
-        var table = new Table(header, 2, tableHeaders, widths);
-        foreach (Parameter parameter in parameters[header]) {
-          table.AddRow(new List<string>(){
-            FileHelper.CreateIconLink(parameter),
-            FileHelper.CreatePageLink(parameter, config.ProjectName),
-            parameter.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty)
-          });
-        }
-        text += table.Finalise();
-      }
+      //foreach (string header in parameters.Keys) {
+      //  var table = new Table(header, 2 /*, tableHeaders, widths*/);
+      //  foreach (Parameter parameter in parameters[header]) {
+      //    table.AddRow(new List<string>() {
+      //      FileHelper.CreateIconLink(parameter),
+      //      FileHelper.CreatePageLink(parameter, config.ProjectName),
+      //      parameter.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty),
+      //    }, new List<int>(1111));
+      //  }
+
+      //  text += table.Finalise();
+      //}
 
       Writer.Write(filePath, text);
     }
@@ -68,21 +68,27 @@ namespace DocsGeneration.MarkDowns {
       text += config.IsBeta ? StringHelper.AddBetaWarning() : string.Empty;
 
       var iconHeaders = new List<string>() {
-        "Icon"
+        "Icon",
       };
-      var iconTable = new Table(string.Empty, 2, iconHeaders, new List<int>() { 150 });
-      iconTable.AddRow(new List<string>() {
-        FileHelper.CreateIconLink(parameter),
-      });
+      string iconLink = FileHelper.CreateIconLink(parameter);
+      //var iconTable = new Table(string.Empty, 2);
+      //iconTable.AddRow(new List<string>() {
+      //  iconLink,
+      //}, new List<int>() {
+      //  iconLink.Length,
+      //});
+      //iconTable.AddTableHeader(iconHeaders, new List<int>() {
+      //  150,
+      //}, new List<int>(iconLink.Length));
 
-      text += iconTable.Finalise();
+      //text += iconTable.Finalise();
 
       if (parameter.Name == "Bool6") {
         text += StringHelper.Admonition("Did you know?", AdmonitionType.Info,
-          "The `Bool6` icon takes inspiration from the central pin/hinge/charnier connection " +
-          "[Ove Arup's Kingsgate footbridge](https://www.arup.com/projects/kingsgate-footbridge" +
-          ").\r\n![Kingsgate Footbridge Durham](./images/Kingsgate-Footbridge-Durham.jpg)\r\n" +
-          "*(c) Giles Rocholl / Arup*");
+          "The `Bool6` icon takes inspiration from the central pin/hinge/charnier connection "
+          + "[Ove Arup's Kingsgate footbridge](https://www.arup.com/projects/kingsgate-footbridge"
+          + ").\r\n![Kingsgate Footbridge Durham](./images/Kingsgate-Footbridge-Durham.jpg)\r\n"
+          + "*(c) Giles Rocholl / Arup*");
       }
 
       text += StringHelper.SummaryDescription(parameter.Summary, config);
@@ -92,27 +98,27 @@ namespace DocsGeneration.MarkDowns {
           "Icon",
           "Type",
           "Name",
-          "Description"
+          "Description",
         };
 
         var widths = new List<int>() {
           Table.IconWidth,
           Table.NameWidth,
           Table.NameWidth,
-          Table.DescriptionWidth
+          Table.DescriptionWidth,
         };
 
-        var table = new Table("Properties", 2, headers, widths);
-        foreach (Parameter property in parameter.Properties) {
-          table.AddRow(new List<string>() {
-            FileHelper.CreateIconLink(property),
-            FileHelper.CreateParameterLink(property, parameterNames, config),
-            StringHelper.MakeBold(property.Name),
-            property.Description,
-         });
-        }
+        //var table = new Table("Properties", 2 /*, headers, widths*/);
+        //foreach (Parameter property in parameter.Properties) {
+        //  table.AddRow(new List<string>() {
+        //    FileHelper.CreateIconLink(property),
+        //    FileHelper.CreateParameterLink(property, parameterNames, config),
+        //    StringHelper.MakeBold(property.Name),
+        //    property.Description,
+        //  }, new List<int>(1111));
+        //}
 
-        text += table.Finalise();
+        //text += table.Finalise();
 
         if (parameter.PropertiesComponent != null) {
           string link = FileHelper.CreatePageLink(parameter.PropertiesComponent, config);

@@ -6,49 +6,69 @@ namespace DocsGeneration.MarkDowns {
     public const int IconWidth = 20;
     public const int NameWidth = 200;
     public const int DescriptionWidth = 1000;
+    private const string EndLine = " |\n";
+    private const string StartLine = "| ";
 
-    public string Name { get; set; }
-    public List<string> Headers { get; set; }
+    public string NameLine { get; private set; } = string.Empty;
+    private string Headers { get; set; } = string.Empty;
+    private string Rows { get; set; } = string.Empty;
     private string _table = string.Empty;
-    private bool _hasRows = false;
-    public Table(string name, int headingSize, List<string> headers, List<int> columnWidths) {
-      Name = name;
+    private readonly List<int> _defaultHeaderWidths = new List<int>();
+
+    public Table(string name, int headingSize, List<int> columnWidths) {
+      _defaultHeaderWidths = columnWidths;
+      AddHeader(name, headingSize);
+    }
+
+    public void AddTableHeader(List<string> headers, List<int> imageWidths) {
+      if (headers?.Count != _defaultHeaderWidths?.Count) {
+        throw new ArgumentException("Headers and header widths must have the same number of elements.");
+        return;
+      }
+
+      for (int i = 0; i < headers?.Count; i++) {
+        string width = $"<img width=\"{imageWidths[i]}\"/>";
+        string line = $"{StartLine}{width} {headers[i]}";
+        int lineLength = line.Length - EndLine.Length;
+
+        int missingSpaces = _defaultHeaderWidths[i] - lineLength;
+        line += missingSpaces > 0 ? new string(' ', missingSpaces) : string.Empty;
+        Headers += line;
+      }
+
+      Headers += EndLine;
+      _defaultHeaderWidths?.ForEach(item => Headers += StartLine + new string('-', item) + " ");
+      Headers += EndLine;
+    }
+
+    private void AddHeader(string name, int headingSize) {
       if (!string.IsNullOrEmpty(name)) {
-        _table += $"{new string('#', headingSize)} {name}\n\n";
+        NameLine += $"{new string('#', headingSize)} {name}\n\n";
       }
-
-      Headers = headers;
-      for (int i = 0; i < headers.Count; i++) {
-        string width = $"<img width=\"{columnWidths[i]}\"/>";
-        _table += $"|{width} {headers[i]} ";
-      }
-
-      _table += $"|\n";
-      foreach (string header in Headers) {
-        _table += $"| ----------- ";
-      }
-
-      _table += $"|\n";
     }
 
     public void AddRow(List<string> items) {
-      _hasRows = true;
-      foreach (string item in items) {
-        string row = item
-          .Replace(Environment.NewLine, "<br />")
-          .Replace("|", "&#124;");
-        _table += $"|{row} ";
+      for (int i = 0; i < items.Count; i++) {
+        string row = items[i];
+        string line = $"| {row} ";
+        int lineLength = line.Length;
+        int missingSpaces = _defaultHeaderWidths[i] - lineLength + EndLine.Length;
+        line += missingSpaces > 0 ? new string(' ', missingSpaces) : string.Empty;
+        Rows += line;
       }
 
-      _table += $"|\n";
+      Rows += EndLine;
     }
 
     public string Finalise() {
-      if (_hasRows) {
-        return _table + "\n";
+      _table += NameLine;
+      if (Rows.Length == 0) {
+        return string.Empty;
       }
 
-      return string.Empty;
+      _table += Headers;
+      _table += Rows;
+      return _table + "\n";
     }
   }
 }
