@@ -1,11 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using DocsGeneration.Data;
 using DocsGeneration.MarkDowns.Helpers;
 
 namespace DocsGeneration.MarkDowns {
   public class Parameters {
+    private static readonly List<string> _iconTableHeader = new List<string>() {
+      "Icon",
+    };
+    private static readonly List<string> _defaultTableHeaders = new List<string>() {
+      "Icon",
+      "Type",
+      "Name",
+      "Description",
+    };
+    private static readonly List<int> _imageWidths = new List<int>() {
+      Table.IconWidth,
+      Table.NameWidth,
+      Table.NameWidth,
+      Table.DescriptionWidth,
+    };
+
     public static void CreateOverview(Dictionary<string, List<Parameter>> parameters, Configuration config) {
       string filePath = $@"{config.OutputPath}\{config.ProjectName.ToLower()}-parameters.md";
       Console.WriteLine($"Writing {filePath}");
@@ -32,19 +49,21 @@ namespace DocsGeneration.MarkDowns {
         Table.NameWidth,
         Table.DescriptionWidth,
       };
+      foreach (string header in parameters.Keys) {
+        var propertieTable = new List<List<string>> {
+          tableHeaders,
+        };
+        propertieTable.AddRange(parameters[header].Select(parameter => new List<string>() {
+          FileHelper.CreateIconLink(parameter),
+          FileHelper.CreatePageLink(parameter, config.ProjectName),
+          parameter.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty),
+        }));
 
-      //foreach (string header in parameters.Keys) {
-      //  var table = new Table(header, 2 /*, tableHeaders, widths*/);
-      //  foreach (Parameter parameter in parameters[header]) {
-      //    table.AddRow(new List<string>() {
-      //      FileHelper.CreateIconLink(parameter),
-      //      FileHelper.CreatePageLink(parameter, config.ProjectName),
-      //      parameter.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty),
-      //    }, new List<int>(1111));
-      //  }
-
-      //  text += table.Finalise();
-      //}
+        var table = new Table(header, 2, Table.GetColumnsWidth(propertieTable));
+        table.AddTableHeader(tableHeaders, widths);
+        propertieTable.Skip(1).ToList().ForEach(row => table.AddRow(row));
+        text += table.Finalise();
+      }
 
       Writer.Write(filePath, text);
     }
@@ -67,21 +86,20 @@ namespace DocsGeneration.MarkDowns {
       string text = $"# {parameter.Name}\n\n";
       text += config.IsBeta ? StringHelper.AddBetaWarning() : string.Empty;
 
-      var iconHeaders = new List<string>() {
-        "Icon",
+      int linkImageWidth = 150;
+      var tempIconTable = new List<List<string>> {
+        _iconTableHeader,
+        new List<string>() {
+          FileHelper.CreateIconLink(parameter),
+        },
       };
-      string iconLink = FileHelper.CreateIconLink(parameter);
-      //var iconTable = new Table(string.Empty, 2);
-      //iconTable.AddRow(new List<string>() {
-      //  iconLink,
-      //}, new List<int>() {
-      //  iconLink.Length,
-      //});
-      //iconTable.AddTableHeader(iconHeaders, new List<int>() {
-      //  150,
-      //}, new List<int>(iconLink.Length));
 
-      //text += iconTable.Finalise();
+      var iconTable = new Table(string.Empty, 2, Table.GetColumnsWidth(tempIconTable));
+      iconTable.AddTableHeader(_iconTableHeader, new List<int>() {
+        linkImageWidth,
+      });
+      iconTable.AddRow(tempIconTable[1]);
+      text += iconTable.Finalise();
 
       if (parameter.Name == "Bool6") {
         text += StringHelper.Admonition("Did you know?", AdmonitionType.Info,
@@ -94,31 +112,20 @@ namespace DocsGeneration.MarkDowns {
       text += StringHelper.SummaryDescription(parameter.Summary, config);
 
       if (parameter.Properties != null && parameter.Properties.Count != 0) {
-        var headers = new List<string>() {
-          "Icon",
-          "Type",
-          "Name",
-          "Description",
+        var propertieTable = new List<List<string>> {
+          _defaultTableHeaders,
         };
+        propertieTable.AddRange(parameter.Properties.Select(property => new List<string>() {
+          FileHelper.CreateIconLink(property),
+          FileHelper.CreateParameterLink(property, parameterNames, config),
+          StringHelper.MakeBold(property.Name),
+          property.Description,
+        }));
+        var table = new Table("Properties", 2, Table.GetColumnsWidth(propertieTable));
 
-        var widths = new List<int>() {
-          Table.IconWidth,
-          Table.NameWidth,
-          Table.NameWidth,
-          Table.DescriptionWidth,
-        };
-
-        //var table = new Table("Properties", 2 /*, headers, widths*/);
-        //foreach (Parameter property in parameter.Properties) {
-        //  table.AddRow(new List<string>() {
-        //    FileHelper.CreateIconLink(property),
-        //    FileHelper.CreateParameterLink(property, parameterNames, config),
-        //    StringHelper.MakeBold(property.Name),
-        //    property.Description,
-        //  }, new List<int>(1111));
-        //}
-
-        //text += table.Finalise();
+        table.AddTableHeader(_defaultTableHeaders, _imageWidths);
+        propertieTable.Skip(1).ToList().ForEach(row => table.AddRow(row));
+        text += table.Finalise();
 
         if (parameter.PropertiesComponent != null) {
           string link = FileHelper.CreatePageLink(parameter.PropertiesComponent, config);

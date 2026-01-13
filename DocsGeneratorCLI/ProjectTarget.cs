@@ -57,7 +57,7 @@ namespace DocsGeneratorCLI {
       }
 
       Console.WriteLine("Setting up result notes...");
-      Type resultNotesType = Assembly.GetType($"{projectName}.jComponents.Helpers.ResultNotes");
+      Type resultNotesType = Assembly.GetType($"{projectName}.Components.Helpers.ResultNotes");
       if (resultNotesType == null) {
         Console.WriteLine("Warning: ResultNotes type not found in assembly.");
         return;

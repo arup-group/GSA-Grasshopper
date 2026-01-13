@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DocsGeneration.MarkDowns {
   public class Table {
@@ -12,8 +13,8 @@ namespace DocsGeneration.MarkDowns {
     public string NameLine { get; private set; } = string.Empty;
     private string Headers { get; set; } = string.Empty;
     private string Rows { get; set; } = string.Empty;
-    private string _table = string.Empty;
     private readonly List<int> _defaultHeaderWidths = new List<int>();
+    private string _table = string.Empty;
 
     public Table(string name, int headingSize, List<int> columnWidths) {
       _defaultHeaderWidths = columnWidths;
@@ -69,6 +70,12 @@ namespace DocsGeneration.MarkDowns {
       _table += Headers;
       _table += Rows;
       return _table + "\n";
+    }
+
+    public static List<int> GetColumnsWidth(List<List<string>> table) {
+      const int _columnMinWidth = 30;
+      return Enumerable.Range(0, table[0].Count).Select(i
+        => Math.Max(_columnMinWidth, table.Where(row => i < row.Count).Max(row => row[i].Length))).ToList();
     }
   }
 }

@@ -65,7 +65,7 @@ namespace DocsGeneration.MarkDowns {
         },
       };
 
-      var iconTable = new Table(string.Empty, 2, GetColumnsWidth(tempIconTable));
+      var iconTable = new Table(string.Empty, 2, Table.GetColumnsWidth(tempIconTable));
       iconTable.AddTableHeader(_iconTableHeader, new List<int>() {
         linkImageWidth,
       });
@@ -101,13 +101,13 @@ namespace DocsGeneration.MarkDowns {
           var cells = new List<string>() {
             FileHelper.CreateIconLink(property),
             FileHelper.CreateParameterLink(property, parmeterNames, config),
-            StringHelper.MakeBold(property.Name),
+            StringHelper.Replace(StringHelper.MakeBold(property.Name)),
             StringHelper.Replace(property.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty)),
           };
           tempInputTable.Add(cells);
         }
 
-        var table = new Table("Input parameters", 3, GetColumnsWidth(tempInputTable));
+        var table = new Table("Input parameters", 3, Table.GetColumnsWidth(tempInputTable));
         table.AddTableHeader(_defaultTableHeaders, _imageWidths);
         tempInputTable.Skip(1).ToList().ForEach(row => table.AddRow(row));
         text += table.Finalise();
@@ -124,23 +124,24 @@ namespace DocsGeneration.MarkDowns {
           var cells = new List<string>() {
             FileHelper.CreateIconLink(property),
             FileHelper.CreateParameterLink(property, parmeterNames, config),
-            StringHelper.MakeBold(property.Name),
+            StringHelper.Replace(StringHelper.MakeBold(property.Name)),
             StringHelper.Replace(description),
           };
           tempOutputTable.Add(cells);
         }
 
-        var table = new Table("Output parameters", 3, GetColumnsWidth(tempOutputTable));
+        var table = new Table("Output parameters", 3, Table.GetColumnsWidth(tempOutputTable));
         table.AddTableHeader(_defaultTableHeaders, _imageWidths);
         tempOutputTable.Skip(1).ToList().ForEach(row => table.AddRow(row));
         text += table.Finalise();
+
         if (!string.IsNullOrEmpty(note)) {
           note = note.Replace(Environment.NewLine, " ").TrimSpaces();
-          text += "\n\n" + StringHelper.Replace(StringHelper.MakeItalic("* " + note) + "\n\n");
+          text += StringHelper.Replace(StringHelper.MakeItalic("* " + note));
         }
       }
 
-      Writer.Write(filePath, text);
+      Writer.Write(filePath, text.TrimEnd());
     }
 
     private static string CheckForResultNote(ref string description, List<string> notesToCheckFor) {
@@ -197,6 +198,9 @@ namespace DocsGeneration.MarkDowns {
         Table.NameWidth,
         Table.DescriptionWidth,
       };
+      var tempTable = new List<List<string>> {
+        tableHeaders,
+      };
 
       var subCategories = new List<string>() {
         "Primary",
@@ -208,36 +212,27 @@ namespace DocsGeneration.MarkDowns {
         "Septenary",
       };
 
-      //for (int i = 0; i < subCategories.Count; i++) {
+      for (int i = 0; i < subCategories.Count; i++) {
+        foreach (Component component in components) {
+          if (component.SubCategory - 1 != i) {
+            continue;
+          }
 
-      //  var table = new Table(subCategories[i], 4);
-      //  foreach (Component component in components) {
-      //    if (component.SubCategory - 1 != i) {
-      //      continue;
-      //    }
+          var cells = new List<string>() {
+            FileHelper.CreateIconLink(component),
+            FileHelper.CreatePageLink(component, config),
+            StringHelper.Replace(StringHelper.ComponentDescription(component.Description, parameterNames)),
+          };
+          tempTable.Add(cells);
+        }
 
-      //    var rows = new List<string>() {
-      //      FileHelper.CreateIconLink(component),
-      //      FileHelper.CreatePageLink(component, config),
-      //      StringHelper.Replace(StringHelper.ComponentDescription(component.Description, parameterNames)),
-      //    };
-      //    for (int j = 0; j < textMaxWidths.Count; j++) {
-      //      textMaxWidths[j] = Math.Max(textMaxWidths[j], rows[j].Length);
-      //    }
-      //  }
-
-      //  table.AddTableHeader(tableHeaders, imageWidths, textMaxWidths);
-      //  text += table.Finalise();
-      //}
+        var table = new Table(subCategories[i], 4, Table.GetColumnsWidth(tempTable));
+        table.AddTableHeader(tableHeaders, imageWidths);
+        tempTable.Skip(1).ToList().ForEach(row => table.AddRow(row));
+        text += table.Finalise();
+      }
 
       Writer.Write(filePath, text);
     }
-
-    private static List<int> GetColumnsWidth(List<List<string>> table) {
-      const int _columnMinWidth = 30;
-      return Enumerable.Range(0, table[0].Count).Select(i
-        => Math.Max(_columnMinWidth, table.Where(row => i < row.Count).Max(row => row[i].Length))).ToList();
-    }
-
   }
 }
