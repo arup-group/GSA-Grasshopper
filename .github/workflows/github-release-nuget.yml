@@ -1,4 +1,6 @@
 name: Push GsaGH NuGet
+permissions:
+  contents: read
 
 # On run when release is published
 on:
