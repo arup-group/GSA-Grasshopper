@@ -9,22 +9,6 @@ using Helpers;
 
 namespace DocsGeneration.MarkDowns {
   public class Components {
-    private static readonly List<string> _iconTableHeader = new List<string>() {
-      "Icon",
-    };
-    private static readonly List<string> _defaultTableHeaders = new List<string>() {
-      "Icon",
-      "Type",
-      "Name",
-      "Description",
-    };
-    private static readonly List<int> _imageWidths = new List<int>() {
-      Table.IconWidth,
-      Table.NameWidth,
-      Table.NameWidth,
-      Table.DescriptionWidth,
-    };
-
     public static void CreateOverview(
       Dictionary<string, List<Component>> components, List<Parameter> parameters, Configuration config) {
       CreateComponentOverview(components.Keys.ToList(), config);
@@ -57,21 +41,12 @@ namespace DocsGeneration.MarkDowns {
       string text = $"# {component.Name}\n\n";
       text += config.IsBeta ? StringHelper.AddBetaWarning() : string.Empty;
 
-      int linkImageWidth = 150;
       var tempIconTable = new List<List<string>> {
-        _iconTableHeader,
         new List<string>() {
           FileHelper.CreateIconLink(component),
         },
       };
-
-      var iconTable = new Table(string.Empty, 2, Table.GetColumnsWidth(tempIconTable));
-      iconTable.AddTableHeader(_iconTableHeader, new List<int>() {
-        linkImageWidth,
-      });
-      iconTable.AddRow(tempIconTable[1]);
-      text += iconTable.Finalise();
-
+      text += TableBuilder.CreateTableString(string.Empty, TableBuilder.TableType.IconOnly, tempIconTable);
       text += $"## Description\n\n{component.Description}\n\n";
 
       switch (component.ComponentType) {
@@ -94,9 +69,7 @@ namespace DocsGeneration.MarkDowns {
       }
 
       if (component.Inputs != null && component.Inputs.Count != 0) {
-        var tempInputTable = new List<List<string>> {
-          _defaultTableHeaders,
-        };
+        var tempInputTable = new List<List<string>> { };
         foreach (Parameter property in component.Inputs) {
           var cells = new List<string>() {
             FileHelper.CreateIconLink(property),
@@ -107,16 +80,12 @@ namespace DocsGeneration.MarkDowns {
           tempInputTable.Add(cells);
         }
 
-        var table = new Table("Input parameters", 3, Table.GetColumnsWidth(tempInputTable));
-        table.AddTableHeader(_defaultTableHeaders, _imageWidths);
-        tempInputTable.Skip(1).ToList().ForEach(row => table.AddRow(row));
-        text += table.Finalise();
+        text += TableBuilder.CreateTableString("Input parameters", TableBuilder.TableType.InputOutput, tempInputTable,
+          3);
       }
 
       if (component.Outputs != null && component.Outputs.Count != 0) {
-        var tempOutputTable = new List<List<string>> {
-          _defaultTableHeaders,
-        };
+        var tempOutputTable = new List<List<string>> { };
         string note = string.Empty;
         foreach (Parameter property in component.Outputs) {
           string description = property.Description;
@@ -130,10 +99,8 @@ namespace DocsGeneration.MarkDowns {
           tempOutputTable.Add(cells);
         }
 
-        var table = new Table("Output parameters", 3, Table.GetColumnsWidth(tempOutputTable));
-        table.AddTableHeader(_defaultTableHeaders, _imageWidths);
-        tempOutputTable.Skip(1).ToList().ForEach(row => table.AddRow(row));
-        text += table.Finalise();
+        text += TableBuilder.CreateTableString("Output parameters", TableBuilder.TableType.InputOutput, tempOutputTable,
+          3);
 
         if (!string.IsNullOrEmpty(note)) {
           note = note.Replace(Environment.NewLine, " ").TrimSpaces();
@@ -187,20 +154,7 @@ namespace DocsGeneration.MarkDowns {
 
       string text = $"# {category} components \n\n";
 
-      var tableHeaders = new List<string>() {
-        " ", // icon
-        "Name",
-        "Description",
-      };
-
-      var imageWidths = new List<int>() {
-        Table.IconWidth,
-        Table.NameWidth,
-        Table.DescriptionWidth,
-      };
-      var tempTable = new List<List<string>> {
-        tableHeaders,
-      };
+      var tempTable = new List<List<string>> { };
 
       var subCategories = new List<string>() {
         "Primary",
@@ -226,10 +180,7 @@ namespace DocsGeneration.MarkDowns {
           tempTable.Add(cells);
         }
 
-        var table = new Table(subCategories[i], 4, Table.GetColumnsWidth(tempTable));
-        table.AddTableHeader(tableHeaders, imageWidths);
-        tempTable.Skip(1).ToList().ForEach(row => table.AddRow(row));
-        text += table.Finalise();
+        text += TableBuilder.CreateTableString(subCategories[i], TableBuilder.TableType.Properties, tempTable, 4);
       }
 
       Writer.Write(filePath, text);

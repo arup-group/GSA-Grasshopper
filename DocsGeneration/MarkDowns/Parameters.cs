@@ -38,31 +38,14 @@ namespace DocsGeneration.MarkDowns {
         + "![Parameters](https://developer.rhino3d.com/api/grasshopper/media/ParameterKinds.png)\n" + "\n"
         + "## Custom GSA Parameters" + "\n\n";
 
-      var tableHeaders = new List<string>() {
-        " ", // icon
-        "Name",
-        "Description",
-      };
-
-      var widths = new List<int>() {
-        Table.IconWidth,
-        Table.NameWidth,
-        Table.DescriptionWidth,
-      };
       foreach (string header in parameters.Keys) {
-        var propertieTable = new List<List<string>> {
-          tableHeaders,
-        };
+        var propertieTable = new List<List<string>>();
         propertieTable.AddRange(parameters[header].Select(parameter => new List<string>() {
           FileHelper.CreateIconLink(parameter),
           FileHelper.CreatePageLink(parameter, config.ProjectName),
           parameter.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty),
         }));
-
-        var table = new Table(header, 2, Table.GetColumnsWidth(propertieTable));
-        table.AddTableHeader(tableHeaders, widths);
-        propertieTable.Skip(1).ToList().ForEach(row => table.AddRow(row));
-        text += table.Finalise();
+        text += TableBuilder.CreateTableString(header, TableBuilder.TableType.Properties, propertieTable);
       }
 
       Writer.Write(filePath, text);
@@ -86,20 +69,12 @@ namespace DocsGeneration.MarkDowns {
       string text = $"# {parameter.Name}\n\n";
       text += config.IsBeta ? StringHelper.AddBetaWarning() : string.Empty;
 
-      int linkImageWidth = 150;
       var tempIconTable = new List<List<string>> {
-        _iconTableHeader,
         new List<string>() {
           FileHelper.CreateIconLink(parameter),
         },
       };
-
-      var iconTable = new Table(string.Empty, 2, Table.GetColumnsWidth(tempIconTable));
-      iconTable.AddTableHeader(_iconTableHeader, new List<int>() {
-        linkImageWidth,
-      });
-      iconTable.AddRow(tempIconTable[1]);
-      text += iconTable.Finalise();
+      text += TableBuilder.CreateTableString(string.Empty, TableBuilder.TableType.IconOnly, tempIconTable);
 
       if (parameter.Name == "Bool6") {
         text += StringHelper.Admonition("Did you know?", AdmonitionType.Info,
@@ -112,21 +87,15 @@ namespace DocsGeneration.MarkDowns {
       text += StringHelper.SummaryDescription(parameter.Summary, config);
 
       if (parameter.Properties != null && parameter.Properties.Count != 0) {
-        var propertieTable = new List<List<string>> {
-          _defaultTableHeaders,
-        };
+        var propertieTable = new List<List<string>> { };
         propertieTable.AddRange(parameter.Properties.Select(property => new List<string>() {
           FileHelper.CreateIconLink(property),
           FileHelper.CreateParameterLink(property, parameterNames, config),
           StringHelper.MakeBold(property.Name),
           property.Description,
         }));
-        var table = new Table("Properties", 2, Table.GetColumnsWidth(propertieTable));
 
-        table.AddTableHeader(_defaultTableHeaders, _imageWidths);
-        propertieTable.Skip(1).ToList().ForEach(row => table.AddRow(row));
-        text += table.Finalise();
-
+        text += TableBuilder.CreateTableString("Properties", TableBuilder.TableType.InputOutput, propertieTable);
         if (parameter.PropertiesComponent != null) {
           string link = FileHelper.CreatePageLink(parameter.PropertiesComponent, config);
           string note = $"Note: the above properties can be retrieved using the {link} component";

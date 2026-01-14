@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DocsGeneration.MarkDowns {
   public class Table {
@@ -30,10 +29,7 @@ namespace DocsGeneration.MarkDowns {
       for (int i = 0; i < headers?.Count; i++) {
         string width = $"<img width=\"{imageWidths[i]}\"/>";
         string line = $"{StartLine}{width} {headers[i]}";
-        int lineLength = line.Length - EndLine.Length;
-
-        int missingSpaces = _defaultHeaderWidths[i] - lineLength;
-        line += missingSpaces > 0 ? new string(' ', missingSpaces) : string.Empty;
+        line = AdjustLineWithWhitespaces(line, i);
         Headers += line;
       }
 
@@ -52,13 +48,18 @@ namespace DocsGeneration.MarkDowns {
       for (int i = 0; i < items.Count; i++) {
         string row = items[i];
         string line = $"| {row} ";
-        int lineLength = line.Length;
-        int missingSpaces = _defaultHeaderWidths[i] - lineLength + EndLine.Length;
-        line += missingSpaces > 0 ? new string(' ', missingSpaces) : string.Empty;
+        line = AdjustLineWithWhitespaces(line, i);
         Rows += line;
       }
 
       Rows += EndLine;
+    }
+
+    private string AdjustLineWithWhitespaces(string line, int i) {
+      int lineLength = line.Length - EndLine.Length;
+      int missingSpaces = _defaultHeaderWidths[i] - lineLength;
+      line += missingSpaces > 0 ? new string(' ', missingSpaces) : string.Empty;
+      return line;
     }
 
     public string Finalise() {
@@ -70,12 +71,6 @@ namespace DocsGeneration.MarkDowns {
       _table += Headers;
       _table += Rows;
       return _table + "\n";
-    }
-
-    public static List<int> GetColumnsWidth(List<List<string>> table) {
-      const int _columnMinWidth = 30;
-      return Enumerable.Range(0, table[0].Count).Select(i
-        => Math.Max(_columnMinWidth, table.Where(row => i < row.Count).Max(row => row[i].Length))).ToList();
     }
   }
 }
