@@ -12,7 +12,7 @@ namespace DocsGeneration.MarkDowns {
     public string NameLine { get; private set; } = string.Empty;
     private string Headers { get; set; } = string.Empty;
     private string Rows { get; set; } = string.Empty;
-    private readonly List<int> _defaultHeaderWidths = new List<int>();
+    private readonly List<int> _defaultHeaderWidths;
     private string _table = string.Empty;
 
     public Table(string name, int headingSize, List<int> columnWidths) {

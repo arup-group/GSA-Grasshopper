@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 using DocsGeneration.Data;
 using DocsGeneration.MarkDowns.Helpers;
@@ -38,33 +39,37 @@ namespace DocsGeneration.MarkDowns {
       string filePath = FileHelper.CreateMarkDownFileName(component, config);
       Console.WriteLine($"Writing {filePath}");
 
-      string text = $"# {component.Name}\n\n";
-      text += config.IsBeta ? StringHelper.AddBetaWarning() : string.Empty;
+      var stringBuilder = new StringBuilder();
+      stringBuilder.Append($"# {component.Name}\n\n");
+      stringBuilder.Append(config.IsBeta ? StringHelper.AddBetaWarning() : string.Empty);
 
       var tempIconTable = new List<List<string>> {
         new List<string>() {
           FileHelper.CreateIconLink(component),
         },
       };
-      text += TableBuilder.CreateTableString(string.Empty, TableBuilder.TableType.IconOnly, tempIconTable);
-      text += $"## Description\n\n{component.Description}\n\n";
+      stringBuilder.Append(TableBuilder.CreateTableString(string.Empty, TableBuilder.TableType.IconOnly,
+        tempIconTable));
+      stringBuilder.Append($"## Description\n\n{component.Description}\n\n");
 
       switch (component.ComponentType) {
         case "DropDownComponent":
-          text += StringHelper.MakeItalic("Note: This is a dropdown component and input/output "
-            + "may vary depending on the selected dropdown") + "\n\n";
+          stringBuilder.Append(StringHelper.MakeItalic("Note: This is a dropdown component and input/output "
+            + "may vary depending on the selected dropdown") + "\n\n");
           break;
 
         case "Section3dPreviewComponent":
-          text += StringHelper.MakeItalic("Note: This component can preview 3D Sections, right-click the middle of the "
-            + "component to toggle the section preview.") + "\n\n";
+          stringBuilder.Append(StringHelper.MakeItalic(
+            "Note: This component can preview 3D Sections, right-click the middle of the "
+            + "component to toggle the section preview.") + "\n\n");
           break;
 
         case "Section3dPreviewDropDownComponent":
-          text += StringHelper.MakeItalic("Note: This is a dropdown component and input/output "
-            + "may vary depending on the selected dropdown") + "\n" + StringHelper.MakeItalic(
-            "This component can preview 3D Sections, right-click the middle of the "
-            + "component to toggle the section preview.") + "\n\n";
+          stringBuilder.Append(
+            StringHelper.MakeItalic("Note: This is a dropdown component and input/output "
+              + "may vary depending on the selected dropdown") + "\n" + StringHelper.MakeItalic(
+              "This component can preview 3D Sections, right-click the middle of the "
+              + "component to toggle the section preview.") + "\n\n");
           break;
       }
 
@@ -76,8 +81,8 @@ namespace DocsGeneration.MarkDowns {
           tempInputTable.Add(cells);
         }
 
-        text += TableBuilder.CreateTableString("Input parameters", TableBuilder.TableType.InputOutput, tempInputTable,
-          3);
+        stringBuilder.Append(TableBuilder.CreateTableString("Input parameters", TableBuilder.TableType.InputOutput,
+          tempInputTable, 3));
       }
 
       if (component.Outputs != null && component.Outputs.Count != 0) {
@@ -90,16 +95,16 @@ namespace DocsGeneration.MarkDowns {
           tempOutputTable.Add(cells);
         }
 
-        text += TableBuilder.CreateTableString("Output parameters", TableBuilder.TableType.InputOutput, tempOutputTable,
-          3);
+        stringBuilder.Append(TableBuilder.CreateTableString("Output parameters", TableBuilder.TableType.InputOutput,
+          tempOutputTable, 3));
 
         if (!string.IsNullOrEmpty(note)) {
           note = note.Replace(Environment.NewLine, " ").TrimSpaces();
-          text += StringHelper.Replace(StringHelper.MakeItalic("* " + note));
+          stringBuilder.Append(StringHelper.Replace(StringHelper.MakeItalic("* " + note)));
         }
       }
 
-      Writer.Write(filePath, text.TrimEnd());
+      Writer.Write(filePath, stringBuilder.ToString().TrimEnd());
     }
 
     private static List<string> GetPropertiesCells(
@@ -133,19 +138,20 @@ namespace DocsGeneration.MarkDowns {
       string filePath = $@"{config.OutputPath}\{lowerCaseName}-components.md";
       Console.WriteLine($"Writing {filePath}");
 
-      string text = "# Components\n\n";
+      var stringBuilder = new StringBuilder();
+      stringBuilder.AppendLine("# Components\n");
       if (config.IsBeta) {
-        text += StringHelper.AddBetaWarning();
-        text += "\n";
+        stringBuilder.Append(StringHelper.AddBetaWarning());
       }
 
-      text += $" ![{config.ProjectName}-Ribbon](./images/RibbonLayout.gif)\n\n";
+      stringBuilder.AppendLine($" ![{config.ProjectName}-Ribbon](./images/RibbonLayout.gif)\n");
 
       foreach (string category in categories) {
-        text += $"[{category} components]({lowerCaseName}-{category.ToLower()}-components-overview.md)\n\n";
+        stringBuilder.Append(
+          $"[{category} components]({lowerCaseName}-{category.ToLower()}-components-overview.md)\n\n");
       }
 
-      Writer.Write(filePath, text);
+      Writer.Write(filePath, stringBuilder.ToString());
     }
 
     private static void CreateComponentOverview(

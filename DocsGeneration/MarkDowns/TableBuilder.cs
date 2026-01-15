@@ -60,7 +60,6 @@ namespace DocsGeneration.MarkDowns {
           iconTable.AddTableHeader(_iconTableHeader, _iconWidth);
           iconTable.AddRow(tempTable[1]);
           return iconTable.Finalise();
-          break;
         case TableType.Properties:
           tempTable.Insert(0, _propertiesHeaders); // add heading to calculate width of column
           columnWidths = GetColumnsWidth(tempTable);
@@ -69,11 +68,8 @@ namespace DocsGeneration.MarkDowns {
           propertiesTable.AddTableHeader(_propertiesHeaders, _propertiesImageWidths);
           tempTable.Skip(1).ToList().ForEach(row => propertiesTable.AddRow(row));
           return propertiesTable.Finalise();
-          break;
-        default: break;
+        default:return null;
       }
-
-      return null;
     }
 
     public static List<int> GetColumnsWidth(List<List<string>> table) {
