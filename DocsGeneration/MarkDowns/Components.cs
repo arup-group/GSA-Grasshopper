@@ -160,7 +160,8 @@ namespace DocsGeneration.MarkDowns {
         = $@"{config.OutputPath}\{config.ProjectName.ToLower()}-{category.ToLower()}-components-overview.md";
       Console.WriteLine($"Writing {filePath}");
 
-      string text = $"# {category} components \n\n";
+      var stringBuilder = new StringBuilder();
+      stringBuilder.AppendLine($"# {category} components \n");
 
       var tempTable = new List<List<string>> { };
 
@@ -184,10 +185,11 @@ namespace DocsGeneration.MarkDowns {
           tempTable.Add(cells);
         }
 
-        text += TableBuilder.CreateTableString(subCategories[i], TableBuilder.TableType.Properties, tempTable, 4);
+        stringBuilder.Append(TableBuilder.CreateTableString(subCategories[i], TableBuilder.TableType.Properties,
+          tempTable, 4));
       }
 
-      Writer.Write(filePath, text);
+      Writer.Write(filePath, stringBuilder.ToString());
     }
 
     private static List<string> GetSubCategoryCells(

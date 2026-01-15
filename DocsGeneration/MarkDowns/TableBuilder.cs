@@ -42,29 +42,25 @@ namespace DocsGeneration.MarkDowns {
 
     public static string CreateTableString(
       string name, TableType tableType, List<List<string>> tempTable, int headingSize = 2) {
-      var columnWidths = new List<int>();
       switch (tableType) {
         case TableType.InputOutput:
           tempTable.Insert(0, _inputOutputTableHeaders); // add heading to calculate width of column
-          columnWidths = GetColumnsWidth(tempTable);
 
-          var table = new Table(name, headingSize, columnWidths);
+          var table = new Table(name, headingSize, GetColumnsWidth(tempTable));
           table.AddTableHeader(_inputOutputTableHeaders, _inputOutputImageWidths);
           tempTable.Skip(1).ToList().ForEach(row => table.AddRow(row));
           return table.Finalise();
         case TableType.IconOnly:
           tempTable.Insert(0, _iconTableHeader); // add heading to calculate width of column
-          columnWidths = GetColumnsWidth(tempTable);
 
-          var iconTable = new Table(string.Empty, headingSize, columnWidths);
+          var iconTable = new Table(string.Empty, headingSize, GetColumnsWidth(tempTable));
           iconTable.AddTableHeader(_iconTableHeader, _iconWidth);
           iconTable.AddRow(tempTable[1]);
           return iconTable.Finalise();
         case TableType.Properties:
           tempTable.Insert(0, _propertiesHeaders); // add heading to calculate width of column
-          columnWidths = GetColumnsWidth(tempTable);
 
-          var propertiesTable = new Table(name, headingSize, columnWidths);
+          var propertiesTable = new Table(name, headingSize, GetColumnsWidth(tempTable));
           propertiesTable.AddTableHeader(_propertiesHeaders, _propertiesImageWidths);
           tempTable.Skip(1).ToList().ForEach(row => propertiesTable.AddRow(row));
           return propertiesTable.Finalise();

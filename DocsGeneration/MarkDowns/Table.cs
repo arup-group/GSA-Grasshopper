@@ -23,7 +23,6 @@ namespace DocsGeneration.MarkDowns {
     public void AddTableHeader(List<string> headers, List<int> imageWidths) {
       if (headers?.Count != _defaultHeaderWidths?.Count) {
         throw new ArgumentException("Headers and header widths must have the same number of elements.");
-        return;
       }
 
       for (int i = 0; i < headers?.Count; i++) {
