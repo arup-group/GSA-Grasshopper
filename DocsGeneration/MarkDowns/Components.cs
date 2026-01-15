@@ -71,12 +71,8 @@ namespace DocsGeneration.MarkDowns {
       if (component.Inputs != null && component.Inputs.Count != 0) {
         var tempInputTable = new List<List<string>> { };
         foreach (Parameter property in component.Inputs) {
-          var cells = new List<string>() {
-            FileHelper.CreateIconLink(property),
-            FileHelper.CreateParameterLink(property, parmeterNames, config),
-            StringHelper.Replace(StringHelper.MakeBold(property.Name)),
-            StringHelper.Replace(property.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty)),
-          };
+          string desc = property.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty);
+          List<string> cells = GetPropertiesCells(parmeterNames, config, property, desc);
           tempInputTable.Add(cells);
         }
 
@@ -90,12 +86,7 @@ namespace DocsGeneration.MarkDowns {
         foreach (Parameter property in component.Outputs) {
           string description = property.Description;
           note = CheckForResultNote(ref description, config.ResultNotes);
-          var cells = new List<string>() {
-            FileHelper.CreateIconLink(property),
-            FileHelper.CreateParameterLink(property, parmeterNames, config),
-            StringHelper.Replace(StringHelper.MakeBold(property.Name)),
-            StringHelper.Replace(description),
-          };
+          List<string> cells = GetPropertiesCells(parmeterNames, config, property, description);
           tempOutputTable.Add(cells);
         }
 
@@ -109,6 +100,17 @@ namespace DocsGeneration.MarkDowns {
       }
 
       Writer.Write(filePath, text.TrimEnd());
+    }
+
+    private static List<string> GetPropertiesCells(
+      List<string> parmeterNames, Configuration config, Parameter property, string description) {
+      var cells = new List<string>() {
+        FileHelper.CreateIconLink(property),
+        FileHelper.CreateParameterLink(property, parmeterNames, config),
+        StringHelper.Replace(StringHelper.MakeBold(property.Name)),
+        StringHelper.Replace(description),
+      };
+      return cells;
     }
 
     private static string CheckForResultNote(ref string description, List<string> notesToCheckFor) {
@@ -172,11 +174,7 @@ namespace DocsGeneration.MarkDowns {
             continue;
           }
 
-          var cells = new List<string>() {
-            FileHelper.CreateIconLink(component),
-            FileHelper.CreatePageLink(component, config),
-            StringHelper.Replace(StringHelper.ComponentDescription(component.Description, parameterNames)),
-          };
+          List<string> cells = GetSubCategoryCells(parameterNames, config, component);
           tempTable.Add(cells);
         }
 
@@ -184,6 +182,16 @@ namespace DocsGeneration.MarkDowns {
       }
 
       Writer.Write(filePath, text);
+    }
+
+    private static List<string> GetSubCategoryCells(
+      List<string> parameterNames, Configuration config, Component component) {
+      var cells = new List<string>() {
+        FileHelper.CreateIconLink(component),
+        FileHelper.CreatePageLink(component, config),
+        StringHelper.Replace(StringHelper.ComponentDescription(component.Description, parameterNames)),
+      };
+      return cells;
     }
   }
 }

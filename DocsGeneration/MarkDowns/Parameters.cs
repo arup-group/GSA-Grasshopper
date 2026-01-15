@@ -7,22 +7,6 @@ using DocsGeneration.MarkDowns.Helpers;
 
 namespace DocsGeneration.MarkDowns {
   public class Parameters {
-    private static readonly List<string> _iconTableHeader = new List<string>() {
-      "Icon",
-    };
-    private static readonly List<string> _defaultTableHeaders = new List<string>() {
-      "Icon",
-      "Type",
-      "Name",
-      "Description",
-    };
-    private static readonly List<int> _imageWidths = new List<int>() {
-      Table.IconWidth,
-      Table.NameWidth,
-      Table.NameWidth,
-      Table.DescriptionWidth,
-    };
-
     public static void CreateOverview(Dictionary<string, List<Parameter>> parameters, Configuration config) {
       string filePath = $@"{config.OutputPath}\{config.ProjectName.ToLower()}-parameters.md";
       Console.WriteLine($"Writing {filePath}");
@@ -39,16 +23,22 @@ namespace DocsGeneration.MarkDowns {
         + "## Custom GSA Parameters" + "\n\n";
 
       foreach (string header in parameters.Keys) {
-        var propertieTable = new List<List<string>>();
-        propertieTable.AddRange(parameters[header].Select(parameter => new List<string>() {
-          FileHelper.CreateIconLink(parameter),
-          FileHelper.CreatePageLink(parameter, config.ProjectName),
-          parameter.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty),
-        }));
+        List<List<string>> propertieTable = GetParametersTempTable(parameters, config, header);
         text += TableBuilder.CreateTableString(header, TableBuilder.TableType.Properties, propertieTable);
       }
 
       Writer.Write(filePath, text);
+    }
+
+    private static List<List<string>> GetParametersTempTable(
+      Dictionary<string, List<Parameter>> parameters, Configuration config, string header) {
+      var parametersTable = new List<List<string>>();
+      parametersTable.AddRange(parameters[header].Select(parameter => new List<string>() {
+        FileHelper.CreateIconLink(parameter),
+        FileHelper.CreatePageLink(parameter, config.ProjectName),
+        parameter.Description.Replace(StringHelper.PrefixBetweenTypes, string.Empty),
+      }));
+      return parametersTable;
     }
 
     public static void CreateParameters(List<Parameter> parameters, Configuration config) {
@@ -87,13 +77,7 @@ namespace DocsGeneration.MarkDowns {
       text += StringHelper.SummaryDescription(parameter.Summary, config);
 
       if (parameter.Properties != null && parameter.Properties.Count != 0) {
-        var propertieTable = new List<List<string>> { };
-        propertieTable.AddRange(parameter.Properties.Select(property => new List<string>() {
-          FileHelper.CreateIconLink(property),
-          FileHelper.CreateParameterLink(property, parameterNames, config),
-          StringHelper.MakeBold(property.Name),
-          property.Description,
-        }));
+        List<List<string>> propertieTable = GetPropertyTempTable(parameter, parameterNames, config);
 
         text += TableBuilder.CreateTableString("Properties", TableBuilder.TableType.InputOutput, propertieTable);
         if (parameter.PropertiesComponent != null) {
@@ -104,6 +88,18 @@ namespace DocsGeneration.MarkDowns {
       }
 
       Writer.Write(filePath, text);
+    }
+
+    private static List<List<string>> GetPropertyTempTable(
+      Parameter parameter, List<string> parameterNames, Configuration config) {
+      var propertieTable = new List<List<string>> { };
+      propertieTable.AddRange(parameter.Properties.Select(property => new List<string>() {
+        FileHelper.CreateIconLink(property),
+        FileHelper.CreateParameterLink(property, parameterNames, config),
+        StringHelper.MakeBold(property.Name),
+        property.Description,
+      }));
+      return propertieTable;
     }
   }
 }
