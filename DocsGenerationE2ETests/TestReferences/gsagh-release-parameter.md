@@ -1,9 +1,9 @@
 # Release
 <!--- This file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration --->
 
-|<img width="150"/> Icon |
-| ----------- |
-|![Bool6Param](./images/Bool6Param.png) |
+| <img width="150"/> Icon                 |
+| --------------------------------------  |
+| ![Bool6Param](./images/Bool6Param.png)  |
 
 ## Description
 

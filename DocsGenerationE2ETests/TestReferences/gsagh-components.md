@@ -1,7 +1,7 @@
 # Components
 <!--- This file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration --->
 
-![GsaGH-Ribbon](./images/RibbonLayout.gif)
+ ![GsaGH-Ribbon](./images/RibbonLayout.gif)
 
 [Model components](gsagh-model-components-overview.md)
 
