@@ -1,4 +1,4 @@
-using GsaGH.Parameters;
+﻿using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
 

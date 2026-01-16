@@ -1,4 +1,4 @@
-using GsaGH.Helpers;
+﻿using GsaGH.Helpers;
 
 using Xunit;
 

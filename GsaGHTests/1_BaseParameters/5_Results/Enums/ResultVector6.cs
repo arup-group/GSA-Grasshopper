@@ -1,4 +1,4 @@
-namespace GsaGHTests.Parameters.Results {
+﻿namespace GsaGHTests.Parameters.Results {
   public enum ResultVector6 {
     X,
     Y,

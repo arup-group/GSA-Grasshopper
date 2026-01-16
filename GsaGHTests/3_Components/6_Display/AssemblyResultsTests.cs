@@ -1,4 +1,4 @@
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
 
 using GsaGH.Components;
@@ -115,7 +115,7 @@ namespace GsaGHTests.Components.Display {
       var comp = new AssemblyResults();
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.AssemblyByStorey, 1);
       ComponentTestHelper.SetInput(comp, result);
-      comp.UpdateMoment("N�cm");
+      comp.UpdateMoment("N·cm");
     }
 
     private void SetSelectedDrawViewportMeshesAndWiresTest(AssemblyResults comp, int i, int j) {

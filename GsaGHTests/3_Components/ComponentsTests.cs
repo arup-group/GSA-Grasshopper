@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 
 using GsaGH.Components;
 
@@ -130,7 +130,7 @@ namespace GsaGHTests.Components {
     [InlineData(typeof(CreateBeamThermalLoad), "Uniform", "Uniform")]
     [InlineData(typeof(CreateFaceLoad), "Uniform", "Equation")]
     [InlineData(typeof(CreateFaceThermalLoad), "Uniform", "Uniform")]
-    [InlineData(typeof(CreateGridAreaLoad), "kN/m²", "kipf/ft²")]
+    [InlineData(typeof(CreateGridAreaLoad), "kN/mÂ²", "kipf/ftÂ²")]
     [InlineData(typeof(CreateGridLineLoad), "kN/m", "kipf/ft")]
     [InlineData(typeof(CreateGridPlane), "General", "Storey")]
     [InlineData(typeof(CreateGridPointLoad), "kN", "tf")]

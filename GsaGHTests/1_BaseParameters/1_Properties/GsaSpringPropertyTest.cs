@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+锘縰sing System.Collections.Generic;
 using System.Drawing;
 
 using GsaAPI;
@@ -425,7 +425,7 @@ namespace GsaGHTests.Parameters {
         }
       };
 
-      Assert.Equal("Torsional Name 1.2N穖/rad 10%", spring.ToString());
+      Assert.Equal("Torsional Name 1.2N路m/rad 10%", spring.ToString());
     }
 
     [Fact]
@@ -444,8 +444,8 @@ namespace GsaGHTests.Parameters {
         }
       };
 
-      Assert.Equal("General Name X:0.0012kN/m Y:0.0022kN/m Z:0.0032kN/m XX:4.2N穖/rad " +
-        "YY:4.2N穖/rad ZZ:4.2N穖/rad 10%", spring.ToString());
+      Assert.Equal("General Name X:0.0012kN/m Y:0.0022kN/m Z:0.0032kN/m XX:4.2N路m/rad " +
+        "YY:4.2N路m/rad ZZ:4.2N路m/rad 10%", spring.ToString());
     }
 
     [Fact]

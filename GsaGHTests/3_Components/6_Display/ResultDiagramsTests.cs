@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 
 using Grasshopper.Kernel;
 
@@ -57,9 +57,9 @@ namespace GsaGHTests.Components.Display {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignComplex, 1);
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       comp.SetSelected(0, 1); // Force
-      comp.UpdateMoment("MN·m");
+      comp.UpdateMoment("MNÂ·m");
       comp.Params.Output[0].CollectData();
-      Assert.Equal("MN·m", comp.Message);
+      Assert.Equal("MNÂ·m", comp.Message);
     }
 
     [Fact]
