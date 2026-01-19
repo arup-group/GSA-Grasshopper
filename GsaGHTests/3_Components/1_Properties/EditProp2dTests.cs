@@ -6,7 +6,6 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 
 using GsaGH.Components;
-using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
@@ -80,7 +79,7 @@ namespace GsaGHTests.Properties {
       Assert.Equal(-1, axis.Value);
       Assert.Equal(-1, axis.Value);
       Assert.Equal("Shell", type.Value);
-      Assert.Equal(400, thickness.Value.As(LengthUnit.Millimeter), DoubleComparer.Default);
+      Assert.Equal(400, thickness.Value.As(LengthUnit.Millimeter), 6);
       Assert.Equal(ReferenceSurface.Middle, referenceSurface.Value);
       Assert.Equal(new Length(0, LengthUnit.Centimeter), offset.Value);
       Duplicates.AreEqual(new GsaProperty2dModifier(), modifier.Value);

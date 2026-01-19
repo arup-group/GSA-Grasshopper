@@ -4,7 +4,6 @@ using System.Drawing;
 using GsaAPI;
 
 using GsaGH.Parameters;
-using GsaGH.Helpers;
 
 using GsaGHTests.Helpers;
 
@@ -12,6 +11,7 @@ using Rhino.Collections;
 using Rhino.Geometry;
 
 using Xunit;
+
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaMember1dTest {
@@ -119,7 +119,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(2, dup.Id);
       Assert.Equal("Sally", dup.ApiMember.Name);
       Assert.False(dup.ApiMember.IsDummy);
-      Assert.Equal(0.1, dup.Offset.X2.Value, DoubleComparer.Default);
+      Assert.Equal(0.1, dup.Offset.X2.Value);
       Assert.Equal(4, dup.Section.Id);
       Assert.Equal(99, dup.ApiMember.Group);
       Assert.Equal(ElementType.BAR, dup.ApiMember.Type1D);
@@ -139,7 +139,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(2, dup.Id);
       Assert.Equal("Sally", dup.ApiMember.Name);
       Assert.False(dup.ApiMember.IsDummy);
-      Assert.Equal(0.1, dup.Offset.X2.Value, DoubleComparer.Default);
+      Assert.Equal(0.1, dup.Offset.X2.Value);
       Assert.Equal(1, dup.Section.Id);
       Assert.Equal(99, dup.ApiMember.Group);
       Assert.Equal(ElementType.BAR, dup.ApiMember.Type1D);
@@ -149,7 +149,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(1, orig.Id);
       Assert.Equal("Peter Peterson", orig.ApiMember.Name);
       Assert.True(orig.ApiMember.IsDummy);
-      Assert.Equal(0.4, orig.Offset.X2.Value, DoubleComparer.Default);
+      Assert.Equal(0.4, orig.Offset.X2.Value);
       Assert.Equal(1, orig.Section.Id);
       Assert.Equal(4, orig.ApiMember.Group);
       Assert.Equal(ElementType.BEAM, orig.ApiMember.Type1D);

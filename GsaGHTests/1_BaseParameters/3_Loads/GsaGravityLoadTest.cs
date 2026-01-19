@@ -1,10 +1,10 @@
 ﻿using GsaAPI;
+
 using GsaGH.Parameters;
+
 using GsaGHTests.Helpers;
-using GsaGH.Helpers;
+
 using Xunit;
-
-
 
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -13,9 +13,9 @@ namespace GsaGHTests.Parameters {
     public void ConstructorTest() {
       var load = new GsaGravityLoad();
 
-      Assert.Equal(0, load.ApiLoad.Factor.X, DoubleComparer.Default);
-      Assert.Equal(0, load.ApiLoad.Factor.Y, DoubleComparer.Default);
-      Assert.Equal(-1, load.ApiLoad.Factor.Z, DoubleComparer.Default);
+      Assert.Equal(0, load.ApiLoad.Factor.X);
+      Assert.Equal(0, load.ApiLoad.Factor.Y);
+      Assert.Equal(-1, load.ApiLoad.Factor.Z);
       Assert.Equal(1, load.ApiLoad.Case);
       Assert.Equal("all", load.ApiLoad.EntityList);
       Assert.Equal(GsaAPI.EntityType.Element, load.ApiLoad.EntityType);
@@ -52,9 +52,9 @@ namespace GsaGHTests.Parameters {
       duplicate.ApiLoad.Nodes = "";
       duplicate.ApiLoad.Name = "";
 
-      Assert.Equal(0, original.ApiLoad.Factor.X, DoubleComparer.Default);
-      Assert.Equal(0, original.ApiLoad.Factor.Y, DoubleComparer.Default);
-      Assert.Equal(-1, original.ApiLoad.Factor.Z, DoubleComparer.Default);
+      Assert.Equal(0, original.ApiLoad.Factor.X);
+      Assert.Equal(0, original.ApiLoad.Factor.Y);
+      Assert.Equal(-1, original.ApiLoad.Factor.Z);
       Assert.Equal(1, original.ApiLoad.Case);
       Assert.Equal("all", original.ApiLoad.EntityList);
       Assert.Equal(GsaAPI.EntityType.Element, original.ApiLoad.EntityType);

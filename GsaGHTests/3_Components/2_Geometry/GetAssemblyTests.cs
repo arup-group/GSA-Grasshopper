@@ -1,28 +1,19 @@
 ﻿using System.Collections;
 
-
 using Grasshopper.Kernel.Types;
 
-
 using GsaGH.Components;
-
 using GsaGH.Parameters;
-
 
 using GsaGHTests.Helpers;
 
-
 using OasysGH.Components;
 
-
 using OasysUnits;
-
 using OasysUnits.Units;
 
-
-using GsaGH.Helpers;
-
 using Xunit;
+
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class GetAssemblyTests {
@@ -105,8 +96,8 @@ namespace GsaGHTests.Components.Geometry {
       Assert.Equal(6, ((GH_Integer)internalTopology[2]).Value);
       Assert.Equal(1, curveFit.Value);
       Assert.Equal(2, positions.Count);
-      Assert.Equal(7.7, ((GH_Number)positions[0]).Value, DoubleComparer.Default);
-      Assert.Equal(8.8, ((GH_Number)positions[1]).Value, DoubleComparer.Default);
+      Assert.Equal(7.7, ((GH_Number)positions[0]).Value);
+      Assert.Equal(8.8, ((GH_Number)positions[1]).Value);
     }
 
     [Fact]

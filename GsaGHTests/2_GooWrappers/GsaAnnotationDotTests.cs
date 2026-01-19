@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 
 using GsaGH.Parameters;
-using GsaGH.Helpers;
 
 using Rhino.Geometry;
 
@@ -21,9 +20,9 @@ namespace GsaGHTests.Parameters {
     [Fact]
     public void ConstructorTest() {
       GsaAnnotationDot anno3d = AnnotationDotMother();
-      Assert.Equal(1, anno3d.Location.X, DoubleComparer.Default);
-      Assert.Equal(1, anno3d.Location.Y, DoubleComparer.Default);
-      Assert.Equal(1, anno3d.Location.Z, DoubleComparer.Default);
+      Assert.Equal(1, anno3d.Location.X);
+      Assert.Equal(1, anno3d.Location.Y);
+      Assert.Equal(1, anno3d.Location.Z);
       Assert.Equal("Annotation", anno3d.TypeName);
       Assert.Equal("A GSA Annotation.", anno3d.TypeDescription);
       Assert.Equal("32.1mm", anno3d.Value.Text);

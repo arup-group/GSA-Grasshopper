@@ -1,24 +1,16 @@
 ﻿using GsaGH.Components;
-
 using GsaGH.Parameters;
-
 using GsaGH.Parameters.Enums;
 
-
 using GsaGHTests.Components.Geometry;
-
 using GsaGHTests.Helpers;
-
 
 using OasysGH.Components;
 
-
 using Rhino.Geometry;
 
-
-using GsaGH.Helpers;
-
 using Xunit;
+
 namespace GsaGHTests.Components.Loads {
   [Collection("GrasshopperFixture collection")]
   public class CreateGravityLoadTests {
@@ -34,9 +26,9 @@ namespace GsaGHTests.Components.Loads {
       var load = (GsaGravityLoad)output.Value;
       Assert.Equal(7, load.LoadCase.Id);
       Assert.Equal("myGravityLoad", load.ApiLoad.Name);
-      Assert.Equal(0, load.ApiLoad.Factor.X, DoubleComparer.Default);
-      Assert.Equal(0, load.ApiLoad.Factor.Y, DoubleComparer.Default);
-      Assert.Equal(-2, load.ApiLoad.Factor.Z, DoubleComparer.Default);
+      Assert.Equal(0, load.ApiLoad.Factor.X);
+      Assert.Equal(0, load.ApiLoad.Factor.Y);
+      Assert.Equal(-2, load.ApiLoad.Factor.Z);
       Assert.Equal(ReferenceType.None, load.ReferenceType);
     }
 

@@ -70,9 +70,9 @@ namespace GsaGHTests.Parameters {
       elem.ApiElements.SetMembers(off);
 
       for (int i = 0; i < elem.Topology.Count; i++) {
-        Assert.Equal(mesh.Vertices[i].X, elem.Topology[i].X, DoubleComparer.Default);
-        Assert.Equal(mesh.Vertices[i].Y, elem.Topology[i].Y, DoubleComparer.Default);
-        Assert.Equal(mesh.Vertices[i].Z, elem.Topology[i].Z, DoubleComparer.Default);
+        Assert.Equal(mesh.Vertices[i].X, elem.Topology[i].X);
+        Assert.Equal(mesh.Vertices[i].Y, elem.Topology[i].Y);
+        Assert.Equal(mesh.Vertices[i].Z, elem.Topology[i].Z);
       }
 
       int checkElementId = 14;
@@ -88,9 +88,9 @@ namespace GsaGHTests.Parameters {
 
         Point3d mPt = mesh.Vertices[mesh.Faces[i].A];
         Point3d ePt = elem.Topology[elem.TopoInt[i][0]]; // topology first pt
-        Assert.Equal(mPt.X, ePt.X, DoubleComparer.Default);
-        Assert.Equal(mPt.Y, ePt.Y, DoubleComparer.Default);
-        Assert.Equal(mPt.Z, ePt.Z, DoubleComparer.Default);
+        Assert.Equal(mPt.X, ePt.X);
+        Assert.Equal(mPt.Y, ePt.Y);
+        Assert.Equal(mPt.Z, ePt.Z);
 
         mPt = mesh.Vertices[mesh.Faces[i].B];
         ePt = elem.Topology[elem.TopoInt[i][1]]; // topology second pt
@@ -107,9 +107,9 @@ namespace GsaGHTests.Parameters {
         if (elem.ApiElements[i].Type == ElementType.QUAD4) {
           mPt = mesh.Vertices[mesh.Faces[i].D];
           ePt = elem.Topology[elem.TopoInt[i][3]]; // topology fourth pt
-          Assert.Equal(mPt.X, ePt.X, DoubleComparer.Default);
-          Assert.Equal(mPt.Y, ePt.Y, DoubleComparer.Default);
-          Assert.Equal(mPt.Z, ePt.Z, DoubleComparer.Default);
+          Assert.Equal(mPt.X, ePt.X);
+          Assert.Equal(mPt.Y, ePt.Y);
+          Assert.Equal(mPt.Z, ePt.Z);
         }
 
         Assert.Equal(checkElementId++, elem.Ids[i]);
@@ -117,7 +117,7 @@ namespace GsaGHTests.Parameters {
         Assert.Equal(22, elem.ApiElements[i].Group);
         Assert.True(elem.ApiElements[i].IsDummy);
         Assert.Equal("Shahin", elem.ApiElements[i].Name);
-        Assert.Equal(0.1, elem.Offsets[i].Z.Value, DoubleComparer.Default);
+        Assert.Equal(0.1, elem.Offsets[i].Z.Value);
       }
     }
 
@@ -152,9 +152,9 @@ namespace GsaGHTests.Parameters {
       var dup = new GsaElement2d(origi);
 
       for (int i = 0; i < dup.Topology.Count; i++) {
-        Assert.Equal(mesh.Vertices[i].X, dup.Topology[i].X, DoubleComparer.Default);
-        Assert.Equal(mesh.Vertices[i].Y, dup.Topology[i].Y, DoubleComparer.Default);
-        Assert.Equal(mesh.Vertices[i].Z, origi.Topology[i].Z, DoubleComparer.Default);
+        Assert.Equal(mesh.Vertices[i].X, dup.Topology[i].X);
+        Assert.Equal(mesh.Vertices[i].Y, dup.Topology[i].Y);
+        Assert.Equal(mesh.Vertices[i].Z, origi.Topology[i].Z);
       }
 
       for (int i = 0; i < dup.ApiElements.Count; i++) {
@@ -168,21 +168,21 @@ namespace GsaGHTests.Parameters {
 
         Point3d mPt = mesh.Vertices[mesh.Faces[i].A];
         Point3d ePt = dup.Topology[dup.TopoInt[i][0]]; // topology first pt
-        Assert.Equal(mPt.X, ePt.X, DoubleComparer.Default);
-        Assert.Equal(mPt.Y, ePt.Y, DoubleComparer.Default);
-        Assert.Equal(mPt.Z, ePt.Z, DoubleComparer.Default);
+        Assert.Equal(mPt.X, ePt.X);
+        Assert.Equal(mPt.Y, ePt.Y);
+        Assert.Equal(mPt.Z, ePt.Z);
 
         mPt = mesh.Vertices[mesh.Faces[i].B];
         ePt = dup.Topology[dup.TopoInt[i][1]]; // topology second pt
-        Assert.Equal(mPt.X, ePt.X, DoubleComparer.Default);
-        Assert.Equal(mPt.Y, ePt.Y, DoubleComparer.Default);
-        Assert.Equal(mPt.Z, ePt.Z, DoubleComparer.Default);
+        Assert.Equal(mPt.X, ePt.X);
+        Assert.Equal(mPt.Y, ePt.Y);
+        Assert.Equal(mPt.Z, ePt.Z);
 
         mPt = mesh.Vertices[mesh.Faces[i].C];
         ePt = dup.Topology[dup.TopoInt[i][2]]; // topology third pt
-        Assert.Equal(mPt.X, ePt.X, DoubleComparer.Default);
-        Assert.Equal(mPt.Y, ePt.Y, DoubleComparer.Default);
-        Assert.Equal(mPt.Z, ePt.Z, DoubleComparer.Default);
+        Assert.Equal(mPt.X, ePt.X);
+        Assert.Equal(mPt.Y, ePt.Y);
+        Assert.Equal(mPt.Z, ePt.Z);
 
         if (dup.ApiElements[i].Type != ElementType.QUAD4) {
           continue;
@@ -190,9 +190,9 @@ namespace GsaGHTests.Parameters {
 
         mPt = mesh.Vertices[mesh.Faces[i].D];
         ePt = dup.Topology[dup.TopoInt[i][3]]; // topology fourth pt
-        Assert.Equal(mPt.X, ePt.X, DoubleComparer.Default);
-        Assert.Equal(mPt.Y, ePt.Y, DoubleComparer.Default);
-        Assert.Equal(mPt.Z, ePt.Z, DoubleComparer.Default);
+        Assert.Equal(mPt.X, ePt.X);
+        Assert.Equal(mPt.Y, ePt.Y);
+        Assert.Equal(mPt.Z, ePt.Z);
       }
 
       // make some changes to original
@@ -242,7 +242,7 @@ namespace GsaGHTests.Parameters {
         Assert.Equal(4, origi.ApiElements[i].Group);
         Assert.True(origi.ApiElements[i].IsDummy);
         Assert.Equal("Mani", origi.ApiElements[i].Name);
-        Assert.Equal(-0.17, origi.Offsets[i].Z.Value, DoubleComparer.Default);
+        Assert.Equal(-0.17, origi.Offsets[i].Z.Value);
       }
     }
 
@@ -279,7 +279,7 @@ namespace GsaGHTests.Parameters {
         Assert.Equal(ele.ApiElements[i].IsDummy, list[i].IsDummy);
         Assert.Equal(ele.ApiElements[i].Name, list[i].Name);
         Assert.Equal(ele.ApiElements[i].Offset.ToString(), list[i].Offset.ToString());
-        Assert.Equal(ele.ApiElements[i].OrientationAngle, list[i].OrientationAngle, DoubleComparer.Default);
+        Assert.Equal(ele.ApiElements[i].OrientationAngle, list[i].OrientationAngle);
         Assert.Equal(ele.ApiElements[i].OrientationNode, list[i].OrientationNode);
         Assert.Equal(ele.ApiElements[i].ParentMember?.Member, list[i].ParentMember?.Member);
         Assert.Equal(ele.ApiElements[i].ParentMember?.Replica, list[i].ParentMember?.Replica);
@@ -407,9 +407,9 @@ namespace GsaGHTests.Parameters {
       Point3dList points = loadPanel.GetCenterPoints();
       Assert.NotNull(points);
       Assert.Single(points);
-      Assert.Equal(0.5, points[0].X, DoubleComparer.Default);
-      Assert.Equal(0.5, points[0].Y, DoubleComparer.Default);
-      Assert.Equal(0, points[0].Z, DoubleComparer.Default);
+      Assert.Equal(0.5, points[0].X);
+      Assert.Equal(0.5, points[0].Y);
+      Assert.Equal(0, points[0].Z);
     }
 
     [Fact]

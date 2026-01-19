@@ -3,7 +3,6 @@
 using Grasshopper.Kernel.Types;
 
 using GsaGH.Parameters;
-using GsaGH.Helpers;
 
 using GsaGHTests.GooWrappers;
 
@@ -15,6 +14,7 @@ using Rhino.Geometry;
 using Rhino.Geometry.Morphs;
 
 using Xunit;
+
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaAnnotationGooTests {
@@ -43,7 +43,7 @@ namespace GsaGHTests.Parameters {
       GH_Number number = null;
       anno3d.CastTo(ref number);
       Assert.NotNull(number);
-      Assert.Equal(32.1, number.Value, DoubleComparer.Default);
+      Assert.Equal(32.1, number.Value);
       bool f = false;
       Assert.False(anno3d.CastTo(ref f));
     }
@@ -58,7 +58,7 @@ namespace GsaGHTests.Parameters {
       GH_Number number = null;
       anno3d.CastTo(ref number);
       Assert.NotNull(number);
-      Assert.Equal(32.1, number.Value, DoubleComparer.Default);
+      Assert.Equal(32.1, number.Value);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ namespace GsaGHTests.Parameters {
       GH_Number number = null;
       annoDot.CastTo(ref number);
       Assert.NotNull(number);
-      Assert.Equal(32.1, number.Value, DoubleComparer.Default);
+      Assert.Equal(32.1, number.Value);
       bool f = false;
       Assert.False(annoDot.CastTo(ref f));
     }
@@ -81,7 +81,7 @@ namespace GsaGHTests.Parameters {
       GH_Number number = null;
       anno3d.CastTo(ref number);
       Assert.NotNull(number);
-      Assert.Equal(32.1, number.Value, DoubleComparer.Default);
+      Assert.Equal(32.1, number.Value);
     }
 
     [Fact]
@@ -129,9 +129,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(2, transformed.Location.X, 2);
       Assert.Equal(2, transformed.Location.Y, 2);
       Assert.Equal(2, transformed.Location.Z, 2);
-      Assert.Equal(1, anno3d.Value.Location.X, DoubleComparer.Default);
-      Assert.Equal(1, anno3d.Value.Location.Y, DoubleComparer.Default);
-      Assert.Equal(1, anno3d.Value.Location.Z, DoubleComparer.Default);
+      Assert.Equal(1, anno3d.Value.Location.X);
+      Assert.Equal(1, anno3d.Value.Location.Y);
+      Assert.Equal(1, anno3d.Value.Location.Z);
     }
 
     [Fact]
@@ -143,9 +143,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(2, transformed.Location.X, 2);
       Assert.Equal(2, transformed.Location.Y, 2);
       Assert.Equal(2, transformed.Location.Z, 2);
-      Assert.Equal(1, annoDot.Value.Location.X, DoubleComparer.Default);
-      Assert.Equal(1, annoDot.Value.Location.Y, DoubleComparer.Default);
-      Assert.Equal(1, annoDot.Value.Location.Z, DoubleComparer.Default);
+      Assert.Equal(1, annoDot.Value.Location.X);
+      Assert.Equal(1, annoDot.Value.Location.Y);
+      Assert.Equal(1, annoDot.Value.Location.Z);
     }
 
     [Fact]
@@ -157,9 +157,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0.88, morphed.Location.X, 2);
       Assert.Equal(0.88, morphed.Location.Y, 2);
       Assert.Equal(0.88, morphed.Location.Z, 2);
-      Assert.Equal(1, anno3d.Value.Location.X, DoubleComparer.Default);
-      Assert.Equal(1, anno3d.Value.Location.Y, DoubleComparer.Default);
-      Assert.Equal(1, anno3d.Value.Location.Z, DoubleComparer.Default);
+      Assert.Equal(1, anno3d.Value.Location.X);
+      Assert.Equal(1, anno3d.Value.Location.Y);
+      Assert.Equal(1, anno3d.Value.Location.Z);
     }
 
     [Fact]
@@ -171,9 +171,9 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(0.88, morphed.Location.X, 2);
       Assert.Equal(0.88, morphed.Location.Y, 2);
       Assert.Equal(0.88, morphed.Location.Z, 2);
-      Assert.Equal(1, annoDot.Value.Location.X, DoubleComparer.Default);
-      Assert.Equal(1, annoDot.Value.Location.Y, DoubleComparer.Default);
-      Assert.Equal(1, annoDot.Value.Location.Z, DoubleComparer.Default);
+      Assert.Equal(1, annoDot.Value.Location.X);
+      Assert.Equal(1, annoDot.Value.Location.Y);
+      Assert.Equal(1, annoDot.Value.Location.Z);
     }
   }
 }

@@ -15,7 +15,7 @@ using Xunit;
 using AngleUnit = OasysUnits.Units.AngleUnit;
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
-using GsaGH.Helpers;
+
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaElement1dTest {
@@ -35,12 +35,12 @@ namespace GsaGHTests.Parameters {
       elem.Offset = offset;
       elem.OrientationAngle = new Angle(90, AngleUnit.Degree);
 
-      Assert.Equal(1, elem.Line.PointAtStart.X, DoubleComparer.Default);
-      Assert.Equal(4, elem.Line.PointAtStart.Y, DoubleComparer.Default);
-      Assert.Equal(6, elem.Line.PointAtStart.Z, DoubleComparer.Default);
-      Assert.Equal(-2, elem.Line.PointAtEnd.X, DoubleComparer.Default);
-      Assert.Equal(3, elem.Line.PointAtEnd.Y, DoubleComparer.Default);
-      Assert.Equal(-5, elem.Line.PointAtEnd.Z, DoubleComparer.Default);
+      Assert.Equal(1, elem.Line.PointAtStart.X);
+      Assert.Equal(4, elem.Line.PointAtStart.Y);
+      Assert.Equal(6, elem.Line.PointAtStart.Z);
+      Assert.Equal(-2, elem.Line.PointAtEnd.X);
+      Assert.Equal(3, elem.Line.PointAtEnd.Y);
+      Assert.Equal(-5, elem.Line.PointAtEnd.Z);
 
       Assert.Equal(66, elem.Id);
       Assert.Equal(3, elem.Section.Id);
@@ -48,7 +48,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(4, elem.ApiElement.Group);
       Assert.True(elem.ApiElement.IsDummy);
       Assert.Equal("EltonJohn", elem.ApiElement.Name);
-      Assert.Equal(14.3, elem.Offset.Y.Value, DoubleComparer.Default);
+      Assert.Equal(14.3, elem.Offset.Y.Value);
       Assert.Equal(90, elem.OrientationAngle.Degrees);
       Assert.Equal(3, elem.Section.Id);
     }
@@ -99,12 +99,12 @@ namespace GsaGHTests.Parameters {
       orig.OrientationAngle = new Angle(0, AngleUnit.Radian);
 
       // check that values in duplicate are not changed
-      Assert.Equal(2, dup.Line.PointAtStart.X, DoubleComparer.Default);
-      Assert.Equal(-1, dup.Line.PointAtStart.Y, DoubleComparer.Default);
-      Assert.Equal(0, dup.Line.PointAtStart.Z, DoubleComparer.Default);
-      Assert.Equal(2, dup.Line.PointAtEnd.X, DoubleComparer.Default);
-      Assert.Equal(-1, dup.Line.PointAtEnd.Y, DoubleComparer.Default);
-      Assert.Equal(4, dup.Line.PointAtEnd.Z, DoubleComparer.Default);
+      Assert.Equal(2, dup.Line.PointAtStart.X, 1E-9);
+      Assert.Equal(-1, dup.Line.PointAtStart.Y, 1E-9);
+      Assert.Equal(0, dup.Line.PointAtStart.Z, 1E-9);
+      Assert.Equal(2, dup.Line.PointAtEnd.X, 1E-9);
+      Assert.Equal(-1, dup.Line.PointAtEnd.Y, 1E-9);
+      Assert.Equal(4, dup.Line.PointAtEnd.Z, 1E-9);
       Assert.Equal(3, dup.Id);
       Assert.Equal(9, dup.Section.Id);
       Assert.Equal(Color.FromArgb(255, 0, 255, 255), (Color)dup.ApiElement.Colour);
@@ -115,20 +115,20 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(-0.14, dup.OrientationAngle.Radians, 1E-9);
 
       // check that original has changed values
-      Assert.Equal(1, orig.Line.PointAtStart.X, DoubleComparer.Default);
-      Assert.Equal(1, orig.Line.PointAtStart.Y, DoubleComparer.Default);
-      Assert.Equal(-4, orig.Line.PointAtStart.Z, DoubleComparer.Default);
-      Assert.Equal(1, orig.Line.PointAtEnd.X, DoubleComparer.Default);
-      Assert.Equal(1, orig.Line.PointAtEnd.Y, DoubleComparer.Default);
-      Assert.Equal(0, orig.Line.PointAtEnd.Z, DoubleComparer.Default);
+      Assert.Equal(1, orig.Line.PointAtStart.X, 1E-9);
+      Assert.Equal(1, orig.Line.PointAtStart.Y, 1E-9);
+      Assert.Equal(-4, orig.Line.PointAtStart.Z, 1E-9);
+      Assert.Equal(1, orig.Line.PointAtEnd.X, 1E-9);
+      Assert.Equal(1, orig.Line.PointAtEnd.Y, 1E-9);
+      Assert.Equal(0, orig.Line.PointAtEnd.Z, 1E-9);
       Assert.Equal(5, orig.Id);
       Assert.Equal(9, orig.Section.Id);
       Assert.Equal(Color.FromArgb(255, 255, 0, 0), (Color)orig.ApiElement.Colour);
       Assert.Equal(2, orig.ApiElement.Group);
       Assert.True(orig.ApiElement.IsDummy);
       Assert.Equal("Hugh", orig.ApiElement.Name);
-      Assert.Equal(-0.991, orig.Offset.Y.Meters, DoubleComparer.Default);
-      Assert.Equal(0, orig.OrientationAngle.Radians, DoubleComparer.Default);
+      Assert.Equal(-0.991, orig.Offset.Y.Meters, 1E-9);
+      Assert.Equal(0, orig.OrientationAngle.Radians, 1E-9);
     }
 
     [Fact]
@@ -187,22 +187,19 @@ namespace GsaGHTests.Parameters {
 
 
     public GsaElement1d GetElement(List<int> topo, out Dictionary<int, Node> nodes) {
-      var gsaElement = new GSAElement(new Element()) {
-        OrientationNode = 0,
-        Topology = new ReadOnlyCollection<int>(topo)
-      };
+      var gsaElement = new GSAElement(new Element());
+      gsaElement.OrientationNode = 0;
+      gsaElement.Topology = new ReadOnlyCollection<int>(topo);
       var element = new KeyValuePair<int, GSAElement>(0, gsaElement);
       nodes = new Dictionary<int, Node>();
-      var p1 = new Node {
-        Position = new Vector3() { X = 1, Y = 2, Z = 3 }
-      };
+      var p1 = new Node();
+      p1.Position = new Vector3() { X = 1, Y = 2, Z = 3 };
       nodes.Add(0, p1);
-      var p2 = new Node {
-        Position = new Vector3() { X = 4, Y = 5, Z = 6 }
-      };
+      var p2 = new Node();
+      p2.Position = new Vector3() { X = 4, Y = 5, Z = 6 };
       nodes.Add(1, p2);
 
-      var localaxes = new ReadOnlyCollection<double>(new List<double> { 1, 0, 0, 0, 1, 0, 0, 0, 1 });
+      ReadOnlyCollection<double> localaxes = new ReadOnlyCollection<double>(new List<double> { 1, 0, 0, 0, 1, 0, 0, 0, 1 });
       var section = new GsaSection();
       var elem = new GsaElement1d(element, nodes, section, localaxes, LengthUnit.Meter);
       return elem;
@@ -210,18 +207,18 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void ShouldCreateElementWithNoValidLine() {
-      GsaElement1d elem = GetElement(new List<int> { 2, 3 }, out Dictionary<int, Node> _);
+      var elem = GetElement(new List<int> { 2, 3 }, out var _);
       Assert.Equal(elem.Line.PointAtStart, elem.Line.PointAtEnd);
     }
 
     [Fact]
     public void ShouldCreateElementWithAValidLine() {
 
-      GsaElement1d elem = GetElement(new List<int> { 0, 1 }, out Dictionary<int, Node> nodes);
-      Vector3 pos1 = nodes[0].Position;
+      var elem = GetElement(new List<int> { 0, 1 }, out var nodes);
+      var pos1 = nodes[0].Position;
       Assert.Equal(elem.Line.PointAtStart,
           new Point3d() { X = pos1.X, Y = pos1.Y, Z = pos1.Z });
-      Vector3 pos2 = nodes[1].Position;
+      var pos2 = nodes[1].Position;
       Assert.Equal(elem.Line.PointAtEnd,
           new Point3d() { X = pos2.X, Y = pos2.Y, Z = pos2.Z });
     }
@@ -232,27 +229,26 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void ShouldCreateElementWithSection() {
-      GsaElement1d elem = GetBasicElement();
+      var elem = GetBasicElement();
       elem.Id = 1;
-      elem.Section = new GsaSection {
-        Id = 2
-      };
+      elem.Section = new GsaSection();
+      elem.Section.Id = 2;
 
       Assert.Contains("PB", elem.ToString());
     }
 
     [Fact]
     public void ShouldCreateElementWithSectionNoId() {
-      GsaElement1d elem = GetBasicElement();
+      var elem = GetBasicElement();
       elem.Id = 1;
       elem.Section = new GsaSection();
-      string asd = elem.Section.ApiSection.Profile = "TESTSECTION";
+      var asd = elem.Section.ApiSection.Profile = "TESTSECTION";
       Assert.Contains("TESTSECTION", elem.ToString());
     }
 
     [Fact]
     public void ShouldCreateElementWithSpring() {
-      GsaElement1d elem = GetBasicElement();
+      var elem = GetBasicElement();
       elem.Id = 1;
       elem.SpringProperty = new GsaSpringProperty(2);
 
@@ -261,11 +257,10 @@ namespace GsaGHTests.Parameters {
 
     [Fact]
     public void ShouldCreateElementWithSpringNoId() {
-      GsaElement1d elem = GetBasicElement();
+      var elem = GetBasicElement();
       elem.Id = 1;
-      elem.SpringProperty = new GsaSpringProperty {
-        ApiProperty = new AxialSpringProperty() { Stiffness = 1000 }
-      };
+      elem.SpringProperty = new GsaSpringProperty();
+      elem.SpringProperty.ApiProperty = new AxialSpringProperty() { Stiffness = 1000 };
       elem.SpringProperty.ApiProperty.Name = "Test";
 
       Assert.Contains("Test", elem.ToString());

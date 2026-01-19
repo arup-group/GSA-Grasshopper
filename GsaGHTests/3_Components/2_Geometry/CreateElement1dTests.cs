@@ -1,26 +1,18 @@
 ﻿using System.Linq;
 
-
 using Grasshopper.Kernel.Types;
 
-
 using GsaGH.Components;
-
 using GsaGH.Parameters;
-
 
 using GsaGHTests.Helpers;
 
-
 using OasysGH.Components;
-
 
 using Rhino.Geometry;
 
-
-using GsaGH.Helpers;
-
 using Xunit;
+
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class CreateElement1dTests {
@@ -55,32 +47,32 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void ComponentShouldReturn0AsPointAtStartXValue() {
-      Assert.Equal(0, _element1dGoo.Value.Line.PointAtStart.X, DoubleComparer.Default);
+      Assert.Equal(0, _element1dGoo.Value.Line.PointAtStart.X);
     }
 
     [Fact]
     public void ComponentShouldReturnMinus1AsPointAtStartYValue() {
-      Assert.Equal(-1, _element1dGoo.Value.Line.PointAtStart.Y, DoubleComparer.Default);
+      Assert.Equal(-1, _element1dGoo.Value.Line.PointAtStart.Y);
     }
 
     [Fact]
     public void ComponentShouldReturn0AsPointAtStartZValue() {
-      Assert.Equal(0, _element1dGoo.Value.Line.PointAtStart.Z, DoubleComparer.Default);
+      Assert.Equal(0, _element1dGoo.Value.Line.PointAtStart.Z);
     }
 
     [Fact]
     public void ComponentShouldReturn7AsPointAtEndXValue() {
-      Assert.Equal(7, _element1dGoo.Value.Line.PointAtEnd.X, DoubleComparer.Default);
+      Assert.Equal(7, _element1dGoo.Value.Line.PointAtEnd.X);
     }
 
     [Fact]
     public void ComponentShouldReturn3AsPointAtEndYValue() {
-      Assert.Equal(3, _element1dGoo.Value.Line.PointAtEnd.Y, DoubleComparer.Default);
+      Assert.Equal(3, _element1dGoo.Value.Line.PointAtEnd.Y);
     }
 
     [Fact]
     public void ComponentShouldReturn1AsPointAtEndZValue() {
-      Assert.Equal(1, _element1dGoo.Value.Line.PointAtEnd.Z, DoubleComparer.Default);
+      Assert.Equal(1, _element1dGoo.Value.Line.PointAtEnd.Z);
     }
 
     [Fact]

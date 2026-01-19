@@ -1,5 +1,4 @@
 ﻿using GsaGH.Components;
-using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
@@ -59,15 +58,15 @@ namespace GsaGHTests.Properties {
 
       Assert.NotEqual(offset, offsetGoo.Value);
 
-      Assert.NotEqual(0, x1Out.Value.As(unit), DoubleComparer.Default);
-      Assert.NotEqual(0, x2Out.Value.As(unit), DoubleComparer.Default);
-      Assert.NotEqual(0, yOut.Value.As(unit), DoubleComparer.Default);
-      Assert.NotEqual(0, zOut.Value.As(unit), DoubleComparer.Default);
+      Assert.NotEqual(0, x1Out.Value.As(unit));
+      Assert.NotEqual(0, x2Out.Value.As(unit));
+      Assert.NotEqual(0, yOut.Value.As(unit));
+      Assert.NotEqual(0, zOut.Value.As(unit));
 
-      Assert.Equal(x1, x1Out.Value.As(unit), DoubleComparer.Default);
-      Assert.Equal(x2, x2Out.Value.As(unit), DoubleComparer.Default);
-      Assert.Equal(y, yOut.Value.As(unit), DoubleComparer.Default); ;
-      Assert.Equal(z, zOut.Value.As(unit), DoubleComparer.Default); ;
+      Assert.Equal(x1, x1Out.Value.As(unit), 6);
+      Assert.Equal(x2, x2Out.Value.As(unit), 6);
+      Assert.Equal(y, yOut.Value.As(unit), 6);
+      Assert.Equal(z, zOut.Value.As(unit), 6);
     }
 
     [Theory]
@@ -89,10 +88,10 @@ namespace GsaGHTests.Properties {
 
       Duplicates.AreEqual(offset, offsetGoo.Value);
       Assert.NotEqual(offset, offsetGoo.Value);
-      Assert.Equal(x1, x1Out.Value.As(unit), DoubleComparer.Default);
-      Assert.Equal(x2, x2Out.Value.As(unit), DoubleComparer.Default);
-      Assert.Equal(y, yOut.Value.As(unit), DoubleComparer.Default);
-      Assert.Equal(z, zOut.Value.As(unit), DoubleComparer.Default);
+      Assert.Equal(x1, x1Out.Value.As(unit), 6);
+      Assert.Equal(x2, x2Out.Value.As(unit), 6);
+      Assert.Equal(y, yOut.Value.As(unit), 6);
+      Assert.Equal(z, zOut.Value.As(unit), 6);
     }
   }
 }

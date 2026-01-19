@@ -136,7 +136,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(Property2D_Type.SHELL.ToString(), dup.ApiProp2d.Type.ToString());
       Assert.Equal(14, dup.Id);
       Assert.Equal(ReferenceSurface.Bottom, dup.ApiProp2d.ReferenceSurface);
-      Assert.Equal(-100, dup.AdditionalOffsetZ.As(LengthUnit.Millimeter), DoubleComparer.Default);
+      Assert.Equal(-100, dup.AdditionalOffsetZ.As(LengthUnit.Millimeter));
 
       Assert.Equal(0, orig.ApiProp2d.AxisProperty);
       Assert.Equal(99, orig.Material.Id);
@@ -147,7 +147,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(SupportType.AllEdges, orig.ApiProp2d.SupportType);
       Assert.Equal(4, orig.Id);
       Assert.Equal(ReferenceSurface.Top, orig.ApiProp2d.ReferenceSurface);
-      Assert.Equal(50, orig.AdditionalOffsetZ.As(LengthUnit.Millimeter), DoubleComparer.Default);
+      Assert.Equal(50, orig.AdditionalOffsetZ.As(LengthUnit.Millimeter));
     }
   }
 }

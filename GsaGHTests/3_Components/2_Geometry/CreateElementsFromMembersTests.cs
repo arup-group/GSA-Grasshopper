@@ -1,17 +1,12 @@
 ﻿using GsaGH.Components;
-
 using GsaGH.Parameters;
-
 
 using GsaGHTests.Helpers;
 
-
 using OasysGH.Components;
 
-
-using GsaGH.Helpers;
-
 using Xunit;
+
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class CreateElementsFromMembersTests {
@@ -40,15 +35,15 @@ namespace GsaGHTests.Components.Geometry {
 
       Assert.NotNull(node);
       Assert.Equal(1, node.Value.Id);
-      Assert.Equal(0, node.Value.Point.X, DoubleComparer.Default);
-      Assert.Equal(-1, node.Value.Point.Y, DoubleComparer.Default);
-      Assert.Equal(0, node.Value.Point.Z, DoubleComparer.Default);
+      Assert.Equal(0, node.Value.Point.X);
+      Assert.Equal(-1, node.Value.Point.Y);
+      Assert.Equal(0, node.Value.Point.Z);
 
       Assert.NotNull(e1d);
       Assert.Equal(1, e1d.Value.Id);
-      Assert.Equal(0, e1d.Value.Line.PointAtStart.X, DoubleComparer.Default);
-      Assert.Equal(-1, e1d.Value.Line.PointAtStart.Y, DoubleComparer.Default);
-      Assert.Equal(0, e1d.Value.Line.PointAtStart.Z, DoubleComparer.Default);
+      Assert.Equal(0, e1d.Value.Line.PointAtStart.X);
+      Assert.Equal(-1, e1d.Value.Line.PointAtStart.Y);
+      Assert.Equal(0, e1d.Value.Line.PointAtStart.Z);
 
       Assert.NotNull(e2d);
       Assert.Equal(400, e2d.Value.Ids.Count);

@@ -1,27 +1,18 @@
 ﻿using System;
 
-
 using GsaAPI;
 
-
 using GsaGH.Components;
-
 using GsaGH.Parameters;
-
 using GsaGH.Parameters.Enums;
 
-
 using GsaGHTests.Components.Geometry;
-
 using GsaGHTests.Helpers;
-
 
 using OasysGH.Components;
 
-
-using GsaGH.Helpers;
-
 using Xunit;
+
 namespace GsaGHTests.Components.Loads {
   [Collection("GrasshopperFixture collection")]
   public class CreateFaceLoadTests {
@@ -84,8 +75,8 @@ namespace GsaGHTests.Components.Loads {
       Assert.Equal(7, load.LoadCase.Id);
       Assert.Equal("myFaceLoad", load.ApiLoad.Name);
       Assert.Equal(-5000, load.ApiLoad.Value(0));
-      Assert.Equal(0.5, load.ApiLoad.Position.X, DoubleComparer.Default);
-      Assert.Equal(1.0, load.ApiLoad.Position.Y, DoubleComparer.Default);
+      Assert.Equal(0.5, load.ApiLoad.Position.X);
+      Assert.Equal(1.0, load.ApiLoad.Position.Y);
       Assert.Equal(GsaAPI.FaceLoadType.POINT, load.ApiLoad.Type);
       Assert.Equal(ReferenceType.None, load.ReferenceType);
     }

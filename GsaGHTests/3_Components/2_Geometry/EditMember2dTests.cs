@@ -18,8 +18,6 @@ using Rhino.Geometry;
 
 using Xunit;
 
-using GsaGH.Helpers;
-
 using LengthUnit = OasysUnits.Units.LengthUnit;
 using Line = Rhino.Geometry.Line;
 
@@ -107,25 +105,25 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void ComponentReturnValidOffsetX1Value() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.X1.Value, DoubleComparer.Default);
+      Assert.Equal(0, output.X1.Value, 6);
     }
 
     [Fact]
     public void ComponentReturnValidOffsetX2Value() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.X2.Value, DoubleComparer.Default);
+      Assert.Equal(0, output.X2.Value, 6);
     }
 
     [Fact]
     public void ComponentReturnValidOffsetYValue() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.Y.Value, DoubleComparer.Default);
+      Assert.Equal(0, output.Y.Value, 6);
     }
 
     [Fact]
     public void ComponentReturnValidOffsetZValue() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(0, output.Z.Value, DoubleComparer.Default);
+      Assert.Equal(0, output.Z.Value, 6);
     }
 
     [Fact]
@@ -137,7 +135,7 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void ComponentReturnValidMeshSize() {
       double output = _helper.GetMeshSizeOutput();
-      Assert.Equal(0.5, output, DoubleComparer.Default);
+      Assert.Equal(0.5, output, 6);
     }
 
     [Fact]
@@ -281,25 +279,25 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMemberReturnValidOffsetX1Value() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(1, output.X1.Value, DoubleComparer.Default);
+      Assert.Equal(1, output.X1.Value, 6);
     }
 
     [Fact]
     public void EditMemberReturnValidOffsetX2Value() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(2, output.X2.Value, DoubleComparer.Default);
+      Assert.Equal(2, output.X2.Value, 6);
     }
 
     [Fact]
     public void EditMemberReturnValidOffsetYValue() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(3, output.Y.Value, DoubleComparer.Default);
+      Assert.Equal(3, output.Y.Value, 6);
     }
 
     [Fact]
     public void EditMemberReturnValidOffsetZValue() {
       GsaOffset output = _helper.GetOffsetOutput();
-      Assert.Equal(4, output.Z.Value, DoubleComparer.Default);
+      Assert.Equal(4, output.Z.Value, 6);
     }
 
     [Fact]
@@ -311,7 +309,7 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMemberReturnValidMeshSize() {
       double output = _helper.GetMeshSizeOutput();
-      Assert.Equal(0.7, output, DoubleComparer.Default);
+      Assert.Equal(0.7, output, 6);
     }
 
     [Fact]
@@ -329,7 +327,7 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMemberReturnValidAngle() {
       double output = _helper.GetAngleOutput();
-      Assert.Equal(0.0, output, DoubleComparer.Default);
+      Assert.Equal(0.0, output, 6);
     }
 
     [Fact]
@@ -390,55 +388,55 @@ namespace GsaGHTests.Components.Geometry {
     [Fact]
     public void EditMemberReturnValidInclusionPointXValue() {
       Point3d output = _helper.GetInclusionPointsOutput();
-      Assert.Equal(2, output.X, DoubleComparer.Default);
+      Assert.Equal(2, output.X);
     }
 
     [Fact]
     public void EditMemberReturnValidInclusionPointYValue() {
       Point3d output = _helper.GetInclusionPointsOutput();
-      Assert.Equal(2, output.Y, DoubleComparer.Default);
+      Assert.Equal(2, output.Y);
     }
 
     [Fact]
     public void EditMemberReturnValidInclusionPointZValue() {
       Point3d output = _helper.GetInclusionPointsOutput();
-      Assert.Equal(0, output.Z, DoubleComparer.Default);
+      Assert.Equal(0, output.Z);
     }
 
     [Fact]
     public void EditMemberReturnValidInclusionLinePointAtStartXValue() {
       Curve output = _helper.GetInclusionCurveOutput();
-      Assert.Equal(3, output.PointAtStart.X, DoubleComparer.Default);
+      Assert.Equal(3, output.PointAtStart.X);
     }
 
     [Fact]
     public void EditMemberReturnValidInclusionLinePointAtStartYValue() {
       Curve output = _helper.GetInclusionCurveOutput();
-      Assert.Equal(0, output.PointAtStart.Y, DoubleComparer.Default);
+      Assert.Equal(0, output.PointAtStart.Y);
     }
 
     [Fact]
     public void EditMemberReturnValidInclusionLinePointAtStartZValue() {
       Curve output = _helper.GetInclusionCurveOutput();
-      Assert.Equal(0, output.PointAtStart.Z, DoubleComparer.Default);
+      Assert.Equal(0, output.PointAtStart.Z);
     }
 
     [Fact]
     public void EditMemberReturnValidInclusionLinePointAtEndXValue() {
       Curve output = _helper.GetInclusionCurveOutput();
-      Assert.Equal(3, output.PointAtEnd.X, DoubleComparer.Default);
+      Assert.Equal(3, output.PointAtEnd.X);
     }
 
     [Fact]
     public void EditMemberReturnValidInclusionLinePointAtEndYValue() {
       Curve output = _helper.GetInclusionCurveOutput();
-      Assert.Equal(3, output.PointAtEnd.Y, DoubleComparer.Default);
+      Assert.Equal(3, output.PointAtEnd.Y);
     }
 
     [Fact]
     public void EditMemberReturnValidInclusionLinePointAtEndZValue() {
       Curve output = _helper.GetInclusionCurveOutput();
-      Assert.Equal(0, output.PointAtEnd.Z, DoubleComparer.Default);
+      Assert.Equal(0, output.PointAtEnd.Z);
     }
   }
 
@@ -580,7 +578,7 @@ namespace GsaGHTests.Components.Geometry {
       ComponentTestHelper.SetInput(_component, input, 3);
     }
 
-    public void SetInclusionCurvesInput(Rhino.Geometry.Line input) {
+    public void SetInclusionCurvesInput(Line input) {
       ComponentTestHelper.SetInput(_component, input, 4);
     }
 

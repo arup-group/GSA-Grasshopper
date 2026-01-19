@@ -6,7 +6,6 @@ using Grasshopper.Kernel.Types;
 
 using GsaGH.Components;
 using GsaGH.Parameters;
-using GsaGH.Helpers;
 
 using GsaGHTests.Helpers;
 
@@ -52,32 +51,32 @@ namespace GsaGHTests.Components.Geometry {
 
     [Fact]
     public void ComponentShouldReturn0AsPointAtStartXValue() {
-      Assert.Equal(0, _gsaMember1dGoo.Value.PolyCurve.PointAtStart.X, DoubleComparer.Default);
+      Assert.Equal(0, _gsaMember1dGoo.Value.PolyCurve.PointAtStart.X);
     }
 
     [Fact]
     public void ComponentShouldReturnMinus1AsPointAtStartYValue() {
-      Assert.Equal(-1, _gsaMember1dGoo.Value.PolyCurve.PointAtStart.Y, DoubleComparer.Default);
+      Assert.Equal(-1, _gsaMember1dGoo.Value.PolyCurve.PointAtStart.Y);
     }
 
     [Fact]
     public void ComponentShouldReturn0AsPointAtStartZValue() {
-      Assert.Equal(0, _gsaMember1dGoo.Value.PolyCurve.PointAtStart.Z, DoubleComparer.Default);
+      Assert.Equal(0, _gsaMember1dGoo.Value.PolyCurve.PointAtStart.Z);
     }
 
     [Fact]
     public void ComponentShouldReturn7AsPointAtEndXValue() {
-      Assert.Equal(7, _gsaMember1dGoo.Value.PolyCurve.PointAtEnd.X, DoubleComparer.Default);
+      Assert.Equal(7, _gsaMember1dGoo.Value.PolyCurve.PointAtEnd.X);
     }
 
     [Fact]
     public void ComponentShouldReturn3AsPointAtEndYValue() {
-      Assert.Equal(3, _gsaMember1dGoo.Value.PolyCurve.PointAtEnd.Y, DoubleComparer.Default);
+      Assert.Equal(3, _gsaMember1dGoo.Value.PolyCurve.PointAtEnd.Y);
     }
 
     [Fact]
     public void ComponentShouldReturn1AsPointAtEndZValue() {
-      Assert.Equal(1, _gsaMember1dGoo.Value.PolyCurve.PointAtEnd.Z, DoubleComparer.Default);
+      Assert.Equal(1, _gsaMember1dGoo.Value.PolyCurve.PointAtEnd.Z);
     }
 
     [Fact]

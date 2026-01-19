@@ -1,29 +1,19 @@
 ﻿using Grasshopper.Kernel.Types;
 
-
 using GsaAPI;
 
-
 using GsaGH.Components;
-
 using GsaGHTests.Components.Geometry;
-
 using GsaGH.Parameters;
 
-
 using GsaGHTests.Helpers;
-
 using GsaGHTests.Parameters;
 
-
 using Rhino.Geometry;
-
 using Rhino.Geometry.Morphs;
 
-
-using GsaGH.Helpers;
-
 using Xunit;
+
 namespace GsaGHTests.GooWrappers {
   [Collection("GrasshopperFixture collection")]
   public class GsaElement2dGooTests {
@@ -73,7 +63,7 @@ namespace GsaGHTests.GooWrappers {
       var morph = new StretchSpaceMorph(new Point3d(0, 0, 0), new Point3d(2, 0, 0), 3);
       var morphed = (GsaElement2dGoo)output.Morph(morph);
       Assert.NotNull(morphed);
-      Assert.Equal(1.5, morphed.Value.Mesh.Vertices[1].X, DoubleComparer.Default);
+      Assert.Equal(1.5, morphed.Value.Mesh.Vertices[1].X);
     }
 
     [Fact]
@@ -83,7 +73,7 @@ namespace GsaGHTests.GooWrappers {
       var morph = new StretchSpaceMorph(new Point3d(0, 0, 0), new Point3d(2, 0, 0), 3);
       var morphed = (GsaElement2dGoo)output.Morph(morph);
       Assert.NotNull(morphed);
-      Assert.Equal(1.5, morphed.Value.Curve.PointAt(1).X, DoubleComparer.Default);
+      Assert.Equal(1.5, morphed.Value.Curve.PointAt(1).X);
     }
 
     [Fact]

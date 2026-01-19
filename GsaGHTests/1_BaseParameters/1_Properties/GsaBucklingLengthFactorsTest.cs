@@ -1,6 +1,5 @@
 ﻿using GsaAPI;
 
-using GsaGH.Helpers;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Parameters;
 
@@ -32,9 +31,9 @@ namespace GsaGHTests.Parameters {
 
       Member assembledMem1d = assembled.ApiModel.Members()[1];
 
-      Assert.Equal(1.5, assembledMem1d.MomentAmplificationFactorStrongAxis, DoubleComparer.Default);
-      Assert.Equal(2.5, assembledMem1d.MomentAmplificationFactorWeakAxis, DoubleComparer.Default);
-      Assert.Equal(0.75, assembledMem1d.EquivalentUniformMomentFactor, DoubleComparer.Default);
+      Assert.Equal(1.5, assembledMem1d.MomentAmplificationFactorStrongAxis);
+      Assert.Equal(2.5, assembledMem1d.MomentAmplificationFactorWeakAxis);
+      Assert.Equal(0.75, assembledMem1d.EquivalentUniformMomentFactor);
     }
 
     [Theory]
@@ -42,9 +41,9 @@ namespace GsaGHTests.Parameters {
     public void ConstructorTest1(double factor1, double factor2, double factor3) {
       var factors = new GsaBucklingFactors(factor1, factor2, factor3);
 
-      Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis, DoubleComparer.Default);
-      Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis, DoubleComparer.Default);
-      Assert.Equal(factor3, factors.EquivalentUniformMomentFactor, DoubleComparer.Default);
+      Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
+      Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
+      Assert.Equal(factor3, factors.EquivalentUniformMomentFactor);
     }
 
     [Theory]
@@ -60,9 +59,9 @@ namespace GsaGHTests.Parameters {
 
       var factors = new GsaBucklingFactors(member);
 
-      Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis, DoubleComparer.Default);
-      Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis, DoubleComparer.Default);
-      Assert.Equal(factor3, factors.EquivalentUniformMomentFactor, DoubleComparer.Default);
+      Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
+      Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
+      Assert.Equal(factor3, factors.EquivalentUniformMomentFactor);
     }
 
     [Theory]
@@ -79,9 +78,9 @@ namespace GsaGHTests.Parameters {
 
       var factors = new GsaBucklingFactors(member);
 
-      Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis, DoubleComparer.Default);
-      Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis, DoubleComparer.Default);
-      Assert.Equal(factor3, factors.EquivalentUniformMomentFactor, DoubleComparer.Default);
+      Assert.Equal(factor1, factors.MomentAmplificationFactorStrongAxis);
+      Assert.Equal(factor2, factors.MomentAmplificationFactorWeakAxis);
+      Assert.Equal(factor3, factors.EquivalentUniformMomentFactor);
     }
 
     [Theory]
@@ -105,9 +104,9 @@ namespace GsaGHTests.Parameters {
       duplicate.MomentAmplificationFactorWeakAxis = 20;
       duplicate.EquivalentUniformMomentFactor = 30;
 
-      Assert.Equal(factor1, original.MomentAmplificationFactorStrongAxis, DoubleComparer.Default);
-      Assert.Equal(factor2, original.MomentAmplificationFactorWeakAxis, DoubleComparer.Default);
-      Assert.Equal(factor3, original.EquivalentUniformMomentFactor, DoubleComparer.Default);
+      Assert.Equal(factor1, original.MomentAmplificationFactorStrongAxis);
+      Assert.Equal(factor2, original.MomentAmplificationFactorWeakAxis);
+      Assert.Equal(factor3, original.EquivalentUniformMomentFactor);
     }
 
     [Fact]

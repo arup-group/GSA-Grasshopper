@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 using GsaAPI;
 
-using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
@@ -51,7 +50,7 @@ namespace GsaGHTests.Parameters {
       var section = new GsaSection(profile);
 
       var areaExpected = new Area(7808.121, AreaUnit.SquareMillimeter);
-      Assert.Equal(areaExpected.Value, section.SectionProperties.Area.SquareMillimeters, DoubleComparer.Default);
+      Assert.Equal(areaExpected.Value, section.SectionProperties.Area.SquareMillimeters, 10);
     }
 
     [Fact]
@@ -65,7 +64,7 @@ namespace GsaGHTests.Parameters {
       var material = new GsaCustomMaterial(GsaMaterialTest.TestAnalysisMaterial(), 42);
       sect.Material = material;
 
-      Assert.Equal(areaExpected.Value, sect.SectionProperties.Area.SquareMillimeters, DoubleComparer.Default);
+      Assert.Equal(areaExpected.Value, sect.SectionProperties.Area.SquareMillimeters, 10);
 
       sect.Material.Id = 2;
       sect.ApiSection.Name = "mariam";
@@ -136,10 +135,10 @@ namespace GsaGHTests.Parameters {
       var tolerance = Length.FromMeters(1e-6);
 
       Assert.Equal("STD R 15 20", orig.ApiSection.Profile);
-      Assert.Equal(areaExpected.SquareMillimeters, orig.SectionProperties.Area.SquareMillimeters, DoubleComparer.Default);
+      Assert.Equal(areaExpected.SquareMillimeters, orig.SectionProperties.Area.SquareMillimeters);
 
       Assert.Equal(profile, dup.ApiSection.Profile.Substring(0, profile.Length));
-      Assert.Equal(myarea1, dup.SectionProperties.Area.SquareMillimeters, DoubleComparer.Default);
+      Assert.Equal(myarea1, dup.SectionProperties.Area.SquareMillimeters, 5);
 
       Assert.Equal(4, dup.Material.Id);
       Assert.Equal("Custom", dup.Material.MaterialType.ToString());

@@ -7,7 +7,7 @@ using GsaGHTests.Helpers;
 using Xunit;
 
 using LoadCaseType = GsaGH.Parameters.LoadCaseType;
-using GsaGH.Helpers;
+
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaFaceLoadTest {
@@ -60,7 +60,7 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(GsaAPI.EntityType.Element, original.ApiLoad.EntityType);
       Assert.Equal("name", original.ApiLoad.Name);
       Assert.False(original.ApiLoad.IsProjected);
-      Assert.Equal(0, original.ApiLoad.Value(0), DoubleComparer.Default);
+      Assert.Equal(0, original.ApiLoad.Value(0));
     }
 
     [Fact]
@@ -97,10 +97,10 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(GsaAPI.EntityType.Element, original.ApiLoad.EntityType);
       Assert.Equal("name", original.ApiLoad.Name);
       Assert.False(original.ApiLoad.IsProjected);
-      Assert.Equal(0, original.ApiLoad.Value(0), DoubleComparer.Default);
-      Assert.Equal(0, original.ApiLoad.Value(1), DoubleComparer.Default);
-      Assert.Equal(0, original.ApiLoad.Value(2), DoubleComparer.Default);
-      Assert.Equal(0, original.ApiLoad.Value(3), DoubleComparer.Default);
+      Assert.Equal(0, original.ApiLoad.Value(0));
+      Assert.Equal(0, original.ApiLoad.Value(1));
+      Assert.Equal(0, original.ApiLoad.Value(2));
+      Assert.Equal(0, original.ApiLoad.Value(3));
     }
 
     [Fact]
@@ -139,8 +139,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal("name", original.ApiLoad.Name);
       Assert.False(original.ApiLoad.IsProjected);
       Assert.Equal(0, original.ApiLoad.Value(0));
-      Assert.Equal(0.5, original.ApiLoad.Position.X, DoubleComparer.Default);
-      Assert.Equal(0.5, original.ApiLoad.Position.Y, DoubleComparer.Default);
+      Assert.Equal(0.5, original.ApiLoad.Position.X);
+      Assert.Equal(0.5, original.ApiLoad.Position.Y);
     }
 
     [Fact]

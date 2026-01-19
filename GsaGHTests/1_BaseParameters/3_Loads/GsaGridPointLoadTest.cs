@@ -7,7 +7,7 @@ using GsaGHTests.Helpers;
 using Xunit;
 
 using LoadCaseType = GsaGH.Parameters.LoadCaseType;
-using GsaGH.Helpers;
+
 namespace GsaGHTests.Parameters {
   [Collection("GrasshopperFixture collection")]
   public class GsaGridPointLoadTest {
@@ -52,8 +52,8 @@ namespace GsaGHTests.Parameters {
       Assert.Equal(Direction.X, original.ApiLoad.Direction);
       Assert.Equal(7, original.ApiLoad.GridSurface);
       Assert.Equal("name", original.ApiLoad.Name);
-      Assert.Equal(5, original.ApiLoad.X, DoubleComparer.Default);
-      Assert.Equal(6, original.ApiLoad.Y, DoubleComparer.Default);
+      Assert.Equal(5, original.ApiLoad.X);
+      Assert.Equal(6, original.ApiLoad.Y);
       Assert.Equal(10, original.ApiLoad.Value);
     }
 

@@ -1,28 +1,19 @@
 ﻿using System.Drawing;
 
-
 using Grasshopper.Kernel.Types;
 
-
 using GsaGH.Components;
-
 using GsaGH.Parameters;
 
-
 using GsaGHTests.Components.Properties;
-
 using GsaGHTests.Helpers;
-
 
 using OasysGH.Components;
 
-
 using Rhino.Geometry;
 
-
-using GsaGH.Helpers;
-
 using Xunit;
+
 namespace GsaGHTests.Components.Geometry {
   [Collection("GrasshopperFixture collection")]
   public class EditNodeTests {
@@ -52,15 +43,15 @@ namespace GsaGHTests.Components.Geometry {
       var output8 = (GH_String)ComponentTestHelper.GetOutput(comp, 8);
       var output9 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 9);
 
-      Assert.Equal(0, output0.Value.ApiNode.Position.X, DoubleComparer.Default);
-      Assert.Equal(-1, output0.Value.ApiNode.Position.Y, DoubleComparer.Default);
-      Assert.Equal(0, output0.Value.ApiNode.Position.Z, DoubleComparer.Default);
-      Assert.Equal(0, output0.Value.Point.X, DoubleComparer.Default);
-      Assert.Equal(-1, output0.Value.Point.Y, DoubleComparer.Default);
-      Assert.Equal(0, output0.Value.Point.Z, DoubleComparer.Default);
-      Assert.Equal(0, output2.Value.X, DoubleComparer.Default);
-      Assert.Equal(-1, output2.Value.Y, DoubleComparer.Default);
-      Assert.Equal(0, output2.Value.Z, DoubleComparer.Default);
+      Assert.Equal(0, output0.Value.ApiNode.Position.X);
+      Assert.Equal(-1, output0.Value.ApiNode.Position.Y);
+      Assert.Equal(0, output0.Value.ApiNode.Position.Z);
+      Assert.Equal(0, output0.Value.Point.X);
+      Assert.Equal(-1, output0.Value.Point.Y);
+      Assert.Equal(0, output0.Value.Point.Z);
+      Assert.Equal(0, output2.Value.X);
+      Assert.Equal(-1, output2.Value.Y);
+      Assert.Equal(0, output2.Value.Z);
 
       Assert.False(output0.Value.IsSupport);
       Duplicates.AreEqual(new GsaBool6(), output0.Value.Restraint);
@@ -110,15 +101,15 @@ namespace GsaGHTests.Components.Geometry {
       var output8 = (GH_String)ComponentTestHelper.GetOutput(comp, 8);
       var output9 = (GH_Colour)ComponentTestHelper.GetOutput(comp, 9);
 
-      Assert.Equal(1, output0.Value.ApiNode.Position.X, DoubleComparer.Default);
-      Assert.Equal(2, output0.Value.ApiNode.Position.Y, DoubleComparer.Default);
-      Assert.Equal(3, output0.Value.ApiNode.Position.Z, DoubleComparer.Default);
-      Assert.Equal(1, output0.Value.Point.X, DoubleComparer.Default);
-      Assert.Equal(2, output0.Value.Point.Y, DoubleComparer.Default);
-      Assert.Equal(3, output0.Value.Point.Z, DoubleComparer.Default);
-      Assert.Equal(1, output2.Value.X, DoubleComparer.Default);
-      Assert.Equal(2, output2.Value.Y, DoubleComparer.Default);
-      Assert.Equal(3, output2.Value.Z, DoubleComparer.Default);
+      Assert.Equal(1, output0.Value.ApiNode.Position.X);
+      Assert.Equal(2, output0.Value.ApiNode.Position.Y);
+      Assert.Equal(3, output0.Value.ApiNode.Position.Z);
+      Assert.Equal(1, output0.Value.Point.X);
+      Assert.Equal(2, output0.Value.Point.Y);
+      Assert.Equal(3, output0.Value.Point.Z);
+      Assert.Equal(1, output2.Value.X);
+      Assert.Equal(2, output2.Value.Y);
+      Assert.Equal(3, output2.Value.Z);
 
       Assert.True(output0.Value.IsSupport);
       Duplicates.AreEqual(new GsaBool6(true, true, true, true, true, true),
