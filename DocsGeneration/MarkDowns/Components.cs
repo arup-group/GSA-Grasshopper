@@ -163,8 +163,6 @@ namespace DocsGeneration.MarkDowns {
       var stringBuilder = new StringBuilder();
       stringBuilder.AppendLine($"# {category} components \n");
 
-      var tempTable = new List<List<string>> { };
-
       var subCategories = new List<string>() {
         "Primary",
         "Secondary",
@@ -176,6 +174,7 @@ namespace DocsGeneration.MarkDowns {
       };
 
       for (int i = 0; i < subCategories.Count; i++) {
+        var tempTable = new List<List<string>>();
         foreach (Component component in components) {
           if (component.SubCategory - 1 != i) {
             continue;
