@@ -40,10 +40,6 @@ namespace GsaGH.Parameters {
     public IEnumerable<Line> Outlines { get; set; }
 
     public Section3dPreview(GsaElement1d elem) {
-      if (elem.ApiElement == null || !GsaSection.IsValidProfile(elem.Section.ApiSection.Profile)) {
-        return;
-      }
-
       Model model = AssembleTempModel(elem);
       CreateGraphics(model, Layer.Analysis, DimensionType.OneDimensional);
     }
@@ -150,7 +146,10 @@ namespace GsaGH.Parameters {
       };
       GSAElement elem1d = elem.DuplicateApiObject();
       elem1d.Topology = new ReadOnlyCollection<int>(topo);
-      elem1d.Property = model.AddSection(elem.Section.ApiSection);
+      elem1d.Property = elem.Section.Id;
+      if (elem.Section.ApiSection != null ) {
+        elem1d.Property = model.AddSection(elem.Section.ApiSection);
+      }
       model.AddElement(elem1d.Element);
       return model;
     }
@@ -166,7 +165,10 @@ namespace GsaGH.Parameters {
       };
       Member mem1d = mem.DuplicateApiObject();
       mem1d.Topology = topo.Trim();
-      mem1d.Property = model.AddSection(mem.Section.ApiSection);
+      mem1d.Property = mem.Section.Id;
+      if (mem.Section.ApiSection != null) {
+        mem1d.Property = model.AddSection(mem.Section.ApiSection);
+      }
       model.AddMember(mem1d);
       return model;
     }
@@ -181,7 +183,10 @@ namespace GsaGH.Parameters {
         };
         GSAElement element = elem.ApiElements[i];
         element.Topology = new ReadOnlyCollection<int>(topo);
-        element.Property = model.AddProp2D(elem.Prop2ds[i].ApiProp2d);
+        element.Property = elem.Prop2ds[i].Id;
+        if (elem.Prop2ds[i].ApiProp2d != null) {
+          element.Property = model.AddProp2D(elem.Prop2ds[i].ApiProp2d);
+        }
         if (element.IsLoadPanel) {
           model.AddLoadPanelElement(element.LoadPanelElement);
         } else {
@@ -203,7 +208,10 @@ namespace GsaGH.Parameters {
       };
       Member mem2d = mem.DuplicateApiObject();
       mem2d.Topology = topo.Trim();
-      mem2d.Property = model.AddProp2D(mem.Prop2d.ApiProp2d);
+      mem2d.Property = mem.Prop2d.Id;
+      if (mem.Prop2d.ApiProp2d != null) {
+        mem2d.Property = model.AddProp2D(mem.Prop2d.ApiProp2d);
+      }
       model.AddMember(mem2d);
       return model;
     }
