@@ -40,6 +40,7 @@ namespace GsaGHTests.Components.Properties {
       LengthUnit.Millimeter)]
     [InlineData("STD I 1000 200 7 8", 1000, 200, 200, 200, 8, 8, 7, 0, 0, LengthUnit.Millimeter)]
     [InlineData("STD RHS 400 200 7 8", 400, 200, 200, 200, 8, 8, 7, 0, 0, LengthUnit.Millimeter)]
+    [InlineData("STD RHS 400 200 7", 400, 200, 200, 200, 7, 7, 7, 0, 0, LengthUnit.Millimeter)]
     [InlineData("STD R 250 300", 250, 300, 300, 300, 0, 0, 0, 0, 0, LengthUnit.Millimeter)]
     [InlineData("STD RE 400 250 350 200 2", 400, 350, 250, 200, 0, 0, 0, 0, 0,
       LengthUnit.Millimeter)]
