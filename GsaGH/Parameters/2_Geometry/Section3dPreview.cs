@@ -124,6 +124,19 @@ namespace GsaGH.Parameters {
         var scalar = Rhino.Geometry.Transform.Scale(new Point3d(0, 0, 0), unitScaleFactor);
         Transform(scalar);
       }
+      ZoomToBoundingBox();
+    }
+
+    private void ZoomToBoundingBox() {
+      BoundingBox bbox = Mesh.GetBoundingBox(true);
+      foreach (Line line in Outlines) {
+        bbox = BoundingBox.Union(bbox, new BoundingBox(line.From, line.To));
+      }
+      Rhino.Display.RhinoView view = RhinoDoc.ActiveDoc?.Views.ActiveView;
+      if (view != null) {
+        view.ActiveViewport.ZoomBoundingBox(bbox);
+        view.Redraw();
+      }
     }
 
     public void Transform(Transform xform) {
