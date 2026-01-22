@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
@@ -9,7 +10,7 @@ using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
-using GsaGHTests.TestHelpers;
+
 
 using OasysUnits;
 using OasysUnits.Units;
@@ -47,8 +48,8 @@ namespace GsaGHTests.Components.Results {
       List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
       // Assert
-      double max = output.Max().As(Unit(component)); ;
-      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      double max = output.Max().As(Unit()); ;
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -69,8 +70,8 @@ namespace GsaGHTests.Components.Results {
       List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
       // Assert
-      double max = output.Max().As(Unit(component));
-      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      double max = output.Max().As(Unit());
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -91,8 +92,8 @@ namespace GsaGHTests.Components.Results {
       List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
       // Assert
-      double min = output.Min().As(Unit(component));
-      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      double min = output.Min().As(Unit());
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Theory]
@@ -113,8 +114,8 @@ namespace GsaGHTests.Components.Results {
       List<IQuantity> output = ComponentTestHelper.GetResultOutput(comp, (int)component);
 
       // Assert
-      double min = output.Min().As(Unit(component));
-      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      double min = output.Min().As(Unit());
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     private List<double> ExpectedAnalysisCaseValues(DriftResultVector component) {
@@ -137,7 +138,7 @@ namespace GsaGHTests.Components.Results {
       throw new NotImplementedException();
     }
 
-    private Enum Unit(DriftResultVector component) {
+    private Enum Unit() {
       Enum unit = LengthUnit.Millimeter;
       return unit;
     }

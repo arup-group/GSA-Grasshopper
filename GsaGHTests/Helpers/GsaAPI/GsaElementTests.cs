@@ -1,12 +1,12 @@
 ﻿using System;
+
+using Xunit;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
-
 using GsaAPI;
-
-using Xunit;
+using GsaGH.Helpers;
 
 namespace GsaGHTests.Helpers.GsaAPITests {
 
@@ -275,12 +275,12 @@ namespace GsaGHTests.Helpers.GsaAPITests {
 
     [Fact]
     public void OffsetShouldSetYValueCorrectlyForParent() {
-      Assert.Equal(1, gsaElement.Offset.Y);
+      Assert.Equal(1, gsaElement.Offset.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void OffsetShouldSetZValueCorrectlyForParent() {
-      Assert.Equal(1, gsaElement.Offset.Z);
+      Assert.Equal(1, gsaElement.Offset.Z, DoubleComparer.Default);
     }
 
     [Fact]
@@ -295,12 +295,12 @@ namespace GsaGHTests.Helpers.GsaAPITests {
 
     [Fact]
     public void OffsetShouldSetYValueCorrectlyForChild() {
-      Assert.Equal(1, gsaElement.Element.Offset.Y);
+      Assert.Equal(1, gsaElement.Element.Offset.Y, DoubleComparer.Default);
     }
 
     [Fact]
     public void OffsetShouldSetZValueCorrectlyForChild() {
-      Assert.Equal(1, gsaElement.Element.Offset.Z);
+      Assert.Equal(1, gsaElement.Element.Offset.Z, DoubleComparer.Default);
     }
 
     [Fact]

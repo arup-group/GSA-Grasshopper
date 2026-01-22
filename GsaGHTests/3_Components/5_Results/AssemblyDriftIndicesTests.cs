@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
@@ -9,7 +10,7 @@ using GsaGH.Parameters.Results;
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
-using GsaGHTests.TestHelpers;
+
 
 using OasysUnits;
 using OasysUnits.Units;
@@ -48,7 +49,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert
       double max = output.Max().As(RatioUnit.DecimalFraction);
-      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -70,7 +71,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert
       double max = output.Max().As(RatioUnit.DecimalFraction);
-      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -92,7 +93,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert
       double min = output.Min().As(RatioUnit.DecimalFraction);
-      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Theory]
@@ -114,7 +115,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert
       double min = output.Min().As(RatioUnit.DecimalFraction);
-      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     private List<double> ExpectedAnalysisCaseValues(DriftResultVector component) {

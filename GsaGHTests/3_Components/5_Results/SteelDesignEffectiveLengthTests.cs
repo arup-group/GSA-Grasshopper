@@ -5,6 +5,7 @@ using System.Linq;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
@@ -110,7 +111,7 @@ namespace GsaGHTests.Components.Results {
          .Select(x => ((GH_String)x).Value).ToList();
         for (int i = 0; i < expected.Count; i++) {
           Assert.Equal(expected[i],
-            ResultHelper.RoundToSignificantDigits(double.Parse(strResult[i]), 4));
+            double.Parse(strResult[i]));
         }
       }
     }
@@ -170,9 +171,7 @@ namespace GsaGHTests.Components.Results {
 
         for (int i = 0; i < expected.Count; i++) {
           List<IQuantity> resultOutput = ComponentTestHelper.GetResultOutput(comp, (int)outputType);
-          Assert.Equal(expected[i],
-            ResultHelper.RoundToSignificantDigits(resultOutput[i].As(LengthUnit.Millimeter),
-              4));
+          Assert.Equal(expected[i], resultOutput[i].As(LengthUnit.Millimeter), DoubleComparer.Default);
         }
       }
     }
@@ -199,8 +198,8 @@ namespace GsaGHTests.Components.Results {
           List<IQuantity> resultOutput = ComponentTestHelper.GetResultOutput(comp, (int)outputType);
 
           Assert.Equal(expected[i],
-            ResultHelper.RoundToSignificantDigits(resultOutput[i].As(RatioUnit.DecimalFraction),
-              4));
+           resultOutput[i].As(RatioUnit.DecimalFraction),
+              DoubleComparer.Default);
         }
       }
     }
@@ -230,7 +229,7 @@ namespace GsaGHTests.Components.Results {
           var ratioResult = ComponentTestHelper.GetResultOutputAllData(comp, (int)outputType)
            .Select(x => ((GH_Number)x).Value).ToList();
 
-          Assert.Equal(expected[i], ResultHelper.RoundToSignificantDigits(ratioResult[i], 4));
+          Assert.Equal(expected[i], ratioResult[i], DoubleComparer.Default);
         }
       }
     }

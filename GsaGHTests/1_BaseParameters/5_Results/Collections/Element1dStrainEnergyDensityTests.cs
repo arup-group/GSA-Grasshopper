@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters.Results;
 
@@ -59,7 +60,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double max = resultSet.GetExtrema(resultSet.Max).EnergyDensity.Kilojoules;
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Fact]
@@ -76,7 +77,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double max = resultSet.GetExtrema(resultSet.Max).EnergyDensity.Kilojoules;
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Fact]
@@ -92,7 +93,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double min = resultSet.GetExtrema(resultSet.Min).EnergyDensity.Kilojoules;
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Fact]
@@ -109,7 +110,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double min = resultSet.GetExtrema(resultSet.Min).EnergyDensity.Kilojoules;
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Fact]
@@ -135,7 +136,7 @@ namespace GsaGHTests.Parameters.Results {
         k => (double)k / (positionsCount - 1)).ToList();
         foreach (double position in positions) {
           double value = strainEnergy[0].Results[position].EnergyDensity.Kilojoules;
-          Assert.Equal(expected[i++], ResultHelper.RoundToSignificantDigits(value, 4));
+          Assert.Equal(expected[i++], value, DoubleComparer.Default);
         }
       }
     }
@@ -165,9 +166,9 @@ namespace GsaGHTests.Parameters.Results {
         k => (double)k / (positionsCount - 1)).ToList();
         foreach (double position in positions) {
           double perm1 = strainEnergy[0].Results[position].EnergyDensity.Kilojoules;
-          Assert.Equal(expectedP1[i], ResultHelper.RoundToSignificantDigits(perm1, 4));
+          Assert.Equal(expectedP1[i], perm1, DoubleComparer.Default);
           double perm2 = strainEnergy[1].Results[position].EnergyDensity.Kilojoules;
-          Assert.Equal(expectedP2[i++], ResultHelper.RoundToSignificantDigits(perm2, 4));
+          Assert.Equal(expectedP2[i++], perm2, DoubleComparer.Default);
         }
       }
     }

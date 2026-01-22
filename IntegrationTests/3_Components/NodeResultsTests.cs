@@ -7,6 +7,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
+
 using Xunit;
 
 namespace IntegrationTests.Components {
@@ -22,7 +24,7 @@ namespace IntegrationTests.Components {
       var output1 = (GH_Number)param1.VolatileData.get_Branch(0)[0];
       IGH_Param param2 = Helper.FindParameter(doc, "ScaledContour");
       var output2 = (GH_Number)param2.VolatileData.get_Branch(0)[0];
-      Assert.Equal(output1.Value, output2.Value, 6);
+      Assert.Equal(output1.Value, output2.Value, DoubleComparer.Default);
     }
 
     [Fact]
