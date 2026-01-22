@@ -1,0 +1,14 @@
+name: "CSharp CodeQL Config"
+
+paths:
+  - "."
+
+paths-ignore:
+  - "**/bin/**"
+  - "**/obj/**"
+  - "**/*.g.cs"
+  - "**/*.Designer.cs"
+  - "**/TestReferences/**"
+
+languages:
+  - csharp

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 using Grasshopper.Kernel;
@@ -22,9 +23,11 @@ namespace GsaGH.Components {
     public override Guid ComponentGuid => new Guid("4a322b8e-031a-4c90-b8df-b32d162a3274");
     public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
-    internal Line _previewXaxis;
-    internal Line _previewYaxis;
-    internal Line _previewZaxis;
+
+    internal readonly List<Line> _previewXaxes = new List<Line>();
+    internal readonly List<Line> _previewYaxes = new List<Line>();
+    internal readonly List<Line> _previewZaxes = new List<Line>();
+
     protected override Bitmap Icon => Resources.LocalAxes;
     public LocalAxes() : base("Local Axes", "Axes",
       "Get the local axes from a 1D Element or Member",
@@ -33,16 +36,14 @@ namespace GsaGH.Components {
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
 
-      if (_previewXaxis != null) {
-        args.Display.DrawLine(_previewXaxis, Color.FromArgb(255, 244, 96, 96), 3);
+      foreach (Line line in _previewXaxes) {
+        args.Display.DrawLine(line, Color.FromArgb(255, 244, 96, 96), 3);
       }
-
-      if (_previewYaxis != null) {
-        args.Display.DrawLine(_previewYaxis, Color.FromArgb(255, 96, 244, 96), 1);
+      foreach (Line line in _previewYaxes) {
+        args.Display.DrawLine(line, Color.FromArgb(255, 96, 244, 96), 1);
       }
-
-      if (_previewZaxis != null) {
-        args.Display.DrawLine(_previewZaxis, Color.FromArgb(255, 96, 96, 234), 1);
+      foreach (Line line in _previewZaxes) {
+        args.Display.DrawLine(line, Color.FromArgb(255, 96, 96, 234), 1);
       }
     }
 
@@ -58,6 +59,13 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddVectorParameter("Local Z", "Z", "Element1D or Member1D's local X-axis",
         GH_ParamAccess.item);
+    }
+
+    protected override void BeforeSolveInstance() {
+      base.BeforeSolveInstance();
+      _previewXaxes.Clear();
+      _previewYaxes.Clear();
+      _previewZaxes.Clear();
     }
 
     protected override void SolveInstance(IGH_DataAccess da) {
@@ -130,9 +138,10 @@ namespace GsaGH.Components {
       da.SetData(0, x);
       da.SetData(1, y);
       da.SetData(2, z);
-      _previewXaxis = new Line(midPt, x, size);
-      _previewYaxis = new Line(midPt, y, size);
-      _previewZaxis = new Line(midPt, z, size);
+
+      _previewXaxes.Add(new Line(midPt, x, size));
+      _previewYaxes.Add(new Line(midPt, y, size));
+      _previewZaxes.Add(new Line(midPt, z, size));
     }
   }
 }

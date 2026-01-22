@@ -1,61 +1,46 @@
+﻿function Has-Version {
+    param ($version)
 
-function Has-Version {
-  param ($version)
-
-  # Check if the version argument is provided
-  if ($version.Count -eq 0) {
-      Write-Host "Please provide the version number as an argument. Usage: .\bump-version.ps1 <new-version>"
+    if (-not $version) {
+        Write-Host "Please provide the version number. Usage: .\bump-version.ps1 <new-version>"
         exit
-  }
+    }
 
-  # Get the new version from the CLI argument
-  return $version[0]
+    $version[0]
 }
 
-$newVersion = Has-Version($args)
+$newVersion = Has-Version $args
 
-# Function to validate the version format (X.X.X where X is a number)
 function Validate-VersionFormat {
-    param (
-        [string]$version
-    )
-
-    # Regex pattern for validating version format (X.X.X)
-    $versionPattern = '^\d+\.\d+\.\d+$'
-
-    # Check if version matches the pattern
-    return $version -match $versionPattern
+    param ([string]$version)
+    $version -match '^\d+\.\d+\.\d+$'
 }
 
-# Function to update version in a file
-function Update-Version {
+function Update-FileContent {
     param (
         [string]$filePath,
         [string]$searchPattern,
-        [string]$newVersion,
         [string]$replacementPattern
     )
 
-    # Read the content of the file
-    $content = Get-Content $filePath
+    $content = Get-Content $filePath -Encoding UTF8
+    $updated = $content -replace $searchPattern, $replacementPattern
+    $updated = $updated -replace "`r`n", "`n"
 
-    # Replace the version based on the provided pattern and replacement
-    $updatedContent = $content -replace $searchPattern, $replacementPattern
-
-    # Write the updated content back to the file
-    Set-Content $filePath -Value $updatedContent
-
-    Write-Host "Updated version in $filePath to $newVersion"
+    Set-Content $filePath -Value $updated -Encoding UTF8 -Force
+    Write-Host "Updated file '$filePath' using pattern '$searchPattern' to '$replacementPattern'"
 }
 
-# Check if the version format is valid
 if (-not (Validate-VersionFormat $newVersion)) {
-    Write-Host "Invalid version format. Please use the format: X.X.X where X is a number."
+    Write-Host "Invalid version format. Use X.X.X"
     exit
 }
 
-# Define the paths and patterns for each file
-$filesToUpdate = @(
+$currentYear = (Get-Date).Year
+
+# Define updates
+$updates = @(
+    # Version updates
     @{
         FilePath = ".\GsaGH\GsaGH.csproj"
         SearchPattern = '<Version>(.*?)<\/Version>'
@@ -64,13 +49,42 @@ $filesToUpdate = @(
     @{
         FilePath = ".\GsaGH\GsaGHInfo.cs"
         SearchPattern = 'string GrasshopperVersion = "(.*?)"'
-        ReplacementPattern = 'string GrasshopperVersion = "' + $newVersion + '"'
+        ReplacementPattern = "string GrasshopperVersion = `"$newVersion`""
+    },
+
+    # Year updates
+    @{
+        FilePath = ".\GsaGH\GsaGH.csproj"
+        SearchPattern = '1985 - \d{4}'
+        ReplacementPattern = "1985 - $currentYear"
+    },
+    @{
+        FilePath = ".\GsaGH\GsaGHInfo.cs"
+        SearchPattern = '1985 - \d{4}'
+        ReplacementPattern = "1985 - $currentYear"
+    },
+    @{
+        FilePath = ".\GsaGH\UI\AboutBox.cs"
+        SearchPattern = '1985 - \d{4}'
+        ReplacementPattern = "1985 - $currentYear"
+    },
+    @{
+        FilePath = ".\GsaGHTests\UI\AboutBoxTests.cs"
+        SearchPattern = '1985 - \d{4}'
+        ReplacementPattern = "1985 - $currentYear"
+    },
+    @{
+        FilePath = "LICENSE"
+        SearchPattern = '2020-\d{4}'
+        ReplacementPattern = "2020-$currentYear"
     }
 )
 
-# Loop through each file and update the version
-foreach ($file in $filesToUpdate) {
-    Update-Version -filePath $file.FilePath -searchPattern $file.SearchPattern -newVersion $newVersion -replacementPattern $file.ReplacementPattern
+foreach ($item in $updates) {
+    Update-FileContent `
+        -filePath $item.FilePath `
+        -searchPattern $item.SearchPattern `
+        -replacementPattern $item.ReplacementPattern
 }
 
-Write-Host "Version update completed."
+Write-Host "All updates completed."
