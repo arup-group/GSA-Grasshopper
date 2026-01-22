@@ -122,7 +122,7 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void DriftShouldNotHaveError() {
       var comp = new AssemblyDrifts();
-      ComponentTestHelper.SetInput(comp, new GsaResultGoo(GsaResultTests.AnalysisCaseResult(GsaFile.AssemblyRessult, 1)));
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(GsaResultTests.AnalysisCaseResult(GsaFile.AssemblyResult, 1)));
       object output = ComponentTestHelper.GetOutput(comp);
       Assert.NotNull(output);
       Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
