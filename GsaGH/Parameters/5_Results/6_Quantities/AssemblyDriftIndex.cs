@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 using GsaAPI;
 
@@ -11,9 +12,9 @@ namespace GsaGH.Parameters.Results {
 
     internal AssemblyDriftIndex(ReadOnlyCollection<AssemblyDriftIndexResult> result) {
       for (int i = 0; i < result.Count; i++) {
-        Results.Add(result[i].Position, new DriftIndex(result[i]));
-        Storeys.Add(result[i].Storey);
+        Results[result[i].Position] = new DriftIndex(result[i]);
       }
+      Storeys = result.Select(r => r.Storey).Distinct().ToList();
     }
 
     public IEntity1dQuantity<DriftIndex> TakePositions(ICollection<double> positions) {

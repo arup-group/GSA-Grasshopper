@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Grasshopper.Kernel;
+
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
@@ -115,6 +117,15 @@ namespace GsaGHTests.Components.Results {
       // Assert
       double min = output.Min().As(RatioUnit.DecimalFraction);
       DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+    }
+
+    [Fact]
+    public void DriftIndicesShouldNotHaveError() {
+      var comp = new AssemblyDriftIndices();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(GsaResultTests.AnalysisCaseResult(GsaFile.AssemblyRessult, 1)));
+      object output = ComponentTestHelper.GetOutput(comp);
+      Assert.NotNull(output);
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
     }
 
     private List<double> ExpectedAnalysisCaseValues(DriftResultVector component) {

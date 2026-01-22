@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 using GsaAPI;
 
@@ -11,9 +12,9 @@ namespace GsaGH.Parameters.Results {
 
     internal AssemblyInternalForce(ReadOnlyCollection<AssemblyResult> result) {
       for (int i = 0; i < result.Count; i++) {
-        Results.Add(result[i].Position, new InternalForce(result[i]));
-        Storeys.Add(result[i].Storey);
+        Results[result[i].Position] = new InternalForce(result[i]);
       }
+      Storeys = result.Select(r => r.Storey).Distinct().ToList();
     }
 
     public IEntity1dQuantity<IInternalForce> TakePositions(ICollection<double> positions) {

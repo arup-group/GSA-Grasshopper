@@ -13,6 +13,7 @@ namespace GsaGHTests.Helper {
     private static string _assemblySimple = string.Empty;
     private static string _assemblyByStorey = string.Empty;
     private static string _fabricMaterialModel = string.Empty;
+    private static string _assemblyResult = string.Empty;
 
     internal static string SteelDesignComplex {
       get {
@@ -108,6 +109,16 @@ namespace GsaGHTests.Helper {
         }
 
         return _assemblyByStorey;
+      }
+    }
+
+    internal static string AssemblyRessult {
+      get {
+        if (_assemblyResult == string.Empty) {
+          _assemblyResult = FilePath("assembly_result.gwb");
+        }
+
+        return _assemblyResult;
       }
     }
 
