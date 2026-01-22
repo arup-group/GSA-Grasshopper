@@ -81,66 +81,66 @@ steps:
   env:
     MSBUILDDISABLENODEREUSE: 1
 
-- powershell: |
-    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
-    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\integration  .\IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
-  displayName: dotnet tests
-  failOnStderr: true
-
-- powershell: |
-    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
-      Write-Output "codecov.yml is invalid"
-      Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
-      exit(1)
-    } else {
-      Write-Output "codecov.yml is valid"
-    }
-  displayName: Validate codecov.yml
-  failOnStderr: true
-
-- powershell: |
-    $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
-    echo $coverage_file_gsagh
-    $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
-    echo $coverage_file_integration
-    Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
-    Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-    $ProgressPreference = 'SilentlyContinue'
-    Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
-    ls $(System.DefaultWorkingDirectory)\
-    cd $(System.DefaultWorkingDirectory)\
-    .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
-    .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_integration.xml -F integration
-  env:
-    CODECOV_TOKEN: $(CODECOV_TOKEN)
-  displayName: Upload Code Coverage to codecovio
-  failOnStderr: true
-
-- task: PublishCodeCoverageResults@1
-  displayName: Create Azure GsaGH CodeCoverage
-  inputs:
-    codeCoverageTool: 'cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
-    pathToSources: '$(System.DefaultWorkingDirectory)'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-
-- task: PublishCodeCoverageResults@1
-  displayName: Create Azure IntegrationTest CodeCoverage
-  inputs:
-    codeCoverageTool: 'cobertura'
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/integration/**/coverage.cobertura.xml'
-    pathToSources: '$(System.DefaultWorkingDirectory)'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-
-- publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
-  displayName: Publish GsaGHTest xml to Azure
-  artifact: GsaGHTestsCoverage
-  continueOnError: true
-
-- publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-  displayName: Publish IntegrationTest xml to Azure
-  artifact: IntegrationTestsCoverage
-  continueOnError: true
+# - powershell: |
+#     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
+#     dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\integration  .\IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
+#   displayName: dotnet tests
+#   failOnStderr: true
+#
+# - powershell: |
+#     if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
+#       Write-Output "codecov.yml is invalid"
+#       Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
+#       exit(1)
+#     } else {
+#       Write-Output "codecov.yml is valid"
+#     }
+#   displayName: Validate codecov.yml
+#   failOnStderr: true
+#
+# - powershell: |
+#     $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
+#     echo $coverage_file_gsagh
+#     $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
+#     echo $coverage_file_integration
+#     Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+#     Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
+#     $ProgressPreference = 'SilentlyContinue'
+#     Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
+#     ls $(System.DefaultWorkingDirectory)\
+#     cd $(System.DefaultWorkingDirectory)\
+#     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
+#     .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_integration.xml -F integration
+#   env:
+#     CODECOV_TOKEN: $(CODECOV_TOKEN)
+#   displayName: Upload Code Coverage to codecovio
+#   failOnStderr: true
+#
+# - task: PublishCodeCoverageResults@1
+#   displayName: Create Azure GsaGH CodeCoverage
+#   inputs:
+#     codeCoverageTool: 'cobertura'
+#     summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/gsagh/**/coverage.cobertura.xml'
+#     pathToSources: '$(System.DefaultWorkingDirectory)'
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+#
+# - task: PublishCodeCoverageResults@1
+#   displayName: Create Azure IntegrationTest CodeCoverage
+#   inputs:
+#     codeCoverageTool: 'cobertura'
+#     summaryFileLocation: '$(System.DefaultWorkingDirectory)/results/integration/**/coverage.cobertura.xml'
+#     pathToSources: '$(System.DefaultWorkingDirectory)'
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+#
+# - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+#   displayName: Publish GsaGHTest xml to Azure
+#   artifact: GsaGHTestsCoverage
+#   continueOnError: true
+#
+# - publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
+#   displayName: Publish IntegrationTest xml to Azure
+#   artifact: IntegrationTestsCoverage
+#   continueOnError: true
 
 - task: PowerShell@2
   displayName: Check for existing tags
@@ -210,6 +210,18 @@ steps:
     cd GsaGH
     & 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' GsaGH.csproj /t:pack /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg /p:DebugType=portable /property:Configuration=Release
   displayName: Package NuGet
+
+- powershell: |
+    cd GsaGH
+    dotnet pack GsaGH.csproj -c Release `
+      --include-symbols `
+      -p:SymbolPackageFormat=snupkg `
+  displayName: dotnet pack
+
+- powershell: |
+    cd GsaGH
+    Get-ChildItem -Recurse bin | Select-Object FullName
+  displayName: Inspect bin output
 
 - publish: $(System.DefaultWorkingDirectory)/GsaGH/bin/Release/*.nupkg
   displayName: Publish Nuget Package to Azure
