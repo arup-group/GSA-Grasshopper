@@ -8,7 +8,7 @@ using GsaAPI;
 namespace GsaGH.Parameters.Results {
   public class AssemblyInternalForce : IEntity1dQuantity<IInternalForce> {
     public IDictionary<double, IInternalForce> Results { get; private set; } = new Dictionary<double, IInternalForce>();
-    public IList<string> Storeys { get; private set; } = new List<string>();
+    public IList<string> Storeys { get; private set; }
 
     internal AssemblyInternalForce(ReadOnlyCollection<AssemblyResult> result) {
       for (int i = 0; i < result.Count; i++) {

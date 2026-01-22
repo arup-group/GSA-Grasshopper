@@ -8,7 +8,7 @@ using GsaAPI;
 namespace GsaGH.Parameters.Results {
   public class AssemblyDrift : IEntity1dQuantity<Drift> {
     public IDictionary<double, Drift> Results { get; private set; } = new Dictionary<double, Drift>();
-    public IList<string> Storeys { get; private set; } = new List<string>();
+    public IList<string> Storeys { get; private set; }
 
     internal AssemblyDrift(ReadOnlyCollection<AssemblyDriftResult> result) {
       for (int i = 0; i < result.Count; i++) {
