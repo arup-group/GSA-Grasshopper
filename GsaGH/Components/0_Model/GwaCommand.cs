@@ -11,7 +11,7 @@ using GsaGH.Helpers.GsaCOM;
 using GsaGH.Parameters;
 using GsaGH.Properties;
 
-using Interop.Gsa_10_2;
+using Interop.Gsa_10_3;
 
 using OasysGH;
 using OasysGH.Components;

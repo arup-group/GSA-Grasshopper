@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 namespace GsaGH.Helpers {
+
   public class DoubleComparer : IEqualityComparer<double>, IEqualityComparer<double?> {
     public static readonly DoubleComparer Default = new DoubleComparer();
 
