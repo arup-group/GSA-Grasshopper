@@ -99,6 +99,12 @@ namespace DocsGeneration.MarkDowns.Helpers {
       return left;
     }
 
+    public static string Replace(string oldValue) {
+      return oldValue.Replace(Environment.NewLine, "<br />").Replace("|", "&#124;").Replace("{ `", @"\{ `")
+       .Replace("` }", @"` \}").Replace("{`", @"\{`").Replace("`}", @"`\}").Replace("|*", @"| \*").Replace("_*", @"_\*")
+       .Replace(" {i} ", " `{i}` ");
+    }
+
     private static bool EndsWithArticleAndSpace(string word)
     {
       return word.EndsWith("a ");
