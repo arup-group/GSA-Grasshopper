@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 using DocsGeneration.Data;
 using DocsGeneration.MarkDowns.Helpers;
@@ -12,57 +13,58 @@ namespace DocsGeneration.MarkDowns {
       Configuration config) {
       Console.WriteLine($"Writing sidebar");
       // intro
-      string sb = "/*\n --- Start of auto-generated text --- \n"
+      var sb = new StringBuilder();
+      sb.Append("/*\n --- Start of auto-generated text --- \n"
         + "This part of the sidebar file has been auto-generated, do not change it manually! Edit"
-        + " the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration\n*/\n";
+        + " the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration\n*/\n");
       int ind = 2;
-      sb += "{\r\n";
-      sb += AddLine(ind, "type: 'category',");
-      sb += "\tlabel: 'GSA Grasshopper plugin',\r\n";
-      sb += AddLine(ind, "items: [");
+      sb.Append("{\r\n");
+      sb.Append(AddLine(ind, "type: 'category',"));
+      sb.Append("\tlabel: 'GSA Grasshopper plugin',\r\n");
+      sb.Append(AddLine(ind, "items: ["));
       ind += 2;
 
       string projectNameLower = config.ProjectName.ToLower();
-      var page = $"references/{projectNameLower}/";
+      string page = $"references/{projectNameLower}/";
       // Parameter sidebar
-      sb += AddLine(ind, "{");
+      sb.Append(AddLine(ind, "{"));
       ind += 2;
-      sb += AddLine(ind, "type: 'category',");
-      sb += AddLine(ind, "label: 'Parameters',");
-      sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}{projectNameLower}-parameters'}},");
-      sb += AddLine(ind, "items: [");
+      sb.Append(AddLine(ind, "type: 'category',"));
+      sb.Append(AddLine(ind, "label: 'Parameters',"));
+      sb.Append(AddLine(ind, $"link: {{type: 'doc', id: '{page}{projectNameLower}-parameters'}},"));
+      sb.Append(AddLine(ind, "items: ["));
       ind += 2;
       foreach (string key in parameters.Keys) {
         foreach (Parameter parameter in parameters[key]) {
           string file = FileHelper.CreateSideBarFileName(FileHelper.CreateFileName(parameter, config.ProjectName));
-          sb += AddLine(ind, $"'{page}{file}',");
+          sb.Append(AddLine(ind, $"'{page}{file}',"));
         }
       }
 
-      sb += AddLine(ind, $"'{page}{projectNameLower}-unitnumber-parameter'");
+      sb.Append(AddLine(ind, $"'{page}{projectNameLower}-unitnumber-parameter'"));
       ind -= 2;
-      sb += AddLine(ind, "]");
+      sb.Append(AddLine(ind, "]"));
       ind -= 2;
-      sb += AddLine(ind, "},");
+      sb.Append(AddLine(ind, "},"));
 
       // Components sidebar
-      sb += AddLine(ind, "{");
+      sb.Append(AddLine(ind, "{"));
       ind += 2;
-      sb += AddLine(ind, "type: 'category',");
-      sb += AddLine(ind, "label: 'Components',");
-      sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}{projectNameLower}-components'}},");
-      sb += AddLine(ind, "items: [");
+      sb.Append(AddLine(ind, "type: 'category',"));
+      sb.Append(AddLine(ind, "label: 'Components',"));
+      sb.Append(AddLine(ind, $"link: {{type: 'doc', id: '{page}{projectNameLower}-components'}},"));
+      sb.Append(AddLine(ind, "items: ["));
 
       // Per category sidebar
       ind += 2;
       foreach (string key in components.Keys) {
-        sb += AddLine(ind, "{");
+        sb.Append(AddLine(ind, "{"));
         ind += 2;
-        sb += AddLine(ind, "type: 'category',");
-        sb += AddLine(ind, $"label: '{key}',");
-        sb += AddLine(ind,
-          $"link: {{type: 'doc', id: '{page}{projectNameLower}-{key.ToLower()}-components-overview'}},");
-        sb += AddLine(ind, "items: [");
+        sb.Append(AddLine(ind, "type: 'category',"));
+        sb.Append(AddLine(ind, $"label: '{key}',"));
+        sb.Append(AddLine(ind,
+          $"link: {{type: 'doc', id: '{page}{projectNameLower}-{key.ToLower()}-components-overview'}},"));
+        sb.Append(AddLine(ind, "items: ["));
         ind += 2;
 
         for (int i = 0; i < 7; i++) {
@@ -72,28 +74,27 @@ namespace DocsGeneration.MarkDowns {
             }
 
             string file = FileHelper.CreateSideBarFileName(FileHelper.CreateFileName(component, config.ProjectName));
-            sb += AddLine(ind, $"'{page}{file}',");
+            sb.Append(AddLine(ind, $"'{page}{file}',"));
           }
         }
 
-        sb = sb.TrimEnd(',');
+        TrimEndFor(sb, ',');
         ind -= 2;
-        sb += AddLine(ind, "]");
+        sb.Append(AddLine(ind, "]"));
         ind -= 2;
-        sb += AddLine(ind, "},");
+        sb.Append(AddLine(ind, "},"));
       }
 
-      sb = sb.TrimEnd(',');
+      TrimEndFor(sb, ',');
       ind -= 2;
-      sb += AddLine(ind, "]");
+      sb.Append(AddLine(ind, "]"));
       ind -= 2;
-      sb += AddLine(ind, "}");
+      sb.Append(AddLine(ind, "}"));
       ind -= 2;
-      sb += AddLine(ind, "]");
-      ind -= 4;
-      sb += AddLine(0, "}");
+      sb.Append(AddLine(ind, "]"));
+      sb.Append(AddLine(0, "}"));
 
-      sb += "/*\n--- End of auto-generated text ---\n*/\n";
+      sb.Append("/*\n--- End of auto-generated text ---\n*/\n");
 
       string filePath = $@"{config.OutputPath}\Helper\sidebar-{projectNameLower}.js";
       string directory = Path.GetDirectoryName(filePath);
@@ -103,6 +104,12 @@ namespace DocsGeneration.MarkDowns {
 
       using (var js = new StreamWriter(filePath)) {
         js.Write(sb);
+      }
+    }
+
+    private static void TrimEndFor(StringBuilder sb, char c) {
+      if (sb.Length > 0 && sb[sb.Length - 1] == c) {
+        sb.Length--;
       }
     }
 

@@ -50,7 +50,6 @@ namespace DocsGeneratorCLI {
         throw new DirectoryNotFoundException($"Source directory not found: {sourceDir}");
       }
 
-      DirectoryInfo[] dirs = dir.GetDirectories();
       Directory.CreateDirectory(destinationDir);
 
       foreach (FileInfo file in dir.GetFiles()) {

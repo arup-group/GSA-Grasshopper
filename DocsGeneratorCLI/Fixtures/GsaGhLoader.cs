@@ -24,8 +24,6 @@ namespace DocsGeneratorCLI {
         return null;
       }
 
-      // UpdateEnvironmentPath(Path.GetDirectoryName(dllPath));
-
       Assembly GsaGH = LoadAssembly(dllPath);
       LoadXmlIfExists(dllPath, projectName);
 
@@ -155,14 +153,5 @@ namespace DocsGeneratorCLI {
         Console.WriteLine($"Fail to load XML: {e.Message}");
       }
     }
-
-    // private static void UpdateEnvironmentPath(string path) {
-    //   const string name = "PATH";
-    //   string current = Environment.GetEnvironmentVariable(name) ?? "";
-    //
-    //   if (!current.Contains(path)) {
-    //     Environment.SetEnvironmentVariable(name, current + ";" + path);
-    //   }
-    // }
   }
 }
