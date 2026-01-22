@@ -112,7 +112,7 @@ namespace GsaGHTests.Helper {
       }
     }
 
-    internal static string AssemblyRessult {
+    internal static string AssemblyResult {
       get {
         if (_assemblyResult == string.Empty) {
           _assemblyResult = FilePath("assembly_result.gwb");
