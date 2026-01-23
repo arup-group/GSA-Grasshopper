@@ -94,8 +94,11 @@ namespace DocsGeneratorCLI {
           throw new InvalidOperationException($"Field '{name}' not found in the assembly.")).ToList();
     }
 
-    // TODO: update for adsecgh
     public void SetXmlDocumentation(string projectName) {
+      if (projectName.ToLower() != "gsagh") {
+        XmlDoc = null;
+      }
+
       XmlDoc = GsaGhDll.GsaGhXml;
     }
   }

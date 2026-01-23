@@ -227,31 +227,40 @@ namespace GsaGH.Components {
       cases = null;
       var ghTypes = new List<GH_ObjectWrapper>();
       if (_type != AnalysisTaskType.Footfall) {
-        if (da.GetDataList(_casesParamIndex, ghTypes)) {
-          cases = new List<GsaAnalysisCase>();
-          for (int i = 0; i < ghTypes.Count; i++) {
-            GH_ObjectWrapper ghTypeWrapper = ghTypes[i];
-            if (ghTypeWrapper == null) {
-              this.AddRuntimeWarning($"Analysis Case input (index: {i}) is null and has been ignored");
-              continue;
-            }
-
-            if (ghTypeWrapper.Value is GsaAnalysisCaseGoo goo) {
-              cases.Add(goo.Value.Duplicate());
-            } else {
-              UnsupportedValueError(ghTypeWrapper);
-              return false;
-            }
-          }
-        }
-
-        if (cases == null) {
-          this.AddRuntimeRemark("Default Task has been created; it will by default contain all cases found in model");
+        if (!TryGetAnalysisCasesForNonFootfall(da, ref cases, ghTypes)) {
+          return false;
         }
       } else {
         cases = new List<GsaAnalysisCase> {
-          new GsaAnalysisCase(name, "Footfall")
+          new GsaAnalysisCase(name, "Footfall"),
         };
+      }
+
+      return true;
+    }
+
+    private bool TryGetAnalysisCasesForNonFootfall(
+      IGH_DataAccess da, ref List<GsaAnalysisCase> cases, List<GH_ObjectWrapper> ghTypes) {
+      if (da.GetDataList(_casesParamIndex, ghTypes)) {
+        cases = new List<GsaAnalysisCase>();
+        for (int i = 0; i < ghTypes.Count; i++) {
+          GH_ObjectWrapper ghTypeWrapper = ghTypes[i];
+          if (ghTypeWrapper == null) {
+            this.AddRuntimeWarning($"Analysis Case input (index: {i}) is null and has been ignored");
+            continue;
+          }
+
+          if (ghTypeWrapper.Value is GsaAnalysisCaseGoo goo) {
+            cases.Add(goo.Value.Duplicate());
+          } else {
+            UnsupportedValueError(ghTypeWrapper);
+            return false;
+          }
+        }
+      }
+
+      if (cases == null) {
+        this.AddRuntimeRemark("Default Task has been created; it will by default contain all cases found in model");
       }
 
       return true;
