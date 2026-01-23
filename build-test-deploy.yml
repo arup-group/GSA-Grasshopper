@@ -212,24 +212,19 @@ steps:
   displayName: Package NuGet
 
 - powershell: |
-    cd GsaGH
-    dotnet pack GsaGH.csproj -c Release --include-symbols -p:SymbolPackageFormat=snupkg
-  displayName: dotnet pack
+    New-Item -ItemType Directory -Force $(Build.ArtifactStagingDirectory)
+    Copy-Item GsaGH/bin/Release/*.nupkg $(Build.ArtifactStagingDirectory)
+    Copy-Item GsaGH/bin/Release/*.snupkg $(Build.ArtifactStagingDirectory)
+  displayName: Put Artifacts into Staging Directory
+
+- publish: $(Build.ArtifactStagingDirectory)
+  artifact: NuGetPackages
+  displayName: Publish Nuget and Snupkg Packages
 
 - powershell: |
     cd GsaGH
     Get-ChildItem -Recurse bin | Select-Object FullName
   displayName: Inspect bin output
-
-- publish: $(System.DefaultWorkingDirectory)/GsaGH/bin/Release/*.nupkg
-  displayName: Publish Nuget Package to Azure
-  artifact: NuGetPackages
-  continueOnError: false
-
-- publish: $(System.DefaultWorkingDirectory)/GsaGH/bin/Release/*.snupkg
-  displayName: Publish Snupkg Package to Azure
-  artifact: NuGetSymbols
-  continueOnError: false
 
 - task: GitHubRelease@1
   displayName: 'Publishing assets to Github'
