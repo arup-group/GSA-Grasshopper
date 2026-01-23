@@ -213,9 +213,7 @@ steps:
 
 - powershell: |
     cd GsaGH
-    dotnet pack GsaGH.csproj -c Release `
-      --include-symbols `
-      -p:SymbolPackageFormat=snupkg `
+    dotnet pack GsaGH.csproj -c Release --include-symbols -p:SymbolPackageFormat=snupkg
   displayName: dotnet pack
 
 - powershell: |
