@@ -24,7 +24,8 @@ namespace DocsGeneration.Data {
 
     public Parameter(Type type, Configuration config, bool summary = false) {
       var persistentParam = (IGH_Param)Activator.CreateInstance(type, null);
-      Name = Regex.Replace(persistentParam.Name, "parameter", string.Empty, RegexOptions.IgnoreCase).Trim();
+      Name = Regex.Replace(persistentParam.Name, "parameter", string.Empty, RegexOptions.IgnoreCase,
+        TimeSpan.FromMinutes(1)).Trim();
       if (Name.Contains('[')) {
         Name = Name.Split('[')[0];
       }
@@ -159,7 +160,7 @@ namespace DocsGeneration.Data {
         XmlNode xmlDocOfMethod = document.SelectSingleNode("//member[@name='" + path + "']");
         if (xmlDocOfMethod != null) {
           string text = xmlDocOfMethod.InnerXml.Replace("<summary>", string.Empty).Replace("</summary>", string.Empty);
-          string cleanStr = Regex.Replace(text, @"\s+", " ");
+          string cleanStr = Regex.Replace(text, @"\s+", " ", RegexOptions.None, TimeSpan.FromMinutes(1));
           return cleanStr.Trim();
         } else {
           // Try and grab the documentation from the parameter
@@ -170,7 +171,7 @@ namespace DocsGeneration.Data {
           }
 
           string text = xmlDocOfMethod2.InnerXml.Replace("<summary>", string.Empty).Replace("</summary>", string.Empty);
-          string cleanStr = Regex.Replace(text, @"\s+", " ");
+          string cleanStr = Regex.Replace(text, @"\s+", " ", RegexOptions.None, TimeSpan.FromMinutes(1));
           return cleanStr.Trim();
         }
       }
