@@ -1,10 +1,6 @@
 ﻿
 using System;
 
-using OasysGH.Units;
-
-using OasysUnits.Units;
-
 namespace GsaGH.Helpers {
   public static class Utility {
     public static bool IsInRange(double value, double min, double max) {
