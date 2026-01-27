@@ -1,9 +1,9 @@
 # Element 3D
 <!--- This file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration --->
 
-|<img width="150"/> Icon |
-| ----------- |
-|![Element3dParam](./images/Element3dParam.png) |
+| <img width="150"/> Icon                         |
+| ----------------------------------------------  |
+| ![Element3dParam](./images/Element3dParam.png)  |
 
 ## Description
 
@@ -17,17 +17,20 @@ Refer to [Elements](/references/hidr-data-element.md) to read more.
 
 ## Properties
 
-|<img width="20"/> Icon |<img width="200"/> Type |<img width="200"/> Name |<img width="1000"/> Description |
-| ----------- | ----------- | ----------- | ----------- |
-|![IntegerParam](./images/IntegerParam.png) |`Integer` _List_ |**Number** |Element Number |
-|![MeshParam](./images/MeshParam.png) |`Mesh` _List_ |**Analysis Mesh** |Analysis Mesh. <br />This will export a list of solid meshes representing each 3D element.<br />To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly |
-|![Property3dParam](./images/Property3dParam.png) |[Property 3D](gsagh-property-3d-parameter.md) _List_ |**3D Property** |3D Property. Either a GSA 3D Property or an Integer representing a Property already defined in model |
-|![IntegerParam](./images/IntegerParam.png) |`Integer` _List_ |**Group** |Element Group |
-|![TextParam](./images/TextParam.png) |`Text` _List_ |**Element Type** |Element 3D Type.<br />Type can not be set; it is either Tetra4, Pyramid5, Wedge6 or Brick8 |
-|![TextParam](./images/TextParam.png) |`Text` _List_ |**Name** |Set Element Name |
-|![ColourParam](./images/ColourParam.png) |`Colour` _List_ |**Colour** |Element Colour |
-|![BooleanParam](./images/BooleanParam.png) |`Boolean` _List_ |**Dummy Element** |if Element is Dummy |
-|![IntegerParam](./images/IntegerParam.png) |`Integer` _List_ |**Parent Members** |Parent Member IDs in Model that Element was created from |
-|![IntegerParam](./images/IntegerParam.png) |`Integer` _List_ |**Topology** |the Element's original topology list referencing node IDs in Model that Element was created from |
+| <img width="20"/> Icon                           | <img width="200"/> Type                              | <img width="200"/> Name        | <img width="1000"/> Description                                                                                                                                                                   |
+| ------------------------------------------------ | ---------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  |
+| ![IntegerParam](./images/IntegerParam.png)       | `Integer` _List_                                     | **Number**                     | Element Number                                                                                                                                                                                    |
+| ![MeshParam](./images/MeshParam.png)             | `Mesh` _List_                                        | **Analysis Mesh**              | Analysis Mesh. 
+This will export a list of solid meshes representing each 3D element.
+To get a combined mesh connect a GSA Element 3D to normal Mesh Parameter component to convert on the fly  |
+| ![Property3dParam](./images/Property3dParam.png) | [Property 3D](gsagh-property-3d-parameter.md) _List_ | **3D Property**                | 3D Property. Either a GSA 3D Property or an Integer representing a Property already defined in model                                                                                              |
+| ![IntegerParam](./images/IntegerParam.png)       | `Integer` _List_                                     | **Group**                      | Element Group                                                                                                                                                                                     |
+| ![TextParam](./images/TextParam.png)             | `Text` _List_                                        | **Element Type**               | Element 3D Type.
+Type can not be set; it is either Tetra4, Pyramid5, Wedge6 or Brick8                                                                                                            |
+| ![TextParam](./images/TextParam.png)             | `Text` _List_                                        | **Name**                       | Set Element Name                                                                                                                                                                                  |
+| ![ColourParam](./images/ColourParam.png)         | `Colour` _List_                                      | **Colour**                     | Element Colour                                                                                                                                                                                    |
+| ![BooleanParam](./images/BooleanParam.png)       | `Boolean` _List_                                     | **Dummy Element**              | if Element is Dummy                                                                                                                                                                               |
+| ![IntegerParam](./images/IntegerParam.png)       | `Integer` _List_                                     | **Parent Members**             | Parent Member IDs in Model that Element was created from                                                                                                                                          |
+| ![IntegerParam](./images/IntegerParam.png)       | `Integer` _List_                                     | **Topology**                   | the Element's original topology list referencing node IDs in Model that Element was created from                                                                                                  |
 
 _Note: the above properties can be retrieved using the [Edit 3D Element](gsagh-edit-3d-element-component.md) component_

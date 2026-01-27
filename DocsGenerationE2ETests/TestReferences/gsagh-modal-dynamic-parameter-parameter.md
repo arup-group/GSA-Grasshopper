@@ -8,7 +8,3 @@
 ## Description
 
 Refer to [modal dynamic parameter](/references/hidd-anal-gss-dyn) to read more.
-
-
-
-
