@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/arup-group/GSA-Grasshopper</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>GSALogo128.png</PackageIcon>
-    <Version>1.5.2</Version>
+    <Version>1.5.3</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <LangVersion>8.0</LangVersion>
@@ -45,7 +45,7 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="OasysGH" Version="1.2.4" />
+    <PackageReference Include="OasysGH" Version="1.2.5" />
     <PackageReference Include="OasysUnits" Version="1.2.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
@@ -60,11 +60,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grasshopper" Version="6.27.20176.5001" IncludeAssets="compile;build">
+    <PackageReference Include="Grasshopper" Version="7.38.24338.17001" IncludeAssets="compile;build">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.3" />
-    <PackageReference Include="RhinoCommon" Version="6.27.20176.5001">
+    <PackageReference Include="RhinoCommon" Version="7.38.24338.17001">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>compile;build</IncludeAssets>
     </PackageReference>
