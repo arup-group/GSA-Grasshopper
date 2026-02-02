@@ -30,12 +30,15 @@ namespace GsaGHTests.Components.Geometry {
       var comp = new Create1dMember();
       comp.CreateAttributes();
 
-      ComponentTestHelper.SetInput(
-        comp, new LineCurve(new Point3d(0, -1, 0), new Point3d(7, 3, 1)), 0);
+      ComponentTestHelper.SetInput(comp, GetTestLineCurve(), 0);
       ComponentTestHelper.SetInput(comp, "STD CH(ft) 1 2 3 4", 1);
       ComponentTestHelper.SetInput(comp, 0.5, 2);
 
       return comp;
+    }
+
+    private static LineCurve GetTestLineCurve() {
+      return new LineCurve(new Point3d(0, -1, 0), new Point3d(7, 3, 1));
     }
 
     private void SetMember1dFromSection3d() {
@@ -175,6 +178,17 @@ namespace GsaGHTests.Components.Geometry {
 
       var output = (GsaMember1dGoo)ComponentTestHelper.GetOutput(comp);
       Assert.Single(comp.RuntimeMessages(GH_RuntimeMessageLevel.Remark));
+    }
+
+    [Fact]
+    public void ShouldAcceptIdWithoutException() {
+      var comp = new Create1dMember();
+      comp.CreateAttributes();
+      ComponentTestHelper.SetInput(comp, GetTestLineCurve());
+      ComponentTestHelper.SetInput(comp, "1", 1);
+      comp.Preview3dSection = true;
+      ComponentTestHelper.GetOutput(comp);
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
   }
 }

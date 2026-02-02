@@ -208,9 +208,23 @@ steps:
 
 - powershell: |
     cd GsaGH
-    & 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' GsaGH.csproj /t:pack /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg /p:DebugType=portable /property:Configuration=Debug
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
+    & 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' GsaGH.csproj /t:pack /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg /p:DebugType=portable /property:Configuration=Release
   displayName: Package NuGet
+
+- powershell: |
+    New-Item -ItemType Directory -Force $(Build.ArtifactStagingDirectory)
+    Copy-Item GsaGH/bin/Release/*.nupkg $(Build.ArtifactStagingDirectory)
+    Copy-Item GsaGH/bin/Release/*.snupkg $(Build.ArtifactStagingDirectory)
+  displayName: Put Artifacts into Staging Directory
+
+- publish: $(Build.ArtifactStagingDirectory)
+  artifact: NuGetPackages
+  displayName: Publish Nuget and Snupkg Packages
+
+- powershell: |
+    cd GsaGH
+    Get-ChildItem -Recurse bin | Select-Object FullName
+  displayName: Inspect bin output
 
 - task: GitHubRelease@1
   displayName: 'Publishing assets to Github'
@@ -226,8 +240,8 @@ steps:
       Created from commit https://github.com/arup-group/GSA-Grasshopper/commit/$(Build.SourceVersion)
     assets: |
       $(System.DefaultWorkingDirectory)/**/*.yak
-      $(System.DefaultWorkingDirectory)/**/*.nupkg
-      $(System.DefaultWorkingDirectory)/**/*.snupkg
+      $(System.DefaultWorkingDirectory)/GsaGH/bin/Release/*.nupkg
+      $(System.DefaultWorkingDirectory)/GsaGH\bin/Release/*.snupkg
       $(System.DefaultWorkingDirectory)/**/$(dotSeparatedTag)-docs.zip
     assetUploadMode: 'replace'
     isDraft: true

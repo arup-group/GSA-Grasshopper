@@ -19,6 +19,16 @@ namespace GsaGH.Parameters {
       return new GsaPropertyGoo(Value);
     }
 
+    public override bool CastTo<Q>(ref Q target) {
+      if (typeof(Q).IsAssignableFrom(typeof(GH_Integer)) && Value != null) {
+        target = (Q)(object)new GH_Integer(Value.Id);
+        return true;
+      }
+
+      target = default;
+      return false;
+    }
+
     public override string ToString() {
       if (Value == null) {
         return "Null";
