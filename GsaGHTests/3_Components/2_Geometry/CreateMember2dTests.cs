@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
 using GsaAPI;
@@ -37,13 +38,17 @@ namespace GsaGHTests.Components.Geometry {
       comp.CreateAttributes();
 
       ComponentTestHelper.SetInput(comp,
-        Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(10, 0, 0),
-          new Point3d(10, 10, 0), new Point3d(0, 10, 0), 1), 0);
+        GetTestBrep(), 0);
       ComponentTestHelper.SetInput(comp,
         ComponentTestHelper.GetOutput(CreateProp2dTests.ComponentMother(false)), 3);
       ComponentTestHelper.SetInput(comp, 0.5, 4);
 
       return comp;
+    }
+
+    private static Brep GetTestBrep() {
+      return Brep.CreateFromCornerPoints(new Point3d(0, 0, 0), new Point3d(10, 0, 0),
+                new Point3d(10, 10, 0), new Point3d(0, 10, 0), 1);
     }
 
     private void SetMember2dFromSection3d() {
@@ -153,6 +158,17 @@ namespace GsaGHTests.Components.Geometry {
     public void SelectThirdndValueInADropdownShouldReturnMeshModeTri() {
       GsaMember2dGoo component = SetSelected(2);
       Assert.Equal(MeshMode2d.Quad, component.Value.ApiMember.MeshMode2d);
+    }
+
+    [Fact]
+    public void ShouldAcceptIdWithoutException() {
+      var comp = new Create1dMember();
+      comp.CreateAttributes();
+      ComponentTestHelper.SetInput(comp, GetTestBrep());
+      ComponentTestHelper.SetInput(comp, "1", 1);
+      comp.Preview3dSection = true;
+      ComponentTestHelper.GetOutput(comp);
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     private GsaMember2dGoo SetSelected(int i) {

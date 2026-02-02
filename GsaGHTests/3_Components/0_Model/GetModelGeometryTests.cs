@@ -1,11 +1,19 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Geometry.SpatialTrees;
+
+using GsaAPI;
 
 using GsaGH.Components;
+using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
 
 using GsaGHTests.Components.Geometry;
@@ -194,6 +202,41 @@ namespace GsaGHTests.Model {
       component.Params.Input[0].AddSource(parameter);
       ComponentTestHelper.ComputeOutput(component);
       Assert.Empty(component.RuntimeMessages(Grasshopper.Kernel.GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void GetModelGeometryCanParseSpringElement() {
+      var gsaModel = new GsaModel(ModeElement1D(out Element element));
+      var elem1dDict = new ConcurrentDictionary<int, GSAElement>();
+      elem1dDict.TryAdd(1, new GSAElement(element));
+      ConcurrentBag<GsaElement1dGoo> elements = GsaElementFactory.CreateElement1dFromApi(elem1dDict, gsaModel);
+      Assert.Single(elements);
+      Assert.Equal(ElementType.SPRING, elements.First().Value.ApiElement.Type);
+    }
+
+    private static GsaAPI.Model ModeElement1D(out Element element) {
+      var model = new GsaAPI.Model();
+      var node1 = new Node();
+      int node1Id = model.AddNode(node1);
+
+      var node2 = new Node();
+      node2.Position.X = 1;
+      int node2Id = model.AddNode(node2);
+
+      var prop = new AxialSpringProperty {
+        Stiffness = 100
+      };
+      model.AddSpringProperty(prop);
+
+      element = new Element() {
+        Topology = new ReadOnlyCollection<int>(
+            new int[] { node1Id, node2Id }
+        ),
+        Property = 1,
+        Type = ElementType.SPRING
+      };
+      model.AddElement(element);
+      return model;
     }
   }
 }
