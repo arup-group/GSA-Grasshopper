@@ -54,12 +54,13 @@ The GSA plugin introduces a new set of custom Grasshopper parameters. Parameters
 
 ## Analysis
 
-| <img width="20"/>                                          | <img width="200"/> Name                                 | <img width="1000"/> Description |
-| ---------------------------------------------------------- | ------------------------------------------------------- | ------------------------------  |
-| ![AnalysisCaseParam](./images/AnalysisCaseParam.png)       | [Analysis Case](gsagh-analysis-case-parameter.md)       | Analysis Case parameter         |
-| ![AnalysisTaskParam](./images/AnalysisTaskParam.png)       | [Analysis Task](gsagh-analysis-task-parameter.md)       | Analysis Task parameter         |
-| ![CombinationCaseParam](./images/CombinationCaseParam.png) | [Combination Case](gsagh-combination-case-parameter.md) | Combination Case parameter      |
-| ![DesignTaskParam](./images/DesignTaskParam.png)           | [Design Task](gsagh-design-task-parameter.md)           | Design Task parameter           |
+| <img width="20"/>                                          | <img width="200"/> Name                                 | <img width="1000"/> Description    |
+| ---------------------------------------------------------- | ------------------------------------------------------- | ---------------------------------  |
+| ![AnalysisCaseParam](./images/AnalysisCaseParam.png)       | [Analysis Case](gsagh-analysis-case-parameter.md)       | Analysis Case parameter            |
+| ![AnalysisTaskParam](./images/AnalysisTaskParam.png)       | [Analysis Task](gsagh-analysis-task-parameter.md)       | Analysis Task parameter            |
+| ![CombinationCaseParam](./images/CombinationCaseParam.png) | [Combination Case](gsagh-combination-case-parameter.md) | Combination Case parameter         |
+| ![DesignTaskParam](./images/DesignTaskParam.png)           | [Design Task](gsagh-design-task-parameter.md)           | Design Task parameter              |
+| ![ModalDynamicParam](./images/ModalDynamicParam.png)       | [Modal Dynamic](gsagh-modal-dynamic-parameter.md)       | modal dynamic analysis parameters  |
 
 ## Results
 
