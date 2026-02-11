@@ -20,19 +20,12 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 
 ### Output parameters
 
-| <img width="20"/> Icon                     | <img width="200"/> Type        | <img width="200"/> Name        | <img width="1000"/> Description                                                   |
-| ------------------------------------------ | ------------------------------ | ------------------------------ | --------------------------------------------------------------------------------  |
-| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Steel Quantities**           | Total weight of Steel Materials from GSA Model
-Grafted by Material ID.            |
-| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Concrete Quantities**        | Total weight of Concrete Materials from GSA Model
-Grafted by Material ID.         |
-| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **FRP Quantities**             | Total weight of FRP Materials from GSA Model
-Grafted by Material ID.              |
-| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Aluminium Quantities**       | Total weight of Aluminium Materials from GSA Model
-Grafted by Material ID.        |
-| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Timber Quantities**          | Total weight of Timber Materials from GSA Model
-Grafted by Material ID.           |
-| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Glass Quantities**           | Total weight of Glass Materials from GSA Model
-Grafted by Material ID.            |
-| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Custom Quantities**          | Total weight of Custom Analysis Materials from GSA Model
-Grafted by Material ID.  |
+| <img width="20"/> Icon                     | <img width="200"/> Type        | <img width="200"/> Name        | <img width="1000"/> Description                                                        |
+| ------------------------------------------ | ------------------------------ | ------------------------------ | -------------------------------------------------------------------------------------  |
+| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Steel Quantities**           | Total weight of Steel Materials from GSA Model<br />Grafted by Material ID.            |
+| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Concrete Quantities**        | Total weight of Concrete Materials from GSA Model<br />Grafted by Material ID.         |
+| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **FRP Quantities**             | Total weight of FRP Materials from GSA Model<br />Grafted by Material ID.              |
+| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Aluminium Quantities**       | Total weight of Aluminium Materials from GSA Model<br />Grafted by Material ID.        |
+| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Timber Quantities**          | Total weight of Timber Materials from GSA Model<br />Grafted by Material ID.           |
+| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Glass Quantities**           | Total weight of Glass Materials from GSA Model<br />Grafted by Material ID.            |
+| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Custom Quantities**          | Total weight of Custom Analysis Materials from GSA Model<br />Grafted by Material ID.  |

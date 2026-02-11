@@ -21,44 +21,14 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 
 ### Output parameters
 
-| <img width="20"/> Icon                | <img width="200"/> Type                                        | <img width="200"/> Name        | <img width="1000"/> Description                                                                                                                                                                                                                              |
-| ------------------------------------- | -------------------------------------------------------------- | ------------------------------ | -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  |
-| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Axial**                      | Axial stress:
-A = Fx/Area
-+ve stresses: tensile                                                                                                                                                                                                              |
-| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Shear Y**                    | Shear stresses:
-Sy = Fy/Ay
-where Ay and Az are the shear areas calculated in accordance with selected code. Note that torsional stresses are ignored.                                                                                                        |
-| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Shear Z**                    | Shear stresses:
-Sz = Fz/Az
-where Ay and Az are the shear areas calculated in accordance with selected code. Note that torsional stresses are ignored.                                                                                                        |
-| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Bending Y +ve z**            | Bending stresses:
-For sections that have Iyz=0:
-By = Myy/Iyy x Dz
-- where Dz & Dy are the distances from the centroid to the edge of the
-section in the +ve z and y directions respectively.
-For sections that have non-zero Iyz: refer to the GSA manual.   |
-| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Bending Y -ve z**            | Bending stresses:
-For sections that have Iyz=0:
-By = Myy/Iyy x Dz
-- where Dz & Dy are the distances from the centroid to the edge of the
-section in the +ve z and y directions respectively.
-For sections that have non-zero Iyz: refer to the GSA manual.   |
-| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Bending Z +ve y**            | Bending stresses:
-For sections that have Iyz=0:
-Bz = -Mzz/Izz x Dy
-- where Dz & Dy are the distances from the centroid to the edge of the
-section in the +ve z and y directions respectively.
-For sections that have non-zero Iyz: refer to the GSA manual.  |
-| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Bending Z -ve y**            | Bending stresses:
-For sections that have Iyz=0:
-Bz = -Mzz/Izz x Dy
-- where Dz & Dy are the distances from the centroid to the edge of the
-section in the +ve z and y directions respectively.
-For sections that have non-zero Iyz: refer to the GSA manual.  |
-| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Combined C1**                | C1 is the maximum extreme fibre longitudinal stress due to axial forces and transverse bending
-C1 and C2 stresses are not calculated for cases with enveloping operators in them.
-+ve stresses: tensile                                                      |
-| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Combined C2**                | C2 is the minimum extreme fibre longitudinal stress due to axial forces and transverse bending
-C1 and C2 stresses are not calculated for cases with enveloping operators in them.
-+ve stresses: tensile                                                      |
+| <img width="20"/> Icon                | <img width="200"/> Type                                        | <img width="200"/> Name        | <img width="1000"/> Description                                                                                                                                                                                                                                                       |
+| ------------------------------------- | ---------------------------------------------------------------| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  |
+| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Axial**                      | Axial stress:<br />A = Fx/Area<br />+ve stresses: tensile                                                                                                                                                                                                                             |
+| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Shear Y**                    | Shear stresses:<br />Sy = Fy/Ay<br />where Ay and Az are the shear areas calculated in accordance with selected code. Note that torsional stresses are ignored.                                                                                                                       |
+| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Shear Z**                    | Shear stresses:<br />Sz = Fz/Az<br />where Ay and Az are the shear areas calculated in accordance with selected code. Note that torsional stresses are ignored.                                                                                                                       |
+| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Bending Y +ve z**            | Bending stresses:<br />For sections that have Iyz=0:<br />By = Myy/Iyy x Dz<br />- where Dz & Dy are the distances from the centroid to the edge of the<br />section in the +ve z and y directions respectively.<br />For sections that have non-zero Iyz: refer to the GSA manual.   |
+| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Bending Y -ve z**            | Bending stresses:<br />For sections that have Iyz=0:<br />By = Myy/Iyy x Dz<br />- where Dz & Dy are the distances from the centroid to the edge of the<br />section in the +ve z and y directions respectively.<br />For sections that have non-zero Iyz: refer to the GSA manual.   |
+| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Bending Z +ve y**            | Bending stresses:<br />For sections that have Iyz=0:<br />Bz = -Mzz/Izz x Dy<br />- where Dz & Dy are the distances from the centroid to the edge of the<br />section in the +ve z and y directions respectively.<br />For sections that have non-zero Iyz: refer to the GSA manual.  |
+| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Bending Z -ve y**            | Bending stresses:<br />For sections that have Iyz=0:<br />Bz = -Mzz/Izz x Dy<br />- where Dz & Dy are the distances from the centroid to the edge of the<br />section in the +ve z and y directions respectively.<br />For sections that have non-zero Iyz: refer to the GSA manual.  |
+| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Combined C1**                | C1 is the maximum extreme fibre longitudinal stress due to axial forces and transverse bending<br />C1 and C2 stresses are not calculated for cases with enveloping operators in them.<br />+ve stresses: tensile                                                                     |
+| ![UnitNumber](./images/UnitParam.png) | [Unit Number](gsagh-unitnumber-parameter.md) `Pressure` _Tree_ | **Combined C2**                | C2 is the minimum extreme fibre longitudinal stress due to axial forces and transverse bending<br />C1 and C2 stresses are not calculated for cases with enveloping operators in them.<br />+ve stresses: tensile                                                                     |

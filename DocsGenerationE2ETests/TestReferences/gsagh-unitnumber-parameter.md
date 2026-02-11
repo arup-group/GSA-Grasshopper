@@ -1,16 +1,16 @@
 # Unit number
 
-|Icon |
-| ----------- | 
-|![UnitNumber](./images/UnitParam.png)|
+| Icon                                  |
+| ------------------------------------- |
+| ![UnitNumber](./images/UnitParam.png) |
 
 ## Description
 
-GSA-Grasshopper includes a new way to work with units inside Grasshopper; we call this parameter a *UnitNumber*. For components that are using a *UnitNumber* as input parameter you can simply input a number as usual in GSA and the component will automatically convert it into the selected unit on the component's dropdown.
+GSA-Grasshopper includes a new way to work with units inside Grasshopper; we call this parameter a _UnitNumber_. For components that are using a _UnitNumber_ as input parameter you can simply input a number as usual in GSA and the component will automatically convert it into the selected unit on the component's dropdown.
 
 :::info Definition
 
-A *UnitNumber* is technically a Quantity defined as: 
+A _UnitNumber_ is technically a Quantity defined as:
 
 $Quantity = Value \times Measure.$
 
@@ -22,33 +22,33 @@ We are using the opensource library [UnitsNet](https://github.com/angularsen/Uni
 
 The following units have been exposed (many more are available in UnitsNet, let us know if you need them exposed...):
 
-  - `Angle`
-  - `Length`
-  - `Area`
-  - `Volume`
-  - `AreaMomentOfInertia`
-  - `Force`
-  - `ForcePerLength`
-  - `ForcePerArea`
-  - `Moment`
-  - `Stress`
-  - `Strain`
-  - `AxialStiffness`
-  - `BendingStiffness`
-  - `Curvature`
-  - `Mass`
-  - `Density`
-  - `Temperature`
-  - `Velocity`
-  - `Acceleration`
-  - `Energy`
-  - `Ratio`
-  - `Time`
-  - `LinearDensity`
-  - `VolumePerLength`
-  - `SectionModulus`
+- `Angle`
+- `Length`
+- `Area`
+- `Volume`
+- `AreaMomentOfInertia`
+- `Force`
+- `ForcePerLength`
+- `ForcePerArea`
+- `Moment`
+- `Stress`
+- `Strain`
+- `AxialStiffness`
+- `BendingStiffness`
+- `Curvature`
+- `Mass`
+- `Density`
+- `Temperature`
+- `Velocity`
+- `Acceleration`
+- `Energy`
+- `Ratio`
+- `Time`
+- `LinearDensity`
+- `VolumePerLength`
+- `SectionModulus`
 
-As mentioned, most components having *UnitNumber* inputs will also have a dropdown for you to select the unit . You can input a normal slider component to create a *UnitNumber* input of the selected unit, or you can use the *Create UnitsNumber* component to create (and mix) your own:
+As mentioned, most components having _UnitNumber_ inputs will also have a dropdown for you to select the unit . You can input a normal slider component to create a _UnitNumber_ input of the selected unit, or you can use the _Create UnitsNumber_ component to create (and mix) your own:
 ![CreateUnitNumber](./images/gsagh-create-unitnumber.gif)
 
 ## Convert unit number

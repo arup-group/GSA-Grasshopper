@@ -20,9 +20,7 @@ _Note: This is a dropdown component and input/output may vary depending on the s
 
 ### Output parameters
 
-| <img width="20"/> Icon                     | <img width="200"/> Type        | <img width="200"/> Name        | <img width="1000"/> Description                                          |
-| ------------------------------------------ | ------------------------------ | ------------------------------ | -----------------------------------------------------------------------  |
-| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Section Quantities**         | Total Length per Section Property from GSA Model
-Grafted by Section ID.  |
-| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **2D Property Quantities**     | Total Area per 2D Property from GSA Model.
-Grafted by Property ID.       |
+| <img width="20"/> Icon                     | <img width="200"/> Type        | <img width="200"/> Name        | <img width="1000"/> Description                                               |
+| ------------------------------------------ | ------------------------------ | ------------------------------ | ----------------------------------------------------------------------------  |
+| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **Section Quantities**         | Total Length per Section Property from GSA Model<br />Grafted by Section ID.  |
+| ![GenericParam](./images/GenericParam.png) | `Generic` _Tree_               | **2D Property Quantities**     | Total Area per 2D Property from GSA Model.<br />Grafted by Property ID.       |
