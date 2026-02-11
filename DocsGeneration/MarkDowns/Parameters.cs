@@ -101,7 +101,7 @@ namespace DocsGeneration.MarkDowns {
         FileHelper.CreateIconLink(property),
         FileHelper.CreateParameterLink(property, parameterNames, config),
         StringHelper.MakeBold(property.Name),
-        property.Description,
+        StringHelper.Replace(property.Description),
       }));
       return propertieTable;
     }

@@ -106,9 +106,9 @@ namespace DocsGeneration.MarkDowns.Helpers {
     }
 
     public static string Replace(string oldValue) {
-      return oldValue.Replace(Environment.NewLine, "<br />").Replace("|", "&#124;").Replace("{ `", @"\{ `")
-       .Replace("` }", @"` \}").Replace("{`", @"\{`").Replace("`}", @"`\}").Replace("|*", @"| \*").Replace("_*", @"_\*")
-       .Replace(" {i} ", " `{i}` ");
+      return oldValue.Replace(Environment.NewLine, "<br />").Replace("\n", "<br />").Replace("|", "&#124;")
+       .Replace("{ `", @"\{ `").Replace("` }", @"` \}").Replace("{`", @"\{`").Replace("`}", @"`\}")
+       .Replace("|*", @"| \*").Replace("_*", @"_\*").Replace(" {i} ", " `{i}` ");
     }
 
     private static bool EndsWithArticleAndSpace(string word)
