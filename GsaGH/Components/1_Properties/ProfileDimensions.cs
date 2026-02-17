@@ -341,8 +341,9 @@ namespace GsaGH.Components {
         SetOutput(da, i++, parts[3], unit); //Width
         SetOutput(da, i++, parts[3], unit); //Width Top
         SetOutput(da, i++, parts[3], unit); //Width Bottom
-        SetOutput(da, i++, parts[5], unit); //Flange Thk Top
-        SetOutput(da, i++, parts[5], unit); //Flange Thk Bottom
+        string flangeThickness = parts.Length > 5 ? parts[5] : parts[4];
+        SetOutput(da, i++, flangeThickness, unit); //Flange Thk Top
+        SetOutput(da, i++, flangeThickness, unit); //Flange Thk Bottom
         SetOutput(da, i++, parts[4], unit); //Web Thk Bottom
         da.SetData(i++, null); //Root radius
         da.SetData(i++, null); //Spacing
