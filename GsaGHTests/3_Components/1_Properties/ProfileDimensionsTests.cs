@@ -46,7 +46,7 @@ namespace GsaGHTests.Components.Properties {
     [InlineData("CAT BSI-IPE IPE100", 100.0, 55, 55, 55, 5.7, 5.7, 4.1, 7, -1, LengthUnit.Millimeter)]
     [InlineData("CAT EN-SHS SHS400x400x16", 400, 400, 400, 400, -1, -1, 16, 0, -1, LengthUnit.Millimeter)]
     [InlineData("CAT EN-RHS RHS400X200X7.1", 400, 200, 200, 200, -1, -1, 7.1, 0, -1, LengthUnit.Millimeter)]
-    [InlineData("CAT PX PX0.5", 21, 3.7, -1, -1, -1, -1, 3.7, -1, -1, LengthUnit.Millimeter)]
+    [InlineData("CAT PX PX0.5", 21.336, 3.7338, -1, -1, -1, -1, 3.7338, -1, -1, LengthUnit.Millimeter)]
     public void CreateComponent(
       string profile, double expectedDepth, double expectedWidth, double expectedWidthTop, double expectedWidthBottom,
       double expectedFlngThkTop, double expectedFlngThkBtm, double expectedWebThk, double expectedRootRadius,
