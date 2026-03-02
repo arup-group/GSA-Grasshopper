@@ -34,7 +34,7 @@ namespace IntegrationTests.Parameters {
     [InlineData("IBeamAsymmetrical", "STD GI(mm) 500 100 10 20 30 30")]
     [InlineData("IBeamCellular", "STD CB(mm) 500 100 10 20 300 3000")]
     [InlineData("IBeamSymmetrical", "STD I(mm) 500 100 10 20")]
-    [InlineData("Perimeter", "GEO P(m) M(1|2) L(1|-2) L(-1|-2) L(-1|2)")]
+    [InlineData("Perimeter", "GEO P(m) M(-1|-2) L(1|-2) L(1|2) L(-1|2)")]
     [InlineData("RectangleHollow", "STD RHS(mm) 500 100 10 20")]
     [InlineData("Rectangle", "STD R(mm) 500 100")]
     [InlineData("RectoEllipse", "STD RE(mm) 500 400 350 300 2")]
