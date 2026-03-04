@@ -88,4 +88,3 @@ foreach ($item in $updates) {
 }
 
 Write-Host "All updates completed."
-

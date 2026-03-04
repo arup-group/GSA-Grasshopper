@@ -38,7 +38,7 @@ namespace GsaGH.Helpers {
 
     public static void ImportAnalysisTask(GsaAnalysisTask task, Model model) {
       var gsaModel = new GsaModel(model);
-      ImportAnalysisTask(task, ref gsaModel);
+       ImportAnalysisTask(task, ref gsaModel);
     }
 
     private static Dictionary<int, AnalysisCase> BuildCustomCases(GsaAnalysisTask task) {

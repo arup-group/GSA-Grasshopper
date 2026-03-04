@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 
@@ -13,9 +14,27 @@ namespace DocsGeneration {
     public static int Generate(Configuration config) {
       try {
         // reflect
-        Type[] typelist = config.Assembly.GetTypes();
-        List<Component> components = Component.GetComponents(typelist, config);
-        List<Parameter> parameters = Parameter.GetParameters(typelist, components, config);
+        Console.WriteLine($"Assembly: {config.Assembly.FullName}");
+
+        foreach (var references in config.Assembly.GetReferencedAssemblies()) {
+          Console.WriteLine($"Referenced Assembly: {references}");
+        }
+        
+        try
+        {
+          foreach (var type in config.Assembly.DefinedTypes) {
+            Console.WriteLine($" - {type.FullName}");
+          }
+        }
+        catch (ReflectionTypeLoadException ex)
+        {
+          foreach (var e in ex.LoaderExceptions) {
+            Console.WriteLine($"Loader exception: {e.Message}");
+          }
+        }
+        Type[] types = config.Assembly.GetTypes();
+        List<Component> components = Component.GetComponents(types, config);
+        List<Parameter> parameters = Parameter.GetParameters(types, components, config);
 
         // write individual files
         Components.CreateComponents(components, parameters, config);
@@ -28,8 +47,8 @@ namespace DocsGeneration {
         Parameters.CreateOverview(sortedParameters, config);
 
         // write sidebar
-        SideBar.CreateSideBar(sortedComponents, sortedParameters);
-        FileHelper.WriteIconNames();
+        SideBar.CreateSideBar(sortedComponents, sortedParameters, config);
+        FileHelper.WriteIconNames(config.OutputPath);
         return 0;
       } catch (Exception e) {
         Console.WriteLine($"Failed to generate documentation.\nStackTrace: {e.StackTrace}");
@@ -40,7 +59,8 @@ namespace DocsGeneration {
 
   public struct Configuration {
     public bool GenerateE2ETestData { get; set; }
-    public string CustomOutputPath { get; set; }
+    public string OutputPath { get; set; }
+    public string ProjectName { get; set; }
     public Assembly Assembly { get; set; }
     public List<string> ResultNotes { get; set; }
     public bool IsBeta { get; set; }

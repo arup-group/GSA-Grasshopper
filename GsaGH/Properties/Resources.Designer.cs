@@ -123,16 +123,6 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap ModalDynamicParam {
-          get {
-            object obj = ResourceManager.GetObject("ModalDynamicParam", resourceCulture);
-            return ((System.Drawing.Bitmap)(obj));
-          }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap Annotate {
             get {
                 object obj = ResourceManager.GetObject("Annotate", resourceCulture);
@@ -473,16 +463,6 @@ namespace GsaGH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap CreateModalDynamicParameter {
-          get {
-              object obj = ResourceManager.GetObject("CreateModalDynamicParameter", resourceCulture);
-              return ((System.Drawing.Bitmap)(obj));
-          }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap CreateAssembly {
             get {
                 object obj = ResourceManager.GetObject("CreateAssembly", resourceCulture);
@@ -706,6 +686,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap CreateMemberEndRestraint {
             get {
                 object obj = ResourceManager.GetObject("CreateMemberEndRestraint", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap CreateModalDynamicParameter {
+            get {
+                object obj = ResourceManager.GetObject("CreateModalDynamicParameter", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1616,6 +1606,16 @@ namespace GsaGH.Properties {
         internal static System.Drawing.Bitmap MeshResultInfo {
             get {
                 object obj = ResourceManager.GetObject("MeshResultInfo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ModalDynamicParam {
+            get {
+                object obj = ResourceManager.GetObject("ModalDynamicParam", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

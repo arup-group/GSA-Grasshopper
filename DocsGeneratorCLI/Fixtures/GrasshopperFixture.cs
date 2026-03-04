@@ -31,7 +31,7 @@ namespace DocsGeneratorCLI {
       AddPluginToGh();
       LoadRefs();
 #pragma warning disable S3885 // "Assembly.Load" should be used
-      Assembly.LoadFile(Path.Combine(GrasshopperInstallPath, "GsaAPI.dll"));
+      Assembly.LoadFile(Path.Combine(GSA_INSTALL_PATH, "GsaAPI.dll"));
 #pragma warning restore S3885 // "Assembly.Load" should be used
       InitializeCore();
       Utility.SetupUnitsDuringLoad();
@@ -85,6 +85,9 @@ namespace DocsGeneratorCLI {
 
       using (StreamWriter writer = File.CreateText(fullPath)) {
         writer.Write(Environment.CurrentDirectory);
+        var cliPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        writer.Write(cliPath);
+        Console.WriteLine($"GH load directory from: {Environment.CurrentDirectory} and {cliPath}");
       }
     }
 
@@ -99,11 +102,9 @@ namespace DocsGeneratorCLI {
 
     private static void LoadRefs() {
       const string name = "PATH";
-      string pathvar = Environment.GetEnvironmentVariable(name) ?? "";
-      string value = pathvar + ";" + GrasshopperInstallPath + "\\";
+      string pathvar = Environment.GetEnvironmentVariable(name) ?? string.Empty;
+      string value = $"{pathvar};{GSA_INSTALL_PATH}\\";
       Environment.SetEnvironmentVariable(name, value, EnvironmentVariableTarget.Process);
-      Console.WriteLine("PATH ENV after loadrefs :");
-      Console.WriteLine(Environment.GetEnvironmentVariable("PATH"));
     }
 
     private void Dispose(bool disposing) {
@@ -126,7 +127,7 @@ namespace DocsGeneratorCLI {
     }
 
 #pragma warning disable S1075 // URIs should not be hardcoded
-    private const string GrasshopperInstallPath = @"C:\Program Files\Oasys\GSA 10.2";
+    private const string GSA_INSTALL_PATH = @"C:\Program Files\Oasys\GSA 10.2";
 #pragma warning restore S1075 // URIs should not be hardcoded
   }
 }

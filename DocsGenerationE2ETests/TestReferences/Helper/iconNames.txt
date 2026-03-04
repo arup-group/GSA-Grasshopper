@@ -61,7 +61,6 @@ CreateList
 CreateLoadCase
 CreateMaterial
 CreateMemberEndRestraint
-CreateModalDynamicParameter
 CreateModel
 CreateNodeLoad
 CreateOffset
@@ -146,7 +145,6 @@ Member3dParam
 MemberEndRestraintInfo
 MeshParam
 MeshResultInfo
-ModalDynamicParam
 ModelParam
 ModelTitles
 ModelUnits

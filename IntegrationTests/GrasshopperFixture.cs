@@ -68,7 +68,7 @@ namespace IntegrationTests {
       InitializeCore();
 
       // setup headless units
-     OasysGH.Units.Utility.SetupUnitsDuringLoad();
+      Utility.SetupUnitsDuringLoad();
     }
 
     // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
