@@ -144,12 +144,12 @@ namespace GsaGH.Components {
       GsaSectionGoo sectionGoo = null;
       da.GetData(0, ref sectionGoo);
       GsaSection section = sectionGoo.Value;
-
-      string profile = section.ApiSection.Profile;
-      if (string.IsNullOrEmpty(profile.Trim())) {
-        this.AddRuntimeError("Profile not set in Section");
+      if (section == null) {
+        this.AddRuntimeError("Profile is not valid");
         return;
       }
+
+      string profile = section.ApiSection.Profile;
 
       string[] parts = profile.Split(' ');
 

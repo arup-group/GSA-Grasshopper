@@ -1,4 +1,5 @@
-﻿using Grasshopper.Kernel.Types;
+﻿using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 
 using GsaGH.Components;
 
@@ -120,6 +121,17 @@ namespace GsaGHTests.Components.Properties {
       }
 
       Assert.StartsWith(type, expectedType);
+    }
+
+    [Theory]
+    [InlineData("EXP 8 2000 400 200 400 600")]
+    [InlineData("invalid")]
+    public void CreateInvalidComponent(string profile) {
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, profile);
+      ComponentTestHelper.GetOutput(comp);
+
+      Assert.NotEmpty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
 
     [Fact]
