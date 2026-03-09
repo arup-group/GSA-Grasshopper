@@ -171,6 +171,7 @@ namespace GsaGH {
 
     private static void SetInstances() {
       Instances.CanvasCreated += MenuLoad.OnStartup;
+      Instances.CanvasCreated += ExamplesMenu.OnStartup;
       Instances.ComponentServer.AddCategorySymbolName(ProductName, 'G');
       Instances.ComponentServer.AddCategoryIcon(ProductName, Resources.GSALogo);
     }

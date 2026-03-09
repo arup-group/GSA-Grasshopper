@@ -45,6 +45,7 @@
   </Target>
 
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
     <PackageReference Include="OasysGH" Version="1.2.5" />
     <PackageReference Include="OasysUnits" Version="1.2.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
