@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 using GsaAPI;
 
@@ -12,6 +14,7 @@ namespace GsaGH.Parameters {
     internal ReadOnlyDictionary<int, GsaMaterial> GlassMaterials { get; private set; }
     internal ReadOnlyDictionary<int, GsaMaterial> FabricMaterials { get; private set; }
     internal ReadOnlyDictionary<int, GsaMaterial> AnalysisMaterials { get; private set; }
+    internal List<string> UnsupportedMaterials { get; private set; } = new List<string>();
 
     internal GsaMaterials(Model model) {
       SteelMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.SteelMaterials(), model);
@@ -22,6 +25,7 @@ namespace GsaGH.Parameters {
       GlassMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.GlassMaterials(), model);
       FabricMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.FabricMaterials(), model);
       AnalysisMaterials = GsaMaterialFactory.CreateMaterialsFromApi(model.AnalysisMaterials());
+      DetectUnsupportedAnalysisMaterials(model);
     }
 
     internal GsaMaterial GetMaterial(Section section) {
@@ -62,6 +66,38 @@ namespace GsaGH.Parameters {
                     : new GsaReferencedMaterial(gradeProp, MatType.Timber),
         _ => new GsaReferencedMaterial(gradeProp, GsaMaterialFactory.GetMatType(type)),
       };
+    }
+
+    private void DetectUnsupportedAnalysisMaterials(Model model) {
+      var unsupportedIds = new HashSet<int>();
+
+      foreach (KeyValuePair<int, Section> kvp in model.Sections()) {
+        int analysisProp = kvp.Value.MaterialAnalysisProperty;
+        if (analysisProp != 0 && !AnalysisMaterials.ContainsKey(analysisProp)) {
+          unsupportedIds.Add(analysisProp);
+        }
+      }
+
+      foreach (KeyValuePair<int, Prop2D> kvp in model.Prop2Ds()) {
+        int analysisProp = kvp.Value.MaterialAnalysisProperty;
+        if (analysisProp != 0 && !AnalysisMaterials.ContainsKey(analysisProp)) {
+          unsupportedIds.Add(analysisProp);
+        }
+      }
+
+      foreach (KeyValuePair<int, Prop3D> kvp in model.Prop3Ds()) {
+        int analysisProp = kvp.Value.MaterialAnalysisProperty;
+        if (analysisProp != 0 && !AnalysisMaterials.ContainsKey(analysisProp)) {
+          unsupportedIds.Add(analysisProp);
+        }
+      }
+
+      foreach (int id in unsupportedIds.OrderBy(x => x)) {
+        UnsupportedMaterials.Add(
+          $"Analysis Material (ID: {id}) is not supported and was not imported. " +
+          "Only elastic isotropic analysis materials are supported. " +
+          "Fabric and orthotropic analysis materials are not supported.");
+      }
     }
 
     internal bool SanitizeGenericCodeNames() {

@@ -14,6 +14,7 @@ namespace GsaGHTests.Helper {
     private static string _assemblyByStorey = string.Empty;
     private static string _fabricMaterialModel = string.Empty;
     private static string _assemblyResult = string.Empty;
+    private static string _unsupportedMaterials = string.Empty;
 
     internal static string SteelDesignComplex {
       get {
@@ -129,6 +130,16 @@ namespace GsaGHTests.Helper {
         }
 
         return _fabricMaterialModel;
+      }
+    }
+
+    internal static string UnsupportedMaterials {
+      get {
+        if (_unsupportedMaterials == string.Empty) {
+          _unsupportedMaterials = FilePath("unsupported_materials.gwb");
+        }
+
+        return _unsupportedMaterials;
       }
     }
 

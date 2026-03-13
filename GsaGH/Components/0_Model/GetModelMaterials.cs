@@ -60,6 +60,10 @@ namespace GsaGH.Components {
       da.SetDataList(5, materials.GlassMaterials.Values.Select(x => new GsaMaterialGoo(x)));
       da.SetDataList(6, materials.FabricMaterials.Values.Select(x => new GsaMaterialGoo(x)));
       da.SetDataList(7, materials.AnalysisMaterials.Values.Select(x => new GsaMaterialGoo(x)));
+
+      foreach (string warning in materials.UnsupportedMaterials) {
+        this.AddRuntimeWarning(warning);
+      }
     }
   }
 }
