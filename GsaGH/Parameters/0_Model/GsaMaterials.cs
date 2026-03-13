@@ -94,9 +94,9 @@ namespace GsaGH.Parameters {
 
       foreach (int id in unsupportedIds.OrderBy(x => x)) {
         UnsupportedMaterials.Add(
-          $"Analysis Material (ID: {id}) is not supported and was not imported. " +
-          "Only elastic isotropic analysis materials are supported. " +
-          "Fabric and orthotropic analysis materials are not supported.");
+          $"Analysis Material (ID: {id}) was not imported. " +
+          "Only elastic isotropic analysis materials are supported; " +
+          "fabric and orthotropic materials cannot be imported.");
       }
     }
 

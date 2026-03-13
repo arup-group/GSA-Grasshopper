@@ -27,7 +27,7 @@ namespace GsaGHTests.Model {
       var warnings = comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning);
       Assert.NotEmpty(warnings);
       foreach (string warning in warnings) {
-        Assert.Contains("is not supported", warning);
+        Assert.Contains("was not imported", warning);
       }
     }
   }
