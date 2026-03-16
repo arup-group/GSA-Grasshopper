@@ -7,7 +7,8 @@ namespace GsaGH.UI {
       Downloaded,
       OpenFailed,
       DownloadFailed,
-      NoFilesFound,
+      NoSampleFilesFound,
+      FileNoExist,
       Cancelled,
       OverrideQuestion,
     }
@@ -16,7 +17,6 @@ namespace GsaGH.UI {
       switch (state) {
         case FileOpenState.Success: break;
         case FileOpenState.Downloaded:
-
           MessageBox.Show($"File downloaded to: {HttpsFileDownloader.DownloadsPath}", "Download Complete");
           break;
         case FileOpenState.OpenFailed:
@@ -25,12 +25,15 @@ namespace GsaGH.UI {
         case FileOpenState.DownloadFailed:
           MessageBox.Show($"Download of the file: {name}, failed.", "Error");
           break;
-        case FileOpenState.NoFilesFound:
+        case FileOpenState.NoSampleFilesFound:
           MessageBox.Show("Couldn't find any files in sample site. Please contact with support.");
+          break;
+        case FileOpenState.FileNoExist:
+          MessageBox.Show($"Couldn't find sample file: {name}");
           break;
         case FileOpenState.OverrideQuestion:
           return MessageBox.Show($"File \"{name}\" already exists in Downloads. Overwrite?", "File Exists",
-            MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+            MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
       }
 
       return DialogResult.OK;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 
 using Grasshopper;
 using Grasshopper.Kernel;
@@ -10,11 +11,13 @@ using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 
 using GsaGH.Components.Helpers;
+using GsaGH.Graphics.Menu;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGH.Properties;
+using GsaGH.UI;
 
 using OasysGH;
 using OasysGH.Components;
@@ -29,10 +32,15 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.FootfallResults;
+    private List<string> keywords = new List<string>() {
+      "footfall",
+    };
+    internal readonly IEnumerable<FileEntry> sampleFiles = new List<FileEntry>();
 
     public FootfallResults() : base("Footfall Results", "Footfall",
       "Node Resonant or Transient Footfall result values", CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
+      sampleFiles = ExampleFileRepository.GetFileEntriesByKeywords(keywords);
     }
 
     public override void SetSelected(int i, int j) {
@@ -179,6 +187,34 @@ namespace GsaGH.Components {
       da.SetDataTree(5, critId);
       da.SetDataTree(6, critfreq);
       da.SetDataTree(7, outIDs);
+    }
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
+
+      Menu_AppendSeparator(menu);
+
+      var samplesMenu = new ToolStripMenuItem("Sample files", Resources.ModelTitles) {
+        Enabled = true,
+        ImageScaling = ToolStripItemImageScaling.SizeToFit,
+      };
+      foreach (FileEntry file in sampleFiles) {
+        var toolStripMenuItem
+          = new ToolStripMenuItem(file.Name, null, (s, e) => DownloadAndOpen(file)) {
+            Enabled = true,
+          };
+        samplesMenu.DropDownItems.Add(toolStripMenuItem);
+      }
+
+      menu.Items.Add(samplesMenu);
+
+      Menu_AppendSeparator(menu);
+    }
+
+    private async void DownloadAndOpen(FileEntry file) {
+      await ExamplesMenu.ExampleFileManager.DownloadAndOpenFileAsync(file);
     }
   }
 }

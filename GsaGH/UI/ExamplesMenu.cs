@@ -18,13 +18,13 @@ namespace GsaGH.Graphics.Menu {
   public class ExamplesMenu {
     private static ToolStripMenuItem examplesMenu;
     private const string name = "X Examples";
-    private static IExampleFileManager exampleFileManager;
+    internal static IExampleFileManager ExampleFileManager { get; private set; }
 
     /// <summary>
     ///   Initializes the examples menu on Grasshopper startup.
     /// </summary>
     internal static void OnStartup(GH_Canvas canvas) {
-      exampleFileManager = new ExampleFileManager(new HttpsFileDownloader());
+      ExampleFileManager = new ExampleFileManager(new HttpsFileDownloader());
       examplesMenu = new ToolStripMenuItem(name) {
         Name = name,
       };
@@ -63,7 +63,7 @@ namespace GsaGH.Graphics.Menu {
     }
 
     private static async Task AddExampleFilesAsync(ToolStripMenuItem menuItem) {
-      List<FileEntry> files = await exampleFileManager.GetExampleFilesAsync();
+      List<FileEntry> files = await ExampleFileManager.GetExampleFilesAsync();
 
       if (files != null && files.Count > 0) {
         menuItem.GetCurrentParent().BeginInvoke((Action)(() => {
@@ -76,7 +76,7 @@ namespace GsaGH.Graphics.Menu {
 
     private static void AddFileMenuItem(ToolStripMenuItem menuItem, FileEntry file) {
       menuItem.DropDown.Items.Add(file.Name, null,
-        async (s, a) => await exampleFileManager.DownloadAndOpenFileAsync(file));
+        async (s, a) => await ExampleFileManager.DownloadAndOpenFileAsync(file));
     }
   }
 }
