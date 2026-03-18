@@ -19,6 +19,7 @@ namespace GsaGH.Graphics.Menu {
     private static ToolStripMenuItem examplesMenu;
     private const string name = "Examples";
     private static IExampleFileManager exampleFileManager;
+    private static readonly object examplesMenuLock = new object();
 
     protected ExamplesMenu() { }
 
@@ -48,7 +49,7 @@ namespace GsaGH.Graphics.Menu {
         editor.MainMenuStrip.Items.Add(examplesMenu);
       } else {
         examplesMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items[name];
-        lock (examplesMenu) { //huh?
+        lock (examplesMenuLock) {
           examplesMenu.DropDown.Items.Add(new ToolStripSeparator());
           PopulateSub(examplesMenu);
         }
