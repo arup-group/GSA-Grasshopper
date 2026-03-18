@@ -17,8 +17,10 @@ namespace GsaGH.Graphics.Menu {
   /// </summary>
   public class ExamplesMenu {
     private static ToolStripMenuItem examplesMenu;
-    private const string name = "X Examples";
+    private const string name = "Examples";
     private static IExampleFileManager exampleFileManager;
+
+    protected ExamplesMenu() { }
 
     /// <summary>
     ///   Initializes the examples menu on Grasshopper startup.
@@ -46,7 +48,7 @@ namespace GsaGH.Graphics.Menu {
         editor.MainMenuStrip.Items.Add(examplesMenu);
       } else {
         examplesMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items[name];
-        lock (examplesMenu) {
+        lock (examplesMenu) { //huh?
           examplesMenu.DropDown.Items.Add(new ToolStripSeparator());
           PopulateSub(examplesMenu);
         }

@@ -17,10 +17,10 @@ namespace GsaGH.UI {
   }
 
   public class ExampleFileManager : IExampleFileManager {
-    private IHttpsFileDownloader _downloader;
+    private IHttpsFileDownloader Downloader { get; }
 
     public ExampleFileManager(IHttpsFileDownloader downloader) {
-      _downloader = downloader;
+      Downloader = downloader;
     }
 
     /// <summary>
@@ -28,7 +28,7 @@ namespace GsaGH.UI {
     /// </summary>
     public async Task<List<FileEntry>> GetExampleFilesAsync() {
       try {
-        return await _downloader.GetFilesFromWebPageAsync();
+        return await Downloader.GetFilesFromWebPageAsync();
       } catch (Exception ex) {
         ShowMessage(FileOpenState.NoFilesFound, string.Empty);
         return new List<FileEntry>();
@@ -36,7 +36,7 @@ namespace GsaGH.UI {
     }
 
     public bool CheckForDuplicatedDownloads(FileEntry file) {
-      string savePath = _downloader.GetFullDownloadPath(file);
+      string savePath = Downloader.GetFullDownloadPath(file);
       if (!File.Exists(savePath)) {
         return true;
       }
@@ -50,9 +50,9 @@ namespace GsaGH.UI {
     public async Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file) {
       if (CheckForDuplicatedDownloads(file)) {
         try {
-          await _downloader.DownloadFileAsync(file);
+          await Downloader.DownloadFileAsync(file);
 
-          string savePath = _downloader.GetFullDownloadPath(file);
+          string savePath = Downloader.GetFullDownloadPath(file);
           if (Path.GetExtension(savePath).Equals(".gh", StringComparison.OrdinalIgnoreCase)) {
             var io = new GH_DocumentIO();
             if (io.Open(savePath)) {
