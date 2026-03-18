@@ -29,7 +29,7 @@ namespace GsaGH.UI {
     public async Task<List<FileEntry>> GetExampleFilesAsync() {
       try {
         return await Downloader.GetFilesFromWebPageAsync();
-      } catch (Exception ex) {
+      } catch (Exception) {
         ShowMessage(FileOpenState.NoFilesFound, string.Empty);
         return new List<FileEntry>();
       }
