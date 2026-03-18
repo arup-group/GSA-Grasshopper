@@ -1,5 +1,7 @@
 ﻿using System.Linq;
+using System.Security.Cryptography;
 
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
 using GsaGH.Components;
@@ -105,6 +107,17 @@ namespace GsaGHTests.Components.Geometry {
       GH_OasysComponent comp = ComponentMother(isCurve, isLoadPanel);
       ComponentTestHelper.GetOutput(comp);
       Assert.Contains("One runtime error", comp.InstanceDescription);
+    }
+
+    [Fact]
+    public void ShouldAcceptIdWithoutException() {
+      var comp = new Create2dElement();
+      comp.CreateAttributes();
+      ComponentTestHelper.SetInput(comp, GetMesh(), 0);
+      ComponentTestHelper.SetInput(comp,"1", 1);
+      comp.Preview3dSection = true;
+      ComponentTestHelper.GetOutput(comp);
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
   }
 

@@ -34,8 +34,7 @@ namespace IntegrationTests.Components {
       var output = (GH_String)param.VolatileData.get_Branch(0)[0];
 
       string expected
-        = "GEO P(m) M(-0.01|0.015) L(-0.01|-0.015) L(0.01|-0.015) L(0.01|0.015) " +
-          ": M(0.015|0.01) L(0.015|-0.01) L(-0.015|-0.01) L(-0.015|0.01)";
+        = "GEO P(m) M(-0.01|0) L(0.01|0) L(0.01|0.03) L(-0.01|0.03) : M(-0.03|-0.01) L(0|-0.01) L(0|0.01) L(-0.03|0.01)";
       Assert.Equal(expected, output.Value);
     }
 

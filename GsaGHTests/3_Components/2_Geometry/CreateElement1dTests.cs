@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
 using GsaGH.Components;
@@ -102,6 +103,17 @@ namespace GsaGHTests.Components.Geometry {
       SetElement1dFromSection3d();
       var mesh = new GH_Mesh();
       Assert.True(_element1dGooFromSection3d.CastTo(ref mesh));
+    }
+
+    [Fact]
+    public void ShouldAcceptIdWithoutException() {
+      var comp = new Create1dElement();
+      comp.CreateAttributes();
+      ComponentTestHelper.SetInput(comp, new LineCurve(new Point3d(0, -1, 0), new Point3d(7, 3, 1)), 0);
+      ComponentTestHelper.SetInput(comp, "1", 1);
+      comp.Preview3dSection = true;
+      ComponentTestHelper.GetOutput(comp);
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
   }
 }
