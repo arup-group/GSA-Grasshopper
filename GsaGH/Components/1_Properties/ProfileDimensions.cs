@@ -301,7 +301,7 @@ namespace GsaGH.Components {
 
       string[] values = {
         parts[2], // Depth
-        null, // Placeholder for Width, 
+        null, // Placeholder for Width,
         parts[3], // Width Top
         parts[4], // Width Bottom
         null, // Flange Thk Top
@@ -425,6 +425,9 @@ namespace GsaGH.Components {
 
     private void SetOutputForIRectangleHollowProfile(
       IGH_DataAccess da, string[] parts, LengthUnit unit, string[] type) {
+      if (parts.Length == 5) {
+        parts = parts.Concat(new[] { parts[4] }).ToArray();
+      }
       SetOutputForAngleProfile(da, parts, unit, type);
     }
 
