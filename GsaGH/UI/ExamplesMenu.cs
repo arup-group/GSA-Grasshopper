@@ -62,7 +62,13 @@ namespace GsaGH.Graphics.Menu {
     ///   Populates the submenu with example files.
     /// </summary>
     internal static void PopulateSub(ToolStripMenuItem menuItem) {
-      AddExampleFilesAsync(menuItem);
+      _ = AddExampleFilesAsync(menuItem).ContinueWith(t => {
+        if (t.Exception == null) {
+          return;
+        }
+
+        MessageDialogBox.ShowMessage(MessageDialogBox.FileOpenState.NoFilesFound, string.Empty);
+      }, TaskContinuationOptions.OnlyOnFaulted);
     }
 
     private static async Task AddExampleFilesAsync(ToolStripMenuItem menuItem) {
