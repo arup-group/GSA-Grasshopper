@@ -17,7 +17,7 @@ namespace GsaGH.Graphics.Menu {
   /// </summary>
   public class ExamplesMenu {
     private static ToolStripMenuItem examplesMenu;
-    private const string name = "Examples";
+    public const string Name = "Examples";
     private static IExampleFileManager exampleFileManager;
     private static readonly object examplesMenuLock = new object();
 
@@ -28,8 +28,8 @@ namespace GsaGH.Graphics.Menu {
     /// </summary>
     internal static void OnStartup(GH_Canvas canvas) {
       exampleFileManager = new ExampleFileManager(new HttpsFileDownloader());
-      examplesMenu = new ToolStripMenuItem(name) {
-        Name = name,
+      examplesMenu = new ToolStripMenuItem(Name) {
+        Name = Name,
       };
 
       PopulateSub(examplesMenu);
@@ -45,10 +45,10 @@ namespace GsaGH.Graphics.Menu {
         Thread.Sleep(321);
       }
 
-      if (!editor.MainMenuStrip.Items.ContainsKey(name)) {
+      if (!editor.MainMenuStrip.Items.ContainsKey(Name)) {
         editor.MainMenuStrip.Items.Add(examplesMenu);
       } else {
-        examplesMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items[name];
+        examplesMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items[Name];
         lock (examplesMenuLock) {
           examplesMenu.DropDown.Items.Add(new ToolStripSeparator());
           PopulateSub(examplesMenu);

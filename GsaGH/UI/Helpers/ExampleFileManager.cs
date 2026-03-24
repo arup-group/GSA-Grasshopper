@@ -42,7 +42,7 @@ namespace GsaGH.UI {
       }
 
       // if file exists ask for overwrite
-      DialogResult result = ShowMessage(FileOpenState.OverrideQuestion, file.Name);
+      DialogResult result = ShowMessage(FileOpenState.OverrideQuestion, file.Name, savePath);
 
       return result == DialogResult.OK;
     }
@@ -63,7 +63,7 @@ namespace GsaGH.UI {
             return ShowMessage(FileOpenState.OpenFailed, file.Name);
           }
 
-          return ShowMessage(FileOpenState.Downloaded, file.Name);
+          return ShowMessage(FileOpenState.Downloaded, file.Name, savePath);
         } catch {
           return ShowMessage(FileOpenState.DownloadFailed, file.Name);
         }
