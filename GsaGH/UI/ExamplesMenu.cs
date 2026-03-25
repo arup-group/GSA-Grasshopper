@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
 
 using GsaGH.UI;
+using GsaGH.UI.Helpers;
 
 namespace GsaGH.Graphics.Menu {
 
@@ -27,7 +29,10 @@ namespace GsaGH.Graphics.Menu {
     ///   Initializes the examples menu on Grasshopper startup.
     /// </summary>
     internal static void OnStartup(GH_Canvas canvas) {
-      exampleFileManager = new ExampleFileManager(new HttpsFileDownloader());
+      var httpClient = new HttpClient();
+      var httpClientWrapper = new HttpClientWrapper(httpClient);
+      var downloader = new HttpsFileDownloader(httpClientWrapper);
+      exampleFileManager = new ExampleFileManager(downloader);
       examplesMenu = new ToolStripMenuItem(Name) {
         Name = Name,
       };

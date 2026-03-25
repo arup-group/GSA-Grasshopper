@@ -6,10 +6,12 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using GsaGH.Properties;
+using GsaGH.UI.Helpers;
 
 using HtmlAgilityPack;
 
 namespace GsaGH.UI {
+
   public interface IHttpsFileDownloader {
     public Task DownloadFileAsync(FileEntry file);
     public Task<List<FileEntry>> GetFilesFromWebPageAsync();
@@ -34,33 +36,33 @@ namespace GsaGH.UI {
       ".3dm",
     };
 
+    private readonly IHttpClientWrapper _httpClientWrapper;
+
     public static string DownloadsPath
       => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+
+    public HttpsFileDownloader(IHttpClientWrapper httpClientWrapper) {
+      _httpClientWrapper = httpClientWrapper;
+    }
 
     public string GetFullDownloadPath(FileEntry file) {
       return Path.Combine(DownloadsPath, file.Name);
     }
 
-    /// <summary>
-    ///   Get and download a specific file
-    /// </summary>
-    /// <param name="file"></param>
-    /// <returns></returns>
     public async Task DownloadFileAsync(FileEntry file) {
-      using var client = new HttpClient();
-      using HttpResponseMessage response = await client.GetAsync(file.Url);
+      string fileUrl = file.Url;
+      string filePath = GetFullDownloadPath(file);
+
+      HttpResponseMessage response = await _httpClientWrapper.GetAsync(fileUrl);
       response.EnsureSuccessStatusCode();
-      using var fs = new FileStream(GetFullDownloadPath(file), FileMode.Create, FileAccess.Write);
+
+      using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
       await response.Content.CopyToAsync(fs);
     }
 
-    /// <summary>
-    ///   Gets the list of example files from the web page, combined with links to them
-    /// </summary>
     public async Task<List<FileEntry>> GetFilesFromWebPageAsync() {
       string examplesUrl = Resources.SamplesUrl;
-      using var client = new HttpClient();
-      string html = await client.GetStringAsync(examplesUrl);
+      string html = await _httpClientWrapper.GetStringAsync(examplesUrl);
       var doc = new HtmlDocument();
       doc.LoadHtml(html);
 
@@ -70,7 +72,7 @@ namespace GsaGH.UI {
 
     private static List<FileEntry> GetFileListFromNodes(string url, HtmlNodeCollection nodes) {
       var fileList = new List<FileEntry>();
-      //if possible, use json from the serveer, or nginx directory - if not then this solution is the easiest and most popular
+
       foreach (HtmlNode link in nodes) {
         string href = link.GetAttributeValue("href", "");
         if (AllowedExtensions.Any(ext => href.EndsWith(ext, StringComparison.OrdinalIgnoreCase))) {
