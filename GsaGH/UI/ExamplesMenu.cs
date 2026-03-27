@@ -9,6 +9,7 @@ using Grasshopper;
 using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
 
+using GsaGH.Properties;
 using GsaGH.UI;
 using GsaGH.UI.Helpers;
 
@@ -31,7 +32,7 @@ namespace GsaGH.Graphics.Menu {
     internal static void OnStartup(GH_Canvas canvas) {
       var httpClient = new HttpClient();
       var httpClientWrapper = new HttpClientWrapper(httpClient);
-      var downloader = new HttpsFileDownloader(httpClientWrapper);
+      var downloader = new HttpsFileDownloader(httpClientWrapper, Resources.SamplesUrl);
       exampleFileManager = new ExampleFileManager(downloader);
       examplesMenu = new ToolStripMenuItem(Name) {
         Name = Name,

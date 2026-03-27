@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-using GsaGH.Properties;
 using GsaGH.UI.Helpers;
 
 using HtmlAgilityPack;
@@ -16,6 +15,8 @@ namespace GsaGH.UI {
     public Task DownloadFileAsync(FileEntry file);
     public Task<List<FileEntry>> GetFilesFromWebPageAsync();
     public string GetFullDownloadPath(FileEntry file);
+    public Task SaveFileAsync(HttpResponseMessage response, FileEntry file);
+    public string UrlToSamples { get; }
   }
 
   public class FileEntry {
@@ -41,8 +42,11 @@ namespace GsaGH.UI {
     public static string DownloadsPath
       => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
-    public HttpsFileDownloader(IHttpClientWrapper httpClientWrapper) {
+    public string UrlToSamples { get; }
+
+    public HttpsFileDownloader(IHttpClientWrapper httpClientWrapper, string urlToSamples) {
       _httpClientWrapper = httpClientWrapper;
+      UrlToSamples = urlToSamples;
     }
 
     public string GetFullDownloadPath(FileEntry file) {
@@ -51,23 +55,38 @@ namespace GsaGH.UI {
 
     public async Task DownloadFileAsync(FileEntry file) {
       string fileUrl = file.Url;
+
+      try {
+        HttpResponseMessage response = await _httpClientWrapper.GetAsync(fileUrl);
+
+        if (!response.IsSuccessStatusCode) {
+          throw new HttpRequestException($"Failed to download file from {fileUrl}. Status Code: {response.StatusCode}");
+        }
+
+        await SaveFileAsync(response, file);
+      } catch (HttpRequestException ex) {
+        Console.WriteLine($"HTTP error occurred while downloading {file.Url}: {ex.Message}");
+        throw;
+      } catch (Exception ex) {
+        Console.WriteLine($"An error occurred while downloading or saving the file: {ex.Message}");
+        throw;
+      }
+    }
+
+    public async Task SaveFileAsync(HttpResponseMessage response, FileEntry file) {
       string filePath = GetFullDownloadPath(file);
 
-      HttpResponseMessage response = await _httpClientWrapper.GetAsync(fileUrl);
-      response.EnsureSuccessStatusCode();
-
       using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-      await response.Content.CopyToAsync(fs);
+      await response?.Content?.CopyToAsync(fs);
     }
 
     public async Task<List<FileEntry>> GetFilesFromWebPageAsync() {
-      string examplesUrl = Resources.SamplesUrl;
-      string html = await _httpClientWrapper.GetStringAsync(examplesUrl);
+      string html = await _httpClientWrapper.GetStringAsync(UrlToSamples);
       var doc = new HtmlDocument();
       doc.LoadHtml(html);
 
       HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//a[@href]");
-      return nodes == null ? new List<FileEntry>() : GetFileListFromNodes(examplesUrl, nodes);
+      return nodes == null ? new List<FileEntry>() : GetFileListFromNodes(UrlToSamples, nodes);
     }
 
     private static List<FileEntry> GetFileListFromNodes(string url, HtmlNodeCollection nodes) {
