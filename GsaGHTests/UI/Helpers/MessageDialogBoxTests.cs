@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Windows.Forms;
 
 using GsaGH.UI;
@@ -145,13 +144,11 @@ namespace GsaGHTests.UI {
 
     [Fact]
     public void SetMessageBoxWrapper_ShouldNotChangeWrapper_WhenNullPassed() {
-      object currentWrapper = typeof(MessageDialogBox)
-       .GetField("_messageBoxWrapper", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+      object currentWrapper = MessageDialogBox.MessageBoxWrapper;
 
       MessageDialogBox.SetMessageBoxWrapper(null);
 
-      object afterWrapper = typeof(MessageDialogBox)
-       .GetField("_messageBoxWrapper", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+      object afterWrapper = MessageDialogBox.MessageBoxWrapper;
 
       Assert.Equal(currentWrapper, afterWrapper);
     }
@@ -161,8 +158,7 @@ namespace GsaGHTests.UI {
       var newMock = new Mock<IMessageBoxWrapper>();
       MessageDialogBox.SetMessageBoxWrapper(newMock.Object);
 
-      object currentWrapper = typeof(MessageDialogBox)
-       .GetField("_messageBoxWrapper", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+      object currentWrapper = MessageDialogBox.MessageBoxWrapper;
 
       Assert.Equal(newMock.Object, currentWrapper);
     }

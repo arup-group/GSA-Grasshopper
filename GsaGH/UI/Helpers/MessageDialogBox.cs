@@ -1,6 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
+[assembly: InternalsVisibleTo("GsaGHTests")]
+
 namespace GsaGH.UI {
   public interface IMessageBoxWrapper {
     DialogResult Show(string message, string title);
@@ -17,7 +19,6 @@ namespace GsaGH.UI {
     }
   }
 
-  [assembly: InternalsVisibleTo("GsaGHTests")]
   public static class MessageDialogBox {
     internal static IMessageBoxWrapper MessageBoxWrapper { get; private set; } = new MessageBoxWrapper();
 
