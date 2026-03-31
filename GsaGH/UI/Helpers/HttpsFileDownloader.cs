@@ -39,25 +39,51 @@ namespace GsaGH.UI {
 
     private readonly IHttpClientWrapper _httpClientWrapper;
 
-    public static string DownloadsPath
+    public static string DefaultDownloadPath
       => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+    private readonly string _downloadsPath;
 
     public string UrlToSamples { get; }
 
-    public HttpsFileDownloader(IHttpClientWrapper httpClientWrapper, string urlToSamples) {
+    public HttpsFileDownloader(
+      IHttpClientWrapper httpClientWrapper, string urlToSamples, string customDownloadPath = "") {
       _httpClientWrapper = httpClientWrapper;
       UrlToSamples = urlToSamples;
+      _downloadsPath = SetCustomDownloadsPath(customDownloadPath);
+    }
+
+    private static string SetCustomDownloadsPath(string customDownloadPath) {
+      if (string.IsNullOrWhiteSpace(customDownloadPath)) {
+        return DefaultDownloadPath;
+      }
+
+      if (Path.IsPathRooted(customDownloadPath) && Directory.Exists(customDownloadPath)) {
+        return customDownloadPath;
+      }
+
+      MessageDialogBox.ShowMessage(MessageDialogBox.FileOpenState.InvalidDownloadPath, string.Empty,
+        customDownloadPath);
+      return DefaultDownloadPath;
     }
 
     public string GetFullDownloadPath(FileEntry file) {
-      return Path.Combine(DownloadsPath, file.Name);
+      if (file == null) {
+        throw new ArgumentNullException(nameof(file));
+      }
+
+      string safeFileName = HttpNameExtractor.GetSafeFileName(file.Name);
+      return Path.Combine(_downloadsPath, safeFileName);
     }
 
     public async Task DownloadFileAsync(FileEntry file) {
+      if (file == null) {
+        throw new ArgumentNullException(nameof(file));
+      }
+
       string fileUrl = file.Url;
 
       try {
-        HttpResponseMessage response = await _httpClientWrapper.GetAsync(fileUrl);
+        using HttpResponseMessage response = await _httpClientWrapper.GetAsync(fileUrl);
 
         if (!response.IsSuccessStatusCode) {
           throw new HttpRequestException($"Failed to download file from {fileUrl}. Status Code: {response.StatusCode}");
@@ -74,10 +100,14 @@ namespace GsaGH.UI {
     }
 
     public async Task SaveFileAsync(HttpResponseMessage response, FileEntry file) {
+      if (response?.Content == null) {
+        throw new ArgumentNullException(nameof(response));
+      }
+
       string filePath = GetFullDownloadPath(file);
 
       using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-      await response?.Content?.CopyToAsync(fs);
+      await response.Content.CopyToAsync(fs)!;
     }
 
     public async Task<List<FileEntry>> GetFilesFromWebPageAsync() {

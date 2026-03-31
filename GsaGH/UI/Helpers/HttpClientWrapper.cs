@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace GsaGH.UI.Helpers {
@@ -10,8 +11,9 @@ namespace GsaGH.UI.Helpers {
   public class HttpClientWrapper : IHttpClientWrapper {
     private readonly HttpClient _httpClient;
 
-    public HttpClientWrapper(HttpClient httpClient) {
+    public HttpClientWrapper(HttpClient httpClient, TimeSpan? timeout = null) {
       _httpClient = httpClient;
+      httpClient.Timeout = timeout ?? TimeSpan.FromSeconds(60); // Default timeout
     }
 
     public async Task<string> GetStringAsync(string url) {
