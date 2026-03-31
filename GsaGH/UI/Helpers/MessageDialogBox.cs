@@ -30,6 +30,7 @@ namespace GsaGH.UI {
       NoFilesFound,
       Cancelled,
       OverrideQuestion,
+      InvalidDownloadPath,
     }
 
     public static void SetMessageBoxWrapper(IMessageBoxWrapper messageBoxWrapper) {
@@ -40,10 +41,9 @@ namespace GsaGH.UI {
       const string errorTitle = "Error";
       switch (state) {
         case FileOpenState.Success: return DialogResult.OK;
-        case FileOpenState.Cancelled: return DialogResult.Cancel;
         case FileOpenState.Downloaded:
           MessageBoxWrapper.Show($"File downloaded to: {path}", "Download Complete");
-          break;
+          return DialogResult.OK;
         case FileOpenState.OpenFailed:
           MessageBoxWrapper.Show($"Failed to open the Grasshopper file: {name}", errorTitle);
           break;
@@ -53,9 +53,13 @@ namespace GsaGH.UI {
         case FileOpenState.NoFilesFound:
           MessageBoxWrapper.Show("Couldn't find any sample files. Please contact with support.", errorTitle);
           break;
+        case FileOpenState.Cancelled: return DialogResult.Cancel;
         case FileOpenState.OverrideQuestion:
           return MessageBoxWrapper.Show($"File \"{name}\" already exists in {path}. Overwrite?", "File Exists",
             MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+        case FileOpenState.InvalidDownloadPath:
+          MessageBoxWrapper.Show("Custom download path must be an existing absolute path.", errorTitle);
+          break;
       }
 
       return DialogResult.Abort;
