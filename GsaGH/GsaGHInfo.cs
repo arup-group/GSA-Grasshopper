@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -45,12 +45,12 @@ namespace GsaGH {
 
     internal const string Company = "Oasys";
     internal const string Contact = "https://www.oasys-software.com/";
-    internal const string Copyright = "Copyright © Oasys 1985 - 2025";
+    internal const string Copyright = "Copyright © Oasys 1985 - 2026";
     public const string PluginName = "GsaGH";
     public const string ProductName = "GSA";
     internal const string TermsConditions
       = "Oasys terms and conditions apply. See https://www.oasys-software.com/terms-conditions for details. ";
-    internal const string GrasshopperVersion = "1.5.2";
+    internal const string GrasshopperVersion = "1.5.3";
 
     internal static string disclaimer = $"{PluginName} is pre-release and under active development, "
       + "including further testing to be undertaken. It is provided \"as-is\" and you bear the risk of using it. "

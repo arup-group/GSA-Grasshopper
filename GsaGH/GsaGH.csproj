@@ -1,16 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <PlatformTarget>x64</PlatformTarget>
     <Platforms>x64</Platforms>
     <Title>GsaGH</Title>
     <Company>Oasys</Company>
-    <Copyright>Copyright © Oasys 1985 - 2025</Copyright>
+    <Copyright>Copyright © Oasys 1985 - 2026</Copyright>
     <PackageProjectUrl>https://github.com/arup-group/GSA-Grasshopper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/arup-group/GSA-Grasshopper</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>GSALogo128.png</PackageIcon>
-    <Version>1.5.2</Version>
+    <Version>1.5.3</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <LangVersion>8.0</LangVersion>
@@ -21,7 +21,7 @@
 
       Contact oasys@arup.com to request a free trial version.
 
-      Copyright © Oasys 1985 - 2025
+      Copyright © Oasys 1985 - 2026
     </Description>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
