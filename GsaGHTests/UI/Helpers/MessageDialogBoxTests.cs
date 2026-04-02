@@ -29,18 +29,16 @@ namespace GsaGHTests.UI {
     }
 
     [Theory]
-    [InlineData(MessageDialogBox.FileOpenState.Downloaded, "path", "File downloaded to: path", "Download Complete")]
-    [InlineData(MessageDialogBox.FileOpenState.OpenFailed, "invalid", "Failed to open the Grasshopper file: someName",
-      "Error")]
-    [InlineData(MessageDialogBox.FileOpenState.DownloadFailed, "invalid", "Download of the file: someName, failed.",
-      "Error")]
-    [InlineData(MessageDialogBox.FileOpenState.NoFilesFound, "invalid",
+    [InlineData(MessageDialogBox.FileOpenState.Downloaded, "File downloaded to: somePath", "Download Complete")]
+    [InlineData(MessageDialogBox.FileOpenState.OpenFailed, "Failed to open the Grasshopper file: someName", "Error")]
+    [InlineData(MessageDialogBox.FileOpenState.DownloadFailed, "Download of the file: someName, failed.", "Error")]
+    [InlineData(MessageDialogBox.FileOpenState.NoFilesFound,
       "Couldn't find any sample files. Please contact with support.", "Error")]
-    [InlineData(MessageDialogBox.FileOpenState.InvalidDownloadPath, "invalid",
+    [InlineData(MessageDialogBox.FileOpenState.InvalidDownloadPath,
       "Custom download path must be an existing absolute path.", "Error")]
     public void ShowMessage_ShouldDisplayMessage_WhenStateIsInvalid(
-      MessageDialogBox.FileOpenState state, string path, string errorMessage, string title) {
-      MessageDialogBox.ShowMessage(state, "someName", path);
+      MessageDialogBox.FileOpenState state, string errorMessage, string title) {
+      MessageDialogBox.ShowMessage(state, "someName", "somePath");
 
       _mockMessageBox.Verify(m => m.Show(errorMessage, title), Times.Once);
     }
@@ -154,6 +152,5 @@ namespace GsaGHTests.UI {
 
       Assert.Equal(newMock.Object, currentWrapper);
     }
-
   }
 }
