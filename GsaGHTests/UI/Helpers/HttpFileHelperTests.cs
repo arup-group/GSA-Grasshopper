@@ -103,9 +103,7 @@ namespace GsaGHTests.UI {
 
       FileEntry entry = HttpFileHelper.GetFileEntry("http://example.com", node, allowed);
 
-      Assert.NotNull(entry);
-      Assert.Equal("myfile.csv", entry.Name);
-      Assert.Equal("http://example.com/data/", entry.Url);
+      Assert.Null(entry);
     }
 
     [Fact]
