@@ -226,6 +226,27 @@ namespace GsaGHTests.UI {
       Assert.Equal(TimeSpan.FromSeconds(5), httpClient.Timeout);
     }
 
+    [Fact]
+    public void SetCustomDownloadPath_ShouldReturnCustomPath_WhenValid() {
+      string customPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+        "CustomDownloads");
+      Directory.CreateDirectory(customPath);
+
+      var downloader = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples, customPath);
+      string downloadPath = downloader.SetCustomDownloadsPath(customPath);
+
+      Assert.Equal(customPath, downloadPath);
+
+      Directory.Delete(customPath);
+    }
+
+    [Fact]
+    public void SetCustomDownloadPath_ShouldThrowArgumentException_WhenInvalid() {
+      var downloader = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples);
+
+      Assert.Throws<ArgumentException>(() => downloader.SetCustomDownloadsPath("invalid\\path"));
+    }
+
     private static FileEntry GetSampleFileEntry() {
       var file = new FileEntry {
         Name = "testfile.gh",

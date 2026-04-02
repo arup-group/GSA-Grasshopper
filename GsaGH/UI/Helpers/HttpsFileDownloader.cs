@@ -12,11 +12,12 @@ using HtmlAgilityPack;
 namespace GsaGH.UI {
 
   public interface IHttpsFileDownloader {
-    public Task DownloadFileAsync(FileEntry file);
-    public Task<List<FileEntry>> GetFilesFromWebPageAsync();
-    public string GetFullDownloadPath(FileEntry file);
-    public Task SaveFileAsync(HttpResponseMessage response, FileEntry file);
-    public string UrlToSamples { get; }
+    Task DownloadFileAsync(FileEntry file);
+    Task<List<FileEntry>> GetFilesFromWebPageAsync();
+    string GetFullDownloadPath(FileEntry file);
+    Task SaveFileAsync(HttpResponseMessage response, FileEntry file);
+    string UrlToSamples { get; }
+    string SetCustomDownloadsPath(string customDownloadPath);
   }
 
   public class FileEntry {
@@ -52,7 +53,7 @@ namespace GsaGH.UI {
       _downloadsPath = SetCustomDownloadsPath(customDownloadPath);
     }
 
-    private static string SetCustomDownloadsPath(string customDownloadPath) {
+    public string SetCustomDownloadsPath(string customDownloadPath) {
       if (string.IsNullOrWhiteSpace(customDownloadPath)) {
         return DefaultDownloadPath;
       }
@@ -61,9 +62,7 @@ namespace GsaGH.UI {
         return customDownloadPath;
       }
 
-      MessageDialogBox.ShowMessage(MessageDialogBox.FileOpenState.InvalidDownloadPath, string.Empty,
-        customDownloadPath);
-      return DefaultDownloadPath;
+      throw new ArgumentException("Invalid download path", nameof(customDownloadPath));
     }
 
     public string GetFullDownloadPath(FileEntry file) {
@@ -71,7 +70,7 @@ namespace GsaGH.UI {
         throw new ArgumentNullException(nameof(file));
       }
 
-      string safeFileName = HttpNameExtractor.GetSafeFileName(file.Name);
+      string safeFileName = HttpFileHelper.GetSafeFileName(file.Name);
       return Path.Combine(_downloadsPath, safeFileName);
     }
 
@@ -91,11 +90,7 @@ namespace GsaGH.UI {
 
         await SaveFileAsync(response, file);
       } catch (HttpRequestException ex) {
-        Console.WriteLine($"HTTP error occurred while downloading {file.Url}: {ex.Message}");
-        throw;
-      } catch (Exception ex) {
-        Console.WriteLine($"An error occurred while downloading or saving the file: {ex.Message}");
-        throw;
+        throw new HttpRequestException($"HTTP error occurred while downloading {file.Url}: {ex.Message}");
       }
     }
 
@@ -120,19 +115,12 @@ namespace GsaGH.UI {
     }
 
     private static List<FileEntry> GetFileListFromNodes(string url, HtmlNodeCollection nodes) {
-      var fileList = new List<FileEntry>();
-
-      foreach (HtmlNode link in nodes) {
-        string href = link.GetAttributeValue("href", "");
-        if (AllowedExtensions.Any(ext => href.EndsWith(ext, StringComparison.OrdinalIgnoreCase))) {
-          fileList.Add(new FileEntry {
-            Name = link.InnerText.Trim(),
-            Url = href.StartsWith("http") ? href : new Uri(new Uri(url), href).ToString(),
-          });
-        }
+      if (nodes == null) {
+        return new List<FileEntry>();
       }
 
-      return fileList;
+      return nodes.Select(link => HttpFileHelper.GetFileEntry(url, link, AllowedExtensions))
+       .Where(entryFile => entryFile != null).ToList();
     }
   }
 }
