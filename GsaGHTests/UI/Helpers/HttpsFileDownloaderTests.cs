@@ -23,14 +23,13 @@ namespace GsaGHTests.UI {
 
     public HttpsFileDownloaderTests() {
       _mockHttpClient = new Mock<IHttpClientWrapper>();
-      _downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples);
+      _downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples, Path.GetTempPath());
     }
 
     [Fact]
     public void GetFullDownloadPath_ShouldReturnCorrectPath() {
       FileEntry file = GetSampleFileEntry();
-      string expectedPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads",
-        "testfile.gh");
+      string expectedPath = Path.Combine(Path.GetTempPath(), "testfile.gh");
 
       string fullPath = _downloader.GetFullDownloadPath(file);
 
@@ -55,7 +54,8 @@ namespace GsaGHTests.UI {
       };
       mockHttpClientWrapper.Setup(c => c.GetAsync(It.IsAny<string>())).ReturnsAsync(mockHttpResponseMessage);
 
-      var downloader = new HttpsFileDownloader(mockHttpClientWrapper.Object, _httpExampleComSamples);
+      var downloader
+        = new HttpsFileDownloader(mockHttpClientWrapper.Object, _httpExampleComSamples, Path.GetTempPath());
 
       FileEntry file = GetSampleFileEntry();
 
@@ -71,7 +71,8 @@ namespace GsaGHTests.UI {
       var mockHttpResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound);
       mockHttpClientWrapper.Setup(c => c.GetAsync(It.IsAny<string>())).ReturnsAsync(mockHttpResponseMessage);
 
-      var downloader = new HttpsFileDownloader(mockHttpClientWrapper.Object, _httpExampleComSamples);
+      var downloader
+        = new HttpsFileDownloader(mockHttpClientWrapper.Object, _httpExampleComSamples, Path.GetTempPath());
 
       FileEntry file = GetSampleFileEntry();
 
@@ -87,7 +88,8 @@ namespace GsaGHTests.UI {
       mockHttpClientWrapper.Setup(c => c.GetAsync(It.IsAny<string>()))
        .ThrowsAsync(new HttpRequestException("Request failed"));
 
-      var downloader = new HttpsFileDownloader(mockHttpClientWrapper.Object, _httpExampleComSamples);
+      var downloader
+        = new HttpsFileDownloader(mockHttpClientWrapper.Object, _httpExampleComSamples, Path.GetTempPath());
 
       FileEntry file = GetSampleFileEntry();
 
@@ -102,7 +104,8 @@ namespace GsaGHTests.UI {
         Content = new StringContent("sample file content"),
       };
 
-      var downloader = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples);
+      var downloader
+        = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples, Path.GetTempPath());
 
       FileEntry file = GetSampleFileEntry();
 
@@ -125,7 +128,7 @@ namespace GsaGHTests.UI {
 
       _mockHttpClient.Setup(c => c.GetStringAsync(It.IsAny<string>())).ReturnsAsync(htmlContent);
 
-      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples);
+      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples, Path.GetTempPath());
 
       List<FileEntry> files = await downloader.GetFilesFromWebPageAsync();
 
@@ -141,7 +144,7 @@ namespace GsaGHTests.UI {
 
       _mockHttpClient.Setup(c => c.GetStringAsync(It.IsAny<string>())).ReturnsAsync(htmlContent);
 
-      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples);
+      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples, Path.GetTempPath());
       List<FileEntry> files = await downloader.GetFilesFromWebPageAsync();
 
       Assert.Empty(files);
@@ -153,7 +156,7 @@ namespace GsaGHTests.UI {
 
       _mockHttpClient.Setup(c => c.GetStringAsync(It.IsAny<string>())).ReturnsAsync(htmlContent);
 
-      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples);
+      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples, Path.GetTempPath());
       List<FileEntry> files = await downloader.GetFilesFromWebPageAsync();
 
       Assert.Empty(files);
@@ -166,7 +169,7 @@ namespace GsaGHTests.UI {
         HtmlNode.CreateNode("<a href='/file2.3dm'>file2.3dm</a>"),
       };
 
-      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples);
+      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples, Path.GetTempPath());
 
       MethodInfo method = downloader.GetType()
        .GetMethod("GetFileListFromNodes", BindingFlags.NonPublic | BindingFlags.Static);
@@ -194,7 +197,8 @@ namespace GsaGHTests.UI {
       var response = new HttpResponseMessage(HttpStatusCode.OK) {
         Content = null,
       };
-      var downloader = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples);
+      var downloader
+        = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples, Path.GetTempPath());
       FileEntry file = GetSampleFileEntry();
 
       await Assert.ThrowsAsync<ArgumentNullException>(() => downloader.SaveFileAsync(response, file));
@@ -202,7 +206,8 @@ namespace GsaGHTests.UI {
 
     [Fact]
     public async Task DownloadFileAsync_ShouldThrowArgumentNullException_WhenFileIsNull() {
-      var downloader = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples);
+      var downloader
+        = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples, Path.GetTempPath());
 
       await Assert.ThrowsAsync<ArgumentNullException>(() => downloader.DownloadFileAsync(null));
     }
@@ -212,7 +217,7 @@ namespace GsaGHTests.UI {
       string htmlContent = "<html><body><a href='/file1.gh'>file1.gh"; // tag not closed
       _mockHttpClient.Setup(c => c.GetStringAsync(It.IsAny<string>())).ReturnsAsync(htmlContent);
 
-      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples);
+      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples, Path.GetTempPath());
       List<FileEntry> files = await downloader.GetFilesFromWebPageAsync();
 
       Assert.Single(files);
