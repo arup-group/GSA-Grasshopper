@@ -29,18 +29,28 @@ namespace GsaGHTests.UI {
     }
 
     [Theory]
-    [InlineData(MessageDialogBox.FileOpenState.Downloaded, "File downloaded to: somePath", "Download Complete")]
-    [InlineData(MessageDialogBox.FileOpenState.OpenFailed, "Failed to open the Grasshopper file: someName", "Error")]
-    [InlineData(MessageDialogBox.FileOpenState.DownloadFailed, "Download of the file: someName, failed.", "Error")]
-    [InlineData(MessageDialogBox.FileOpenState.NoFilesFound,
-      "Couldn't find any sample files. Please contact with support.", "Error")]
-    [InlineData(MessageDialogBox.FileOpenState.InvalidDownloadPath,
+    [InlineData(MessageDialogBox.FileState.Downloaded, "File downloaded to: somePath", "Download Complete")]
+    [InlineData(MessageDialogBox.FileState.OpenFailed, "Failed to open the Grasshopper file: someName", "Error")]
+    [InlineData(MessageDialogBox.FileState.DownloadFailed, "Download of the file: someName, failed.", "Error")]
+    [InlineData(MessageDialogBox.FileState.NoFilesFound, "Couldn't find any sample files. Please contact with support.",
+      "Error")]
+    [InlineData(MessageDialogBox.FileState.InvalidDownloadPath,
       "Custom download path must be an existing absolute path.", "Error")]
-    public void ShowMessage_ShouldDisplayMessage_WhenStateIsInvalid(
-      MessageDialogBox.FileOpenState state, string errorMessage, string title) {
+    public void ShowMessage_ShouldDisplayMessage_WhenFileStateIsInvalid(
+      MessageDialogBox.FileState state, string errorMessage, string title) {
       MessageDialogBox.ShowMessage(state, "someName", "somePath");
 
       _mockMessageBox.Verify(m => m.Show(errorMessage, title), Times.Once);
+    }
+
+    [Fact]
+    public void ShowMessage_ShouldDisplayMessage_WhenMenuStateIsInvalid() {
+      MessageDialogBox.ShowMessage(MessageDialogBox.MenuState.FailedToInitialize);
+
+      _mockMessageBox.Verify(
+        m => m.Show(
+          "Unable to initialize the Examples menu because the Grasshopper document editor did not become available in time.",
+          "GSA Examples", MessageBoxButtons.OK, MessageBoxIcon.Warning), Times.Once);
     }
 
     [Fact]
@@ -52,7 +62,7 @@ namespace GsaGHTests.UI {
        .Setup(m => m.Show(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButtons>(),
           It.IsAny<MessageBoxIcon>())).Returns(DialogResult.OK); // Simulation OK
 
-      DialogResult result = MessageDialogBox.ShowMessage(MessageDialogBox.FileOpenState.OverrideQuestion, name, path);
+      DialogResult result = MessageDialogBox.ShowMessage(MessageDialogBox.FileState.OverrideQuestion, name, path);
 
       _mockMessageBox.Verify(
         m => m.Show($"File \"{name}\" already exists in {path}. Overwrite?", "File Exists", MessageBoxButtons.OKCancel,
@@ -69,7 +79,7 @@ namespace GsaGHTests.UI {
        .Setup(m => m.Show(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButtons>(),
           It.IsAny<MessageBoxIcon>())).Returns(DialogResult.Cancel); // Simulation Cancel
 
-      DialogResult result = MessageDialogBox.ShowMessage(MessageDialogBox.FileOpenState.OverrideQuestion, name, path);
+      DialogResult result = MessageDialogBox.ShowMessage(MessageDialogBox.FileState.OverrideQuestion, name, path);
 
       _mockMessageBox.Verify(
         m => m.Show($"File \"{name}\" already exists in {path}. Overwrite?", "File Exists", MessageBoxButtons.OKCancel,
@@ -79,20 +89,20 @@ namespace GsaGHTests.UI {
 
     [Fact]
     public void ShowMessage_ShouldNotShowMessage_WhenSuccessState() {
-      MessageDialogBox.ShowMessage(MessageDialogBox.FileOpenState.Success, "name");
+      MessageDialogBox.ShowMessage(MessageDialogBox.FileState.Success, "name");
 
       _mockMessageBox.Verify(m => m.Show(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
     public void ShowMessage_ShouldHandleAllFileOpenStates() {
-      Array allFileOpenStates = Enum.GetValues(typeof(MessageDialogBox.FileOpenState));
+      Array allFileOpenStates = Enum.GetValues(typeof(MessageDialogBox.FileState));
 
       foreach (object state in allFileOpenStates) {
         bool isHandled = false;
 
         try {
-          MessageDialogBox.ShowMessage((MessageDialogBox.FileOpenState)state, "testfile", "path");
+          MessageDialogBox.ShowMessage((MessageDialogBox.FileState)state, "testfile", "path");
           isHandled = true;
         } catch {
           isHandled = false;
@@ -104,7 +114,7 @@ namespace GsaGHTests.UI {
 
     [Fact]
     public void ShowMessage_ShouldReturnCancel_WhenCancelledState() {
-      DialogResult result = MessageDialogBox.ShowMessage(MessageDialogBox.FileOpenState.Cancelled, "name", "path");
+      DialogResult result = MessageDialogBox.ShowMessage(MessageDialogBox.FileState.Cancelled, "name", "path");
 
       Assert.Equal(DialogResult.Cancel, result);
       _mockMessageBox.Verify(m => m.Show(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
@@ -112,14 +122,14 @@ namespace GsaGHTests.UI {
 
     [Fact]
     public void ShowMessage_ShouldReturnAbort_ForUnhandledStates() {
-      MessageDialogBox.FileOpenState[] handledStates = new[] {
-        MessageDialogBox.FileOpenState.Success,
-        MessageDialogBox.FileOpenState.Downloaded,
-        MessageDialogBox.FileOpenState.Cancelled,
-        MessageDialogBox.FileOpenState.OverrideQuestion,
+      MessageDialogBox.FileState[] handledStates = new[] {
+        MessageDialogBox.FileState.Success,
+        MessageDialogBox.FileState.Downloaded,
+        MessageDialogBox.FileState.Cancelled,
+        MessageDialogBox.FileState.OverrideQuestion,
       };
 
-      foreach (MessageDialogBox.FileOpenState state in Enum.GetValues(typeof(MessageDialogBox.FileOpenState))) {
+      foreach (MessageDialogBox.FileState state in Enum.GetValues(typeof(MessageDialogBox.FileState))) {
         if (handledStates.Contains(state)) {
           continue;
         }

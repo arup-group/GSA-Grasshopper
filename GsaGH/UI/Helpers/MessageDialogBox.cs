@@ -22,10 +22,10 @@ namespace GsaGH.UI {
   public static class MessageDialogBox {
     internal static IMessageBoxWrapper MessageBoxWrapper { get; private set; } = new MessageBoxWrapper();
 
-    public enum FileOpenState {
+    public enum FileState {
       Success,
-      Downloaded,
       OpenFailed,
+      Downloaded,
       DownloadFailed,
       NoFilesFound,
       Cancelled,
@@ -33,32 +33,48 @@ namespace GsaGH.UI {
       InvalidDownloadPath,
     }
 
+    public enum MenuState {
+      FailedToInitialize,
+    }
+
     public static void SetMessageBoxWrapper(IMessageBoxWrapper messageBoxWrapper) {
       MessageBoxWrapper = messageBoxWrapper ?? MessageBoxWrapper;
     }
 
-    public static DialogResult ShowMessage(FileOpenState state, string name, string path = "") {
+    public static DialogResult ShowMessage(FileState state, string name, string path = "") {
       const string errorTitle = "Error";
       switch (state) {
-        case FileOpenState.Success: return DialogResult.OK;
-        case FileOpenState.Downloaded:
+        case FileState.Success: return DialogResult.OK;
+        case FileState.Downloaded:
           MessageBoxWrapper.Show($"File downloaded to: {path}", "Download Complete");
           return DialogResult.OK;
-        case FileOpenState.OpenFailed:
+        case FileState.OpenFailed:
           MessageBoxWrapper.Show($"Failed to open the Grasshopper file: {name}", errorTitle);
           break;
-        case FileOpenState.DownloadFailed:
+        case FileState.DownloadFailed:
           MessageBoxWrapper.Show($"Download of the file: {name}, failed.", errorTitle);
           break;
-        case FileOpenState.NoFilesFound:
+        case FileState.NoFilesFound:
           MessageBoxWrapper.Show("Couldn't find any sample files. Please contact with support.", errorTitle);
           break;
-        case FileOpenState.Cancelled: return DialogResult.Cancel;
-        case FileOpenState.OverrideQuestion:
+        case FileState.Cancelled: return DialogResult.Cancel;
+        case FileState.OverrideQuestion:
           return MessageBoxWrapper.Show($"File \"{name}\" already exists in {path}. Overwrite?", "File Exists",
             MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-        case FileOpenState.InvalidDownloadPath:
+        case FileState.InvalidDownloadPath:
           MessageBoxWrapper.Show("Custom download path must be an existing absolute path.", errorTitle);
+          break;
+      }
+
+      return DialogResult.Abort;
+    }
+
+    public static DialogResult ShowMessage(MenuState state) {
+      switch (state) {
+        case MenuState.FailedToInitialize:
+          MessageBoxWrapper.Show(
+            "Unable to initialize the Examples menu because the Grasshopper document editor did not become available in time.",
+            "GSA Examples", MessageBoxButtons.OK, MessageBoxIcon.Warning);
           break;
       }
 
