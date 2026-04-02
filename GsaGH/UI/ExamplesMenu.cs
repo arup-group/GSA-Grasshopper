@@ -30,17 +30,30 @@ namespace GsaGH.Graphics.Menu {
     ///   Initializes the examples menu on Grasshopper startup.
     /// </summary>
     internal static void OnStartup(GH_Canvas canvas) {
-      var httpClient = new HttpClient();
-      var httpClientWrapper = new HttpClientWrapper(httpClient);
-      var downloader = new HttpsFileDownloader(httpClientWrapper, Resources.SamplesUrl);
-      exampleFileManager = new ExampleFileManager(downloader);
+      exampleFileManager = CreateExampleFileManager();
       examplesMenu = new ToolStripMenuItem(Name) {
         Name = Name,
       };
 
-      PopulateSub(examplesMenu);
-
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+      PopulateSub(examplesMenu); // we cannot change the signature of this method to async, so we fire and forget the population of the menu, which will update when the files are retrieved
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
       AddToMainTab();
+    }
+
+    public static IExampleFileManager CreateExampleFileManager(IExampleFileManager manager = null) {
+      if (manager != null) {
+        return manager;
+      }
+
+      if (exampleFileManager != null) {
+        return exampleFileManager;
+      }
+
+      var httpClient = new HttpClient();
+      IHttpClientWrapper httpClientWrapper = new HttpClientWrapper(httpClient);
+      IHttpsFileDownloader downloader = new HttpsFileDownloader(httpClientWrapper, Resources.SamplesUrl);
+      return new ExampleFileManager(downloader);
     }
 
     private static void AddToMainTab() {
@@ -57,7 +70,10 @@ namespace GsaGH.Graphics.Menu {
         examplesMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items[Name];
         lock (examplesMenuLock) {
           examplesMenu.DropDown.Items.Add(new ToolStripSeparator());
-          PopulateSub(examplesMenu);
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+          PopulateSub(
+            examplesMenu); // we cannot change the signature of this method to async, so we fire and forget the population of the menu, which will update when the files are retrieved
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
       }
 
@@ -67,14 +83,19 @@ namespace GsaGH.Graphics.Menu {
     /// <summary>
     ///   Populates the submenu with example files.
     /// </summary>
-    internal static void PopulateSub(ToolStripMenuItem menuItem) {
-      _ = AddExampleFilesAsync(menuItem).ContinueWith(t => {
-        if (t.Exception == null) {
-          return;
+    internal static async Task PopulateSub(ToolStripMenuItem menuItem) {
+      try {
+        await AddExampleFilesAsync(menuItem);
+      } catch {
+        // looks stupid but we need to show message on main UI thread, that's why we have to catch the exception here and then invoke the message box on the main thread
+        ToolStrip parent = menuItem.GetCurrentParent();
+        if (parent != null) {
+          parent.BeginInvoke((Action)(()
+            => MessageDialogBox.ShowMessage(MessageDialogBox.FileOpenState.NoFilesFound, string.Empty)));
+        } else {
+          MessageDialogBox.ShowMessage(MessageDialogBox.FileOpenState.NoFilesFound, string.Empty);
         }
-
-        MessageDialogBox.ShowMessage(MessageDialogBox.FileOpenState.NoFilesFound, string.Empty);
-      }, TaskContinuationOptions.OnlyOnFaulted);
+      }
     }
 
     private static async Task AddExampleFilesAsync(ToolStripMenuItem menuItem) {
