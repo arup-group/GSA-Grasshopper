@@ -40,8 +40,15 @@ namespace GsaGH.UI {
 
     private readonly IHttpClientWrapper _httpClientWrapper;
 
-    public static string DefaultDownloadPath
-      => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+    public static string DefaultDownloadPath {
+      get {
+        // ensure the default download path exists before returning it - some systems may not have a downloads folder by default, and this will prevent errors when trying to save files
+        string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+        Directory.CreateDirectory(path);
+
+        return path;
+      }
+    }
     private readonly string _downloadsPath;
 
     public string UrlToSamples { get; }
