@@ -1,7 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Windows.Forms;
-
-[assembly: InternalsVisibleTo("GsaGHTests")]
+﻿using System.Windows.Forms;
 
 namespace GsaGH.UI {
   public interface IMessageBoxWrapper {
