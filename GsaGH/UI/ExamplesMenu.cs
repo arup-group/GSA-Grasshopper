@@ -59,11 +59,16 @@ namespace GsaGH.Graphics.Menu {
     private static void AddToMainTab() {
       GH_DocumentEditor editor = null;
 
-      while (editor == null) {
-        editor = Instances.DocumentEditor;
-        Thread.Sleep(321);
+      if (!EnsureDocumentEditorAvailable(ref editor)) {
+        return;
       }
 
+      AddOrUpdateExamplesMenu(editor);
+
+      Instances.CanvasCreated -= OnStartup;
+    }
+
+    private static void AddOrUpdateExamplesMenu(GH_DocumentEditor editor) {
       if (!editor.MainMenuStrip.Items.ContainsKey(Name)) {
         editor.MainMenuStrip.Items.Add(examplesMenu);
       } else {
@@ -76,8 +81,30 @@ namespace GsaGH.Graphics.Menu {
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
       }
+    }
 
+    private static bool EnsureDocumentEditorAvailable(ref GH_DocumentEditor editor) {
+      DateTime start = DateTime.UtcNow;
+      var timeout = TimeSpan.FromSeconds(60);
+      while (editor == null && DateTime.UtcNow - start < timeout) {
+        editor = Instances.DocumentEditor;
+        if (editor != null) {
+          break;
+        }
+
+        Thread.Sleep(321);
+      }
+
+      if (editor != null) {
+        return true;
+      }
+
+      // Failed to obtain the document editor within the timeout; skip adding the menu and fail gracefully.
       Instances.CanvasCreated -= OnStartup;
+      MessageBox.Show(
+        "Unable to initialize the Examples menu because the Grasshopper document editor did not become available in time.",
+        "GSA Examples", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+      return false;
     }
 
     /// <summary>
@@ -91,9 +118,9 @@ namespace GsaGH.Graphics.Menu {
         ToolStrip parent = menuItem.GetCurrentParent();
         if (parent != null) {
           parent.BeginInvoke((Action)(()
-            => MessageDialogBox.ShowMessage(MessageDialogBox.FileOpenState.NoFilesFound, string.Empty)));
+            => MessageDialogBox.ShowMessage(MessageDialogBox.FileState.NoFilesFound, string.Empty)));
         } else {
-          MessageDialogBox.ShowMessage(MessageDialogBox.FileOpenState.NoFilesFound, string.Empty);
+          MessageDialogBox.ShowMessage(MessageDialogBox.FileState.NoFilesFound, string.Empty);
         }
       }
     }
@@ -102,17 +129,34 @@ namespace GsaGH.Graphics.Menu {
       List<FileEntry> files = await exampleFileManager.GetExampleFilesAsync();
 
       if (files != null && files.Count > 0) {
-        menuItem.GetCurrentParent().BeginInvoke((Action)(() => {
-          foreach (FileEntry file in files) {
-            AddFileMenuItem(menuItem, file);
-          }
-        }));
+        // Try to get a non-null UI invoker for marshaling back to the UI thread.
+        ToolStrip parent = menuItem.GetCurrentParent() ?? menuItem.Owner;
+        if (parent != null) {
+          parent.BeginInvoke((Action)(() => {
+            foreach (FileEntry file in files) {
+              AddFileMenuItem(menuItem, file);
+            }
+          }));
+        } else {
+          // Fallback: use the document editor if available.
+          GH_DocumentEditor editor = Instances.DocumentEditor;
+          editor?.BeginInvoke((Action)(() => {
+            foreach (FileEntry file in files) {
+              AddFileMenuItem(menuItem, file);
+            }
+          }));
+        }
       }
     }
 
     private static void AddFileMenuItem(ToolStripMenuItem menuItem, FileEntry file) {
-      menuItem.DropDown.Items.Add(file.Name, null,
-        async (s, a) => await exampleFileManager.DownloadAndOpenFileAsync(file));
+      menuItem.DropDown.Items.Add(file.Name, null, async (s, a) => {
+        try {
+          await exampleFileManager.DownloadAndOpenFileAsync(file);
+        } catch (Exception) {
+          MessageDialogBox.ShowMessage(MessageDialogBox.FileState.NoFilesFound, string.Empty);
+        }
+      });
     }
   }
 }
