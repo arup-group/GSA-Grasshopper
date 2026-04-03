@@ -32,7 +32,7 @@ namespace GsaGHTests.UI {
     [InlineData(MessageDialogBox.FileState.Downloaded, "File downloaded to: somePath", "Download Complete")]
     [InlineData(MessageDialogBox.FileState.OpenFailed, "Failed to open the Grasshopper file: someName", "Error")]
     [InlineData(MessageDialogBox.FileState.DownloadFailed, "Download of the file: someName, failed.", "Error")]
-    [InlineData(MessageDialogBox.FileState.NoFilesFound, "Couldn't find any sample files. Please contact with support.",
+    [InlineData(MessageDialogBox.FileState.NoFilesFound, "Couldn't find any sample files. Please contact support.",
       "Error")]
     [InlineData(MessageDialogBox.FileState.InvalidDownloadPath,
       "Custom download path must be an existing absolute path.", "Error")]

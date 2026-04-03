@@ -52,7 +52,7 @@ namespace GsaGH.UI {
           MessageBoxWrapper.Show($"Download of the file: {name}, failed.", errorTitle);
           break;
         case FileState.NoFilesFound:
-          MessageBoxWrapper.Show("Couldn't find any sample files. Please contact with support.", errorTitle);
+          MessageBoxWrapper.Show("Couldn't find any sample files. Please contact support.", errorTitle);
           break;
         case FileState.Cancelled: return DialogResult.Cancel;
         case FileState.OverrideQuestion:
