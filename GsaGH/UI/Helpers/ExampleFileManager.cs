@@ -12,7 +12,7 @@ using static GsaGH.UI.MessageDialogBox;
 namespace GsaGH.UI {
   public interface IExampleFileManager {
     public Task<List<FileEntry>> GetExampleFilesAsync();
-    public bool CheckForDuplicatedDownloads(FileEntry file);
+    public bool IsOverwriteApproved(FileEntry file);
     public Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file);
   }
 
@@ -30,25 +30,25 @@ namespace GsaGH.UI {
       try {
         return await Downloader.GetFilesFromWebPageAsync();
       } catch (Exception) {
-        ShowMessage(FileOpenState.NoFilesFound, string.Empty);
+        ShowMessage(FileState.NoFilesFound, string.Empty);
         return new List<FileEntry>();
       }
     }
 
-    public bool CheckForDuplicatedDownloads(FileEntry file) {
+    public bool IsOverwriteApproved(FileEntry file) {
       string savePath = Downloader.GetFullDownloadPath(file);
       if (!File.Exists(savePath)) {
         return true;
       }
 
       // if file exists ask for overwrite
-      DialogResult result = ShowMessage(FileOpenState.OverrideQuestion, file.Name, savePath);
+      DialogResult result = ShowMessage(FileState.OverrideQuestion, file.Name, savePath);
 
       return result == DialogResult.OK;
     }
 
     public async Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file) {
-      if (CheckForDuplicatedDownloads(file)) {
+      if (IsOverwriteApproved(file)) {
         try {
           await Downloader.DownloadFileAsync(file);
 
@@ -57,19 +57,19 @@ namespace GsaGH.UI {
             var io = new GH_DocumentIO();
             if (io.Open(savePath)) {
               Instances.DocumentEditor.Invoke((Action)(() => Instances.ActiveCanvas.Document = io.Document));
-              return ShowMessage(FileOpenState.Success, file.Name);
+              return ShowMessage(FileState.Success, file.Name);
             }
 
-            return ShowMessage(FileOpenState.OpenFailed, file.Name);
+            return ShowMessage(FileState.OpenFailed, file.Name);
           }
 
-          return ShowMessage(FileOpenState.Downloaded, file.Name, savePath);
+          return ShowMessage(FileState.Downloaded, file.Name, savePath);
         } catch {
-          return ShowMessage(FileOpenState.DownloadFailed, file.Name);
+          return ShowMessage(FileState.DownloadFailed, file.Name);
         }
       }
 
-      return ShowMessage(FileOpenState.Cancelled, file.Name);
+      return ShowMessage(FileState.Cancelled, file.Name);
     }
   }
 }
