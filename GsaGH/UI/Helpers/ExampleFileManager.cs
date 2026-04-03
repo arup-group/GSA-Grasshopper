@@ -11,9 +11,9 @@ using static GsaGH.UI.MessageDialogBox;
 
 namespace GsaGH.UI {
   public interface IExampleFileManager {
-    public Task<List<FileEntry>> GetExampleFilesAsync();
-    public bool IsOverwriteApproved(FileEntry file);
-    public Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file);
+    Task<List<FileEntry>> GetExampleFilesAsync();
+    bool IsOverwriteApproved(FileEntry file);
+    Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file);
   }
 
   public class ExampleFileManager : IExampleFileManager {
