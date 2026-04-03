@@ -46,6 +46,7 @@ namespace GsaGH.Graphics.Menu {
 
     public static IExampleFileManager CreateExampleFileManager(IExampleFileManager manager = null) {
       if (manager != null) {
+        exampleFileManager = manager;
         return manager;
       }
 
@@ -143,11 +144,18 @@ namespace GsaGH.Graphics.Menu {
         } else {
           // Fallback: use the document editor if available.
           GH_DocumentEditor editor = Instances.DocumentEditor;
-          editor?.BeginInvoke((Action)(() => {
+          if (editor != null) {
+            editor.BeginInvoke((Action)(() => {
+              foreach (FileEntry file in files) {
+                AddFileMenuItem(menuItem, file);
+              }
+            }));
+          } else {
+            // Fallback for unit tests: add directly
             foreach (FileEntry file in files) {
               AddFileMenuItem(menuItem, file);
             }
-          }));
+          }
         }
       }
     }
