@@ -8,10 +8,13 @@ using System.Windows.Forms;
 using Grasshopper;
 using Grasshopper.GUI;
 using Grasshopper.GUI.Canvas;
+using Grasshopper.Kernel;
 
 using GsaGH.Properties;
 using GsaGH.UI;
 using GsaGH.UI.Helpers;
+
+using static GsaGH.UI.MessageDialogBox;
 
 namespace GsaGH.Graphics.Menu {
 
@@ -118,9 +121,9 @@ namespace GsaGH.Graphics.Menu {
         ToolStrip parent = menuItem.GetCurrentParent();
         if (parent != null) {
           parent.BeginInvoke((Action)(()
-            => MessageDialogBox.ShowMessage(MessageDialogBox.FileState.NoFilesFound, string.Empty)));
+            => ShowMessage(FileState.NoFilesFound, string.Empty)));
         } else {
-          MessageDialogBox.ShowMessage(MessageDialogBox.FileState.NoFilesFound, string.Empty);
+          ShowMessage(FileState.NoFilesFound, string.Empty);
         }
       }
     }
@@ -152,11 +155,21 @@ namespace GsaGH.Graphics.Menu {
     private static void AddFileMenuItem(ToolStripMenuItem menuItem, FileEntry file) {
       menuItem.DropDown.Items.Add(file.Name, null, async (s, a) => {
         try {
-          await exampleFileManager.DownloadAndOpenFileAsync(file);
+          await exampleFileManager.DownloadAndOpenFileAsync(file, OpenFile);
         } catch (Exception) {
-          MessageDialogBox.ShowMessage(MessageDialogBox.FileState.NoFilesFound, string.Empty);
+          ShowMessage(FileState.NoFilesFound, string.Empty);
         }
       });
+    }
+
+    private static bool OpenFile(string path) {
+      var io = new GH_DocumentIO();
+      if (!io.Open(path)) {
+        return false;
+      }
+
+      Instances.DocumentEditor.Invoke((Action)(() => Instances.ActiveCanvas.Document = io.Document));
+      return true;
     }
   }
 }

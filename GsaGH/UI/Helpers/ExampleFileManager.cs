@@ -4,16 +4,13 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using Grasshopper;
-using Grasshopper.Kernel;
-
 using static GsaGH.UI.MessageDialogBox;
 
 namespace GsaGH.UI {
   public interface IExampleFileManager {
     Task<List<FileEntry>> GetExampleFilesAsync();
     bool IsOverwriteApproved(FileEntry file);
-    Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file);
+    Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file, Func<string, bool> openGhFileFunc);
   }
 
   public class ExampleFileManager : IExampleFileManager {
@@ -47,29 +44,28 @@ namespace GsaGH.UI {
       return result == DialogResult.OK;
     }
 
-    public async Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file) {
-      if (IsOverwriteApproved(file)) {
-        try {
-          await Downloader.DownloadFileAsync(file);
-
-          string savePath = Downloader.GetFullDownloadPath(file);
-          if (Path.GetExtension(savePath).Equals(".gh", StringComparison.OrdinalIgnoreCase)) {
-            var io = new GH_DocumentIO();
-            if (io.Open(savePath)) {
-              Instances.DocumentEditor.Invoke((Action)(() => Instances.ActiveCanvas.Document = io.Document));
-              return ShowMessage(FileState.Success, file.Name);
-            }
-
-            return ShowMessage(FileState.OpenFailed, file.Name);
-          }
-
-          return ShowMessage(FileState.Downloaded, file.Name, savePath);
-        } catch {
-          return ShowMessage(FileState.DownloadFailed, file.Name);
-        }
+    public async Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file, Func<string, bool> openGhFileFunc) {
+      if (!IsOverwriteApproved(file)) {
+        return ShowMessage(FileState.Cancelled, file.Name);
       }
 
-      return ShowMessage(FileState.Cancelled, file.Name);
+      try {
+        await Downloader.DownloadFileAsync(file);
+
+        string savePath = Downloader.GetFullDownloadPath(file);
+        if (!Path.GetExtension(savePath).Equals(".gh", StringComparison.OrdinalIgnoreCase)) {
+          return ShowMessage(FileState.Downloaded, file.Name, savePath);
+        }
+
+        return openGhFileFunc switch {
+          null => throw new ArgumentNullException(nameof(openGhFileFunc),
+            "Function to open .gh files must be provided."),
+          _ => openGhFileFunc(savePath) ? ShowMessage(FileState.Success, file.Name) :
+            ShowMessage(FileState.OpenFailed, file.Name),
+        };
+      } catch {
+        return ShowMessage(FileState.DownloadFailed, file.Name);
+      }
     }
   }
 }
