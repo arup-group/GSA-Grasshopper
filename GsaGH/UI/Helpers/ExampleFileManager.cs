@@ -63,6 +63,8 @@ namespace GsaGH.UI {
           _ => openGhFileFunc(savePath) ? ShowMessage(FileState.Success, file.Name) :
             ShowMessage(FileState.OpenFailed, file.Name),
         };
+      } catch (ArgumentNullException) {
+        throw;
       } catch {
         return ShowMessage(FileState.DownloadFailed, file.Name);
       }

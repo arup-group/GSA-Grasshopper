@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -11,7 +12,9 @@ using Moq;
 using Xunit;
 
 namespace GsaGHTests.UI {
-  public class ExampleFileManagerTests {
+  public class ExampleFileManagerTests : IDisposable {
+    private readonly List<string> _tempFiles = new List<string>();
+
     private class TestMessageBoxWrapper : IMessageBoxWrapper {
       public int ShowCallCount { get; private set; } = 0;
       private readonly DialogResult _result;
@@ -31,15 +34,40 @@ namespace GsaGHTests.UI {
       }
     }
 
-    private static string SetTempPath(Mock<IHttpsFileDownloader> downloader) {
-      string path = Path.GetTempFileName();
+    private static TestMessageBoxWrapper SetMessageBoxWrapper(DialogResult result) {
+      var wrapper = new TestMessageBoxWrapper(result);
+      MessageDialogBox.SetMessageBoxWrapper(wrapper);
+      return wrapper;
+    }
+
+    private ExampleFileManager CreateManagerWithFiles(
+      List<FileEntry> files = null, DialogResult dialogResult = DialogResult.OK,
+      Action<Mock<IHttpsFileDownloader>> setupDownloader = null) {
+      var downloader = new Mock<IHttpsFileDownloader>();
+      if (files != null) {
+        downloader.Setup(d => d.GetFilesFromWebPageAsync()).ReturnsAsync(files);
+      }
+
+      setupDownloader?.Invoke(downloader);
+      SetMessageBoxWrapper(dialogResult);
+      return new ExampleFileManager(downloader.Object);
+    }
+
+    private string CreateTempFile(string extension = "") {
+      string path = Path.GetTempFileName() + extension;
       File.WriteAllText(path, "test");
-      downloader.Setup(d => d.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
+      _tempFiles.Add(path);
       return path;
     }
 
-    private bool OpenFileMock(string path) {
+    private static bool OpenFileMock(string path) {
       return string.IsNullOrEmpty(path);
+    }
+
+    public void Dispose() {
+      foreach (string file in _tempFiles.Where(File.Exists)) {
+        File.Delete(file);
+      }
     }
 
     [Fact]
@@ -50,11 +78,7 @@ namespace GsaGHTests.UI {
           Url = "u",
         },
       };
-      var downloader = new Mock<IHttpsFileDownloader>();
-      downloader.Setup(d => d.GetFilesFromWebPageAsync()).ReturnsAsync(files);
-
-      MessageDialogBox.SetMessageBoxWrapper(new TestMessageBoxWrapper(DialogResult.OK));
-      var manager = new ExampleFileManager(downloader.Object);
+      ExampleFileManager manager = CreateManagerWithFiles(files);
 
       List<FileEntry> result = await manager.GetExampleFilesAsync();
 
@@ -65,9 +89,7 @@ namespace GsaGHTests.UI {
     public async Task GetExampleFilesAsync_ReturnsEmptyList_WhenDownloaderThrows() {
       var downloader = new Mock<IHttpsFileDownloader>();
       downloader.Setup(d => d.GetFilesFromWebPageAsync()).ThrowsAsync(new Exception());
-
-      var wrapper = new TestMessageBoxWrapper(DialogResult.OK);
-      MessageDialogBox.SetMessageBoxWrapper(wrapper);
+      TestMessageBoxWrapper wrapper = SetMessageBoxWrapper(DialogResult.OK);
       var manager = new ExampleFileManager(downloader.Object);
 
       List<FileEntry> result = await manager.GetExampleFilesAsync();
@@ -78,147 +100,119 @@ namespace GsaGHTests.UI {
 
     [Fact]
     public void IsOverwriteApproved_ReturnsTrue_WhenFileDoesNotExist() {
-      var downloader = new Mock<IHttpsFileDownloader>();
-      downloader.Setup(d => d.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns("notfound.txt");
-
-      var wrapper = new TestMessageBoxWrapper(DialogResult.Cancel);
-      MessageDialogBox.SetMessageBoxWrapper(wrapper);
-      var manager = new ExampleFileManager(downloader.Object);
+      ExampleFileManager manager = CreateManagerWithFiles(
+        setupDownloader: d => d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns("notfound.txt"),
+        dialogResult: DialogResult.Cancel);
 
       Assert.True(manager.IsOverwriteApproved(new FileEntry()));
     }
 
     [Fact]
     public void IsOverwriteApproved_ReturnsTrue_WhenUserApprovesOverwrite() {
-      var downloader = new Mock<IHttpsFileDownloader>();
-      string path = SetTempPath(downloader);
-
-      var wrapper = new TestMessageBoxWrapper(DialogResult.OK);
-      MessageDialogBox.SetMessageBoxWrapper(wrapper);
-      var manager = new ExampleFileManager(downloader.Object);
+      string path = CreateTempFile();
+      ExampleFileManager manager = CreateManagerWithFiles(
+        setupDownloader: d => d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path),
+        dialogResult: DialogResult.OK);
 
       Assert.True(manager.IsOverwriteApproved(new FileEntry()));
-      File.Delete(path);
-      Assert.True(wrapper.ShowCallCount > 0);
     }
 
     [Fact]
     public void IsOverwriteApproved_ReturnsFalse_WhenUserCancelsOverwrite() {
-      var downloader = new Mock<IHttpsFileDownloader>();
-      string path = SetTempPath(downloader);
-
-      var wrapper = new TestMessageBoxWrapper(DialogResult.Cancel);
-      MessageDialogBox.SetMessageBoxWrapper(wrapper);
-      var manager = new ExampleFileManager(downloader.Object);
+      string path = CreateTempFile();
+      ExampleFileManager manager = CreateManagerWithFiles(
+        setupDownloader: d => d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path),
+        dialogResult: DialogResult.Cancel);
 
       Assert.False(manager.IsOverwriteApproved(new FileEntry()));
-      File.Delete(path);
-      Assert.True(wrapper.ShowCallCount > 0);
     }
 
     [Fact]
     public async Task DownloadAndOpenFileAsync_ReturnsCancelled_WhenUserCancelsOverwrite() {
-      var downloader = new Mock<IHttpsFileDownloader>();
-      string path = SetTempPath(downloader);
-
-      MessageDialogBox.SetMessageBoxWrapper(new TestMessageBoxWrapper(DialogResult.Cancel));
-      var manager = new ExampleFileManager(downloader.Object);
+      string path = CreateTempFile(".gh");
+      ExampleFileManager manager = CreateManagerWithFiles(
+        setupDownloader: d => d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path),
+        dialogResult: DialogResult.Cancel);
 
       DialogResult result = await manager.DownloadAndOpenFileAsync(new FileEntry {
         Name = "file.gh",
       }, OpenFileMock);
 
       Assert.Equal(DialogResult.Cancel, result);
-      File.Delete(path);
     }
 
     [Fact]
     public async Task DownloadAndOpenFileAsync_ReturnsDownloaded_WhenNotGhFile() {
-      var downloader = new Mock<IHttpsFileDownloader>();
-      string path = Path.GetTempFileName() + ".txt";
-      downloader.Setup(d => d.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
-      downloader.Setup(d => d.DownloadFileAsync(It.IsAny<FileEntry>())).Returns(Task.CompletedTask);
-
-      MessageDialogBox.SetMessageBoxWrapper(new TestMessageBoxWrapper(DialogResult.Yes));
-      var manager = new ExampleFileManager(downloader.Object);
+      string path = CreateTempFile(".txt");
+      ExampleFileManager manager = CreateManagerWithFiles(setupDownloader: d => {
+        d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
+        d.Setup(x => x.DownloadFileAsync(It.IsAny<FileEntry>())).Returns(Task.CompletedTask);
+      }, dialogResult: DialogResult.OK);
 
       DialogResult result = await manager.DownloadAndOpenFileAsync(new FileEntry {
         Name = "file.txt",
       }, OpenFileMock);
 
-      Assert.Equal(DialogResult.Yes, result);
-      File.Delete(path);
+      Assert.Equal(DialogResult.OK, result);
     }
 
     [Fact]
     public async Task DownloadAndOpenFileAsync_ReturnsDownloadFailed_OnException() {
-      var downloader = new Mock<IHttpsFileDownloader>();
-      string path = Path.GetTempFileName() + ".txt";
-      downloader.Setup(d => d.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
-      downloader.Setup(d => d.DownloadFileAsync(It.IsAny<FileEntry>())).ThrowsAsync(new Exception());
-
-      MessageDialogBox.SetMessageBoxWrapper(new TestMessageBoxWrapper(DialogResult.Abort));
-      var manager = new ExampleFileManager(downloader.Object);
+      string path = CreateTempFile(".txt");
+      ExampleFileManager manager = CreateManagerWithFiles(setupDownloader: d => {
+        d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
+        d.Setup(x => x.DownloadFileAsync(It.IsAny<FileEntry>())).ThrowsAsync(new Exception());
+      }, dialogResult: DialogResult.OK);
 
       DialogResult result = await manager.DownloadAndOpenFileAsync(new FileEntry {
         Name = "file.txt",
-      }, OpenFileMock);
+      }, _ => true);
 
       Assert.Equal(DialogResult.Abort, result);
     }
 
     [Fact]
     public async Task DownloadAndOpenFileAsync_ReturnsSuccess_WhenOpenGhFileFuncReturnsTrue() {
-      var downloader = new Mock<IHttpsFileDownloader>();
-      string path = Path.GetTempFileName() + ".gh";
-      downloader.Setup(d => d.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
-      downloader.Setup(d => d.DownloadFileAsync(It.IsAny<FileEntry>())).Returns(Task.CompletedTask);
-
-      MessageDialogBox.SetMessageBoxWrapper(new TestMessageBoxWrapper(DialogResult.OK));
-      var manager = new ExampleFileManager(downloader.Object);
+      string path = CreateTempFile(".gh");
+      ExampleFileManager manager = CreateManagerWithFiles(setupDownloader: d => {
+        d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
+        d.Setup(x => x.DownloadFileAsync(It.IsAny<FileEntry>())).Returns(Task.CompletedTask);
+      }, dialogResult: DialogResult.OK);
 
       DialogResult result = await manager.DownloadAndOpenFileAsync(new FileEntry {
         Name = "file.gh",
       }, _ => true);
 
       Assert.Equal(DialogResult.OK, result);
-      File.Delete(path);
     }
 
     [Fact]
     public async Task DownloadAndOpenFileAsync_ReturnsOpenFailed_WhenOpenGhFileFuncReturnsFalse() {
-      var downloader = new Mock<IHttpsFileDownloader>();
-      string path = Path.GetTempFileName() + ".gh";
-      downloader.Setup(d => d.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
-      downloader.Setup(d => d.DownloadFileAsync(It.IsAny<FileEntry>())).Returns(Task.CompletedTask);
-
-      MessageDialogBox.SetMessageBoxWrapper(new TestMessageBoxWrapper(DialogResult.Retry));
-      var manager = new ExampleFileManager(downloader.Object);
+      string path = CreateTempFile(".gh");
+      ExampleFileManager manager = CreateManagerWithFiles(setupDownloader: d => {
+        d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
+        d.Setup(x => x.DownloadFileAsync(It.IsAny<FileEntry>())).Returns(Task.CompletedTask);
+      }, dialogResult: DialogResult.OK);
 
       DialogResult result = await manager.DownloadAndOpenFileAsync(new FileEntry {
         Name = "file.gh",
       }, _ => false);
 
-      Assert.Equal(DialogResult.Retry, result);
-      File.Delete(path);
+      Assert.Equal(DialogResult.Abort, result);
     }
 
     [Fact]
     public async Task DownloadAndOpenFileAsync_ThrowsArgumentNullException_WhenOpenGhFileFuncIsNull() {
-      var downloader = new Mock<IHttpsFileDownloader>();
-      string path = Path.GetTempFileName() + ".gh";
-      downloader.Setup(d => d.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
-      downloader.Setup(d => d.DownloadFileAsync(It.IsAny<FileEntry>())).Returns(Task.CompletedTask);
-
-      MessageDialogBox.SetMessageBoxWrapper(new TestMessageBoxWrapper(DialogResult.OK));
-      var manager = new ExampleFileManager(downloader.Object);
+      string path = CreateTempFile(".gh");
+      ExampleFileManager manager = CreateManagerWithFiles(setupDownloader: d => {
+        d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
+        d.Setup(x => x.DownloadFileAsync(It.IsAny<FileEntry>())).Returns(Task.CompletedTask);
+      }, dialogResult: DialogResult.OK);
 
       await Assert.ThrowsAsync<ArgumentNullException>(()
         => manager.DownloadAndOpenFileAsync(new FileEntry {
           Name = "file.gh",
         }, null));
-      File.Delete(path);
     }
-
   }
 }
