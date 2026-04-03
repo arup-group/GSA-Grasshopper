@@ -58,9 +58,11 @@ namespace GsaGH.UI {
         return DefaultDownloadPath;
       }
 
+#pragma warning disable IDE0046 // Convert to conditional expression
       if (Path.IsPathRooted(customDownloadPath) && Directory.Exists(customDownloadPath)) {
         return customDownloadPath;
       }
+#pragma warning restore IDE0046 // Convert to conditional expression
 
       throw new ArgumentException("Invalid download path", nameof(customDownloadPath));
     }
@@ -95,8 +97,12 @@ namespace GsaGH.UI {
     }
 
     public async Task SaveFileAsync(HttpResponseMessage response, FileEntry file) {
-      if (response?.Content == null) {
+      if (response == null) {
         throw new ArgumentNullException(nameof(response));
+      }
+
+      if (response.Content == null) {
+        throw new ArgumentNullException(nameof(response.Content));
       }
 
       string filePath = GetFullDownloadPath(file);
