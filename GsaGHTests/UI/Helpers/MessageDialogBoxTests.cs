@@ -141,7 +141,8 @@ namespace GsaGHTests.UI {
 
         DialogResult result = MessageDialogBox.ShowMessage(state, "testfile.txt", "test");
         Assert.Equal(DialogResult.Abort, result);
-        _mockMessageBox.Verify(m => m.Show(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        _mockMessageBox.Verify(m => m.Show(It.IsAny<string>(), It.IsAny<string>()), Times.Once,
+          $"failed for state: {state}");
       }
     }
 
