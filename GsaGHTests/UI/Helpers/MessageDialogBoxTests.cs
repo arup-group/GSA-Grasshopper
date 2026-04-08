@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -56,7 +57,7 @@ namespace GsaGHTests.UI {
     [Fact]
     public void ShowMessage_ShouldDisplayMessage_WhenOverrideQuestion() {
       string name = "testfile.txt";
-      string path = "C:\\Downloads";
+      string path = Path.GetTempPath();
 
       _mockMessageBox
        .Setup(m => m.Show(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButtons>(),
@@ -72,8 +73,8 @@ namespace GsaGHTests.UI {
 
     [Fact]
     public void ShowMessage_ShouldReturnCorrectDialogResult_WhenOverrideQuestionCancelled() {
-      string name = "testfile.txt";
-      string path = "C:\\Downloads";
+      string name = "testfile2.txt";
+      string path = Path.GetTempPath();
 
       _mockMessageBox
        .Setup(m => m.Show(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButtons>(),
