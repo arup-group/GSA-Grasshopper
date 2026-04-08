@@ -109,7 +109,9 @@ namespace GsaGH.UI {
       }
 
       if (response.Content == null) {
+#pragma warning disable S3928 // Parameter names used into ArgumentException constructors should match an existing one 
         throw new ArgumentNullException(nameof(response.Content));
+#pragma warning restore S3928 // Parameter names used into ArgumentException constructors should match an existing one 
       }
 
       string filePath = GetFullDownloadPath(file);
