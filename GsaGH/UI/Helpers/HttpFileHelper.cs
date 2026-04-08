@@ -6,7 +6,7 @@ using System.Linq;
 using HtmlAgilityPack;
 
 namespace GsaGH.UI.Helpers {
-  internal class HttpFileHelper {
+  internal static class HttpFileHelper {
     public static string GetSafeFileName(string fileName) {
       if (string.IsNullOrWhiteSpace(fileName)) {
         throw new ArgumentException("File name must not be null or empty.", nameof(fileName));

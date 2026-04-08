@@ -132,30 +132,22 @@ namespace GsaGH.Graphics.Menu {
     private static async Task AddExampleFilesAsync(ToolStripMenuItem menuItem) {
       List<FileEntry> files = await exampleFileManager.GetExampleFilesAsync();
 
-      if (files != null && files.Count > 0) {
-        // Try to get a non-null UI invoker for marshaling back to the UI thread.
-        ToolStrip parent = menuItem.GetCurrentParent() ?? menuItem.Owner;
-        if (parent != null) {
-          parent.BeginInvoke((Action)(() => {
-            foreach (FileEntry file in files) {
-              AddFileMenuItem(menuItem, file);
-            }
-          }));
+      if (files == null || files.Count <= 0) {
+        return;
+      }
+
+      // Try to get a non-null UI invoker for marshaling back to the UI thread.
+      ToolStrip parent = menuItem.GetCurrentParent() ?? menuItem.Owner;
+      if (parent != null) {
+        parent.BeginInvoke((Action)(() => files.ForEach(item => AddFileMenuItem(menuItem, item))));
+      } else {
+        // Fallback: use the document editor if available.
+        GH_DocumentEditor editor = Instances.DocumentEditor;
+        if (editor != null) {
+          editor.BeginInvoke((Action)(() => files.ForEach(item => AddFileMenuItem(menuItem, item))));
         } else {
-          // Fallback: use the document editor if available.
-          GH_DocumentEditor editor = Instances.DocumentEditor;
-          if (editor != null) {
-            editor.BeginInvoke((Action)(() => {
-              foreach (FileEntry file in files) {
-                AddFileMenuItem(menuItem, file);
-              }
-            }));
-          } else {
-            // Fallback for unit tests: add directly
-            foreach (FileEntry file in files) {
-              AddFileMenuItem(menuItem, file);
-            }
-          }
+          // Fallback for unit tests: add directly
+          files.ForEach(item => AddFileMenuItem(menuItem, item));
         }
       }
     }
