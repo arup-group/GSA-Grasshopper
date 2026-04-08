@@ -75,6 +75,7 @@ namespace GsaGHTests.UI {
     public void ShowMessage_ShouldReturnCorrectDialogResult_WhenOverrideQuestionCancelled() {
       string name = "testfile2.txt";
       string path = Path.GetTempPath();
+      File.Create(Path.Combine(path, name)).Dispose(); // Create a temp file to simulate existing file
 
       _mockMessageBox
        .Setup(m => m.Show(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButtons>(),
@@ -86,6 +87,7 @@ namespace GsaGHTests.UI {
         m => m.Show($"File \"{name}\" already exists in {path}. Overwrite?", "File Exists", MessageBoxButtons.OKCancel,
           MessageBoxIcon.Question), Times.Once);
       Assert.Equal(DialogResult.Cancel, result);
+      File.Delete(Path.Combine(path, name));
     }
 
     [Fact]
