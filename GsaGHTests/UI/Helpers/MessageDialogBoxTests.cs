@@ -57,37 +57,39 @@ namespace GsaGHTests.UI {
     [Fact]
     public void ShowMessage_ShouldDisplayMessage_WhenOverrideQuestion() {
       string name = "testfile.txt";
-      string path = Path.GetTempPath();
+      string path = Path.Combine("some", "path");
+
+      string expectedMessage = $"File \"{name}\" already exists in {path}. Overwrite?";
+      string expectedTitle = "File Exists";
 
       _mockMessageBox
-       .Setup(m => m.Show(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButtons>(),
-          It.IsAny<MessageBoxIcon>())).Returns(DialogResult.OK); // Simulation OK
+       .Setup(m => m.Show(expectedMessage, expectedTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Question))
+       .Returns(DialogResult.OK);
 
       DialogResult result = MessageDialogBox.ShowMessage(MessageDialogBox.FileState.OverrideQuestion, name, path);
 
       _mockMessageBox.Verify(
-        m => m.Show($"File \"{name}\" already exists in {path}. Overwrite?", "File Exists", MessageBoxButtons.OKCancel,
-          MessageBoxIcon.Question), Times.Once);
+        m => m.Show(expectedMessage, expectedTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Question), Times.Once);
       Assert.Equal(DialogResult.OK, result);
     }
 
     [Fact]
     public void ShowMessage_ShouldReturnCorrectDialogResult_WhenOverrideQuestionCancelled() {
       string name = "testfile2.txt";
-      string path = Path.GetTempPath();
-      File.Create(Path.Combine(path, name)).Dispose(); // Create a temp file to simulate existing file
+      string path = Path.Combine("some", "otherpath");
 
-      _mockMessageBox
-       .Setup(m => m.Show(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MessageBoxButtons>(),
-          It.IsAny<MessageBoxIcon>())).Returns(DialogResult.Cancel); // Simulation Cancel
+      string message = $"File \"{name}\" already exists in {path}. Overwrite?";
+      string fileExists = "File Exists";
+
+      _mockMessageBox.Setup(m => m.Show(message, fileExists, MessageBoxButtons.OKCancel, MessageBoxIcon.Question))
+       .Returns(DialogResult.Cancel);
 
       DialogResult result = MessageDialogBox.ShowMessage(MessageDialogBox.FileState.OverrideQuestion, name, path);
 
-      _mockMessageBox.Verify(
-        m => m.Show($"File \"{name}\" already exists in {path}. Overwrite?", "File Exists", MessageBoxButtons.OKCancel,
-          MessageBoxIcon.Question), Times.Once);
+      _mockMessageBox.Verify(m => m.Show(message, fileExists, MessageBoxButtons.OKCancel, MessageBoxIcon.Question),
+        Times.Once);
+
       Assert.Equal(DialogResult.Cancel, result);
-      File.Delete(Path.Combine(path, name));
     }
 
     [Fact]
@@ -105,7 +107,7 @@ namespace GsaGHTests.UI {
         bool isHandled = false;
 
         try {
-          MessageDialogBox.ShowMessage((MessageDialogBox.FileState)state, "testfile", "path");
+          MessageDialogBox.ShowMessage((MessageDialogBox.FileState)state, "testfile", "C:\\path");
           isHandled = true;
         } catch {
           isHandled = false;
@@ -139,7 +141,7 @@ namespace GsaGHTests.UI {
 
         _mockMessageBox.Invocations.Clear();
 
-        DialogResult result = MessageDialogBox.ShowMessage(state, "testfile.txt", "test");
+        DialogResult result = MessageDialogBox.ShowMessage(state, "testfile.txt", "C:\\test");
         Assert.Equal(DialogResult.Abort, result);
         _mockMessageBox.Verify(m => m.Show(It.IsAny<string>(), It.IsAny<string>()), Times.Once,
           $"failed for state: {state}");
