@@ -15,10 +15,17 @@ namespace GsaGHTests.UI {
       return new ToolStripMenuItem("Examples");
     }
 
-    private static void SetFileManager(IExampleFileManager manager) {
+    private static IExampleFileManager SetFileManager(IExampleFileManager manager) {
       var wrapper = new TestMessageBoxWrapper();
       MessageDialogBox.SetMessageBoxWrapper(wrapper);
-      ExamplesMenu.CreateExampleFileManager(manager);
+      return ExamplesMenu.CreateExampleFileManager(manager);
+    }
+
+    [Fact]
+    public void CreateExampleFileManager_SetsDefaultFileManager_WhenArgumentIsNull() {
+      IExampleFileManager manager = SetFileManager(null);
+
+      Assert.NotNull(manager);
     }
 
     [Fact]
