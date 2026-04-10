@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -95,12 +97,116 @@ namespace GsaGHTests.UI {
       Assert.Empty(menuItem.DropDownItems);
     }
 
+    [Fact]
+    public void CreateExampleFileManager_ReturnsNewDefaultManager_WhenBothNull() {
+      FieldInfo field = typeof(ExamplesMenu).GetField("exampleFileManager",
+        BindingFlags.Static | BindingFlags.NonPublic);
+      object originalValue = field.GetValue(null);
+      field.SetValue(null, null);
+      try {
+        IExampleFileManager result = ExamplesMenu.CreateExampleFileManager(null);
+        Assert.NotNull(result);
+      } finally {
+        field.SetValue(null, originalValue);
+      }
+    }
+
+    [Fact]
+    public async Task PopulateSub_ClickHandler_InvokesDownloadAndOpenFile_WhenItemClicked() {
+      var mock = new DownloadRecordingManager();
+      SetFileManager(mock);
+
+      ToolStripMenuItem menuItem = CreateMenuItem();
+      await ExamplesMenu.PopulateSub(menuItem);
+
+      Assert.NotEmpty(menuItem.DropDownItems);
+      menuItem.DropDownItems[0].PerformClick();
+
+      Assert.True(mock.WaitForCall(), "DownloadAndOpenFileAsync should have been called after click");
+    }
+
+    [Fact]
+    public async Task PopulateSub_ClickHandler_ShowsNoFilesError_WhenDownloadThrows() {
+      var recordingWrapper = new RecordingMessageBoxWrapper();
+      MessageDialogBox.SetMessageBoxWrapper(recordingWrapper);
+      ExamplesMenu.CreateExampleFileManager(new DownloadThrowingManager());
+
+      ToolStripMenuItem menuItem = CreateMenuItem();
+      await ExamplesMenu.PopulateSub(menuItem);
+
+      Assert.NotEmpty(menuItem.DropDownItems);
+      menuItem.DropDownItems[0].PerformClick();
+
+      Assert.True(recordingWrapper.WaitForShow(), "Error message should have been shown after download failure");
+    }
+
     private class TestMessageBoxWrapper : IMessageBoxWrapper {
       public DialogResult Show(string message, string title) {
         return DialogResult.OK;
       }
 
       public DialogResult Show(string message, string title, MessageBoxButtons buttons, MessageBoxIcon icon) {
+        return DialogResult.OK;
+      }
+    }
+
+    private class DownloadRecordingManager : IExampleFileManager {
+      private readonly ManualResetEventSlim _called = new ManualResetEventSlim(false);
+
+      public bool WaitForCall(int milliseconds = 2000) {
+        return _called.Wait(milliseconds);
+      }
+
+      public Task<List<FileEntry>> GetExampleFilesAsync() {
+        return Task.FromResult(new List<FileEntry> {
+          new FileEntry {
+            Name = "test.gh",
+          },
+        });
+      }
+
+      public Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file, Func<string, bool> openGhFileFunc) {
+        _called.Set();
+        return Task.FromResult(DialogResult.OK);
+      }
+
+      public bool IsOverwriteApproved(FileEntry file) {
+        return true;
+      }
+    }
+
+    private class DownloadThrowingManager : IExampleFileManager {
+      public Task<List<FileEntry>> GetExampleFilesAsync() {
+        return Task.FromResult(new List<FileEntry> {
+          new FileEntry {
+            Name = "test.gh",
+          },
+        });
+      }
+
+      public Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file, Func<string, bool> openGhFileFunc) {
+        throw new Exception("Download failed");
+      }
+
+      public bool IsOverwriteApproved(FileEntry file) {
+        return true;
+      }
+    }
+
+    private class RecordingMessageBoxWrapper : IMessageBoxWrapper {
+      private readonly ManualResetEventSlim _shown = new ManualResetEventSlim(false);
+
+      public bool WaitForShow(int milliseconds = 2000) {
+        return _shown.Wait(milliseconds);
+      }
+
+      public DialogResult Show(string message, string title) {
+        _shown.Set();
+        return DialogResult.OK;
+      }
+
+      public DialogResult Show(string message, string title, MessageBoxButtons buttons, MessageBoxIcon icon) {
+        _shown.Set();
         return DialogResult.OK;
       }
     }
