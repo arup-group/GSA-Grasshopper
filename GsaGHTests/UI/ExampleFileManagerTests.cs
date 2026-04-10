@@ -125,7 +125,6 @@ namespace GsaGHTests.UI {
         dialogResult: DialogResult.OK);
 
       Assert.True(manager.IsOverwriteApproved(new FileEntry()));
-      RemoveTempFile(path);
     }
 
     [Fact]
@@ -136,7 +135,6 @@ namespace GsaGHTests.UI {
         dialogResult: DialogResult.Cancel);
 
       Assert.False(manager.IsOverwriteApproved(new FileEntry()));
-      RemoveTempFile(path);
     }
 
     [Fact]
@@ -151,7 +149,6 @@ namespace GsaGHTests.UI {
       }, OpenFileMock);
 
       Assert.Equal(DialogResult.Cancel, result);
-      RemoveTempFile(path);
     }
 
     [Fact]
@@ -167,7 +164,6 @@ namespace GsaGHTests.UI {
       }, OpenFileMock);
 
       Assert.Equal(DialogResult.OK, result);
-      RemoveTempFile(path);
     }
 
     [Fact]
@@ -183,7 +179,6 @@ namespace GsaGHTests.UI {
       }, _ => true);
 
       Assert.Equal(DialogResult.Abort, result);
-      RemoveTempFile(path);
     }
 
     [Fact]
@@ -199,7 +194,6 @@ namespace GsaGHTests.UI {
       }, _ => true);
 
       Assert.Equal(DialogResult.OK, result);
-      RemoveTempFile(path);
     }
 
     [Fact]
@@ -215,7 +209,6 @@ namespace GsaGHTests.UI {
       }, _ => false);
 
       Assert.Equal(DialogResult.Abort, result);
-      RemoveTempFile(path);
     }
 
     [Fact]
@@ -230,7 +223,6 @@ namespace GsaGHTests.UI {
         => manager.DownloadAndOpenFileAsync(new FileEntry {
           Name = Path.GetFileName(path),
         }, null));
-      RemoveTempFile(path);
     }
   }
 }
