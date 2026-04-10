@@ -12,6 +12,7 @@ using Moq;
 using Xunit;
 
 namespace GsaGHTests.UI {
+  [Collection("RunOneByOne")]
   public class ExampleFileManagerTests : IDisposable {
     private readonly List<string> _tempFiles = new List<string>();
 
@@ -53,11 +54,18 @@ namespace GsaGHTests.UI {
       return new ExampleFileManager(downloader.Object);
     }
 
-    private string CreateTempFile(string extension = "") {
-      string path = Path.GetTempFileName() + extension;
+    private string CreateTempFile(string extension = ".gh") {
+      string path = Path.Combine(Path.GetTempPath(), $"file{_tempFiles.Count + 1}") + extension;
       File.WriteAllText(path, "test");
       _tempFiles.Add(path);
       return path;
+    }
+
+    private void RemoveTempFile(string path) {
+      //_tempFiles.RemoveAll(item => item.Equals(path));
+      if (File.Exists(path)) {
+        File.Delete(path);
+      }
     }
 
     private static bool OpenFileMock(string path) {
@@ -115,6 +123,7 @@ namespace GsaGHTests.UI {
         dialogResult: DialogResult.OK);
 
       Assert.True(manager.IsOverwriteApproved(new FileEntry()));
+      RemoveTempFile(path);
     }
 
     [Fact]
@@ -125,20 +134,22 @@ namespace GsaGHTests.UI {
         dialogResult: DialogResult.Cancel);
 
       Assert.False(manager.IsOverwriteApproved(new FileEntry()));
+      RemoveTempFile(path);
     }
 
     [Fact]
     public async Task DownloadAndOpenFileAsync_ReturnsCancelled_WhenUserCancelsOverwrite() {
-      string path = CreateTempFile(".gh");
+      string path = CreateTempFile();
       ExampleFileManager manager = CreateManagerWithFiles(
         setupDownloader: d => d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path),
         dialogResult: DialogResult.Cancel);
 
       DialogResult result = await manager.DownloadAndOpenFileAsync(new FileEntry {
-        Name = "file.gh",
+        Name = Path.GetFileName(path),
       }, OpenFileMock);
 
       Assert.Equal(DialogResult.Cancel, result);
+      RemoveTempFile(path);
     }
 
     [Fact]
@@ -150,10 +161,11 @@ namespace GsaGHTests.UI {
       }, dialogResult: DialogResult.OK);
 
       DialogResult result = await manager.DownloadAndOpenFileAsync(new FileEntry {
-        Name = "file.txt",
+        Name = Path.GetFileName(path),
       }, OpenFileMock);
 
       Assert.Equal(DialogResult.OK, result);
+      RemoveTempFile(path);
     }
 
     [Fact]
@@ -165,45 +177,48 @@ namespace GsaGHTests.UI {
       }, dialogResult: DialogResult.OK);
 
       DialogResult result = await manager.DownloadAndOpenFileAsync(new FileEntry {
-        Name = "file.txt",
+        Name = Path.GetFileName(path),
       }, _ => true);
 
       Assert.Equal(DialogResult.Abort, result);
+      RemoveTempFile(path);
     }
 
     [Fact]
     public async Task DownloadAndOpenFileAsync_ReturnsSuccess_WhenOpenGhFileFuncReturnsTrue() {
-      string path = CreateTempFile(".gh");
+      string path = CreateTempFile();
       ExampleFileManager manager = CreateManagerWithFiles(setupDownloader: d => {
         d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
         d.Setup(x => x.DownloadFileAsync(It.IsAny<FileEntry>())).Returns(Task.CompletedTask);
       }, dialogResult: DialogResult.OK);
 
       DialogResult result = await manager.DownloadAndOpenFileAsync(new FileEntry {
-        Name = "file.gh",
+        Name = Path.GetFileName(path),
       }, _ => true);
 
       Assert.Equal(DialogResult.OK, result);
+      RemoveTempFile(path);
     }
 
     [Fact]
     public async Task DownloadAndOpenFileAsync_ReturnsOpenFailed_WhenOpenGhFileFuncReturnsFalse() {
-      string path = CreateTempFile(".gh");
+      string path = CreateTempFile();
       ExampleFileManager manager = CreateManagerWithFiles(setupDownloader: d => {
         d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
         d.Setup(x => x.DownloadFileAsync(It.IsAny<FileEntry>())).Returns(Task.CompletedTask);
       }, dialogResult: DialogResult.OK);
 
       DialogResult result = await manager.DownloadAndOpenFileAsync(new FileEntry {
-        Name = "file.gh",
+        Name = Path.GetFileName(path),
       }, _ => false);
 
       Assert.Equal(DialogResult.Abort, result);
+      RemoveTempFile(path);
     }
 
     [Fact]
     public async Task DownloadAndOpenFileAsync_ThrowsArgumentNullException_WhenOpenGhFileFuncIsNull() {
-      string path = CreateTempFile(".gh");
+      string path = CreateTempFile();
       ExampleFileManager manager = CreateManagerWithFiles(setupDownloader: d => {
         d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
         d.Setup(x => x.DownloadFileAsync(It.IsAny<FileEntry>())).Returns(Task.CompletedTask);
@@ -211,8 +226,9 @@ namespace GsaGHTests.UI {
 
       await Assert.ThrowsAsync<ArgumentNullException>(()
         => manager.DownloadAndOpenFileAsync(new FileEntry {
-          Name = "file.gh",
+          Name = Path.GetFileName(path),
         }, null));
+      RemoveTempFile(path);
     }
   }
 }
