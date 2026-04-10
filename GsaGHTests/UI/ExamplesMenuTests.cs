@@ -210,10 +210,15 @@ namespace GsaGHTests.UI {
 
     [Fact]
     public void AddToMainTab_ReturnsSilently_WhenEditorNotAvailable() {
-      InjectNoEditorEnvironment();
+      var recordingWrapper = new RecordingMessageBoxWrapper();
+      MessageDialogBox.SetMessageBoxWrapper(recordingWrapper);
+      ExamplesMenu.SetDocumentEditorProvider(() => null);
+      ExamplesMenu.SetSleepAction(_ => { });
+      ExamplesMenu.SetEditorAvailabilityTimeout(TimeSpan.FromMilliseconds(1));
 
-      // Should complete quickly and without throwing.
       ExamplesMenu.AddToMainTab();
+
+      Assert.True(recordingWrapper.WaitForShow(), "FailedToInitialize message should have been shown when editor is unavailable");
     }
 
     [Fact]
