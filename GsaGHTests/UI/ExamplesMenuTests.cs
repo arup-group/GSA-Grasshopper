@@ -5,14 +5,42 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using Grasshopper.GUI;
+
 using GsaGH.Graphics.Menu;
 using GsaGH.UI;
 
 using Xunit;
 
 namespace GsaGHTests.UI {
-  [Collection("GrasshopperFixture collection")]
-  public class ExamplesMenuTests {
+  [Collection("RunOneByOne")]
+  public class ExamplesMenuTests : IDisposable {
+    private readonly IMessageBoxWrapper _originalWrapper;
+    private readonly Func<GH_DocumentEditor> _originalGetDocumentEditor;
+    private readonly Action<int> _originalSleep;
+    private readonly TimeSpan _originalTimeout;
+    private readonly Func<string, bool> _originalGhDocumentLoader;
+
+    public ExamplesMenuTests() {
+      _originalWrapper = MessageDialogBox.MessageBoxWrapper;
+      _originalGetDocumentEditor = ExamplesMenu.GetDocumentEditor;
+      _originalSleep = ExamplesMenu.Sleep;
+      _originalTimeout = ExamplesMenu.EditorAvailabilityTimeout;
+      _originalGhDocumentLoader = ExamplesMenu.GhDocumentLoader;
+    }
+
+    public void Dispose() {
+      try {
+        MessageDialogBox.SetMessageBoxWrapper(_originalWrapper);
+        ExamplesMenu.GetDocumentEditor = _originalGetDocumentEditor;
+        ExamplesMenu.Sleep = _originalSleep;
+        ExamplesMenu.EditorAvailabilityTimeout = _originalTimeout;
+        ExamplesMenu.GhDocumentLoader = _originalGhDocumentLoader;
+      } catch {
+        // best-effort cleanup
+      }
+    }
+
     private static ToolStripMenuItem CreateMenuItem() {
       return new ToolStripMenuItem("Examples");
     }
@@ -21,6 +49,14 @@ namespace GsaGHTests.UI {
       var wrapper = new TestMessageBoxWrapper();
       MessageDialogBox.SetMessageBoxWrapper(wrapper);
       return ExamplesMenu.CreateExampleFileManager(manager);
+    }
+
+    /// <summary>Injects a test environment where the Grasshopper document editor is unavailable and operations complete immediately.</summary>
+    private static void InjectNoEditorEnvironment() {
+      ExamplesMenu.GetDocumentEditor = () => null;
+      ExamplesMenu.Sleep = _ => { };
+      ExamplesMenu.EditorAvailabilityTimeout = TimeSpan.FromMilliseconds(1);
+      MessageDialogBox.SetMessageBoxWrapper(new TestMessageBoxWrapper());
     }
 
     [Fact]
@@ -140,6 +176,87 @@ namespace GsaGHTests.UI {
       Assert.True(recordingWrapper.WaitForShow(), "Error message should have been shown after download failure");
     }
 
+    [Fact]
+    public void EnsureDocumentEditorAvailable_ReturnsFalse_WhenEditorNeverAvailable() {
+      InjectNoEditorEnvironment();
+
+      GH_DocumentEditor editor = null;
+      bool result = ExamplesMenu.EnsureDocumentEditorAvailable(ref editor);
+
+      Assert.False(result);
+      Assert.Null(editor);
+    }
+
+    [Fact]
+    public void AddOrUpdateExamplesMenu_AddsNewMenu_WhenMenuNotPresent() {
+      SetFileManager(new MockExampleFileManager(new List<FileEntry>()));
+      // Populate the examplesMenu static field with a named item for testing.
+      var examplesMenuItem = new ToolStripMenuItem(ExamplesMenu.Name) {
+        Name = ExamplesMenu.Name,
+      };
+      typeof(ExamplesMenu)
+        .GetField("examplesMenu", BindingFlags.Static | BindingFlags.NonPublic)
+        ?.SetValue(null, examplesMenuItem);
+
+      var strip = new MenuStrip();
+      ExamplesMenu.AddOrUpdateExamplesMenu(strip.Items);
+
+      Assert.True(strip.Items.ContainsKey(ExamplesMenu.Name));
+    }
+
+    [Fact]
+    public void AddOrUpdateExamplesMenu_AddsSeparatorToExistingMenu_WhenMenuPresent() {
+      SetFileManager(new MockExampleFileManager(new List<FileEntry>()));
+      var existingMenu = new ToolStripMenuItem(ExamplesMenu.Name) {
+        Name = ExamplesMenu.Name,
+      };
+      var strip = new MenuStrip();
+      strip.Items.Add(existingMenu);
+
+      ExamplesMenu.AddOrUpdateExamplesMenu(strip.Items);
+
+      Assert.NotEmpty(existingMenu.DropDownItems);
+      Assert.IsType<ToolStripSeparator>(existingMenu.DropDownItems[0]);
+    }
+
+    [Fact]
+    public void AddToMainTab_ReturnsSilently_WhenEditorNotAvailable() {
+      InjectNoEditorEnvironment();
+
+      // Should complete quickly and without throwing.
+      ExamplesMenu.AddToMainTab();
+    }
+
+    [Fact]
+    public void OnStartup_InitializesFileManagerAndMenu_WhenEditorNotAvailable() {
+      InjectNoEditorEnvironment();
+      SetFileManager(new MockExampleFileManager(new List<FileEntry>()));
+
+      // Should complete without throwing even though no Grasshopper editor is present.
+      ExamplesMenu.OnStartup(null);
+
+      IExampleFileManager result = ExamplesMenu.CreateExampleFileManager(null);
+      Assert.NotNull(result);
+    }
+
+    [Fact]
+    public void OpenFile_ReturnsFalse_WhenLoaderReturnsFalse() {
+      ExamplesMenu.GhDocumentLoader = _ => false;
+
+      bool result = ExamplesMenu.OpenFile("nonexistent.gh");
+
+      Assert.False(result);
+    }
+
+    [Fact]
+    public void OpenFile_ReturnsTrue_WhenLoaderReturnsTrue() {
+      ExamplesMenu.GhDocumentLoader = _ => true;
+
+      bool result = ExamplesMenu.OpenFile("test.gh");
+
+      Assert.True(result);
+    }
+
     private class TestMessageBoxWrapper : IMessageBoxWrapper {
       public DialogResult Show(string message, string title) {
         return DialogResult.OK;
@@ -246,3 +363,4 @@ namespace GsaGHTests.UI {
     }
   }
 }
+
