@@ -16,26 +16,15 @@ namespace GsaGHTests.UI {
   [Collection("RunOneByOne")]
   public class ExamplesMenuTests : IDisposable {
     private readonly IMessageBoxWrapper _originalWrapper;
-    private readonly Func<GH_DocumentEditor> _originalGetDocumentEditor;
-    private readonly Action<int> _originalSleep;
-    private readonly TimeSpan _originalTimeout;
-    private readonly Func<string, bool> _originalGhDocumentLoader;
 
     public ExamplesMenuTests() {
       _originalWrapper = MessageDialogBox.MessageBoxWrapper;
-      _originalGetDocumentEditor = ExamplesMenu.GetDocumentEditor;
-      _originalSleep = ExamplesMenu.Sleep;
-      _originalTimeout = ExamplesMenu.EditorAvailabilityTimeout;
-      _originalGhDocumentLoader = ExamplesMenu.GhDocumentLoader;
     }
 
     public void Dispose() {
       try {
         MessageDialogBox.SetMessageBoxWrapper(_originalWrapper);
-        ExamplesMenu.GetDocumentEditor = _originalGetDocumentEditor;
-        ExamplesMenu.Sleep = _originalSleep;
-        ExamplesMenu.EditorAvailabilityTimeout = _originalTimeout;
-        ExamplesMenu.GhDocumentLoader = _originalGhDocumentLoader;
+        ExamplesMenu.ResetDependencies();
       } catch {
         // best-effort cleanup
       }
@@ -53,9 +42,9 @@ namespace GsaGHTests.UI {
 
     /// <summary>Injects a test environment where the Grasshopper document editor is unavailable and operations complete immediately.</summary>
     private static void InjectNoEditorEnvironment() {
-      ExamplesMenu.GetDocumentEditor = () => null;
-      ExamplesMenu.Sleep = _ => { };
-      ExamplesMenu.EditorAvailabilityTimeout = TimeSpan.FromMilliseconds(1);
+      ExamplesMenu.SetDocumentEditorProvider(() => null);
+      ExamplesMenu.SetSleepAction(_ => { });
+      ExamplesMenu.SetEditorAvailabilityTimeout(TimeSpan.FromMilliseconds(1));
       MessageDialogBox.SetMessageBoxWrapper(new TestMessageBoxWrapper());
     }
 
@@ -241,7 +230,7 @@ namespace GsaGHTests.UI {
 
     [Fact]
     public void OpenFile_ReturnsFalse_WhenLoaderReturnsFalse() {
-      ExamplesMenu.GhDocumentLoader = _ => false;
+      ExamplesMenu.SetDocumentLoader(_ => false);
 
       bool result = ExamplesMenu.OpenFile("nonexistent.gh");
 
@@ -250,7 +239,7 @@ namespace GsaGHTests.UI {
 
     [Fact]
     public void OpenFile_ReturnsTrue_WhenLoaderReturnsTrue() {
-      ExamplesMenu.GhDocumentLoader = _ => true;
+      ExamplesMenu.SetDocumentLoader(_ => true);
 
       bool result = ExamplesMenu.OpenFile("test.gh");
 

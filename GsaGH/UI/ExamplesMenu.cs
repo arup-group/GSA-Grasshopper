@@ -27,35 +27,47 @@ namespace GsaGH.Graphics.Menu {
     private static IExampleFileManager exampleFileManager;
     private static readonly object examplesMenuLock = new object();
 
-    // Internal static delegates for dependency injection — all default to production behaviour
-    // and can be overridden in tests to avoid blocking on the Grasshopper runtime.
-
-    /// <summary>Returns the active Grasshopper document editor; <c>null</c> in headless mode.</summary>
-    internal static Func<GH_DocumentEditor> GetDocumentEditor = () => Instances.DocumentEditor;
-
-    /// <summary>Suspends the current thread for the given number of milliseconds.</summary>
-    internal static Action<int> Sleep = ms => Thread.Sleep(ms);
-    /// <summary>
-    ///   Maximum time to wait for <see cref="GH_DocumentEditor" /> to become available.
-    ///   Defaults to 60 seconds; override in tests to make <see cref="AddToMainTab" /> return immediately.
-    /// </summary>
-    internal static TimeSpan EditorAvailabilityTimeout = TimeSpan.FromSeconds(60);
-
-    /// <summary>
-    ///   Opens a Grasshopper document at <c>path</c> and assigns it as the active canvas document.
-    ///   Override in tests to avoid touching the file system or Grasshopper runtime.
-    /// </summary>
-    internal static Func<string, bool> GhDocumentLoader = path => {
-      var io = new GH_DocumentIO();
-      if (!io.Open(path)) {
-        return false;
-      }
-
-      Instances.DocumentEditor.Invoke((Action)(() => Instances.ActiveCanvas.Document = io.Document));
-      return true;
-    };
+    // Private backing fields for dependency injection — defaults reflect production behaviour.
+    // Use the internal Set* methods (or ResetDependencies) to override them in tests.
+    private static Func<GH_DocumentEditor> _getDocumentEditor = () => Instances.DocumentEditor;
+    private static Action<int> _sleep = ms => Thread.Sleep(ms);
+    private static TimeSpan _editorAvailabilityTimeout = TimeSpan.FromSeconds(60);
+    private static Func<string, bool> _ghDocumentLoader = DefaultDocumentLoader;
 
     protected ExamplesMenu() { }
+
+    // ── Internal setters (test injection, following MessageDialogBox.SetMessageBoxWrapper pattern) ──
+
+    /// <summary>Overrides the provider used to obtain the active <see cref="GH_DocumentEditor" />.</summary>
+    internal static void SetDocumentEditorProvider(Func<GH_DocumentEditor> provider) {
+      _getDocumentEditor = provider ?? (() => Instances.DocumentEditor);
+    }
+
+    /// <summary>Overrides the sleep action used while polling for the document editor.</summary>
+    internal static void SetSleepAction(Action<int> sleep) {
+      _sleep = sleep ?? (ms => Thread.Sleep(ms));
+    }
+
+    /// <summary>Overrides the maximum time to wait for the document editor to become available.</summary>
+    internal static void SetEditorAvailabilityTimeout(TimeSpan timeout) {
+      _editorAvailabilityTimeout = timeout;
+    }
+
+    /// <summary>
+    ///   Overrides the function used to open a Grasshopper document from disk.
+    ///   Override in tests to avoid touching the file system or Grasshopper runtime.
+    /// </summary>
+    internal static void SetDocumentLoader(Func<string, bool> loader) {
+      _ghDocumentLoader = loader ?? DefaultDocumentLoader;
+    }
+
+    /// <summary>Restores all overridable dependencies to their production defaults.</summary>
+    internal static void ResetDependencies() {
+      _getDocumentEditor = () => Instances.DocumentEditor;
+      _sleep = ms => Thread.Sleep(ms);
+      _editorAvailabilityTimeout = TimeSpan.FromSeconds(60);
+      _ghDocumentLoader = DefaultDocumentLoader;
+    }
 
     /// <summary>
     ///   Initializes the examples menu on Grasshopper startup.
@@ -121,13 +133,13 @@ namespace GsaGH.Graphics.Menu {
 
     internal static bool EnsureDocumentEditorAvailable(ref GH_DocumentEditor editor) {
       DateTime start = DateTime.UtcNow;
-      while (editor == null && DateTime.UtcNow - start < EditorAvailabilityTimeout) {
-        editor = GetDocumentEditor();
+      while (editor == null && DateTime.UtcNow - start < _editorAvailabilityTimeout) {
+        editor = _getDocumentEditor();
         if (editor != null) {
           break;
         }
 
-        Sleep(321);
+        _sleep(321);
       }
 
       if (editor != null) {
@@ -192,7 +204,17 @@ namespace GsaGH.Graphics.Menu {
     }
 
     internal static bool OpenFile(string path) {
-      return GhDocumentLoader(path);
+      return _ghDocumentLoader(path);
+    }
+
+    private static bool DefaultDocumentLoader(string path) {
+      var io = new GH_DocumentIO();
+      if (!io.Open(path)) {
+        return false;
+      }
+
+      Instances.DocumentEditor.Invoke((Action)(() => Instances.ActiveCanvas.Document = io.Document));
+      return true;
     }
   }
 }
