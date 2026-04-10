@@ -15,6 +15,11 @@ namespace GsaGHTests.UI {
   [Collection("RunOneByOne")]
   public class ExampleFileManagerTests : IDisposable {
     private readonly List<string> _tempFiles = new List<string>();
+    private readonly IMessageBoxWrapper _originalWrapper;
+
+    public ExampleFileManagerTests() {
+      _originalWrapper = MessageDialogBox.MessageBoxWrapper;
+    }
 
     private class TestMessageBoxWrapper : IMessageBoxWrapper {
       public int ShowCallCount { get; private set; } = 0;
@@ -61,20 +66,17 @@ namespace GsaGHTests.UI {
       return path;
     }
 
-    private void RemoveTempFile(string path) {
-      //_tempFiles.RemoveAll(item => item.Equals(path));
-      if (File.Exists(path)) {
-        File.Delete(path);
-      }
-    }
-
     private static bool OpenFileMock(string path) {
       return string.IsNullOrEmpty(path);
     }
 
     public void Dispose() {
-      foreach (string file in _tempFiles.Where(File.Exists)) {
-        File.Delete(file);
+      try {
+        foreach (string file in _tempFiles.Where(File.Exists)) {
+          File.Delete(file);
+        }
+      } finally {
+        MessageDialogBox.SetMessageBoxWrapper(_originalWrapper);
       }
     }
 
