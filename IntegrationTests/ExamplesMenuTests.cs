@@ -12,8 +12,8 @@ using GsaGH.UI;
 
 using Xunit;
 
-namespace GsaGHTests.UI {
-  [Collection("RunOneByOne")]
+namespace IntegrationTests {
+  [Collection("GrasshopperFixture collection")]
   public class ExamplesMenuTests : IDisposable {
     private readonly IMessageBoxWrapper _originalWrapper;
 
@@ -40,7 +40,10 @@ namespace GsaGHTests.UI {
       return ExamplesMenu.CreateExampleFileManager(manager);
     }
 
-    /// <summary>Injects a test environment where the Grasshopper document editor is unavailable and operations complete immediately.</summary>
+    /// <summary>
+    ///   Injects a test environment where the Grasshopper document editor is unavailable and operations complete
+    ///   immediately.
+    /// </summary>
     private static void InjectNoEditorEnvironment() {
       ExamplesMenu.SetDocumentEditorProvider(() => null);
       ExamplesMenu.SetSleepAction(_ => { });
@@ -183,9 +186,8 @@ namespace GsaGHTests.UI {
       var examplesMenuItem = new ToolStripMenuItem(ExamplesMenu.Name) {
         Name = ExamplesMenu.Name,
       };
-      typeof(ExamplesMenu)
-        .GetField("examplesMenu", BindingFlags.Static | BindingFlags.NonPublic)
-        ?.SetValue(null, examplesMenuItem);
+      typeof(ExamplesMenu).GetField("examplesMenu", BindingFlags.Static | BindingFlags.NonPublic)
+      ?.SetValue(null, examplesMenuItem);
 
       var strip = new MenuStrip();
       ExamplesMenu.AddOrUpdateExamplesMenu(strip.Items);
@@ -218,7 +220,8 @@ namespace GsaGHTests.UI {
 
       ExamplesMenu.AddToMainTab();
 
-      Assert.True(recordingWrapper.WaitForShow(), "FailedToInitialize message should have been shown when editor is unavailable");
+      Assert.True(recordingWrapper.WaitForShow(),
+        "FailedToInitialize message should have been shown when editor is unavailable");
     }
 
     [Fact]
@@ -357,4 +360,3 @@ namespace GsaGHTests.UI {
     }
   }
 }
-
