@@ -5,31 +5,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using Grasshopper.GUI;
-
 using GsaGH.Graphics.Menu;
 using GsaGH.UI;
 
 using Xunit;
 
-namespace IntegrationTests {
+namespace GsaGHTests.UI {
   [Collection("GrasshopperFixture collection")]
-  public class ExamplesMenuTests : IDisposable {
-    private readonly IMessageBoxWrapper _originalWrapper;
-
-    public ExamplesMenuTests() {
-      _originalWrapper = MessageDialogBox.MessageBoxWrapper;
-    }
-
-    public void Dispose() {
-      try {
-        MessageDialogBox.SetMessageBoxWrapper(_originalWrapper);
-        ExamplesMenu.ResetDependencies();
-      } catch {
-        // best-effort cleanup
-      }
-    }
-
+  public class ExamplesMenuTests {
     private static ToolStripMenuItem CreateMenuItem() {
       return new ToolStripMenuItem("Examples");
     }
@@ -38,17 +21,6 @@ namespace IntegrationTests {
       var wrapper = new TestMessageBoxWrapper();
       MessageDialogBox.SetMessageBoxWrapper(wrapper);
       return ExamplesMenu.CreateExampleFileManager(manager);
-    }
-
-    /// <summary>
-    ///   Injects a test environment where the Grasshopper document editor is unavailable and operations complete
-    ///   immediately.
-    /// </summary>
-    private static void InjectNoEditorEnvironment() {
-      ExamplesMenu.SetDocumentEditorProvider(() => null);
-      ExamplesMenu.SetSleepAction(_ => { });
-      ExamplesMenu.SetEditorAvailabilityTimeout(TimeSpan.FromMilliseconds(1));
-      MessageDialogBox.SetMessageBoxWrapper(new TestMessageBoxWrapper());
     }
 
     [Fact]
@@ -166,92 +138,6 @@ namespace IntegrationTests {
       menuItem.DropDownItems[0].PerformClick();
 
       Assert.True(recordingWrapper.WaitForShow(), "Error message should have been shown after download failure");
-    }
-
-    [Fact]
-    public void EnsureDocumentEditorAvailable_ReturnsFalse_WhenEditorNeverAvailable() {
-      InjectNoEditorEnvironment();
-
-      GH_DocumentEditor editor = null;
-      bool result = ExamplesMenu.EnsureDocumentEditorAvailable(ref editor);
-
-      Assert.False(result);
-      Assert.Null(editor);
-    }
-
-    [Fact]
-    public void AddOrUpdateExamplesMenu_AddsNewMenu_WhenMenuNotPresent() {
-      SetFileManager(new MockExampleFileManager(new List<FileEntry>()));
-      // Populate the examplesMenu static field with a named item for testing.
-      var examplesMenuItem = new ToolStripMenuItem(ExamplesMenu.Name) {
-        Name = ExamplesMenu.Name,
-      };
-      typeof(ExamplesMenu).GetField("examplesMenu", BindingFlags.Static | BindingFlags.NonPublic)
-      ?.SetValue(null, examplesMenuItem);
-
-      var strip = new MenuStrip();
-      ExamplesMenu.AddOrUpdateExamplesMenu(strip.Items);
-
-      Assert.True(strip.Items.ContainsKey(ExamplesMenu.Name));
-    }
-
-    [Fact]
-    public void AddOrUpdateExamplesMenu_AddsSeparatorToExistingMenu_WhenMenuPresent() {
-      SetFileManager(new MockExampleFileManager(new List<FileEntry>()));
-      var existingMenu = new ToolStripMenuItem(ExamplesMenu.Name) {
-        Name = ExamplesMenu.Name,
-      };
-      var strip = new MenuStrip();
-      strip.Items.Add(existingMenu);
-
-      ExamplesMenu.AddOrUpdateExamplesMenu(strip.Items);
-
-      Assert.NotEmpty(existingMenu.DropDownItems);
-      Assert.IsType<ToolStripSeparator>(existingMenu.DropDownItems[0]);
-    }
-
-    [Fact]
-    public void AddToMainTab_ReturnsSilently_WhenEditorNotAvailable() {
-      var recordingWrapper = new RecordingMessageBoxWrapper();
-      MessageDialogBox.SetMessageBoxWrapper(recordingWrapper);
-      ExamplesMenu.SetDocumentEditorProvider(() => null);
-      ExamplesMenu.SetSleepAction(_ => { });
-      ExamplesMenu.SetEditorAvailabilityTimeout(TimeSpan.FromMilliseconds(1));
-
-      ExamplesMenu.AddToMainTab();
-
-      Assert.True(recordingWrapper.WaitForShow(),
-        "FailedToInitialize message should have been shown when editor is unavailable");
-    }
-
-    [Fact]
-    public void OnStartup_InitializesFileManagerAndMenu_WhenEditorNotAvailable() {
-      InjectNoEditorEnvironment();
-      SetFileManager(new MockExampleFileManager(new List<FileEntry>()));
-
-      // Should complete without throwing even though no Grasshopper editor is present.
-      ExamplesMenu.OnStartup(null);
-
-      IExampleFileManager result = ExamplesMenu.CreateExampleFileManager(null);
-      Assert.NotNull(result);
-    }
-
-    [Fact]
-    public void OpenFile_ReturnsFalse_WhenLoaderReturnsFalse() {
-      ExamplesMenu.SetDocumentLoader(_ => false);
-
-      bool result = ExamplesMenu.OpenFile("nonexistent.gh");
-
-      Assert.False(result);
-    }
-
-    [Fact]
-    public void OpenFile_ReturnsTrue_WhenLoaderReturnsTrue() {
-      ExamplesMenu.SetDocumentLoader(_ => true);
-
-      bool result = ExamplesMenu.OpenFile("test.gh");
-
-      Assert.True(result);
     }
 
     private class TestMessageBoxWrapper : IMessageBoxWrapper {

@@ -27,47 +27,7 @@ namespace GsaGH.Graphics.Menu {
     private static IExampleFileManager exampleFileManager;
     private static readonly object examplesMenuLock = new object();
 
-    // Private backing fields for dependency injection — defaults reflect production behaviour.
-    // Use the internal Set* methods (or ResetDependencies) to override them in tests.
-    private static Func<GH_DocumentEditor> _getDocumentEditor = () => Instances.DocumentEditor;
-    private static Action<int> _sleep = ms => Thread.Sleep(ms);
-    private static TimeSpan _editorAvailabilityTimeout = TimeSpan.FromSeconds(60);
-    private static Func<string, bool> _ghDocumentLoader = DefaultDocumentLoader;
-
     protected ExamplesMenu() { }
-
-    // ── Internal setters (test injection, following MessageDialogBox.SetMessageBoxWrapper pattern) ──
-
-    /// <summary>Overrides the provider used to obtain the active <see cref="GH_DocumentEditor" />.</summary>
-    internal static void SetDocumentEditorProvider(Func<GH_DocumentEditor> provider) {
-      _getDocumentEditor = provider ?? (() => Instances.DocumentEditor);
-    }
-
-    /// <summary>Overrides the sleep action used while polling for the document editor.</summary>
-    internal static void SetSleepAction(Action<int> sleep) {
-      _sleep = sleep ?? (ms => Thread.Sleep(ms));
-    }
-
-    /// <summary>Overrides the maximum time to wait for the document editor to become available.</summary>
-    internal static void SetEditorAvailabilityTimeout(TimeSpan timeout) {
-      _editorAvailabilityTimeout = timeout;
-    }
-
-    /// <summary>
-    ///   Overrides the function used to open a Grasshopper document from disk.
-    ///   Override in tests to avoid touching the file system or Grasshopper runtime.
-    /// </summary>
-    internal static void SetDocumentLoader(Func<string, bool> loader) {
-      _ghDocumentLoader = loader ?? DefaultDocumentLoader;
-    }
-
-    /// <summary>Restores all overridable dependencies to their production defaults.</summary>
-    internal static void ResetDependencies() {
-      _getDocumentEditor = () => Instances.DocumentEditor;
-      _sleep = ms => Thread.Sleep(ms);
-      _editorAvailabilityTimeout = TimeSpan.FromSeconds(60);
-      _ghDocumentLoader = DefaultDocumentLoader;
-    }
 
     /// <summary>
     ///   Initializes the examples menu on Grasshopper startup.
@@ -100,7 +60,7 @@ namespace GsaGH.Graphics.Menu {
       return new ExampleFileManager(downloader);
     }
 
-    internal static void AddToMainTab() {
+    private static void AddToMainTab() {
       GH_DocumentEditor editor = null;
 
       if (!EnsureDocumentEditorAvailable(ref editor)) {
@@ -113,14 +73,10 @@ namespace GsaGH.Graphics.Menu {
     }
 
     private static void AddOrUpdateExamplesMenu(GH_DocumentEditor editor) {
-      AddOrUpdateExamplesMenu(editor.MainMenuStrip.Items);
-    }
-
-    internal static void AddOrUpdateExamplesMenu(ToolStripItemCollection items) {
-      if (!items.ContainsKey(Name)) {
-        items.Add(examplesMenu);
+      if (!editor.MainMenuStrip.Items.ContainsKey(Name)) {
+        editor.MainMenuStrip.Items.Add(examplesMenu);
       } else {
-        examplesMenu = (ToolStripMenuItem)items[Name];
+        examplesMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items[Name];
         lock (examplesMenuLock) {
           examplesMenu.DropDown.Items.Add(new ToolStripSeparator());
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -131,15 +87,16 @@ namespace GsaGH.Graphics.Menu {
       }
     }
 
-    internal static bool EnsureDocumentEditorAvailable(ref GH_DocumentEditor editor) {
+    private static bool EnsureDocumentEditorAvailable(ref GH_DocumentEditor editor) {
       DateTime start = DateTime.UtcNow;
-      while (editor == null && DateTime.UtcNow - start < _editorAvailabilityTimeout) {
-        editor = _getDocumentEditor();
+      var timeout = TimeSpan.FromSeconds(60);
+      while (editor == null && DateTime.UtcNow - start < timeout) {
+        editor = Instances.DocumentEditor;
         if (editor != null) {
           break;
         }
 
-        _sleep(321);
+        Thread.Sleep(321);
       }
 
       if (editor != null) {
@@ -148,7 +105,9 @@ namespace GsaGH.Graphics.Menu {
 
       // Failed to obtain the document editor within the timeout; skip adding the menu and fail gracefully.
       Instances.CanvasCreated -= OnStartup;
-      ShowMessage(MenuState.FailedToInitialize);
+      MessageBox.Show(
+        "Unable to initialize the Examples menu because the Grasshopper document editor did not become available in time.",
+        "GSA Examples", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       return false;
     }
 
@@ -203,11 +162,7 @@ namespace GsaGH.Graphics.Menu {
       });
     }
 
-    internal static bool OpenFile(string path) {
-      return _ghDocumentLoader(path);
-    }
-
-    private static bool DefaultDocumentLoader(string path) {
+    private static bool OpenFile(string path) {
       var io = new GH_DocumentIO();
       if (!io.Open(path)) {
         return false;
