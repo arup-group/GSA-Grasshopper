@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using GsaGH.UI;
-using GsaGH.UI.Helpers;
+using GsaGH.UI.SampleFiles;
 
 using HtmlAgilityPack;
 

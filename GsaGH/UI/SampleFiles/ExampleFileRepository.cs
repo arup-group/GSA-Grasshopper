@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GsaGH.UI.Helpers {
+namespace GsaGH.UI.SampleFiles {
   /// <summary>
   ///   In-memory repository for example files. Initialized once at startup.
   /// </summary>

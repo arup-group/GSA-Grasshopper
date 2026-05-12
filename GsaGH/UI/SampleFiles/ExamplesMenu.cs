@@ -11,11 +11,10 @@ using Grasshopper.GUI.Canvas;
 using Grasshopper.Kernel;
 
 using GsaGH.Properties;
-using GsaGH.UI.Helpers;
 
 using static GsaGH.UI.Helpers.MessageDialogBox;
 
-namespace GsaGH.Graphics.Menu {
+namespace GsaGH.UI.SampleFiles {
 
   /// <summary>
   ///   Provides a menu for downloading and opening example files.

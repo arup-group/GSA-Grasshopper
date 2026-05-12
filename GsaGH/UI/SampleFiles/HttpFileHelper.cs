@@ -5,7 +5,7 @@ using System.Linq;
 
 using HtmlAgilityPack;
 
-namespace GsaGH.UI.Helpers {
+namespace GsaGH.UI.SampleFiles {
   internal static class HttpFileHelper {
     public static string GetSafeFileName(string fileName) {
       if (string.IsNullOrWhiteSpace(fileName)) {

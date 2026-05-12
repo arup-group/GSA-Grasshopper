@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using GsaGH.Graphics.Menu;
 using GsaGH.Properties;
 
-namespace GsaGH.UI.Helpers {
+namespace GsaGH.UI.SampleFiles {
   public static class SampleFilesMenuHelper {
     public static ToolStripMenuItem CreateSampleFilesMenu(List<string> keywords) {
       var samplesMenu = new ToolStripMenuItem("Sample files", Resources.ModelTitles) {

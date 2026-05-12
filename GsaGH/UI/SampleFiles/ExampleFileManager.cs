@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 using static GsaGH.UI.Helpers.MessageDialogBox;
 
-namespace GsaGH.UI.Helpers {
+namespace GsaGH.UI.SampleFiles {
   public interface IExampleFileManager {
     Task<List<FileEntry>> GetExampleFilesAsync();
     bool IsOverwriteApproved(FileEntry file);

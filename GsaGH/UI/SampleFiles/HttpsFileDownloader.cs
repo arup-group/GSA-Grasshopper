@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using HtmlAgilityPack;
 
-namespace GsaGH.UI.Helpers {
+namespace GsaGH.UI.SampleFiles {
 
   public interface IHttpsFileDownloader {
     Task DownloadFileAsync(FileEntry file);

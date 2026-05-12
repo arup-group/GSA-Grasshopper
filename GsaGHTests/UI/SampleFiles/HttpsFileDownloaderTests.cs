@@ -6,20 +6,17 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 
-using GsaGH.UI;
-using GsaGH.UI.Helpers;
-
 using HtmlAgilityPack;
 
 using Moq;
 
 using Xunit;
 
-namespace GsaGHTests.UI {
+namespace GsaGHTests.UI.SampleFiles {
   public class HttpsFileDownloaderTests {
-    private readonly Mock<IHttpClientWrapper> _mockHttpClient;
     private const string _httpExampleComSamples = "http://example.com/samples";
     private readonly HttpsFileDownloader _downloader;
+    private readonly Mock<IHttpClientWrapper> _mockHttpClient;
 
     public HttpsFileDownloaderTests() {
       _mockHttpClient = new Mock<IHttpClientWrapper>();

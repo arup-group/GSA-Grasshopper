@@ -5,13 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using GsaGH.UI;
-
 using Moq;
 
 using Xunit;
 
-namespace GsaGHTests.UI {
+namespace GsaGHTests.UI.SampleFiles {
   [Collection("RunOneByOne")]
   public class ExampleFileManagerTests : IDisposable {
     private readonly List<string> _tempFiles = new List<string>();

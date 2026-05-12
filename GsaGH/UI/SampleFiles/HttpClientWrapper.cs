@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace GsaGH.UI.Helpers {
+namespace GsaGH.UI.SampleFiles {
   public interface IHttpClientWrapper {
     Task<string> GetStringAsync(string url);
     Task<HttpResponseMessage> GetAsync(string url);
