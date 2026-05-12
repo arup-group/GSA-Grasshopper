@@ -23,8 +23,9 @@ namespace GsaGH.Graphics.Menu {
   public class ExamplesMenu {
     private static ToolStripMenuItem examplesMenu;
     public const string Name = "Examples";
-    private static IExampleFileManager exampleFileManager;
     private static readonly object examplesMenuLock = new object();
+
+    public static IExampleFileManager ExampleFileManager { get; private set; }
 
     protected ExamplesMenu() { }
 
@@ -32,7 +33,7 @@ namespace GsaGH.Graphics.Menu {
     ///   Initializes the examples menu on Grasshopper startup.
     /// </summary>
     internal static void OnStartup(GH_Canvas canvas) {
-      exampleFileManager = CreateExampleFileManager();
+      ExampleFileManager = CreateExampleFileManager();
       examplesMenu = new ToolStripMenuItem(Name) {
         Name = Name,
       };
@@ -45,18 +46,18 @@ namespace GsaGH.Graphics.Menu {
 
     public static IExampleFileManager CreateExampleFileManager(IExampleFileManager manager = null) {
       if (manager != null) {
-        exampleFileManager = manager;
+        ExampleFileManager = manager;
         return manager;
       }
 
-      if (exampleFileManager != null) {
-        return exampleFileManager;
+      if (ExampleFileManager != null) {
+        return ExampleFileManager;
       }
 
       var httpClient = new HttpClient();
       IHttpClientWrapper httpClientWrapper = new HttpClientWrapper(httpClient);
       IHttpsFileDownloader downloader = new HttpsFileDownloader(httpClientWrapper, Resources.SamplesUrl);
-      return new ExampleFileManager(downloader);
+      return new ExampleFileManager(downloader, OpenFile);
     }
 
     private static void AddToMainTab() {
@@ -129,7 +130,7 @@ namespace GsaGH.Graphics.Menu {
     }
 
     private static async Task AddExampleFilesAsync(ToolStripMenuItem menuItem) {
-      List<FileEntry> files = await exampleFileManager.GetExampleFilesAsync();
+      List<FileEntry> files = await ExampleFileManager.GetExampleFilesAsync();
 
       if (files == null || files.Count <= 0) {
         return;
@@ -154,7 +155,7 @@ namespace GsaGH.Graphics.Menu {
     private static void AddFileMenuItem(ToolStripMenuItem menuItem, FileEntry file) {
       menuItem.DropDown.Items.Add(file.Name, null, async (s, a) => {
         try {
-          await exampleFileManager.DownloadAndOpenFileAsync(file, OpenFile);
+          await ExampleFileManager.DownloadAndOpenFileAsync(file);
         } catch (Exception) {
           ShowMessage(FileState.NoFilesFound, string.Empty);
         }

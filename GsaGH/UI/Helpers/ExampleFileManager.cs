@@ -10,26 +10,33 @@ namespace GsaGH.UI.Helpers {
   public interface IExampleFileManager {
     Task<List<FileEntry>> GetExampleFilesAsync();
     bool IsOverwriteApproved(FileEntry file);
-    Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file, Func<string, bool> openGhFileFunc);
+    Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file);
   }
 
   public class ExampleFileManager : IExampleFileManager {
     private IHttpsFileDownloader Downloader { get; }
+    private Func<string, bool> OpenGhFile { get; }
 
-    public ExampleFileManager(IHttpsFileDownloader downloader) {
-      Downloader = downloader;
+    public ExampleFileManager(IHttpsFileDownloader downloader, Func<string, bool> openGhFileFunc) {
+      Downloader = downloader ?? throw new ArgumentNullException(nameof(downloader));
+      OpenGhFile = openGhFileFunc ?? throw new ArgumentNullException(nameof(openGhFileFunc));
     }
 
     /// <summary>
     ///   Fetches the list of example files asynchronously and returns them.
+    ///   Initializes ExampleFileRepository so other classes can access the file list.
     /// </summary>
     public async Task<List<FileEntry>> GetExampleFilesAsync() {
+      List<FileEntry> files;
       try {
-        return await Downloader.GetFilesFromWebPageAsync();
+        files = await Downloader.GetFilesFromWebPageAsync();
       } catch (Exception) {
         ShowMessage(FileState.NoFilesFound, string.Empty);
-        return new List<FileEntry>();
+        files = new List<FileEntry>();
       }
+
+      ExampleFileRepository.SetFiles(files);
+      return files;
     }
 
     public bool IsOverwriteApproved(FileEntry file) {
@@ -38,13 +45,11 @@ namespace GsaGH.UI.Helpers {
         return true;
       }
 
-      // if file exists ask for overwrite
       DialogResult result = ShowMessage(FileState.OverrideQuestion, file.Name, savePath);
-
       return result == DialogResult.OK;
     }
 
-    public async Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file, Func<string, bool> openGhFileFunc) {
+    public async Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file) {
       if (!IsOverwriteApproved(file)) {
         return ShowMessage(FileState.Cancelled, file.Name);
       }
@@ -57,14 +62,8 @@ namespace GsaGH.UI.Helpers {
           return ShowMessage(FileState.Downloaded, file.Name, savePath);
         }
 
-        return openGhFileFunc switch {
-          null => throw new ArgumentNullException(nameof(openGhFileFunc),
-            "Function to open .gh files must be provided."),
-          _ => openGhFileFunc(savePath) ? ShowMessage(FileState.Success, file.Name) :
-            ShowMessage(FileState.OpenFailed, file.Name),
-        };
-      } catch (ArgumentNullException) {
-        throw;
+        return OpenGhFile(savePath) ? ShowMessage(FileState.Success, file.Name) :
+          ShowMessage(FileState.OpenFailed, file.Name);
       } catch {
         return ShowMessage(FileState.DownloadFailed, file.Name);
       }
