@@ -13,6 +13,7 @@ using GsaGH.Graphics.Menu;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Helpers.GsaCOM;
 using GsaGH.Properties;
+using GsaGH.UI.SampleFiles;
 
 using OasysGH;
 using OasysGH.Helpers;
@@ -94,11 +95,11 @@ namespace GsaGH {
     private static string GsaVersionMustBeUpdatedMessage
       => "Version " + GrasshopperVersion
         + $" of GSA-Grasshopper requires {GsaVersionRequired.FullVersion} installed. Please upgrade {ProductName}.";
-    private string _GsaApiDllVersion;
     private readonly IAnalytics _analytics;
     private readonly bool _underTest;
+    private string _GsaApiDllVersion;
 
-    public AddReferencePriority() : this(new PostHoGAnalytics(), underTest: false) { }
+    public AddReferencePriority() : this(new PostHoGAnalytics(), false) { }
 
     internal AddReferencePriority(IAnalytics analytics, bool underTest) {
       _analytics = analytics;
