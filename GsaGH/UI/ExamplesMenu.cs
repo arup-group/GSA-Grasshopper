@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Grasshopper;
 using Grasshopper.GUI;
-using Grasshopper.GUI.Canvas;
-using Grasshopper.Kernel;
 
 using GsaGH.Properties;
 using GsaGH.UI;
@@ -19,30 +17,12 @@ using static GsaGH.UI.MessageDialogBox;
 namespace GsaGH.Graphics.Menu {
 
   /// <summary>
-  ///   Provides a menu for downloading and opening example files.
+  ///   Builds a menu item populated with downloadable example files.
   /// </summary>
   public class ExamplesMenu {
-    private static ToolStripMenuItem examplesMenu;
-    public const string Name = "Examples";
     private static IExampleFileManager exampleFileManager;
-    private static readonly object examplesMenuLock = new object();
 
     protected ExamplesMenu() { }
-
-    /// <summary>
-    ///   Initializes the examples menu on Grasshopper startup.
-    /// </summary>
-    internal static void OnStartup(GH_Canvas canvas) {
-      exampleFileManager = CreateExampleFileManager();
-      examplesMenu = new ToolStripMenuItem(Name) {
-        Name = Name,
-      };
-
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-      PopulateSub(examplesMenu); // we cannot change the signature of this method to async, so we fire and forget the population of the menu, which will update when the files are retrieved
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-      AddToMainTab();
-    }
 
     public static IExampleFileManager CreateExampleFileManager(IExampleFileManager manager = null) {
       if (manager != null) {
@@ -60,73 +40,21 @@ namespace GsaGH.Graphics.Menu {
       return new ExampleFileManager(downloader);
     }
 
-    private static void AddToMainTab() {
-      GH_DocumentEditor editor = null;
-
-      if (!EnsureDocumentEditorAvailable(ref editor)) {
-        return;
-      }
-
-      AddOrUpdateExamplesMenu(editor);
-
-      Instances.CanvasCreated -= OnStartup;
-    }
-
-    private static void AddOrUpdateExamplesMenu(GH_DocumentEditor editor) {
-      if (!editor.MainMenuStrip.Items.ContainsKey(Name)) {
-        editor.MainMenuStrip.Items.Add(examplesMenu);
-      } else {
-        examplesMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items[Name];
-        lock (examplesMenuLock) {
-          examplesMenu.DropDown.Items.Add(new ToolStripSeparator());
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-          PopulateSub(
-            examplesMenu); // we cannot change the signature of this method to async, so we fire and forget the population of the menu, which will update when the files are retrieved
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-        }
-      }
-    }
-
-    private static bool EnsureDocumentEditorAvailable(ref GH_DocumentEditor editor) {
-      DateTime start = DateTime.UtcNow;
-      var timeout = TimeSpan.FromSeconds(60);
-      while (editor == null && DateTime.UtcNow - start < timeout) {
-        editor = Instances.DocumentEditor;
-        if (editor != null) {
-          break;
-        }
-
-        Thread.Sleep(321);
-      }
-
-      if (editor != null) {
-        return true;
-      }
-
-      // Failed to obtain the document editor within the timeout; skip adding the menu and fail gracefully.
-      Instances.CanvasCreated -= OnStartup;
-      MessageBox.Show(
-        "Unable to initialize the Examples menu because the Grasshopper document editor did not become available in time.",
-        "GSA Examples", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-      return false;
-    }
-
     /// <summary>
-    ///   Populates the submenu with example files.
+    ///   Creates a "GSA Example files" menu item with a GitHub link and all example files.
     /// </summary>
-    internal static async Task PopulateSub(ToolStripMenuItem menuItem) {
-      try {
-        await AddExampleFilesAsync(menuItem);
-      } catch {
-        // looks stupid but we need to show message on main UI thread, that's why we have to catch the exception here and then invoke the message box on the main thread
-        ToolStrip parent = menuItem.GetCurrentParent();
-        if (parent != null) {
-          parent.BeginInvoke((Action)(()
-            => ShowMessage(FileState.NoFilesFound, string.Empty)));
-        } else {
-          ShowMessage(FileState.NoFilesFound, string.Empty);
-        }
-      }
+    internal static async Task<ToolStripMenuItem> CreateExamplesMenuItemAsync() {
+      exampleFileManager = CreateExampleFileManager();
+      var menuItem = new ToolStripMenuItem("GSA Example files", Resources.ExampleFiles);
+      menuItem.DropDownItems.Add(CreateViewOnGithubMenuItem());
+      menuItem.DropDownItems.Add(new ToolStripSeparator());
+      await AddExampleFilesAsync(menuItem);
+      return menuItem;
+    }
+
+    private static ToolStripMenuItem CreateViewOnGithubMenuItem() {
+      return new ToolStripMenuItem("View on GitHub", Resources.ExampleFiles,
+        (s, a) => OpenUrl(Resources.GithubExamples));
     }
 
     private static async Task AddExampleFilesAsync(ToolStripMenuItem menuItem) {
@@ -136,17 +64,14 @@ namespace GsaGH.Graphics.Menu {
         return;
       }
 
-      // Try to get a non-null UI invoker for marshaling back to the UI thread.
       ToolStrip parent = menuItem.GetCurrentParent() ?? menuItem.Owner;
       if (parent != null) {
         parent.BeginInvoke((Action)(() => files.ForEach(item => AddFileMenuItem(menuItem, item))));
       } else {
-        // Fallback: use the document editor if available.
         GH_DocumentEditor editor = Instances.DocumentEditor;
         if (editor != null) {
           editor.BeginInvoke((Action)(() => files.ForEach(item => AddFileMenuItem(menuItem, item))));
         } else {
-          // Fallback for unit tests: add directly
           files.ForEach(item => AddFileMenuItem(menuItem, item));
         }
       }
@@ -155,21 +80,18 @@ namespace GsaGH.Graphics.Menu {
     private static void AddFileMenuItem(ToolStripMenuItem menuItem, FileEntry file) {
       menuItem.DropDown.Items.Add(file.Name, null, async (s, a) => {
         try {
-          await exampleFileManager.DownloadAndOpenFileAsync(file, OpenFile);
+          await exampleFileManager.DownloadAndOpenFileAsync(file, GrasshopperFileOpener.Open);
         } catch (Exception) {
           ShowMessage(FileState.NoFilesFound, string.Empty);
         }
       });
     }
 
-    private static bool OpenFile(string path) {
-      var io = new GH_DocumentIO();
-      if (!io.Open(path)) {
-        return false;
-      }
-
-      Instances.DocumentEditor.Invoke((Action)(() => Instances.ActiveCanvas.Document = io.Document));
-      return true;
+    private static void OpenUrl(string url) {
+      Process.Start(new ProcessStartInfo {
+        FileName = url,
+        UseShellExecute = true,
+      });
     }
   }
 }
