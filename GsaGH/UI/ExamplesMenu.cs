@@ -48,7 +48,12 @@ namespace GsaGH.Graphics.Menu {
       var menuItem = new ToolStripMenuItem("GSA Example files", Resources.ExampleFiles);
       menuItem.DropDownItems.Add(CreateViewOnGithubMenuItem());
       menuItem.DropDownItems.Add(new ToolStripSeparator());
-      await AddExampleFilesAsync(menuItem);
+      try {
+        await AddExampleFilesAsync(menuItem);
+      } catch {
+        ShowMessage(FileState.NoFilesFound, string.Empty);
+      }
+
       return menuItem;
     }
 

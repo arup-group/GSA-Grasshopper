@@ -64,7 +64,7 @@ namespace GsaGH.Graphics.Menu {
       }
     }
 
-    private static async Task PopulateOasysMenu(ToolStripMenuItem menuItem) {
+    internal static async Task PopulateOasysMenu(ToolStripMenuItem menuItem) {
       try {
         ToolStripMenuItem documentation = CreateDocumentationMenuItem();
         ToolStripMenuItem examples = await ExamplesMenu.CreateExamplesMenuItemAsync();
@@ -82,7 +82,7 @@ namespace GsaGH.Graphics.Menu {
       }
     }
 
-    private static ToolStripMenuItem CreateDocumentationMenuItem() {
+    internal static ToolStripMenuItem CreateDocumentationMenuItem() {
       return new ToolStripMenuItem("GSA Documentation", Resources.Documentation,
         (s, a) => Process.Start(new ProcessStartInfo {
           FileName = Resources.DocumentationUrl,
@@ -90,7 +90,7 @@ namespace GsaGH.Graphics.Menu {
         }));
     }
 
-    private static ToolStripMenuItem CreateInfoMenuItem() {
+    internal static ToolStripMenuItem CreateInfoMenuItem() {
       return new ToolStripMenuItem("GSA Info", Resources.GSAInfo, (s, a) => {
         var aboutBox = new AboutBox();
         aboutBox.ShowDialog();
