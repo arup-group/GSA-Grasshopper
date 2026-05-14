@@ -851,6 +851,15 @@ namespace GsaGH.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to https://docs.oasys-software.com/structural/gsa/explanations/gsagh-introduction.html?source=grasshopper.
+        /// </summary>
+        internal static string DocumentationUrl {
+            get {
+                return ResourceManager.GetString("DocumentationUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Edit1dElement {
@@ -1317,6 +1326,15 @@ namespace GsaGH.Properties {
             get {
                 object obj = ResourceManager.GetObject("GetSpringProperty", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://github.com/arup-group/GSA-Grasshopper/tree/main/ExampleFiles.
+        /// </summary>
+        internal static string GithubExamples {
+            get {
+                return ResourceManager.GetString("GithubExamples", resourceCulture);
             }
         }
         

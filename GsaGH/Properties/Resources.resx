@@ -707,4 +707,10 @@
     <value>https://samples.oasys-software.com/gsa/10.2/Gsa_GH/</value>
     <comment>page where we store all sample files for gsagh</comment>
   </data>
+  <data name="DocumentationUrl" xml:space="preserve">
+    <value>https://docs.oasys-software.com/structural/gsa/explanations/gsagh-introduction.html?source=grasshopper</value>
+  </data>
+  <data name="GithubExamples" xml:space="preserve">
+    <value>https://github.com/arup-group/GSA-Grasshopper/tree/main/ExampleFiles</value>
+  </data>
 </root>
