@@ -55,7 +55,17 @@ namespace GsaGH.UI {
 
     public HttpsFileDownloader(
       IHttpClientWrapper httpClientWrapper, string urlToSamples, string customDownloadPath = "") {
-      _httpClientWrapper = httpClientWrapper;
+      _httpClientWrapper = httpClientWrapper ?? throw new ArgumentNullException(nameof(httpClientWrapper));
+
+      if (string.IsNullOrWhiteSpace(urlToSamples)) {
+        throw new ArgumentException("URL to samples cannot be null or whitespace.", nameof(urlToSamples));
+      }
+
+      if (!Uri.TryCreate(urlToSamples, UriKind.Absolute, out Uri samplesUri) ||
+        (samplesUri.Scheme != Uri.UriSchemeHttp && samplesUri.Scheme != Uri.UriSchemeHttps)) {
+        throw new ArgumentException("URL to samples must be a valid absolute HTTP or HTTPS URL.", nameof(urlToSamples));
+      }
+
       UrlToSamples = urlToSamples;
       _downloadsPath = SetCustomDownloadsPath(customDownloadPath);
     }
