@@ -11,8 +11,27 @@ using GsaGH.UI;
 using Xunit;
 
 namespace GsaGHTests.UI {
-  [Collection("GrasshopperFixture collection")]
-  public class ExamplesMenuTests {
+  [Collection("RunOneByOne")]
+  public class ExamplesMenuTests : IDisposable {
+    private static readonly FieldInfo ExampleFileManagerField = typeof(ExamplesMenu).GetField(
+      "exampleFileManager", BindingFlags.Static | BindingFlags.NonPublic);
+
+    private readonly IMessageBoxWrapper _originalWrapper;
+    private readonly object _originalFileManager;
+
+    public ExamplesMenuTests() {
+      _originalWrapper = MessageDialogBox.MessageBoxWrapper;
+      _originalFileManager = ExampleFileManagerField.GetValue(null);
+    }
+
+    public void Dispose() {
+      try {
+        ExampleFileManagerField.SetValue(null, _originalFileManager);
+      } finally {
+        MessageDialogBox.SetMessageBoxWrapper(_originalWrapper);
+      }
+    }
+
     private static IExampleFileManager SetFileManager(IExampleFileManager manager) {
       var wrapper = new TestMessageBoxWrapper();
       MessageDialogBox.SetMessageBoxWrapper(wrapper);
@@ -21,16 +40,11 @@ namespace GsaGHTests.UI {
 
     [Fact]
     public void CreateExampleFileManager_ReturnsNewDefaultManager_WhenBothNull() {
-      FieldInfo field = typeof(ExamplesMenu).GetField("exampleFileManager",
-        BindingFlags.Static | BindingFlags.NonPublic);
-      object originalValue = field.GetValue(null);
-      field.SetValue(null, null);
-      try {
-        IExampleFileManager result = ExamplesMenu.CreateExampleFileManager(null);
-        Assert.NotNull(result);
-      } finally {
-        field.SetValue(null, originalValue);
-      }
+      ExampleFileManagerField.SetValue(null, null);
+
+      IExampleFileManager result = ExamplesMenu.CreateExampleFileManager(null);
+
+      Assert.NotNull(result);
     }
 
     [Fact]
