@@ -17,6 +17,10 @@ namespace GsaGH.UI {
     private IHttpsFileDownloader Downloader { get; }
 
     public ExampleFileManager(IHttpsFileDownloader downloader) {
+      if (downloader == null) {
+        throw new ArgumentNullException(nameof(downloader));
+      }
+
       Downloader = downloader;
     }
 
