@@ -99,7 +99,7 @@ namespace GsaGH.UI {
 
         await SaveFileAsync(response, file);
       } catch (HttpRequestException ex) {
-        throw new HttpRequestException($"HTTP error occurred while downloading {file.Url}: {ex.Message}");
+        throw new HttpRequestException($"HTTP error occurred while downloading {file.Url}: {ex.Message}", ex);
       }
     }
 
