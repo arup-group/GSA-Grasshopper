@@ -11,7 +11,7 @@ using GsaGH.UI;
 using Xunit;
 
 namespace GsaGHTests.UI {
-  [Collection("RunOneByOne")]
+  [Collection("GrasshopperFixture collection")]
   public class ExamplesMenuTests : IDisposable {
     private static readonly FieldInfo ExampleFileManagerField = typeof(ExamplesMenu).GetField(
       "exampleFileManager", BindingFlags.Static | BindingFlags.NonPublic);

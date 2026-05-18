@@ -9,7 +9,7 @@ using Moq;
 using Xunit;
 
 namespace GsaGHTests.UI {
-  [Collection("RunOneByOne")]
+  [Collection("GrasshopperFixture collection")]
   public class MessageDialogBoxTests : IDisposable {
     private readonly Mock<IMessageBoxWrapper> _mockMessageBox;
     private readonly IMessageBoxWrapper _originalWrapper;

@@ -201,7 +201,7 @@ namespace GsaGHTests.UI {
         = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples, Path.GetTempPath());
       FileEntry file = GetSampleFileEntry();
 
-      await Assert.ThrowsAsync<ArgumentNullException>(() => downloader.SaveFileAsync(response, file));
+      await Assert.ThrowsAsync<InvalidOperationException>(() => downloader.SaveFileAsync(response, file));
     }
 
     [Fact]
