@@ -49,6 +49,14 @@ namespace GsaGH.UI {
     }
 
     public async Task<DialogResult> DownloadAndOpenFileAsync(FileEntry file, Func<string, bool> openGhFileFunc) {
+      if (file == null) {
+        throw new ArgumentNullException(nameof(file));
+      }
+
+      if (openGhFileFunc == null) {
+        throw new ArgumentNullException(nameof(openGhFileFunc));
+      }
+
       if (!IsOverwriteApproved(file)) {
         return ShowMessage(FileState.Cancelled, file.Name);
       }
@@ -61,14 +69,8 @@ namespace GsaGH.UI {
           return ShowMessage(FileState.Downloaded, file.Name, savePath);
         }
 
-        return openGhFileFunc switch {
-          null => throw new ArgumentNullException(nameof(openGhFileFunc),
-            "Function to open .gh files must be provided."),
-          _ => openGhFileFunc(savePath) ? ShowMessage(FileState.Success, file.Name) :
-            ShowMessage(FileState.OpenFailed, file.Name),
-        };
-      } catch (ArgumentNullException) {
-        throw;
+        return openGhFileFunc(savePath) ? ShowMessage(FileState.Success, file.Name) :
+          ShowMessage(FileState.OpenFailed, file.Name);
       } catch {
         return ShowMessage(FileState.DownloadFailed, file.Name);
       }

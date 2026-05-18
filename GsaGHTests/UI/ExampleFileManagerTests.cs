@@ -213,15 +213,11 @@ namespace GsaGHTests.UI {
 
     [Fact]
     public async Task DownloadAndOpenFileAsync_ThrowsArgumentNullException_WhenOpenGhFileFuncIsNull() {
-      string path = CreateTempFile();
-      ExampleFileManager manager = CreateManagerWithFiles(setupDownloader: d => {
-        d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
-        d.Setup(x => x.DownloadFileAsync(It.IsAny<FileEntry>())).Returns(Task.CompletedTask);
-      }, dialogResult: DialogResult.OK);
+      ExampleFileManager manager = CreateManagerWithFiles(dialogResult: DialogResult.OK);
 
       await Assert.ThrowsAsync<ArgumentNullException>(()
         => manager.DownloadAndOpenFileAsync(new FileEntry {
-          Name = Path.GetFileName(path),
+          Name = "test.gh",
         }, null));
     }
   }
