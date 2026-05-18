@@ -16,7 +16,6 @@ namespace GsaGH.Graphics.Menu {
   public class MenuLoad {
     private static ToolStripMenuItem oasysMenu;
     public const string Name = "Oasys";
-    private static readonly object menuLock = new object();
 
     internal static void OnStartup(GH_Canvas canvas) {
       oasysMenu = new ToolStripMenuItem(Name) {
@@ -59,9 +58,7 @@ namespace GsaGH.Graphics.Menu {
         oasysMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items[Name];
       }
 
-      lock (menuLock) {
-        _ = PopulateOasysMenu(oasysMenu);
-      }
+      _ = PopulateOasysMenu(oasysMenu);
     }
 
     internal static async Task PopulateOasysMenu(ToolStripMenuItem menuItem) {
