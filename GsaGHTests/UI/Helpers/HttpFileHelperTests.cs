@@ -96,14 +96,15 @@ namespace GsaGHTests.UI {
 
     [Fact]
     public void GetFileEntry_FileNameFromInnerText_WhenFileNameMissing() {
-      var node = HtmlNode.CreateNode("<a href=\"/data/\">myfile.csv</a>");
+      var node = HtmlNode.CreateNode("<a href=\"/data/?download=.csv\">myfile.csv</a>");
       var allowed = new List<string> {
         ".csv",
       };
 
       FileEntry entry = HttpFileHelper.GetFileEntry("http://example.com", node, allowed);
 
-      Assert.Null(entry);
+      Assert.NotNull(entry);
+      Assert.Equal("myfile.csv", entry.Name);
     }
 
     [Fact]
