@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -8,8 +10,27 @@ using GsaGH.UI;
 using Xunit;
 
 namespace GsaGHTests.UI {
-  [Collection("GrasshopperFixture collection")]
-  public class LoadMainMenuTests {
+  [Collection("RunOneByOne")]
+  public class LoadMainMenuTests : IDisposable {
+    private static readonly FieldInfo ExampleFileManagerField = typeof(ExamplesMenu).GetField(
+      "exampleFileManager", BindingFlags.Static | BindingFlags.NonPublic);
+
+    private readonly IMessageBoxWrapper _originalWrapper;
+    private readonly object _originalFileManager;
+
+    public LoadMainMenuTests() {
+      _originalWrapper = MessageDialogBox.MessageBoxWrapper;
+      _originalFileManager = ExampleFileManagerField.GetValue(null);
+    }
+
+    public void Dispose() {
+      try {
+        ExampleFileManagerField.SetValue(null, _originalFileManager);
+      } finally {
+        MessageDialogBox.SetMessageBoxWrapper(_originalWrapper);
+      }
+    }
+
     [Fact]
     public async Task PopulateOasysMenu_ItemsInCorrectOrder() {
       ExamplesMenu.CreateExampleFileManager(new MockExampleFileManager(new List<FileEntry>()));
