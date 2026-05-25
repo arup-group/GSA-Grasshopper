@@ -10,7 +10,7 @@ using GsaGH.UI;
 using Xunit;
 
 namespace GsaGHTests.UI {
-  [Collection("RunOneByOne")]
+  [Collection("o")]
   public class LoadMainMenuTests : IDisposable {
     private static readonly FieldInfo ExampleFileManagerField = typeof(ExamplesMenu).GetField(
       "exampleFileManager", BindingFlags.Static | BindingFlags.NonPublic);
