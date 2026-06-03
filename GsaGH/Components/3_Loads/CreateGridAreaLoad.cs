@@ -309,6 +309,7 @@ namespace GsaGH.Components {
       gridareaload.ApiLoad.Value = ((Pressure)Input.UnitNumber(this, da, 7, _forcePerAreaUnit))
        .NewtonsPerSquareMeter;
 
+      GsaGH.Helpers.PostHog.Load(gridareaload, ReferenceType.None);
       da.SetData(0, new GsaLoadGoo(gridareaload));
     }
 

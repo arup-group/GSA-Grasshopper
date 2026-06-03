@@ -315,6 +315,7 @@ namespace GsaGH.Components {
 
       gridlineload.ApiLoad.ValueAtEnd = load2;
 
+      GsaGH.Helpers.PostHog.Load(gridlineload, ReferenceType.None);
       da.SetData(0, new GsaLoadGoo(gridlineload));
     }
 

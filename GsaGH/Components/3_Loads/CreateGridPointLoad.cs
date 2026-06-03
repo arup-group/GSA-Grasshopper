@@ -273,6 +273,7 @@ namespace GsaGH.Components {
       gridPointLoad.ApiLoad.Value
         = ((Force)Input.UnitNumber(this, da, 6, _forceUnit)).Newtons;
 
+      GsaGH.Helpers.PostHog.Load(gridPointLoad, ReferenceType.None);
       da.SetData(0, new GsaLoadGoo(gridPointLoad));
     }
 

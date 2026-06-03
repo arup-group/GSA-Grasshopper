@@ -453,6 +453,7 @@ namespace GsaGH.Components {
           break;
       }
 
+      GsaGH.Helpers.PostHog.Load(beamLoad, beamLoad.ReferenceType);
       da.SetData(0, new GsaLoadGoo(beamLoad));
     }
 

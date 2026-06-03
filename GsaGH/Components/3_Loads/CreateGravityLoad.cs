@@ -186,6 +186,7 @@ namespace GsaGH.Components {
 
       gravityLoad.ApiLoad.Factor = factor;
 
+      GsaGH.Helpers.PostHog.Load(gravityLoad, gravityLoad.ReferenceType);
       da.SetData(0, new GsaLoadGoo(gravityLoad));
     }
   }
