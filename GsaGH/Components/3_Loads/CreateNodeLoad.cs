@@ -8,6 +8,7 @@ using Grasshopper.Kernel.Types;
 using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 
 using OasysGH;
@@ -310,7 +311,7 @@ namespace GsaGH.Components {
 
       nodeLoad.ApiLoad.Value = load;
 
-      PostHog.Load(nodeLoad._refPoint != Point3d.Unset, nodeLoad.Type.ToString());
+      GsaGH.Helpers.PostHog.Load(nodeLoad._refPoint != Point3d.Unset, nodeLoad.Type.ToString());
       da.SetData(0, new GsaLoadGoo(nodeLoad));
     }
 
