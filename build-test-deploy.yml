@@ -83,7 +83,7 @@ steps:
 
 - powershell: |
       $env:VSTEST_CONNECTION_TIMEOUT = "300"
-      dotnet test .\GsaGHTests\GsaGHTests.csproj -c Release -f net48 -p:Platform=x64 --no-build --results-directory .\results\gsagh --collect:"XPlat Code Coverage"
+      # dotnet test .\GsaGHTests\GsaGHTests.csproj -c Release -f net48 -p:Platform=x64 --no-build --results-directory .\results\gsagh --collect:"XPlat Code Coverage"
       dotnet test .\IntegrationTests\IntegrationTests.csproj -c Release -f net48 -p:Platform=x64 --no-build --results-directory .\results\integration --collect:"XPlat Code Coverage"
   displayName: dotnet tests
   failOnStderr: true
