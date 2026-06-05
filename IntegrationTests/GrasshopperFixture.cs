@@ -111,6 +111,40 @@ namespace IntegrationTests {
       gsa.NewFile();
     }
 
+    private void RunWithTimeout(Action action, string stepName, TimeSpan timeout) {
+      Exception exception = null;
+      var thread = new Thread(() => {
+        try {
+          action();
+        } catch (Exception ex) {
+          exception = ex;
+        }
+      });
+      thread.SetApartmentState(ApartmentState.STA);
+      thread.IsBackground = true;
+      thread.Start();
+
+      if (!thread.Join(timeout)) {
+        LogProgress($"[IntegrationTests] Timeout waiting for {stepName} after {timeout.TotalSeconds} seconds");
+        throw new TimeoutException($"Timeout waiting for {stepName} after {timeout.TotalSeconds} seconds.");
+      }
+
+      if (exception != null) {
+        throw new InvalidOperationException($"{stepName} failed.", exception);
+      }
+    }
+
+    private static void LogProgress(string message) {
+      try {
+        string logFile = Path.Combine(Path.GetTempPath(), "IntegrationTestsFixture.log");
+        File.AppendAllText(logFile, $"{DateTime.UtcNow:O} {message}{Environment.NewLine}");
+      } catch {
+        // ignore logging failures
+      }
+
+      Console.WriteLine(message);
+    }
+
     public void AddPluginToGh() {
       Directory.CreateDirectory(linkFilePath);
       foreach (string file in Directory.GetFiles(linkFilePath, "*.ghlink")) {

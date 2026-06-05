@@ -81,6 +81,25 @@ steps:
   env:
     MSBUILDDISABLENODEREUSE: 1
 
+- powershell: |
+    Write-Host "Killing any leftover Rhino or Grasshopper zombie background processes..."
+    Stop-Process -Name "Rhino" -Force -ErrorAction SilentlyContinue
+    Stop-Process -Name "Rhino.Inside" -Force -ErrorAction SilentlyContinue
+    Stop-Process -Name "GH_IO" -Force -ErrorAction SilentlyContinue
+  displayName: 'Clean zombie Rhino/Grasshopper processes'
+  condition: always()
+
+- powershell: |
+    Write-Host "Clearing out pre-existing orphan .ghlink files to prevent loading blocks..."
+    $ghlinkPath = "C:\Users\*\AppData\Roaming\Grasshopper\Libraries\*.ghlink"
+    if (Test-Path $ghlinkPath) {
+        Remove-Item -Path $ghlinkPath -Force -ErrorAction SilentlyContinue
+    } else {
+        Write-Host "No rogue .ghlink files found."
+    }
+  displayName: 'Pre-test clear orphan .ghlink files'
+  condition: always()
+
 - task: VSTest@3
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
   displayName: dotnet tests (GsaGHTests)
