@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 
 using Grasshopper.Plugin;
 
@@ -60,43 +59,22 @@ namespace IntegrationTests {
     }
 
     public GrasshopperFixture() {
-      LogProgress("[IntegrationTests] Fixture constructor starting");
-
-      LogProgress("[IntegrationTests] AddPluginToGh...");
       AddPluginToGh();
-      LogProgress("[IntegrationTests] AddPluginToGh done");
 
-      LogProgress("[IntegrationTests] LoadRefs...");
       LoadRefs();
-      LogProgress("[IntegrationTests] LoadRefs done");
-
-      LogProgress("[IntegrationTests] LoadFile GsaAPI.dll...");
       Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
-      LogProgress("[IntegrationTests] LoadFile done");
-
-      LogProgress("[IntegrationTests] TryGsaCom...");
       try {
-        RunWithTimeout(() => TryGsaCom(), "TryGsaCom", TimeSpan.FromSeconds(60));
-        LogProgress("[IntegrationTests] TryGsaCom done");
+        TryGsaCom();
       } catch (Exception ex) {
         // GSA COM initialization may fail or hang on headless servers.
         // Log but do not fail fixture initialization.
-        LogProgress($"[IntegrationTests] Warning: GSA COM initialization failed: {ex.Message}");
+        System.Diagnostics.Debug.WriteLine($"Warning: GSA COM initialization failed: {ex.Message}");
       }
 
-      LogProgress("[IntegrationTests] InitializeCore (new RhinoCore)...");
-      try {
-        RunWithTimeout(() => InitializeCore(), "InitializeCore", TimeSpan.FromSeconds(60));
-        LogProgress("[IntegrationTests] InitializeCore done");
-      } catch (Exception ex) {
-        LogProgress($"[IntegrationTests] Error: InitializeCore failed: {ex.Message}");
-        throw;
-      }
+      InitializeCore();
 
       // setup headless units
-      LogProgress("[IntegrationTests] SetupUnitsDuringLoad...");
-      OasysGH.Units.Utility.SetupUnitsDuringLoad();
-      LogProgress("[IntegrationTests] SetupUnitsDuringLoad done, fixture ready");
+     OasysGH.Units.Utility.SetupUnitsDuringLoad();
     }
 
     // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
@@ -109,40 +87,6 @@ namespace IntegrationTests {
     public static void TryGsaCom() {
       ComAuto gsa = GsaComObject.Instance;
       gsa.NewFile();
-    }
-
-    private void RunWithTimeout(Action action, string stepName, TimeSpan timeout) {
-      Exception exception = null;
-      var thread = new Thread(() => {
-        try {
-          action();
-        } catch (Exception ex) {
-          exception = ex;
-        }
-      });
-      thread.SetApartmentState(ApartmentState.STA);
-      thread.IsBackground = true;
-      thread.Start();
-
-      if (!thread.Join(timeout)) {
-        LogProgress($"[IntegrationTests] Timeout waiting for {stepName} after {timeout.TotalSeconds} seconds");
-        throw new TimeoutException($"Timeout waiting for {stepName} after {timeout.TotalSeconds} seconds.");
-      }
-
-      if (exception != null) {
-        throw new InvalidOperationException($"{stepName} failed.", exception);
-      }
-    }
-
-    private static void LogProgress(string message) {
-      try {
-        string logFile = Path.Combine(Path.GetTempPath(), "IntegrationTestsFixture.log");
-        File.AppendAllText(logFile, $"{DateTime.UtcNow:O} {message}{Environment.NewLine}");
-      } catch {
-        // ignore logging failures
-      }
-
-      Console.WriteLine(message);
     }
 
     public void AddPluginToGh() {
