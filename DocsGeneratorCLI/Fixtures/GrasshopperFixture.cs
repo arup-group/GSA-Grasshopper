@@ -81,11 +81,13 @@ namespace DocsGeneratorCLI {
         "Grasshopper", "Libraries");
       Directory.CreateDirectory(linkFilePath);
 
-      string fullPath = Path.Combine(linkFilePath, _linkFileName);
-
-      using (StreamWriter writer = File.CreateText(fullPath)) {
-        writer.Write(Environment.CurrentDirectory);
+      string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+      if (string.IsNullOrEmpty(assemblyFolder)) {
+        throw new InvalidOperationException("Unable to determine the test assembly output directory.");
       }
+
+      string fullPath = Path.Combine(linkFilePath, _linkFileName);
+      File.WriteAllText(fullPath, assemblyFolder);
     }
 
     public void Dispose() {

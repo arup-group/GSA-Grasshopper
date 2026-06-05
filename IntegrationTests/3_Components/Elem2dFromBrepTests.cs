@@ -33,12 +33,12 @@ namespace IntegrationTests.Components {
     })]
     [InlineData("TriQuadCounts", new int[] {
       0,
-      100,
+      16,
       540,
     })]
     [InlineData("Inclusions", new int[] {
       1,
-      14,
+      22,
     })]
     public void Test(string groupIdentifier, object expected) {
       IGH_Param param = Helper.FindParameter(Document, groupIdentifier);

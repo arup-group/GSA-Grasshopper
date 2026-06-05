@@ -90,7 +90,7 @@ steps:
     testSelector: 'testAssemblies'
     searchFolder: '$(System.DefaultWorkingDirectory)'
     testAssemblyVer2: |
-      # GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
+      GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
       IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
     resultsFolder: '$(System.DefaultWorkingDirectory)/TestResultsXUnit'
     platform: 'x64'
