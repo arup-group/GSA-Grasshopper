@@ -59,22 +59,39 @@ namespace IntegrationTests {
     }
 
     public GrasshopperFixture() {
-      AddPluginToGh();
+      Console.WriteLine("[IntegrationTests] Fixture constructor starting");
 
+      Console.WriteLine("[IntegrationTests] AddPluginToGh...");
+      AddPluginToGh();
+      Console.WriteLine("[IntegrationTests] AddPluginToGh done");
+
+      Console.WriteLine("[IntegrationTests] LoadRefs...");
       LoadRefs();
+      Console.WriteLine("[IntegrationTests] LoadRefs done");
+
+      Console.WriteLine("[IntegrationTests] LoadFile GsaAPI.dll...");
       Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
+      Console.WriteLine("[IntegrationTests] LoadFile done");
+
+      Console.WriteLine("[IntegrationTests] TryGsaCom...");
       try {
         TryGsaCom();
+        Console.WriteLine("[IntegrationTests] TryGsaCom done");
       } catch (Exception ex) {
         // GSA COM initialization may fail or hang on headless servers.
         // Log but do not fail fixture initialization.
+        Console.WriteLine($"[IntegrationTests] Warning: GSA COM initialization failed: {ex.Message}");
         System.Diagnostics.Debug.WriteLine($"Warning: GSA COM initialization failed: {ex.Message}");
       }
 
+      Console.WriteLine("[IntegrationTests] InitializeCore (new RhinoCore)...");
       InitializeCore();
+      Console.WriteLine("[IntegrationTests] InitializeCore done");
 
       // setup headless units
+      Console.WriteLine("[IntegrationTests] SetupUnitsDuringLoad...");
      OasysGH.Units.Utility.SetupUnitsDuringLoad();
+      Console.WriteLine("[IntegrationTests] SetupUnitsDuringLoad done, fixture ready");
     }
 
     // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
