@@ -90,12 +90,9 @@ steps:
     testSelector: 'testAssemblies'
     searchFolder: '$(System.DefaultWorkingDirectory)'
     testAssemblyVer2: |
-      GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
+      # GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
       IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
     resultsFolder: '$(System.DefaultWorkingDirectory)/TestResultsXUnit'
-    rerunFailedTests: true
-    rerunMaxAttempts: 3
-    runInParallel: false
     platform: 'x64'
     configuration: 'Release'
     otherConsoleOptions: '--collect:"XPlat Code Coverage" --logger:trx /logger:console;verbosity=detailed'

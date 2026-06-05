@@ -67,9 +67,11 @@ namespace GsaGHTests {
 
     public void AddPluginToGh() {
       Directory.CreateDirectory(linkFilePath);
-      StreamWriter writer = File.CreateText(Path.Combine(linkFilePath, LinkFileName));
-      writer.Write(Environment.CurrentDirectory);
-      writer.Close();
+      string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+      if (string.IsNullOrEmpty(assemblyFolder)) {
+        throw new InvalidOperationException("Unable to determine the test assembly output directory.");
+      }
+      File.WriteAllText(Path.Combine(linkFilePath, LinkFileName), assemblyFolder);
     }
 
     public void Dispose() {

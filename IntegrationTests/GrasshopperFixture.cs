@@ -63,7 +63,13 @@ namespace IntegrationTests {
 
       LoadRefs();
       Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
-      TryGsaCom();
+      try {
+        TryGsaCom();
+      } catch (Exception ex) {
+        // GSA COM initialization may fail or hang on headless servers.
+        // Log but do not fail fixture initialization.
+        System.Diagnostics.Debug.WriteLine($"Warning: GSA COM initialization failed: {ex.Message}");
+      }
 
       InitializeCore();
 
@@ -85,9 +91,11 @@ namespace IntegrationTests {
 
     public void AddPluginToGh() {
       Directory.CreateDirectory(linkFilePath);
-      StreamWriter writer = File.CreateText(Path.Combine(linkFilePath, linkFileName));
-      writer.Write(Environment.CurrentDirectory);
-      writer.Close();
+      string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+      if (string.IsNullOrEmpty(assemblyFolder)) {
+        throw new InvalidOperationException("Unable to determine the test assembly output directory.");
+      }
+      File.WriteAllText(Path.Combine(linkFilePath, linkFileName), assemblyFolder);
     }
 
     public void Dispose() {
