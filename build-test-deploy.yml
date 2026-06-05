@@ -85,12 +85,14 @@ steps:
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
   displayName: dotnet tests (explicit assemblies)
   inputs:
+    testSelector: 'testAssemblies'
     searchFolder: '$(System.DefaultWorkingDirectory)'
-    testAssembly: |
+    testAssemblyVer2: |
       GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
       IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
     resultsFolder: '$(System.DefaultWorkingDirectory)/TestResultsXUnit'
     rerunFailedTests: true
+    rerunMaxAttempts: 3
     runInParallel: false
     platform: 'x64'
     configuration: 'Release'
