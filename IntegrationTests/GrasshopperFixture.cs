@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 
 using Grasshopper.Plugin;
 
@@ -59,39 +60,43 @@ namespace IntegrationTests {
     }
 
     public GrasshopperFixture() {
-      Console.WriteLine("[IntegrationTests] Fixture constructor starting");
+      LogProgress("[IntegrationTests] Fixture constructor starting");
 
-      Console.WriteLine("[IntegrationTests] AddPluginToGh...");
+      LogProgress("[IntegrationTests] AddPluginToGh...");
       AddPluginToGh();
-      Console.WriteLine("[IntegrationTests] AddPluginToGh done");
+      LogProgress("[IntegrationTests] AddPluginToGh done");
 
-      Console.WriteLine("[IntegrationTests] LoadRefs...");
+      LogProgress("[IntegrationTests] LoadRefs...");
       LoadRefs();
-      Console.WriteLine("[IntegrationTests] LoadRefs done");
+      LogProgress("[IntegrationTests] LoadRefs done");
 
-      Console.WriteLine("[IntegrationTests] LoadFile GsaAPI.dll...");
+      LogProgress("[IntegrationTests] LoadFile GsaAPI.dll...");
       Assembly.LoadFile(InstallPath + "\\GsaAPI.dll");
-      Console.WriteLine("[IntegrationTests] LoadFile done");
+      LogProgress("[IntegrationTests] LoadFile done");
 
-      Console.WriteLine("[IntegrationTests] TryGsaCom...");
+      LogProgress("[IntegrationTests] TryGsaCom...");
       try {
-        TryGsaCom();
-        Console.WriteLine("[IntegrationTests] TryGsaCom done");
+        RunWithTimeout(() => TryGsaCom(), "TryGsaCom", TimeSpan.FromSeconds(60));
+        LogProgress("[IntegrationTests] TryGsaCom done");
       } catch (Exception ex) {
         // GSA COM initialization may fail or hang on headless servers.
         // Log but do not fail fixture initialization.
-        Console.WriteLine($"[IntegrationTests] Warning: GSA COM initialization failed: {ex.Message}");
-        System.Diagnostics.Debug.WriteLine($"Warning: GSA COM initialization failed: {ex.Message}");
+        LogProgress($"[IntegrationTests] Warning: GSA COM initialization failed: {ex.Message}");
       }
 
-      Console.WriteLine("[IntegrationTests] InitializeCore (new RhinoCore)...");
-      InitializeCore();
-      Console.WriteLine("[IntegrationTests] InitializeCore done");
+      LogProgress("[IntegrationTests] InitializeCore (new RhinoCore)...");
+      try {
+        RunWithTimeout(() => InitializeCore(), "InitializeCore", TimeSpan.FromSeconds(60));
+        LogProgress("[IntegrationTests] InitializeCore done");
+      } catch (Exception ex) {
+        LogProgress($"[IntegrationTests] Error: InitializeCore failed: {ex.Message}");
+        throw;
+      }
 
       // setup headless units
-      Console.WriteLine("[IntegrationTests] SetupUnitsDuringLoad...");
-     OasysGH.Units.Utility.SetupUnitsDuringLoad();
-      Console.WriteLine("[IntegrationTests] SetupUnitsDuringLoad done, fixture ready");
+      LogProgress("[IntegrationTests] SetupUnitsDuringLoad...");
+      OasysGH.Units.Utility.SetupUnitsDuringLoad();
+      LogProgress("[IntegrationTests] SetupUnitsDuringLoad done, fixture ready");
     }
 
     // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
