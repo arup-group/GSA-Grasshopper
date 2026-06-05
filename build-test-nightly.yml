@@ -88,7 +88,9 @@ steps:
   inputs:
     searchFolder: '$(System.DefaultWorkingDirectory)'
     testAssembly: |
-      **\*Tests.dll
+      GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
+      IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
+    runInParallel: false
     platform: 'x64'
     configuration: 'Release'
     otherConsoleOptions: '--collect:"XPlat Code Coverage" --logger:trx /logger:console;verbosity=detailed'
