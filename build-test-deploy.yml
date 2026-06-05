@@ -82,7 +82,7 @@ steps:
     MSBUILDDISABLENODEREUSE: 1
 
 - task: VSTest@3
-  displayName: dotnet tests
+  displayName: dotnet tests (explicit assemblies)
   inputs:
     searchFolder: '$(System.DefaultWorkingDirectory)'
     testAssembly: |
