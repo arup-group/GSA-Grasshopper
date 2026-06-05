@@ -81,12 +81,18 @@ steps:
   env:
     MSBUILDDISABLENODEREUSE: 1
 
-- powershell: |
-      $env:VSTEST_CONNECTION_TIMEOUT = "300"
-      # dotnet test .\GsaGHTests\GsaGHTests.csproj -c Release -f net48 -p:Platform=x64 --no-build --results-directory .\results\gsagh --collect:"XPlat Code Coverage"
-      dotnet test .\IntegrationTests\IntegrationTests.csproj -c Release -f net48 -p:Platform=x64 --no-build --results-directory .\results\integration --collect:"XPlat Code Coverage"
+- task: VSTest@3
   displayName: dotnet tests
-  failOnStderr: true
+  inputs:
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    testAssembly: |
+      **\*Tests.dll
+    platform: 'x64'
+    configuration: 'Release'
+    otherConsoleOptions: '--collect:"XPlat Code Coverage" --logger:trx /logger:console;verbosity=detailed'
+    publishRunAttachments: true
+  env:
+    VSTEST_CONNECTION_TIMEOUT: '300'
 
 - powershell: |
     if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
