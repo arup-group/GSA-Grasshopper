@@ -108,6 +108,9 @@ namespace IntegrationTests {
 
     public void AddPluginToGh() {
       Directory.CreateDirectory(linkFilePath);
+      foreach (string file in Directory.GetFiles(linkFilePath, "*.ghlink")) {
+        File.Delete(file);
+      }
       string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
       if (string.IsNullOrEmpty(assemblyFolder)) {
         throw new InvalidOperationException("Unable to determine the test assembly output directory.");

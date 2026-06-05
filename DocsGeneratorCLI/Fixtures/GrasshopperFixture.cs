@@ -80,6 +80,9 @@ namespace DocsGeneratorCLI {
       string linkFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "Grasshopper", "Libraries");
       Directory.CreateDirectory(linkFilePath);
+      foreach (string file in Directory.GetFiles(linkFilePath, "*.ghlink")) {
+        File.Delete(file);
+      }
 
       string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
       if (string.IsNullOrEmpty(assemblyFolder)) {
