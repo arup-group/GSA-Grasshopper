@@ -85,20 +85,21 @@ steps:
 
 - task: VSTest@3
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: dotnet tests (explicit assemblies)
+  displayName: dotnet tests (GsaGHTests)
   inputs:
     testSelector: 'testAssemblies'
-    searchFolder: '$(System.DefaultWorkingDirectory)'
     testAssemblyVer2: |
       GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
+    otherConsoleOptions: '--collect:"XPlat Code Coverage"'
+
+- task: VSTest@3
+  condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
+  displayName: dotnet tests (IntegrationTests)
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
       IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
-    resultsFolder: '$(System.DefaultWorkingDirectory)/TestResultsXUnit'
-    platform: 'x64'
-    configuration: 'Release'
-    otherConsoleOptions: '--collect:"XPlat Code Coverage" --logger:trx /logger:console;verbosity=detailed'
-    publishRunAttachments: true
-  env:
-    VSTEST_CONNECTION_TIMEOUT: '300'
+    otherConsoleOptions: '--collect:"XPlat Code Coverage"'
 
 - powershell: |
     if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
