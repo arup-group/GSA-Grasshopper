@@ -82,12 +82,15 @@ steps:
     MSBUILDDISABLENODEREUSE: 1
 
 - task: VSTest@3
+  condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
   displayName: dotnet tests (explicit assemblies)
   inputs:
     searchFolder: '$(System.DefaultWorkingDirectory)'
     testAssembly: |
       GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
       IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
+    resultsFolder: '$(System.DefaultWorkingDirectory)/TestResultsXUnit'
+    rerunFailedTests: true
     runInParallel: false
     platform: 'x64'
     configuration: 'Release'
