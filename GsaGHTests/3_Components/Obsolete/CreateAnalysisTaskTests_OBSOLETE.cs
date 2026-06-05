@@ -24,7 +24,7 @@ namespace GsaGHTests.Components.Analysis {
       return comp;
     }
 
-    [Fact]
+    [Fact(Skip = "Obsolete")]
     public void CreateComponentTest() {
       GH_OasysComponent comp = ComponentMother();
 

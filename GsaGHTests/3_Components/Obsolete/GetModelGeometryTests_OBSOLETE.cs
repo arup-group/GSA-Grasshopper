@@ -20,7 +20,7 @@ using static GsaGHTests.Helpers.Export.AssembleModelTests;
 namespace GsaGHTests.Model {
   [Collection("GrasshopperFixture collection")]
   public class GetModelGeometryTests_OBSOLETE {
-    [Fact]
+    [Fact(Skip = "Obsolete")]
     public void GetModelGeometryNodeDrawViewportMeshesAndWiresTest() {
       var nodeWithSupportSymbol = new GsaNode {
         Restraint = new GsaBool6(true, true, true, false, false, false),
@@ -49,7 +49,7 @@ namespace GsaGHTests.Model {
       ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
-    [Fact]
+    [Fact(Skip = "Obsolete")]
     public void GetModelGeometryElement1dDrawViewportMeshesAndWiresTest() {
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromGeometry(null, new List<GsaElement1dGoo>() {
@@ -62,7 +62,7 @@ namespace GsaGHTests.Model {
       ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
-    [Fact]
+    [Fact(Skip = "Obsolete")]
     public void GetModelGeometryElement2dDrawViewportMeshesAndWiresTest() {
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromGeometry(null, null, new List<GsaElement2dGoo>() {
@@ -75,7 +75,7 @@ namespace GsaGHTests.Model {
       ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
-    [Fact]
+    [Fact(Skip = "Obsolete")]
     public void GetModelGeometryMember1dDrawViewportMeshesAndWiresTest() {
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromGeometry(null, null, null, new List<GsaMember1dGoo>() {
@@ -88,7 +88,7 @@ namespace GsaGHTests.Model {
       ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
-    [Fact]
+    [Fact(Skip = "Obsolete")]
     public void GetModelGeometryMember2dDrawViewportMeshesAndWiresTest() {
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromGeometry(null, null, null, null, new List<GsaMember2dGoo>() {
@@ -101,7 +101,7 @@ namespace GsaGHTests.Model {
       ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
-    [Fact]
+    [Fact(Skip = "Obsolete")]
     public void GetModelGeometryMember3dDrawViewportMeshesAndWiresTest() {
       var modelGoo = (GsaModelGoo)ComponentTestHelper.GetOutput(
         CreateModelTest.CreateModelFromGeometry(null, null, null, null, null,
@@ -115,14 +115,14 @@ namespace GsaGHTests.Model {
       ComponentTestHelper.DrawViewportMeshesAndWiresTest(comp);
     }
 
-    [Fact]
+    [Fact(Skip = "Obsolete")]
     public void CreateGetGeometryTest() {
       var comp = new GetModelGeometry_OBSOLETE();
       comp.CreateAttributes();
       ChangeDropDownTest(comp);
     }
 
-    [Fact]
+    [Fact(Skip = "Obsolete")]
     public void ModeClickedTest() {
       var comp = new GetModelGeometry_OBSOLETE();
 

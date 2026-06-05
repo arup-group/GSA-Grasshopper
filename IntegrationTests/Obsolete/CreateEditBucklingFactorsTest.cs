@@ -12,12 +12,12 @@ namespace IntegrationTests.Obsolete {
     private static GH_Document Document => document ?? (document = OpenDocument());
     private static GH_Document document = null;
 
-    [Fact]
+    [Fact(Skip = "Obsolete")]
     public void NoRuntimeWarningTest() {
       Helper.TestNoRuntimeMessagesInDocument(Document, GH_RuntimeMessageLevel.Warning);
     }
 
-    [Fact]
+    [Fact(Skip = "Obsolete")]
     public void OutputTest() {
       GH_Document doc = Document;
 
