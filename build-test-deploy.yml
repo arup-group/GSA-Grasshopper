@@ -104,6 +104,7 @@ steps:
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
   displayName: dotnet tests (GsaGH)
   inputs:
+    resultsFolder: '$(System.DefaultWorkingDirectory)\results\gsagh'
     testSelector: 'testAssemblies'
     testAssemblyVer2: |
       GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
@@ -113,6 +114,7 @@ steps:
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
   displayName: dotnet tests (Integration)
   inputs:
+    resultsFolder: '$(System.DefaultWorkingDirectory)\results\integration'
     testSelector: 'testAssemblies'
     testAssemblyVer2: |
       IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
