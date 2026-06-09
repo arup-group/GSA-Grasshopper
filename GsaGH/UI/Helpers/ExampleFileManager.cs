@@ -4,6 +4,8 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using GsaGH.UI.Helpers;
+
 using static GsaGH.UI.MessageDialogBox;
 
 namespace GsaGH.UI {
@@ -28,12 +30,16 @@ namespace GsaGH.UI {
     ///   Fetches the list of example files asynchronously and returns them.
     /// </summary>
     public async Task<List<FileEntry>> GetExampleFilesAsync() {
+      List<FileEntry> files;
       try {
-        return await Downloader.GetFilesFromWebPageAsync();
+        files = await Downloader.GetFilesFromWebPageAsync();
       } catch (Exception) {
         ShowMessage(FileState.NoFilesFound, string.Empty);
-        return new List<FileEntry>();
+        files = new List<FileEntry>();
       }
+
+      ExampleFileRepository.SetFiles(files);
+      return files;
     }
 
     public bool IsOverwriteApproved(FileEntry file) {

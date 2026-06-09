@@ -20,18 +20,18 @@ namespace GsaGH.Graphics.Menu {
   ///   Builds a menu item populated with downloadable example files.
   /// </summary>
   public class ExamplesMenu {
-    private static IExampleFileManager exampleFileManager;
+    public static IExampleFileManager ExampleFileManager { get; private set; }
 
     protected ExamplesMenu() { }
 
     public static IExampleFileManager CreateExampleFileManager(IExampleFileManager manager = null) {
       if (manager != null) {
-        exampleFileManager = manager;
+        ExampleFileManager = manager;
         return manager;
       }
 
-      if (exampleFileManager != null) {
-        return exampleFileManager;
+      if (ExampleFileManager != null) {
+        return ExampleFileManager;
       }
 
       var httpClient = new HttpClient();
@@ -44,7 +44,7 @@ namespace GsaGH.Graphics.Menu {
     ///   Creates a "GSA Example files" menu item with a GitHub link and all example files.
     /// </summary>
     internal static async Task<ToolStripMenuItem> CreateExamplesMenuItemAsync() {
-      exampleFileManager = CreateExampleFileManager();
+      ExampleFileManager = CreateExampleFileManager();
       var menuItem = new ToolStripMenuItem("GSA Example files", Resources.ExampleFiles);
       menuItem.DropDownItems.Add(CreateViewOnGithubMenuItem());
       menuItem.DropDownItems.Add(new ToolStripSeparator());
@@ -63,7 +63,7 @@ namespace GsaGH.Graphics.Menu {
     }
 
     private static async Task AddExampleFilesAsync(ToolStripMenuItem menuItem) {
-      List<FileEntry> files = await exampleFileManager.GetExampleFilesAsync();
+      List<FileEntry> files = await ExampleFileManager.GetExampleFilesAsync();
 
       if (files == null || files.Count <= 0) {
         return;
@@ -85,7 +85,7 @@ namespace GsaGH.Graphics.Menu {
     private static void AddFileMenuItem(ToolStripMenuItem menuItem, FileEntry file) {
       menuItem.DropDown.Items.Add(file.Name, null, async (s, a) => {
         try {
-          await exampleFileManager.DownloadAndOpenFileAsync(file, GrasshopperFileOpener.Open);
+          await ExampleFileManager.DownloadAndOpenFileAsync(file, GrasshopperFileOpener.Open);
         } catch (Exception) {
           ShowMessage(FileState.NoFilesFound, string.Empty);
         }
