@@ -12,15 +12,15 @@ using Xunit;
 namespace GsaGHTests.UI {
   [Collection("GrasshopperFixture collection")]
   public class LoadMainMenuTests : IDisposable {
-    private static readonly FieldInfo ExampleFileManagerField = typeof(ExamplesMenu).GetField(
-      "exampleFileManager", BindingFlags.Static | BindingFlags.NonPublic);
+    private static readonly PropertyInfo ExampleFileManagerField = typeof(ExamplesMenu).GetProperty(
+      "ExampleFileManager", BindingFlags.Static | BindingFlags.Public);
 
     private readonly IMessageBoxWrapper _originalWrapper;
     private readonly object _originalFileManager;
 
     public LoadMainMenuTests() {
       _originalWrapper = MessageDialogBox.MessageBoxWrapper;
-      _originalFileManager = ExampleFileManagerField.GetValue(null);
+      _originalFileManager = ExamplesMenu.ExampleFileManager;
     }
 
     public void Dispose() {
