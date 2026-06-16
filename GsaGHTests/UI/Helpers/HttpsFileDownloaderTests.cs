@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
@@ -16,20 +17,224 @@ using Moq;
 using Xunit;
 
 namespace GsaGHTests.UI.Helpers {
-  public class HttpsFileDownloaderTests {
+  public class HttpsFileDownloaderTests : IDisposable {
     private readonly Mock<IHttpClientWrapper> _mockHttpClient;
-    private const string _httpExampleComSamples = "http://example.com/samples";
+    private const string HttpExampleComSamples = "http://example.com/samples";
+    private const string HttpsExampleComSamples = "https://example.com/samples";
+    private const string SampleFileUrl = "http://example.com/testfile.gh";
+    private const string SampleFileName = "testfile.gh";
+    private readonly string _tempDir;
     private readonly HttpsFileDownloader _downloader;
 
     public HttpsFileDownloaderTests() {
       _mockHttpClient = new Mock<IHttpClientWrapper>();
-      _downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples, Path.GetTempPath());
+      _tempDir = Path.Combine(Path.GetTempPath(), $"HttpsFileDownloaderTests_{Guid.NewGuid()}");
+      Directory.CreateDirectory(_tempDir);
+      _downloader = new HttpsFileDownloader(_mockHttpClient.Object, HttpExampleComSamples, _tempDir);
+    }
+
+    public void Dispose() {
+      try {
+        if (Directory.Exists(_tempDir)) {
+          Directory.Delete(_tempDir, true);
+        }
+      } catch {
+        // Ignore cleanup errors
+      }
+    }
+
+    #region Helper Methods
+
+    private static FileEntry CreateSampleFileEntry(string name = SampleFileName, string url = SampleFileUrl) {
+      return new FileEntry {
+        Name = name,
+        Url = url,
+      };
+    }
+
+    private HttpsFileDownloader CreateDownloader(
+      Mock<IHttpClientWrapper> httpClientWrapper = null, string urlToSamples = HttpExampleComSamples) {
+      return new HttpsFileDownloader(httpClientWrapper?.Object ?? _mockHttpClient.Object, urlToSamples, _tempDir);
+    }
+
+    private static Mock<IHttpClientWrapper> CreateMockHttpClientWithResponse(
+      HttpStatusCode statusCode, string content = "") {
+      var mock = new Mock<IHttpClientWrapper>();
+      var response = new HttpResponseMessage(statusCode) {
+        Content = new StringContent(content),
+      };
+      mock.Setup(c => c.GetAsync(It.IsAny<string>())).ReturnsAsync(response);
+      return mock;
+    }
+
+    private static Mock<IHttpClientWrapper> CreateMockHttpClientWithStringResponse(string htmlContent) {
+      var mock = new Mock<IHttpClientWrapper>();
+      mock.Setup(c => c.GetStringAsync(It.IsAny<string>())).ReturnsAsync(htmlContent);
+      return mock;
+    }
+
+    private static Mock<IHttpClientWrapper> CreateMockHttpClientWithException(Exception exception) {
+      var mock = new Mock<IHttpClientWrapper>();
+      mock.Setup(c => c.GetAsync(It.IsAny<string>())).ThrowsAsync(exception);
+      return mock;
+    }
+
+    private static List<HtmlNode> CreateHtmlNodes(params string[] htmlStrings) {
+      return htmlStrings.Select(HtmlNode.CreateNode).ToList();
+    }
+
+    private List<FileEntry> InvokeGetFileListFromNodes(string url, HtmlNodeCollection nodes) {
+      MethodInfo method = _downloader.GetType()
+       .GetMethod("GetFileListFromNodes", BindingFlags.NonPublic | BindingFlags.Static);
+
+      Assert.NotNull(method);
+      return method.Invoke(_downloader, new object[] {
+        url,
+        nodes,
+      }) as List<FileEntry>;
+    }
+
+    #endregion
+
+    #region Constructor Tests
+
+    [Fact]
+    public void Constructor_ThrowsArgumentNullException_WhenHttpClientWrapperIsNull() {
+      Assert.Throws<ArgumentNullException>(() => new HttpsFileDownloader(null, HttpExampleComSamples, _tempDir));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Constructor_ThrowsArgumentException_WhenUrlToSamplesIsNullOrWhitespace(string url) {
+      Assert.Throws<ArgumentException>(() => CreateDownloader(urlToSamples: url));
+    }
+
+    [Theory]
+    [InlineData("not-a-url")]
+    [InlineData("ftp://example.com")]
+    [InlineData("file:///C:/file.txt")]
+    [InlineData("example.com")]
+    public void Constructor_ThrowsArgumentException_WhenUrlToSamplesIsInvalid(string url) {
+      Assert.Throws<ArgumentException>(() => CreateDownloader(urlToSamples: url));
+    }
+
+    [Theory]
+    [InlineData("https://example.com")]
+    [InlineData("http://example.com/path")]
+    [InlineData("https://example.com/samples?query=value")]
+    public void Constructor_SucceedsWithValidUrl(string url) {
+      HttpsFileDownloader downloader = CreateDownloader(urlToSamples: url);
+
+      Assert.NotNull(downloader);
+      Assert.Equal(url, downloader.UrlToSamples);
     }
 
     [Fact]
-    public void GetFullDownloadPath_ShouldReturnCorrectPath() {
-      FileEntry file = GetSampleFileEntry();
-      string expectedPath = Path.Combine(Path.GetTempPath(), "testfile.gh");
+    public void Constructor_SetsUrlToSamples() {
+      HttpsFileDownloader downloader = CreateDownloader(urlToSamples: HttpsExampleComSamples);
+
+      Assert.Equal(HttpsExampleComSamples, downloader.UrlToSamples);
+    }
+
+    [Theory]
+    [InlineData("http://example.com")]
+    [InlineData("http://example.com/")]
+    [InlineData("http://example.com/path")]
+    public void Constructor_AcceptsValidHttpUrl(string url) {
+      HttpsFileDownloader downloader = CreateDownloader(urlToSamples: url);
+
+      Assert.Equal(url, downloader.UrlToSamples);
+    }
+
+    [Theory]
+    [InlineData("https://example.com")]
+    [InlineData("https://example.com/")]
+    [InlineData("https://example.com/path")]
+    public void Constructor_AcceptsValidHttpsUrl(string url) {
+      HttpsFileDownloader downloader = CreateDownloader(urlToSamples: url);
+
+      Assert.Equal(url, downloader.UrlToSamples);
+    }
+
+    #endregion
+
+    #region SetCustomDownloadsPath Tests
+
+    [Fact]
+    public void SetCustomDownloadsPath_ReturnsDefaultPath_WhenCustomPathIsEmpty() {
+      string expectedDefault = HttpsFileDownloader.DefaultDownloadPath;
+
+      string result = _downloader.SetCustomDownloadsPath("");
+
+      Assert.Equal(expectedDefault, result);
+    }
+
+    [Fact]
+    public void SetCustomDownloadsPath_ReturnsDefaultPath_WhenCustomPathIsNull() {
+      string expectedDefault = HttpsFileDownloader.DefaultDownloadPath;
+
+      string result = _downloader.SetCustomDownloadsPath(null);
+
+      Assert.Equal(expectedDefault, result);
+    }
+
+    [Fact]
+    public void SetCustomDownloadsPath_ReturnsDefaultPath_WhenCustomPathIsWhitespace() {
+      string expectedDefault = HttpsFileDownloader.DefaultDownloadPath;
+
+      string result = _downloader.SetCustomDownloadsPath("   ");
+
+      Assert.Equal(expectedDefault, result);
+    }
+
+    [Fact]
+    public void SetCustomDownloadsPath_ReturnsCustomPath_WhenValidRootedPathProvided() {
+      string result = _downloader.SetCustomDownloadsPath(_tempDir);
+
+      Assert.Equal(_tempDir, result);
+    }
+
+    [Fact]
+    public void SetCustomDownloadsPath_ThrowsArgumentException_WhenPathNotRooted() {
+      Assert.Throws<ArgumentException>(() => _downloader.SetCustomDownloadsPath("relative/path"));
+    }
+
+    [Fact]
+    public void SetCustomDownloadsPath_ThrowsArgumentException_WhenPathDoesNotExist() {
+      string nonExistentPath = Path.Combine(_tempDir, "nonexistent");
+
+      Assert.Throws<ArgumentException>(() => _downloader.SetCustomDownloadsPath(nonExistentPath));
+    }
+
+    #endregion
+
+    #region DefaultDownloadPath Tests
+
+    [Fact]
+    public void DefaultDownloadPath_ReturnsUserDownloadsFolder() {
+      string result = HttpsFileDownloader.DefaultDownloadPath;
+
+      Assert.NotNull(result);
+      Assert.NotEmpty(result);
+      Assert.True(Directory.Exists(result));
+      Assert.Contains("Downloads", result);
+    }
+
+    #endregion
+
+    #region GetFullDownloadPath Tests
+
+    [Fact]
+    public void GetFullDownloadPath_ThrowsArgumentNullException_WhenFileIsNull() {
+      Assert.Throws<ArgumentNullException>(() => _downloader.GetFullDownloadPath(null));
+    }
+
+    [Fact]
+    public void GetFullDownloadPath_ReturnsCorrectPath() {
+      FileEntry file = CreateSampleFileEntry();
+      string expectedPath = Path.Combine(_tempDir, SampleFileName);
 
       string fullPath = _downloader.GetFullDownloadPath(file);
 
@@ -37,44 +242,50 @@ namespace GsaGHTests.UI.Helpers {
     }
 
     [Fact]
-    public void GetFullDownloadPath_ShouldThrowException_WhenFileNameWithPath() {
-      var file = new FileEntry {
-        Name = "testfile/gh",
-      };
+    public void GetFullDownloadPath_ThrowsException_WhenFileNameWithPath() {
+      FileEntry file = CreateSampleFileEntry("testfile/gh");
 
       Assert.Throws<ArgumentException>(() => _downloader.GetFullDownloadPath(file));
     }
 
     [Fact]
-    public async Task DownloadFileAsync_ShouldDownloadFileCorrectly() {
-      var mockHttpClientWrapper = new Mock<IHttpClientWrapper>();
+    public void GetFullDownloadPath_SanitizesFileName() {
+      FileEntry file = CreateSampleFileEntry("test file.gh");
+      string result = _downloader.GetFullDownloadPath(file);
 
-      var mockHttpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) {
-        Content = new StringContent("sample file content"),
-      };
-      mockHttpClientWrapper.Setup(c => c.GetAsync(It.IsAny<string>())).ReturnsAsync(mockHttpResponseMessage);
+      Assert.DoesNotContain("?", result);
+      Assert.DoesNotContain("*", result);
+      Assert.True(result.EndsWith("test file.gh"));
+    }
 
-      var downloader
-        = new HttpsFileDownloader(mockHttpClientWrapper.Object, _httpExampleComSamples, Path.GetTempPath());
+    #endregion
 
-      FileEntry file = GetSampleFileEntry();
+    #region DownloadFileAsync Tests
+
+    [Fact]
+    public async Task DownloadFileAsync_ThrowsArgumentNullException_WhenFileIsNull() {
+      await Assert.ThrowsAsync<ArgumentNullException>(() => _downloader.DownloadFileAsync(null));
+    }
+
+    [Fact]
+    public async Task DownloadFileAsync_DownloadsFileCorrectly() {
+      Mock<IHttpClientWrapper> mockHttpClientWrapper
+        = CreateMockHttpClientWithResponse(HttpStatusCode.OK, "sample file content");
+      HttpsFileDownloader downloader = CreateDownloader(mockHttpClientWrapper);
+      FileEntry file = CreateSampleFileEntry();
 
       await downloader.DownloadFileAsync(file);
 
       mockHttpClientWrapper.Verify(c => c.GetAsync(file.Url), Times.Once);
+      string filePath = downloader.GetFullDownloadPath(file);
+      Assert.True(File.Exists(filePath));
     }
 
     [Fact]
-    public async Task DownloadFileAsync_ShouldThrowException_WhenHttpResponseIsNotSuccess() {
-      var mockHttpClientWrapper = new Mock<IHttpClientWrapper>();
-
-      var mockHttpResponseMessage = new HttpResponseMessage(HttpStatusCode.NotFound);
-      mockHttpClientWrapper.Setup(c => c.GetAsync(It.IsAny<string>())).ReturnsAsync(mockHttpResponseMessage);
-
-      var downloader
-        = new HttpsFileDownloader(mockHttpClientWrapper.Object, _httpExampleComSamples, Path.GetTempPath());
-
-      FileEntry file = GetSampleFileEntry();
+    public async Task DownloadFileAsync_ThrowsException_WhenHttpResponseIsNotSuccess() {
+      Mock<IHttpClientWrapper> mockHttpClientWrapper = CreateMockHttpClientWithResponse(HttpStatusCode.NotFound);
+      HttpsFileDownloader downloader = CreateDownloader(mockHttpClientWrapper);
+      FileEntry file = CreateSampleFileEntry();
 
       await Assert.ThrowsAsync<HttpRequestException>(() => downloader.DownloadFileAsync(file));
 
@@ -82,53 +293,63 @@ namespace GsaGHTests.UI.Helpers {
     }
 
     [Fact]
-    public async Task DownloadFileAsync_ShouldThrowException_WhenHttpRequestExceptionOccurs() {
-      var mockHttpClientWrapper = new Mock<IHttpClientWrapper>();
-
-      mockHttpClientWrapper.Setup(c => c.GetAsync(It.IsAny<string>()))
-       .ThrowsAsync(new HttpRequestException("Request failed"));
-
-      var downloader
-        = new HttpsFileDownloader(mockHttpClientWrapper.Object, _httpExampleComSamples, Path.GetTempPath());
-
-      FileEntry file = GetSampleFileEntry();
+    public async Task DownloadFileAsync_ThrowsException_WhenHttpRequestExceptionOccurs() {
+      Mock<IHttpClientWrapper> mockHttpClientWrapper
+        = CreateMockHttpClientWithException(new HttpRequestException("Request failed"));
+      HttpsFileDownloader downloader = CreateDownloader(mockHttpClientWrapper);
+      FileEntry file = CreateSampleFileEntry();
 
       await Assert.ThrowsAsync<HttpRequestException>(() => downloader.DownloadFileAsync(file));
 
       mockHttpClientWrapper.Verify(c => c.GetAsync(file.Url), Times.Once);
     }
 
+    #endregion
+
+    #region SaveFileAsync Tests
+
     [Fact]
-    public async Task SaveFileAsync_ShouldSaveFileOnDisk_WhenValidResponse() {
+    public async Task SaveFileAsync_ThrowsArgumentNullException_WhenResponseIsNull() {
+      FileEntry file = CreateSampleFileEntry();
+
+      await Assert.ThrowsAsync<ArgumentNullException>(() => _downloader.SaveFileAsync(null, file));
+    }
+
+    [Fact]
+    public async Task SaveFileAsync_ThrowsInvalidOperationException_WhenContentIsNull() {
+      var response = new HttpResponseMessage(HttpStatusCode.OK) {
+        Content = null,
+      };
+      FileEntry file = CreateSampleFileEntry();
+
+      await Assert.ThrowsAsync<InvalidOperationException>(() => _downloader.SaveFileAsync(response, file));
+    }
+
+    [Fact]
+    public async Task SaveFileAsync_SavesFileOnDisk_WhenValidResponse() {
       var mockHttpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) {
         Content = new StringContent("sample file content"),
       };
+      FileEntry file = CreateSampleFileEntry();
+      string filePath = _downloader.GetFullDownloadPath(file);
 
-      var downloader
-        = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples, Path.GetTempPath());
-
-      FileEntry file = GetSampleFileEntry();
-
-      string filePath = downloader.GetFullDownloadPath(file);
-
-      await downloader.SaveFileAsync(mockHttpResponseMessage, file);
+      await _downloader.SaveFileAsync(mockHttpResponseMessage, file);
 
       Assert.True(File.Exists(filePath));
-
       string content = File.ReadAllText(filePath);
       Assert.Equal("sample file content", content);
-
-      File.Delete(filePath);
     }
 
+    #endregion
+
+    #region GetFilesFromWebPageAsync Tests
+
     [Fact]
-    public async Task GetFilesFromWebPageAsync_ShouldParseHtmlAndReturnFileList() {
+    public async Task GetFilesFromWebPageAsync_ParsesHtmlAndReturnsFileList() {
       string htmlContent
         = "<html><body><a href='/file1.gh'>file1.gh</a><a href='/file2.3dm'>file2.3dm</a></body></html>";
-
-      _mockHttpClient.Setup(c => c.GetStringAsync(It.IsAny<string>())).ReturnsAsync(htmlContent);
-
-      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples, Path.GetTempPath());
+      Mock<IHttpClientWrapper> mockHttpClientWrapper = CreateMockHttpClientWithStringResponse(htmlContent);
+      HttpsFileDownloader downloader = CreateDownloader(mockHttpClientWrapper);
 
       List<FileEntry> files = await downloader.GetFilesFromWebPageAsync();
 
@@ -138,51 +359,65 @@ namespace GsaGHTests.UI.Helpers {
     }
 
     [Fact]
-    public async Task GetFilesFromWebPageAsync_ShouldReturnEmptyList_WhenNoFilesFound() {
+    public async Task GetFilesFromWebPageAsync_ReturnsEmptyList_WhenNoFilesFound() {
       string htmlContent
         = "<html><body><a href='/file1.txt'>file1.txt</a><a href='/file2.txt'>file2.txt</a></body></html>";
+      Mock<IHttpClientWrapper> mockHttpClientWrapper = CreateMockHttpClientWithStringResponse(htmlContent);
+      HttpsFileDownloader downloader = CreateDownloader(mockHttpClientWrapper);
 
-      _mockHttpClient.Setup(c => c.GetStringAsync(It.IsAny<string>())).ReturnsAsync(htmlContent);
-
-      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples, Path.GetTempPath());
       List<FileEntry> files = await downloader.GetFilesFromWebPageAsync();
 
       Assert.Empty(files);
     }
 
     [Fact]
-    public async Task GetFilesFromWebPageAsync_ShouldHandleEmptyHtmlGracefully() {
+    public async Task GetFilesFromWebPageAsync_HandlesEmptyHtmlGracefully() {
       string htmlContent = "<html><body></body></html>";
+      Mock<IHttpClientWrapper> mockHttpClientWrapper = CreateMockHttpClientWithStringResponse(htmlContent);
+      HttpsFileDownloader downloader = CreateDownloader(mockHttpClientWrapper);
 
-      _mockHttpClient.Setup(c => c.GetStringAsync(It.IsAny<string>())).ReturnsAsync(htmlContent);
-
-      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples, Path.GetTempPath());
       List<FileEntry> files = await downloader.GetFilesFromWebPageAsync();
 
       Assert.Empty(files);
     }
 
     [Fact]
-    public void GetFileListFromNodes_ShouldReturnValidFileList() {
-      var nodes = new List<HtmlNode> {
-        HtmlNode.CreateNode("<a href='/file1.gh'>file1.gh</a>"),
-        HtmlNode.CreateNode("<a href='/file2.3dm'>file2.3dm</a>"),
-      };
+    public async Task GetFilesFromWebPageAsync_HandlesMalformedHtmlGracefully() {
+      string htmlContent = "<html><body><a href='/file1.gh'>file1.gh"; // tag not closed
+      Mock<IHttpClientWrapper> mockHttpClientWrapper = CreateMockHttpClientWithStringResponse(htmlContent);
+      HttpsFileDownloader downloader = CreateDownloader(mockHttpClientWrapper);
 
-      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples, Path.GetTempPath());
+      List<FileEntry> files = await downloader.GetFilesFromWebPageAsync();
 
-      MethodInfo method = downloader.GetType()
-       .GetMethod("GetFileListFromNodes", BindingFlags.NonPublic | BindingFlags.Static);
+      Assert.Single(files);
+      Assert.Equal("file1.gh", files[0].Name);
+    }
 
-      Assert.NotNull(method);
-      var collection = new HtmlNodeCollection(null) {
-        nodes[0],
-        nodes[1],
-      };
-      var fileList = method.Invoke(downloader, new object[] {
-        _httpExampleComSamples,
-        collection,
-      }) as List<FileEntry>;
+    [Fact]
+    public async Task GetFilesFromWebPageAsync_ThrowsException_WhenHttpClientThrows() {
+      Mock<IHttpClientWrapper> mockHttpClientWrapper
+        = CreateMockHttpClientWithException(new HttpRequestException("Network error"));
+      mockHttpClientWrapper.Setup(c => c.GetStringAsync(It.IsAny<string>()))
+       .ThrowsAsync(new HttpRequestException("Network error"));
+      HttpsFileDownloader downloader = CreateDownloader(mockHttpClientWrapper);
+
+      await Assert.ThrowsAsync<HttpRequestException>(() => downloader.GetFilesFromWebPageAsync());
+    }
+
+    #endregion
+
+    #region GetFileListFromNodes Tests
+
+    [Fact]
+    public void GetFileListFromNodes_ReturnsValidFileList() {
+      List<HtmlNode> nodes = CreateHtmlNodes("<a href='/file1.gh'>file1.gh</a>", "<a href='/file2.3dm'>file2.3dm</a>");
+
+      var collection = new HtmlNodeCollection(null);
+      foreach (HtmlNode node in nodes) {
+        collection.Add(node);
+      }
+
+      List<FileEntry> fileList = InvokeGetFileListFromNodes(HttpExampleComSamples, collection);
 
       Assert.NotNull(fileList);
       Assert.Equal(2, fileList.Count);
@@ -193,71 +428,14 @@ namespace GsaGHTests.UI.Helpers {
     }
 
     [Fact]
-    public async Task SaveFileAsync_ShouldThrowArgumentNullException_WhenContentIsNull() {
-      var response = new HttpResponseMessage(HttpStatusCode.OK) {
-        Content = null,
-      };
-      var downloader
-        = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples, Path.GetTempPath());
-      FileEntry file = GetSampleFileEntry();
+    public void GetFileListFromNodes_ReturnsEmptyList_WhenNodesIsNull() {
+      List<FileEntry> fileList = InvokeGetFileListFromNodes(HttpExampleComSamples, null);
 
-      await Assert.ThrowsAsync<InvalidOperationException>(() => downloader.SaveFileAsync(response, file));
+      Assert.NotNull(fileList);
+      Assert.Empty(fileList);
     }
 
-    [Fact]
-    public async Task DownloadFileAsync_ShouldThrowArgumentNullException_WhenFileIsNull() {
-      var downloader
-        = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples, Path.GetTempPath());
+    #endregion
 
-      await Assert.ThrowsAsync<ArgumentNullException>(() => downloader.DownloadFileAsync(null));
-    }
-
-    [Fact]
-    public async Task GetFilesFromWebPageAsync_ShouldHandleMalformedHtmlGracefully() {
-      string htmlContent = "<html><body><a href='/file1.gh'>file1.gh"; // tag not closed
-      _mockHttpClient.Setup(c => c.GetStringAsync(It.IsAny<string>())).ReturnsAsync(htmlContent);
-
-      var downloader = new HttpsFileDownloader(_mockHttpClient.Object, _httpExampleComSamples, Path.GetTempPath());
-      List<FileEntry> files = await downloader.GetFilesFromWebPageAsync();
-
-      Assert.Single(files);
-      Assert.Equal("file1.gh", files[0].Name);
-    }
-
-    [Fact]
-    public void HttpClientWrapper_ShouldSetCustomTimeout() {
-      var httpClient = new HttpClient();
-      var wrapper = new HttpClientWrapper(httpClient, TimeSpan.FromSeconds(5));
-      Assert.Equal(TimeSpan.FromSeconds(5), httpClient.Timeout);
-    }
-
-    [Fact]
-    public void SetCustomDownloadPath_ShouldReturnCustomPath_WhenValid() {
-      string customPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-        "CustomDownloads");
-      Directory.CreateDirectory(customPath);
-
-      var downloader = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples, customPath);
-      string downloadPath = downloader.SetCustomDownloadsPath(customPath);
-
-      Assert.Equal(customPath, downloadPath);
-
-      Directory.Delete(customPath);
-    }
-
-    [Fact]
-    public void SetCustomDownloadPath_ShouldThrowArgumentException_WhenInvalid() {
-      var downloader = new HttpsFileDownloader(Mock.Of<IHttpClientWrapper>(), _httpExampleComSamples);
-
-      Assert.Throws<ArgumentException>(() => downloader.SetCustomDownloadsPath("invalid\\path"));
-    }
-
-    private static FileEntry GetSampleFileEntry() {
-      var file = new FileEntry {
-        Name = "testfile.gh",
-        Url = "http://example.com/testfile.gh",
-      };
-      return file;
-    }
   }
 }

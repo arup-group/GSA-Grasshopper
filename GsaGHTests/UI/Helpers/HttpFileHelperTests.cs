@@ -43,6 +43,12 @@ namespace GsaGHTests.UI.Helpers {
     }
 
     [Fact]
+    public void GetFileEntry_NullLink_ThrowsArgumentNullException() {
+      Assert.Throws<ArgumentNullException>(()
+        => HttpFileHelper.GetFileEntry("http://example.com", null, new List<string>()));
+    }
+
+    [Fact]
     public void GetFileEntry_ValidAbsoluteUrl_ReturnsFileEntry() {
       var node = HtmlNode.CreateNode("<a href=\"http://example.com/file.csv\">file.csv</a>");
       var allowed = new List<string> {
@@ -121,9 +127,41 @@ namespace GsaGHTests.UI.Helpers {
     }
 
     [Fact]
-    public void GetFileEntry_NullLink_ThrowsArgumentNullException() {
-      Assert.Throws<ArgumentNullException>(()
-        => HttpFileHelper.GetFileEntry("http://example.com", null, new List<string>()));
+    public void GetFileEntry_EmptyAllowedExtensions_ReturnsNull() {
+      var node = HtmlNode.CreateNode("<a href=\"/data/file.csv\">file.csv</a>");
+      var allowed = new List<string>();
+
+      FileEntry entry = HttpFileHelper.GetFileEntry("http://example.com", node, allowed);
+
+      Assert.Null(entry);
+    }
+
+    [Fact]
+    public void GetFileEntry_CaseInsensitiveExtension_ReturnsFileEntry() {
+      var node = HtmlNode.CreateNode("<a href=\"/data/file.CSV\">file.CSV</a>");
+      var allowed = new List<string> {
+        ".csv",
+      };
+
+      FileEntry entry = HttpFileHelper.GetFileEntry("http://example.com", node, allowed);
+
+      Assert.NotNull(entry);
+      Assert.Equal("file.CSV", entry.Name);
+    }
+
+    [Fact]
+    public void GetFileEntry_MultipleExtensionsAllowed_WithMatchingExtension_ReturnsFileEntry() {
+      var node = HtmlNode.CreateNode("<a href=\"/data/file.gwa\">file.gwa</a>");
+      var allowed = new List<string> {
+        ".gh",
+        ".gwa",
+        ".gwb",
+      };
+
+      FileEntry entry = HttpFileHelper.GetFileEntry("http://example.com", node, allowed);
+
+      Assert.NotNull(entry);
+      Assert.Equal("file.gwa", entry.Name);
     }
   }
 }
