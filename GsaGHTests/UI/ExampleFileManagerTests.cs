@@ -81,6 +81,11 @@ namespace GsaGHTests.UI {
     }
 
     [Fact]
+    public void Constructor_ThrowsArgumentNullException_WhenDownloaderIsNull() {
+      Assert.Throws<ArgumentNullException>(() => new ExampleFileManager(null));
+    }
+
+    [Fact]
     public async Task GetExampleFilesAsync_ReturnsFiles_WhenDownloaderSucceeds() {
       var files = new List<FileEntry> {
         new FileEntry {
@@ -138,6 +143,23 @@ namespace GsaGHTests.UI {
     }
 
     [Fact]
+    public async Task DownloadAndOpenFileAsync_ThrowsArgumentNullException_WhenFileIsNull() {
+      ExampleFileManager manager = CreateManagerWithFiles(dialogResult: DialogResult.OK);
+
+      await Assert.ThrowsAsync<ArgumentNullException>(() => manager.DownloadAndOpenFileAsync(null, _ => true));
+    }
+
+    [Fact]
+    public async Task DownloadAndOpenFileAsync_ThrowsArgumentNullException_WhenOpenGhFileFuncIsNull() {
+      ExampleFileManager manager = CreateManagerWithFiles(dialogResult: DialogResult.OK);
+
+      await Assert.ThrowsAsync<ArgumentNullException>(()
+        => manager.DownloadAndOpenFileAsync(new FileEntry {
+          Name = "test.gh",
+        }, null));
+    }
+
+    [Fact]
     public async Task DownloadAndOpenFileAsync_ReturnsCancelled_WhenUserCancelsOverwrite() {
       string path = CreateTempFile();
       ExampleFileManager manager = CreateManagerWithFiles(
@@ -181,8 +203,11 @@ namespace GsaGHTests.UI {
       Assert.Equal(DialogResult.Abort, result);
     }
 
-    [Fact]
-    public async Task DownloadAndOpenFileAsync_ReturnsSuccess_WhenOpenGhFileFuncReturnsTrue() {
+    [Theory]
+    [InlineData(true, true)]
+    [InlineData(false, false)]
+    public async Task DownloadAndOpenFileAsync_ReturnsCorrectResult_WhenOpeningGhFile(
+      bool openFileReturnsTrue, bool expectedResultIsOk) {
       string path = CreateTempFile();
       ExampleFileManager manager = CreateManagerWithFiles(setupDownloader: d => {
         d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
@@ -191,34 +216,10 @@ namespace GsaGHTests.UI {
 
       DialogResult result = await manager.DownloadAndOpenFileAsync(new FileEntry {
         Name = Path.GetFileName(path),
-      }, _ => true);
+      }, _ => openFileReturnsTrue);
 
-      Assert.Equal(DialogResult.OK, result);
-    }
-
-    [Fact]
-    public async Task DownloadAndOpenFileAsync_ReturnsOpenFailed_WhenOpenGhFileFuncReturnsFalse() {
-      string path = CreateTempFile();
-      ExampleFileManager manager = CreateManagerWithFiles(setupDownloader: d => {
-        d.Setup(x => x.GetFullDownloadPath(It.IsAny<FileEntry>())).Returns(path);
-        d.Setup(x => x.DownloadFileAsync(It.IsAny<FileEntry>())).Returns(Task.CompletedTask);
-      }, dialogResult: DialogResult.OK);
-
-      DialogResult result = await manager.DownloadAndOpenFileAsync(new FileEntry {
-        Name = Path.GetFileName(path),
-      }, _ => false);
-
-      Assert.Equal(DialogResult.Abort, result);
-    }
-
-    [Fact]
-    public async Task DownloadAndOpenFileAsync_ThrowsArgumentNullException_WhenOpenGhFileFuncIsNull() {
-      ExampleFileManager manager = CreateManagerWithFiles(dialogResult: DialogResult.OK);
-
-      await Assert.ThrowsAsync<ArgumentNullException>(()
-        => manager.DownloadAndOpenFileAsync(new FileEntry {
-          Name = "test.gh",
-        }, null));
+      DialogResult expectedResult = expectedResultIsOk ? DialogResult.OK : DialogResult.Abort;
+      Assert.Equal(expectedResult, result);
     }
   }
 }

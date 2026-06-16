@@ -6,10 +6,9 @@ using GsaGH.UI.Helpers;
 
 using Xunit;
 
-namespace GsaGHTests.UI {
+namespace GsaGHTests.UI.Helpers {
   public class ExampleFileRepositoryTests {
     public ExampleFileRepositoryTests() {
-      // Ensure clean state before each test
       ExampleFileRepository.Reset();
     }
 
@@ -47,7 +46,7 @@ namespace GsaGHTests.UI {
     public void GetFileEntriesByKeywords_NullOrEmptyKeywords_ReturnsEmpty() {
       var files = new List<FileEntry>() {
         new FileEntry() {
-          Name = "example.gh",
+          Name = "Footfall-example.gh",
           Url = "u1",
         },
       };
