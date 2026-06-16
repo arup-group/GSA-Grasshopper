@@ -64,10 +64,26 @@ namespace GsaGHTests.UI {
     }
 
     [Fact]
+    public void CreateDocumentationMenuItem_ReturnsNewInstance_EachCall() {
+      ToolStripMenuItem item1 = MenuLoad.CreateDocumentationMenuItem();
+      ToolStripMenuItem item2 = MenuLoad.CreateDocumentationMenuItem();
+
+      Assert.NotSame(item1, item2);
+    }
+
+    [Fact]
     public void CreateInfoMenuItem_HasCorrectText() {
       ToolStripMenuItem item = MenuLoad.CreateInfoMenuItem();
 
       Assert.Equal("GSA Info", item.Text);
+    }
+
+    [Fact]
+    public void CreateInfoMenuItem_ReturnsNewInstance_EachCall() {
+      ToolStripMenuItem item1 = MenuLoad.CreateInfoMenuItem();
+      ToolStripMenuItem item2 = MenuLoad.CreateInfoMenuItem();
+
+      Assert.NotSame(item1, item2);
     }
   }
 }

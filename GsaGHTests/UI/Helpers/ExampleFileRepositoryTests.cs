@@ -12,24 +12,17 @@ namespace GsaGHTests.UI.Helpers {
       ExampleFileRepository.Reset();
     }
 
+    private static List<FileEntry> CreateFileEntries(params string[] names) {
+      return names.Select(n => new FileEntry {
+        Name = n,
+        Url = $"http://example.com/{n}",
+      }).ToList();
+    }
+
     [Fact]
     public void SetFiles_SetsOnlyOnce_GetAllFilesReturnsFirstSet() {
-      var first = new List<FileEntry>() {
-        new FileEntry() {
-          Name = "first.gh",
-          Url = "u1",
-        },
-        new FileEntry() {
-          Name = "second.gh",
-          Url = "u2",
-        },
-      };
-      var second = new List<FileEntry>() {
-        new FileEntry() {
-          Name = "third.gh",
-          Url = "u3",
-        },
-      };
+      List<FileEntry> first = CreateFileEntries("first.gh", "second.gh");
+      List<FileEntry> second = CreateFileEntries("third.gh");
 
       ExampleFileRepository.SetFiles(first);
       ExampleFileRepository.SetFiles(second); // should be ignored
@@ -43,15 +36,59 @@ namespace GsaGHTests.UI.Helpers {
     }
 
     [Fact]
-    public void GetFileEntriesByKeywords_NullOrEmptyKeywords_ReturnsEmpty() {
-      var files = new List<FileEntry>() {
-        new FileEntry() {
-          Name = "Footfall-example.gh",
-          Url = "u1",
-        },
-      };
+    public void SetFiles_StoresEmptyList_WhenNullPassed() {
+      ExampleFileRepository.SetFiles(null);
 
-      ExampleFileRepository.SetFiles(files);
+      Assert.Empty(ExampleFileRepository.GetAllFiles());
+    }
+
+    [Fact]
+    public void SetFiles_StoresEmptyList_WhenEmptyListPassed() {
+      ExampleFileRepository.SetFiles(new List<FileEntry>());
+
+      Assert.Empty(ExampleFileRepository.GetAllFiles());
+    }
+
+    [Fact]
+    public void GetAllFiles_ReturnsEmptyList_WhenNotInitialized() {
+      Assert.Empty(ExampleFileRepository.GetAllFiles());
+    }
+
+    [Fact]
+    public void GetAllFiles_ReturnsCopy_NotSameReference() {
+      ExampleFileRepository.SetFiles(CreateFileEntries("a.gh"));
+
+      List<FileEntry> result1 = ExampleFileRepository.GetAllFiles();
+      List<FileEntry> result2 = ExampleFileRepository.GetAllFiles();
+
+      Assert.NotSame(result1, result2);
+    }
+
+    [Fact]
+    public void Reset_ClearsStoredFiles() {
+      ExampleFileRepository.SetFiles(CreateFileEntries("a.gh"));
+
+      ExampleFileRepository.Reset();
+
+      Assert.Empty(ExampleFileRepository.GetAllFiles());
+    }
+
+    [Fact]
+    public void Reset_AllowsSetFiles_ToBeCalledAgain() {
+      List<FileEntry> first = CreateFileEntries("a.gh");
+      List<FileEntry> second = CreateFileEntries("b.gh", "c.gh");
+      ExampleFileRepository.SetFiles(first);
+
+      ExampleFileRepository.Reset();
+      ExampleFileRepository.SetFiles(second);
+
+      List<FileEntry> result = ExampleFileRepository.GetAllFiles();
+      Assert.Equal(2, result.Count);
+    }
+
+    [Fact]
+    public void GetFileEntriesByKeywords_NullOrEmptyKeywords_ReturnsEmpty() {
+      ExampleFileRepository.SetFiles(CreateFileEntries("Footfall-example.gh"));
 
       IEnumerable<FileEntry> nullResult = ExampleFileRepository.GetFileEntriesByKeywords(null);
       IEnumerable<FileEntry> emptyResult = ExampleFileRepository.GetFileEntriesByKeywords(new List<string>());
@@ -62,30 +99,15 @@ namespace GsaGHTests.UI.Helpers {
 
     [Fact]
     public void GetFileEntriesByKeywords_FindsCaseInsensitivePartialMatches() {
-      var files = new List<FileEntry>() {
-        new FileEntry() {
-          Name = "Footfall-example.gh",
-          Url = "u1",
-        },
-        new FileEntry() {
-          Name = "Model_foot.gh",
-          Url = "u2",
-        },
-        new FileEntry() {
-          Name = "Otherfile.gwa",
-          Url = "u3",
-        },
-      };
+      ExampleFileRepository.SetFiles(CreateFileEntries("Footfall-example.gh", "Model_foot.gh", "Otherfile.gwa"));
 
-      ExampleFileRepository.SetFiles(files);
-
-      var matches = ExampleFileRepository.GetFileEntriesByKeywords(new List<string>() {
+      var matches = ExampleFileRepository.GetFileEntriesByKeywords(new List<string> {
         "footfall",
       }).ToList();
       Assert.Single(matches);
       Assert.Equal("Footfall-example.gh", matches[0].Name);
 
-      var multiMatches = ExampleFileRepository.GetFileEntriesByKeywords(new List<string>() {
+      var multiMatches = ExampleFileRepository.GetFileEntriesByKeywords(new List<string> {
         "foot",
       }).ToList();
       Assert.Equal(2, multiMatches.Count);
