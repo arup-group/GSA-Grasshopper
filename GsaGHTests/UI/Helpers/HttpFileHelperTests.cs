@@ -8,7 +8,7 @@ using HtmlAgilityPack;
 
 using Xunit;
 
-namespace GsaGHTests.UI {
+namespace GsaGHTests.UI.Helpers {
   public class HttpFileHelperTests {
     [Theory]
     [InlineData("file.txt")]

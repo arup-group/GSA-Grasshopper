@@ -15,7 +15,7 @@ using Moq;
 
 using Xunit;
 
-namespace GsaGHTests.UI {
+namespace GsaGHTests.UI.Helpers {
   public class HttpsFileDownloaderTests {
     private readonly Mock<IHttpClientWrapper> _mockHttpClient;
     private const string _httpExampleComSamples = "http://example.com/samples";
