@@ -192,5 +192,18 @@ namespace GsaGHTests.Properties {
       comp.Update("ft");
       Assert.Equal("ft", comp.Message);
     }
+
+
+    [Fact]
+    public void CheckNumberInputCanBeAssignedToSupportType() {
+      var prop2d = new GsaProperty2d();
+      prop2d.ApiProp2d.Type = Property2D_Type.LOAD;
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, new GsaProperty2dGoo(prop2d), 0);
+      ComponentTestHelper.SetInput(comp, new GH_Number(2), 11);
+      var prop2dGoo = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp, 0);
+      Assert.Equal(SupportType.AllEdges, prop2dGoo.Value.ApiProp2d.SupportType);
+
+    }
   }
 }
