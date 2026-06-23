@@ -255,7 +255,7 @@ namespace GsaGHTests.UI.Helpers {
 
       Assert.DoesNotContain("?", result);
       Assert.DoesNotContain("*", result);
-      Assert.True(result.EndsWith("test file.gh"));
+      Assert.EndsWith("test file.gh", result);
     }
 
     #endregion
