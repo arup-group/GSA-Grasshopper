@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -89,9 +90,18 @@ namespace GsaGHTests.UI.Helpers {
 
     [Fact]
     public void ShowMessage_HandlesAllFileStates_WithoutThrowing() {
-      foreach (MessageDialogBox.FileState state in Enum.GetValues(typeof(MessageDialogBox.FileState))) {
-        MessageDialogBox.ShowMessage(state, "testfile", "C:\\path");
+      var results = new List<DialogResult>();
+      Array states = Enum.GetValues(typeof(MessageDialogBox.FileState));
+
+      foreach (MessageDialogBox.FileState state in states) {
+        // call must not throw and must return a DialogResult
+        DialogResult result = MessageDialogBox.ShowMessage(state, "testfile", "C:\\path");
+        Assert.IsType<DialogResult>(result);
+        results.Add(result);
       }
+
+      // ensure we exercised every enum value
+      Assert.Equal(states.Length, results.Count);
     }
 
     [Fact]

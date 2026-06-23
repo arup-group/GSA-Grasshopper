@@ -16,7 +16,6 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGH.Properties;
-using GsaGH.UI;
 using GsaGH.UI.SampleFiles;
 
 using OasysGH;
@@ -32,7 +31,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.FootfallResults;
-    private List<string> keywords = new List<string>() {
+    private readonly List<string> keywords = new List<string>() {
       "footfall",
     };
 
@@ -199,7 +198,5 @@ namespace GsaGH.Components {
 
       Menu_AppendSeparator(menu);
     }
-
-    private async void DownloadAndOpen(FileEntry file) { }
   }
 }
