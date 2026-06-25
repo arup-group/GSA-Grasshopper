@@ -4,8 +4,6 @@ using System.Reflection;
 
 using Grasshopper.Plugin;
 
-using OasysGH.Units;
-
 using Rhino;
 using Rhino.Runtime.InProcess;
 
