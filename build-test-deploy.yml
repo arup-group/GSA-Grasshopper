@@ -121,10 +121,13 @@ steps:
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
 - powershell: |
-    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
+    $response = Invoke-WebRequest -Uri "https://codecov.io/validate" -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method Post -UseBasicParsing -ErrorAction SilentlyContinue
+
+    if ($response.StatusCode -ne 200) {
       Write-Output "codecov.yml is invalid"
-      Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
-      exit(1)
+      # Print the actual error details from Codecov to your pipeline logs
+      Write-Output $response.Content
+      exit 1
     } else {
       Write-Output "codecov.yml is valid"
     }
