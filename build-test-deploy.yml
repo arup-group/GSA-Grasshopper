@@ -120,7 +120,7 @@ steps:
       IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
-- bash: |
+- powershell: |
     PR_ARGS=""
     if [[ -n "${PULL_REQUEST_NUMBER}" ]]; then
       PR_ARGS="--pull-request-number ${PULL_REQUEST_NUMBER}"
