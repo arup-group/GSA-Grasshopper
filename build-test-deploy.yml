@@ -135,13 +135,6 @@ steps:
   failOnStderr: true
 
 - powershell: |
-    $ProgressPreference = 'SilentlyContinue'
-    Invoke-WebRequest -Uri https://codecov.io -Outfile codecov-cli.exe
-    .\codecov-cli.exe config-validate --file .\codecov.yml
-  displayName: Validate codecov.yml
-  failOnStderr: false
-
-- powershell: |
     $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
     echo $coverage_file_gsagh
     $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
