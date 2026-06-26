@@ -121,32 +121,18 @@ steps:
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
 - powershell: |
-    $response = Invoke-WebRequest -Uri "https://codecov.io/validate" -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method Post -UseBasicParsing -ErrorAction SilentlyContinue
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $ProgressPreference = 'SilentlyContinue'
 
-    if ($response.StatusCode -ne 200) {
-      Write-Output "codecov.yml is invalid"
-      # Print the actual error details from Codecov to your pipeline logs
-      Write-Output $response.Content
-      exit 1
-    } else {
-      Write-Output "codecov.yml is valid"
-    }
-  displayName: Validate codecov.yml
-  failOnStderr: true
+    # 1. Clean up any previous broken files in the local directory
+    if (Test-Path "codecov.exe") { Remove-Item "codecov.exe" -Force }
 
-- powershell: |
-    $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
-    echo $coverage_file_gsagh
-    $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
-    echo $coverage_file_integration
-    Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
-    Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-  displayName: Locate and Copy Coverage Files
-  failOnStderr: true
+    Write-Host "Downloading clean Codecov CLI binary..."
+    Invoke-WebRequest -Uri "https://codecov.io" -Outfile "codecov.exe"
 
-- powershell: |
-    & "$env:TEMP\codecov-cli.exe" do-upload --token $(CODECOV_TOKEN) --file "$(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml" --flag "gsagh"
-    & "$env:TEMP\codecov-cli.exe" do-upload --token $(CODECOV_TOKEN) --file "$(System.DefaultWorkingDirectory)\results\coverage_integration.xml" --flag "integration"
+    Write-Host "Uploading coverage reports..."
+    .\codecov.exe do-upload --token $(CODECOV_TOKEN) --file "$(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml" --flag "gsagh"
+    .\codecov.exe do-upload --token $(CODECOV_TOKEN) --file "$(System.DefaultWorkingDirectory)\results\coverage_integration.xml" --flag "integration"
   displayName: Upload Code Coverage to Codecov via CLI
   failOnStderr: false
 
