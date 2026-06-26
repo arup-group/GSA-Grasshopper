@@ -120,21 +120,13 @@ steps:
       IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
-- powershell: |
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    $ProgressPreference = 'SilentlyContinue'
-
-    # 1. Clean up any previous broken files in the local directory
-    if (Test-Path "codecov.exe") { Remove-Item "codecov.exe" -Force }
-
-    Write-Host "Downloading clean Codecov CLI binary..."
-    Invoke-WebRequest -Uri "https://codecov.io" -Outfile "codecov.exe"
-
-    Write-Host "Uploading coverage reports..."
-    .\codecov.exe do-upload --token $(CODECOV_TOKEN) --file "$(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml" --flag "gsagh"
-    .\codecov.exe do-upload --token $(CODECOV_TOKEN) --file "$(System.DefaultWorkingDirectory)\results\coverage_integration.xml" --flag "integration"
-  displayName: Upload Code Coverage to Codecov via CLI
-  failOnStderr: false
+- script: |
+    curl -Os https://codecov.io
+    .\codecov.exe upload-process --dir $(System.DefaultWorkingDirectory)\results
+  displayName: 'Upload Code Coverage to Codecov'
+  condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
+  env:
+    CODECOV_TOKEN: $(CODECOV_TOKEN)
 
 - task: PublishCodeCoverageResults@2
   displayName: Create Azure GsaGH CodeCoverage
