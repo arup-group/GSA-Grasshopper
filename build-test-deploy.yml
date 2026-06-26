@@ -124,7 +124,7 @@ steps:
     # 1. Install uv for Windows if it isn't found
     if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
         Write-Host "Installing uv Package Manager..."
-        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
     }
 
     # 2. Explicitly load uv into the CURRENT active PowerShell task path
@@ -140,24 +140,22 @@ steps:
       $PR_ARGS += $env:PULL_REQUEST_NUMBER
     }
 
-    # 4. Upload GsaGH coverage file
+    # 4. Upload GsaGH coverage file (Codecov searches the gsagh results folder)
     uvx codecov-cli upload-coverage `
       --fail-on-error `
       --token "$env:CODECOV_TOKEN" `
-      --disable-search `
+      --dir "$(System.DefaultWorkingDirectory)/results/gsagh" `
       --disable-file-fixes `
-      --file "$(System.DefaultWorkingDirectory)/results/coverage_gsagh.xml" `
       --flag "gsagh" `
       --git-service github --slug arup-group/gsa-grasshopper `
       $PR_ARGS
 
-    # 5. Upload Integration coverage file
+    # 5. Upload Integration coverage file (Codecov searches the integration results folder)
     uvx codecov-cli upload-coverage `
       --fail-on-error `
       --token "$env:CODECOV_TOKEN" `
-      --disable-search `
+      --dir "$(System.DefaultWorkingDirectory)/results/integration" `
       --disable-file-fixes `
-      --file "$(System.DefaultWorkingDirectory)/results/coverage_integration.xml" `
       --flag "integration" `
       --git-service github --slug arup-group/gsa-grasshopper `
       $PR_ARGS
