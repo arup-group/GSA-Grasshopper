@@ -140,9 +140,8 @@ steps:
       $PR_ARGS += $env:PULL_REQUEST_NUMBER
     }
 
-    # 4. Upload GsaGH coverage file
-    # Explicitly using string literals for slug/git-service to bypass git parsing errors
-    uvx codecov-cli upload-coverage `
+    # 4. Upload GsaGH coverage file (with global verbose enabled)
+    uvx codecov-cli --verbose upload-coverage `
       --fail-on-error `
       --token "$env:CODECOV_TOKEN" `
       --git-service "github" `
@@ -152,8 +151,8 @@ steps:
       --flag "gsagh" `
       $PR_ARGS
 
-    # 5. Upload Integration coverage file
-    uvx codecov-cli upload-coverage `
+    # 5. Upload Integration coverage file (with global verbose enabled)
+    uvx codecov-cli --verbose upload-coverage `
       --fail-on-error `
       --token "$env:CODECOV_TOKEN" `
       --git-service "github" `
@@ -163,7 +162,7 @@ steps:
       --flag "integration" `
       $PR_ARGS
   timeoutInMinutes: 5
-  retryCountOnTaskFailure: 3
+  retryCountOnTaskFailure: 1
   continueOnError: false
   env:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
