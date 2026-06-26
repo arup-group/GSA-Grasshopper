@@ -121,32 +121,34 @@ steps:
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
 - powershell: |
-    PR_ARGS=""
-    if [[ -n "${PULL_REQUEST_NUMBER}" ]]; then
-      PR_ARGS="--pull-request-number ${PULL_REQUEST_NUMBER}"
-    fi
+    # Initialize the PR arguments array
+    $PR_ARGS = @()
+    if ($env:PULL_REQUEST_NUMBER) {
+      $PR_ARGS += "--pull-request-number"
+      $PR_ARGS += $env:PULL_REQUEST_NUMBER
+    }
 
     # Upload the GsaGH coverage file
-    uvx codecov-cli upload-coverage \
-      --fail-on-error \
-      --token ${CODECOV_TOKEN} \
-      --disable-search \
-      --disable-file-fixes \
-      --file "$(System.DefaultWorkingDirectory)/results/coverage_gsagh.xml" \
-      --flag "gsagh" \
-      ${PR_ARGS} \
-      --git-service github --slug arup-group/gsa-grasshopper
+    uvx codecov-cli upload-coverage `
+      --fail-on-error `
+      --token "$env:CODECOV_TOKEN" `
+      --disable-search `
+      --disable-file-fixes `
+      --file "$(System.DefaultWorkingDirectory)/results/coverage_gsagh.xml" `
+      --flag "gsagh" `
+      --git-service github --slug arup-group/gsa-grasshopper `
+      $PR_ARGS
 
     # Upload the Integration coverage file
-    uvx codecov-cli upload-coverage \
-      --fail-on-error \
-      --token ${CODECOV_TOKEN} \
-      --disable-search \
-      --disable-file-fixes \
-      --file "$(System.DefaultWorkingDirectory)/results/coverage_integration.xml" \
-      --flag "integration" \
-      ${PR_ARGS} \
-      --git-service github --slug arup-group/gsa-grasshopper
+    uvx codecov-cli upload-coverage `
+      --fail-on-error `
+      --token "$env:CODECOV_TOKEN" `
+      --disable-search `
+      --disable-file-fixes `
+      --file "$(System.DefaultWorkingDirectory)/results/coverage_integration.xml" `
+      --flag "integration" `
+      --git-service github --slug arup-group/gsa-grasshopper `
+      $PR_ARGS
   timeoutInMinutes: 5
   retryCountOnTaskFailure: 3
   continueOnError: false
