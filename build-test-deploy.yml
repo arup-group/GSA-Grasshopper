@@ -121,22 +121,26 @@ steps:
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
 - powershell: |
-    # Install uv for the current runner session
-    powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
+    # 1. Install uv for Windows if it isn't found
+    if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
+        Write-Host "Installing uv Package Manager..."
+        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+    }
 
-    # Add uv to the environment path for subsequent tasks
-    echo "##vso[task.prependpath]$env:USERPROFILE\.local\bin"
-  displayName: Install uv package manager
+    # 2. Explicitly load uv into the CURRENT active PowerShell task path
+    $uvBinPath = "$env:USERPROFILE\.local\bin"
+    if ($env:PATH -notlike "*$uvBinPath*") {
+        $env:PATH = "$uvBinPath;$env:PATH"
+    }
 
-- powershell: |
-    # Initialize the PR arguments array
+    # 3. Structure the optional Pull Request arguments array
     $PR_ARGS = @()
     if ($env:PULL_REQUEST_NUMBER) {
       $PR_ARGS += "--pull-request-number"
       $PR_ARGS += $env:PULL_REQUEST_NUMBER
     }
 
-    # Upload the GsaGH coverage file
+    # 4. Upload GsaGH coverage file
     uvx codecov-cli upload-coverage `
       --fail-on-error `
       --token "$env:CODECOV_TOKEN" `
@@ -147,7 +151,7 @@ steps:
       --git-service github --slug arup-group/gsa-grasshopper `
       $PR_ARGS
 
-    # Upload the Integration coverage file
+    # 5. Upload Integration coverage file
     uvx codecov-cli upload-coverage `
       --fail-on-error `
       --token "$env:CODECOV_TOKEN" `
