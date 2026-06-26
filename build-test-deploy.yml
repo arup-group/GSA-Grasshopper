@@ -121,6 +121,14 @@ steps:
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
 - powershell: |
+    # Install uv for the current runner session
+    powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
+
+    # Add uv to the environment path for subsequent tasks
+    echo "##vso[task.prependpath]$env:USERPROFILE\.local\bin"
+  displayName: Install uv package manager
+
+- powershell: |
     # Initialize the PR arguments array
     $PR_ARGS = @()
     if ($env:PULL_REQUEST_NUMBER) {
