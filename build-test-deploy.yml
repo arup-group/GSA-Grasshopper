@@ -120,20 +120,40 @@ steps:
       IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
-- task: PowerShell@2
-  displayName: 'Upload Code Coverage to Codecov'
-  condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  inputs:
-    targetType: 'inline'
-    script: |
-      # Download the authentic Windows executable from the Codecov CLI distribution
-      Invoke-WebRequest -Uri https://codecov.io -OutFile codecov.exe
+- bash: |
+    PR_ARGS=""
+    if [[ -n "${PULL_REQUEST_NUMBER}" ]]; then
+      PR_ARGS="--pull-request-number ${PULL_REQUEST_NUMBER}"
+    fi
 
-      # Execute using valid PowerShell syntax
-      .\codecov.exe upload-process --dir "$(System.DefaultWorkingDirectory)\results"
+    # Upload the GsaGH coverage file
+    uvx codecov-cli upload-coverage \
+      --fail-on-error \
+      --token ${CODECOV_TOKEN} \
+      --disable-search \
+      --disable-file-fixes \
+      --file "$(System.DefaultWorkingDirectory)/results/coverage_gsagh.xml" \
+      --flag "gsagh" \
+      ${PR_ARGS} \
+      --git-service github --slug arup-group/gsa-grasshopper
+
+    # Upload the Integration coverage file
+    uvx codecov-cli upload-coverage \
+      --fail-on-error \
+      --token ${CODECOV_TOKEN} \
+      --disable-search \
+      --disable-file-fixes \
+      --file "$(System.DefaultWorkingDirectory)/results/coverage_integration.xml" \
+      --flag "integration" \
+      ${PR_ARGS} \
+      --git-service github --slug arup-group/gsa-grasshopper
+  timeoutInMinutes: 5
+  retryCountOnTaskFailure: 3
+  continueOnError: false
   env:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
-
+    PULL_REQUEST_NUMBER: $(System.PullRequest.PullRequestNumber)
+  displayName: Codecov coverage upload
 
 - task: PublishCodeCoverageResults@2
   displayName: Create Azure GsaGH CodeCoverage
