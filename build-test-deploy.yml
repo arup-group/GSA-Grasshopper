@@ -121,12 +121,18 @@ steps:
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
 - powershell: |
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    $ProgressPreference = 'SilentlyContinue'
-    Invoke-WebRequest -Uri "https://codecov.io" -Outfile "$env:TEMP\codecov-cli.exe"
-    & "$env:TEMP\codecov-cli.exe" config-validate --file .\codecov.yml
+    $response = Invoke-WebRequest -Uri "https://codecov.io/validate" -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method Post -UseBasicParsing -ErrorAction SilentlyContinue
+
+    if ($response.StatusCode -ne 200) {
+      Write-Output "codecov.yml is invalid"
+      # Print the actual error details from Codecov to your pipeline logs
+      Write-Output $response.Content
+      exit 1
+    } else {
+      Write-Output "codecov.yml is valid"
+    }
   displayName: Validate codecov.yml
-  failOnStderr: false
+  failOnStderr: true
 
 - powershell: |
     $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
