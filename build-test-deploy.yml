@@ -1,4 +1,4 @@
-# https://aka.ms
+# https://aka.ms/yaml
 
 trigger:
 - main
@@ -121,11 +121,18 @@ steps:
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
 - powershell: |
-    $ProgressPreference = 'SilentlyContinue'
-    Invoke-WebRequest -Uri https://codecov.io -Outfile codecov-cli.exe
-    .\codecov-cli.exe config-validate --file .\codecov.yml
+    $response = Invoke-WebRequest -Uri "https://codecov.io/validate" -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method Post -UseBasicParsing -ErrorAction SilentlyContinue
+
+    if ($response.StatusCode -ne 200) {
+      Write-Output "codecov.yml is invalid"
+      # Print the actual error details from Codecov to your pipeline logs
+      Write-Output $response.Content
+      exit 1
+    } else {
+      Write-Output "codecov.yml is valid"
+    }
   displayName: Validate codecov.yml
-  failOnStderr: false
+  failOnStderr: true
 
 - powershell: |
     $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
@@ -134,14 +141,16 @@ steps:
     echo $coverage_file_integration
     Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
     Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-  displayName: Locate and Copy Coverage Files
+    $ProgressPreference = 'SilentlyContinue'
+    Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
+    ls $(System.DefaultWorkingDirectory)\
+    cd $(System.DefaultWorkingDirectory)\
+    .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
+    .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_integration.xml -F integration
+  env:
+    CODECOV_TOKEN: $(CODECOV_TOKEN)
+  displayName: Upload Code Coverage to codecovio
   failOnStderr: true
-
-- powershell: |
-    .\codecov-cli.exe do-upload --token $(CODECOV_TOKEN) --file "$(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml" --flag "gsagh"
-    .\codecov-cli.exe do-upload --token $(CODECOV_TOKEN) --file "$(System.DefaultWorkingDirectory)\results\coverage_integration.xml" --flag "integration"
-  displayName: Upload Code Coverage to Codecov via CLI
-  failOnStderr: false
 
 - task: PublishCodeCoverageResults@2
   displayName: Create Azure GsaGH CodeCoverage
@@ -178,10 +187,10 @@ steps:
         echo $versionInfo
         $fullVersion = [array]${versionInfo}.FileVersion.split('.')
         $currentTime = $(Get-Date -Format "dddd MM/dd/yyyy HH:mm")
-        $majorVersion = [string]$fullVersion
-        $minorVersion = [string]$fullVersion
-        $spVersion = [string]$fullVersion
-        $buildNumber = [string]$fullVersion
+        $majorVersion = [string]$fullVersion[0]
+        $minorVersion = [string]$fullVersion[1]
+        $spVersion = [string]$fullVersion[2]
+        $buildNumber = [string]$fullVersion[3]
 
         $tag = [array]@($exeName,$majorVersion,$minorVersion,$spVersion,$buildNumber)
         $tagNumbersOnly = [array]@($majorVersion,$minorVersion,$spVersion,$buildNumber)
@@ -204,7 +213,7 @@ steps:
 
 - powershell: |
     cd GsaGH\bin\x64\Release
-    curl https://mcneel.com -o yak.exe
+    curl https://files.mcneel.com/yak/tools/latest/yak.exe -o yak.exe
     .\yak version
     cd net48
     ..\yak spec
@@ -233,4 +242,70 @@ steps:
   artifact: Yak Package
   continueOnError: false
 
+- powershell: |
+    cd GsaGH
+    & 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' GsaGH.csproj /t:pack /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg /p:DebugType=portable /property:Configuration=Release
+  displayName: Package NuGet
+
+- powershell: |
+    New-Item -ItemType Directory -Force $(Build.ArtifactStagingDirectory)
+    Copy-Item GsaGH/bin/Release/*.nupkg $(Build.ArtifactStagingDirectory)
+    Copy-Item GsaGH/bin/Release/*.snupkg $(Build.ArtifactStagingDirectory)
+  displayName: Put Artifacts into Staging Directory
+
+- publish: $(Build.ArtifactStagingDirectory)
+  artifact: NuGetPackages
+  displayName: Publish Nuget and Snupkg Packages
+
+- powershell: |
+    cd GsaGH
+    Get-ChildItem -Recurse bin | Select-Object FullName
+  displayName: Inspect bin output
+
+- task: GitHubRelease@1
+  displayName: 'Publishing assets to Github'
+  continueOnError: true
+  inputs:
+    gitHubConnection: 'github.com_MJCramp'
+    repositoryName: 'arup-group/GSA-Grasshopper'
+    action: 'edit'
+    target: '$(Build.SourceVersion)'
+    tag: '$(dotSeparatedTag)'
+    title: 'GsaGH version $(dotSeparatedTag)'
+    releaseNotesSource: 'inline'
+    releaseNotesInline: |
+      Created from commit https://github.com/arup-group/GSA-Grasshopper/commit/$(Build.SourceVersion)
+    assets: |
+      $(System.DefaultWorkingDirectory)/results/yak/*.yak
+      $(System.DefaultWorkingDirectory)/GsaGH/bin/Release/*.nupkg
+      $(System.DefaultWorkingDirectory)/GsaGH\bin/Release/*.snupkg
+      $(System.DefaultWorkingDirectory)/**/$(dotSeparatedTag)-docs.zip
+    assetUploadMode: 'replace'
+    isDraft: true
+    isPreRelease: false
+    addChangeLog: false
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(variables.TAG_EXISTS, 'true'))
+
 - powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
+  displayName: 'Delete orphan .ghlink files'
+  condition: always()
+
+- powershell: |
+    $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
+    Write-output "Installer Path: ${installerPath}"
+    $app = Start-Process "msiexec.exe" -ArgumentList "/x ${installerPath} /quiet /passive /norestart /l* msiUninstallLog.txt" -PassThru -Wait
+    $app.WaitForExit()
+    Write-Output "Exit code: $($app.ExitCode)"
+    Write-Output "Exit time: $($app.ExitTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss')) UTC"
+    ### Success error codes: 0 = ERROR_SUCCESS, 1641 = ERROR_SUCCESS_REBOOT_INITIATED, 3010 = ERROR_SUCCESS_REBOOT_REQUIRED
+    ### See https://docs.microsoft.com/en-us/windows/win32/msi/error-codes
+    if (($app.ExitCode -eq 0) -or ($app.ExitCode -eq 1641) -or ($app.ExitCode -eq 3010)) {
+      Write-Output "Application successfully uninstalled with exit code $($app.ExitCode)"
+      rm $installerPath
+      exit(0)
+    } else {
+      Write-Error "Application could not be uninstalled. Error code $($app.ExitCode)"
+      exit(1)
+    }
+  condition: always()
+  displayName: 'Uninstall Application'
