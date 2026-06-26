@@ -120,26 +120,6 @@ steps:
       IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
-- task: VSTest@3
-  condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: dotnet tests (GsaGH)
-  inputs:
-    resultsFolder: '$(System.DefaultWorkingDirectory)\results\gsagh'
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
-    otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
-
-- task: VSTest@3
-  condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: dotnet tests (Integration)
-  inputs:
-    resultsFolder: '$(System.DefaultWorkingDirectory)\results\integration'
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
-    otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
-
 - powershell: |
     # 1. Install the explicit version of uv matching your configuration rules
     $uvBinPath = "$env:USERPROFILE\.local\bin"
