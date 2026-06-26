@@ -137,19 +137,11 @@ steps:
   displayName: Locate and Copy Coverage Files
   failOnStderr: true
 
-- task: Codecov@7
-  displayName: Upload GsaGH Code Coverage
-  inputs:
-    codecov_token: $(CODECOV_TOKEN)
-    files: '$(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml'
-    flags: 'gsagh'
-
-- task: Codecov@7
-  displayName: Upload Integration Code Coverage
-  inputs:
-    codecov_token: $(CODECOV_TOKEN)
-    files: '$(System.DefaultWorkingDirectory)\results\coverage_integration.xml'
-    flags: 'integration'
+- powershell: |
+    .\codecov-cli.exe do-upload --token $(CODECOV_TOKEN) --file "$(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml" --flag "gsagh"
+    .\codecov-cli.exe do-upload --token $(CODECOV_TOKEN) --file "$(System.DefaultWorkingDirectory)\results\coverage_integration.xml" --flag "integration"
+  displayName: Upload Code Coverage to Codecov via CLI
+  failOnStderr: false
 
 - task: PublishCodeCoverageResults@2
   displayName: Create Azure GsaGH CodeCoverage
@@ -186,10 +178,10 @@ steps:
         echo $versionInfo
         $fullVersion = [array]${versionInfo}.FileVersion.split('.')
         $currentTime = $(Get-Date -Format "dddd MM/dd/yyyy HH:mm")
-        $majorVersion = [string]$fullVersion[0]
-        $minorVersion = [string]$fullVersion[1]
-        $spVersion = [string]$fullVersion[2]
-        $buildNumber = [string]$fullVersion[3]
+        $majorVersion = [string]$fullVersion
+        $minorVersion = [string]$fullVersion
+        $spVersion = [string]$fullVersion
+        $buildNumber = [string]$fullVersion
 
         $tag = [array]@($exeName,$majorVersion,$minorVersion,$spVersion,$buildNumber)
         $tagNumbersOnly = [array]@($majorVersion,$minorVersion,$spVersion,$buildNumber)
@@ -209,3 +201,36 @@ steps:
     errorActionPreference: 'continue'
     workingDirectory: '$(System.DefaultWorkingDirectory)'
     ignoreLASTEXITCODE: true
+
+- powershell: |
+    cd GsaGH\bin\x64\Release
+    curl https://mcneel.com -o yak.exe
+    .\yak version
+    cd net48
+    ..\yak spec
+    Add-Content manifest.yml 'icon: GsaIcon.png'
+    Add-Content manifest.yml 'keywords:'
+    Add-Content manifest.yml '- oasys'
+    Add-Content manifest.yml '- gsa'
+    Add-Content manifest.yml '- gsagh'
+    Add-Content manifest.yml '- fe'
+    Add-Content manifest.yml '- fea'
+    Add-Content manifest.yml '- fem'
+    Add-Content manifest.yml '- structural'
+    Add-Content manifest.yml '- structuralanalysis'
+    ..\yak build --platform win
+    $yakCurrentVersName = Get-ChildItem -Path . -Filter "*.yak"
+    $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
+    Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
+    ..\yak build --platform win
+    New-Item -ItemType Directory -Path $(System.DefaultWorkingDirectory)\results\yak
+    Copy-Item $yakCurrentVersName $(System.DefaultWorkingDirectory)\results\yak\$yakCurrentVersName
+    Copy-Item $yakRh7Name $(System.DefaultWorkingDirectory)\results\yak\$yakRh7Name
+  displayName: Package yak
+
+- publish: $(System.DefaultWorkingDirectory)\results\yak\
+  displayName: Publish Yak Package to Azure
+  artifact: Yak Package
+  continueOnError: false
+
+- powershell: Remove-Item -Path C:\Users\**\AppData\Roaming\Grasshopper\Libraries\*.ghlink
