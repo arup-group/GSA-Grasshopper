@@ -121,14 +121,14 @@ steps:
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
 - powershell: |
-    # 1. Install uv for Windows if it isn't found
-    if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
+    # 1. Install uv for Windows safely (checking path string directly to prevent re-install errors)
+    $uvBinPath = "$env:USERPROFILE\.local\bin"
+    if (-not (Test-Path "$uvBinPath\uv.exe")) {
         Write-Host "Installing uv Package Manager..."
         powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
     }
 
     # 2. Explicitly load uv into the CURRENT active PowerShell task path
-    $uvBinPath = "$env:USERPROFILE\.local\bin"
     if ($env:PATH -notlike "*$uvBinPath*") {
         $env:PATH = "$uvBinPath;$env:PATH"
     }
@@ -140,24 +140,27 @@ steps:
       $PR_ARGS += $env:PULL_REQUEST_NUMBER
     }
 
-    # 4. Upload GsaGH coverage file (Codecov searches the gsagh results folder)
+    # 4. Upload GsaGH coverage file
+    # Explicitly using string literals for slug/git-service to bypass git parsing errors
     uvx codecov-cli upload-coverage `
       --fail-on-error `
       --token "$env:CODECOV_TOKEN" `
+      --git-service "github" `
+      --slug "arup-group/gsa-grasshopper" `
       --dir "$(System.DefaultWorkingDirectory)/results/gsagh" `
       --disable-file-fixes `
       --flag "gsagh" `
-      --git-service github --slug arup-group/gsa-grasshopper `
       $PR_ARGS
 
-    # 5. Upload Integration coverage file (Codecov searches the integration results folder)
+    # 5. Upload Integration coverage file
     uvx codecov-cli upload-coverage `
       --fail-on-error `
       --token "$env:CODECOV_TOKEN" `
+      --git-service "github" `
+      --slug "arup-group/gsa-grasshopper" `
       --dir "$(System.DefaultWorkingDirectory)/results/integration" `
       --disable-file-fixes `
       --flag "integration" `
-      --git-service github --slug arup-group/gsa-grasshopper `
       $PR_ARGS
   timeoutInMinutes: 5
   retryCountOnTaskFailure: 3
