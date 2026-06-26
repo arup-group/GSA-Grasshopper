@@ -120,13 +120,20 @@ steps:
       IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
-- script: |
-    curl -Os https://codecov.io
-    .\codecov.exe upload-process --dir $(System.DefaultWorkingDirectory)\results
+- task: PowerShell@2
   displayName: 'Upload Code Coverage to Codecov'
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
+  inputs:
+    targetType: 'inline'
+    script: |
+      # Download the authentic Windows executable from the Codecov CLI distribution
+      Invoke-WebRequest -Uri https://codecov.io -OutFile codecov.exe
+
+      # Execute using valid PowerShell syntax
+      .\codecov.exe upload-process --dir "$(System.DefaultWorkingDirectory)\results"
   env:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
+
 
 - task: PublishCodeCoverageResults@2
   displayName: Create Azure GsaGH CodeCoverage
