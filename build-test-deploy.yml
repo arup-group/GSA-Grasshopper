@@ -209,9 +209,3 @@ steps:
     errorActionPreference: 'continue'
     workingDirectory: '$(System.DefaultWorkingDirectory)'
     ignoreLASTEXITCODE: true
-
-- powershell: |
-    cd GsaGH\bin\x64\Release
-    curl https://mcneel.com -o yak.exe
-    .\yak version
-  displayName: Run Yak Version Check
