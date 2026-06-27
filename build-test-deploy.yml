@@ -121,19 +121,19 @@ steps:
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
 - powershell: |
-    # 1. Install the explicit version of uv matching your configuration rules
+    # 1. Install uv for Windows safely if not present
     $uvBinPath = "$env:USERPROFILE\.local\bin"
     if (-not (Test-Path "$uvBinPath\uv.exe")) {
-        Write-Host "Installing uv Package Manager version 0.10.4..."
+        Write-Host "Installing uv Package Manager..."
         powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
     }
 
-    # 2. Force the installation path directly into the active task process
+    # 2. Explicitly load uv into the CURRENT active PowerShell task path
     if ($env:PATH -notlike "*$uvBinPath*") {
         $env:PATH = "$uvBinPath;$env:PATH"
     }
 
-    # 3. Handle optional Pull Request argument building
+    # 3. Structure the optional Pull Request arguments array
     $PR_ARGS = @()
     if ($env:PULL_REQUEST_NUMBER) {
       $PR_ARGS += "--pull-request-number"
@@ -144,13 +144,12 @@ steps:
     $gsaghFile = Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\results\gsagh" -Filter "coverage.cobertura.xml" -Recurse | Select-Object -First 1 -ExpandProperty FullName
     $integrationFile = Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\results\integration" -Filter "coverage.cobertura.xml" -Recurse | Select-Object -First 1 -ExpandProperty FullName
 
-    # 5. Upload GsaGH using exact matching version variables
+    # 5. Upload GsaGH (Token handled natively by the environment layer)
     if ($gsaghFile) {
       Write-Host "Uploading GsaGH Coverage from file path: $gsaghFile"
       uvx --python "3.12" `
         codecov-cli=="11.2.6" upload-coverage `
         --fail-on-error `
-        --token "$env:CODECOV_TOKEN" `
         --disable-search `
         --disable-file-fixes `
         --file "$gsaghFile" `
@@ -162,13 +161,12 @@ steps:
       exit 1
     }
 
-    # 6. Upload Integration using exact matching version variables
+    # 6. Upload Integration (Token handled natively by the environment layer)
     if ($integrationFile) {
       Write-Host "Uploading Integration Coverage from file path: $integrationFile"
       uvx --python "3.12" `
         codecov-cli=="11.2.6" upload-coverage `
         --fail-on-error `
-        --token "$env:CODECOV_TOKEN" `
         --disable-search `
         --disable-file-fixes `
         --file "$integrationFile" `
@@ -180,10 +178,12 @@ steps:
       exit 1
     }
   timeoutInMinutes: 5
-  retryCountOnTaskFailure: 3
+  retryCountOnTaskFailure: 1
   continueOnError: false
   env:
+    # Double-binding the token using multiple common naming conventions to ensure it resolves:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
+    CodecovToken: $(CodecovToken)
     PULL_REQUEST_NUMBER: $(System.PullRequest.PullRequestNumber)
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
   displayName: Codecov coverage upload
