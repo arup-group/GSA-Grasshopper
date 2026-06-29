@@ -161,8 +161,6 @@ steps:
       Write-Error "CRITICAL: Could not locate generated GsaGH coverage file under results\gsagh!"
       exit 1
     }
-  timeoutInMinutes: 5
-  retryCountOnTaskFailure: 1
   continueOnError: false
   env:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
