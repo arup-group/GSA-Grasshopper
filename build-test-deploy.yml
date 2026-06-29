@@ -147,16 +147,16 @@ steps:
     # 5. Upload GsaGH using exact matching version variables and cased public target slug
     if ($gsaghFile) {
       Write-Host "Uploading GsaGH Coverage via uvx from: $gsaghFile"
-      uvx --python "3.12" \
-        codecov-cli=="11.2.6" upload-coverage \
-        --fail-on-error \
-        --token ${CODECOV_TOKEN} \
-        --disable-search \
-        --disable-file-fixes \
-        --file "$gsaghFile" \
-        --flag "gsagh" \
-        ${PR_ARGS} \
-        --git-service github --slug "arup-group/GSA-Grasshopper"
+      uvx --python "3.12" `
+        codecov-cli=="11.2.6" upload-coverage `
+        --fail-on-error `
+        --token "$env:CODECOV_TOKEN" `
+        --disable-search `
+        --disable-file-fixes `
+        --file "$gsaghFile" `
+        --flag "gsagh" `
+        --git-service github --slug "arup-group/GSA-Grasshopper" `
+        $PR_ARGS
     } else {
       Write-Error "CRITICAL: Could not locate generated GsaGH coverage file under results\gsagh!"
       exit 1
@@ -165,16 +165,16 @@ steps:
     # 6. Upload Integration using exact matching version variables and cased public target slug
     if ($integrationFile) {
       Write-Host "Uploading Integration Coverage via uvx from: $integrationFile"
-      uvx --python "3.12" \
-        codecov-cli=="11.2.6" upload-coverage \
-        --fail-on-error \
-        --token ${CODECOV_TOKEN} \
-        --disable-search \
-        --disable-file-fixes \
-        --file "$integrationFile" \
-        --flag "integration" \
-        ${PR_ARGS} \
-        --git-service github --slug "arup-group/GSA-Grasshopper"
+      uvx --python "3.12" `
+        codecov-cli=="11.2.6" upload-coverage `
+        --fail-on-error `
+        --token "$env:CODECOV_TOKEN" `
+        --disable-search `
+        --disable-file-fixes `
+        --file "$integrationFile" `
+        --flag "integration" `
+        --git-service github --slug "arup-group/GSA-Grasshopper" `
+        $PR_ARGS
     } else {
       Write-Error "CRITICAL: Could not locate generated Integration coverage file under results\integration!"
       exit 1
