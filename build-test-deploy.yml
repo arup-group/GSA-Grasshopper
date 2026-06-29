@@ -147,16 +147,7 @@ steps:
     # 5. Upload GsaGH using exact matching version variables and cased public target slug
     if ($gsaghFile) {
       Write-Host "Uploading GsaGH Coverage via uvx from: $gsaghFile"
-      uvx --python "3.12" `
-        codecov-cli=="11.2.6" -v upload-coverage
-        --fail-on-error `
-        --token "$env:CODECOV_TOKEN" `
-        --disable-search `
-        --disable-file-fixes `
-        --file "$gsaghFile" `
-        --flag "gsagh" `
-        --git-service github --slug "arup-group/GSA-Grasshopper" `
-        $PR_ARGS
+      uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage --fail-on-error --token "$env:CODECOV_TOKEN" --plugin noop --disable-search --disable-file-fixes --file "$gsaghFile" --flag "gsagh" $PR_ARGS --git-service github --slug "arup-group/GSA-Grasshopper"
     } else {
       Write-Error "CRITICAL: Could not locate generated GsaGH coverage file under results\gsagh!"
       exit 1
