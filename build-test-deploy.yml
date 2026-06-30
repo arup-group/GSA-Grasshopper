@@ -102,7 +102,7 @@ steps:
 
 - task: VSTest@3
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: dotnet tests (GsaGH)
+  displayName: GsaGh test
   inputs:
     resultsFolder: '$(System.DefaultWorkingDirectory)\results\gsagh'
     testSelector: 'testAssemblies'
@@ -112,7 +112,7 @@ steps:
 
 - task: VSTest@3
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: dotnet tests (Integration)
+  displayName: Integration test
   inputs:
     resultsFolder: '$(System.DefaultWorkingDirectory)\results\integration'
     testSelector: 'testAssemblies'
@@ -140,18 +140,46 @@ steps:
       $PR_ARGS += $env:PULL_REQUEST_NUMBER
     }
 
-    # 4. Use PowerShell to precisely find the dynamically generated coverage files
-    $gsaghFile = Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\results\gsagh" -Filter "coverage.cobertura.xml" -Recurse | Select-Object -First 1 -ExpandProperty FullName
-    $integrationFile = Get-ChildItem -Path "$(System.DefaultWorkingDirectory)\results\integration" -Filter "coverage.cobertura.xml" -Recurse | Select-Object -First 1 -ExpandProperty FullName
+    # --- SIMPLIFIED FUNCTION DEFINITION ---
+    function Invoke-CoverageUpload {
+        param (
+            [string]$Name
+        )
 
-    # 5. Upload GsaGH using exact matching version variables and cased public target slug
-    if ($gsaghFile) {
-      Write-Host "Uploading GsaGH Coverage via uvx from: $gsaghFile"
-      uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage --fail-on-error --token "$env:CODECOV_TOKEN" --plugin noop --disable-search --disable-file-fixes --file "$gsaghFile" --flag "gsagh" $PR_ARGS --git-service github --slug "arup-group/GSA-Grasshopper"
-    } else {
-      Write-Error "CRITICAL: Could not locate generated GsaGH coverage file under results\gsagh!"
-      exit 1
+        $SearchPath = "$(System.DefaultWorkingDirectory)\results\$Name"
+        Write-Host "Searching for coverage file in: $SearchPath"
+
+        # Locate the dynamically generated coverage file
+        $CoverageFile = Get-ChildItem -Path $SearchPath -Filter "coverage.cobertura.xml" -Recurse |
+                        Select-Object -First 1 -ExpandProperty FullName
+
+        # Validate and upload if found
+        if ($CoverageFile) {
+            Write-Host "Uploading $Name Coverage via uvx from: $CoverageFile"
+
+            uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage `
+                --fail-on-error `
+                --token "$env:CODECOV_TOKEN" `
+                --disable-search `
+                --disable-file-fixes `
+                --file "$CoverageFile" `
+                --flag "$Name" `
+                $PR_ARGS `
+                --git-service github `
+                --slug "arup-group/GSA-Grasshopper"
+        } else {
+            Write-Error "CRITICAL: Could not locate generated $Name coverage file under results\$Name!"
+            exit 1
+        }
     }
+    # ----------------------------
+
+    # 4. Upload GsaGH coverage
+    Invoke-CoverageUpload -Name "gsagh"
+
+    # 5. Upload Integration coverage
+    Invoke-CoverageUpload -Name "integration"
+
   continueOnError: false
   env:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
