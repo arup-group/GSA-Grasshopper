@@ -1,0 +1,66 @@
+parameters:
+- name: coverageName
+  type: string
+- name: searchPath
+  type: string
+- name: codecovToken
+  type: string
+  default: ''
+- name: pullRequestNumber
+  type: string
+  default: ''
+- name: uploadStepDisplayName
+  type: string
+  default: 'Upload coverage to Codecov'
+- name: condition
+  type: string
+  default: 'succeeded()'
+- name: continueOnError
+  type: boolean
+  default: false
+
+steps:
+- powershell: |
+    $uvBinPath = "$env:USERPROFILE\.local\bin"
+    if (-not (Test-Path "$uvBinPath\uv.exe")) {
+        Write-Host "Installing uv Package Manager..."
+        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
+    }
+
+    if ($env:PATH -notlike "*$uvBinPath*") {
+        $env:PATH = "$uvBinPath;$env:PATH"
+    }
+
+    $prNum         = $env:PARAM_PULL_REQUEST_NUMBER
+    $coverageName  = $env:PARAM_COVERAGE_NAME
+    $searchPath    = $env:PARAM_SEARCH_PATH
+    $codecovToken  = $env:SECRET_CODECOV_TOKEN
+
+    $PR_ARGS = @()
+    if ([string]::IsNullOrWhiteSpace($prNum) -eq $false -and $prNum -ne "None") {
+      $PR_ARGS += "--pull-request-number"
+      $PR_ARGS += $prNum
+    }
+
+    Write-Host "Searching for coverage file in: $searchPath"
+
+    $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse |
+                    Where-Object { $_.FullName -notmatch '\\In\\' } |
+                    Select-Object -First 1 -ExpandProperty FullName
+
+    if ($CoverageFile) {
+        Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
+
+        uvx --python "3.12" codecov-cli=="11.2.6" upload-coverage --fail-on-error --token "$codecovToken" --disable-search --disable-file-fixes --dir "$CoverageFile" --file "$CoverageFile" --flag "$coverageName" --git-service github --slug "arup-group/GSA-Grasshopper" $PR_ARGS
+    } else {
+        Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
+        exit 1
+    }
+  displayName: ${{ parameters.uploadStepDisplayName }}
+  condition: ${{ parameters.condition }}
+  continueOnError: ${{ parameters.continueOnError }}
+  env:
+    SECRET_CODECOV_TOKEN: ${{ parameters.codecovToken }}
+    PARAM_PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
+    PARAM_COVERAGE_NAME: ${{ parameters.coverageName }}
+    PARAM_SEARCH_PATH: ${{ parameters.searchPath }}
