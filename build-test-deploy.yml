@@ -102,7 +102,7 @@ steps:
 
 - task: VSTest@3
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: GsaGh test
+  displayName: GsaGh Test
   inputs:
     resultsFolder: '$(System.DefaultWorkingDirectory)\results\gsagh'
     testSelector: 'testAssemblies'
@@ -112,7 +112,7 @@ steps:
 
 - task: VSTest@3
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: Integration test
+  displayName: Integration Test
   inputs:
     resultsFolder: '$(System.DefaultWorkingDirectory)\results\integration'
     testSelector: 'testAssemblies'
@@ -120,68 +120,21 @@ steps:
       IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
-- powershell: |
-    # 1. Install uv for Windows safely if not present
-    $uvBinPath = "$env:USERPROFILE\.local\bin"
-    if (-not (Test-Path "$uvBinPath\uv.exe")) {
-        Write-Host "Installing uv Package Manager..."
-        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
-    }
+- template: codecov-upload.yml
+  parameters:
+    coverageName: gsagh
+    searchPath: $(System.DefaultWorkingDirectory)\results\gsagh
+    codecovToken: $(CODECOV_TOKEN)
+    pullRequestNumber: $(System.PullRequest.PullRequestNumber)
 
-    # 2. Force the installation path directly into the active task process
-    if ($env:PATH -notlike "*$uvBinPath*") {
-        $env:PATH = "$uvBinPath;$env:PATH"
-    }
-
-    # 3. Handle optional Pull Request argument building
-    $PR_ARGS = @()
-    if ($env:PULL_REQUEST_NUMBER) {
-      $PR_ARGS += "--pull-request-number"
-      $PR_ARGS += $env:PULL_REQUEST_NUMBER
-    }
-
-    # --- SIMPLIFIED FUNCTION DEFINITION ---
-    function Invoke-CoverageUpload {
-        param (
-            [string]$Name
-        )
-
-        $SearchPath = "$(System.DefaultWorkingDirectory)\results\$Name"
-        Write-Host "Searching for coverage file in: $SearchPath"
-
-        # Locate the dynamically generated coverage file
-        $CoverageFile = Get-ChildItem -Path $SearchPath -Filter "coverage.cobertura.xml" -Recurse |
-                        Select-Object -First 1 -ExpandProperty FullName
-
-        # Validate and upload if found
-        if ($CoverageFile) {
-            Write-Host "Uploading $Name Coverage via uvx from: $CoverageFile"
-
-            uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage `
-                --fail-on-error `
-                --token "$env:CODECOV_TOKEN" `
-                --disable-search `
-                --disable-file-fixes `
-                --file "$CoverageFile" `
-                --flag "$Name" `
-                $PR_ARGS
-        } else {
-            Write-Error "CRITICAL: Could not locate generated $Name coverage file under results\$Name!"
-            exit 1
-        }
-    }
-    # ----------------------------
-
-    # 4. Upload GsaGH coverage
-    Invoke-CoverageUpload -Name "gsagh"
-
-    # 5. Upload Integration coverage
-    Invoke-CoverageUpload -Name "integration"
+- template: codecov-upload.yml
+  parameters:
+    coverageName: integration
+    searchPath: $(System.DefaultWorkingDirectory)\results\integration
+    codecovToken: $(CODECOV_TOKEN)
+    pullRequestNumber: $(System.PullRequest.PullRequestNumber)
 
   continueOnError: false
-  env:
-    CODECOV_TOKEN: $(CODECOV_TOKEN)
-    PULL_REQUEST_NUMBER: $(System.PullRequest.PullRequestNumber)
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
   displayName: Codecov coverage upload
 

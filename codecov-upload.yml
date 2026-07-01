@@ -1,0 +1,69 @@
+parameters:
+- name: coverageName
+  type: string
+- name: searchPath
+  type: string
+- name: codecovToken
+  type: string
+  default: ''
+- name: pullRequestNumber
+  type: string
+  default: ''
+
+steps:
+- powershell: |
+    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
+      Write-Output "codecov.yml is invalid"
+      Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
+      exit(1)
+    } else {
+      Write-Output "codecov.yml is valid"
+    }
+  displayName: Validate codecov.yml
+  failOnStderr: true
+
+- powershell: |
+    $uvBinPath = "$env:USERPROFILE\.local\bin"
+    if (-not (Test-Path "$uvBinPath\uv.exe")) {
+        Write-Host "Installing uv Package Manager..."
+        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
+    }
+
+    if ($env:PATH -notlike "*$uvBinPath*") {
+        $env:PATH = "$uvBinPath;$env:PATH"
+    }
+
+    $PR_ARGS = @()
+    if ([string]::IsNullOrWhiteSpace("${{ parameters.pullRequestNumber }}") -eq $false -and "${{ parameters.pullRequestNumber }}" -ne "None") {
+      $PR_ARGS += "--pull-request-number"
+      $PR_ARGS += "${{ parameters.pullRequestNumber }}"
+    }
+
+    $SearchPath = "${{ parameters.searchPath }}"
+    Write-Host "Searching for coverage file in: $SearchPath"
+
+    $CoverageFile = Get-ChildItem -Path $SearchPath -Filter "coverage.cobertura.xml" -Recurse |
+                    Select-Object -First 1 -ExpandProperty FullName
+
+    if ($CoverageFile) {
+        Write-Host "Uploading ${{ parameters.coverageName }} coverage via uvx from: $CoverageFile"
+
+        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage `
+            --fail-on-error `
+            --token "${{ parameters.codecovToken }}" `
+            --disable-search `
+            --disable-file-fixes `
+            --file "$CoverageFile" `
+            --flag "${{ parameters.coverageName }}" `
+            --git-service github `
+            --slug "arup-group/GSA-Grasshopper" `
+            $PR_ARGS
+    } else {
+        Write-Error "CRITICAL: Could not locate generated ${{ parameters.coverageName }} coverage file under $SearchPath!"
+        exit 1
+    }
+  displayName: Upload ${{ parameters.coverageName }} coverage to Codecov
+  failOnStderr: true
+  env:
+    CODECOV_TOKEN: ${{ parameters.codecovToken }}
+    PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
