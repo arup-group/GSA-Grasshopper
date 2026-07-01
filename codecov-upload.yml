@@ -3,6 +3,9 @@ parameters:
   type: string
 - name: searchPath
   type: string
+- name: codecovToken
+  type: string
+  default: ''
 - name: pullRequestNumber
   type: string
   default: ''
@@ -21,14 +24,14 @@ steps:
     $uvBinPath = "$env:USERPROFILE\.local\bin"
     if (-not (Test-Path "$uvBinPath\uv.exe")) {
         Write-Host "Installing uv Package Manager..."
-        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
     }
 
     if ($env:PATH -notlike "*$uvBinPath*") {
         $env:PATH = "$uvBinPath;$env:PATH"
     }
 
-    # 1. Variables are now mapped straight from safe environment containers
+    # Read values strictly from the secure environment block
     $prNum         = $env:PARAM_PULL_REQUEST_NUMBER
     $coverageName  = $env:PARAM_COVERAGE_NAME
     $searchPath    = $env:PARAM_SEARCH_PATH
@@ -65,9 +68,9 @@ steps:
   displayName: ${{ parameters.uploadStepDisplayName }}
   condition: ${{ parameters.condition }}
   continueOnError: ${{ parameters.continueOnError }}
-  # 2. Precise and distinct variable mapping
+  # Map template parameters directly to the environment scope
   env:
-    SECRET_CODECOV_TOKEN: $(CODECOV_TOKEN)
+    SECRET_CODECOV_TOKEN: ${{ parameters.codecovToken }}
     PARAM_PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
     PARAM_COVERAGE_NAME: ${{ parameters.coverageName }}
     PARAM_SEARCH_PATH: ${{ parameters.searchPath }}
