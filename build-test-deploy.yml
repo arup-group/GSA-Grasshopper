@@ -164,9 +164,7 @@ steps:
                 --disable-file-fixes `
                 --file "$CoverageFile" `
                 --flag "$Name" `
-                $PR_ARGS `
-                --git-service github `
-                --slug "arup-group/GSA-Grasshopper"
+                $PR_ARGS
         } else {
             Write-Error "CRITICAL: Could not locate generated $Name coverage file under results\$Name!"
             exit 1
