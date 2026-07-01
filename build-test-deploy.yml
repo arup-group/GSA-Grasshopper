@@ -126,6 +126,9 @@ steps:
     searchPath: $(System.DefaultWorkingDirectory)\results\gsagh
     codecovToken: $(CODECOV_TOKEN)
     pullRequestNumber: $(System.PullRequest.PullRequestNumber)
+  continueOnError: false
+  condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
+  displayName: Codecov coverage upload (gsagh)
 
 - template: codecov-upload.yml
   parameters:
@@ -133,10 +136,9 @@ steps:
     searchPath: $(System.DefaultWorkingDirectory)\results\integration
     codecovToken: $(CODECOV_TOKEN)
     pullRequestNumber: $(System.PullRequest.PullRequestNumber)
-
   continueOnError: false
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: Codecov coverage upload
+  displayName: Codecov coverage upload (integration)
 
 - task: PublishCodeCoverageResults@2
   displayName: Create Azure GsaGH CodeCoverage
