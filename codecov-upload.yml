@@ -47,7 +47,7 @@ steps:
     # do not read file from system trace log
     $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse |
                     Where-Object { $_.FullName -notmatch '\\In\\' } |
-                    Select-Object -First 1 -ExpandProperty FullNamee
+                    Select-Object -First 1 -ExpandProperty FullName
 
     if ($CoverageFile) {
         Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
