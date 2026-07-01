@@ -31,7 +31,6 @@ steps:
         $env:PATH = "$uvBinPath;$env:PATH"
     }
 
-    # Read values strictly from the secure environment block
     $prNum         = $env:PARAM_PULL_REQUEST_NUMBER
     $coverageName  = $env:PARAM_COVERAGE_NAME
     $searchPath    = $env:PARAM_SEARCH_PATH
@@ -44,24 +43,15 @@ steps:
     }
 
     Write-Host "Searching for coverage file in: $searchPath"
-    # do not read file from system trace log
+
     $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse |
                     Where-Object { $_.FullName -notmatch '\\In\\' } |
                     Select-Object -First 1 -ExpandProperty FullName
 
     if ($CoverageFile) {
         Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
-
-        uvx --python "3.12" codecov-cli=="11.2.6" upload-coverage `
-            --fail-on-error `
-            --token "$codecovToken" `
-            --disable-search `
-            --disable-file-fixes `
-            --file "$CoverageFile" `
-            --flag "$coverageName" `
-            --git-service github `
-            --slug "arup-group/GSA-Grasshopper" `
-            $PR_ARGS
+        # make command in single line to guarantee all parameters execute together safely
+        uvx --python "3.12" codecov-cli=="11.2.6" upload-coverage --fail-on-error --token "$codecovToken" --disable-search --disable-file-fixes --file "$CoverageFile" --flag "$coverageName" --git-service github --slug "arup-group/GSA-Grasshopper" $PR_ARGS
     } else {
         Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
         exit 1
@@ -69,7 +59,6 @@ steps:
   displayName: ${{ parameters.uploadStepDisplayName }}
   condition: ${{ parameters.condition }}
   continueOnError: ${{ parameters.continueOnError }}
-  # Map template parameters directly to the environment scope
   env:
     SECRET_CODECOV_TOKEN: ${{ parameters.codecovToken }}
     PARAM_PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
