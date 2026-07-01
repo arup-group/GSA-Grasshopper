@@ -61,7 +61,6 @@ steps:
         exit 1
     }
   displayName: ${{ parameters.uploadStepDisplayName }}
-  failOnStderr: true
   condition: ${{ parameters.condition }}
   continueOnError: ${{ parameters.continueOnError }}
   env:
