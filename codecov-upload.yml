@@ -9,19 +9,17 @@ parameters:
 - name: pullRequestNumber
   type: string
   default: ''
+- name: uploadStepDisplayName
+  type: string
+  default: 'Upload coverage to Codecov'
+- name: condition
+  type: string
+  default: 'succeeded()'
+- name: continueOnError
+  type: boolean
+  default: false
 
 steps:
-- powershell: |
-    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
-      Write-Output "codecov.yml is invalid"
-      Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
-      exit(1)
-    } else {
-      Write-Output "codecov.yml is valid"
-    }
-  displayName: Validate codecov.yml
-  failOnStderr: true
-
 - powershell: |
     $uvBinPath = "$env:USERPROFILE\.local\bin"
     if (-not (Test-Path "$uvBinPath\uv.exe")) {
@@ -62,8 +60,10 @@ steps:
         Write-Error "CRITICAL: Could not locate generated ${{ parameters.coverageName }} coverage file under $SearchPath!"
         exit 1
     }
-  displayName: Upload ${{ parameters.coverageName }} coverage to Codecov
+  displayName: ${{ parameters.uploadStepDisplayName }}
   failOnStderr: true
+  condition: ${{ parameters.condition }}
+  continueOnError: ${{ parameters.continueOnError }}
   env:
     CODECOV_TOKEN: ${{ parameters.codecovToken }}
     PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}

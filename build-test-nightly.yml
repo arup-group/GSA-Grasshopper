@@ -122,15 +122,27 @@ steps:
       IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
     otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
 
+- powershell: |
+    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
+      Write-Output "codecov.yml is invalid"
+      Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
+      exit(1)
+    } else {
+      Write-Output "codecov.yml is valid"
+    }
+  displayName: Validate codecov.yml
+  failOnStderr: true
+  condition: succeeded()
+
 - template: codecov-upload.yml
   parameters:
     coverageName: gsagh
     searchPath: $(System.DefaultWorkingDirectory)\results\gsagh
     codecovToken: $(CODECOV_TOKEN)
     pullRequestNumber: $(System.PullRequest.PullRequestNumber)
-  continueOnError: false
-  condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: Codecov coverage upload (gsagh)
+    uploadStepDisplayName: Upload gsagh Codecov
+    condition: succeeded()
+    continueOnError: false
 
 - template: codecov-upload.yml
   parameters:
@@ -138,9 +150,9 @@ steps:
     searchPath: $(System.DefaultWorkingDirectory)\results\integration
     codecovToken: $(CODECOV_TOKEN)
     pullRequestNumber: $(System.PullRequest.PullRequestNumber)
-  continueOnError: false
-  condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: Codecov coverage upload (integration)
+    uploadStepDisplayName: Upload integration Codecov
+    condition: succeeded()
+    continueOnError: false
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
   displayName: Publish GsaGHTest xml to Azure
