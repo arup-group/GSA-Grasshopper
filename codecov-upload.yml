@@ -3,9 +3,6 @@ parameters:
   type: string
 - name: searchPath
   type: string
-- name: codecovToken
-  type: string
-  default: ''
 - name: pullRequestNumber
   type: string
   default: ''
@@ -24,18 +21,18 @@ steps:
     $uvBinPath = "$env:USERPROFILE\.local\bin"
     if (-not (Test-Path "$uvBinPath\uv.exe")) {
         Write-Host "Installing uv Package Manager..."
-        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
+        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
     }
 
     if ($env:PATH -notlike "*$uvBinPath*") {
         $env:PATH = "$uvBinPath;$env:PATH"
     }
 
-    # Read parameters strictly from mapped environment variables
-    $prNum = $env:PARAM_PULL_REQUEST_NUMBER
-    $coverageName = $env:PARAM_COVERAGE_NAME
-    $searchPath = $env:PARAM_SEARCH_PATH
-    $codecovToken = $env:PARAM_CODECOV_TOKEN
+    # 1. Variables are now mapped straight from safe environment containers
+    $prNum         = $env:PARAM_PULL_REQUEST_NUMBER
+    $coverageName  = $env:PARAM_COVERAGE_NAME
+    $searchPath    = $env:PARAM_SEARCH_PATH
+    $codecovToken  = $env:SECRET_CODECOV_TOKEN
 
     $PR_ARGS = @()
     if ([string]::IsNullOrWhiteSpace($prNum) -eq $false -and $prNum -ne "None") {
@@ -50,6 +47,7 @@ steps:
 
     if ($CoverageFile) {
         Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
+
         uvx --python "3.12" codecov-cli=="11.2.6" upload-coverage `
             --fail-on-error `
             --token "$codecovToken" `
@@ -61,17 +59,15 @@ steps:
             --slug "arup-group/GSA-Grasshopper" `
             $PR_ARGS
     } else {
-        Write-Error "CRITICAL: Could not locate generated $coverageName coverage file under $searchPath!"
+        Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
         exit 1
     }
   displayName: ${{ parameters.uploadStepDisplayName }}
   condition: ${{ parameters.condition }}
   continueOnError: ${{ parameters.continueOnError }}
-  # Safely inject parameters via environment variables here
+  # 2. Precise and distinct variable mapping
   env:
-    CODECOV_TOKEN: ${{ parameters.codecovToken }}
-    PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
+    SECRET_CODECOV_TOKEN: $(CODECOV_TOKEN)
     PARAM_PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
     PARAM_COVERAGE_NAME: ${{ parameters.coverageName }}
     PARAM_SEARCH_PATH: ${{ parameters.searchPath }}
-    PARAM_CODECOV_TOKEN: ${{ parameters.codecovToken }}
