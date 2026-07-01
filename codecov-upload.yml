@@ -46,7 +46,7 @@ steps:
     if ($CoverageFile) {
         Write-Host "Uploading ${{ parameters.coverageName }} coverage via uvx from: $CoverageFile"
 
-        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage `
+        uvx --python "3.12" codecov-cli=="11.2.6" upload-coverage `
             --fail-on-error `
             --token "${{ parameters.codecovToken }}" `
             --disable-search `
