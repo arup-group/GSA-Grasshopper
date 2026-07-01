@@ -104,7 +104,7 @@ steps:
 
 - task: VSTest@3
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: GsaGh Test
+  displayName: GsaGh test
   inputs:
     resultsFolder: '$(System.DefaultWorkingDirectory)\results\gsagh'
     testSelector: 'testAssemblies'
@@ -114,7 +114,7 @@ steps:
 
 - task: VSTest@3
   condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: Integration Test
+  displayName: Integration test
   inputs:
     resultsFolder: '$(System.DefaultWorkingDirectory)\results\integration'
     testSelector: 'testAssemblies'
@@ -130,7 +130,7 @@ steps:
     } else {
       Write-Output "codecov.yml is valid"
     }
-  displayName: Validate codecov.yml
+  displayName: Validate codecov
   failOnStderr: true
   condition: succeeded()
 
@@ -140,7 +140,7 @@ steps:
     searchPath: $(System.DefaultWorkingDirectory)\results\gsagh
     codecovToken: $(CODECOV_TOKEN)
     pullRequestNumber: $(System.PullRequest.PullRequestNumber)
-    uploadStepDisplayName: Upload gsagh Codecov
+    uploadStepDisplayName: Upload gsagh codecov
     condition: succeeded()
     continueOnError: false
 
@@ -150,7 +150,7 @@ steps:
     searchPath: $(System.DefaultWorkingDirectory)\results\integration
     codecovToken: $(CODECOV_TOKEN)
     pullRequestNumber: $(System.PullRequest.PullRequestNumber)
-    uploadStepDisplayName: Upload integration Codecov
+    uploadStepDisplayName: Upload integration codecov
     condition: succeeded()
     continueOnError: false
 
