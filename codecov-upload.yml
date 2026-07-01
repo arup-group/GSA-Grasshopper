@@ -31,40 +31,47 @@ steps:
         $env:PATH = "$uvBinPath;$env:PATH"
     }
 
+    # Read parameters strictly from mapped environment variables
+    $prNum = $env:PARAM_PULL_REQUEST_NUMBER
+    $coverageName = $env:PARAM_COVERAGE_NAME
+    $searchPath = $env:PARAM_SEARCH_PATH
+    $codecovToken = $env:PARAM_CODECOV_TOKEN
+
     $PR_ARGS = @()
-    if ([string]::IsNullOrWhiteSpace($env:PULL_REQUEST_NUMBER) -eq $false -and $env:PULL_REQUEST_NUMBER -ne "None") {
+    if ([string]::IsNullOrWhiteSpace($prNum) -eq $false -and $prNum -ne "None") {
       $PR_ARGS += "--pull-request-number"
-      $PR_ARGS += $env:PULL_REQUEST_NUMBER
+      $PR_ARGS += $prNum
     }
 
-    $SearchPath = $env:SEARCH_PATH
-    Write-Host "Searching for coverage file in: $SearchPath"
+    Write-Host "Searching for coverage file in: $searchPath"
 
-    $CoverageFile = Get-ChildItem -Path $SearchPath -Filter "coverage.cobertura.xml" -Recurse |
+    $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse |
                     Select-Object -First 1 -ExpandProperty FullName
 
     if ($CoverageFile) {
-        Write-Host "Uploading $env:COVERAGE_NAME coverage via uvx from: $CoverageFile"
-
+        Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
         uvx --python "3.12" codecov-cli=="11.2.6" upload-coverage `
             --fail-on-error `
-            --token "$env:CODECOV_TOKEN" `
+            --token "$codecovToken" `
             --disable-search `
             --disable-file-fixes `
             --file "$CoverageFile" `
-            --flag "$env:COVERAGE_NAME" `
+            --flag "$coverageName" `
             --git-service github `
             --slug "arup-group/GSA-Grasshopper" `
             $PR_ARGS
     } else {
-        Write-Error "CRITICAL: Could not locate generated $env:COVERAGE_NAME coverage file under $SearchPath!"
+        Write-Error "CRITICAL: Could not locate generated $coverageName coverage file under $searchPath!"
         exit 1
     }
   displayName: ${{ parameters.uploadStepDisplayName }}
   condition: ${{ parameters.condition }}
   continueOnError: ${{ parameters.continueOnError }}
+  # Safely inject parameters via environment variables here
   env:
     CODECOV_TOKEN: ${{ parameters.codecovToken }}
     PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
-    SEARCH_PATH: ${{ parameters.searchPath }}
-    COVERAGE_NAME: ${{ parameters.coverageName }}
+    PARAM_PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
+    PARAM_COVERAGE_NAME: ${{ parameters.coverageName }}
+    PARAM_SEARCH_PATH: ${{ parameters.searchPath }}
+    PARAM_CODECOV_TOKEN: ${{ parameters.codecovToken }}

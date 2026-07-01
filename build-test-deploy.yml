@@ -23,16 +23,15 @@ steps:
   failOnStderr: true
 
 - powershell: |
-    $installerPath = Get-Item -LiteralPath $env:INSTALLER_PATH
-    $installerPathFullName = $installerPath.FullName
-    Write-output "Installer Path: $installerPathFullName"
+    $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
+    Write-output "Installer Path: ${installerPath}"
     Write-output "GSA Version:"
-    if (!(Test-Path $installerPathFullName)) {
-      Write-output "File '{0}' does not exist" -f $installerPathFullName
+    if (!(Test-Path $installerPath.FullName)) {
+      Write-output "File '{0}' does not exist" -f $installerPath.FullName
     }
     try {
       $WindowsInstaller = New-Object -com WindowsInstaller.Installer
-      $Database = $WindowsInstaller.GetType().InvokeMember("OpenDatabase", "InvokeMethod", $Null, $WindowsInstaller, @($installerPathFullName, 0))
+      $Database = $WindowsInstaller.GetType().InvokeMember("OpenDatabase", "InvokeMethod", $Null, $WindowsInstaller, @($installerPath.FullName, 0))
       $Query = "SELECT Value FROM Property WHERE Property = 'ProductVersion'"
       $View = $database.GetType().InvokeMember("OpenView", "InvokeMethod", $Null, $Database, ($Query))
       $View.GetType().InvokeMember("Execute", "InvokeMethod", $Null, $View, $Null) | Out-Null
@@ -42,7 +41,7 @@ steps:
     } catch {
       Write-output "Failed to get MSI file version: {0}." -f $_
     }
-    $app = Start-Process $installerPathFullName -ArgumentList '/passive /quiet /l* msiLog.txt' -PassThru -Wait
+    $app = Start-Process ${installerPath} -ArgumentList '/passive /quiet /l* msiLog.txt' -PassThru -Wait
     $app.WaitForExit()
     Write-Output "Exit code: $($app.ExitCode)"
     Write-Output "Exit time: $($app.ExitTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss')) UTC"
@@ -52,8 +51,6 @@ steps:
     }
   displayName: 'Install GSA'
   failOnStderr: true
-  env:
-    INSTALLER_PATH: '$(Pipeline.Workspace)\gsa.msi'
 
 - powershell: |
     & 'C:\Program Files\Oasys\*\GSA.exe' /Register
@@ -186,10 +183,10 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-        $versionInfo = (Get-Item -LiteralPath $env:GSA_DLL_PATH).VersionInfo
+        $versionInfo = $(Get-Item .\GsaGH\bin\x64\Release\net48\GsaGH.dll).VersionInfo
         echo $versionInfo
-        $fullVersion = [array]$versionInfo.FileVersion.split('.')
-        $currentTime = (Get-Date -Format "dddd MM/dd/yyyy HH:mm")
+        $fullVersion = [array]${versionInfo}.FileVersion.split('.')
+        $currentTime = $(Get-Date -Format "dddd MM/dd/yyyy HH:mm")
         $majorVersion = [string]$fullVersion[0]
         $minorVersion = [string]$fullVersion[1]
         $spVersion = [string]$fullVersion[2]
@@ -213,8 +210,6 @@ steps:
     errorActionPreference: 'continue'
     workingDirectory: '$(System.DefaultWorkingDirectory)'
     ignoreLASTEXITCODE: true
-  env:
-    GSA_DLL_PATH: '$(System.DefaultWorkingDirectory)\GsaGH\bin\x64\Release\net48\GsaGH.dll'
 
 - powershell: |
     cd GsaGH\bin\x64\Release
@@ -237,12 +232,10 @@ steps:
     $yakRh7Name =  $yakCurrentVersName -Replace "rh6_27", "rh7_0"
     Rename-Item -Path $yakCurrentVersName -NewName $yakRh7Name
     ..\yak build --platform win
-    New-Item -ItemType Directory -Path "$env:WORKSPACE_ROOT\results\yak"
-    Copy-Item $yakCurrentVersName "$env:WORKSPACE_ROOT\results\yak\$yakCurrentVersName"
-    Copy-Item $yakRh7Name "$env:WORKSPACE_ROOT\results\yak\$yakRh7Name"
+    New-Item -ItemType Directory -Path $(System.DefaultWorkingDirectory)\results\yak
+    Copy-Item $yakCurrentVersName $(System.DefaultWorkingDirectory)\results\yak\$yakCurrentVersName
+    Copy-Item $yakRh7Name $(System.DefaultWorkingDirectory)\results\yak\$yakRh7Name
   displayName: Package yak
-  env:
-    WORKSPACE_ROOT: '$(System.DefaultWorkingDirectory)'
 
 - publish: $(System.DefaultWorkingDirectory)\results\yak\
   displayName: Publish Yak Package to Azure
@@ -298,10 +291,9 @@ steps:
   condition: always()
 
 - powershell: |
-    $installerPath = Get-Item -LiteralPath $env:INSTALLER_PATH
-    $installerPathFullName = $installerPath.FullName
-    Write-output "Installer Path: $installerPathFullName"
-    $app = Start-Process "msiexec.exe" -ArgumentList "/x $installerPathFullName /quiet /passive /norestart /l* msiUninstallLog.txt" -PassThru -Wait
+    $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
+    Write-output "Installer Path: ${installerPath}"
+    $app = Start-Process "msiexec.exe" -ArgumentList "/x ${installerPath} /quiet /passive /norestart /l* msiUninstallLog.txt" -PassThru -Wait
     $app.WaitForExit()
     Write-Output "Exit code: $($app.ExitCode)"
     Write-Output "Exit time: $($app.ExitTime.ToUniversalTime().ToString('yyyy-MM-dd HH:mm:ss')) UTC"
@@ -309,7 +301,7 @@ steps:
     ### See https://docs.microsoft.com/en-us/windows/win32/msi/error-codes
     if (($app.ExitCode -eq 0) -or ($app.ExitCode -eq 1641) -or ($app.ExitCode -eq 3010)) {
       Write-Output "Application successfully uninstalled with exit code $($app.ExitCode)"
-      Remove-Item -LiteralPath $installerPathFullName -Force
+      rm $installerPath
       exit(0)
     } else {
       Write-Error "Application could not be uninstalled. Error code $($app.ExitCode)"
@@ -317,5 +309,3 @@ steps:
     }
   condition: always()
   displayName: 'Uninstall Application'
-  env:
-    INSTALLER_PATH: '$(Pipeline.Workspace)\gsa.msi'
