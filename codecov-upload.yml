@@ -34,8 +34,11 @@ steps:
     $codecovToken  = $env:SECRET_CODECOV_TOKEN
 
     if ([string]::IsNullOrWhiteSpace($codecovToken)) {
+      Write-Host "DEBUG: SECRET_CODECOV_TOKEN is empty or not set."
       Write-Error "CRITICAL: CODECOV_TOKEN is empty or not set. Ensure the secret is defined and passed to the upload step."
       exit 1
+    } else {
+      Write-Host "DEBUG: SECRET_CODECOV_TOKEN is present."
     }
 
     $PR_ARGS = @()
