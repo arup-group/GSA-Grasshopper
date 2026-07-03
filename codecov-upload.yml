@@ -40,6 +40,14 @@ steps:
       Write-Host "DEBUG: CODECOV_TOKEN is present."
     }
 
+    # #Dynamic Branch Fallback (Resolves the CI 404 Error)
+      $TargetBranch = $env:SYSTEM_PULLREQUEST_TARGETBRANCH
+      if ([string]::IsNullOrWhiteSpace($TargetBranch)) {
+          $TargetBranch = $env:BUILD_SOURCEBRANCHNAME
+      }
+      $TargetBranch = $TargetBranch -replace "refs/heads/", ""
+      Write-Host "Overriding Codecov git branch context to: $TargetBranch"
+
     $PR_ARGS = @()
     if ([string]::IsNullOrWhiteSpace($prNum) -eq $false -and $prNum -ne "None") {
       $PR_ARGS += "--pull-request-number"
@@ -54,7 +62,7 @@ steps:
 
     if ($CoverageFile) {
         Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
-        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-process --fail-on-error --token "$codecovToken" --slug "arup-group/GSA-Grasshopper" --git-service github --disable-search -f "$CoverageFile" -F "$coverageName" $PR_ARGS
+        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-process --fail-on-error --token "$codecovToken" --slug "arup-group/GSA-Grasshopper" --git-service github --disable-search --branch "$TargetBranch" -f "$CoverageFile" -F "$coverageName" $PR_ARGS
     } else {
         Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
         exit 1
