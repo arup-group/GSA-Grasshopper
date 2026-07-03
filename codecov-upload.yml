@@ -3,9 +3,6 @@ parameters:
   type: string
 - name: searchPath
   type: string
-- name: codecovToken
-  type: string
-  default: ''
 - name: pullRequestNumber
   type: string
   default: ''
@@ -64,7 +61,7 @@ steps:
   condition: ${{ parameters.condition }}
   continueOnError: ${{ parameters.continueOnError }}
   env:
-    SECRET_CODECOV_TOKEN: ${{ parameters.codecovToken }}
+    SECRET_CODECOV_TOKEN: $(CODECOV_TOKEN)
     PARAM_PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
     PARAM_COVERAGE_NAME: ${{ parameters.coverageName }}
     PARAM_SEARCH_PATH: ${{ parameters.searchPath }}

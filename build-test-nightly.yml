@@ -138,7 +138,6 @@ steps:
   parameters:
     coverageName: gsagh
     searchPath: $(System.DefaultWorkingDirectory)\results\gsagh
-    codecovToken: $(CODECOV_TOKEN)
     pullRequestNumber: $(System.PullRequest.PullRequestNumber)
     uploadStepDisplayName: Upload gsagh codecov
     condition: succeeded()
@@ -148,7 +147,6 @@ steps:
   parameters:
     coverageName: integration
     searchPath: $(System.DefaultWorkingDirectory)\results\integration
-    codecovToken: $(CODECOV_TOKEN)
     pullRequestNumber: $(System.PullRequest.PullRequestNumber)
     uploadStepDisplayName: Upload integration codecov
     condition: succeeded()
