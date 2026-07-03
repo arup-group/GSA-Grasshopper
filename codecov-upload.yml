@@ -18,27 +18,14 @@ parameters:
 
 steps:
 - powershell: |
-    $uvBinPath = "$env:USERPROFILE\.local\bin"
-    if (-not (Test-Path "$uvBinPath\uv.exe")) {
-        Write-Host "Installing uv Package Manager..."
-        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
-    }
-
-    if ($env:PATH -notlike "*$uvBinPath*") {
-        $env:PATH = "$uvBinPath;$env:PATH"
-    }
-
     $prNum         = $env:PARAM_PULL_REQUEST_NUMBER
     $coverageName  = $env:PARAM_COVERAGE_NAME
     $searchPath    = $env:PARAM_SEARCH_PATH
+    $codecovToken  = "$(CODECOV_TOKEN)"
 
-    Write-Host "DEBUG: CODECOV_TOKEN raw substitution: '$(CODECOV_TOKEN)'"
-    if ([string]::IsNullOrWhiteSpace("$(CODECOV_TOKEN)")) {
-      Write-Host "DEBUG: CODECOV_TOKEN is empty or not set."
-      Write-Error "CRITICAL: CODECOV_TOKEN is empty or not set. Ensure the secret is defined and passed to the upload step."
+    if ([string]::IsNullOrWhiteSpace($codecovToken)) {
+      Write-Error "CRITICAL: CODECOV_TOKEN is empty or not set. Ensure the secret is defined in your pipeline variables."
       exit 1
-    } else {
-      Write-Host "DEBUG: CODECOV_TOKEN is present."
     }
 
     $PR_ARGS = @()
@@ -55,7 +42,7 @@ steps:
 
     if ($CoverageFile) {
         Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
-        uvx --python "3.12" codecov-cli==11.2.6 -v upload-process --fail-on-error --token "$env:CODECOV_TOKEN" --slug "arup-group/gsa-grasshopper" --git-service github --disable-search --file "$CoverageFile" --flag "$coverageName" $PR_ARGS
+        uvx --python "3.12" codecov-cli==11.2.6 -v upload-process --fail-on-error --token "$codecovToken" --slug "arup-group/gsa-grasshopper" --git-service github --disable-search --file "$CoverageFile" --flag "$coverageName" $PR_ARGS
     } else {
         Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
         exit 1
@@ -64,7 +51,6 @@ steps:
   condition: ${{ parameters.condition }}
   continueOnError: ${{ parameters.continueOnError }}
   env:
-    SECRET_CODECOV_TOKEN: $(CODECOV_TOKEN)
     PARAM_PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
     PARAM_COVERAGE_NAME: ${{ parameters.coverageName }}
     PARAM_SEARCH_PATH: ${{ parameters.searchPath }}
