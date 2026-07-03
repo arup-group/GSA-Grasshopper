@@ -18,6 +18,16 @@ parameters:
 
 steps:
 - powershell: |
+    $uvBinPath = "$env:USERPROFILE\.local\bin"
+    if (-not (Test-Path "$uvBinPath\uv.exe")) {
+        Write-Host "Installing uv Package Manager..."
+        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+    }
+
+    if ($env:PATH -notlike "*$uvBinPath*") {
+        $env:PATH = "$uvBinPath;$env:PATH"
+    }
+
     $prNum         = $env:PARAM_PULL_REQUEST_NUMBER
     $coverageName  = $env:PARAM_COVERAGE_NAME
     $searchPath    = $env:PARAM_SEARCH_PATH
