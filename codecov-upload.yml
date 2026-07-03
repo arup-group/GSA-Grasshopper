@@ -36,6 +36,11 @@ steps:
     $searchPath    = $env:PARAM_SEARCH_PATH
     $codecovToken  = $env:SECRET_CODECOV_TOKEN
 
+    if ([string]::IsNullOrWhiteSpace($codecovToken)) {
+      Write-Error "CRITICAL: CODECOV_TOKEN is empty or not set. Ensure the secret is defined and passed to the upload step."
+      exit 1
+    }
+
     $PR_ARGS = @()
     if ([string]::IsNullOrWhiteSpace($prNum) -eq $false -and $prNum -ne "None") {
       $PR_ARGS += "--pull-request-number"
@@ -50,7 +55,7 @@ steps:
 
     if ($CoverageFile) {
         Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
-        uvx --python "3.12" codecov-cli==11.2.6 -v upload-process --fail-on-error --token "$codecovToken" --slug "arup-group/GSA-Grasshopper" --git-service github --disable-search --file "coverage.xml" --flag "$coverageName" "$PR_ARGS"
+        uvx --python "3.12" codecov-cli==11.2.6 -v upload-process --fail-on-error --token "$codecovToken" --slug "arup-group/gsa-grasshopper" --git-service github --disable-search --file "$CoverageFile" --flag "$coverageName" $PR_ARGS
     } else {
         Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
         exit 1
