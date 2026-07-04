@@ -34,7 +34,7 @@ steps:
         Write-Error "CRITICAL: CODECOV_TOKEN is empty or not set."
         exit 1
     }else {
-        Write-Error "Token is not empty"
+        Write-Host "DEBUG: Token is present and not empty."
     }
 
     $PR_ARGS = @()
