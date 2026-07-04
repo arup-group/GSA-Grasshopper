@@ -48,7 +48,7 @@ steps:
 
     if ($CoverageFile) {
         Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
-        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage --fail-on-error --token "$codecovToken" --slug "arup-group/GSA-Grasshopper" --git-service github --disable-search --disable-file-fixes --file "$CoverageFile" --flag "$coverageName" $PR_ARGS
+        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage --fail-on-error --token "$codecovToken" --git-service github --slug "arup-group/GSA-Grasshopper" --git-service github --disable-search --disable-file-fixes --file "$CoverageFile" --flag "$coverageName" $PR_ARGS
     } else {
         Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
         exit 1
