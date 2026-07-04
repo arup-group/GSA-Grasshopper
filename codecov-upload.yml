@@ -21,40 +21,34 @@ steps:
     $uvBinPath = "$env:USERPROFILE\.local\bin"
     if (-not (Test-Path "$uvBinPath\uv.exe")) {
         Write-Host "Installing uv Package Manager..."
-        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
     }
+    if ($env:PATH -notlike "*$uvBinPath*") { $env:PATH = "$uvBinPath;$env:PATH" }
 
-    if ($env:PATH -notlike "*$uvBinPath*") {
-        $env:PATH = "$uvBinPath;$env:PATH"
-    }
-
-    $prNum         = $env:PARAM_PULL_REQUEST_NUMBER
-    $coverageName  = $env:PARAM_COVERAGE_NAME
-    $searchPath    = $env:PARAM_SEARCH_PATH
-    $codecovToken  = $env:CODECOV_TOKEN
+    $prNum = $env:PARAM_PULL_REQUEST_NUMBER
+    $coverageName = $env:PARAM_COVERAGE_NAME
+    $searchPath = $env:PARAM_SEARCH_PATH
+    $codecovToken = $env:CODECOV_TOKEN
 
     if ([string]::IsNullOrWhiteSpace($codecovToken)) {
-      Write-Error "CRITICAL: CODECOV_TOKEN is empty or not set. Ensure the secret is defined in your pipeline variables."
-      exit 1
-    } else {
-      Write-Host "DEBUG: CODECOV_TOKEN is present."
+        Write-Error "CRITICAL: CODECOV_TOKEN is empty or not set."
+        exit 1
+    }else {
+        Write-Error "Token is not empty"
     }
 
     $PR_ARGS = @()
     if ([string]::IsNullOrWhiteSpace($prNum) -eq $false -and $prNum -ne "None") {
-      $PR_ARGS += "--pull-request-number"
-      $PR_ARGS += $prNum
+        $PR_ARGS += "--pull-request-number"
+        $PR_ARGS += $prNum
     }
 
     Write-Host "Searching for coverage file in: $searchPath"
-
-    $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse |
-                    Where-Object { $_.FullName -notmatch '\\In\\' } |
-                    Select-Object -First 1 -ExpandProperty FullName
+    $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse | Where-Object { $_.FullName -notmatch '\\In\\' } | Select-Object -First 1 -ExpandProperty FullName
 
     if ($CoverageFile) {
         Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
-        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-process --fail-on-error --token "$codecovToken" --slug "arup-group/GSA-Grasshopper" --git-service github --disable-search -f "$CoverageFile" -F "$coverageName" $PR_ARGS
+        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage --fail-on-error --token "$codecovToken" --slug "arup-group/GSA-Grasshopper" --git-service github --disable-search --disable-file-fixes --file "$CoverageFile" --flag "$coverageName" $PR_ARGS
     } else {
         Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
         exit 1
