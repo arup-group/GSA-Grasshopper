@@ -33,7 +33,7 @@ steps:
     if ([string]::IsNullOrWhiteSpace($codecovToken)) {
         Write-Error "CRITICAL: CODECOV_TOKEN is empty or not set."
         exit 1
-    }else {
+    } else {
         Write-Host "DEBUG: Token is present and not empty."
     }
 
@@ -48,7 +48,7 @@ steps:
 
     if ($CoverageFile) {
         Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
-        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage --fail-on-error --token "$codecovToken" --git-service github --slug "arup-group/GSA-Grasshopper" --git-service github --disable-search --disable-file-fixes --file "$CoverageFile" --flag "$coverageName" $PR_ARGS
+        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage --fail-on-error --token "$codecovToken" --git-service github --slug "arup-group/GSA-Grasshopper" --branch "$env:PARAM_BRANCH" --sha "$env:PARAM_SHA" --disable-search --disable-file-fixes --file "$CoverageFile" --flag "$coverageName" $PR_ARGS
     } else {
         Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
         exit 1
@@ -61,3 +61,5 @@ steps:
     PARAM_PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
     PARAM_COVERAGE_NAME: ${{ parameters.coverageName }}
     PARAM_SEARCH_PATH: ${{ parameters.searchPath }}
+    PARAM_SHA: $(System.PullRequest.SourceCommitId)
+    PARAM_BRANCH: $(System.PullRequest.SourceBranch)
