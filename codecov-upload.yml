@@ -18,54 +18,44 @@ parameters:
 
 steps:
 - powershell: |
-    # 1. Enforce local installation directory paths for uv
     $uvBinPath = "$env:USERPROFILE\.local\bin"
     if (-not (Test-Path "$uvBinPath\uv.exe")) {
-        Write-Host "Installing uv Package Manager..." -ForegroundColor Cyan
+        Write-Host "Installing uv Package Manager..."
         powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
     }
-    if ($env:PATH -notlike "*$uvBinPath*") {
-        $env:PATH = "$env:PATH;$uvBinPath"
-    }
+    if ($env:PATH -notlike "*$uvBinPath*") { $env:PATH = "$uvBinPath;$env:PATH" }
 
-    # 2. Extract pipeline environment contexts
-    $prNum         = $env:PARAM_PULL_REQUEST_NUMBER
-    $coverageName  = $env:PARAM_COVERAGE_NAME
-    $searchPath    = $env:PARAM_SEARCH_PATH
-    $codecovToken  = $env:CODECOV_TOKEN
-    $commitSha     = $env:BUILD_SOURCEVERSION
+    $prNum = $env:PARAM_PULL_REQUEST_NUMBER
+    $coverageName = $env:PARAM_COVERAGE_NAME
+    $searchPath = $env:PARAM_SEARCH_PATH
+    $codecovToken = $env:CODECOV_TOKEN
 
-    # FIX: Extract the true source branch name without the 'refs/heads/' prefix
-    if (![string]::IsNullOrEmpty($env:SYSTEM_PULLREQUEST_SOURCEBRANCH)) {
-        $branchName = $env:SYSTEM_PULLREQUEST_SOURCEBRANCH -replace '^refs/heads/', ''
-    } else {
-        $branchName = $env:BUILD_SOURCEBRANCHNAME
-    }
-
-    # 3. Validate mandatory parameters before attempting action execution
+    # checks for mandatory parameters
     if ([string]::IsNullOrWhiteSpace($codecovToken)) {
-        Write-Error "CRITICAL: CODECOV_TOKEN environment secret is empty or missing."
-        exit 1
-    }
-    if ([string]::IsNullOrWhiteSpace($coverageName) -or [string]::IsNullOrWhiteSpace($searchPath)) {
-        Write-Error "CRITICAL: Required inputs PARAM_COVERAGE_NAME or PARAM_SEARCH_PATH are null."
+        Write-Error "CRITICAL: CODECOV_TOKEN is empty or not set."
         exit 1
     }
 
-    Write-Host "Success: Critical pipeline parameters successfully verified." -ForegroundColor Green
+    if ([string]::IsNullOrWhiteSpace($coverageName)) {
+        Write-Error "CRITICAL: PARAM_COVERAGE_NAME is empty or not set."
+        exit 1
+    }
 
-    # 4. Locate target Cobertura coverage data asset
-    Write-Host "Scanning directory tree for target file under: $searchPath"
-    $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse |
-                    Where-Object { $_.FullName -notmatch '\\In\\' } |
-                    Select-Object -First 1 -ExpandProperty FullName
+    if ([string]::IsNullOrWhiteSpace($searchPath)) {
+        Write-Error "CRITICAL: PARAM_SEARCH_PATH is empty or not set."
+        exit 1
+    }
 
-    # 5. Run multi-step process uploader using explicit manual git targets
+    Write-Host "Success: All mandatory environment variables are verified." -ForegroundColor Green
+
+    Write-Host "Searching for coverage file in: $searchPath"
+    $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse | Where-Object { $_.FullName -notmatch '\\In\\' } | Select-Object -First 1 -ExpandProperty FullName
+
     if ($CoverageFile) {
-        Write-Host "Executing multi-step commit preparation and uploading $coverageName from: $CoverageFile"
-        uvx --python "3.12" codecov-cli==11.2.6 -v upload-process --fail-on-error --token "$codecovToken" --git-service github --slug "arup-group/GSA-Grasshopper" --disable-search --disable-file-fixes --file "$CoverageFile" --flag "$coverageName" --sha "$commitSha" --branch "$branchName" --pr "$prNum"
+        Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
+        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage --fail-on-error --token "$codecovToken" --slug "arup-group/GSA-Grasshopper" --git-service github --disable-search --disable-file-fixes --file "$CoverageFile" --flag "$coverageName" $PR_ARGS
     } else {
-        Write-Error "CRITICAL: Failed to locate 'coverage.cobertura.xml' under target path tree $searchPath!"
+        Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
         exit 1
     }
   displayName: ${{ parameters.uploadStepDisplayName }}
@@ -76,6 +66,3 @@ steps:
     PARAM_PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
     PARAM_COVERAGE_NAME: ${{ parameters.coverageName }}
     PARAM_SEARCH_PATH: ${{ parameters.searchPath }}
-    BUILD_SOURCEVERSION: $(Build.SourceVersion)
-    BUILD_SOURCEBRANCHNAME: $(Build.SourceBranchName)
-    SYSTEM_PULLREQUEST_SOURCEBRANCH: $(System.PullRequest.SourceBranch)
