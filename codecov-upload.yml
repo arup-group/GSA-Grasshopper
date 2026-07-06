@@ -34,7 +34,13 @@ steps:
     $searchPath    = $env:PARAM_SEARCH_PATH
     $codecovToken  = $env:CODECOV_TOKEN
     $commitSha     = $env:BUILD_SOURCEVERSION
-    $branchName    = $env:BUILD_SOURCEBRANCHNAME
+
+    # FIX: Extract the true source branch name without the 'refs/heads/' prefix
+    if (![string]::IsNullOrEmpty($env:SYSTEM_PULLREQUEST_SOURCEBRANCH)) {
+        $branchName = $env:SYSTEM_PULLREQUEST_SOURCEBRANCH -replace '^refs/heads/', ''
+    } else {
+        $branchName = $env:BUILD_SOURCEBRANCHNAME
+    }
 
     # 3. Validate mandatory parameters before attempting action execution
     if ([string]::IsNullOrWhiteSpace($codecovToken)) {
@@ -72,3 +78,4 @@ steps:
     PARAM_SEARCH_PATH: ${{ parameters.searchPath }}
     BUILD_SOURCEVERSION: $(Build.SourceVersion)
     BUILD_SOURCEBRANCHNAME: $(Build.SourceBranchName)
+    SYSTEM_PULLREQUEST_SOURCEBRANCH: $(System.PullRequest.SourceBranch)
