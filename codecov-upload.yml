@@ -49,12 +49,17 @@ steps:
         exit 1
     }
 
-    # 2. FIX MIXED CASING SUGGESTION: Match lower-case structures if Codecov org rules fail matching upper-case
+    # FIX MIXED CASING SUGGESTION: Match lower-case structures to bypass Codecov org rule quirks
     $repoSlug = "arup-group/gsa-grasshopper"
 
-    # Extract structural PR variables explicitly mapped from pipeline params
-    $targetBranch = if ($prNum -and $prNum -ne "0") { "${{ parameters.sourceBranch }}" } else { "main" }
-    $targetSha = if ($prNum -and $prNum -ne "0") { "${{ parameters.sourceCommitId }}" } else { "latest" }
+    # 2. FIXED: Retrieve target details via mapped environment context variables to avoid template parameter dependency
+    $targetBranch = $env:PARAM_SOURCE_BRANCH
+    $targetSha = $env:PARAM_SOURCE_SHA
+
+    # Clean out branch reference prefixing (e.g., 'refs/heads/feature' becomes 'feature')
+    if (-not [string]::IsNullOrWhiteSpace($targetBranch)) {
+        $targetBranch = $targetBranch -replace '^refs/heads/', '' -replace '^refs/pull/', ''
+    }
 
     $baseArgs = @(
         "--fail-on-error",
@@ -71,7 +76,7 @@ steps:
         $baseArgs += @("--commit-sha", $targetSha)
     }
     if (-not [string]::IsNullOrWhiteSpace($prNum) -and $prNum -ne "0" -and $prNum -notlike "*System.PullRequest*") {
-        Write-Host "Context Target Confirmed: PR #$prNum (Branch: $targetBranch)"
+        Write-Host "Context Target Confirmed: PR #$prNum (Branch: $targetBranch | SHA: $targetSha)"
         $baseArgs += @("--pull-request-number", $prNum)
     }
 
@@ -97,3 +102,5 @@ steps:
     PARAM_PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
     PARAM_COVERAGE_NAME: ${{ parameters.coverageName }}
     PARAM_SEARCH_PATH: ${{ parameters.searchPath }}
+    PARAM_SOURCE_BRANCH: $(System.PullRequest.SourceBranch)
+    PARAM_SOURCE_SHA: $(System.PullRequest.SourceCommitId)
