@@ -18,6 +18,13 @@ parameters:
 
 steps:
 - powershell: |
+    $ErrorActionPreference = "Stop"
+
+    # 1. FORCE CI ENV BYPASS: Wipe background Azure mapping contexts to prevent Codecov's proxy from throwing a 404
+    Get-ChildItem Env: | Where-Object { $_.Name -like "BUILD_*" -or $_.Name -like "SYSTEM_*" -or $_.Name -like "AZURE_*" } | ForEach-Object {
+        Remove-Item "Env:\$($_.Name)"
+    }
+
     $uvBinPath = "$env:USERPROFILE\.local\bin"
     if (-not (Test-Path "$uvBinPath\uv.exe")) {
         Write-Host "Installing uv Package Manager..."
@@ -30,21 +37,9 @@ steps:
     $searchPath = $env:PARAM_SEARCH_PATH
     $codecovToken = $env:CODECOV_TOKEN
 
-    # Checks for mandatory parameters
-    if ([string]::IsNullOrWhiteSpace($codecovToken)) {
-        Write-Error "CRITICAL: CODECOV_TOKEN is empty or not set."
-        exit 1
-    }
-    if ([string]::IsNullOrWhiteSpace($coverageName)) {
-        Write-Error "CRITICAL: PARAM_COVERAGE_NAME is empty or not set."
-        exit 1
-    }
-    if ([string]::IsNullOrWhiteSpace($searchPath)) {
-        Write-Error "CRITICAL: PARAM_SEARCH_PATH is empty or not set."
-        exit 1
-    }
-
-    Write-Host "Success: All mandatory environment variables are verified." -ForegroundColor Green
+    if ([string]::IsNullOrWhiteSpace($codecovToken)) { Write-Error "CRITICAL: CODECOV_TOKEN is empty."; exit 1 }
+    if ([string]::IsNullOrWhiteSpace($coverageName)) { Write-Error "CRITICAL: PARAM_COVERAGE_NAME is empty."; exit 1 }
+    if ([string]::IsNullOrWhiteSpace($searchPath)) { Write-Error "CRITICAL: PARAM_SEARCH_PATH is empty."; exit 1 }
 
     Write-Host "Searching for coverage file in: $searchPath"
     $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse | Where-Object { $_.FullName -notmatch '\\In\\' } | Select-Object -First 1 -ExpandProperty FullName
@@ -54,15 +49,12 @@ steps:
         exit 1
     }
 
-    $repoUri = "$(Build.Repository.Uri)"
-    $repoSlug = "arup-group/GSA-Grasshopper"
-    if ($repoUri -match 'github\.com[:/](?<owner>[^/]+)/(?<repo>[^/]+?)(?:\.git)?$') {
-        $repoSlug = "$($matches.owner)/$($matches.repo)"
-    }
-    Write-Host "Slug: $repoSlug"
+    # 2. FIX MIXED CASING SUGGESTION: Match lower-case structures if Codecov org rules fail matching upper-case
+    $repoSlug = "arup-group/gsa-grasshopper"
 
-    $targetBranch = if ($prNum -and $prNum -ne "0") { "$(System.PullRequest.SourceBranch)" } else { "$(Build.SourceBranchName)" }
-    $targetSha = if ($prNum -and $prNum -ne "0") { "$(System.PullRequest.SourceCommitId)" } else { "$(Build.SourceVersion)" }
+    # Extract structural PR variables explicitly mapped from pipeline params
+    $targetBranch = if ($prNum -and $prNum -ne "0") { "${{ parameters.sourceBranch }}" } else { "main" }
+    $targetSha = if ($prNum -and $prNum -ne "0") { "${{ parameters.sourceCommitId }}" } else { "latest" }
 
     $baseArgs = @(
         "--fail-on-error",
@@ -71,21 +63,18 @@ steps:
         "--git-service", "github"
     )
 
+    # Set explicit branch fallback definitions
     if (-not [string]::IsNullOrWhiteSpace($targetBranch) -and $targetBranch -notlike "*System.PullRequest*") {
         $baseArgs += @("--branch", $targetBranch)
     }
-
     if (-not [string]::IsNullOrWhiteSpace($targetSha) -and $targetSha -notlike "*System.PullRequest*") {
         $baseArgs += @("--commit-sha", $targetSha)
     }
-
     if (-not [string]::IsNullOrWhiteSpace($prNum) -and $prNum -ne "0" -and $prNum -notlike "*System.PullRequest*") {
-        Write-Host "Pull Request target context verified: #$prNum (Branch: $targetBranch | SHA: $targetSha)"
+        Write-Host "Context Target Confirmed: PR #$prNum (Branch: $targetBranch)"
         $baseArgs += @("--pull-request-number", $prNum)
     }
 
-    Write-Host "Resolved repository slug: $repoSlug"
-    Write-Host "Uploading file payload to Codecov flag: $coverageName"
     $uploadArgs = $baseArgs + @(
         "--disable-search",
         "--disable-file-fixes",
@@ -93,8 +82,12 @@ steps:
         "--flag", $coverageName
     )
 
+    Write-Host "Uploading standalone artifact payload to slug: $repoSlug"
     uvx --python "3.12" codecov-cli=="11.2.6" -v do-upload @uploadArgs
-    if ($LASTEXITCODE -ne 0) { Write-Error "Data upload processing failed."; exit $LASTEXITCODE }
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Data upload processing failed with exit code $LASTEXITCODE."
+        exit $LASTEXITCODE
+    }
 
   displayName: ${{ parameters.uploadStepDisplayName }}
   condition: ${{ parameters.condition }}
