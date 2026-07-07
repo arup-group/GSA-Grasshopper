@@ -18,13 +18,6 @@ parameters:
 
 steps:
 - powershell: |
-    $ErrorActionPreference = "Stop"
-
-    # 1. FORCE CI ENV BYPASS: Wipe background Azure mapping contexts to prevent Codecov's proxy from throwing a 404
-    Get-ChildItem Env: | Where-Object { $_.Name -like "BUILD_*" -or $_.Name -like "SYSTEM_*" -or $_.Name -like "AZURE_*" } | ForEach-Object {
-        Remove-Item "Env:\$($_.Name)"
-    }
-
     $uvBinPath = "$env:USERPROFILE\.local\bin"
     if (-not (Test-Path "$uvBinPath\uv.exe")) {
         Write-Host "Installing uv Package Manager..."
@@ -37,63 +30,34 @@ steps:
     $searchPath = $env:PARAM_SEARCH_PATH
     $codecovToken = $env:CODECOV_TOKEN
 
-    if ([string]::IsNullOrWhiteSpace($codecovToken)) { Write-Error "CRITICAL: CODECOV_TOKEN is empty."; exit 1 }
-    if ([string]::IsNullOrWhiteSpace($coverageName)) { Write-Error "CRITICAL: PARAM_COVERAGE_NAME is empty."; exit 1 }
-    if ([string]::IsNullOrWhiteSpace($searchPath)) { Write-Error "CRITICAL: PARAM_SEARCH_PATH is empty."; exit 1 }
+    # checks for mandatory parameters
+    if ([string]::IsNullOrWhiteSpace($codecovToken)) {
+        Write-Error "CRITICAL: CODECOV_TOKEN is empty or not set."
+        exit 1
+    }
+
+    if ([string]::IsNullOrWhiteSpace($coverageName)) {
+        Write-Error "CRITICAL: PARAM_COVERAGE_NAME is empty or not set."
+        exit 1
+    }
+
+    if ([string]::IsNullOrWhiteSpace($searchPath)) {
+        Write-Error "CRITICAL: PARAM_SEARCH_PATH is empty or not set."
+        exit 1
+    }
+
+    Write-Host "Success: All mandatory environment variables are verified." -ForegroundColor Green
 
     Write-Host "Searching for coverage file in: $searchPath"
     $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse | Where-Object { $_.FullName -notmatch '\\In\\' } | Select-Object -First 1 -ExpandProperty FullName
 
-    if (-not $CoverageFile) {
+    if ($CoverageFile) {
+        Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
+        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage --fail-on-error --token "$codecovToken" --slug "arup-group/gsa-grasshopper" --git-service github --disable-search --disable-file-fixes --file "$CoverageFile" --flag "$coverageName" $PR_ARGS
+    } else {
         Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
         exit 1
     }
-
-    # FIX MIXED CASING SUGGESTION: Match lower-case structures to bypass Codecov org rule quirks
-    $repoSlug = "arup-group/gsa-grasshopper"
-
-    # 2. FIXED: Retrieve target details via mapped environment context variables to avoid template parameter dependency
-    $targetBranch = $env:PARAM_SOURCE_BRANCH
-    $targetSha = $env:PARAM_SOURCE_SHA
-
-    # Clean out branch reference prefixing (e.g., 'refs/heads/feature' becomes 'feature')
-    if (-not [string]::IsNullOrWhiteSpace($targetBranch)) {
-        $targetBranch = $targetBranch -replace '^refs/heads/', '' -replace '^refs/pull/', ''
-    }
-
-    $baseArgs = @(
-        "--fail-on-error",
-        "--token", $codecovToken,
-        "--slug", $repoSlug,
-        "--git-service", "github"
-    )
-
-    # Set explicit branch fallback definitions
-    if (-not [string]::IsNullOrWhiteSpace($targetBranch) -and $targetBranch -notlike "*System.PullRequest*") {
-        $baseArgs += @("--branch", $targetBranch)
-    }
-    if (-not [string]::IsNullOrWhiteSpace($targetSha) -and $targetSha -notlike "*System.PullRequest*") {
-        $baseArgs += @("--commit-sha", $targetSha)
-    }
-    if (-not [string]::IsNullOrWhiteSpace($prNum) -and $prNum -ne "0" -and $prNum -notlike "*System.PullRequest*") {
-        Write-Host "Context Target Confirmed: PR #$prNum (Branch: $targetBranch | SHA: $targetSha)"
-        $baseArgs += @("--pull-request-number", $prNum)
-    }
-
-    $uploadArgs = $baseArgs + @(
-        "--disable-search",
-        "--disable-file-fixes",
-        "--file", $CoverageFile,
-        "--flag", $coverageName
-    )
-
-    Write-Host "Uploading standalone artifact payload to slug: $repoSlug"
-    uvx --python "3.12" codecov-cli=="11.2.6" -v do-upload @uploadArgs
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Data upload processing failed with exit code $LASTEXITCODE."
-        exit $LASTEXITCODE
-    }
-
   displayName: ${{ parameters.uploadStepDisplayName }}
   condition: ${{ parameters.condition }}
   continueOnError: ${{ parameters.continueOnError }}
@@ -102,5 +66,3 @@ steps:
     PARAM_PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
     PARAM_COVERAGE_NAME: ${{ parameters.coverageName }}
     PARAM_SEARCH_PATH: ${{ parameters.searchPath }}
-    PARAM_SOURCE_BRANCH: $(System.PullRequest.SourceBranch)
-    PARAM_SOURCE_SHA: $(System.PullRequest.SourceCommitId)
