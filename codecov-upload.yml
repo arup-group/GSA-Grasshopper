@@ -1,22 +1,3 @@
-parameters:
-- name: coverageName
-  type: string
-- name: searchPath
-  type: string
-- name: pullRequestNumber
-  type: string
-  default: ''
-- name: uploadStepDisplayName
-  type: string
-  default: 'Upload coverage to Codecov'
-- name: condition
-  type: string
-  default: 'succeeded()'
-- name: continueOnError
-  type: boolean
-  default: false
-
-steps:
 - powershell: |
     $uvBinPath = "$env:USERPROFILE\.local\bin"
     if (-not (Test-Path "$uvBinPath\uv.exe")) {
@@ -54,16 +35,22 @@ steps:
         exit 1
     }
 
+    # DYNAMIC TARGET RESOLUTION: Fixes Codecov cross-platform 404 parsing errors
+    $targetBranch = if ($prNum -and $prNum -ne "0") { "$(System.PullRequest.SourceBranch)" } else { "$(Build.SourceBranchName)" }
+    $targetSha = if ($prNum -and $prNum -ne "0") { "$(System.PullRequest.SourceCommitId)" } else { "$(Build.SourceVersion)" }
+
     # Base flags that apply to all subcommands
     $baseArgs = @(
         "--token", $codecovToken,
         "--slug", "arup-group/GSA-Grasshopper",
-        "--git-service", "github"
+        "--git-service", "github",
+        "--branch", $targetBranch,
+        "--commit-sha", $targetSha
     )
 
     # Handle PR numbering overrides if actively present
     if (-not [string]::IsNullOrWhiteSpace($prNum) -and $prNum -ne "0" -and $prNum -notlike "*System.PullRequest*") {
-        Write-Host "Pull Request target context verified: #$prNum"
+        Write-Host "Pull Request target context verified: #$prNum (Branch: $targetBranch | SHA: $targetSha)"
         $baseArgs += @("--pull-request-number", $prNum)
     }
 
