@@ -30,17 +30,15 @@ steps:
     $searchPath = $env:PARAM_SEARCH_PATH
     $codecovToken = $env:CODECOV_TOKEN
 
-    # checks for mandatory parameters
+    # Checks for mandatory parameters
     if ([string]::IsNullOrWhiteSpace($codecovToken)) {
         Write-Error "CRITICAL: CODECOV_TOKEN is empty or not set."
         exit 1
     }
-
     if ([string]::IsNullOrWhiteSpace($coverageName)) {
         Write-Error "CRITICAL: PARAM_COVERAGE_NAME is empty or not set."
         exit 1
     }
-
     if ([string]::IsNullOrWhiteSpace($searchPath)) {
         Write-Error "CRITICAL: PARAM_SEARCH_PATH is empty or not set."
         exit 1
@@ -48,26 +46,47 @@ steps:
 
     Write-Host "Success: All mandatory environment variables are verified." -ForegroundColor Green
 
-    # Construct PR argument dynamically if available
-    $PR_ARGS = ""
-    if (-not [string]::IsNullOrWhiteSpace($prNum) -and $prNum -ne "0" -and $prNum -ne "$(System.PullRequest.PullRequestNumber)") {
-        Write-Host "Pull Request detected: #$prNum"
-        $PR_ARGS = "--pull-request-number $prNum"
-    }
-
     Write-Host "Searching for coverage file in: $searchPath"
     $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse | Where-Object { $_.FullName -notmatch '\\In\\' } | Select-Object -First 1 -ExpandProperty FullName
 
-    if ($CoverageFile) {
-        Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
-
-        # CHANGED: Switched subcommand to upload-process to fully support commit validation on GitHub service overrides
-        Invoke-Expression "uvx --python '3.12' codecov-cli=='11.2.6' -v upload-process --fail-on-error --token '$codecovToken' --slug 'arup-group/GSA-Grasshopper' --git-service github --disable-search --disable-file-fixes --file '$CoverageFile' --flag '$coverageName' $PR_ARGS"
-
-    } else {
+    if (-not $CoverageFile) {
         Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
         exit 1
     }
+
+    # Base flags that apply to all subcommands
+    $baseArgs = @(
+        "--token", $codecovToken,
+        "--slug", "arup-group/GSA-Grasshopper",
+        "--git-service", "github"
+    )
+
+    # Handle PR numbering overrides if actively present
+    if (-not [string]::IsNullOrWhiteSpace($prNum) -and $prNum -ne "0" -and $prNum -notlike "*System.PullRequest*") {
+        Write-Host "Pull Request target context verified: #$prNum"
+        $baseArgs += @("--pull-request-number", $prNum)
+    }
+
+    Write-Host "Executing isolated multi-step upload pipeline..."
+
+    # Step 1: Force Git Commit alignment against the GitHub endpoint
+    Write-Host "1. Initializing commit validation..."
+    uvx --python "3.12" codecov-cli=="11.2.6" -v create-commit @baseArgs
+
+    # Step 2: Initialize Report context architecture
+    Write-Host "2. Instantiating Codecov report structure..."
+    uvx --python "3.12" codecov-cli=="11.2.6" -v create-report @baseArgs
+
+    # Step 3: Package and push the specific Cobertura XML file
+    Write-Host "3. Pushing file payload to target flag: $coverageName"
+    $uploadArgs = $baseArgs + @(
+        "--disable-search",
+        "--disable-file-fixes",
+        "--file", $CoverageFile,
+        "--flag", $coverageName
+    )
+    uvx --python "3.12" codecov-cli=="11.2.6" -v do-upload @uploadArgs
+
   displayName: ${{ parameters.uploadStepDisplayName }}
   condition: ${{ parameters.condition }}
   continueOnError: ${{ parameters.continueOnError }}
