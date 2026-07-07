@@ -166,13 +166,13 @@ steps:
     pathToSources: '$(System.DefaultWorkingDirectory)'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
-- publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
-  displayName: Publish GsaGHTest xml to Azure
+- publish: $(System.DefaultWorkingDirectory)\results\gsagh
+  displayName: Publish GsaGHTest coverage results to Azure
   artifact: GsaGHTestsCoverage
   continueOnError: true
 
-- publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-  displayName: Publish IntegrationTest xml to Azure
+- publish: $(System.DefaultWorkingDirectory)\results\integration
+  displayName: Publish IntegrationTest coverage results to Azure
   artifact: IntegrationTestsCoverage
   continueOnError: true
 
