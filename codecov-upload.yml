@@ -39,12 +39,12 @@ steps:
     $prNum        = $env:PARAM_PULL_REQUEST_NUMBER
     $coverageName = $env:PARAM_COVERAGE_NAME
     $searchPath   = $env:PARAM_SEARCH_PATH
-    $codecovToken = $env:SECRET_CODECOV_TOKEN
+    $codecovToken = $env:CODECOV_TOKEN
 
     # A blank token makes the CLI do a tokenless upload, which Codecov answers
     # with a misleading 404 "Repository not found" (not 401). Fail loudly first.
     if ([string]::IsNullOrWhiteSpace($codecovToken) -or $codecovToken -match 'CODECOV_TOKEN') {
-        Write-Error "CRITICAL: CODECOV_TOKEN missing/unexpanded (len=$($codecovToken.Length)). Is 'pipeline-tokens' group linked to this job?"
+        Write-Error "CRITICAL: CODECOV_TOKEN missing/unexpanded (len=$($codecovToken.Length)). Is 'grasshopper-public-repos' group linked to this job?"
         exit 1
     }
     Write-Host "CODECOV_TOKEN present (len=$($codecovToken.Length))."
