@@ -1,3 +1,22 @@
+parameters:
+- name: coverageName
+  type: string
+- name: searchPath
+  type: string
+- name: pullRequestNumber
+  type: string
+  default: ''
+- name: uploadStepDisplayName
+  type: string
+  default: 'Upload coverage to Codecov'
+- name: condition
+  type: string
+  default: 'succeeded()'
+- name: continueOnError
+  type: boolean
+  default: false
+
+steps:
 - powershell: |
     $uvBinPath = "$env:USERPROFILE\.local\bin"
     if (-not (Test-Path "$uvBinPath\uv.exe")) {
@@ -40,7 +59,9 @@
     $targetSha = if ($prNum -and $prNum -ne "0") { "$(System.PullRequest.SourceCommitId)" } else { "$(Build.SourceVersion)" }
 
     # Base flags that apply to all subcommands
+    # FIXED: Added --fail-on-error globally so any step failure stops processing immediately
     $baseArgs = @(
+        "--fail-on-error",
         "--token", $codecovToken,
         "--slug", "arup-group/GSA-Grasshopper",
         "--git-service", "github",
@@ -59,10 +80,12 @@
     # Step 1: Force Git Commit alignment against the GitHub endpoint
     Write-Host "1. Initializing commit validation..."
     uvx --python "3.12" codecov-cli=="11.2.6" -v create-commit @baseArgs
+    if ($LASTEXITCODE -ne 0) { Write-Error "Commit validation failed."; exit $LASTEXITCODE }
 
     # Step 2: Initialize Report context architecture
     Write-Host "2. Instantiating Codecov report structure..."
     uvx --python "3.12" codecov-cli=="11.2.6" -v create-report @baseArgs
+    if ($LASTEXITCODE -ne 0) { Write-Error "Report structure creation failed."; exit $LASTEXITCODE }
 
     # Step 3: Package and push the specific Cobertura XML file
     Write-Host "3. Pushing file payload to target flag: $coverageName"
@@ -73,6 +96,7 @@
         "--flag", $coverageName
     )
     uvx --python "3.12" codecov-cli=="11.2.6" -v do-upload @uploadArgs
+    if ($LASTEXITCODE -ne 0) { Write-Error "Data upload processing failed."; exit $LASTEXITCODE }
 
   displayName: ${{ parameters.uploadStepDisplayName }}
   condition: ${{ parameters.condition }}
