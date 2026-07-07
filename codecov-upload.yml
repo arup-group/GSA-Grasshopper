@@ -36,10 +36,32 @@ steps:
         exit 1
     }
 
-    if ([string]::IsNullOrWhiteSpace($coverageName)) {
-        Write-Error "CRITICAL: PARAM_COVERAGE_NAME is empty or not set."
+    $prNum        = $env:PARAM_PULL_REQUEST_NUMBER
+    $coverageName = $env:PARAM_COVERAGE_NAME
+    $searchPath   = $env:PARAM_SEARCH_PATH
+    $codecovToken = $env:SECRET_CODECOV_TOKEN
+
+    # A blank token makes the CLI do a tokenless upload, which Codecov answers
+    # with a misleading 404 "Repository not found" (not 401). Fail loudly first.
+    if ([string]::IsNullOrWhiteSpace($codecovToken) -or $codecovToken -match 'CODECOV_TOKEN') {
+        Write-Error "CRITICAL: CODECOV_TOKEN missing/unexpanded (len=$($codecovToken.Length)). Is 'pipeline-tokens' group linked to this job?"
         exit 1
     }
+    Write-Host "CODECOV_TOKEN present (len=$($codecovToken.Length))."
+
+    # Azure PR builds produce a merge commit that doesn't exist on GitHub, so
+    # the report won't attach unless we send the actual PR head SHA.
+    $isPr = -not [string]::IsNullOrWhiteSpace($prNum) -and $prNum -ne 'None' -and $prNum -notmatch 'PullRequestNumber'
+    if ($isPr -and -not [string]::IsNullOrWhiteSpace($env:SYSTEM_PULLREQUEST_SOURCECOMMITID)) {
+        $sha    = $env:SYSTEM_PULLREQUEST_SOURCECOMMITID
+        $branch = $env:SYSTEM_PULLREQUEST_SOURCEBRANCH -replace '^refs/heads/', ''
+    } else {
+        $sha    = $env:BUILD_SOURCEVERSION
+        $branch = $env:BUILD_SOURCEBRANCH -replace '^refs/heads/', ''
+    }
+
+    $PR_ARGS = @()
+    if ($isPr) { $PR_ARGS += @("--pull-request-number", $prNum) }
 
     if ([string]::IsNullOrWhiteSpace($searchPath)) {
         Write-Error "CRITICAL: PARAM_SEARCH_PATH is empty or not set."
@@ -52,8 +74,9 @@ steps:
     $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse | Where-Object { $_.FullName -notmatch '\\In\\' } | Select-Object -First 1 -ExpandProperty FullName
 
     if ($CoverageFile) {
-        Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
-        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage --fail-on-error --token "$codecovToken" --slug "arup-group/gsa-grasshopper" --git-service github --disable-search --disable-file-fixes --file "$CoverageFile" --flag "$coverageName" $PR_ARGS
+        Write-Host "Uploading $coverageName from: $CoverageFile (sha=$sha branch=$branch)"
+
+        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-process --fail-on-error --token "$codecovToken" --slug "arup-group/GSA-Grasshopper" --git-service github --sha "$sha" --branch "$branch" --file "$CoverageFile" --disable-search --name "$coverageName" --flag "$coverageName" $PR_ARGS
     } else {
         Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
         exit 1

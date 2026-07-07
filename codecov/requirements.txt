@@ -1,0 +1,11 @@
+# Pin to the SAME codecov-cli version your CI uses, so you reproduce prod
+# behaviour rather than debugging against a different uploader.
+#
+# Find the version your pipeline runs (the uploader prints it near the top of
+# its CI log output), then pin it exactly here, e.g.:
+#
+#     codecov-cli==<x.y.z>
+#
+# List installable versions:  pip index versions codecov-cli
+# The command is `codecovcli` once installed.
+codecov-cli==11.2.6
