@@ -1,29 +1,29 @@
 codecov:
-    notify:
-        after_n_builds: 2
+  notify:
+    after_n_builds: 2
+
 comment:
   behavior: new
-  layout: reach, diff, tree
+  layout: "reach, diff, tree"
   show_carryforward_flags: false
+
 coverage:
   precision: 1
-  range:
-  - 30.0
-  - 75.0
   round: down
+  range: "30...75"
   status:
     changes: false
-    default_rules:
-      flag_coverage_not_uploaded_behavior: include
     patch: true
     project:
       default:
         target: auto
         threshold: 1%
+
 flags:
   gsagh:
     carryforward: false
   integration:
     carryforward: false
+
 ignore:
-  - "GsaGHTests"  # ignore project (as it is referenced by Integration test)
+  - "**/GsaGHTests/**"
