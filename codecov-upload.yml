@@ -48,12 +48,22 @@ steps:
 
     Write-Host "Success: All mandatory environment variables are verified." -ForegroundColor Green
 
+    # Construct PR argument dynamically if available
+    $PR_ARGS = ""
+    if (-not [string]::IsNullOrWhiteSpace($prNum) -and $prNum -ne "0" -and $prNum -ne "$(System.PullRequest.PullRequestNumber)") {
+        Write-Host "Pull Request detected: #$prNum"
+        $PR_ARGS = "--pull-request-number $prNum"
+    }
+
     Write-Host "Searching for coverage file in: $searchPath"
     $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse | Where-Object { $_.FullName -notmatch '\\In\\' } | Select-Object -First 1 -ExpandProperty FullName
 
     if ($CoverageFile) {
         Write-Host "Uploading $coverageName coverage via uvx from: $CoverageFile"
-        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-coverage --fail-on-error --token "$codecovToken" --slug "arup-group/GSA-Grasshopper" --git-service github --disable-search --disable-file-fixes --file "$CoverageFile" --flag "$coverageName" $PR_ARGS
+
+        # CHANGED: Switched subcommand to upload-process to fully support commit validation on GitHub service overrides
+        Invoke-Expression "uvx --python '3.12' codecov-cli=='11.2.6' -v upload-process --fail-on-error --token '$codecovToken' --slug 'arup-group/GSA-Grasshopper' --git-service github --disable-search --disable-file-fixes --file '$CoverageFile' --flag '$coverageName' $PR_ARGS"
+
     } else {
         Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
         exit 1
