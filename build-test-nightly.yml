@@ -7,7 +7,7 @@ trigger:
 
 variables:
   - group: s3PushInstallers
-  - group: pipeline-tokens
+  - group: grasshopper-public-repos
   - name: configuration
     value: Release
 
@@ -84,75 +84,39 @@ steps:
     MSBUILDDISABLENODEREUSE: 1
 
 - powershell: |
-    Write-Host "Killing any leftover Rhino or Grasshopper background processes..."
-    Stop-Process -Name "Rhino" -Force -ErrorAction SilentlyContinue
-    Stop-Process -Name "Rhino.Inside" -Force -ErrorAction SilentlyContinue
-    Stop-Process -Name "GH_IO" -Force -ErrorAction SilentlyContinue
-  displayName: 'Clean Rhino/Grasshopper processes'
-  condition: always()
+    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
+    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\integration  .\IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
+  displayName: dotnet tests
+  failOnStderr: true
 
 - powershell: |
-    Write-Host "Clearing out pre-existing orphan .ghlink files to prevent loading blocks..."
-    $ghlinkPath = "C:\Users\*\AppData\Roaming\Grasshopper\Libraries\*.ghlink"
-    if (Test-Path $ghlinkPath) {
-        Remove-Item -Path $ghlinkPath -Force -ErrorAction SilentlyContinue
-    } else {
-        Write-Host "No rogue .ghlink files found."
-    }
-  displayName: 'Clear orphan .ghlink files'
-  condition: always()
-
-- task: VSTest@3
-  condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: GsaGh test
-  inputs:
-    resultsFolder: '$(System.DefaultWorkingDirectory)\results\gsagh'
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
-    otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
-
-- task: VSTest@3
-  condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
-  displayName: Integration test
-  inputs:
-    resultsFolder: '$(System.DefaultWorkingDirectory)\results\integration'
-    testSelector: 'testAssemblies'
-    testAssemblyVer2: |
-      IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
-    otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:$(USERPROFILE)\\.nuget\\packages\\coverlet.collector\\6.0.2\\build'
-
-- powershell: |
-    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post -UseBasicParsing | Select-Object StatusCode).StatusCode) {
+    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
       Write-Output "codecov.yml is invalid"
-      Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post -UseBasicParsing
+      Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
       exit(1)
     } else {
       Write-Output "codecov.yml is valid"
     }
-  displayName: Validate codecov
+  displayName: Validate codecov.yml
   failOnStderr: true
-  condition: succeeded()
 
-- template: codecov-upload.yml
-  parameters:
-    coverageName: gsagh
-    searchPath: $(System.DefaultWorkingDirectory)\results\gsagh
-    codecovToken: $(CODECOV_TOKEN)
-    pullRequestNumber: $(System.PullRequest.PullRequestNumber)
-    uploadStepDisplayName: Upload gsagh codecov
-    condition: succeeded()
-    continueOnError: false
-
-- template: codecov-upload.yml
-  parameters:
-    coverageName: integration
-    searchPath: $(System.DefaultWorkingDirectory)\results\integration
-    codecovToken: $(CODECOV_TOKEN)
-    pullRequestNumber: $(System.PullRequest.PullRequestNumber)
-    uploadStepDisplayName: Upload integration codecov
-    condition: succeeded()
-    continueOnError: false
+- powershell: |
+    $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
+    echo $coverage_file_gsagh
+    $coverage_file_integration = (Resolve-Path $(System.DefaultWorkingDirectory)/results/integration/*/coverage.cobertura.xml).Path
+    echo $coverage_file_integration
+    Copy-Item $coverage_file_gsagh $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
+    Copy-Item $coverage_file_integration $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
+    $ProgressPreference = 'SilentlyContinue'
+    Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
+    ls $(System.DefaultWorkingDirectory)\
+    cd $(System.DefaultWorkingDirectory)\
+    .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_gsagh.xml -F gsagh
+    .\codecov -t $env:CODECOV_TOKEN --dir $(System.DefaultWorkingDirectory)\results --file coverage_integration.xml -F integration
+  env:
+    CODECOV_TOKEN: $(CODECOV_TOKEN)
+  displayName: Upload Code Coverage to codecovio
+  failOnStderr: true
 
 - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
   displayName: Publish GsaGHTest xml to Azure
