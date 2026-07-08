@@ -9,81 +9,66 @@ parameters:
 - name: uploadStepDisplayName
   type: string
   default: 'Upload coverage to Codecov'
-- name: condition
-  type: string
-  default: 'succeeded()'
-- name: continueOnError
-  type: boolean
-  default: false
+
 
 steps:
-- powershell: |
-    $uvBinPath = "$env:USERPROFILE\.local\bin"
-    if (-not (Test-Path "$uvBinPath\uv.exe")) {
-        Write-Host "Installing uv Package Manager..."
-        powershell -ExecutionPolicy ByPass -c "irm https://astral.sh | iex"
-    }
-    if ($env:PATH -notlike "*$uvBinPath*") { $env:PATH = "$uvBinPath;$env:PATH" }
+- bash: |
+    set -euo pipefail
 
-    $prNum = $env:PARAM_PULL_REQUEST_NUMBER
-    $coverageName = $env:PARAM_COVERAGE_NAME
-    $searchPath = $env:PARAM_SEARCH_PATH
-    $codecovToken = $env:CODECOV_TOKEN
+    # Normalize Windows backslashes to forward slashes for Git Bash
+    search_path="${PARAM_SEARCH_PATH//\\//}"
+    coverage_name="$PARAM_COVERAGE_NAME"
+    pr_num="${PARAM_PULL_REQUEST_NUMBER:-}"
+    codecov_token="$CODECOV_TOKEN"
 
-    # checks for mandatory parameters
-    if ([string]::IsNullOrWhiteSpace($codecovToken)) {
-        Write-Error "CRITICAL: CODECOV_TOKEN is empty or not set."
-        exit 1
-    }
+    # A blank token causes a tokenless upload → Codecov returns 404 "Repository not found".
+    if [[ -z "$codecov_token" || "$codecov_token" == *CODECOV_TOKEN* ]]; then
+      echo "##[error]CRITICAL: CODECOV_TOKEN missing/unexpanded (len=${#codecov_token}). Is 'grasshopper-public-repos' linked and accessible?"
+      exit 1
+    fi
+    echo "CODECOV_TOKEN present (len=${#codecov_token})."
 
-    $prNum        = $env:PARAM_PULL_REQUEST_NUMBER
-    $coverageName = $env:PARAM_COVERAGE_NAME
-    $searchPath   = $env:PARAM_SEARCH_PATH
-    $codecovToken = $env:CODECOV_TOKEN
+    # Ensure uv is available
+    uv_bin="$HOME/.local/bin"
+    if [[ ! -f "$uv_bin/uv.exe" ]]; then
+      echo "Installing uv Package Manager..."
+      powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+    fi
+    export PATH="$uv_bin:$PATH"
 
-    # A blank token makes the CLI do a tokenless upload, which Codecov answers
-    # with a misleading 404 "Repository not found" (not 401). Fail loudly first.
-    if ([string]::IsNullOrWhiteSpace($codecovToken) -or $codecovToken -match 'CODECOV_TOKEN') {
-        Write-Error "CRITICAL: CODECOV_TOKEN missing/unexpanded (len=$($codecovToken.Length)). Is 'grasshopper-public-repos' group linked to this job?"
-        exit 1
-    }
-    Write-Host "CODECOV_TOKEN present (len=$($codecovToken.Length))."
+    # Azure PR builds produce a merge commit that doesn't exist on GitHub;
+    # use the PR head SHA so the report attaches to the right commit.
+    is_pr=false
+    if [[ -n "$pr_num" && "$pr_num" != "None" && "$pr_num" != *PullRequestNumber* ]]; then
+      is_pr=true
+    fi
 
-    # Azure PR builds produce a merge commit that doesn't exist on GitHub, so
-    # the report won't attach unless we send the actual PR head SHA.
-    $isPr = -not [string]::IsNullOrWhiteSpace($prNum) -and $prNum -ne 'None' -and $prNum -notmatch 'PullRequestNumber'
-    if ($isPr -and -not [string]::IsNullOrWhiteSpace($env:SYSTEM_PULLREQUEST_SOURCECOMMITID)) {
-        $sha    = $env:SYSTEM_PULLREQUEST_SOURCECOMMITID
-        $branch = $env:SYSTEM_PULLREQUEST_SOURCEBRANCH -replace '^refs/heads/', ''
-    } else {
-        $sha    = $env:BUILD_SOURCEVERSION
-        $branch = $env:BUILD_SOURCEBRANCH -replace '^refs/heads/', ''
-    }
+    pr_args=()
+    [[ "$is_pr" == "true" ]] && pr_args=(--pull-request-number "$pr_num")
 
-    $PR_ARGS = @()
-    if ($isPr) { $PR_ARGS += @("--pull-request-number", $prNum) }
+    echo "Searching for coverage file in: $search_path"
+    coverage_file=$(find "$search_path" -name "coverage.cobertura.xml" | grep -v '/In/' | head -1)
 
-    if ([string]::IsNullOrWhiteSpace($searchPath)) {
-        Write-Error "CRITICAL: PARAM_SEARCH_PATH is empty or not set."
-        exit 1
-    }
+    if [[ -z "$coverage_file" ]]; then
+      echo "##[error]CRITICAL: Could not locate 'coverage.cobertura.xml' under $search_path!"
+      exit 1
+    fi
 
-    Write-Host "Success: All mandatory environment variables are verified." -ForegroundColor Green
+    echo "Uploading $coverage_name from: $coverage_file"
 
-    Write-Host "Searching for coverage file in: $searchPath"
-    $CoverageFile = Get-ChildItem -Path $searchPath -Filter "coverage.cobertura.xml" -Recurse | Where-Object { $_.FullName -notmatch '\\In\\' } | Select-Object -First 1 -ExpandProperty FullName
-
-    if ($CoverageFile) {
-        Write-Host "Uploading $coverageName from: $CoverageFile (sha=$sha branch=$branch)"
-
-        uvx --python "3.12" codecov-cli=="11.2.6" -v upload-process --fail-on-error --token "$codecovToken" --slug "arup-group/GSA-Grasshopper" --git-service github --sha "$sha" --branch "$branch" --file "$CoverageFile" --disable-search --name "$coverageName" --flag "$coverageName" $PR_ARGS
-    } else {
-        Write-Error "CRITICAL: Could not locate 'coverage.cobertura.xml' under $searchPath!"
-        exit 1
-    }
+    uvx --python "3.12" "codecov-cli==11.2.6" -v upload-coverage \
+      --fail-on-error \
+      --token "$codecov_token" \
+      --slug "arup-group/GSA-Grasshopper" \
+      --git-service github \
+      --file "$coverage_file" \
+      --disable-search \
+      --name "$coverage_name" \
+      --flag "$coverage_name" \
+      "${pr_args[@]}"
   displayName: ${{ parameters.uploadStepDisplayName }}
-  condition: ${{ parameters.condition }}
-  continueOnError: ${{ parameters.continueOnError }}
+  condition: succeeded()
+  continueOnError: false
   env:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
     PARAM_PULL_REQUEST_NUMBER: ${{ parameters.pullRequestNumber }}
