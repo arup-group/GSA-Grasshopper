@@ -11,7 +11,20 @@ variables:
   - name: configuration
     value: Release
 
-pool: 'rhino-compute'
+pr: none
+
+jobs:
+- job: build_and_test
+  pool: 'rhino-compute'
+  workspace:
+    clean: all
+  steps:
+  - powershell: |
+      Get-ChildItem *.msi -Recurse | Remove-Item
+      aws s3 cp s3://oasys-installer-store/GSA/nightly . --exclude "*" --include *Arup*.msi --recursive
+      Get-ChildItem *.msi | Rename-Item -NewName gsa.msi
+    displayName: 'Download GSA nightly'
+    failOnStderr: true
 
 workspace:
   clean: all
