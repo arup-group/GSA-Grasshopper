@@ -1,0 +1,79 @@
+parameters:
+- name: vmImage
+  type: string
+  default: windows-2025
+- name: pullRequestNumber
+  type: string
+  default: ''
+- name: publishAzureCodeCoverageResults
+  type: boolean
+  default: false
+
+jobs:
+- job: upload_coverage
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+  dependsOn: build_and_test
+  condition: succeeded('build_and_test')
+  steps:
+  - checkout: none
+  - download: current
+    artifact: codecov-config
+
+  - download: current
+    artifact: coverage-gsagh
+
+  - download: current
+    artifact: coverage-integration
+
+  - powershell: |
+      if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath $(Pipeline.Workspace)\codecov-config\codecov.yml) -Method post -UseBasicParsing | Select-Object StatusCode).StatusCode) {
+        Write-Output "codecov.yml is invalid"
+        Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath $(Pipeline.Workspace)\codecov-config\codecov.yml) -Method post -UseBasicParsing
+        exit(1)
+      } else {
+        Write-Output "codecov.yml is valid"
+      }
+    displayName: Validate codecov
+    failOnStderr: true
+
+  - ${{ if eq(parameters.publishAzureCodeCoverageResults, true) }}:
+    - task: PublishCodeCoverageResults@2
+      displayName: Create Azure GsaGH CodeCoverage
+      inputs:
+        codeCoverageTool: 'cobertura'
+        summaryFileLocation: '$(Pipeline.Workspace)/coverage-gsagh/**/coverage.cobertura.xml'
+        pathToSources: '$(System.DefaultWorkingDirectory)'
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+
+    - task: PublishCodeCoverageResults@2
+      displayName: Create Azure IntegrationTest CodeCoverage
+      inputs:
+        codeCoverageTool: 'cobertura'
+        summaryFileLocation: '$(Pipeline.Workspace)/coverage-integration/**/coverage.cobertura.xml'
+        pathToSources: '$(System.DefaultWorkingDirectory)'
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+
+  - publish: $(Pipeline.Workspace)/coverage-gsagh/**/coverage.cobertura.xml
+    displayName: Publish GsaGHTest xml to Azure
+    artifact: GsaGHTestsCoverage
+    continueOnError: true
+
+  - publish: $(Pipeline.Workspace)/coverage-integration/**/coverage.cobertura.xml
+    displayName: Publish IntegrationTest xml to Azure
+    artifact: IntegrationTestsCoverage
+    continueOnError: true
+
+  - template: codecov-upload.yml
+    parameters:
+      coverageName: gsagh
+      searchPath: $(Pipeline.Workspace)/coverage-gsagh
+      pullRequestNumber: ${{ parameters.pullRequestNumber }}
+      uploadStepDisplayName: Upload gsagh codecov
+
+  - template: codecov-upload.yml
+    parameters:
+      coverageName: integration
+      searchPath: $(Pipeline.Workspace)/coverage-integration
+      pullRequestNumber: ${{ parameters.pullRequestNumber }}
+      uploadStepDisplayName: Upload integration codecov
