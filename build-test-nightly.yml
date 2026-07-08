@@ -132,16 +132,6 @@ jobs:
     artifact: coverage-integration
     displayName: Publish integration coverage for Codecov
 
-  - publish: $(System.DefaultWorkingDirectory)\results\coverage_gsagh.xml
-    displayName: Publish GsaGHTest xml to Azure
-    artifact: GsaGHTestsCoverage
-    continueOnError: true
-
-  - publish: $(System.DefaultWorkingDirectory)\results\coverage_integration.xml
-    displayName: Publish IntegrationTest xml to Azure
-    artifact: IntegrationTestsCoverage
-    continueOnError: true
-
   - publish: $(System.DefaultWorkingDirectory)\codecov.yml
     artifact: codecov-config
     displayName: Publish codecov config
@@ -227,6 +217,16 @@ jobs:
       }
     displayName: Validate codecov
     failOnStderr: true
+
+  - publish: $(Pipeline.Workspace)/coverage-gsagh/**/coverage.cobertura.xml
+    displayName: Publish GsaGHTest xml to Azure
+    artifact: GsaGHTestsCoverage
+    continueOnError: true
+
+  - publish: $(Pipeline.Workspace)/coverage-integration/**/coverage.cobertura.xml
+    displayName: Publish IntegrationTest xml to Azure
+    artifact: IntegrationTestsCoverage
+    continueOnError: true
 
   - template: codecov-upload.yml
     parameters:
