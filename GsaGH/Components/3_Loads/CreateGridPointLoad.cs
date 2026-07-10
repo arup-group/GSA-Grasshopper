@@ -10,6 +10,7 @@ using Grasshopper.Kernel.Types;
 
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 
 using OasysGH;
@@ -273,6 +274,7 @@ namespace GsaGH.Components {
       gridPointLoad.ApiLoad.Value
         = ((Force)Input.UnitNumber(this, da, 6, _forceUnit)).Newtons;
 
+      GsaGH.Helpers.PostHog.Load(gridPointLoad, ReferenceType.None);
       da.SetData(0, new GsaLoadGoo(gridPointLoad));
     }
 

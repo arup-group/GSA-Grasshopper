@@ -5,7 +5,7 @@ trigger:
 
 variables:
   - group: s3PushInstallers
-  - group: pipeline-tokens
+  - group: grasshopper-public-repos
   - name: configuration
     value: Release
 
@@ -88,15 +88,16 @@ steps:
   failOnStderr: true
 
 - powershell: |
-    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
+    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post -UseBasicParsing | Select-Object StatusCode).StatusCode) {
       Write-Output "codecov.yml is invalid"
-      Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
+      Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post -UseBasicParsing
       exit(1)
     } else {
       Write-Output "codecov.yml is valid"
     }
-  displayName: Validate codecov.yml
+  displayName: Validate codecov
   failOnStderr: true
+  condition: and(succeeded(), startsWith(variables['configuration'], 'Release'))
 
 - powershell: |
     $coverage_file_gsagh = (Resolve-Path $(System.DefaultWorkingDirectory)/results/gsagh/*/coverage.cobertura.xml).Path
