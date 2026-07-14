@@ -5,7 +5,7 @@ trigger:
 
 variables:
   - group: s3PushInstallers
-  - group: pipeline-tokens
+  - group: grasshopper-public-repos
   - name: configuration
     value: Release
 
@@ -88,9 +88,9 @@ steps:
   failOnStderr: true
 
 - powershell: |
-    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post | Select-Object StatusCode).StatusCode) {
+    if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post -UseBasicParsing  | Select-Object StatusCode).StatusCode) {
       Write-Output "codecov.yml is invalid"
-      Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post
+      Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post -UseBasicParsing
       exit(1)
     } else {
       Write-Output "codecov.yml is valid"
@@ -116,7 +116,7 @@ steps:
   displayName: Upload Code Coverage to codecovio
   failOnStderr: true
 
-- task: PublishCodeCoverageResults@1
+- task: PublishCodeCoverageResults@2
   displayName: Create Azure GsaGH CodeCoverage
   inputs:
     codeCoverageTool: 'cobertura'
@@ -124,7 +124,7 @@ steps:
     pathToSources: '$(System.DefaultWorkingDirectory)'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
-- task: PublishCodeCoverageResults@1
+- task: PublishCodeCoverageResults@2
   displayName: Create Azure IntegrationTest CodeCoverage
   inputs:
     codeCoverageTool: 'cobertura'
