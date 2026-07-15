@@ -82,10 +82,30 @@ steps:
     MSBUILDDISABLENODEREUSE: 1
 
 - powershell: |
-    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\gsagh .\GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
-    dotnet test --collect:"XPlat Code Coverage" /TestAdapterPath:$env:UserProfile\.nuget\packages\coverlet.collector\6.0.2\build --results-directory .\results\integration  .\IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
-  displayName: dotnet tests
-  failOnStderr: true
+    Write-Host "Killing any leftover Rhino or Grasshopper background processes..."
+    Stop-Process -Name "Rhino" -Force -ErrorAction SilentlyContinue
+    Stop-Process -Name "Rhino.Inside" -Force -ErrorAction SilentlyContinue
+    Stop-Process -Name "GH_IO" -Force -ErrorAction SilentlyContinue
+  displayName: 'Clean rhino processes'
+  condition: always()
+
+- task: VSTest@3
+  displayName: 'GsaGh test'
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
+    resultsFolder: '$(System.DefaultWorkingDirectory)\results\gsagh'
+    otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:"$(USERPROFILE)\.nuget\packages\coverlet.collector\6.0.2\build"'
+
+- task: VSTest@3
+  displayName: 'Integration test'
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      IntegrationTests\bin\x64\Release\net48\IntegrationTests.dll
+    resultsFolder: '$(System.DefaultWorkingDirectory)\results\integration'
+    otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:"$(USERPROFILE)\.nuget\packages\coverlet.collector\6.0.2\build"'
 
 - powershell: |
     if (200 -ne (Invoke-WebRequest -Uri https://codecov.io/validate -Body (Get-Content -Raw -LiteralPath .\codecov.yml) -Method post -UseBasicParsing  | Select-Object StatusCode).StatusCode) {
