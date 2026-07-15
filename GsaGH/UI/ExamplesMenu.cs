@@ -83,7 +83,7 @@ namespace GsaGH.Graphics.Menu {
     }
 
     private static void AddFileMenuItem(ToolStripMenuItem menuItem, FileEntry file) {
-      menuItem.DropDown.Items.Add(file.Name, null, async (s, a) => {
+      menuItem.DropDown.Items.Add(HttpFileHelper.GetMenuText(file.Name), null, async (s, a) => {
         try {
           await exampleFileManager.DownloadAndOpenFileAsync(file, GrasshopperFileOpener.Open);
         } catch (Exception) {

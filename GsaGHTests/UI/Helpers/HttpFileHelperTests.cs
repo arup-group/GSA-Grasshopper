@@ -125,5 +125,50 @@ namespace GsaGHTests.UI {
       Assert.Throws<ArgumentNullException>(()
         => HttpFileHelper.GetFileEntry("http://example.com", null, new List<string>()));
     }
+
+    [Fact]
+    public void GetFileEntry_EncodedHtmlEntityInHref_DecodesNameAndRewritesUrl() {
+      var node = HtmlNode.CreateNode(
+        "<a href=\"/data/Edit%20%26amp%3B%20update.gh\">x</a>");
+      var allowed = new List<string> {
+        ".gh",
+      };
+
+      FileEntry entry = HttpFileHelper.GetFileEntry("http://example.com", node, allowed);
+
+      Assert.NotNull(entry);
+      Assert.Equal("Edit & update.gh", entry.Name);
+      Assert.Equal("http://example.com/data/Edit%20%26%20update.gh", entry.Url);
+    }
+
+    [Fact]
+    public void GetFileEntry_EmptyPathFileName_UsesDecodedInnerTextAndRewritesUrl() {
+      var node = HtmlNode.CreateNode("<a href=\"/data/?download=.gh\">Edit &amp; @ model.gh</a>");
+      var allowed = new List<string> {
+        ".gh",
+      };
+
+      FileEntry entry = HttpFileHelper.GetFileEntry("http://example.com", node, allowed);
+
+      Assert.NotNull(entry);
+      Assert.Equal("Edit & @ model.gh", entry.Name);
+      Assert.Equal("http://example.com/data/Edit%20%26%20%40%20model.gh", entry.Url);
+    }
+
+    [Fact]
+    public void GetMenuText_NullInput_ReturnsEmptyString() {
+      string result = HttpFileHelper.GetMenuText(null);
+
+      Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public void GetMenuText_DecodesHtml_NormalizesWhitespace_AndEscapesAmpersand() {
+      const string input = "A&amp;B\tC\nD\rE@F.gh";
+
+      string result = HttpFileHelper.GetMenuText(input);
+
+      Assert.Equal("A&&B C D E@F.gh", result);
+    }
   }
 }

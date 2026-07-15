@@ -34,15 +34,34 @@ namespace GsaGH.UI.Helpers {
       Uri absoluteUri = href.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? new Uri(href) :
         new Uri(new Uri(url), href);
       string fileName = Path.GetFileName(absoluteUri.LocalPath);
-      fileName = Uri.UnescapeDataString(fileName ?? string.Empty).Trim();
+      fileName = System.Net.WebUtility.HtmlDecode(Uri.UnescapeDataString(fileName ?? string.Empty)).Trim();
       if (string.IsNullOrEmpty(fileName)) {
-        fileName = link.InnerText.Trim();
+        fileName = System.Net.WebUtility.HtmlDecode(link.InnerText.Trim());
       }
+      string absoluteUrl = absoluteUri.ToString();
+      int lastSlashIndex = absoluteUrl.LastIndexOf('/');
+      if (lastSlashIndex >= 0) {
+        absoluteUrl = absoluteUrl.Substring(0, lastSlashIndex + 1) + Uri.EscapeDataString(fileName);
+      }
+
 
       return new FileEntry() {
         Name = fileName,
-        Url = absoluteUri.ToString(),
+        Url = absoluteUrl,
       };
+    }
+
+    /// <summary>
+    ///   Converts a file name into text safe for WinForms menu display.
+    ///   Decodes HTML entities, normalizes whitespace, and escapes ampersands
+    ///   so characters like '&' are shown literally instead of treated as mnemonics.
+    /// </summary>
+    /// <param name="fileName">Raw file name from HTML/link source.</param>
+    /// <returns>Menu-safe text for <see cref="ToolStripMenuItem" />.</returns>
+    public static string GetMenuText(string fileName) {
+      string text = System.Net.WebUtility.HtmlDecode(fileName ?? string.Empty).Trim();
+      text = text.Replace("\r", " ").Replace("\n", " ").Replace("\t", " ");
+      return text.Replace("&", "&&");
     }
   }
 }

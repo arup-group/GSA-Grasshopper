@@ -252,6 +252,20 @@ namespace GsaGHTests.UI {
       Assert.Throws<ArgumentException>(() => downloader.SetCustomDownloadsPath("invalid\\path"));
     }
 
+    [Fact]
+    public async Task GetFilesFromWebPageAsync_AppliesHttpFileHelperRules_ForDecodedNameAndEscapedUrl() {
+      string htmlContent
+        = "<html><body><a href='/Edit%20%26amp%3B%20%40%20model.gh'>Edit &amp; @ model.gh</a></body></html>";
+
+      _mockHttpClient.Setup(c => c.GetStringAsync(It.IsAny<string>())).ReturnsAsync(htmlContent);
+
+      List<FileEntry> files = await _downloader.GetFilesFromWebPageAsync();
+
+      Assert.Single(files);
+      Assert.Equal("Edit & @ model.gh", files[0].Name);
+      Assert.Equal("http://example.com/Edit%20%26%20%40%20model.gh", files[0].Url);
+    }
+
     private static FileEntry GetSampleFileEntry() {
       var file = new FileEntry {
         Name = "testfile.gh",
