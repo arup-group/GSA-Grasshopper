@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+using System.Windows.Forms;
 
 using Grasshopper;
 using Grasshopper.Kernel;
@@ -15,6 +16,7 @@ using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 using GsaGH.Properties;
+using GsaGH.UI.SampleFiles;
 
 using OasysGH;
 using OasysGH.Components;
@@ -29,6 +31,9 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.FootfallResults;
+    private readonly List<string> keywords = new List<string>() {
+      "footfall",
+    };
 
     public FootfallResults() : base("Footfall Results", "Footfall",
       "Node Resonant or Transient Footfall result values", CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -179,6 +184,19 @@ namespace GsaGH.Components {
       da.SetDataTree(5, critId);
       da.SetDataTree(6, critfreq);
       da.SetDataTree(7, outIDs);
+    }
+
+    public override void AppendAdditionalMenuItems(ToolStripDropDown menu) {
+      if (!(menu is ContextMenuStrip)) {
+        return; // this method is also called when clicking EWR balloon
+      }
+
+      Menu_AppendSeparator(menu);
+      ToolStripMenuItem samplesMenu = SampleFilesMenuHelper.CreateSampleFilesMenu(keywords);
+
+      menu.Items.Add(samplesMenu);
+
+      Menu_AppendSeparator(menu);
     }
   }
 }
