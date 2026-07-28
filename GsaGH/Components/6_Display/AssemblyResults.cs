@@ -852,7 +852,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
 
-      PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 1, _mode.ToString(), _disp.ToString()));
+      PostHog.TrackResultOnce(this, result.CaseType, 1, _mode.ToString(), _disp.ToString());
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {

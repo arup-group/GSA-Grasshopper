@@ -308,7 +308,7 @@ namespace GsaGH.Components {
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
 
-      PostHog.TrackOnce(this, () => PostHog.Diagram("Load", _caseId, _selectedItems[1], types, Parameters.EntityType.Element));
+      PostHog.TrackDiagramOnce(this, "Load", _caseId, _selectedItems[1], types, Parameters.EntityType.Element);
     }
 
     private bool IsGhObjectValid(GsaModelGoo modelGoo) {

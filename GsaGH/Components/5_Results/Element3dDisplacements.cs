@@ -169,7 +169,7 @@ namespace GsaGH.Components {
           outTransXyz.Add(new GH_UnitNumber(extrema.Xyz.ToUnit(_lengthUnit)), path);
         }
 
-        PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 3, "Displacement"));
+        PostHog.TrackResultOnce(this, result.CaseType, 3, "Displacement");
       }
 
       da.SetDataTree(0, outTransX);

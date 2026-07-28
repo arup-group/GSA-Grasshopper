@@ -192,7 +192,7 @@ namespace GsaGH.Components {
           outIDs.Add(key.Id, path);
         }
 
-        PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 0, "Displacement"));
+        PostHog.TrackResultOnce(this, result.CaseType, 0, "Displacement");
       }
 
       da.SetDataTree(0, outTransX);

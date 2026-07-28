@@ -83,7 +83,7 @@ namespace GsaGH.Components {
       da.SetData(0, resonant.GetExtrema(resonant.Max.MaximumResponseFactor).MaximumResponseFactor);
       da.SetData(1, transient.GetExtrema(transient.Max.MaximumResponseFactor).MaximumResponseFactor);
 
-      PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 0, "Footfall", "Max"));
+      PostHog.TrackResultOnce(this, result.CaseType, 0, "Footfall", "Max");
     }
   }
 }

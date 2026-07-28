@@ -118,8 +118,8 @@ namespace GsaGH.Components {
       }
 
       da.SetData(0, new GsaModelGoo(gsaModel));
-      GsaGH.Helpers.PostHog.TrackOnce(this, () => OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"open{fileName.Substring(fileName.LastIndexOf('.') + 1).ToUpper()}",
-        (int)(new FileInfo(fileName).Length / 1024)));
+      GsaGH.Helpers.PostHog.TrackModelIOOnce(this, $"open{fileName.Substring(fileName.LastIndexOf('.') + 1).ToUpper()}",
+        (int)(new FileInfo(fileName).Length / 1024));
     }
 
     private void UpdateMessage(string fileName) {

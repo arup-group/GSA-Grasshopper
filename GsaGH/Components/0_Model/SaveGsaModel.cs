@@ -123,8 +123,8 @@ namespace GsaGH.Components {
       string mes = model.ApiModel.SaveAs(fileNameAndPath).ToString();
       if (mes == ReturnValue.GS_OK.ToString()) {
         _fileNameLastSaved = fileNameAndPath;
-        GsaGH.Helpers.PostHog.TrackOnce(this, () => OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"save{fileNameAndPath.Substring(fileNameAndPath.LastIndexOf('.') + 1).ToUpper()}",
-          (int)(new FileInfo(fileNameAndPath).Length / 1024)));
+        GsaGH.Helpers.PostHog.TrackModelIOOnce(this, $"save{fileNameAndPath.Substring(fileNameAndPath.LastIndexOf('.') + 1).ToUpper()}",
+          (int)(new FileInfo(fileNameAndPath).Length / 1024));
         model.FileNameAndPath = fileNameAndPath;
       } else {
         this.AddRuntimeError(mes);

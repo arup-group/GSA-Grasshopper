@@ -311,7 +311,7 @@ namespace GsaGH.Components {
 
       nodeLoad.ApiLoad.Value = load;
 
-      GsaGH.Helpers.PostHog.TrackOnce(this, () => GsaGH.Helpers.PostHog.Load(nodeLoad._refPoint != Point3d.Unset, nodeLoad.Type.ToString()));
+      GsaGH.Helpers.PostHog.TrackLoadOnce(this, nodeLoad._refPoint != Point3d.Unset, nodeLoad.Type.ToString());
       da.SetData(0, new GsaLoadGoo(nodeLoad));
     }
 

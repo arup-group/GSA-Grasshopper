@@ -317,7 +317,7 @@ namespace GsaGH.Components {
 
       gridlineload.ApiLoad.ValueAtEnd = load2;
 
-      GsaGH.Helpers.PostHog.TrackOnce(this, () => GsaGH.Helpers.PostHog.Load(gridlineload, ReferenceType.None));
+      GsaGH.Helpers.PostHog.TrackLoadOnce(this, gridlineload, ReferenceType.None);
       da.SetData(0, new GsaLoadGoo(gridlineload));
     }
 

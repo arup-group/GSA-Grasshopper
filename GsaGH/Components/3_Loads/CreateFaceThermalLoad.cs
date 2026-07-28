@@ -209,7 +209,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      GsaGH.Helpers.PostHog.TrackOnce(this, () => GsaGH.Helpers.PostHog.Load(faceThermalLoad, faceThermalLoad.ReferenceType));
+      GsaGH.Helpers.PostHog.TrackLoadOnce(this, faceThermalLoad, faceThermalLoad.ReferenceType);
       da.SetData(0, new GsaLoadGoo(faceThermalLoad));
     }
 

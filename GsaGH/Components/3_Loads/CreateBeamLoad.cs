@@ -454,7 +454,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      GsaGH.Helpers.PostHog.TrackOnce(this, () => GsaGH.Helpers.PostHog.Load(beamLoad, beamLoad.ReferenceType));
+      GsaGH.Helpers.PostHog.TrackLoadOnce(this, beamLoad, beamLoad.ReferenceType);
       da.SetData(0, new GsaLoadGoo(beamLoad));
     }
 

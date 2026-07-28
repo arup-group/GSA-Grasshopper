@@ -510,7 +510,7 @@ namespace GsaGH.Components {
         default: throw new ArgumentOutOfRangeException();
       }
 
-      GsaGH.Helpers.PostHog.TrackOnce(this, () => GsaGH.Helpers.PostHog.Load(faceLoad, faceLoad.ReferenceType));
+      GsaGH.Helpers.PostHog.TrackLoadOnce(this, faceLoad, faceLoad.ReferenceType);
       da.SetData(0, new GsaLoadGoo(faceLoad));
     }
 

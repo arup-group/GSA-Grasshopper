@@ -210,7 +210,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      GsaGH.Helpers.PostHog.TrackOnce(this, () => GsaGH.Helpers.PostHog.Load(beamThermalLoad, beamThermalLoad.ReferenceType));
+      GsaGH.Helpers.PostHog.TrackLoadOnce(this, beamThermalLoad, beamThermalLoad.ReferenceType);
       da.SetData(0, new GsaLoadGoo(beamThermalLoad));
     }
 

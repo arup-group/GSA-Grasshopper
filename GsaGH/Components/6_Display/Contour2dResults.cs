@@ -944,7 +944,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
 
-      PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 2, _mode.ToString(), _disp.ToString()));
+      PostHog.TrackResultOnce(this, result.CaseType, 2, _mode.ToString(), _disp.ToString());
     }
 
     private ConcurrentDictionary<int, IList<IQuantity>> GetResultComponent(

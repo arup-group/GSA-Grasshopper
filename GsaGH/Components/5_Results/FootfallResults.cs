@@ -168,7 +168,7 @@ namespace GsaGH.Components {
           outIDs.Add(key.Id, path);
         }
 
-        PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 0, "Footfall"));
+        PostHog.TrackResultOnce(this, result.CaseType, 0, "Footfall");
       }
 
       da.SetDataTree(0, rf);

@@ -255,8 +255,7 @@ namespace GsaGH.Components {
 
           foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks) {
             if (model.ApiModel.Analyse(task.Key, out TaskReport report)) {
-              PostHog.TrackOnce(this, () => OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
-                model.ApiModel.Elements().Count));
+              PostHog.TrackModelIOOnce(this, "analyse", model.ApiModel.Elements().Count);
             } else {
               string message = "Analysis Task " + task.Key +
                 " failed with one or more errors. Check report output for details";
