@@ -47,6 +47,7 @@ namespace GsaGH.Components {
     private bool _duringLoad;
     private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
     private FoldMode _mode = FoldMode.Uniform;
+    private bool _postHogTracked = false;
 
     public CreateFaceLoad() : base("Create Face Load", "FaceLoad", "Create GSA Face Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
@@ -509,7 +510,10 @@ namespace GsaGH.Components {
         default: throw new ArgumentOutOfRangeException();
       }
 
-      GsaGH.Helpers.PostHog.Load(faceLoad, faceLoad.ReferenceType);
+      if (!_postHogTracked) {
+        GsaGH.Helpers.PostHog.Load(faceLoad, faceLoad.ReferenceType);
+        _postHogTracked = true;
+      }
       da.SetData(0, new GsaLoadGoo(faceLoad));
     }
 

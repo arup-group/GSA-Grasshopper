@@ -52,6 +52,7 @@ namespace GsaGH.Components {
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
+    private bool _postHogTracked = false;
 
     public ResultDiagrams() : base("Result Diagrams", "ResultDiagram",
       "Displays GSA 1D Element Result Diagram", CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -313,7 +314,10 @@ namespace GsaGH.Components {
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
 
-      PostHog.Diagram("Result", result.CaseType, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
+      if (!_postHogTracked) {
+        PostHog.Diagram("Result", result.CaseType, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
+        _postHogTracked = true;
+      }
     }
 
     protected override void UpdateUIFromSelectedItems() {

@@ -132,6 +132,7 @@ namespace GsaGH.Components {
     private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
     private List<(int startY, int endY, Color gradientColor)> _gradients
       = new List<(int startY, int endY, Color gradientColor)>();
+    private bool _postHogTracked = false;
 
     public Contour2dResults() : base("Contour 2D Results", "Contour2d", "Displays GSA 2D Element Results as Contour",
       CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -947,7 +948,10 @@ namespace GsaGH.Components {
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
 
-      PostHog.Result(result.CaseType, 2, _mode.ToString(), _disp.ToString());
+      if (!_postHogTracked) {
+        PostHog.Result(result.CaseType, 2, _mode.ToString(), _disp.ToString());
+        _postHogTracked = true;
+      }
     }
 
     private ConcurrentDictionary<int, IList<IQuantity>> GetResultComponent(

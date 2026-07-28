@@ -36,6 +36,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Element2dStresses;
     private PressureUnit _stresshUnit = DefaultUnits.StressUnitResult;
+    private bool _postHogTracked = false;
 
     public Element2dStresses() : base("Element 2D Stresses", "Stress2D", "2D Projected Stress result values",
       CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -202,7 +203,10 @@ namespace GsaGH.Components {
           outZx.Add(new GH_UnitNumber(extrema.Zx.ToUnit(_stresshUnit)), path);
         }
 
-        PostHog.Result(result.CaseType, 2, "Stress");
+        if (!_postHogTracked) {
+          PostHog.Result(result.CaseType, 2, "Stress");
+          _postHogTracked = true;
+        }
       }
 
       da.SetDataTree(0, outXx);

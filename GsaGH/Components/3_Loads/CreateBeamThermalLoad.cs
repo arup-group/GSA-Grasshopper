@@ -39,8 +39,7 @@ namespace GsaGH.Components {
       //"GradientInZ"
     });
     private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
-    private FoldMode _mode = FoldMode.Uniform;
-
+    private FoldMode _mode = FoldMode.Uniform;    private bool _postHogTracked = false;
     public CreateBeamThermalLoad() : base("Create Beam Thermal Load", "BeamThermalLoad", "Create GSA Beam Thermal Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
@@ -210,7 +209,10 @@ namespace GsaGH.Components {
           break;
       }
 
-      GsaGH.Helpers.PostHog.Load(beamThermalLoad, beamThermalLoad.ReferenceType);
+      if (!_postHogTracked) {
+        GsaGH.Helpers.PostHog.Load(beamThermalLoad, beamThermalLoad.ReferenceType);
+        _postHogTracked = true;
+      }
       da.SetData(0, new GsaLoadGoo(beamThermalLoad));
     }
 

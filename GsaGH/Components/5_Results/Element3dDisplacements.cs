@@ -36,6 +36,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Element3dDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
+    private bool _postHogTracked = false;
 
     public Element3dDisplacements() : base("Element 3D Displacements", "Disp3D",
       "3D Translation and Rotation result values", CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -169,7 +170,10 @@ namespace GsaGH.Components {
           outTransXyz.Add(new GH_UnitNumber(extrema.Xyz.ToUnit(_lengthUnit)), path);
         }
 
-        PostHog.Result(result.CaseType, 3, "Displacement");
+        if (!_postHogTracked) {
+          PostHog.Result(result.CaseType, 3, "Displacement");
+          _postHogTracked = true;
+        }
       }
 
       da.SetDataTree(0, outTransX);

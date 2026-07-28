@@ -35,6 +35,7 @@ namespace GsaGH.Components {
     private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
     private bool _expansionTypeChanged = false;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
+    private bool _postHogTracked = false;
 
     public CreateGridPointLoad() : base("Create Grid Point Load", "PointLoad",
       "Create GSA Grid Point Load", CategoryName.Name(), SubCategoryName.Cat3()) {
@@ -274,7 +275,10 @@ namespace GsaGH.Components {
       gridPointLoad.ApiLoad.Value
         = ((Force)Input.UnitNumber(this, da, 6, _forceUnit)).Newtons;
 
-      GsaGH.Helpers.PostHog.Load(gridPointLoad, ReferenceType.None);
+      if (!_postHogTracked) {
+        GsaGH.Helpers.PostHog.Load(gridPointLoad, ReferenceType.None);
+        _postHogTracked = true;
+      }
       da.SetData(0, new GsaLoadGoo(gridPointLoad));
     }
 

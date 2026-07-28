@@ -29,6 +29,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.OpenModel;
     private Guid _panelGuid = Guid.NewGuid();
+    private bool _postHogTracked = false;
 
     public OpenModel() : base("Open Model", "Open", "Open an existing GSA model",
       CategoryName.Name(), SubCategoryName.Cat0()) {
@@ -117,8 +118,11 @@ namespace GsaGH.Components {
       }
 
       da.SetData(0, new GsaModelGoo(gsaModel));
-      PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"open{fileName.Substring(fileName.LastIndexOf('.') + 1).ToUpper()}",
-        (int)(new FileInfo(fileName).Length / 1024));
+      if (!_postHogTracked) {
+        PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"open{fileName.Substring(fileName.LastIndexOf('.') + 1).ToUpper()}",
+          (int)(new FileInfo(fileName).Length / 1024));
+        _postHogTracked = true;
+      }
     }
 
     private void UpdateMessage(string fileName) {

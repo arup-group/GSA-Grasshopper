@@ -38,6 +38,7 @@ namespace GsaGH.Components {
     private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
     private bool _expansionTypeChanged = false;
     private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
+    private bool _postHogTracked = false;
 
     public CreateGridLineLoad() : base("Create Grid Line Load", "LineLoad",
       "Create GSA Grid Line Load", CategoryName.Name(), SubCategoryName.Cat3()) {
@@ -316,7 +317,10 @@ namespace GsaGH.Components {
 
       gridlineload.ApiLoad.ValueAtEnd = load2;
 
-      GsaGH.Helpers.PostHog.Load(gridlineload, ReferenceType.None);
+      if (!_postHogTracked) {
+        GsaGH.Helpers.PostHog.Load(gridlineload, ReferenceType.None);
+        _postHogTracked = true;
+      }
       da.SetData(0, new GsaLoadGoo(gridlineload));
     }
 

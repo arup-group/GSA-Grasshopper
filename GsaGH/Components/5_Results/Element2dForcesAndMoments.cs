@@ -39,6 +39,7 @@ namespace GsaGH.Components {
     private ForcePerLengthUnit _forceUnit = DefaultUnits.ForcePerLengthUnit;
     private ForceUnit _momentUnit = DefaultUnits.ForceUnit;
     private const string MomentComponentWarning = "Result is not available for the moment component";
+    private bool _postHogTracked = false;
 
 
     public Element2dForcesAndMoments() : base("Element 2D Forces and Moments", "Forces2D",
@@ -327,7 +328,10 @@ namespace GsaGH.Components {
             }
           }
         }
-        PostHog.Result(result.CaseType, 2, "Force");
+        if (!_postHogTracked) {
+          PostHog.Result(result.CaseType, 2, "Force");
+          _postHogTracked = true;
+        }
       }
 
       da.SetDataTree(0, outX);

@@ -35,6 +35,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.BeamStresses;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
+    private bool _postHogTracked = false;
 
     public BeamStresses() : base("Beam Stresses", "BeamStress",
       "Element1D Stress result values", CategoryName.Name(),
@@ -215,7 +216,10 @@ namespace GsaGH.Components {
           outC2.Add(new GH_UnitNumber(extrema.CombinedC2.ToUnit(_stressUnit)), path);
         }
 
-        PostHog.Result(result.CaseType, 1, "Displacement");
+        if (!_postHogTracked) {
+          PostHog.Result(result.CaseType, 1, "Displacement");
+          _postHogTracked = true;
+        }
       }
 
       da.SetDataTree(0, outAxial);

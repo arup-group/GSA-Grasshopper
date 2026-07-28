@@ -39,6 +39,7 @@ namespace GsaGH.Components {
     private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
     private bool _expansionTypeChanged = false;
     private PressureUnit _forcePerAreaUnit = DefaultUnits.ForcePerAreaUnit;
+    private bool _postHogTracked = false;
 
     public CreateGridAreaLoad() : base("Create Grid Area Load", "AreaLoad",
       "Create GSA Grid Area Load", CategoryName.Name(), SubCategoryName.Cat3()) {
@@ -310,7 +311,10 @@ namespace GsaGH.Components {
       gridareaload.ApiLoad.Value = ((Pressure)Input.UnitNumber(this, da, 7, _forcePerAreaUnit))
        .NewtonsPerSquareMeter;
 
-      GsaGH.Helpers.PostHog.Load(gridareaload, ReferenceType.None);
+      if (!_postHogTracked) {
+        GsaGH.Helpers.PostHog.Load(gridareaload, ReferenceType.None);
+        _postHogTracked = true;
+      }
       da.SetData(0, new GsaLoadGoo(gridareaload));
     }
 

@@ -22,6 +22,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.secondary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateGravityLoad;
+    private bool _postHogTracked = false;
 
     public CreateGravityLoad() : base("Create Gravity Load", "GravityLoad",
       "Create GSA Gravity Load", CategoryName.Name(), SubCategoryName.Cat3()) {
@@ -186,7 +187,10 @@ namespace GsaGH.Components {
 
       gravityLoad.ApiLoad.Factor = factor;
 
-      GsaGH.Helpers.PostHog.Load(gravityLoad, gravityLoad.ReferenceType);
+      if (!_postHogTracked) {
+        GsaGH.Helpers.PostHog.Load(gravityLoad, gravityLoad.ReferenceType);
+        _postHogTracked = true;
+      }
       da.SetData(0, new GsaLoadGoo(gravityLoad));
     }
   }

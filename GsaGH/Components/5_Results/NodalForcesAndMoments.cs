@@ -38,6 +38,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.NodalForcesAndMoments;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
+    private bool _postHogTracked = false;
     public NodalForcesAndMoments() : base("Nodal Forces and Moments", "NodalForces",
       "Nodal Force and Moment result values", CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
@@ -187,7 +188,10 @@ namespace GsaGH.Components {
           }
         }
 
-        PostHog.Result(result.CaseType, 2, "NodalForcesAndMoments");
+        if (!_postHogTracked) {
+          PostHog.Result(result.CaseType, 2, "NodalForcesAndMoments");
+          _postHogTracked = true;
+        }
       }
 
       da.SetDataTree(0, outTransX);

@@ -25,6 +25,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.GwaCommand;
+    private bool _postHogTracked = false;
 
     public GwaCommand() : base("GWA Command", "GWA",
       "Create a model from a GWA string, inject data into a model using GWA command, or retrieve model data or results through a GWA command.",
@@ -74,7 +75,10 @@ namespace GsaGH.Components {
 
       GsaModel gsaGh = GsaComHelper.GetGsaGhModel();
       da.SetData(0, new GsaModelGoo(gsaGh));
-      PostHog.Gwa(gwa, Params.Input.Count > 0);
+      if (!_postHogTracked) {
+        PostHog.Gwa(gwa, Params.Input.Count > 0);
+        _postHogTracked = true;
+      }
     }
   }
 }

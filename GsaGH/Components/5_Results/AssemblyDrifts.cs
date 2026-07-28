@@ -35,6 +35,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.AssemblyDrifts;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
+    private bool _postHogTracked = false;
 
     public AssemblyDrifts() : base("Assembly Drifts", "AssemblyDrifts",
       "Assembly Drift result values", CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -142,7 +143,10 @@ namespace GsaGH.Components {
           outTransXy.Add(new GH_UnitNumber(extrema.Xy.ToUnit(_lengthUnit)), path);
         }
 
-        PostHog.Result(result.CaseType, 1, "AssemblyDrift");
+        if (!_postHogTracked) {
+          PostHog.Result(result.CaseType, 1, "AssemblyDrift");
+          _postHogTracked = true;
+        }
       }
 
       da.SetDataTree(0, outTransX);

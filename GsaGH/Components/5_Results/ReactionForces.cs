@@ -37,6 +37,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.ReactionForces;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
+    private bool _postHogTracked = false;
 
     public ReactionForces() : base("Reaction Forces", "ReactForce", "Reaction Force result values",
       CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -214,7 +215,10 @@ namespace GsaGH.Components {
           outIDs.Add(key.Id, path);
         }
 
-        PostHog.Result(result.CaseType, 0, "Force");
+        if (!_postHogTracked) {
+          PostHog.Result(result.CaseType, 0, "Force");
+          _postHogTracked = true;
+        }
       }
 
       da.SetDataTree(0, outTransX);

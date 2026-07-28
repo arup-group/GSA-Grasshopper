@@ -29,6 +29,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.secondary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.FootfallResults;
+    private bool _postHogTracked = false;
 
     public FootfallResults() : base("Footfall Results", "Footfall",
       "Node Resonant or Transient Footfall result values", CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -168,7 +169,10 @@ namespace GsaGH.Components {
           outIDs.Add(key.Id, path);
         }
 
-        PostHog.Result(result.CaseType, 0, "Footfall");
+        if (!_postHogTracked) {
+          PostHog.Result(result.CaseType, 0, "Footfall");
+          _postHogTracked = true;
+        }
       }
 
       da.SetDataTree(0, rf);
