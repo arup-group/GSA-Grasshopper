@@ -233,7 +233,7 @@ namespace GsaGH.Components {
           }
         }
 
-        PostHog.Result(result.CaseType, 1, "StrainEnergy");
+        PostHog.TrackResultOnce(this, result.CaseType, 1, "StrainEnergy");
       }
 
       da.SetDataTree(0, outResults);

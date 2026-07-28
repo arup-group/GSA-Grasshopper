@@ -216,7 +216,7 @@ namespace GsaGH.Components {
         }
       }
 
-      PostHog.Result(result.CaseType, 1, "Displacement");
+      PostHog.TrackResultOnce(this, result.CaseType, 1, "Displacement");
 
       da.SetDataTree(0, length);
       da.SetDataTree(1, spans);

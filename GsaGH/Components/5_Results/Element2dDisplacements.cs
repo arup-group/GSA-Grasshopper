@@ -195,7 +195,7 @@ namespace GsaGH.Components {
           outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz), path);
         }
 
-        PostHog.Result(result.CaseType, 2, "Displacement");
+        PostHog.TrackResultOnce(this, result.CaseType, 2, "Displacement");
       }
 
       da.SetDataTree(0, outTransX);

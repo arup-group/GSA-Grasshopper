@@ -170,7 +170,7 @@ namespace GsaGH.Components {
       da.SetData(i++, new GH_UnitNumber(rm.ZzToUnit(_momentUnit)));
       da.SetData(i, new GH_UnitNumber(rm.XxyyzzToUnit(_momentUnit)));
 
-      PostHog.Result(result.CaseType, -1, "Global", "TotalLoadsAndReactions");
+      PostHog.TrackResultOnce(this, result.CaseType, -1, "Global", "TotalLoadsAndReactions");
     }
 
     protected override void UpdateUIFromSelectedItems() {

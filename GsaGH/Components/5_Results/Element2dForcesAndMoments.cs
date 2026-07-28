@@ -327,7 +327,7 @@ namespace GsaGH.Components {
             }
           }
         }
-        PostHog.Result(result.CaseType, 2, "Force");
+        PostHog.TrackResultOnce(this, result.CaseType, 2, "Force");
       }
 
       da.SetDataTree(0, outX);
