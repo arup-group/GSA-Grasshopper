@@ -10,6 +10,7 @@ using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
@@ -317,10 +318,7 @@ namespace GsaGH.Components {
 
       gridlineload.ApiLoad.ValueAtEnd = load2;
 
-      if (!_postHogTracked) {
-        GsaGH.Helpers.PostHog.Load(gridlineload, ReferenceType.None);
-        _postHogTracked = true;
-      }
+      GsaGH.Helpers.PostHog.TrackOnce(ref _postHogTracked, () => GsaGH.Helpers.PostHog.Load(gridlineload, ReferenceType.None));
       da.SetData(0, new GsaLoadGoo(gridlineload));
     }
 

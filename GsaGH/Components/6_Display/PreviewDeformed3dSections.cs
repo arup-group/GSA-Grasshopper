@@ -107,10 +107,7 @@ namespace GsaGH.Components {
       da.SetData(0, _section3dPreview.Mesh);
       da.SetDataList(1, _section3dPreview.Outlines);
 
-      if (!_postHogTracked) {
-        PostHog.Result(result.CaseType, 1, "Displacement", "DeformedSection3d");
-        _postHogTracked = true;
-      }
+      PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 1, "Displacement", "DeformedSection3d"));
     }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {

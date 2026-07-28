@@ -143,10 +143,7 @@ namespace GsaGH.Components {
           outTransXy.Add(new GH_UnitNumber(extrema.Xy.ToUnit(_lengthUnit)), path);
         }
 
-        if (!_postHogTracked) {
-          PostHog.Result(result.CaseType, 1, "AssemblyDrift");
-          _postHogTracked = true;
-        }
+        PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 1, "AssemblyDrift"));
       }
 
       da.SetDataTree(0, outTransX);

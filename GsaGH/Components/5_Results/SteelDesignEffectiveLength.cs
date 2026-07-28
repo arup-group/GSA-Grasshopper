@@ -217,10 +217,7 @@ namespace GsaGH.Components {
         }
       }
 
-      if (!_postHogTracked) {
-        PostHog.Result(result.CaseType, 1, "Displacement");
-        _postHogTracked = true;
-      }
+      PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 1, "Displacement"));
 
       da.SetDataTree(0, length);
       da.SetDataTree(1, spans);

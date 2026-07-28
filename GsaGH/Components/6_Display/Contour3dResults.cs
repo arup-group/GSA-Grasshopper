@@ -633,10 +633,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
 
-      if (!_postHogTracked) {
-        PostHog.Result(result.CaseType, 3, _mode.ToString(), _disp.ToString());
-        _postHogTracked = true;
-      }
+      PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 3, _mode.ToString(), _disp.ToString()));
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {

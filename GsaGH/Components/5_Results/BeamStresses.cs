@@ -216,10 +216,7 @@ namespace GsaGH.Components {
           outC2.Add(new GH_UnitNumber(extrema.CombinedC2.ToUnit(_stressUnit)), path);
         }
 
-        if (!_postHogTracked) {
-          PostHog.Result(result.CaseType, 1, "Displacement");
-          _postHogTracked = true;
-        }
+        PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 1, "Displacement"));
       }
 
       da.SetDataTree(0, outAxial);

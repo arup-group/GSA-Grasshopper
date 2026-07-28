@@ -328,10 +328,7 @@ namespace GsaGH.Components {
             }
           }
         }
-        if (!_postHogTracked) {
-          PostHog.Result(result.CaseType, 2, "Force");
-          _postHogTracked = true;
-        }
+        PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 2, "Force"));
       }
 
       da.SetDataTree(0, outX);

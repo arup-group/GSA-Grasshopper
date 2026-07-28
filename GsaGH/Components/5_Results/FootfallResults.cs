@@ -169,10 +169,7 @@ namespace GsaGH.Components {
           outIDs.Add(key.Id, path);
         }
 
-        if (!_postHogTracked) {
-          PostHog.Result(result.CaseType, 0, "Footfall");
-          _postHogTracked = true;
-        }
+        PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 0, "Footfall"));
       }
 
       da.SetDataTree(0, rf);

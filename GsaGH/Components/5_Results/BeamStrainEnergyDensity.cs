@@ -234,10 +234,7 @@ namespace GsaGH.Components {
           }
         }
 
-        if (!_postHogTracked) {
-          PostHog.Result(result.CaseType, 1, "StrainEnergy");
-          _postHogTracked = true;
-        }
+        PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 1, "StrainEnergy"));
       }
 
       da.SetDataTree(0, outResults);

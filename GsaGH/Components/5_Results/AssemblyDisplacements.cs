@@ -175,10 +175,7 @@ namespace GsaGH.Components {
           outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz), path);
         }
 
-        if (!_postHogTracked) {
-          PostHog.Result(result.CaseType, 1, "AssemblyDisplacement");
-          _postHogTracked = true;
-        }
+        PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 1, "AssemblyDisplacement"));
       }
 
       da.SetDataTree(0, outTransX);

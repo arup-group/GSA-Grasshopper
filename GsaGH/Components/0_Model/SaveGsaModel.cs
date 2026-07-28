@@ -13,6 +13,7 @@ using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -122,11 +123,8 @@ namespace GsaGH.Components {
       string mes = model.ApiModel.SaveAs(fileNameAndPath).ToString();
       if (mes == ReturnValue.GS_OK.ToString()) {
         _fileNameLastSaved = fileNameAndPath;
-        if (!_postHogTracked) {
-          PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"save{fileNameAndPath.Substring(fileNameAndPath.LastIndexOf('.') + 1).ToUpper()}",
-            (int)(new FileInfo(fileNameAndPath).Length / 1024));
-          _postHogTracked = true;
-        }
+        GsaGH.Helpers.PostHog.TrackOnce(ref _postHogTracked, () => OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"save{fileNameAndPath.Substring(fileNameAndPath.LastIndexOf('.') + 1).ToUpper()}",
+          (int)(new FileInfo(fileNameAndPath).Length / 1024)));
         model.FileNameAndPath = fileNameAndPath;
       } else {
         this.AddRuntimeError(mes);

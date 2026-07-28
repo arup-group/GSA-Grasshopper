@@ -162,10 +162,7 @@ namespace GsaGH.Components {
         fb.Add(new GH_UnitNumber(extrema.FlexuralBuckling), path);
       }
 
-      if (!_postHogTracked) {
-        PostHog.Result(result.CaseType, 1, "SteelUtilisations");
-        _postHogTracked = true;
-      }
+      PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 1, "SteelUtilisations"));
 
       da.SetDataTree(0, o);
       da.SetDataTree(1, lc);

@@ -8,6 +8,7 @@ using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
@@ -454,10 +455,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      if (!_postHogTracked) {
-        GsaGH.Helpers.PostHog.Load(beamLoad, beamLoad.ReferenceType);
-        _postHogTracked = true;
-      }
+      GsaGH.Helpers.PostHog.TrackOnce(ref _postHogTracked, () => GsaGH.Helpers.PostHog.Load(beamLoad, beamLoad.ReferenceType));
       da.SetData(0, new GsaLoadGoo(beamLoad));
     }
 

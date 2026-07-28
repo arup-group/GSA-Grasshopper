@@ -1,10 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers {
   internal class PostHog {
+
+    /// <summary>
+    /// Executes a PostHog action only once per component instance.
+    /// </summary>
+    internal static void TrackOnce(ref bool tracked, Action postHogAction) {
+      if (!tracked) {
+        postHogAction();
+        tracked = true;
+      }
+    }
 
     internal static void Debug(Dictionary<string, object> properties) {
       const string eventName = "Debug";

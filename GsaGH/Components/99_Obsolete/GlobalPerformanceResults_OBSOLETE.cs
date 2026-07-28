@@ -241,10 +241,7 @@ namespace GsaGH.Components {
         da.SetData(i, null);
       }
 
-      if (!_postHogTracked) {
-        PostHog.Result(result.CaseType, -1, "Global", "Performance");
-        _postHogTracked = true;
-      }
+      PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, -1, "Global", "Performance"));
     }
 
     protected override void UpdateUIFromSelectedItems() {

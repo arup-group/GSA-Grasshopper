@@ -8,6 +8,7 @@ using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
@@ -275,10 +276,7 @@ namespace GsaGH.Components {
       gridPointLoad.ApiLoad.Value
         = ((Force)Input.UnitNumber(this, da, 6, _forceUnit)).Newtons;
 
-      if (!_postHogTracked) {
-        GsaGH.Helpers.PostHog.Load(gridPointLoad, ReferenceType.None);
-        _postHogTracked = true;
-      }
+      GsaGH.Helpers.PostHog.TrackOnce(ref _postHogTracked, () => GsaGH.Helpers.PostHog.Load(gridPointLoad, ReferenceType.None));
       da.SetData(0, new GsaLoadGoo(gridPointLoad));
     }
 

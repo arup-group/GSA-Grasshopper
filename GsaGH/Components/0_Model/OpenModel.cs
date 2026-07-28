@@ -7,6 +7,7 @@ using Grasshopper.Kernel.Special;
 
 using GsaAPI;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Parameters;
@@ -118,11 +119,8 @@ namespace GsaGH.Components {
       }
 
       da.SetData(0, new GsaModelGoo(gsaModel));
-      if (!_postHogTracked) {
-        PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"open{fileName.Substring(fileName.LastIndexOf('.') + 1).ToUpper()}",
-          (int)(new FileInfo(fileName).Length / 1024));
-        _postHogTracked = true;
-      }
+      GsaGH.Helpers.PostHog.TrackOnce(ref _postHogTracked, () => OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"open{fileName.Substring(fileName.LastIndexOf('.') + 1).ToUpper()}",
+        (int)(new FileInfo(fileName).Length / 1024)));
     }
 
     private void UpdateMessage(string fileName) {

@@ -75,10 +75,7 @@ namespace GsaGH.Components {
 
       GsaModel gsaGh = GsaComHelper.GetGsaGhModel();
       da.SetData(0, new GsaModelGoo(gsaGh));
-      if (!_postHogTracked) {
-        PostHog.Gwa(gwa, Params.Input.Count > 0);
-        _postHogTracked = true;
-      }
+      PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Gwa(gwa, Params.Input.Count > 0));
     }
   }
 }
