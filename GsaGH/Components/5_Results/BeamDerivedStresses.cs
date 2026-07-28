@@ -160,7 +160,7 @@ namespace GsaGH.Components {
           outVonMises.Add(new GH_UnitNumber(extrema.VonMises.ToUnit(_stressUnit)), path);
         }
 
-        PostHog.TrackResultOnce(this, result.CaseType, 1, "Displacement");
+        PostHog.Result(this, result.CaseType, 1, "Displacement");
       }
 
       da.SetDataTree(0, outShearY);

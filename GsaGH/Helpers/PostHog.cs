@@ -34,7 +34,7 @@ namespace GsaGH.Helpers {
       TrackOnce(componentInstance, () => Diagram(diagramType, caseId, type, subTypes, entityType));
     }
 
-    internal static void TrackResultOnce(
+    internal static void Result(
       object componentInstance, CaseType caseType, int dimension, string resultType, string subType = "-") {
       TrackOnce(componentInstance, () => Result(caseType, dimension, resultType, subType));
     }

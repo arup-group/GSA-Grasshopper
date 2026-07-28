@@ -209,7 +209,7 @@ namespace GsaGH.Components {
           outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz.ToUnit(_momentUnit)), path);
         }
 
-        PostHog.TrackResultOnce(this, result.CaseType, 1, "Force", "Member");
+        PostHog.Result(this, result.CaseType, 1, "Force", "Member");
       }
 
       da.SetDataTree(0, outTransX);

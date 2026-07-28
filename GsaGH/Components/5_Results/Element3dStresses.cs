@@ -185,7 +185,7 @@ namespace GsaGH.Components {
           outZx.Add(new GH_UnitNumber(extrema.Zx.ToUnit(_stresshUnit)), path);
         }
 
-        PostHog.TrackResultOnce(this, result.CaseType, 3, "Stress");
+        PostHog.Result(this, result.CaseType, 3, "Stress");
       }
 
       da.SetDataTree(0, outXx);

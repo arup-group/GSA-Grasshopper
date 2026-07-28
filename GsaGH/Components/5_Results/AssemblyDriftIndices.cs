@@ -126,7 +126,7 @@ namespace GsaGH.Components {
           outTransXy.Add(new GH_UnitNumber(extrema.Xy), path);
         }
 
-        PostHog.TrackResultOnce(this, result.CaseType, 1, "AssemblyDriftIndex");
+        PostHog.Result(this, result.CaseType, 1, "AssemblyDriftIndex");
       }
 
       da.SetDataTree(0, outTransX);
