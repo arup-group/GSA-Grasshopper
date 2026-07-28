@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
 using GsaAPI;
@@ -203,7 +204,58 @@ namespace GsaGHTests.Properties {
       ComponentTestHelper.SetInput(comp, new GH_Number(2), 11);
       var prop2dGoo = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp, 0);
       Assert.Equal(SupportType.AllEdges, prop2dGoo.Value.ApiProp2d.SupportType);
+    }
 
+    [Theory]
+    [InlineData("1")]
+    [InlineData("2")]
+    [InlineData("3")]
+    [InlineData("4")]
+    [InlineData("5")]
+    [InlineData("6")]
+    [InlineData("7")]
+    [InlineData("8")]
+    [InlineData("9")]
+    [InlineData("oneedge")]
+    [InlineData("ONEEDGE")]
+    [InlineData("twoedges")]
+    [InlineData("TWOEDGES")]
+    [InlineData("auto")]
+    [InlineData("AUTO")]
+    [InlineData(1)]
+    [InlineData(9)]
+    [InlineData(null)]
+    public void InputStringConvertedSupportType(object input) {
+      var prop2d = new GsaProperty2d();
+      prop2d.ApiProp2d.Type = Property2D_Type.LOAD;
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, new GsaProperty2dGoo(prop2d), 0);
+      ComponentTestHelper.SetInput(comp, new GH_ObjectWrapper(input), 11);
+      var prop2dGoo = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp, 0);
+      Assert.NotNull(prop2dGoo);
+    }
+
+    [Theory]
+    [InlineData("0")]
+    [InlineData("All")]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("NaN")]
+    [InlineData("abc")]
+    [InlineData("-1")]
+    [InlineData("999")]
+    [InlineData(-1)]
+    [InlineData(999)]
+   [InlineData(double.NaN)]
+
+    public void InputStringFailedToConvertSupportType(object input) {
+      var prop2d = new GsaProperty2d();
+      prop2d.ApiProp2d.Type = Property2D_Type.LOAD;
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, new GsaProperty2dGoo(prop2d), 0);
+      ComponentTestHelper.SetInput(comp, new GH_ObjectWrapper(input), 11);
+      ComponentTestHelper.ComputeOutput(comp);
+      Assert.NotEmpty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
   }
 }
