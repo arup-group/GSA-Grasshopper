@@ -251,7 +251,7 @@ namespace GsaGH.Components {
       });
 
       SetOutputs(da, reactionForceVectors, annotations);
-      PostHog.TrackDiagramOnce(this, "Result", result.CaseType, "ReactionForce", _selectedDisplayValue.ToString(), Parameters.EntityType.Node);
+      PostHog.Diagram("Result", result.CaseType, "ReactionForce", _selectedDisplayValue.ToString(), Parameters.EntityType.Node);
     }
 
     private double ComputeAutoScale(IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> forceValues, BoundingBox bbox) {

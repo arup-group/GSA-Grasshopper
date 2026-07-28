@@ -240,7 +240,7 @@ namespace GsaGH.Components {
         da.SetData(i, null);
       }
 
-      PostHog.TrackResultOnce(this, result.CaseType, -1, "Global", "Performance");
+      PostHog.Result(result.CaseType, -1, "Global", "Performance");
     }
 
     protected override void UpdateUIFromSelectedItems() {

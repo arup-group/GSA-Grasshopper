@@ -214,7 +214,7 @@ namespace GsaGH.Components {
           outIDs.Add(key.Id, path);
         }
 
-        PostHog.TrackResultOnce(this, result.CaseType, 0, "Force");
+        PostHog.Result(result.CaseType, 0, "Force");
       }
 
       da.SetDataTree(0, outTransX);

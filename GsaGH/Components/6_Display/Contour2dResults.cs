@@ -776,6 +776,7 @@ namespace GsaGH.Components {
         significantDigits = (int)rounded[2];
       }
 
+
       var meshes = new ConcurrentDictionary<int, Mesh>();
       meshes.AsParallel().AsOrdered();
       values.AsParallel().AsOrdered();
@@ -871,6 +872,8 @@ namespace GsaGH.Components {
       var legendValues = new List<string>();
       var legendValuePositionsY = new List<int>();
 
+
+
       for (int i = 0; i < ghGradient.GripCount; i++) {
         double t = dmin + ((dmax - dmin) / ((double)ghGradient.GripCount - 1) * i);
         if (t > 1) {
@@ -944,7 +947,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
 
-      PostHog.TrackResultOnce(this, result.CaseType, 2, _mode.ToString(), _disp.ToString());
+      PostHog.Result(result.CaseType, 2, _mode.ToString(), _disp.ToString());
     }
 
     private ConcurrentDictionary<int, IList<IQuantity>> GetResultComponent(

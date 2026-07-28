@@ -216,7 +216,7 @@ namespace GsaGH.Components {
         }
       }
 
-      PostHog.TrackResultOnce(this, result.CaseType, 1, "Displacement");
+      PostHog.Result(result.CaseType, 1, "Displacement");
 
       da.SetDataTree(0, length);
       da.SetDataTree(1, spans);
@@ -237,6 +237,7 @@ namespace GsaGH.Components {
 
       base.UpdateUIFromSelectedItems();
     }
+
 
     private void UpdateParameters(SteelDesignType type) {
       if (type == _type) {

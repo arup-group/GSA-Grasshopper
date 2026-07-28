@@ -13,7 +13,6 @@ using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
-using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Properties;
@@ -37,6 +36,7 @@ namespace GsaGH.Components {
     private string _fileNameLastSaved;
     internal string FileNameLastSavedFullPath =>  $"\"{Path.GetFullPath(_fileNameLastSaved)}\"";
     private bool _saveInputOverride = false;
+
     public SaveGsaModel() : base("Save GSA Model", "Save",
       "Saves your GSA model from this parametric nightmare", CategoryName.Name(),
       SubCategoryName.Cat0()) {
@@ -123,7 +123,7 @@ namespace GsaGH.Components {
       string mes = model.ApiModel.SaveAs(fileNameAndPath).ToString();
       if (mes == ReturnValue.GS_OK.ToString()) {
         _fileNameLastSaved = fileNameAndPath;
-        GsaGH.Helpers.PostHog.TrackModelIOOnce(this, $"save{fileNameAndPath.Substring(fileNameAndPath.LastIndexOf('.') + 1).ToUpper()}",
+        PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"save{fileNameAndPath.Substring(fileNameAndPath.LastIndexOf('.') + 1).ToUpper()}",
           (int)(new FileInfo(fileNameAndPath).Length / 1024));
         model.FileNameAndPath = fileNameAndPath;
       } else {

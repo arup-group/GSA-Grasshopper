@@ -313,7 +313,7 @@ namespace GsaGH.Components {
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
 
-      PostHog.TrackDiagramOnce(this, "Result", result.CaseType, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
+      PostHog.Diagram("Result", result.CaseType, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
     }
 
     protected override void UpdateUIFromSelectedItems() {

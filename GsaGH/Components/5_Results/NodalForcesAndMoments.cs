@@ -187,7 +187,7 @@ namespace GsaGH.Components {
           }
         }
 
-        PostHog.TrackResultOnce(this, result.CaseType, 2, "NodalForcesAndMoments");
+        PostHog.Result(result.CaseType, 2, "NodalForcesAndMoments");
       }
 
       da.SetDataTree(0, outTransX);

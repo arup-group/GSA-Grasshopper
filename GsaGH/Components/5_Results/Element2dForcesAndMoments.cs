@@ -40,6 +40,7 @@ namespace GsaGH.Components {
     private ForceUnit _momentUnit = DefaultUnits.ForceUnit;
     private const string MomentComponentWarning = "Result is not available for the moment component";
 
+
     public Element2dForcesAndMoments() : base("Element 2D Forces and Moments", "Forces2D",
       "2D Projected Force and Moment result values", CategoryName.Name(), SubCategoryName.Cat5()) {
       Hidden = true;
@@ -326,7 +327,7 @@ namespace GsaGH.Components {
             }
           }
         }
-        PostHog.TrackResultOnce(this, result.CaseType, 2, "Force");
+        PostHog.Result(result.CaseType, 2, "Force");
       }
 
       da.SetDataTree(0, outX);
