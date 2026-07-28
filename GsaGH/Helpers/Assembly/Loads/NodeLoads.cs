@@ -55,8 +55,6 @@ namespace GsaGH.Helpers.Assembly {
           _settlements.Add(load.ApiLoad);
           break;
       }
-
-      PostHog.Load(load._refPoint != Point3d.Unset, load.Type.ToString());
     }
   }
 }
