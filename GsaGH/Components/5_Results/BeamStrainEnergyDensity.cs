@@ -47,6 +47,7 @@ namespace GsaGH.Components {
     private List<bool> _initialCheckState = new List<bool>() {
       true,
     };
+    private bool _postHogTracked = false;
 
     public BeamStrainEnergyDensity() : base("Beam Strain Energy Density", "StrainEnergy",
       "Element1D Strain Energy Density result values", CategoryName.Name(),
@@ -233,7 +234,10 @@ namespace GsaGH.Components {
           }
         }
 
-        PostHog.Result(result.CaseType, 1, "StrainEnergy");
+        if (!_postHogTracked) {
+          PostHog.Result(result.CaseType, 1, "StrainEnergy");
+          _postHogTracked = true;
+        }
       }
 
       da.SetDataTree(0, outResults);

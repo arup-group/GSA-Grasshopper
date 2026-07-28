@@ -48,6 +48,7 @@ namespace GsaGH.Components {
     private bool _duringLoad;
     private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
     private FoldMode _mode = FoldMode.Uniform;
+    private bool _postHogTracked = false;
 
     public CreateBeamLoad() : base("Create Beam Load", "BeamLoad", "Create GSA Beam Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
@@ -453,7 +454,10 @@ namespace GsaGH.Components {
           break;
       }
 
-      GsaGH.Helpers.PostHog.Load(beamLoad, beamLoad.ReferenceType);
+      if (!_postHogTracked) {
+        GsaGH.Helpers.PostHog.Load(beamLoad, beamLoad.ReferenceType);
+        _postHogTracked = true;
+      }
       da.SetData(0, new GsaLoadGoo(beamLoad));
     }
 

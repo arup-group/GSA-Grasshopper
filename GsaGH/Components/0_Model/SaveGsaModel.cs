@@ -35,8 +35,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.SaveGsaModel;
     private string _fileNameLastSaved;
     internal string FileNameLastSavedFullPath =>  $"\"{Path.GetFullPath(_fileNameLastSaved)}\"";
-    private bool _saveInputOverride = false;
-
+    private bool _saveInputOverride = false;    private bool _postHogTracked = false;
     public SaveGsaModel() : base("Save GSA Model", "Save",
       "Saves your GSA model from this parametric nightmare", CategoryName.Name(),
       SubCategoryName.Cat0()) {
@@ -123,8 +122,11 @@ namespace GsaGH.Components {
       string mes = model.ApiModel.SaveAs(fileNameAndPath).ToString();
       if (mes == ReturnValue.GS_OK.ToString()) {
         _fileNameLastSaved = fileNameAndPath;
-        PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"save{fileNameAndPath.Substring(fileNameAndPath.LastIndexOf('.') + 1).ToUpper()}",
-          (int)(new FileInfo(fileNameAndPath).Length / 1024));
+        if (!_postHogTracked) {
+          PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"save{fileNameAndPath.Substring(fileNameAndPath.LastIndexOf('.') + 1).ToUpper()}",
+            (int)(new FileInfo(fileNameAndPath).Length / 1024));
+          _postHogTracked = true;
+        }
         model.FileNameAndPath = fileNameAndPath;
       } else {
         this.AddRuntimeError(mes);

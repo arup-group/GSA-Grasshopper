@@ -47,6 +47,7 @@ namespace GsaGH.Components {
       true,
       true,
     };
+    private bool _postHogTracked = false;
 
     private bool _reMesh = true;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
@@ -255,8 +256,11 @@ namespace GsaGH.Components {
 
           foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks) {
             if (model.ApiModel.Analyse(task.Key, out TaskReport report)) {
-              OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
-                model.ApiModel.Elements().Count);
+              if (!_postHogTracked) {
+                OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
+                  model.ApiModel.Elements().Count);
+                _postHogTracked = true;
+              }
             } else {
               string message = "Analysis Task " + task.Key +
                 " failed with one or more errors. Check report output for details";

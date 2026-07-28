@@ -32,6 +32,7 @@ namespace GsaGH.Components {
     private ForcePerLengthUnit _forcePerLengthUnit = ForcePerLengthUnit.KilonewtonPerMeter;
     private AreaMomentOfInertiaUnit _inertiaUnit = AreaMomentOfInertiaUnit.MeterToTheFourth;
     private MassUnit _massUnit = DefaultUnits.MassUnit;
+    private bool _postHogTracked = false;
 
     public GlobalPerformanceResults_OBSOLETE() : base("Global Performance Results", "GlobalPerformance",
       "Get Global Performance (Dynamic, Model Stability, and Buckling) Results from a GSA model",
@@ -240,7 +241,10 @@ namespace GsaGH.Components {
         da.SetData(i, null);
       }
 
-      PostHog.Result(result.CaseType, -1, "Global", "Performance");
+      if (!_postHogTracked) {
+        PostHog.Result(result.CaseType, -1, "Global", "Performance");
+        _postHogTracked = true;
+      }
     }
 
     protected override void UpdateUIFromSelectedItems() {

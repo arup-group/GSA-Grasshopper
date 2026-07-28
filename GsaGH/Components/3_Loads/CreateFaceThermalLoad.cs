@@ -39,8 +39,7 @@ namespace GsaGH.Components {
       //"General"
     });
     private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
-    private FoldMode _mode = FoldMode.Uniform;
-
+    private FoldMode _mode = FoldMode.Uniform;    private bool _postHogTracked = false;
     public CreateFaceThermalLoad() : base("Create Face Thermal Load", "FaceLoad", "Create GSA Face Thermal Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
@@ -209,7 +208,10 @@ namespace GsaGH.Components {
           break;
       }
 
-      GsaGH.Helpers.PostHog.Load(faceThermalLoad, faceThermalLoad.ReferenceType);
+      if (!_postHogTracked) {
+        GsaGH.Helpers.PostHog.Load(faceThermalLoad, faceThermalLoad.ReferenceType);
+        _postHogTracked = true;
+      }
       da.SetData(0, new GsaLoadGoo(faceThermalLoad));
     }
 

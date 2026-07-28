@@ -36,6 +36,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Member1dForcesAndMoments;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
+    private bool _postHogTracked = false;
 
     public Member1dForcesAndMoments() : base("Member 1D Forces and Moments", "Mem1dForces",
       "1D Member Force and Moment result values", CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -209,7 +210,10 @@ namespace GsaGH.Components {
           outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz.ToUnit(_momentUnit)), path);
         }
 
-        PostHog.Result(result.CaseType, 1, "Force", "Member");
+        if (!_postHogTracked) {
+          PostHog.Result(result.CaseType, 1, "Force", "Member");
+          _postHogTracked = true;
+        }
       }
 
       da.SetDataTree(0, outTransX);

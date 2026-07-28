@@ -31,6 +31,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.TotalLoadsAndReactions;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
+    private bool _postHogTracked = false;
 
     public TotalLoadsAndReactions() : base("Total Loads and Reactions", "TotalResults",
       "Get Total Loads and Reaction Results from a GSA model", CategoryName.Name(),
@@ -170,7 +171,10 @@ namespace GsaGH.Components {
       da.SetData(i++, new GH_UnitNumber(rm.ZzToUnit(_momentUnit)));
       da.SetData(i, new GH_UnitNumber(rm.XxyyzzToUnit(_momentUnit)));
 
-      PostHog.Result(result.CaseType, -1, "Global", "TotalLoadsAndReactions");
+      if (!_postHogTracked) {
+        PostHog.Result(result.CaseType, -1, "Global", "TotalLoadsAndReactions");
+        _postHogTracked = true;
+      }
     }
 
     protected override void UpdateUIFromSelectedItems() {

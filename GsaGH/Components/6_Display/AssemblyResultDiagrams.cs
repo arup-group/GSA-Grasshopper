@@ -47,6 +47,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.AssemblyResultDiagrams;
     private ConcurrentBag<AssemblyPreview> _assemblyPreviews = new ConcurrentBag<AssemblyPreview>();
+    private bool _postHogTracked = false;
 
     private string _case = string.Empty;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
@@ -336,7 +337,10 @@ namespace GsaGH.Components {
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
 
-      PostHog.Diagram("Result", result.CaseType, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
+      if (!_postHogTracked) {
+        PostHog.Diagram("Result", result.CaseType, _selectedItems[0], type.ToString(), Parameters.EntityType.Element);
+        _postHogTracked = true;
+      }
     }
 
     private List<GsaAnnotationGoo> GenerateAnnotations(GraphicDrawResult diagramResults,

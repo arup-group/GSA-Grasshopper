@@ -23,6 +23,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.hidden;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.FootfallResults;
+    private bool _postHogTracked = false;
 
     public FootfallResults_OBSOLETE() : base("Footfall Results", "Footfall",
       "Get the maximum response factor for a footfall analysis case", CategoryName.Name(),
@@ -83,7 +84,10 @@ namespace GsaGH.Components {
       da.SetData(0, resonant.GetExtrema(resonant.Max.MaximumResponseFactor).MaximumResponseFactor);
       da.SetData(1, transient.GetExtrema(transient.Max.MaximumResponseFactor).MaximumResponseFactor);
 
-      PostHog.Result(result.CaseType, 0, "Footfall", "Max");
+      if (!_postHogTracked) {
+        PostHog.Result(result.CaseType, 0, "Footfall", "Max");
+        _postHogTracked = true;
+      }
     }
   }
 }

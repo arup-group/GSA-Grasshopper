@@ -29,6 +29,7 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.septenary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.AssemblyDriftIndices;
+    private bool _postHogTracked = false;
 
     public AssemblyDriftIndices() : base("Assembly Drift Indices", "AssemblyDriftIndices",
       "Assembly Drift Index result values", CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -126,7 +127,10 @@ namespace GsaGH.Components {
           outTransXy.Add(new GH_UnitNumber(extrema.Xy), path);
         }
 
-        PostHog.Result(result.CaseType, 1, "AssemblyDriftIndex");
+        if (!_postHogTracked) {
+          PostHog.Result(result.CaseType, 1, "AssemblyDriftIndex");
+          _postHogTracked = true;
+        }
       }
 
       da.SetDataTree(0, outTransX);

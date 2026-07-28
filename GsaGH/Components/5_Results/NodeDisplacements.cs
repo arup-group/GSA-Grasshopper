@@ -36,6 +36,7 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.NodeDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
+    private bool _postHogTracked = false;
 
     public NodeDisplacements() : base("Node Displacements", "NodeDisp",
       "Node Translation and Rotation result values", CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -192,7 +193,10 @@ namespace GsaGH.Components {
           outIDs.Add(key.Id, path);
         }
 
-        PostHog.Result(result.CaseType, 0, "Displacement");
+        if (!_postHogTracked) {
+          PostHog.Result(result.CaseType, 0, "Displacement");
+          _postHogTracked = true;
+        }
       }
 
       da.SetDataTree(0, outTransX);

@@ -32,6 +32,7 @@ namespace GsaGH.Components {
     private double _minValue;
     private int _noDigits;
     private Section3dPreview _section3dPreview;
+    private bool _postHogTracked = false;
     public PreviewDeformed3dSections() : base("Preview Deformed 3D Sections", "DeformedPreview3d",
       "Show the deformed 3D cross-section of 1D/2D GSA Elements and Members from a GSA Result.",
       CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -106,7 +107,10 @@ namespace GsaGH.Components {
       da.SetData(0, _section3dPreview.Mesh);
       da.SetDataList(1, _section3dPreview.Outlines);
 
-      PostHog.Result(result.CaseType, 1, "Displacement", "DeformedSection3d");
+      if (!_postHogTracked) {
+        PostHog.Result(result.CaseType, 1, "Displacement", "DeformedSection3d");
+        _postHogTracked = true;
+      }
     }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {

@@ -43,6 +43,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.SteelDesignEffectiveLength;
     private SteelDesignType _type = SteelDesignType.Major;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
+    private bool _postHogTracked = false;
 
     private readonly IReadOnlyDictionary<SteelDesignType, string> _steelDesignTypes
       = new Dictionary<SteelDesignType, string> {
@@ -216,7 +217,10 @@ namespace GsaGH.Components {
         }
       }
 
-      PostHog.Result(result.CaseType, 1, "Displacement");
+      if (!_postHogTracked) {
+        PostHog.Result(result.CaseType, 1, "Displacement");
+        _postHogTracked = true;
+      }
 
       da.SetDataTree(0, length);
       da.SetDataTree(1, spans);
