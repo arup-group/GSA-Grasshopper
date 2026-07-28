@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -132,7 +132,6 @@ namespace GsaGH.Components {
     private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
     private List<(int startY, int endY, Color gradientColor)> _gradients
       = new List<(int startY, int endY, Color gradientColor)>();
-    private bool _postHogTracked = false;
 
     public Contour2dResults() : base("Contour 2D Results", "Contour2d", "Displays GSA 2D Element Results as Contour",
       CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -777,7 +776,6 @@ namespace GsaGH.Components {
         significantDigits = (int)rounded[2];
       }
 
-
       var meshes = new ConcurrentDictionary<int, Mesh>();
       meshes.AsParallel().AsOrdered();
       values.AsParallel().AsOrdered();
@@ -873,8 +871,6 @@ namespace GsaGH.Components {
       var legendValues = new List<string>();
       var legendValuePositionsY = new List<int>();
 
-
-
       for (int i = 0; i < ghGradient.GripCount; i++) {
         double t = dmin + ((dmax - dmin) / ((double)ghGradient.GripCount - 1) * i);
         if (t > 1) {
@@ -948,7 +944,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
 
-      PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 2, _mode.ToString(), _disp.ToString()));
+      PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 2, _mode.ToString(), _disp.ToString()));
     }
 
     private ConcurrentDictionary<int, IList<IQuantity>> GetResultComponent(

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -47,7 +47,6 @@ namespace GsaGH.Components {
       true,
       true,
     };
-    private bool _postHogTracked = false;
 
     private bool _reMesh = true;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
@@ -256,7 +255,7 @@ namespace GsaGH.Components {
 
           foreach (KeyValuePair<int, AnalysisTask> task in gsaTasks) {
             if (model.ApiModel.Analyse(task.Key, out TaskReport report)) {
-              PostHog.TrackOnce(ref _postHogTracked, () => OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
+              PostHog.TrackOnce(this, () => OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, "analyse",
                 model.ApiModel.Elements().Count));
             } else {
               string message = "Analysis Task " + task.Key +

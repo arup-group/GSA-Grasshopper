@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -36,7 +36,6 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.Element3dStresses;
     private PressureUnit _stresshUnit = DefaultUnits.StressUnitResult;
-    private bool _postHogTracked = false;
 
     public Element3dStresses() : base("Element 3D Stresses", "Stress3D", "3D Element Stress result values",
       CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -186,7 +185,7 @@ namespace GsaGH.Components {
           outZx.Add(new GH_UnitNumber(extrema.Zx.ToUnit(_stresshUnit)), path);
         }
 
-        PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 3, "Stress"));
+        PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 3, "Stress"));
       }
 
       da.SetDataTree(0, outXx);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -35,7 +35,6 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.BeamDerivedStresses;
     private PressureUnit _stressUnit = DefaultUnits.StressUnitResult;
-    private bool _postHogTracked = false;
 
     public BeamDerivedStresses() : base("Beam Derived Stresses", "vonMises",
       "Element1D Derived Stress results like von Mises", CategoryName.Name(),
@@ -161,7 +160,7 @@ namespace GsaGH.Components {
           outVonMises.Add(new GH_UnitNumber(extrema.VonMises.ToUnit(_stressUnit)), path);
         }
 
-        PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 1, "Displacement"));
+        PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 1, "Displacement"));
       }
 
       da.SetDataTree(0, outShearY);

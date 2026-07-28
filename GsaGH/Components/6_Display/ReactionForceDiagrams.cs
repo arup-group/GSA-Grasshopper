@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -71,7 +71,6 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
     private DisplayValue _selectedDisplayValue = DisplayValue.ResXyz;
-    private bool _postHogTracked = false;
 
     public ReactionForceDiagrams() : base("Reaction Force Diagrams", "ReactionForce",
       "Diplays GSA Node Reaction Force Results as Vector Diagrams", CategoryName.Name(),
@@ -252,7 +251,7 @@ namespace GsaGH.Components {
       });
 
       SetOutputs(da, reactionForceVectors, annotations);
-      PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Diagram("Result", result.CaseType, "ReactionForce", _selectedDisplayValue.ToString(), Parameters.EntityType.Node));
+      PostHog.TrackOnce(this, () => PostHog.Diagram("Result", result.CaseType, "ReactionForce", _selectedDisplayValue.ToString(), Parameters.EntityType.Node));
     }
 
     private double ComputeAutoScale(IEntity0dResultSubset<IReactionForce, ResultVector6<Entity0dExtremaKey>> forceValues, BoundingBox bbox) {

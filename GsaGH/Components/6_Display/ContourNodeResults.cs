@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -126,7 +126,6 @@ namespace GsaGH.Components {
     private EnvelopeMethod _envelopeType = EnvelopeMethod.Absolute;
     private List<(int startY, int endY, Color gradientColor)> _gradients
       = new List<(int startY, int endY, Color gradientColor)>();
-    private bool _postHogTracked = false;
 
     public ContourNodeResults() : base("Contour Node Results", "NodeContour",
       "Diplays GSA Node Results as Contours", CategoryName.Name(), SubCategoryName.Cat6()) { }
@@ -836,7 +835,7 @@ namespace GsaGH.Components {
       da.SetDataList(1, cs);
       da.SetDataList(2, ts);
 
-      PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 0, _mode.ToString(), _disp.ToString()));
+      PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 0, _mode.ToString(), _disp.ToString()));
     }
 
     internal GH_GradientControl CreateGradient(GH_Document doc = null) {

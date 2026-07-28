@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -36,7 +36,6 @@ namespace GsaGH.Components {
     private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
     private bool _expansionTypeChanged = false;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
-    private bool _postHogTracked = false;
 
     public CreateGridPointLoad() : base("Create Grid Point Load", "PointLoad",
       "Create GSA Grid Point Load", CategoryName.Name(), SubCategoryName.Cat3()) {
@@ -276,7 +275,7 @@ namespace GsaGH.Components {
       gridPointLoad.ApiLoad.Value
         = ((Force)Input.UnitNumber(this, da, 6, _forceUnit)).Newtons;
 
-      GsaGH.Helpers.PostHog.TrackOnce(ref _postHogTracked, () => GsaGH.Helpers.PostHog.Load(gridPointLoad, ReferenceType.None));
+      GsaGH.Helpers.PostHog.TrackOnce(this, () => GsaGH.Helpers.PostHog.Load(gridPointLoad, ReferenceType.None));
       da.SetData(0, new GsaLoadGoo(gridPointLoad));
     }
 

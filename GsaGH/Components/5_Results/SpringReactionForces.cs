@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -37,7 +37,6 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.SpringReactionForces;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
-    private bool _postHogTracked = false;
 
     public SpringReactionForces() : base("Spring Reaction Forces", "SpringForce",
       "Spring Reaction Force result values", CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -215,7 +214,7 @@ namespace GsaGH.Components {
           outIDs.Add(key.Id, path);
         }
 
-        PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 0, "Force", "Spring"));
+        PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 0, "Force", "Spring"));
       }
 
       da.SetDataTree(0, outTransX);

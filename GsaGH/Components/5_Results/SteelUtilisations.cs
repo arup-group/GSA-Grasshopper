@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -29,7 +29,6 @@ namespace GsaGH.Components {
     public override GH_Exposure Exposure => GH_Exposure.septenary;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.SteelUtilisations;
-    private bool _postHogTracked = false;
 
     public SteelUtilisations() : base("Steel Utilisations", "SteelUtil", "Steel Utilisation result values",
       CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -162,7 +161,7 @@ namespace GsaGH.Components {
         fb.Add(new GH_UnitNumber(extrema.FlexuralBuckling), path);
       }
 
-      PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 1, "SteelUtilisations"));
+      PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 1, "SteelUtilisations"));
 
       da.SetDataTree(0, o);
       da.SetDataTree(1, lc);

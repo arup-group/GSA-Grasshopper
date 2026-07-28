@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -43,7 +43,6 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.SteelDesignEffectiveLength;
     private SteelDesignType _type = SteelDesignType.Major;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
-    private bool _postHogTracked = false;
 
     private readonly IReadOnlyDictionary<SteelDesignType, string> _steelDesignTypes
       = new Dictionary<SteelDesignType, string> {
@@ -217,7 +216,7 @@ namespace GsaGH.Components {
         }
       }
 
-      PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 1, "Displacement"));
+      PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 1, "Displacement"));
 
       da.SetDataTree(0, length);
       da.SetDataTree(1, spans);
@@ -238,7 +237,6 @@ namespace GsaGH.Components {
 
       base.UpdateUIFromSelectedItems();
     }
-
 
     private void UpdateParameters(SteelDesignType type) {
       if (type == _type) {

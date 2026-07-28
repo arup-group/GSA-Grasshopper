@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers {
   internal class PostHog {
+    // Tracks component instances without preventing garbage collection.
+    private static readonly ConditionalWeakTable<object, object> _instanceTracking =
+      new ConditionalWeakTable<object, object>();
 
-    internal static void TrackOnce(ref bool tracked, Action postHogAction) {
-      if (!tracked) {
+    internal static void TrackOnce(object componentInstance, Action postHogAction) {
+      if (!_instanceTracking.TryGetValue(componentInstance, out _)) {
         postHogAction();
-        tracked = true;
+        _instanceTracking.Add(componentInstance, true);
       }
     }
 

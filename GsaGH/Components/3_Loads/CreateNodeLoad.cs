@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -47,7 +47,6 @@ namespace GsaGH.Components {
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
     private FoldMode _mode = FoldMode.NodeForce;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
-    private bool _postHogTracked = false;
 
     public CreateNodeLoad() : base("Create Node Load", "NodeLoad", "Create GSA Node Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
@@ -312,7 +311,7 @@ namespace GsaGH.Components {
 
       nodeLoad.ApiLoad.Value = load;
 
-      GsaGH.Helpers.PostHog.TrackOnce(ref _postHogTracked, () => GsaGH.Helpers.PostHog.Load(nodeLoad._refPoint != Point3d.Unset, nodeLoad.Type.ToString()));
+      GsaGH.Helpers.PostHog.TrackOnce(this, () => GsaGH.Helpers.PostHog.Load(nodeLoad._refPoint != Point3d.Unset, nodeLoad.Type.ToString()));
       da.SetData(0, new GsaLoadGoo(nodeLoad));
     }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -39,7 +39,6 @@ namespace GsaGH.Components {
     private ExpansionType _expansionType = ExpansionType.UseGpsSettings;
     private bool _expansionTypeChanged = false;
     private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
-    private bool _postHogTracked = false;
 
     public CreateGridLineLoad() : base("Create Grid Line Load", "LineLoad",
       "Create GSA Grid Line Load", CategoryName.Name(), SubCategoryName.Cat3()) {
@@ -318,7 +317,7 @@ namespace GsaGH.Components {
 
       gridlineload.ApiLoad.ValueAtEnd = load2;
 
-      GsaGH.Helpers.PostHog.TrackOnce(ref _postHogTracked, () => GsaGH.Helpers.PostHog.Load(gridlineload, ReferenceType.None));
+      GsaGH.Helpers.PostHog.TrackOnce(this, () => GsaGH.Helpers.PostHog.Load(gridlineload, ReferenceType.None));
       da.SetData(0, new GsaLoadGoo(gridlineload));
     }
 

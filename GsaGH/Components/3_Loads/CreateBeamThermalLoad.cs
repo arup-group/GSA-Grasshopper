@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -40,7 +40,7 @@ namespace GsaGH.Components {
       //"GradientInZ"
     });
     private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
-    private FoldMode _mode = FoldMode.Uniform;    private bool _postHogTracked = false;
+    private FoldMode _mode = FoldMode.Uniform;
     public CreateBeamThermalLoad() : base("Create Beam Thermal Load", "BeamThermalLoad", "Create GSA Beam Thermal Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
@@ -210,7 +210,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      GsaGH.Helpers.PostHog.TrackOnce(ref _postHogTracked, () => GsaGH.Helpers.PostHog.Load(beamThermalLoad, beamThermalLoad.ReferenceType));
+      GsaGH.Helpers.PostHog.TrackOnce(this, () => GsaGH.Helpers.PostHog.Load(beamThermalLoad, beamThermalLoad.ReferenceType));
       da.SetData(0, new GsaLoadGoo(beamThermalLoad));
     }
 

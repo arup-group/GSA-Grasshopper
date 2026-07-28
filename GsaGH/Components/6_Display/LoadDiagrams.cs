@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -48,7 +48,6 @@ namespace GsaGH.Components {
     private string _caseId = "L1";
     private List<string> _2dDiagramTypes;
     private List<string> _3dDiagramTypes;
-    private bool _postHogTracked = false;
     private List<string> _beamDiagramTypes;
     private List<string> _gridDiagramTypes;
     private List<string> _nodalDiagramTypes;
@@ -309,7 +308,7 @@ namespace GsaGH.Components {
       da.SetDataList(0, diagramLines);
       da.SetDataList(1, diagramAnnotations);
 
-      PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Diagram("Load", _caseId, _selectedItems[1], types, Parameters.EntityType.Element));
+      PostHog.TrackOnce(this, () => PostHog.Diagram("Load", _caseId, _selectedItems[1], types, Parameters.EntityType.Element));
     }
 
     private bool IsGhObjectValid(GsaModelGoo modelGoo) {

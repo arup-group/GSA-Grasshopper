@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -35,7 +35,6 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.AssemblyDisplacements;
     private LengthUnit _lengthUnit = DefaultUnits.LengthUnitResult;
-    private bool _postHogTracked = false;
 
     public AssemblyDisplacements() : base("Assembly Displacements", "AssemblyDisp",
       "Assembly Translation and Rotation result values", CategoryName.Name(),
@@ -175,7 +174,7 @@ namespace GsaGH.Components {
           outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz), path);
         }
 
-        PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 1, "AssemblyDisplacement"));
+        PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 1, "AssemblyDisplacement"));
       }
 
       da.SetDataTree(0, outTransX);

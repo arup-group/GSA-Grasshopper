@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -39,8 +39,6 @@ namespace GsaGH.Components {
     private ForcePerLengthUnit _forceUnit = DefaultUnits.ForcePerLengthUnit;
     private ForceUnit _momentUnit = DefaultUnits.ForceUnit;
     private const string MomentComponentWarning = "Result is not available for the moment component";
-    private bool _postHogTracked = false;
-
 
     public Element2dForcesAndMoments() : base("Element 2D Forces and Moments", "Forces2D",
       "2D Projected Force and Moment result values", CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -328,7 +326,7 @@ namespace GsaGH.Components {
             }
           }
         }
-        PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 2, "Force"));
+        PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 2, "Force"));
       }
 
       da.SetDataTree(0, outX);

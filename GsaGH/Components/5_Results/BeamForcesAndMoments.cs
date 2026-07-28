@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -36,7 +36,6 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.BeamForcesAndMoments;
     private ForceUnit _forceUnit = DefaultUnits.ForceUnit;
     private MomentUnit _momentUnit = DefaultUnits.MomentUnit;
-    private bool _postHogTracked = false;
 
     public BeamForcesAndMoments() : base("Beam Forces and Moments", "BeamForces",
       "Element1D Force and Moment result values", CategoryName.Name(), SubCategoryName.Cat5()) {
@@ -210,7 +209,7 @@ namespace GsaGH.Components {
           outRotXyz.Add(new GH_UnitNumber(extrema.Xxyyzz.ToUnit(_momentUnit)), path);
         }
 
-        PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 1, "Force"));
+        PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 1, "Force"));
       }
 
       da.SetDataTree(0, outTransX);

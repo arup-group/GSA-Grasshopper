@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -49,7 +49,6 @@ namespace GsaGH.Components {
     private bool _duringLoad;
     private ForcePerLengthUnit _forcePerLengthUnit = DefaultUnits.ForcePerLengthUnit;
     private FoldMode _mode = FoldMode.Uniform;
-    private bool _postHogTracked = false;
 
     public CreateBeamLoad() : base("Create Beam Load", "BeamLoad", "Create GSA Beam Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
@@ -455,7 +454,7 @@ namespace GsaGH.Components {
           break;
       }
 
-      GsaGH.Helpers.PostHog.TrackOnce(ref _postHogTracked, () => GsaGH.Helpers.PostHog.Load(beamLoad, beamLoad.ReferenceType));
+      GsaGH.Helpers.PostHog.TrackOnce(this, () => GsaGH.Helpers.PostHog.Load(beamLoad, beamLoad.ReferenceType));
       da.SetData(0, new GsaLoadGoo(beamLoad));
     }
 

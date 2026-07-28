@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.IO;
 
@@ -30,7 +30,6 @@ namespace GsaGH.Components {
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.OpenModel;
     private Guid _panelGuid = Guid.NewGuid();
-    private bool _postHogTracked = false;
 
     public OpenModel() : base("Open Model", "Open", "Open an existing GSA model",
       CategoryName.Name(), SubCategoryName.Cat0()) {
@@ -119,7 +118,7 @@ namespace GsaGH.Components {
       }
 
       da.SetData(0, new GsaModelGoo(gsaModel));
-      GsaGH.Helpers.PostHog.TrackOnce(ref _postHogTracked, () => OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"open{fileName.Substring(fileName.LastIndexOf('.') + 1).ToUpper()}",
+      GsaGH.Helpers.PostHog.TrackOnce(this, () => OasysGH.Helpers.PostHog.ModelIO(GsaGH.PluginInfo.Instance, $"open{fileName.Substring(fileName.LastIndexOf('.') + 1).ToUpper()}",
         (int)(new FileInfo(fileName).Length / 1024)));
     }
 

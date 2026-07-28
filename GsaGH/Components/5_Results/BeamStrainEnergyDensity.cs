@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -47,7 +47,6 @@ namespace GsaGH.Components {
     private List<bool> _initialCheckState = new List<bool>() {
       true,
     };
-    private bool _postHogTracked = false;
 
     public BeamStrainEnergyDensity() : base("Beam Strain Energy Density", "StrainEnergy",
       "Element1D Strain Energy Density result values", CategoryName.Name(),
@@ -234,7 +233,7 @@ namespace GsaGH.Components {
           }
         }
 
-        PostHog.TrackOnce(ref _postHogTracked, () => PostHog.Result(result.CaseType, 1, "StrainEnergy"));
+        PostHog.TrackOnce(this, () => PostHog.Result(result.CaseType, 1, "StrainEnergy"));
       }
 
       da.SetDataTree(0, outResults);
