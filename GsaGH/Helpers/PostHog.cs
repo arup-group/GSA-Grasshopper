@@ -7,9 +7,6 @@ using GsaGH.Parameters.Enums;
 namespace GsaGH.Helpers {
   internal class PostHog {
 
-    /// <summary>
-    /// Executes a PostHog action only once per component instance.
-    /// </summary>
     internal static void TrackOnce(ref bool tracked, Action postHogAction) {
       if (!tracked) {
         postHogAction();
