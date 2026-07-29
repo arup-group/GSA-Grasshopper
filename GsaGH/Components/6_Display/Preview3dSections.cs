@@ -143,34 +143,13 @@ namespace GsaGH.Components {
 
         _lengthUnit = OasysUnitsSetup.Default.UnitParser.Parse<LengthUnit>(unitsName.First());
 
-        if (!(elem1ds.Count > 0)) {
-          elem1ds = null;
-        }
-
-        if (!(elem2ds.Count > 0)) {
-          elem2ds = null;
-        }
-
-        if (!(mem1ds.Count > 0)) {
-          mem1ds = null;
-        }
-
-        if (!(mem2ds.Count > 0)) {
-          mem2ds = null;
-        }
-
-        if (models is null & elem1ds is null & elem2ds is null & mem1ds is null & mem2ds is null) {
+        if (models.Count == 0 && elem1ds.Count == 0 && elem2ds.Count == 0 && mem1ds.Count == 0 && mem2ds.Count == 0) {
           this.AddRuntimeWarning("Input parameter failed to collect data");
           return;
         }
 
-        if (models.IsNullOrEmpty()) {
-          if ((elem1ds?.All(e => e.ApiElement.Topology.IsNullOrEmpty()) ?? true) &&
-              (elem2ds?.All(e => e.ApiElements.IsNullOrEmpty()) ?? true) &&
-              (mem1ds?.All(m => string.IsNullOrEmpty(m.ApiMember.Topology)) ?? true) &&
-              (mem2ds?.All(m => string.IsNullOrEmpty(m.ApiMember.Topology)) ?? true)) {
-            _lengthUnit = DefaultUnits.LengthUnitGeometry;
-          }
+        if (ShouldUseDefaultLengthUnit(models, elem1ds, elem2ds, mem1ds, mem2ds)) {
+          _lengthUnit = DefaultUnits.LengthUnitGeometry;
         }
 
         var model = new GsaModel();
@@ -221,6 +200,19 @@ namespace GsaGH.Components {
           da.SetDataList(3, _designSection3dPreview.Outlines);
         }
       }
+    }
+
+    internal static bool ShouldUseDefaultLengthUnit(
+      List<GsaModel> models,
+      List<GsaElement1d> elem1ds,
+      List<GsaElement2d> elem2ds,
+      List<GsaMember1d> mem1ds,
+      List<GsaMember2d> mem2ds) {
+      return models.IsNullOrEmpty()
+        && elem1ds.All(e => e.ApiElement.Topology.IsNullOrEmpty())
+        && elem2ds.All(e => e.ApiElements.IsNullOrEmpty())
+        && mem1ds.All(m => string.IsNullOrEmpty(m.ApiMember.Topology))
+        && mem2ds.All(m => string.IsNullOrEmpty(m.ApiMember.Topology));
     }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {
