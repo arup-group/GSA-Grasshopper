@@ -153,12 +153,10 @@ namespace GsaGH.Components {
         }
 
         var model = new GsaModel();
-        if (models != null) {
-          if (models.Count > 0) {
-            model = models.Count > 1
-              ? MergeModels.MergeModel(models, this, Length.Zero) :
-              models[0].Clone();
-          }
+        if (models.Count > 0) {
+          model = models.Count > 1
+            ? MergeModels.MergeModel(models, this, Length.Zero) :
+            models[0].Clone();
         }
 
         // Assemble model

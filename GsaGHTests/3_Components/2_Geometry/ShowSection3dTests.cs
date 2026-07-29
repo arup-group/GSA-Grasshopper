@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
@@ -135,6 +136,72 @@ namespace GsaGHTests.Components.Geometry {
         new List<GsaMember2d> { new GsaMember2d() });
 
       Assert.False(shouldUseDefault);
+    }
+
+    [Fact]
+    public void NonEmptyElement1dTopologyDoesNotUseDefaultLengthUnit() {
+      bool shouldUseDefault = Preview3dSections.ShouldUseDefaultLengthUnit(
+        new List<GsaModel>(),
+        new List<GsaElement1d> { new GsaElement1d() },
+        new List<GsaElement2d> { new GsaElement2d() },
+        new List<GsaMember1d> { new GsaMember1d() },
+        new List<GsaMember2d> { new GsaMember2d() });
+
+      Assert.False(shouldUseDefault);
+    }
+
+    [Fact]
+    public void NonEmptyElement2dApiElementsDoesNotUseDefaultLengthUnit() {
+      var polyline = new PolylineCurve(new[] {
+        new Point3d(0, 0, 0),
+        new Point3d(1, 0, 0),
+        new Point3d(1, 1, 0),
+        new Point3d(0, 1, 0),
+        new Point3d(0, 0, 0),
+      });
+
+      bool shouldUseDefault = Preview3dSections.ShouldUseDefaultLengthUnit(
+        new List<GsaModel>(),
+        new List<GsaElement1d>(),
+        new List<GsaElement2d> { new GsaElement2d(polyline) },
+        new List<GsaMember1d> { new GsaMember1d() },
+        new List<GsaMember2d> { new GsaMember2d() });
+
+      Assert.False(shouldUseDefault);
+    }
+
+    [Fact]
+    public void NonEmptyMember2dTopologyDoesNotUseDefaultLengthUnit() {
+      var member2dWithTopology = new GsaMember2d();
+      member2dWithTopology.ApiMember.Topology = "1 2 3";
+
+      bool shouldUseDefault = Preview3dSections.ShouldUseDefaultLengthUnit(
+        new List<GsaModel>(),
+        new List<GsaElement1d>(),
+        new List<GsaElement2d> { new GsaElement2d() },
+        new List<GsaMember1d> { new GsaMember1d() },
+        new List<GsaMember2d> { member2dWithTopology });
+
+      Assert.False(shouldUseDefault);
+    }
+
+    [Fact]
+    public void SolveInternalEmptyTopologyInputResetsLengthUnitToDefault() {
+      var component = new Preview3dSections();
+      component.CreateAttributes();
+
+      var member1d = new GsaMember1d {
+        LengthUnit = LengthUnit.Centimeter,
+      };
+
+      ComponentTestHelper.SetInput(component, new GsaMember1dGoo(member1d));
+      ComponentTestHelper.ComputeOutput(component);
+
+      FieldInfo field = typeof(Preview3dSections).GetField("_lengthUnit",
+        BindingFlags.Instance | BindingFlags.NonPublic);
+      Assert.NotNull(field);
+      var lengthUnit = (LengthUnit)field.GetValue(component);
+      Assert.Equal(DefaultUnits.LengthUnitGeometry, lengthUnit);
     }
 
     [Fact]
