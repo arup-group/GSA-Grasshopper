@@ -164,6 +164,15 @@ namespace GsaGH.Components {
           return;
         }
 
+        if (models.IsNullOrEmpty()) {
+          if ((elem1ds?.All(e => e.ApiElement.Topology.IsNullOrEmpty()) ?? true) &&
+              (elem2ds?.All(e => e.ApiElements.IsNullOrEmpty()) ?? true) &&
+              (mem1ds?.All(m => string.IsNullOrEmpty(m.ApiMember.Topology)) ?? true) &&
+              (mem2ds?.All(m => string.IsNullOrEmpty(m.ApiMember.Topology)) ?? true)) {
+            _lengthUnit = DefaultUnits.LengthUnitGeometry;
+          }
+        }
+
         var model = new GsaModel();
         if (models != null) {
           if (models.Count > 0) {
