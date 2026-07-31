@@ -222,8 +222,6 @@ namespace GsaGHTests.Properties {
     [InlineData("TWOEDGES")]
     [InlineData("auto")]
     [InlineData("AUTO")]
-    [InlineData(1)]
-    [InlineData(9)]
     [InlineData(null)]
     public void InputStringConvertedSupportType(object input) {
       var prop2d = new GsaProperty2d();
@@ -233,6 +231,21 @@ namespace GsaGHTests.Properties {
       ComponentTestHelper.SetInput(comp, new GH_ObjectWrapper(input), 11);
       var prop2dGoo = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp, 0);
       Assert.NotNull(prop2dGoo);
+    }
+
+    [Theory]
+      [InlineData("OneWay", 8)]
+      [InlineData("TwoWay", 9)]
+      [InlineData("8", 8)]
+      [InlineData("9", 9)]
+      public void OneWayAndTwoWayStringsSetCorrectSupportType(string input, int expected) {
+      var prop2d = new GsaProperty2d();
+      prop2d.ApiProp2d.Type = Property2D_Type.LOAD;
+      GH_OasysComponent comp = ComponentMother();
+      ComponentTestHelper.SetInput(comp, new GsaProperty2dGoo(prop2d), 0);
+      ComponentTestHelper.SetInput(comp, new GH_ObjectWrapper(input), 11);
+      var prop2dGoo = (GsaProperty2dGoo)ComponentTestHelper.GetOutput(comp, 0);
+        Assert.Equal(expected, (int)prop2dGoo.Value.ApiProp2d.SupportType);
     }
 
     [Theory]
