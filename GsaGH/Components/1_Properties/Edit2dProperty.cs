@@ -147,7 +147,8 @@ namespace GsaGH.Components {
         + "Input either text string or integer:" + Environment.NewLine + "Auto : 1"
         + Environment.NewLine + "All Edges : 2" + Environment.NewLine + "Three Edges : 3"
         + Environment.NewLine + "Two Edges : 4" + Environment.NewLine + "Two Adjacent Edges : 5"
-        + Environment.NewLine + "One Edge : 6" + Environment.NewLine + "Cantilever : 7",
+        + Environment.NewLine + "One Edge : 6" + Environment.NewLine + "Cantilever : 7"
+        + Environment.NewLine + "OneWay : 8" + Environment.NewLine + "TwoWay : 9",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Reference Edge", "RE",
         "Reference Edge for Load Panels with support type other than Auto and All Edges",
