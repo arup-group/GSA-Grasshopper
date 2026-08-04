@@ -147,7 +147,8 @@ namespace GsaGH.Components {
         + "Input either text string or integer:" + Environment.NewLine + "Auto : 1"
         + Environment.NewLine + "All Edges : 2" + Environment.NewLine + "Three Edges : 3"
         + Environment.NewLine + "Two Edges : 4" + Environment.NewLine + "Two Adjacent Edges : 5"
-        + Environment.NewLine + "One Edge : 6" + Environment.NewLine + "Cantilever : 7",
+        + Environment.NewLine + "One Edge : 6" + Environment.NewLine + "Cantilever : 7"
+        + Environment.NewLine + "OneWay : 8" + Environment.NewLine + "TwoWay : 9",
         GH_ParamAccess.item);
       pManager.AddIntegerParameter("Reference Edge", "RE",
         "Reference Edge for Load Panels with support type other than Auto and All Edges",
@@ -299,16 +300,12 @@ namespace GsaGH.Components {
       }
 
       GH_ObjectWrapper ghSupportType = null;
-      if (da.GetData(11, ref ghSupportType)) {
-        if (ghSupportType.Value is GH_Integer supportTypeIndex) {
-          prop.ApiProp2d.SupportType = (SupportType)supportTypeIndex.Value;
+      if (da.GetData(11, ref ghSupportType) && ghSupportType != null) {
+        if (GH_Convert.ToInt32(ghSupportType.Value, out int supportTypeIndex, GH_Conversion.Both)) {
+          prop.ApiProp2d.SupportType = (SupportType)supportTypeIndex;
         } else if (GH_Convert.ToString(ghSupportType.Value, out string supportTypeName,
           GH_Conversion.Both)) {
-          supportTypeName = supportTypeName.Replace(" ", string.Empty).Replace("1", "One")
-           .Replace("2", "Two").Replace("3", "Three");
-          supportTypeName = supportTypeName.Replace("all", "All").Replace("adj", "Adj")
-           .Replace("auto", "Auto").Replace("edge", "Edge").Replace("cant", "Cant");
-          prop.ApiProp2d.SupportType = (SupportType)Enum.Parse(typeof(SupportType), supportTypeName);
+          prop.ApiProp2d.SupportType = (SupportType)Enum.Parse(typeof(SupportType), supportTypeName, true);
         } else {
           this.AddRuntimeError("Cannot convert support type to 'int' or 'string'");
         }
