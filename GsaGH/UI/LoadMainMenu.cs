@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Grasshopper;
@@ -8,50 +10,85 @@ using Grasshopper.GUI.Canvas;
 
 using GsaGH.Properties;
 
+using static GsaGH.UI.MessageDialogBox;
+
 namespace GsaGH.Graphics.Menu {
   public class MenuLoad {
     private static ToolStripMenuItem oasysMenu;
+    public const string Name = "Oasys";
 
     internal static void OnStartup(GH_Canvas canvas) {
-      oasysMenu = new ToolStripMenuItem("Oasys") {
-        Name = "Oasys",
+      oasysMenu = new ToolStripMenuItem(Name) {
+        Name = Name,
       };
+      AddToRibbon();
+    }
 
-      PopulateSub(oasysMenu);
-
-      GH_DocumentEditor editor = null;
-
-      while (editor == null) {
-        editor = Instances.DocumentEditor;
-        Thread.Sleep(321);
+    private static void AddToRibbon() {
+      GH_DocumentEditor editor = WaitForDocumentEditor();
+      if (editor == null) {
+        Instances.CanvasCreated -= OnStartup;
+        ShowMessage(MenuState.FailedToInitialize);
+        return;
       }
 
-      if (!editor.MainMenuStrip.Items.ContainsKey("Oasys")) {
-        editor.MainMenuStrip.Items.Add(oasysMenu);
-      } else {
-        oasysMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items["Oasys"];
-        lock (oasysMenu) {
-          oasysMenu.DropDown.Items.Add(new ToolStripSeparator());
-          PopulateSub(oasysMenu);
-        }
-      }
-
+      AddOrUpdateOasysMenu(editor);
       Instances.CanvasCreated -= OnStartup;
     }
 
-    internal static void PopulateSub(ToolStripMenuItem menuItem) {
-      menuItem.DropDown.Items.Add("GSA Documentation", Resources.Documentation, (s, a)
-        => Process.Start(new ProcessStartInfo {
-          FileName
-            = "https://docs.oasys-software.com/structural/gsa/explanations/gsagh-introduction.html?source=grasshopper",
+    private static GH_DocumentEditor WaitForDocumentEditor() {
+      DateTime start = DateTime.UtcNow;
+      var timeout = TimeSpan.FromSeconds(60);
+      while (DateTime.UtcNow - start < timeout) {
+        GH_DocumentEditor editor = Instances.DocumentEditor;
+        if (editor != null) {
+          return editor;
+        }
+
+        Thread.Sleep(321);
+      }
+
+      return null;
+    }
+
+    private static void AddOrUpdateOasysMenu(GH_DocumentEditor editor) {
+      if (!editor.MainMenuStrip.Items.ContainsKey(Name)) {
+        editor.MainMenuStrip.Items.Add(oasysMenu);
+      } else {
+        oasysMenu = (ToolStripMenuItem)editor.MainMenuStrip.Items[Name];
+      }
+
+      _ = PopulateOasysMenu(oasysMenu);
+    }
+
+    internal static async Task PopulateOasysMenu(ToolStripMenuItem menuItem) {
+      try {
+        ToolStripMenuItem documentation = CreateDocumentationMenuItem();
+        ToolStripMenuItem examples = await ExamplesMenu.CreateExamplesMenuItemAsync();
+        ToolStripMenuItem info = CreateInfoMenuItem();
+        menuItem.DropDown.Items.Insert(0, info);
+        menuItem.DropDown.Items.Insert(0, examples);
+        menuItem.DropDown.Items.Insert(0, documentation);
+      } catch {
+        ToolStrip parent = menuItem.GetCurrentParent();
+        if (parent != null) {
+          parent.BeginInvoke((Action)(() => ShowMessage(FileState.NoFilesFound, string.Empty)));
+        } else {
+          ShowMessage(FileState.NoFilesFound, string.Empty);
+        }
+      }
+    }
+
+    internal static ToolStripMenuItem CreateDocumentationMenuItem() {
+      return new ToolStripMenuItem("GSA Documentation", Resources.Documentation,
+        (s, a) => Process.Start(new ProcessStartInfo {
+          FileName = Resources.DocumentationUrl,
           UseShellExecute = true,
         }));
-      menuItem.DropDown.Items.Add("GSA Example files", Resources.ExampleFiles, (s, a)
-        => Process.Start(new ProcessStartInfo {
-          FileName = "https://github.com/arup-group/GSA-Grasshopper/tree/main/ExampleFiles",
-          UseShellExecute = true,
-        }));
-      menuItem.DropDown.Items.Add("GSA Info", Resources.GSAInfo, (s, a) => {
+    }
+
+    internal static ToolStripMenuItem CreateInfoMenuItem() {
+      return new ToolStripMenuItem("GSA Info", Resources.GSAInfo, (s, a) => {
         var aboutBox = new AboutBox();
         aboutBox.ShowDialog();
       });
