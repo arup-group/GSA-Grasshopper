@@ -1,4 +1,4 @@
-namespace GsaGHTests.Parameters.Results {
+﻿namespace GsaGHTests.Parameters.Results {
   public enum ResultTensor2InAxis {
     Nx,
     Ny,
