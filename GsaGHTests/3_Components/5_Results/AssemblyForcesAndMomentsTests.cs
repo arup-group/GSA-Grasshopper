@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using GsaGH.Helpers;
-using GsaGH.Helpers.GsaApi;
+using Grasshopper.Kernel;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 

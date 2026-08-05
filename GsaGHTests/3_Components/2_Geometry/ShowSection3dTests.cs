@@ -6,7 +6,7 @@ using Grasshopper.Kernel.Types;
 
 using GsaGH.Components;
 using GsaGH.Parameters;
-
+using GsaGH.Helpers;
 using GsaGHTests.Helpers;
 using GsaGHTests.Model;
 
