@@ -118,6 +118,15 @@ namespace GsaGHTests.Components.Results {
       Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
+    [Fact]
+    public void DriftShouldNotHaveError() {
+      var comp = new AssemblyDrifts();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(GsaResultTests.AnalysisCaseResult(GsaFile.AssemblyResult, 1)));
+      object output = ComponentTestHelper.GetOutput(comp);
+      Assert.NotNull(output);
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+    }
+
     private List<double> ExpectedAnalysisCaseValues(DriftResultVector component) {
       switch (component) {
         case DriftResultVector.X: return AssemblyDriftsA1.XInMillimeter();

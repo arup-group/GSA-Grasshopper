@@ -141,8 +141,8 @@ namespace GsaGH.Components {
         GH_ParamAccess.item);
       pManager.AddCurveParameter("Curve", "C", "Member Curve", GH_ParamAccess.item);
       pManager.HideParameter(2);
-      pManager.AddGenericParameter("Section", "PB", "Get Section or Spring Property",
-        GH_ParamAccess.item);
+      pManager.AddParameter(new GsaPropertyParameter(), "Section", "PB", "Get Section or Spring Property",
+      GH_ParamAccess.item);
       pManager.AddIntegerParameter("Member Group", "Gr", "Get Member Group", GH_ParamAccess.item);
       pManager.AddTextParameter("Member Type", "mT", "Get 1D Member Type", GH_ParamAccess.item);
       pManager.AddTextParameter("1D Element Type", "eT", "Get Element 1D Type",

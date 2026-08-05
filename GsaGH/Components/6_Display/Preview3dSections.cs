@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Grasshopper.Kernel;
@@ -19,6 +20,7 @@ using OasysGH.Units;
 
 using OasysUnits;
 
+using LengthUnit = OasysUnits.Units.LengthUnit;
 namespace GsaGH.Components {
   public class Preview3dSections : GH_OasysDropDownComponent {
     public override Guid ComponentGuid => new Guid("a3f80eb4-c876-4582-ad7a-d2bb9acf5c8d");
@@ -27,6 +29,7 @@ namespace GsaGH.Components {
     protected override Bitmap Icon => Resources.Preview3dSections;
     private Section3dPreview _analysisSection3dPreview;
     private Section3dPreview _designSection3dPreview;
+    private LengthUnit _lengthUnit = DefaultUnits.LengthUnitGeometry;
 
     public Preview3dSections() : base("Preview 3D Sections", "Preview3d",
       "Show the 3D cross-section of 1D/2D GSA Elements and Members in a GSA model.",
@@ -74,6 +77,7 @@ namespace GsaGH.Components {
     }
 
     protected override void SolveInternal(IGH_DataAccess da) {
+      var unitsName = new HashSet<string>();
       var ghTypes = new List<GH_ObjectWrapper>();
       if (da.GetDataList(0, ghTypes)) {
         var elem1ds = new List<GsaElement1d>();
@@ -92,6 +96,7 @@ namespace GsaGH.Components {
 
           switch (ghTyp.Value) {
             case GsaModelGoo modelGoo:
+              unitsName.Add(Length.GetAbbreviation(modelGoo.Value.ModelUnit));
               models.Add(modelGoo.Value);
               break;
 
@@ -100,18 +105,22 @@ namespace GsaGH.Components {
               break;
 
             case GsaElement1dGoo element1dGoo:
+              unitsName.Add(Length.GetAbbreviation(element1dGoo.Value.LengthUnit));
               elem1ds.Add(element1dGoo.Value);
               break;
 
             case GsaElement2dGoo element2dGoo:
+              unitsName.Add(Length.GetAbbreviation(element2dGoo.Value.LengthUnit));
               elem2ds.Add(element2dGoo.Value);
               break;
 
             case GsaMember1dGoo member1dGoo:
+              unitsName.Add(Length.GetAbbreviation(member1dGoo.Value.LengthUnit));
               mem1ds.Add(member1dGoo.Value);
               break;
 
             case GsaMember2dGoo member2dGoo:
+              unitsName.Add(Length.GetAbbreviation(member2dGoo.Value.LengthUnit));
               mem2ds.Add(member2dGoo.Value);
               break;
 
@@ -127,38 +136,31 @@ namespace GsaGH.Components {
           }
         }
 
-        if (!(elem1ds.Count > 0)) {
-          elem1ds = null;
+        if (unitsName.Count > 1) {
+          this.AddRuntimeError("Multiple length units have been detected, which is not permitted in geometric entities");
+          return;
         }
 
-        if (!(elem2ds.Count > 0)) {
-          elem2ds = null;
-        }
+        _lengthUnit = OasysUnitsSetup.Default.UnitParser.Parse<LengthUnit>(unitsName.First());
 
-        if (!(mem1ds.Count > 0)) {
-          mem1ds = null;
-        }
-
-        if (!(mem2ds.Count > 0)) {
-          mem2ds = null;
-        }
-
-        if (models is null & elem1ds is null & elem2ds is null & mem1ds is null & mem2ds is null) {
+        if (models.Count == 0 && elem1ds.Count == 0 && elem2ds.Count == 0 && mem1ds.Count == 0 && mem2ds.Count == 0) {
           this.AddRuntimeWarning("Input parameter failed to collect data");
           return;
         }
 
+        if (ShouldUseDefaultLengthUnit(models, elem1ds, elem2ds, mem1ds, mem2ds)) {
+          _lengthUnit = DefaultUnits.LengthUnitGeometry;
+        }
+
         var model = new GsaModel();
-        if (models != null) {
-          if (models.Count > 0) {
-            model = models.Count > 1
-              ? MergeModels.MergeModel(models, this, Length.Zero) :
-              models[0].Clone();
-          }
+        if (models.Count > 0) {
+          model = models.Count > 1
+            ? MergeModels.MergeModel(models, this, Length.Zero) :
+            models[0].Clone();
         }
 
         // Assemble model
-        var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, mem1ds, mem2ds, DefaultUnits.LengthUnitGeometry);
+        var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);
         GsaAPI.Model previewModel = assembly.GetModel();
 
         var steps = new List<int> {
@@ -172,7 +174,7 @@ namespace GsaGH.Components {
               }
 
               _analysisSection3dPreview =
-                new Section3dPreview(previewModel, model.ModelUnit, Layer.Analysis);
+                new Section3dPreview(previewModel, _lengthUnit, Layer.Analysis);
               break;
 
             case 1:
@@ -181,7 +183,7 @@ namespace GsaGH.Components {
               }
 
               _designSection3dPreview =
-                new Section3dPreview(previewModel, model.ModelUnit, Layer.Design);
+                new Section3dPreview(previewModel, _lengthUnit, Layer.Design);
               break;
           }
         });
@@ -196,6 +198,19 @@ namespace GsaGH.Components {
           da.SetDataList(3, _designSection3dPreview.Outlines);
         }
       }
+    }
+
+    internal static bool ShouldUseDefaultLengthUnit(
+      List<GsaModel> models,
+      List<GsaElement1d> elem1ds,
+      List<GsaElement2d> elem2ds,
+      List<GsaMember1d> mem1ds,
+      List<GsaMember2d> mem2ds) {
+      return models.IsNullOrEmpty()
+        && elem1ds.All(e => e.ApiElement.Topology.IsNullOrEmpty())
+        && elem2ds.All(e => e.ApiElements.IsNullOrEmpty())
+        && mem1ds.All(m => string.IsNullOrEmpty(m.ApiMember.Topology))
+        && mem2ds.All(m => string.IsNullOrEmpty(m.ApiMember.Topology));
     }
 
     public override void DrawViewportMeshes(IGH_PreviewArgs args) {

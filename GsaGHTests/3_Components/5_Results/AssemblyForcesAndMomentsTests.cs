@@ -138,6 +138,15 @@ namespace GsaGHTests.Components.Results {
       Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
+    [Fact]
+    public void DriftShouldNotHaveError() {
+      var comp = new AssemblyForcesAndMoments();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(GsaResultTests.AnalysisCaseResult(GsaFile.AssemblyResult, 1)));
+      object output = ComponentTestHelper.GetOutput(comp);
+      Assert.NotNull(output);
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+    }
+
     private List<double> ExpectedAnalysisCaseValues(ResultVector6 component) {
       switch (component) {
         case ResultVector6.X: return AssemblyForcesAndMomentsA1.XInKiloNewton();
