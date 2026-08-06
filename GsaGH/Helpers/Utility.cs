@@ -1,6 +1,8 @@
 ﻿
 using System;
 
+using GsaAPI;
+
 using OasysGH.Units;
 
 using OasysUnits.Units;
@@ -21,6 +23,10 @@ namespace GsaGH.Helpers {
       foreach (int analysisCaseId in model.AnalysisTasks().Keys) {
        model.DeleteResults(analysisCaseId);
       }
+    }
+
+    public static void DeleteResults(GsaAPI.Model model, int analysisCaseId) {
+      model.DeleteResults(analysisCaseId);
     }
 
     public static void DeleteResultsAndReAnalyse( GsaAPI.Model model) {

@@ -10,11 +10,13 @@ using GsaGH.Parameters.Results;
 namespace GsaGHTests.Parameters {
   public partial class GsaResultTests {
 
-    public static GsaResult AnalysisCaseResult(string file, int caseId) {
+    public static GsaResult AnalysisCaseResult(string file, int caseId, bool deleteResults = false) {
       var apiModel = new GsaAPI.Model(file);
       var model = new GsaModel(apiModel);
       ReadOnlyDictionary<int, AnalysisCaseResult> analysisCaseResults = model.ApiModel.Results();
-      Utility.DeleteResults(model.ApiModel);
+      if (deleteResults) {
+        Utility.DeleteResults(model.ApiModel, caseId);
+      }
       return new GsaResult(model, analysisCaseResults[caseId], caseId);
     }
 
