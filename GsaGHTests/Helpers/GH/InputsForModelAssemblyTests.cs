@@ -4,6 +4,7 @@ using Grasshopper.Kernel.Types;
 using GsaAPI;
 
 using GsaGH.Components;
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 
@@ -219,6 +220,7 @@ namespace GsaGHTests.Helpers.GH {
     public void GetModelFromModelTest() {
       var model = new GsaModel();
       model.ApiModel.Open(GsaFile.SteelDesignSimple);
+      Utility.DeleteResults(model.ApiModel);
       var goo = new GsaModelGoo(model);
       var comp = new CreateModel();
       ComponentTestHelper.SetInput(comp, goo, 0);

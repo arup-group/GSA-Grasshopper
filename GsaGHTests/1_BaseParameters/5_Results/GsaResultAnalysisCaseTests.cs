@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 
 using GsaAPI;
 
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 
@@ -13,6 +14,7 @@ namespace GsaGHTests.Parameters {
       var apiModel = new GsaAPI.Model(file);
       var model = new GsaModel(apiModel);
       ReadOnlyDictionary<int, AnalysisCaseResult> analysisCaseResults = model.ApiModel.Results();
+      Utility.DeleteResults(model.ApiModel);
       return new GsaResult(model, analysisCaseResults[caseId], caseId);
     }
 

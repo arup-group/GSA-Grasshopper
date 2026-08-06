@@ -16,5 +16,19 @@ namespace GsaGH.Helpers {
       float epsilon = 10e-12f;
       return Math.Abs(value1 - value2) < epsilon;
     }
+
+    public static void DeleteResults(GsaAPI.Model model) {
+      foreach (int analysisCaseId in model.AnalysisTasks().Keys) {
+       model.DeleteResults(analysisCaseId);
+      }
+    }
+
+    public static void DeleteResultsAndReAnalyse( GsaAPI.Model model) {
+      foreach (int analysisCaseId in model.AnalysisTasks().Keys) {
+        model.DeleteResults(analysisCaseId);
+        model.Analyse(analysisCaseId);
+      }
+    }
+
   }
 }
