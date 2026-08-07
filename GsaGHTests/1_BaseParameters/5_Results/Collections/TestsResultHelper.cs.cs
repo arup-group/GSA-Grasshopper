@@ -38,7 +38,7 @@ namespace GsaGHTests.Parameters.Results {
 
           break;
       }
-      return ResultHelper.RoundToSignificantDigits(value, 4);
+      return value;
     }
 
     public static double ResultsHelper(IEntity0dResultSubset<IInternalForce,
@@ -79,7 +79,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(IInternalForce result, ResultVector6 component) {
@@ -118,7 +118,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double? ResultsHelper(IEntity0dResultSubset<IReactionForce,
@@ -163,7 +163,7 @@ namespace GsaGHTests.Parameters.Results {
         return null;
       }
 
-      return ResultHelper.RoundToSignificantDigits((double)d, 4);
+      return d;
     }
 
     public static double? ResultsHelper(IReactionForce result, ResultVector6 component) {
@@ -222,7 +222,7 @@ namespace GsaGHTests.Parameters.Results {
         return null;
       }
 
-      return ResultHelper.RoundToSignificantDigits((double)d, 4);
+      return d;
     }
 
     public static double ResultsHelper(
@@ -264,7 +264,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(IDisplacement result, ResultVector6 component) {
@@ -303,7 +303,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(Drift result, DriftResultVector component) {
@@ -322,7 +322,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(DriftIndex result, DriftResultVector component) {
@@ -341,7 +341,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(ITranslation result, ResultVector6 component) {
@@ -364,7 +364,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(IStress result, ResultTensor3 component) {
@@ -395,7 +395,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(IStress1dDerived result, ResultDerivedStress1d component) {
@@ -418,7 +418,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(IStress1d result, ResultStress1d component) {
@@ -461,7 +461,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(
@@ -503,7 +503,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(
@@ -545,7 +545,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(
@@ -571,7 +571,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(
@@ -617,7 +617,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(
@@ -659,7 +659,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(
@@ -685,7 +685,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(
@@ -707,7 +707,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(
@@ -735,7 +735,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(
@@ -753,7 +753,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(IForce2d result, ResultTensor2InAxis component) {
@@ -772,7 +772,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(IMoment2d result, ResultTensor2AroundAxis component) {
@@ -797,7 +797,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(IShear2d result, ResultVector2 component) {
@@ -812,7 +812,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(
@@ -846,7 +846,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(AssemblyDisplacements result, ResultVector6 component, bool max) {
@@ -886,7 +886,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(AssemblyDrifts result, DriftResultVector component, bool max) {
@@ -906,7 +906,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(AssemblyDriftIndices result, DriftResultVector component, bool max) {
@@ -926,7 +926,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     public static double ResultsHelper(AssemblyForcesAndMoments result, ResultVector6 component, bool max) {
@@ -966,7 +966,7 @@ namespace GsaGHTests.Parameters.Results {
           break;
       }
 
-      return ResultHelper.RoundToSignificantDigits(d, 4);
+      return d;
     }
 
     internal static List<double> ResultsHelper(IDictionary<int, IReactionForce> result, ResultVector6 component) {

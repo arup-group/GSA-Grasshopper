@@ -31,7 +31,7 @@ namespace GsaGH.Graphics {
       GH_AssemblyInfo gsaPlugin
         = Instances.ComponentServer.FindAssembly(new Guid("a3b08c32-f7de-4b00-b415-f8b466f05e9f"));
 
-      const string api = "GSA 10.2 .NET API beta";
+      const string api = "GSA 10.3 .NET API beta";
       string pluginvers = gsaPlugin.Version;
       string pluginloc = gsaPlugin.Location;
 

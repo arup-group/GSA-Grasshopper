@@ -34,7 +34,7 @@ namespace GsaGHTests {
       }
     }
     public static string InstallPath = Path.Combine(
-      Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.2");
+      Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Oasys", "GSA 10.3");
 
     private object Doc { get; set; }
     private object DocIo { get; set; }

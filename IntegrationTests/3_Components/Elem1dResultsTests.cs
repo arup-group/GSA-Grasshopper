@@ -6,6 +6,8 @@ using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
+
 using Xunit;
 
 namespace IntegrationTests.Components {
@@ -121,7 +123,7 @@ namespace IntegrationTests.Components {
 19.79
       };
       for (int i = 0; i < expectedVals.Count; i++) {
-        Assert.Equal(expectedVals[i], output[i].Value, 0.05);
+        Assert.Equal(expectedVals[i], output[i].Value, DoubleComparer.Default);
       }
     }
 
@@ -132,62 +134,62 @@ namespace IntegrationTests.Components {
 -0.3233,
 -0.4849,
 -0.6465,
-    }, 4)]
+    })]
     [InlineData("Uy", new double[] {
       0.0,
 -0.00087348,
 -0.002832,
 -0.004959,
 -0.006340,
-    }, 6)]
+    })]
     [InlineData("Uz", new double[] {
       0.0,
 0.01502,
 0.04055,
 0.05115,
 0.02138,
-    }, 5)]
+    })]
     [InlineData("U", new double[] {
      0.0,
 0.1623,
 0.3258,
 0.4876,
 0.6469
-    }, 4)]
+    })]
     [InlineData("Rxx", new double[] {
       0.0,
 -16.95E-9,
 -33.89E-9,
 -50.84E-9,
 -67.78E-9,
-    }, 9)]
+    })]
     [InlineData("Ryy", new double[] {
       -1.458E-6,
 -28.02E-6,
 -25.50E-6,
 6.104E-6,
 66.78E-6
-    }, 8)]
+    })]
     [InlineData("Rzz", new double[] {
      -29.53E-9,
 -1.793E-6,
 -2.509E-6,
 -2.179E-6,
 -802.5E-9,
-    }, 9)]
+    })]
     [InlineData("R", new double[] {
       1.459E-6,
 28.07E-6,
 25.62E-6,
 6.481E-6,
 66.79E-6,
-    }, 6)]
-    public void BeamDisplacementTests(string name, double[] expectedVals, int precision = 6) {
+    })]
+    public void BeamDisplacementTests(string name, double[] expectedVals) {
       GH_Document doc = Document;
       IGH_Param param = Helper.FindParameter(doc, name);
       var output = (List<GH_Number>)param.VolatileData.get_Branch(0);
       for (int i = 0; i < expectedVals.Length; i++) {
-        Assert.Equal(expectedVals[i], output[i].Value, precision);
+        Assert.Equal(expectedVals[i], output[i].Value, DoubleComparer.Default);
       }
     }
 
@@ -329,7 +331,7 @@ namespace IntegrationTests.Components {
       IGH_Param param2 = Helper.FindParameter(doc, "ScaledContours");
       var output2 = (List<GH_Number>)param2.VolatileData.get_Branch(0);
       for (int i = 0; i < output1.Count; i++) {
-        Assert.Equal(output2[i].Value, output1[i].Value, 6);
+        Assert.Equal(output2[i].Value, output1[i].Value, DoubleComparer.Default);
       }
     }
 
@@ -347,7 +349,7 @@ namespace IntegrationTests.Components {
 42.701118,
       };
       for (int i = 0; i < expectedVals.Count; i++) {
-        Assert.Equal(expectedVals[i], output[i].Value, 0.01);
+        Assert.Equal(expectedVals[i], output[i].Value, DoubleComparer.Default);
       }
     }
 
@@ -365,7 +367,7 @@ namespace IntegrationTests.Components {
 42.701118,
       };
       for (int i = 0; i < expectedVals.Count; i++) {
-        Assert.Equal(expectedVals[i], output[i].Value, 0.01);
+        Assert.Equal(expectedVals[i], output[i].Value, DoubleComparer.Default);
       }
     }
 
@@ -383,7 +385,7 @@ namespace IntegrationTests.Components {
 448.527682,
       };
       for (int i = 0; i < expectedVals.Count; i++) {
-        Assert.Equal(expectedVals[i], output[i].Value, 0.01);
+        Assert.Equal(expectedVals[i], output[i].Value, DoubleComparer.Default);
       }
     }
 
@@ -406,7 +408,7 @@ namespace IntegrationTests.Components {
 764.514954,
       };
       for (int i = 0; i < expectedVals.Count; i++) {
-        Assert.Equal(expectedVals[i], output[i].Value, 0.01);
+        Assert.Equal(expectedVals[i], output[i].Value, DoubleComparer.Default);
       }
     }
 
