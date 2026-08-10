@@ -181,7 +181,7 @@ namespace GsaGH.Components {
 
     internal Process RunGsa() {
       string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-      string fullPath = Path.Combine(programFiles, @"Oasys\GSA 10.2\GSA.exe");
+      string fullPath = Path.Combine(programFiles, @"Oasys\GSA 10.3\GSA.exe");
       return Process.Start(fullPath, FileNameLastSavedFullPath);
     }
   }

@@ -5,6 +5,7 @@ using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
 using GsaGH.Parameters;
 
 using Xunit;
@@ -29,7 +30,7 @@ namespace IntegrationTests.ExampleFiles {
     public void MaxDeflectionTest() {
       IGH_Param param = Helper.FindParameter(Document(), "RH_OUT:deflection");
       var output = (GH_Number)param.VolatileData.get_Branch(0)[0];
-      Assert.Equal(5.563436, output.Value, 5);
+      Assert.Equal(5.563436, output.Value, DoubleComparer.Default);
     }
 
     [Fact]
