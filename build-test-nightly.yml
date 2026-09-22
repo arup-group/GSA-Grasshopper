@@ -25,6 +25,27 @@ steps:
   failOnStderr: true
 
 - powershell: |
+    $apps = Get-ItemProperty @(
+      'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*',
+      'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*',
+      'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*'
+    ) -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -match '^Oasys\s+GSA\b' }
+
+    foreach ($app in $apps) {
+      $cmd = $app.QuietUninstallString
+      if ([string]::IsNullOrWhiteSpace($cmd)) { $cmd = $app.UninstallString }
+      if ([string]::IsNullOrWhiteSpace($cmd)) { throw "No uninstall command found for $($app.DisplayName)" }
+      if ($cmd -match 'msiexec') {
+        $code = [regex]::Match($cmd, '\{[0-9A-Fa-f-]+\}').Value
+        if ($code) { $cmd = "msiexec.exe /x $code /quiet /norestart" }
+      }
+      $exitCode = (Start-Process cmd.exe -ArgumentList '/c', $cmd -Wait -PassThru).ExitCode
+      if ($exitCode -notin 0,1641,3010) { throw "Failed to uninstall $($app.DisplayName). Exit code $exitCode" }
+    }
+  displayName: 'Uninstall existing GSA'
+  failOnStderr: true
+
+- powershell: |
     $installerPath = $(ls -r $(Pipeline.Workspace)\gsa.msi)
     Write-output "Installer Path: ${installerPath}"
     Write-output "GSA Version:"

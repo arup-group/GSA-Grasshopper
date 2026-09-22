@@ -10,8 +10,10 @@ using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
+using GsaGH.Parameters.Enums;
 using GsaGH.Properties;
 
 using OasysGH;
@@ -315,6 +317,7 @@ namespace GsaGH.Components {
 
       gridlineload.ApiLoad.ValueAtEnd = load2;
 
+      GsaGH.Helpers.PostHog.TrackLoadOnce(this, gridlineload, ReferenceType.None);
       da.SetData(0, new GsaLoadGoo(gridlineload));
     }
 

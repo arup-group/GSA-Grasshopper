@@ -6,6 +6,7 @@ using System.Linq;
 using Grasshopper.Kernel.Data;
 
 using GsaGH.Components;
+using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
@@ -115,7 +116,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert Max in set
       double max = output.Max().As(ForcePerLengthUnit.KilonewtonPerMeter);
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -137,7 +138,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert Max in set
       double max = output.Max().As(ForcePerLengthUnit.KilonewtonPerMeter);
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -158,7 +159,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert Min in set
       double min = output.Min().As(ForcePerLengthUnit.KilonewtonPerMeter);
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Theory]
@@ -180,7 +181,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert Min in set
       double min = output.Min().As(ForcePerLengthUnit.KilonewtonPerMeter);
-      Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     private List<double> ExpectedAnalysisCaseValues(ResultVector2 component) {

@@ -5,6 +5,8 @@ using GH_IO.Serialization;
 
 using Grasshopper.GUI.HTML;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
+using Grasshopper.Kernel.Types;
 
 using GsaAPI;
 
@@ -608,6 +610,59 @@ namespace GsaGHTests.Components.Analysis {
       Assert.Equal(original.SelectedItems[1], loadedComponent.SelectedItems[1]);
       Assert.Equal(original.SelectedItems[2], loadedComponent.SelectedItems[2]);
 
+    }
+
+    [Fact]
+    public void ShouldPreserveInputConnectionsAfterSerializeAndDeserialize() {
+      var original = new CreateModalDynamicParameter();
+      original.CreateAttributes();
+      original.SetSelected(0, 2);
+
+      var doc = new GH_DocumentIO {
+        Document = new GH_Document()
+      };
+
+      // Create document-owned source params so connections can be serialized.
+      var sourceX = new Param_Number();
+      sourceX.CreateAttributes();
+      sourceX.PersistentData.Append(new GH_Number(90.0));
+
+      var sourceY = new Param_Number();
+      sourceY.CreateAttributes();
+      sourceY.PersistentData.Append(new GH_Number(95.0));
+
+      var sourceLoadCase = new Param_String();
+      sourceLoadCase.CreateAttributes();
+      sourceLoadCase.PersistentData.Append(new GH_String("L1"));
+
+      var sourceDamping = new Param_Number();
+      sourceDamping.CreateAttributes();
+      sourceDamping.PersistentData.Append(new GH_Number(0.15));
+
+      doc.Document.AddObject(sourceX, false);
+      doc.Document.AddObject(sourceY, false);
+      doc.Document.AddObject(sourceLoadCase, false);
+      doc.Document.AddObject(sourceDamping, false);
+      doc.Document.AddObject(original, false);
+
+      original.Params.Input[0].AddSource(sourceX);
+      original.Params.Input[1].AddSource(sourceY);
+      original.Params.Input[5].AddSource(sourceLoadCase);
+      original.Params.Input[8].AddSource(sourceDamping);
+
+      int[] sourceCountsBefore = original.Params.Input.Select(x => x.SourceCount).ToArray();
+
+      string randomPath = GetRandomPath();
+      Assert.True(doc.SaveQuiet(randomPath));
+      Assert.True(doc.Open(randomPath));
+
+      var loadedComponent = (CreateModalDynamicParameter)doc.Document.FindComponent(original.InstanceGuid);
+      Assert.NotNull(loadedComponent);
+      Assert.Equal(sourceCountsBefore.Length, loadedComponent.Params.Input.Count);
+
+      for (int i = 0; i < sourceCountsBefore.Length; i++) {
+        Assert.Equal(sourceCountsBefore[i], loadedComponent.Params.Input[i].SourceCount);
+      }
     }
   }
 }

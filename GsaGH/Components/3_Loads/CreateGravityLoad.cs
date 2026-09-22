@@ -4,6 +4,7 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
@@ -186,6 +187,7 @@ namespace GsaGH.Components {
 
       gravityLoad.ApiLoad.Factor = factor;
 
+      GsaGH.Helpers.PostHog.TrackLoadOnce(this, gravityLoad, gravityLoad.ReferenceType);
       da.SetData(0, new GsaLoadGoo(gravityLoad));
     }
   }
