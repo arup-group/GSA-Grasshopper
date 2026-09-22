@@ -1,4 +1,4 @@
-﻿using GsaGH.Graphics;
+using GsaGH.Graphics;
 
 using Xunit;
 
