@@ -67,29 +67,31 @@ namespace DocsGeneration.Data {
       Console.WriteLine($"Finding components...");
       var components = new List<Component>();
       foreach (Type type in typelist) {
-        if (type.Namespace == null) {
+        if (type.Namespace == null || !type.Namespace.StartsWith($"{config.ProjectName}.Components")) {
           continue;
         }
 
-        if (type.Namespace.StartsWith($"{config.ProjectName}.Components")) {
-          if (type.Name.Contains("OBSOLETE")) {
-            continue;
-          }
+        if (type.Name.Contains("OBSOLETE") || !IsDocumentableComponent(type)) {
+          continue;
+        }
 
-          try {
-            var comp = new Component(type, config);
-            components.Add(comp);
-            Console.WriteLine($"Added {comp.Name} component");
-          } catch (TimeoutException ex) {
-            Console.Error.WriteLine($"Timeout creating component {type.Name}: {ex.Message}");
-          } catch (Exception ex) {
-            Console.Error.WriteLine($"Error creating component {type.Name}: {ex.Message}");
-          }
+        try {
+          var comp = new Component(type, config);
+          components.Add(comp);
+          Console.WriteLine($"Added {comp.Name} component");
+        } catch (TimeoutException ex) {
+          Console.Error.WriteLine($"Timeout creating component {type.Name}: {ex.Message}");
+        } catch (Exception ex) {
+          Console.Error.WriteLine($"Error creating component {type.Name}: {ex.Message}");
         }
       }
 
       Console.WriteLine($"Completed finding components - found {components.Count}");
       return components;
+    }
+
+    public static bool IsDocumentableComponent(Type type) {
+      return type != null && !type.IsAbstract && typeof(GH_Component).IsAssignableFrom(type);
     }
 
     public static Dictionary<string, List<Component>> SortComponents(List<Component> components) {

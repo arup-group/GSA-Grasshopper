@@ -109,27 +109,25 @@ namespace DocsGenerationE2ETests {
       }
 
       private static string GetGeneratorPath() {
-#if DEBUG
-        string config = "Debug";
-#else
-        string config = "Release";
-#endif
-        int maxLevelUp = 3;
-        string gsaGrasshopperRepoRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".."));
-        string generatorPath = string.Empty;
-        do {
-          generatorPath = Path.GetFullPath(Path.Combine(gsaGrasshopperRepoRoot, "DocsGeneratorCLI", "bin", config, "DocsGeneratorCLI.exe"));
+        string testOutputDirectory = Directory.GetCurrentDirectory();
+        var directory = new DirectoryInfo(testOutputDirectory);
+        while (directory != null) {
+          string testBinDirectory = Path.Combine(directory.FullName, "DocsGenerationE2ETests", "bin");
+          string testBinPrefix = testBinDirectory + Path.DirectorySeparatorChar;
+          if (testOutputDirectory.StartsWith(testBinPrefix, StringComparison.OrdinalIgnoreCase)) {
+            string outputPath = testOutputDirectory.Substring(testBinPrefix.Length);
+            string generatorPath = Path.Combine(directory.FullName, "DocsGeneratorCLI", "bin", outputPath,
+              "DocsGeneratorCLI.exe");
 
-          if (File.Exists(generatorPath)) {
-            return generatorPath;
+            if (File.Exists(generatorPath)) {
+              return generatorPath;
+            }
           }
 
-          gsaGrasshopperRepoRoot = Path.GetFullPath(Path.Combine(gsaGrasshopperRepoRoot, ".."));
+          directory = directory.Parent;
+        }
 
-          maxLevelUp--;
-        } while (maxLevelUp >= 0);
-
-        throw new FileNotFoundException($"Couldn't find: DocsGeneratorCLI.exe full: {generatorPath}", generatorPath);
+        throw new FileNotFoundException("Couldn't find DocsGeneratorCLI.exe in a parent repository directory.");
       }
 
       private static string[] GetRelativeMarkdownFilePaths(string rootDirectory) {
@@ -198,4 +196,3 @@ namespace DocsGenerationE2ETests {
     }
   }
 }
-
