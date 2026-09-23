@@ -42,4 +42,8 @@
     <ProjectReference Include="..\DocsGeneration\DocsGeneration.csproj" />
     <ProjectReference Include="..\GsaGH\GsaGH.csproj" />
   </ItemGroup>
+
+  <ItemGroup Condition="'$(AdSecGHProjectPath)' != '' and Exists('$(AdSecGHProjectPath)')">
+    <ProjectReference Include="$(AdSecGHProjectPath)" />
+  </ItemGroup>
 </Project>
