@@ -7,7 +7,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
       if (!Directory.Exists(directory)) {
         Directory.CreateDirectory(directory);
       }
-      var file = new StreamWriter(filePath);
+      
       string autogen = "<!--- This file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration --->";
       string[] split = text.Split('\n');
       text = split[0] + '\n';
@@ -16,8 +16,9 @@ namespace DocsGeneration.MarkDowns.Helpers {
         text += split[i] + '\n';
       }
 
-      file.Write(text);
-      file.Close();
+      using (var file = new StreamWriter(filePath)) {
+        file.Write(text);
+      }
     }
   }
 }

@@ -1,66 +1,70 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 using DocsGeneration.Data;
 using DocsGeneration.MarkDowns.Helpers;
 
 namespace DocsGeneration.MarkDowns {
   public class SideBar {
-    public static string page = "references/gsagh/";
-
     public static void CreateSideBar(
-      Dictionary<string, List<Component>> components,
-      Dictionary<string, List<Parameter>> parameters) {
+      Dictionary<string, List<Component>> components, Dictionary<string, List<Parameter>> parameters,
+      Configuration config) {
       Console.WriteLine($"Writing sidebar");
       // intro
-      string sb = "/*\n --- Start of auto-generated text --- \n" +
-        "This part of the sidebar file has been auto-generated, do not change it manually! Edit" +
-        " the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration\n*/\n";
+      var sb = new StringBuilder();
+      sb.Append("/*\n --- Start of auto-generated text --- \n"
+        + "This part of the sidebar file has been auto-generated, do not change it manually! Edit"
+        + " the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration\n*/\n");
       int ind = 2;
-      sb += "{\r\n";
-      sb += AddLine(ind, "type: 'category',");
-      sb += "\tlabel: 'GSA Grasshopper plugin',\r\n";
-      sb += AddLine(ind, "items: [");
+      sb.Append("{\r\n");
+      sb.Append(AddLine(ind, "type: 'category',"));
+      sb.Append("\tlabel: 'GSA Grasshopper plugin',\r\n");
+      sb.Append(AddLine(ind, "items: ["));
       ind += 2;
 
+      string projectNameLower = config.ProjectName.ToLower();
+      string page = $"references/{projectNameLower}/";
       // Parameter sidebar
-      sb += AddLine(ind, "{");
+      sb.Append(AddLine(ind, "{"));
       ind += 2;
-      sb += AddLine(ind, "type: 'category',");
-      sb += AddLine(ind, "label: 'Parameters',");
-      sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-parameters'}},");
-      sb += AddLine(ind, "items: [");
+      sb.Append(AddLine(ind, "type: 'category',"));
+      sb.Append(AddLine(ind, "label: 'Parameters',"));
+      sb.Append(AddLine(ind, $"link: {{type: 'doc', id: '{page}{projectNameLower}-parameters'}},"));
+      sb.Append(AddLine(ind, "items: ["));
       ind += 2;
       foreach (string key in parameters.Keys) {
         foreach (Parameter parameter in parameters[key]) {
-          string file = FileHelper.CreateSideBarFileName(parameter);
-          sb += AddLine(ind, $"'{page}{file}',");
+          string file = FileHelper.CreateSideBarFileName(FileHelper.CreateFileName(parameter, config.ProjectName));
+          sb.Append(AddLine(ind, $"'{page}{file}',"));
         }
       }
-      sb += AddLine(ind, $"'{page}gsagh-unitnumber-parameter'");
+
+      sb.Append(AddLine(ind, $"'{page}{projectNameLower}-unitnumber-parameter'"));
       ind -= 2;
-      sb += AddLine(ind, "]");
+      sb.Append(AddLine(ind, "]"));
       ind -= 2;
-      sb += AddLine(ind, "},");
+      sb.Append(AddLine(ind, "},"));
 
       // Components sidebar
-      sb += AddLine(ind, "{");
+      sb.Append(AddLine(ind, "{"));
       ind += 2;
-      sb += AddLine(ind, "type: 'category',");
-      sb += AddLine(ind, "label: 'Components',");
-      sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-components'}},");
-      sb += AddLine(ind, "items: [");
+      sb.Append(AddLine(ind, "type: 'category',"));
+      sb.Append(AddLine(ind, "label: 'Components',"));
+      sb.Append(AddLine(ind, $"link: {{type: 'doc', id: '{page}{projectNameLower}-components'}},"));
+      sb.Append(AddLine(ind, "items: ["));
 
       // Per category sidebar
       ind += 2;
       foreach (string key in components.Keys) {
-        sb += AddLine(ind, "{");
+        sb.Append(AddLine(ind, "{"));
         ind += 2;
-        sb += AddLine(ind, "type: 'category',");
-        sb += AddLine(ind, $"label: '{key}',");
-        sb += AddLine(ind, $"link: {{type: 'doc', id: '{page}gsagh-{key.ToLower()}-components-overview'}},");
-        sb += AddLine(ind, "items: [");
+        sb.Append(AddLine(ind, "type: 'category',"));
+        sb.Append(AddLine(ind, $"label: '{key}',"));
+        sb.Append(AddLine(ind,
+          $"link: {{type: 'doc', id: '{page}{projectNameLower}-{key.ToLower()}-components-overview'}},"));
+        sb.Append(AddLine(ind, "items: ["));
         ind += 2;
 
         for (int i = 0; i < 7; i++) {
@@ -69,37 +73,44 @@ namespace DocsGeneration.MarkDowns {
               continue;
             }
 
-            string file = FileHelper.CreateSideBarFileName(component);
-            sb += AddLine(ind, $"'{page}{file}',");
+            string file = FileHelper.CreateSideBarFileName(FileHelper.CreateFileName(component, config.ProjectName));
+            sb.Append(AddLine(ind, $"'{page}{file}',"));
           }
         }
 
-        sb = sb.TrimEnd(',');
+        TrimEndFor(sb, ',');
         ind -= 2;
-        sb += AddLine(ind, "]");
+        sb.Append(AddLine(ind, "]"));
         ind -= 2;
-        sb += AddLine(ind, "},");
+        sb.Append(AddLine(ind, "},"));
       }
-      sb = sb.TrimEnd(',');
-      ind -= 2;
-      sb += AddLine(ind, "]");
-      ind -= 2;
-      sb += AddLine(ind, "}");
-      ind -= 2;
-      sb += AddLine(ind, "]");
-      ind -= 4;
-      sb += AddLine(0, "}");
 
-      sb += "/*\n--- End of auto-generated text ---\n*/\n";
+      TrimEndFor(sb, ',');
+      ind -= 2;
+      sb.Append(AddLine(ind, "]"));
+      ind -= 2;
+      sb.Append(AddLine(ind, "}"));
+      ind -= 2;
+      sb.Append(AddLine(ind, "]"));
+      sb.Append(AddLine(0, "}"));
 
-      string filePath = $@"{PathUtils.OutputPath}\Helper\sidebar-gsagh.js";
+      sb.Append("/*\n--- End of auto-generated text ---\n*/\n");
+
+      string filePath = $@"{config.OutputPath}\Helper\sidebar-{projectNameLower}.js";
       string directory = Path.GetDirectoryName(filePath);
       if (!Directory.Exists(directory)) {
         Directory.CreateDirectory(directory);
       }
-      var js = new StreamWriter(filePath);
-      js.Write(sb);
-      js.Close();
+
+      using (var js = new StreamWriter(filePath)) {
+        js.Write(sb);
+      }
+    }
+
+    private static void TrimEndFor(StringBuilder sb, char c) {
+      if (sb.Length > 0 && sb[sb.Length - 1] == c) {
+        sb.Length--;
+      }
     }
 
     private static string AddLine(int indentation, string text) {

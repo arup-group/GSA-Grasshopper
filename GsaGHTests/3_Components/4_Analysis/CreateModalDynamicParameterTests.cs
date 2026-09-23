@@ -336,7 +336,7 @@ namespace GsaGHTests.Components.Analysis {
     [Fact]
     public void ComponentShouldReportErrorIfFrequenciesAreNotCorrect() {
       SetFrequency(6, 5);
-      Assert.Equal(2, _component.RuntimeMessages(GH_RuntimeMessageLevel.Error).Count);
+      Assert.Equal(2,_component.RuntimeMessages(GH_RuntimeMessageLevel.Error).Count);
     }
 
     [Fact]

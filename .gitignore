@@ -363,3 +363,4 @@ dist/*
 *.lok
 /DocsGeneratorCLI/bin
 /DocsGeneratorCLI/obj
+.nuget/

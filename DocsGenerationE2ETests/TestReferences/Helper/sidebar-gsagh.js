@@ -41,7 +41,6 @@ This part of the sidebar file has been auto-generated, do not change it manually
         'references/gsagh/gsagh-analysis-task-parameter',
         'references/gsagh/gsagh-combination-case-parameter',
         'references/gsagh/gsagh-design-task-parameter',
-        'references/gsagh/gsagh-modal-dynamic-parameter-parameter',
         'references/gsagh/gsagh-result-parameter',
         'references/gsagh/gsagh-unitnumber-parameter'
       ]
@@ -174,7 +173,6 @@ This part of the sidebar file has been auto-generated, do not change it manually
             'references/gsagh/gsagh-create-analysis-task-component',
             'references/gsagh/gsagh-analysis-case-info-component',
             'references/gsagh/gsagh-create-analysis-case-component',
-            'references/gsagh/gsagh-create-modal-dynamic-parameter-component',
             'references/gsagh/gsagh-combination-case-info-component',
             'references/gsagh/gsagh-create-combination-case-component',
             'references/gsagh/gsagh-create-steel-design-task-component',

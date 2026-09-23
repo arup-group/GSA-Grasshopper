@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 using DocsGeneration.Data.Helpers;
 
@@ -17,17 +19,44 @@ namespace DocsGeneration.Data {
     public List<Parameter> Outputs { get; set; } = new List<Parameter>();
 
     public Component(Type type, Configuration config) {
-      var componentObject = (GH_Component)Activator.CreateInstance(type, null);
+      var componentObject = CreateComponentWithTimeout(type);
       Name = componentObject.Name;
       NickName = componentObject.NickName;
       Description = componentObject.Description;
       Category = componentObject.SubCategory.Trim();
       SubCategory = Exposure.GetExposure(componentObject.Exposure);
-      ComponentType = type.BaseType.Name
-        .Replace("GH_", string.Empty).Replace("Oasys", string.Empty)
-        .Replace("TaskCapableComponent`1", "DropDownComponent");
+      ComponentType = type.BaseType.Name.Replace("GH_", string.Empty).Replace("Oasys", string.Empty)
+       .Replace("TaskCapableComponent`1", "DropDownComponent");
       Inputs = GetInputOutputParameters(componentObject.Params.Input, config);
       Outputs = GetInputOutputParameters(componentObject.Params.Output, config);
+    }
+
+    private static GH_Component CreateComponentWithTimeout(Type type) {
+      GH_Component result = null;
+      Exception exception = null;
+      const int timeoutMs = 30000; // 30 seconds timeout
+
+      // Note: Task.Run provides timeout detection but cannot forcibly terminate
+      // truly blocking operations. It allows the main thread to detect timeouts
+      // and continue, preventing the entire process from hanging indefinitely.
+      var task = Task.Run(() => {
+        try {
+          result = (GH_Component)Activator.CreateInstance(type, null);
+        } catch (Exception ex) {
+          exception = ex;
+        }
+      });
+
+      if (!task.Wait(timeoutMs)) {
+        throw new TimeoutException($"Component instantiation timed out for type: {type.Name}. "
+          + "This may indicate an infinite loop or deadlock in the component's constructor.");
+      }
+
+      if (exception != null) {
+        throw new InvalidOperationException($"Failed to create component instance for type: {type.Name}", exception);
+      }
+
+      return result;
     }
 
     public override string ToString() {
@@ -38,50 +67,53 @@ namespace DocsGeneration.Data {
       Console.WriteLine($"Finding components...");
       var components = new List<Component>();
       foreach (Type type in typelist) {
-        if (type.Namespace == null) {
+        if (type.Namespace == null || !type.Namespace.StartsWith($"{config.ProjectName}.Components")) {
           continue;
         }
 
-        if (type.Namespace.StartsWith("GsaGH.Components")) {
-          if (type.Name.Contains("OBSOLETE")) {
-            continue;
-          }
+        if (type.Name.Contains("OBSOLETE") || !IsDocumentableComponent(type)) {
+          continue;
+        }
 
-          try {
-            var comp = new Component(type, config);
-            components.Add(comp);
-            Console.WriteLine($"Added {comp.Name} component");
-          } catch (Exception) {
-            continue;
-          }
+        try {
+          var comp = new Component(type, config);
+          components.Add(comp);
+          Console.WriteLine($"Added {comp.Name} component");
+        } catch (TimeoutException ex) {
+          Console.Error.WriteLine($"Timeout creating component {type.Name}: {ex.Message}");
+        } catch (Exception ex) {
+          Console.Error.WriteLine($"Error creating component {type.Name}: {ex.Message}");
         }
       }
+
       Console.WriteLine($"Completed finding components - found {components.Count}");
       return components;
+    }
+
+    public static bool IsDocumentableComponent(Type type) {
+      return type != null && !type.IsAbstract && typeof(GH_Component).IsAssignableFrom(type);
     }
 
     public static Dictionary<string, List<Component>> SortComponents(List<Component> components) {
       Console.WriteLine($"Sorting components by ribbon category");
       var dict = new Dictionary<string, List<Component>>() {
-        {
-          "Model", new List<Component>()
-        }, {
-          "Properties", new List<Component>()
-        }, {
-          "Geometry", new List<Component>()
-        }, {
-          "Loads", new List<Component>()
-        }, {
-          "Analysis", new List<Component>()
-        }, {
-          "Results", new List<Component>()
-        }, {
-          "Display", new List<Component>()
-        },
+        { "Model", new List<Component>() },
+        { "Properties", new List<Component>() },
+        { "Geometry", new List<Component>() },
+        { "Loads", new List<Component>() },
+        { "Analysis", new List<Component>() },
+        { "Results", new List<Component>() },
+        { "Display", new List<Component>() },
       };
 
       foreach (Component component in components) {
-        dict[component.Category].Add(component);
+        if (dict.ContainsKey(component.Category)) {
+          dict[component.Category].Add(component);
+        } else {
+          Console.WriteLine($"Component {component.Name} does not exist in the categort: {component.Category}");
+          dict.Add(component.Category, new List<Component>());
+          dict[component.Category].Add(component);
+        }
       }
 
       return dict;
@@ -95,8 +127,7 @@ namespace DocsGeneration.Data {
           NickName = param.NickName,
           Description = param.Description,
         };
-        if (parameter.ParameterType == "Generic" &&
-          parameter.Name.Contains("[")) {
+        if (parameter.ParameterType == "Generic" && parameter.Name.Contains("[")) {
           parameter.ParameterType = Parameter.CheckIfUnitNumber(parameter.Name);
           parameter.Name = parameter.Name.Replace(" in [m]", string.Empty);
           parameter.Name = parameter.Name.Replace(" in [cm]", string.Empty);
@@ -119,6 +150,7 @@ namespace DocsGeneration.Data {
 
         outparams.Add(parameter);
       }
+
       return outparams;
     }
   }

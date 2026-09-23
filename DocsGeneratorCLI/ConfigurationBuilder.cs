@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -6,27 +7,28 @@ using DocsGeneration;
 
 namespace DocsGeneratorCLI {
   public static class ConfigurationBuilder {
-    public static Configuration BuildConfiguration(CommandArguments args) {
-      var projectTarget = ProjectTarget.LoadProjectTargetFromString(args.ProjectName);
+    public static Configuration BuildConfiguration(Options args) {
+      if (string.IsNullOrWhiteSpace(args.ProjectName)) {
+        throw new ArgumentException("Project name cannot be null or empty.");
+      }
 
-      string outputPath = ResolveOutputPath(args);
+      var projectTarget = new GsaGhProject(args.ProjectName);
 
       return new Configuration {
+        ProjectName = args.ProjectName,
         Assembly = projectTarget.Assembly,
         ResultNotes = projectTarget.Notes.ToList(),
         XmlDocument = projectTarget.XmlDoc,
-        GenerateE2ETestData = args.GenerateE2ETestData,
+        GenerateE2ETestData = args.UpdateTestReferences,
         IsBeta = projectTarget.IsBeta,
-        CustomOutputPath = outputPath,
+        OutputPath = args.Output,
       };
     }
 
-    private static string ResolveOutputPath(CommandArguments args) {
-      string testPath = Path.Combine(GetGsaGrasshopperRoot(), "DocsGeneration.E2ETests", "TestReferences",
-        args.ProjectName);
-      string customOutputPath = !string.IsNullOrWhiteSpace(args.CustomOutputPath) ? args.CustomOutputPath : "Output";
-
-      return args.GenerateE2ETestData ? testPath : customOutputPath;
+    public static string GetTestReferencePath(string projectName)
+    {
+      return Path.Combine(GetGsaGrasshopperRoot(), "DocsGeneration.E2ETests", "TestReferences",
+        projectName);
     }
 
     private static string GetGsaGrasshopperRoot() {

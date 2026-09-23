@@ -1,61 +1,96 @@
 ﻿using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
-using Commander.NET;
+using CommandLine;
 
 using DocsGeneration;
 
 namespace DocsGeneratorCLI {
   public static class Program {
+
     private static int Main(string[] args) {
-#if DEBUG
-      args = new[] {
-        "--project",
-        "GsaGH",
-        "--generate-e2e",
-      };
-#endif
-
-      Console.WriteLine("Hello, let's generate some documentation!");
-      var parser = new CommanderParser<CommandArguments>();
-
-      if (args.Length == 0) {
-        PrintUsage(parser);
-        return 0;
-      }
+      Console.WriteLine("Documentation Generator, based on code!");
+      int exitCode = 1;
 
       try {
-        CommandArguments commandArguments = ParseArguments(parser, args);
-        Configuration config = BuildConfig(commandArguments);
-        RunGeneration(config);
-        return 0;
-      } catch (Exception ex) {
-        PrintError(ex, parser);
-        return 1;
+        Parser.Default.ParseArguments<Options>(args).WithParsed(o => {
+          var config = ConfigurationBuilder.BuildConfiguration(o);
+          const int overallTimeoutMinutes = 2; // Set overall timeout to 2 minutes
+          using (var cts = new CancellationTokenSource(TimeSpan.FromMinutes(overallTimeoutMinutes))) {
+            var task = CreateTask(config, cts);
+            exitCode = RunTask(task, overallTimeoutMinutes);
+            if (o.UpdateTestReferences) {
+              Console.WriteLine("Copying generated files to E2E test references...");
+              var referencePath = ConfigurationBuilder.GetTestReferencePath(o.ProjectName);
+              CopyDirectory(o.Output, referencePath);
+            }
+          }
+        });
+      } finally {
+        // Cleanup Grasshopper fixture to release DLL handles
+        try {
+          GsaGhDll.Cleanup();
+        } catch (Exception ex) {
+          Console.Error.WriteLine($"Error during cleanup: {ex.Message}");
+        }
+
+        // Ensure all console output is flushed before exiting
+        Console.Out.Flush();
+        Console.Error.Flush();
+      }
+
+      return exitCode;
+    }
+
+    public static void CopyDirectory(string sourceDir, string destinationDir) {
+      var dir = new DirectoryInfo(sourceDir);
+      if (!dir.Exists) {
+        throw new DirectoryNotFoundException($"Source directory not found: {sourceDir}");
+      }
+
+      Directory.CreateDirectory(destinationDir);
+
+      foreach (FileInfo file in dir.GetFiles()) {
+        string targetFilePath = Path.Combine(destinationDir, file.Name);
+        file.CopyTo(targetFilePath, true);
       }
     }
 
-    private static CommandArguments ParseArguments(CommanderParser<CommandArguments> parser, string[] args) {
-      Console.WriteLine("Parsing arguments...");
-      return parser.Add(args).Parse();
+    private static int RunTask(Task<int> task, int overallTimeoutMinutes) {
+      int exitCode;
+      try {
+        task.Wait();
+        exitCode = task.Result;
+      } catch (OperationCanceledException) {
+        Console.Error.WriteLine($"Documentation generation timed out after {overallTimeoutMinutes} minutes");
+        exitCode = -1;
+      } catch (AggregateException ae) {
+        foreach (var ex in ae.InnerExceptions) {
+          if (ex is OperationCanceledException) {
+            Console.Error.WriteLine($"Documentation generation timed out after {overallTimeoutMinutes} minutes");
+          } else {
+            Console.Error.WriteLine($"Error: {ex.Message}\n{ex.StackTrace}");
+          }
+        }
+
+        exitCode = -1;
+      }
+
+      return exitCode;
     }
 
-    private static Configuration BuildConfig(CommandArguments args) {
-      Console.WriteLine("Building configuration...");
-      return ConfigurationBuilder.BuildConfiguration(args);
-    }
-
-    private static void RunGeneration(Configuration config) {
-      Console.WriteLine("Generating documentation...");
-      GenerateDocumentation.Generate(config);
-    }
-
-    private static void PrintUsage(CommanderParser<CommandArguments> parser) {
-      Console.WriteLine(parser.Usage());
-    }
-
-    private static void PrintError(Exception ex, CommanderParser<CommandArguments> parser) {
-      Console.Error.WriteLine($"Error: {ex.Message}\n\nStackTrace:\n{ex.StackTrace}\n");
-      PrintUsage(parser);
+    private static Task<int> CreateTask(Configuration config, CancellationTokenSource cts) {
+      return Task.Run(() => {
+        try {
+          GenerateDocumentation.Generate(config);
+          return 0;
+        } catch (Exception e) {
+          Console.Error.WriteLine($"Error during documentation generation: {e.Message}\n{e.StackTrace}");
+          return -1;
+        }
+      }, cts.Token);
     }
   }
 }

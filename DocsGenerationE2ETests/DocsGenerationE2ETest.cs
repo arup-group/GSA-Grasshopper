@@ -54,7 +54,7 @@ namespace DocsGenerationE2ETests {
 
         var startInfo = new ProcessStartInfo {
           FileName = generatorExePath,
-          Arguments = $"--output {generatedDir}",
+          Arguments = $"--output {generatedDir} --project GsaGH",
           RedirectStandardOutput = true,
           RedirectStandardError = true,
           UseShellExecute = false,
@@ -82,37 +82,52 @@ namespace DocsGenerationE2ETests {
           process.BeginOutputReadLine();
           process.BeginErrorReadLine();
 
-          await Task.Run(process.WaitForExit);
+          // Set a timeout for the process to prevent indefinite hanging during tests
+          const int timeoutMinutes = 35; // Slightly longer than the internal timeout
+          using (var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(timeoutMinutes))) {
+            var waitTask = Task.Run(process.WaitForExit, cts.Token);
+
+            try {
+              await waitTask;
+            } catch (OperationCanceledException) {
+              if (!process.HasExited) {
+                process.Kill();
+              }
+              throw new TimeoutException($"DocsGeneratorCLI.exe did not complete within {timeoutMinutes} minutes and was terminated.");
+            }
+          }
+
           if (process.ExitCode != 0) {
             throw new Exception($"DocsGeneratorCLI.exe exited with code:  {process.ExitCode}");
           }
         } finally {
+          if (!process.HasExited) {
+            process.Kill();
+          }
           process.Dispose();
         }
       }
 
       private static string GetGeneratorPath() {
-#if DEBUG
-        string config = "Debug";
-#else
-        string config = "Release";
-#endif
-        int maxLevelUp = 3;
-        string gsaGrasshopperRepoRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".."));
-        string generatorPath = string.Empty;
-        do {
-          generatorPath = Path.GetFullPath(Path.Combine(gsaGrasshopperRepoRoot, "DocsGeneratorCLI", "bin", config, "DocsGeneratorCLI.exe"));
+        string testOutputDirectory = Directory.GetCurrentDirectory();
+        var directory = new DirectoryInfo(testOutputDirectory);
+        while (directory != null) {
+          string testBinDirectory = Path.Combine(directory.FullName, "DocsGenerationE2ETests", "bin");
+          string testBinPrefix = testBinDirectory + Path.DirectorySeparatorChar;
+          if (testOutputDirectory.StartsWith(testBinPrefix, StringComparison.OrdinalIgnoreCase)) {
+            string outputPath = testOutputDirectory.Substring(testBinPrefix.Length);
+            string generatorPath = Path.Combine(directory.FullName, "DocsGeneratorCLI", "bin", outputPath,
+              "DocsGeneratorCLI.exe");
 
-          if (File.Exists(generatorPath)) {
-            return generatorPath;
+            if (File.Exists(generatorPath)) {
+              return generatorPath;
+            }
           }
 
-          gsaGrasshopperRepoRoot = Path.GetFullPath(Path.Combine(gsaGrasshopperRepoRoot, ".."));
+          directory = directory.Parent;
+        }
 
-          maxLevelUp--;
-        } while (maxLevelUp >= 0);
-
-        throw new FileNotFoundException($"Couldn't find: DocsGeneratorCLI.exe full: {generatorPath}", generatorPath);
+        throw new FileNotFoundException("Couldn't find DocsGeneratorCLI.exe in a parent repository directory.");
       }
 
       private static string[] GetRelativeMarkdownFilePaths(string rootDirectory) {
@@ -181,4 +196,3 @@ namespace DocsGenerationE2ETests {
     }
   }
 }
-

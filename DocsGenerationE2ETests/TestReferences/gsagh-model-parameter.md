@@ -1,9 +1,9 @@
 # Model
 <!--- This file has been auto-generated, do not change it manually! Edit the generator here: https://github.com/arup-group/GSA-Grasshopper/tree/main/DocsGeneration --->
 
-|<img width="150"/> Icon |
-| ----------- |
-|![ModelParam](./images/ModelParam.png) |
+| <img width="150"/> Icon                 |
+| --------------------------------------  |
+| ![ModelParam](./images/ModelParam.png)  |
 
 ## Description
 
