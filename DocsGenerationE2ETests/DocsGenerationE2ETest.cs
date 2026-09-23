@@ -86,7 +86,7 @@ namespace DocsGenerationE2ETests {
           const int timeoutMinutes = 35; // Slightly longer than the internal timeout
           using (var cts = new System.Threading.CancellationTokenSource(TimeSpan.FromMinutes(timeoutMinutes))) {
             var waitTask = Task.Run(process.WaitForExit, cts.Token);
-            
+
             try {
               await waitTask;
             } catch (OperationCanceledException) {
