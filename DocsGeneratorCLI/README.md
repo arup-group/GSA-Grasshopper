@@ -9,7 +9,7 @@ documentation from its components and parameters. It supports the in-repository
 
 1. Use 64-bit Windows with Rhino 7 or 8, Grasshopper, and the .NET Framework
    4.8 developer pack installed.
-2. Install GSA in `C:\Program Files\Oasys\GSA 10.2`. This is currently the
+2. Install GSA in `C:\Program Files\Oasys\GSA 10.3`. This is currently the
    path hard-coded in `Fixtures\GrasshopperFixture.cs`.
 3. Build from the root of this repository, `GSA-GH`.
 4. For AdSecGH, install a licensed AdSec API and clone

@@ -5,6 +5,7 @@ using System.Drawing;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GH;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
@@ -40,7 +41,6 @@ namespace GsaGH.Components {
     });
     private TemperatureUnit _temperatureUnit = DefaultUnits.TemperatureUnit;
     private FoldMode _mode = FoldMode.Uniform;
-
     public CreateFaceThermalLoad() : base("Create Face Thermal Load", "FaceLoad", "Create GSA Face Thermal Load",
       CategoryName.Name(), SubCategoryName.Cat3()) {
       Hidden = true;
@@ -209,6 +209,7 @@ namespace GsaGH.Components {
           break;
       }
 
+      GsaGH.Helpers.PostHog.TrackLoadOnce(this, faceThermalLoad, faceThermalLoad.ReferenceType);
       da.SetData(0, new GsaLoadGoo(faceThermalLoad));
     }
 

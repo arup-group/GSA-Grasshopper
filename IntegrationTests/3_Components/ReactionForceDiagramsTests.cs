@@ -5,6 +5,8 @@ using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
+
 using Xunit;
 
 namespace IntegrationTests.Components {
@@ -34,10 +36,10 @@ namespace IntegrationTests.Components {
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
       var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
-      Assert.Equal(209.900, output1.Value, 1);
-      Assert.Equal(205.700, output2.Value, 1);
-      Assert.Equal(209.900, output3.Value, 1);
-      Assert.Equal(205.700, output4.Value, 1);
+      Assert.Equal(209.900, output1.Value, DoubleComparer.Default);
+      Assert.Equal(205.700, output2.Value, DoubleComparer.Default);
+      Assert.Equal(209.900, output3.Value, DoubleComparer.Default);
+      Assert.Equal(205.700, output4.Value, DoubleComparer.Default);
     }
 
     [Fact]
@@ -60,10 +62,10 @@ namespace IntegrationTests.Components {
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
       var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
-      Assert.Equal(-205.200, output1.Value, 1);
-      Assert.Equal(205.200, output2.Value, 1);
-      Assert.Equal(-205.200, output3.Value, 1);
-      Assert.Equal(205.200, output4.Value, 1);
+      Assert.Equal(-205.200, output1.Value, DoubleComparer.Default);
+      Assert.Equal(205.200, output2.Value, DoubleComparer.Default);
+      Assert.Equal(-205.200, output3.Value, DoubleComparer.Default);
+      Assert.Equal(205.200, output4.Value, DoubleComparer.Default);
     }
 
     [Fact]
@@ -73,10 +75,10 @@ namespace IntegrationTests.Components {
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
       var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
-      Assert.Equal(44.160, output1.Value, 2);
-      Assert.Equal(13.700, output2.Value, 1);
-      Assert.Equal(44.160, output3.Value, 2);
-      Assert.Equal(13.700, output4.Value, 1);
+      Assert.Equal(44.160, output1.Value, DoubleComparer.Default);
+      Assert.Equal(13.700, output2.Value, DoubleComparer.Default);
+      Assert.Equal(44.160, output3.Value, DoubleComparer.Default);
+      Assert.Equal(13.700, output4.Value, DoubleComparer.Default);
     }
 
     [Fact]
@@ -86,10 +88,10 @@ namespace IntegrationTests.Components {
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
       var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
-      Assert.Equal(51.740, output1.Value, 2);
-      Assert.Equal(42.250, output2.Value, 2);
-      Assert.Equal(51.740, output3.Value, 2);
-      Assert.Equal(42.250, output4.Value, 2);
+      Assert.Equal(51.740, output1.Value, DoubleComparer.Default);
+      Assert.Equal(42.250, output2.Value, DoubleComparer.Default);
+      Assert.Equal(51.740, output3.Value, DoubleComparer.Default);
+      Assert.Equal(42.250, output4.Value, DoubleComparer.Default);
     }
 
     [Fact]
@@ -99,10 +101,10 @@ namespace IntegrationTests.Components {
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
       var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
-      Assert.Equal(51.740, output1.Value, 2);
-      Assert.Equal(42.250, output2.Value, 2);
-      Assert.Equal(51.740, output3.Value, 2);
-      Assert.Equal(42.250, output4.Value, 2);
+      Assert.Equal(51.740, output1.Value, DoubleComparer.Default);
+      Assert.Equal(42.250, output2.Value, DoubleComparer.Default);
+      Assert.Equal(51.740, output3.Value, DoubleComparer.Default);
+      Assert.Equal(42.250, output4.Value, DoubleComparer.Default);
     }
 
     [Fact]
@@ -112,10 +114,10 @@ namespace IntegrationTests.Components {
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
       var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
-      Assert.Equal(-0.1376, output1.Value, 4);
-      Assert.Equal(-0.000013, output2.Value, 8);
-      Assert.Equal(0.1376, output3.Value, 4);
-      Assert.Equal(0.000013, output4.Value, 8);
+      Assert.Equal(-0.1376, output1.Value, DoubleComparer.Default);
+      Assert.Equal(-0.000013, output2.Value, DoubleComparer.Default);
+      Assert.Equal(0.1376, output3.Value, DoubleComparer.Default);
+      Assert.Equal(0.000013, output4.Value, DoubleComparer.Default);
     }
 
     [Fact]
@@ -125,10 +127,10 @@ namespace IntegrationTests.Components {
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
       var output4 = (GH_Number)param.VolatileData.get_Branch(0)[3];
-      Assert.Equal(0.00008, output1.Value, 8);
-      Assert.Equal(-0.4818, output2.Value, 4);
-      Assert.Equal(-0.00008, output3.Value, 8);
-      Assert.Equal(0.4818, output4.Value, 4);
+      Assert.Equal(0.00008, output1.Value, DoubleComparer.Default);
+      Assert.Equal(-0.4818, output2.Value, DoubleComparer.Default);
+      Assert.Equal(-0.00008, output3.Value, DoubleComparer.Default);
+      Assert.Equal(0.4818, output4.Value, DoubleComparer.Default);
     }
 
     [Theory]

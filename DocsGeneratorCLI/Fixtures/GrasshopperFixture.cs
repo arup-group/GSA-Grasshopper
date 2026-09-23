@@ -127,7 +127,7 @@ namespace DocsGeneratorCLI {
     }
 
 #pragma warning disable S1075 // URIs should not be hardcoded
-    private const string GSA_INSTALL_PATH = @"C:\Program Files\Oasys\GSA 10.2";
+    private const string GSA_INSTALL_PATH = @"C:\Program Files\Oasys\GSA 10.3";
 #pragma warning restore S1075 // URIs should not be hardcoded
   }
 }

@@ -16,6 +16,18 @@ namespace GsaGHTests.Helpers {
       Assert.Equal(expected, comparer.Equals(a, b));
     }
 
+    [Theory]
+    [InlineData(null, null, true)]
+    [InlineData(null, 1.0, false)]
+    [InlineData(1.0, null, false)]
+    [InlineData(1.0, 1.0, true)]
+    [InlineData(1.0, 1.0000001, true)]
+    [InlineData(1.0, 2.0, false)]
+    public void Equals_NullableDoubleBehavior(double? a, double? b, bool expected) {
+      DoubleComparer comparer = DoubleComparer.Default;
+      Assert.Equal(expected, comparer.Equals(a, b));
+    }
+
     [Fact]
     public void ValuesDifferByVeryLittleAndEpsilonIsZero() {
       Assert.NotEqual(10.0, 10.000001, new DoubleComparer(0, true));
@@ -23,7 +35,7 @@ namespace GsaGHTests.Helpers {
 
     [Fact]
     public void ValuesDifferLessThanEpsilonShouldBeConsideredEqualNoMargin() {
-      Assert.Equal(10.0, 10.01, new DoubleComparer());
+      Assert.Equal(10.0, 10.01, DoubleComparer.Default);
     }
 
     [Fact]
@@ -51,6 +63,14 @@ namespace GsaGHTests.Helpers {
       } else {
         Assert.NotEqual(hashA, hashB);
       }
+    }
+
+    [Fact]
+    public void GetHashCode_NullableDoubleBehavior() {
+      DoubleComparer comparer = DoubleComparer.Default;
+      Assert.Equal(0, comparer.GetHashCode((double?)null));
+      Assert.Equal(comparer.GetHashCode(1.0), comparer.GetHashCode((double?)1.0));
+      Assert.NotEqual(comparer.GetHashCode(1.0), comparer.GetHashCode((double?)2.0));
     }
   }
 }

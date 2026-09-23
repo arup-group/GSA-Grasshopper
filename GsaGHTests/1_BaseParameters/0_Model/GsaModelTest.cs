@@ -4,6 +4,7 @@ using System.IO;
 
 using GsaAPI;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.Assembly;
 using GsaGH.Helpers.GsaApi.EnumMappings;
 using GsaGH.Helpers.Import;
@@ -27,7 +28,7 @@ namespace GsaGHTests.Parameters {
     public void TestCreateModelFromModel() {
       var original = new GsaModel();
       original.ApiModel.Open(GsaFile.SteelDesignSimple);
-
+      Utility.DeleteResults(original.ApiModel);
       var assembly = new ModelAssembly(original, null, null, null, null, null, null,
         LengthUnit.Meter, Length.Zero, false, null);
       var assembled = new GsaModel() {

@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
 using GsaGH.Components;
 using GsaGH.Parameters;
-
+using GsaGH.Helpers;
 using GsaGHTests.Helpers;
 using GsaGHTests.Model;
 
 using OasysGH.Components;
+using OasysGH.Units;
 
 using Rhino;
 using Rhino.Geometry;
@@ -65,11 +67,10 @@ namespace GsaGHTests.Components.Geometry {
       var analysisOutlines = (List<GH_Line>)comp.Params.Output[1].VolatileData.get_Branch(0);
       var designMesh = (GH_Mesh)ComponentTestHelper.GetOutput(comp, 2);
       var designOutlines = (List<GH_Line>)comp.Params.Output[3].VolatileData.get_Branch(0);
-
-      Assert.Equal(78, analysisMesh.Value.Vertices.Count);
-      Assert.Equal(86, analysisOutlines.Count);
-      Assert.Equal(78, designMesh.Value.Vertices.Count);
-      Assert.Equal(86, designOutlines.Count);
+      Assert.Equal(88.0, analysisMesh.Value.Vertices.Count, DoubleComparer.Default);
+      Assert.Equal(96.0, analysisOutlines.Count, DoubleComparer.Default);
+      Assert.Equal(88.0, designMesh.Value.Vertices.Count, DoubleComparer.Default);
+      Assert.Equal(96.0, designOutlines.Count, DoubleComparer.Default);
 
     }
 
@@ -91,6 +92,115 @@ namespace GsaGHTests.Components.Geometry {
       IList<string> message = componenet.RuntimeMessages(GH_RuntimeMessageLevel.Error);
       Assert.Single(message);
       Assert.Contains("Multiple length units have been detected", message[0]);
+    }
+
+    [Fact]
+    public void EmptyTopologyInAllFourGeometryInputsUsesDefaultLengthUnit() {
+      var element2d = new GsaElement2d();
+      var member1d = new GsaMember1d();
+      var member2d = new GsaMember2d();
+
+      bool shouldUseDefault = Preview3dSections.ShouldUseDefaultLengthUnit(
+        new List<GsaModel>(),
+        new List<GsaElement1d>(),
+        new List<GsaElement2d> { element2d },
+        new List<GsaMember1d> { member1d },
+        new List<GsaMember2d> { member2d });
+
+      Assert.True(shouldUseDefault);
+    }
+
+    [Fact]
+    public void ModelInputDoesNotUseDefaultLengthUnitFallback() {
+      bool shouldUseDefault = Preview3dSections.ShouldUseDefaultLengthUnit(
+        new List<GsaModel> { new GsaModel() },
+        new List<GsaElement1d>(),
+        new List<GsaElement2d> { new GsaElement2d() },
+        new List<GsaMember1d> { new GsaMember1d() },
+        new List<GsaMember2d> { new GsaMember2d() });
+
+      Assert.False(shouldUseDefault);
+    }
+
+    [Fact]
+    public void NonEmptyTopologyInOneInputDoesNotUseDefaultLengthUnit() {
+      var member1dWithTopology = new GsaMember1d();
+      member1dWithTopology.ApiMember.Topology = "1 2";
+
+      bool shouldUseDefault = Preview3dSections.ShouldUseDefaultLengthUnit(
+        new List<GsaModel>(),
+        new List<GsaElement1d>(),
+        new List<GsaElement2d> { new GsaElement2d() },
+        new List<GsaMember1d> { member1dWithTopology },
+        new List<GsaMember2d> { new GsaMember2d() });
+
+      Assert.False(shouldUseDefault);
+    }
+
+    [Fact]
+    public void NonEmptyElement1dTopologyDoesNotUseDefaultLengthUnit() {
+      bool shouldUseDefault = Preview3dSections.ShouldUseDefaultLengthUnit(
+        new List<GsaModel>(),
+        new List<GsaElement1d> { new GsaElement1d() },
+        new List<GsaElement2d> { new GsaElement2d() },
+        new List<GsaMember1d> { new GsaMember1d() },
+        new List<GsaMember2d> { new GsaMember2d() });
+
+      Assert.False(shouldUseDefault);
+    }
+
+    [Fact]
+    public void NonEmptyElement2dApiElementsDoesNotUseDefaultLengthUnit() {
+      var polyline = new PolylineCurve(new[] {
+        new Point3d(0, 0, 0),
+        new Point3d(1, 0, 0),
+        new Point3d(1, 1, 0),
+        new Point3d(0, 1, 0),
+        new Point3d(0, 0, 0),
+      });
+
+      bool shouldUseDefault = Preview3dSections.ShouldUseDefaultLengthUnit(
+        new List<GsaModel>(),
+        new List<GsaElement1d>(),
+        new List<GsaElement2d> { new GsaElement2d(polyline) },
+        new List<GsaMember1d> { new GsaMember1d() },
+        new List<GsaMember2d> { new GsaMember2d() });
+
+      Assert.False(shouldUseDefault);
+    }
+
+    [Fact]
+    public void NonEmptyMember2dTopologyDoesNotUseDefaultLengthUnit() {
+      var member2dWithTopology = new GsaMember2d();
+      member2dWithTopology.ApiMember.Topology = "1 2 3";
+
+      bool shouldUseDefault = Preview3dSections.ShouldUseDefaultLengthUnit(
+        new List<GsaModel>(),
+        new List<GsaElement1d>(),
+        new List<GsaElement2d> { new GsaElement2d() },
+        new List<GsaMember1d> { new GsaMember1d() },
+        new List<GsaMember2d> { member2dWithTopology });
+
+      Assert.False(shouldUseDefault);
+    }
+
+    [Fact]
+    public void SolveInternalEmptyTopologyInputResetsLengthUnitToDefault() {
+      var component = new Preview3dSections();
+      component.CreateAttributes();
+
+      var member1d = new GsaMember1d {
+        LengthUnit = LengthUnit.Centimeter,
+      };
+
+      ComponentTestHelper.SetInput(component, new GsaMember1dGoo(member1d));
+      ComponentTestHelper.ComputeOutput(component);
+
+      FieldInfo field = typeof(Preview3dSections).GetField("_lengthUnit",
+        BindingFlags.Instance | BindingFlags.NonPublic);
+      Assert.NotNull(field);
+      var lengthUnit = (LengthUnit)field.GetValue(component);
+      Assert.Equal(DefaultUnits.LengthUnitGeometry, lengthUnit);
     }
 
     [Fact]

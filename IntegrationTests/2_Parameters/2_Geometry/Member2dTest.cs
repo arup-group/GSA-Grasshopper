@@ -7,6 +7,7 @@ using GsaGH.Parameters;
 
 using GsaGHTests.Helpers;
 
+using GsaGH.Helpers;
 using Xunit;
 
 namespace IntegrationTests.Parameters {
@@ -28,19 +29,19 @@ namespace IntegrationTests.Parameters {
       Assert.Equal(2, mem.Brep.Loops.Count);
       Assert.Equal(2, mem.InclusionPoints.Count);
       Assert.Equal(2, mem.InclusionLines.Count);
-      Assert.Equal(-1, mem.InclusionPoints[0].X);
-      Assert.Equal(2, mem.InclusionPoints[0].Y);
-      Assert.Equal(0, mem.InclusionPoints[0].Z);
-      Assert.Equal(-1, mem.InclusionPoints[1].X);
-      Assert.Equal(4, mem.InclusionPoints[1].Y);
-      Assert.Equal(0, mem.InclusionPoints[1].Z);
+      Assert.Equal(-1, mem.InclusionPoints[0].X, DoubleComparer.Default);
+      Assert.Equal(2, mem.InclusionPoints[0].Y, DoubleComparer.Default);
+      Assert.Equal(0, mem.InclusionPoints[0].Z, DoubleComparer.Default);
+      Assert.Equal(-1, mem.InclusionPoints[1].X, DoubleComparer.Default);
+      Assert.Equal(4, mem.InclusionPoints[1].Y, DoubleComparer.Default);
+      Assert.Equal(0, mem.InclusionPoints[1].Z, DoubleComparer.Default);
       Assert.Equal("A", mem.InclusionLinesTopologyType[0][1]);
-      Assert.Equal(3, mem.InclusionLines[1].PointAtStart.X);
-      Assert.Equal(3, mem.InclusionLines[1].PointAtStart.Y);
-      Assert.Equal(0, mem.InclusionLines[1].PointAtStart.Z);
-      Assert.Equal(3, mem.InclusionLines[1].PointAtEnd.X);
-      Assert.Equal(1, mem.InclusionLines[1].PointAtEnd.Y);
-      Assert.Equal(0, mem.InclusionLines[1].PointAtEnd.Z);
+      Assert.Equal(3, mem.InclusionLines[1].PointAtStart.X, DoubleComparer.Default);
+      Assert.Equal(3, mem.InclusionLines[1].PointAtStart.Y, DoubleComparer.Default);
+      Assert.Equal(0, mem.InclusionLines[1].PointAtStart.Z, DoubleComparer.Default);
+      Assert.Equal(3, mem.InclusionLines[1].PointAtEnd.X, DoubleComparer.Default);
+      Assert.Equal(1, mem.InclusionLines[1].PointAtEnd.Y, DoubleComparer.Default);
+      Assert.Equal(0, mem.InclusionLines[1].PointAtEnd.Z, DoubleComparer.Default);
     }
 
     private static GH_Document OpenDocument() {

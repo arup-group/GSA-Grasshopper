@@ -1,20 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Security.Cryptography;
-
-using Grasshopper.Kernel.Geometry;
-using Grasshopper.Kernel.Geometry.SpatialTrees;
 
 using GsaAPI;
 
 using GsaGH.Helpers.Import;
 using GsaGH.Parameters;
-
-using Rhino.Collections;
 using Rhino.Geometry;
 
 using Xunit;
+
+using GsaApi = global::GsaAPI;
 
 namespace GsaGHTests.Helpers.Import {
   [Collection("GrasshopperFixture collection")]

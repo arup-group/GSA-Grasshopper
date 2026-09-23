@@ -1,5 +1,10 @@
-﻿
-using System;
+﻿using System;
+
+using GsaAPI;
+
+using OasysGH.Units;
+
+using OasysUnits.Units;
 
 namespace GsaGH.Helpers {
   public static class Utility {
@@ -12,5 +17,23 @@ namespace GsaGH.Helpers {
       float epsilon = 10e-12f;
       return Math.Abs(value1 - value2) < epsilon;
     }
+
+    public static void DeleteResults(GsaAPI.Model model) {
+      foreach (int analysisCaseId in model.AnalysisTasks().Keys) {
+       model.DeleteResults(analysisCaseId);
+      }
+    }
+
+    public static void DeleteResults(GsaAPI.Model model, int analysisCaseId) {
+      model.DeleteResults(analysisCaseId);
+    }
+
+    public static void DeleteResultsAndReAnalyse( GsaAPI.Model model) {
+      foreach (int analysisCaseId in model.AnalysisTasks().Keys) {
+        model.DeleteResults(analysisCaseId);
+        model.Analyse(analysisCaseId);
+      }
+    }
+
   }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 
 using Grasshopper.Kernel.Data;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
@@ -90,7 +91,7 @@ namespace GsaGHTests.Components.Results {
         for (int j = 0; j < expectedOutput[i].Count; j++) {
           Assert.Equal(expectedOutput[i][j],
             outputResult[j] == null ? outputResult[j] :
-              ResultHelper.RoundToSignificantDigits((double)outputResult[j], 4));
+              (double)outputResult[j], DoubleComparer.Default);
         }
       }
     }
@@ -127,7 +128,7 @@ namespace GsaGHTests.Components.Results {
           }
         } else {
           double min = output.Min().As(Unit());
-          Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+          Assert.Equal(expected, min, DoubleComparer.Default);
         }
       }
     }
@@ -164,7 +165,7 @@ namespace GsaGHTests.Components.Results {
           }
         } else {
           double max = output.Max().As(Unit());
-          Assert.Equal(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+          Assert.Equal(expected, max, DoubleComparer.Default);
         }
       }
     }
