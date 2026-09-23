@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace DocsGeneration.MarkDowns {
   public class Table {
@@ -25,16 +26,18 @@ namespace DocsGeneration.MarkDowns {
         throw new ArgumentException("Headers and header widths must have the same number of elements.");
       }
 
+      var headerBuilder = new StringBuilder();
       for (int i = 0; i < headers?.Count; i++) {
         string width = $"<img width=\"{imageWidths[i]}\"/>";
         string line = $"{StartLine}{width} {headers[i]}";
         line = AdjustLineWithWhitespaces(line, i);
-        Headers += line;
+        headerBuilder.Append(line);
       }
 
-      Headers += EndLine;
-      _defaultHeaderWidths?.ForEach(item => Headers += StartLine + new string('-', item) + " ");
-      Headers += EndLine;
+      headerBuilder.Append(EndLine);
+      _defaultHeaderWidths?.ForEach(item => headerBuilder.Append(StartLine).Append('-', item).Append(' '));
+      headerBuilder.Append(EndLine);
+      Headers += headerBuilder.ToString();
     }
 
     private void AddHeader(string name, int headingSize) {
@@ -44,14 +47,16 @@ namespace DocsGeneration.MarkDowns {
     }
 
     public void AddRow(List<string> items) {
+      var rowBuilder = new StringBuilder();
       for (int i = 0; i < items.Count; i++) {
         string row = items[i];
         string line = $"| {row} ";
         line = AdjustLineWithWhitespaces(line, i);
-        Rows += line;
+        rowBuilder.Append(line);
       }
 
-      Rows += EndLine;
+      rowBuilder.Append(EndLine);
+      Rows += rowBuilder.ToString();
     }
 
     private string AdjustLineWithWhitespaces(string line, int i) {

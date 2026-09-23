@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace DocsGeneration.MarkDowns.Helpers {
   public enum AdmonitionType {
@@ -191,7 +192,7 @@ namespace DocsGeneration.MarkDowns.Helpers {
       string[] split = str.Split(new string[] {
         "<see cref=\"",
       }, opt);
-      str = split[0];
+      var markdown = new StringBuilder(split[0]);
       for (int i = 1; i < split.Length; i++) {
         string[] refAndRest = split[i].Split(new string[] {
           "/>",
@@ -204,9 +205,9 @@ namespace DocsGeneration.MarkDowns.Helpers {
             string[] typeSplit = reference.Split('.');
             string markdownLink = SortReference(typeSplit[0], typeSplit[1], typeSplit[typeSplit.Count() - 1], config);
             markdownLink = markdownLink.Replace(" 3d", " 3D").Replace(" 2d", " 2D").Replace(" 1d", " 1D");
-            str += markdownLink;
+            markdown.Append(markdownLink);
             if (refAndRest.Length > 1) {
-              str += refAndRest[1];
+              markdown.Append(refAndRest[1]);
             }
 
             break;
@@ -215,20 +216,20 @@ namespace DocsGeneration.MarkDowns.Helpers {
             reference = reference.Replace("M:", string.Empty).Replace("\"", string.Empty).Replace(" ", string.Empty);
             ;
             string[] typeSplit2 = reference.Split('.');
-            str += typeSplit2[typeSplit2.Count() - 1];
+            markdown.Append(typeSplit2[typeSplit2.Count() - 1]);
             if (refAndRest.Length > 1) {
-              str += refAndRest[1];
+              markdown.Append(refAndRest[1]);
             }
 
             break;
 
           default:
-            str += refAndRest[refAndRest.Count() - 1];
+            markdown.Append(refAndRest[refAndRest.Count() - 1]);
             break;
         }
       }
 
-      return str;
+      return markdown.ToString();
     }
 
     private static string ConvertSeeHrefTagsToMarkdownLinks(string str) { // For example:
