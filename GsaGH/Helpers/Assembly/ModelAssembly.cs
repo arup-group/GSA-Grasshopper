@@ -95,6 +95,7 @@ namespace GsaGH.Helpers.Assembly {
         ConvertNodeLoads(loading.Loads);
       }
 
+      DeleteExistingResultsBeforeAssembly();
       AssembleNodesElementsMembersAndLists();
       ElementsFromMembers(createElementsFromMembers, toleranceCoincidentNodes, owner);
 
@@ -116,8 +117,6 @@ namespace GsaGH.Helpers.Assembly {
         ConvertAndAssembleCombinations(analysis.CombinationCases);
         ConvertAndAssembleDesignTasks(analysis.DesignTasks, owner);
       }
-
-      DeleteExistingResults();
     }
 
     internal Model GetModel() {
@@ -476,14 +475,18 @@ namespace GsaGH.Helpers.Assembly {
       _model = ModelFactory.CreateModelFromCodes(concreteCode, steelCode);
     }
 
-    private void DeleteExistingResults() {
-      if (!_deleteResults) {
+    private void DeleteExistingResultsBeforeAssembly() {
+      if (!_deleteResults && !ModelHasResults()) {
         return;
       }
 
       foreach (int taskId in _model.AnalysisTasks().Keys) {
         _model.DeleteResults(taskId);
       }
+    }
+
+    private bool ModelHasResults() {
+      return _model.Results().Count > 0 || _model.CombinationCaseResults().Count > 0;
     }
 
     private void ElementsFromMembers(bool createElementsFromMembers, Length toleranceCoincidentNodes, GH_Component owner) {

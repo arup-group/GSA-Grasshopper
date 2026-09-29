@@ -81,6 +81,7 @@ namespace GsaGH.Helpers.Assembly {
         return;
       }
 
+      _deleteResults = true;
       nodes = nodes.OrderByDescending(n => n.Id).ToList();
       foreach (GsaNode node in nodes.Where(node => node != null)) {
         ConvertNode(node);
