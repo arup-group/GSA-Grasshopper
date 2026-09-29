@@ -4,18 +4,16 @@ using System.Collections.ObjectModel;
 namespace GsaAPI {
   public class GSAElement {
     public const int DefaultGroup = 1;
-    public const int IndexZero = 0;
     public static int LoadPanelType = -1000;
     private GSAElement() { }
     public GSAElement(Element element) {
       Element = element;
-      IsLoadPanel = false;
-      Element.Group = SetGroupFrom(element.Group);
+      SetGroupFrom(Element);
     }
     public GSAElement(LoadPanelElement element) {
       LoadPanelElement = element;
       IsLoadPanel = true;
-      LoadPanelElement.Group = SetGroupFrom(element.Group);
+      SetGroupFrom(Element);
     }
 
     public bool IsLoadPanel { get; }
@@ -239,8 +237,14 @@ namespace GsaAPI {
       }
     }
 
-    private static int SetGroupFrom(int id) {
-      return id == IndexZero ? DefaultGroup : id;
+    private static void SetGroupFrom(Element element) {
+      try {
+        if (element.Group <= 0) {
+          element.Group = DefaultGroup;
+        }
+      } catch (Exception) {
+        // Exception is intentionally swallowed/ignored
+      }
     }
   }
 

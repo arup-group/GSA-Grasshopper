@@ -21,7 +21,7 @@ namespace GsaGH.Parameters {
     }
     internal GsaSteelDesignTask(KeyValuePair<int, SteelDesignTask> kvp, GsaModel model) {
       Id = kvp.Key;
-      ApiTask = kvp.Value;
+      ApiTask = DuplicateFrom(kvp.Value);
       foreach (KeyValuePair<int, EntityList> apiList in model.ApiModel.Lists()) {
         if (apiList.Value.Name == ApiTask.ListDefinition.Replace("\"", string.Empty)) {
           List = new GsaList(apiList.Key, apiList.Value, model);
@@ -29,7 +29,23 @@ namespace GsaGH.Parameters {
         }
       }
 
-      List = new GsaList(Name, kvp.Value.ListDefinition, GsaAPI.EntityType.Member);
+      List = new GsaList(Name, ApiTask.ListDefinition, GsaAPI.EntityType.Member);
+    }
+
+    internal SteelDesignTask DuplicateApiObject() {
+      return DuplicateFrom(ApiTask);
+    }
+
+    private static SteelDesignTask DuplicateFrom(SteelDesignTask source) {
+      return new SteelDesignTask(source.TaskName) {
+        CombinationCaseId = source.CombinationCaseId,
+        GroupSectionsByPool = source.GroupSectionsByPool,
+        ListDefinition = source.ListDefinition,
+        LowerTargetUtilisationLimit = source.LowerTargetUtilisationLimit,
+        PrimaryObjective = source.PrimaryObjective,
+        SecondaryObjective = source.SecondaryObjective,
+        UpperTargetUtilisationLimit = source.UpperTargetUtilisationLimit,
+      };
     }
 
     public override string ToString() {

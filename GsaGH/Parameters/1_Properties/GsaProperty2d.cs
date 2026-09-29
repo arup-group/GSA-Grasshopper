@@ -83,39 +83,43 @@ namespace GsaGH.Parameters {
     /// <param name="prop2d"></param>
     internal GsaProperty2d(KeyValuePair<int, Prop2D> prop2d) {
       Id = prop2d.Key;
-      ApiProp2d = prop2d.Value;
+      ApiProp2d = DuplicateFrom(prop2d.Value);
       IsReferencedById = false;
     }
 
     public Prop2D DuplicateApiObject() {
+      return DuplicateFrom(ApiProp2d);
+    }
+
+    private static Prop2D DuplicateFrom(Prop2D source) {
       var prop = new Prop2D {
-        MaterialAnalysisProperty = ApiProp2d.MaterialAnalysisProperty,
-        MaterialGradeProperty = ApiProp2d.MaterialGradeProperty,
-        MaterialType = ApiProp2d.MaterialType,
-        Name = ApiProp2d.Name,
-        Description = ApiProp2d.Description,
-        Type = ApiProp2d.Type,
-        AxisProperty = ApiProp2d.AxisProperty,
-        ReferenceSurface = ApiProp2d.ReferenceSurface,
-        AdditionalOffsetZ = ApiProp2d.AdditionalOffsetZ,
+        MaterialAnalysisProperty = source.MaterialAnalysisProperty,
+        MaterialGradeProperty = source.MaterialGradeProperty,
+        MaterialType = source.MaterialType,
+        Name = source.Name,
+        Description = source.Description,
+        Type = source.Type,
+        AxisProperty = source.AxisProperty,
+        ReferenceSurface = source.ReferenceSurface,
+        AdditionalOffsetZ = source.AdditionalOffsetZ,
       };
 
-      if (ApiProp2d.Type == Property2D_Type.LOAD) {
-        prop.SupportType = ApiProp2d.SupportType;
-        if (ApiProp2d.SupportType != SupportType.Auto) {
-          prop.ReferenceEdge = ApiProp2d.ReferenceEdge;
+      if (source.Type == Property2D_Type.LOAD) {
+        prop.SupportType = source.SupportType;
+        if (source.SupportType != SupportType.Auto) {
+          prop.ReferenceEdge = source.ReferenceEdge;
         }
       }
 
-      prop.PropertyModifier.AdditionalMass = ApiProp2d.PropertyModifier.AdditionalMass;
-      prop.PropertyModifier.Bending = ApiProp2d.PropertyModifier.Bending;
-      prop.PropertyModifier.InPlane = ApiProp2d.PropertyModifier.InPlane;
-      prop.PropertyModifier.Shear = ApiProp2d.PropertyModifier.Shear;
-      prop.PropertyModifier.Volume = ApiProp2d.PropertyModifier.Volume;
+      prop.PropertyModifier.AdditionalMass = source.PropertyModifier.AdditionalMass;
+      prop.PropertyModifier.Bending = source.PropertyModifier.Bending;
+      prop.PropertyModifier.InPlane = source.PropertyModifier.InPlane;
+      prop.PropertyModifier.Shear = source.PropertyModifier.Shear;
+      prop.PropertyModifier.Volume = source.PropertyModifier.Volume;
 
       // workaround to handle that System.Drawing.Color is non-nullable type
-      if ((Color)ApiProp2d.Colour != Color.FromArgb(0, 0, 0)) {
-        prop.Colour = ApiProp2d.Colour;
+      if ((Color)source.Colour != Color.FromArgb(0, 0, 0)) {
+        prop.Colour = source.Colour;
       }
 
       return prop;
