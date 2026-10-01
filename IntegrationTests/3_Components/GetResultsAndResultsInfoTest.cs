@@ -6,6 +6,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
+
 using Xunit;
 
 namespace IntegrationTests.Components {
@@ -43,11 +45,11 @@ namespace IntegrationTests.Components {
       var myy13 = (GH_Number)myy1.VolatileData.get_Branch(0)[2];
       var myy14 = (GH_Number)myy1.VolatileData.get_Branch(0)[3];
       var myy15 = (GH_Number)myy1.VolatileData.get_Branch(0)[4];
-      Assert.Equal(-0.001112, myy11.Value, 6);
-      Assert.Equal(-118828.126112, myy12.Value, 6);
-      Assert.Equal(-188437.501112, myy13.Value, 6);
-      Assert.Equal(-118828.126112, myy14.Value, 6);
-      Assert.Equal(-0.001112, myy15.Value, 6);
+      Assert.Equal(-0.001112, myy11.Value, DoubleComparer.Default);
+      Assert.Equal(-118828.126112, myy12.Value, DoubleComparer.Default);
+      Assert.Equal(-188437.501112, myy13.Value, DoubleComparer.Default);
+      Assert.Equal(-118828.126112, myy14.Value, DoubleComparer.Default);
+      Assert.Equal(-0.001112, myy15.Value, DoubleComparer.Default);
 
       IGH_Param myy2 = Helper.FindParameter(doc, "Myy2");
       var myy21 = (GH_Number)myy1.VolatileData.get_Branch(0)[0];
@@ -55,11 +57,11 @@ namespace IntegrationTests.Components {
       var myy23 = (GH_Number)myy1.VolatileData.get_Branch(0)[2];
       var myy24 = (GH_Number)myy1.VolatileData.get_Branch(0)[3];
       var myy25 = (GH_Number)myy1.VolatileData.get_Branch(0)[4];
-      Assert.Equal(-0.001112, myy21.Value, 6);
-      Assert.Equal(-118828.126112, myy22.Value, 6);
-      Assert.Equal(-188437.501112, myy23.Value, 6);
-      Assert.Equal(-118828.126112, myy24.Value, 6);
-      Assert.Equal(-0.001112, myy25.Value, 6);
+      Assert.Equal(-0.001112, myy21.Value, DoubleComparer.Default);
+      Assert.Equal(-118828.126112, myy22.Value, DoubleComparer.Default);
+      Assert.Equal(-188437.501112, myy23.Value, DoubleComparer.Default);
+      Assert.Equal(-118828.126112, myy24.Value, DoubleComparer.Default);
+      Assert.Equal(-0.001112, myy25.Value, DoubleComparer.Default);
     }
 
     private static GH_Document OpenDocument() {

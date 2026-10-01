@@ -6,6 +6,8 @@ using System.Reflection;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
+
 using Xunit;
 
 namespace IntegrationTests.ExampleFiles {
@@ -29,7 +31,7 @@ namespace IntegrationTests.ExampleFiles {
     public void MaxMyyAssert() {
       IGH_Param param = Helper.FindParameter(Document(), "MaxMyy");
       var output = (GH_Number)param.VolatileData.get_Branch(0)[0];
-      Assert.Equal(60.028894, output.Value, 6);
+      Assert.Equal(60.028894, output.Value, DoubleComparer.Default);
     }
 
     [Fact]

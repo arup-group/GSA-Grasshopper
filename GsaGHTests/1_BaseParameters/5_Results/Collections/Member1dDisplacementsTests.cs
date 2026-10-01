@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
+using GsaGH.Helpers;
 using GsaGH.Parameters.Results;
 
 using GsaGHTests.Helper;
@@ -66,7 +67,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -90,7 +91,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double max = TestsResultHelper.ResultsHelper(resultSet, component, true);
-      Assert.Equal(expected, max);
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -114,7 +115,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Theory]
@@ -138,7 +139,7 @@ namespace GsaGHTests.Parameters.Results {
 
       // Assert Max in set
       double min = TestsResultHelper.ResultsHelper(resultSet, component, false);
-      Assert.Equal(expected, min);
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Theory]
@@ -173,7 +174,7 @@ namespace GsaGHTests.Parameters.Results {
         foreach (double position in positions) {
           double x = TestsResultHelper.ResultsHelper(displacementQuantity[0].Results[position],
             component);
-          Assert.Equal(expected[i++], x);
+          Assert.Equal(expected[i++], x, DoubleComparer.Default);
         }
       }
     }
@@ -212,7 +213,7 @@ namespace GsaGHTests.Parameters.Results {
         foreach (double position in positions) {
           double perm1
             = TestsResultHelper.ResultsHelper(displacementQuantity[0].Results[position], component);
-          Assert.Equal(expectedP1[i++], perm1);
+          Assert.Equal(expectedP1[i++], perm1, DoubleComparer.Default);
         }
       }
     }

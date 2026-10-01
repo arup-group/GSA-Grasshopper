@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using GsaGH.Helpers;
 using Grasshopper.Kernel;
-
-using GsaGH.Helpers.GsaApi;
 using GsaGH.Parameters;
 using GsaGH.Parameters.Results;
 
 using GsaGHTests.Helper;
 using GsaGHTests.Helpers;
 using GsaGHTests.Parameters.Results;
-using GsaGHTests.TestHelpers;
+
 
 using OasysUnits;
 using OasysUnits.Units;
@@ -55,7 +54,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert
       double max = output.Max().As(Unit(component));
-      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -82,7 +81,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert
       double max = output.Max().As(Unit(component));
-      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(max, 4));
+      Assert.Equal(expected, max, DoubleComparer.Default);
     }
 
     [Theory]
@@ -109,7 +108,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert
       double min = output.Min().As(Unit(component));
-      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Theory]
@@ -136,7 +135,7 @@ namespace GsaGHTests.Components.Results {
 
       // Assert
       double min = output.Min().As(Unit(component));
-      DoubleAssertHelper.Equals(expected, ResultHelper.RoundToSignificantDigits(min, 4));
+      Assert.Equal(expected, min, DoubleComparer.Default);
     }
 
     [Fact]

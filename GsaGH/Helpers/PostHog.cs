@@ -1,14 +1,64 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 using GsaGH.Parameters;
 using GsaGH.Parameters.Enums;
 
 namespace GsaGH.Helpers {
   internal class PostHog {
+    // Tracks component instances without preventing garbage collection.
+    private static readonly ConditionalWeakTable<object, object> _instanceTracking =
+      new ConditionalWeakTable<object, object>();
+
+    private static void TrackOnce(object componentInstance, Action postHogAction) {
+      if (!_instanceTracking.TryGetValue(componentInstance, out _)) {
+        postHogAction();
+        _instanceTracking.Add(componentInstance, true);
+      }
+    }
+
+    internal static void TrackGwaOnce(object componentInstance, string gwa, bool existingModel) {
+      TrackOnce(componentInstance, () => Gwa(gwa, existingModel));
+    }
+
+    internal static void TrackDiagramOnce(
+      object componentInstance, string diagramType, CaseType caseType, string type, string subTypes,
+      EntityType entityType) {
+      TrackOnce(componentInstance, () => Diagram(diagramType, caseType, type, subTypes, entityType));
+    }
+
+    internal static void TrackDiagramOnce(
+      object componentInstance, string diagramType, string caseId, string type, List<GsaAPI.DiagramType> subTypes,
+      EntityType entityType) {
+      TrackOnce(componentInstance, () => Diagram(diagramType, caseId, type, subTypes, entityType));
+    }
+
+    internal static void TrackResultOnce(
+      object componentInstance, CaseType caseType, int dimension, string resultType, string subType = "-") {
+      TrackOnce(componentInstance, () => Result(caseType, dimension, resultType, subType));
+    }
+
+    internal static void TrackLoadOnce(
+      object componentInstance, IGsaLoad load, ReferenceType refType, string subType = "-") {
+      TrackOnce(componentInstance, () => Load(load, refType, subType));
+    }
+
+    internal static void TrackLoadOnce(object componentInstance, bool refType, string subType = "-") {
+      TrackOnce(componentInstance, () => Load(refType, subType));
+    }
+
+    internal static void TrackModelIOOnce(object componentInstance, string operation, int sizeOrCount) {
+      TrackOnce(componentInstance, () => OasysGH.Helpers.PostHog.ModelIO(PluginInfo.Instance, operation, sizeOrCount));
+    }
+
+    private static void SendEvent(string eventName, Dictionary<string, object> properties) {
+      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+    }
 
     internal static void Debug(Dictionary<string, object> properties) {
       const string eventName = "Debug";
-      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+      SendEvent(eventName, properties);
     }
 
     internal static void Diagram(string diagramType, CaseType caseType, string type, string subTypes, EntityType entityType) {
@@ -26,7 +76,7 @@ namespace GsaGH.Helpers {
           "entityType", entityType.ToString()
         },
       };
-      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+      SendEvent(eventName, properties);
     }
 
     internal static void Diagram(
@@ -57,7 +107,7 @@ namespace GsaGH.Helpers {
             "existingModel", existingModel
           },
         };
-        _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+        SendEvent(eventName, properties);
       }
     }
 
@@ -77,7 +127,7 @@ namespace GsaGH.Helpers {
           "loadSubType", subType
         },
       };
-      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+      SendEvent(eventName, properties);
     }
 
     internal static void Load(bool refType, string subType = "-") {
@@ -93,7 +143,7 @@ namespace GsaGH.Helpers {
           "loadSubType", subType
         },
       };
-      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+      SendEvent(eventName, properties);
     }
 
     internal static void Result(
@@ -110,7 +160,7 @@ namespace GsaGH.Helpers {
           "resultSubType", subType
         },
       };
-      _ = OasysGH.Helpers.PostHog.SendToPostHog(PluginInfo.Instance, eventName, properties);
+      SendEvent(eventName, properties);
     }
   }
 }

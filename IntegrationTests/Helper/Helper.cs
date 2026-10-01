@@ -72,7 +72,27 @@ namespace IntegrationTests {
       return null;
     }
 
+    public static void WaitForPrimitivesInitialize(IGH_Param param) {
+      int maxRetries = 2;
+      for (int i = 0; i < maxRetries; i++) {
+        if (param.VolatileData != null &&
+            param.VolatileData.PathCount > 0 &&
+            param.VolatileData.get_Branch(0).Count > 0) {
+          break;
+        }
+
+        if (i == maxRetries - 1) {
+          Assert.Fail("Grasshopper parameter volatile data failed to populate in time.");
+        }
+
+        //delays on the flaky tests
+        //Has the Grasshopper solver finished putting data into this parameter yet?
+        System.Threading.Tasks.Task.Delay(300).Wait();
+      }
+    }
+
     public static void TestGhPrimitives(IGH_Param param, object expected) {
+      WaitForPrimitivesInitialize(param);
       var comparer = new DoubleComparer();
       if (expected.GetType() == typeof(string)) {
         var valOut = (GH_String)param.VolatileData.get_Branch(0)[0];
@@ -138,6 +158,6 @@ namespace IntegrationTests {
         }
       }
     }
-    
+
   }
 }

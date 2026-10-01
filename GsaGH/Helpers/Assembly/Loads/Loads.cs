@@ -29,7 +29,6 @@ namespace GsaGH.Helpers.Assembly {
     private Dictionary<int, LoadCase> _loadCases;
 
     private void ConvertBeamLoad(GsaBeamLoad load, GH_Component owner) {
-      PostHog.Load(load, load.ReferenceType);
       if (load.ReferenceType != ReferenceType.None) {
         string objectElemList = load.ApiLoad.EntityList;
 
@@ -70,7 +69,6 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertBeamThermalLoad(GsaBeamThermalLoad load, GH_Component owner) {
-      PostHog.Load(load, load.ReferenceType);
       if (load.ReferenceType != ReferenceType.None) {
         string objectElemList = load.ApiLoad.EntityList;
 
@@ -111,7 +109,6 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertFaceLoad(GsaFaceLoad load, GH_Component owner) {
-      PostHog.Load(load, load.ReferenceType);
       if (load.ReferenceType != ReferenceType.None) {
         string objectElemList = load.ApiLoad.EntityList;
 
@@ -152,7 +149,6 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertFaceThermalLoad(GsaFaceThermalLoad load, GH_Component owner) {
-      PostHog.Load(load, load.ReferenceType);
       if (load.ReferenceType != ReferenceType.None) {
         string objectElemList = load.ApiLoad.EntityList;
 
@@ -192,7 +188,6 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertGravityLoad(GsaGravityLoad load, GH_Component owner) {
-      PostHog.Load(load, load.ReferenceType);
       if (load.ReferenceType != ReferenceType.None) {
         string objectElemList = load.ApiLoad.EntityList;
 
@@ -234,8 +229,6 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertGridAreaLoad(GsaGridAreaLoad load, GH_Component owner) {
-      PostHog.Load(load, ReferenceType.None,
-        load.ApiLoad.Type.ToString());
       if (load.ApiLoad.Type == GridAreaPolyLineType.POLYGON) {
         load.ApiLoad.PolyLineDefinition =
         GridLoadHelper.ClearDefinitionForUnit(load.ApiLoad.PolyLineDefinition) +
@@ -261,7 +254,6 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertGridLineLoad(GsaGridLineLoad load, GH_Component owner) {
-      PostHog.Load(load, ReferenceType.None);
       if (load.GridPlaneSurface == null) {
         _gridLineLoads.Add(load.ApiLoad);
         return;
@@ -288,7 +280,6 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void ConvertGridPointLoad(GsaGridPointLoad load, GH_Component owner) {
-      PostHog.Load(load, ReferenceType.None);
       if (load.GridPlaneSurface == null) {
         _gridPointLoads.Add(load.ApiLoad);
         return;

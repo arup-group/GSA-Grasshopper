@@ -2,6 +2,7 @@
 
 using Grasshopper.Kernel.Types;
 
+using GsaGH.Helpers;
 using GsaGH.Helpers.Graphics;
 using GsaGH.Parameters;
 
@@ -224,9 +225,9 @@ namespace GsaGHTests.Parameters {
         = obj.Transform(new Transform(Transform.Mirror(startingPoint, vector3d)));
       var expectedObject = new Vector3d(2, 2, 2);
 
-      Assert.Equal(expectedObject.X, actualObject.Boundingbox.Diagonal.X, 6);
-      Assert.Equal(expectedObject.Y, actualObject.Boundingbox.Diagonal.Y, 6);
-      Assert.Equal(expectedObject.Z, actualObject.Boundingbox.Diagonal.Z, 6);
+      Assert.Equal(expectedObject.X, actualObject.Boundingbox.Diagonal.X, DoubleComparer.Default);
+      Assert.Equal(expectedObject.Y, actualObject.Boundingbox.Diagonal.Y, DoubleComparer.Default);
+      Assert.Equal(expectedObject.Z, actualObject.Boundingbox.Diagonal.Z, DoubleComparer.Default);
     }
 
     [Fact]

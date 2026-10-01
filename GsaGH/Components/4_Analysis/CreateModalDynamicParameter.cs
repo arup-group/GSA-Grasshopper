@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 
+using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
 
 using GsaAPI;
@@ -22,16 +24,41 @@ namespace GsaGH.Components {
   ///   Component to create a modal dynamic parameter
   /// </summary>
   public class CreateModalDynamicParameter : GH_OasysDropDownComponent {
+    private const string ModeMethodKey = "ModeMethod";
     public override Guid ComponentGuid => new Guid("75bf6454-92c4-4a3c-8abf-75f1d449cb85");
     public override GH_Exposure Exposure => GH_Exposure.tertiary | GH_Exposure.obscure;
     public override OasysPluginInfo PluginInfo => GsaGH.PluginInfo.Instance;
     protected override Bitmap Icon => Resources.CreateModalDynamicParameter;
     private ModeCalculationMethod _modeMethod = ModeCalculationMethod.NumberOfMode;
+    private bool _isReading;
     public CreateModalDynamicParameter() : base(
       $"Create {GsaModalDynamicGoo.Name}",
       GsaModalDynamicGoo.NickName.Replace(" ", string.Empty),
       $"Create {GsaModalDynamicGoo.Description}", CategoryName.Name(), SubCategoryName.Cat4()) {
       Hidden = true;
+    }
+
+    public override bool Read(GH_IReader reader) {
+      bool hasModeMethod = reader.ItemExists(ModeMethodKey);
+      if (hasModeMethod) {
+        _modeMethod = (ModeCalculationMethod)reader.GetInt32(ModeMethodKey);
+      }
+
+      _isReading = true;
+      bool flag = base.Read(reader);
+      _isReading = false;
+
+      if (!hasModeMethod && _selectedItems.Count > 0) {
+        _modeMethod = GetModeStrategy(_selectedItems[0]);
+      }
+
+      RefreshInputParametersForMode();
+      return flag;
+    }
+
+    public override bool Write(GH_IWriter writer) {
+      writer.SetInt32(ModeMethodKey, (int)_modeMethod);
+      return base.Write(writer);
     }
 
     private static readonly IReadOnlyDictionary<ModeCalculationMethod, string> _modeCalculationMethod
@@ -268,6 +295,28 @@ namespace GsaGH.Components {
     }
 
     public override void VariableParameterMaintenance() {
+      if (_isReading) {
+        return;
+      }
+
+      RefreshInputParametersForMode();
+    }
+
+    private int GetRequiredInputCount() {
+      return _modeMethod switch {
+        ModeCalculationMethod.NumberOfMode => 5,
+        ModeCalculationMethod.FrquencyRange => 7,
+        ModeCalculationMethod.TargetMassRatio => 9,
+        _ => 5,
+      };
+    }
+
+    private void RefreshInputParametersForMode() {
+      // Keep deserialized parameters and their sources if the input layout already matches.
+      if (Params.Input.Count == GetRequiredInputCount()) {
+        return;
+      }
+
       UnregisterParameters();
       int index = 0;
       if (_modeMethod == ModeCalculationMethod.NumberOfMode) {

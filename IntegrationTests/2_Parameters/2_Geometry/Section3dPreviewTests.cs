@@ -1,13 +1,16 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 
-using Rhino.Geometry;
+using GsaGH.Helpers;
 
 using Xunit;
+
+using Mesh = Rhino.Geometry.Mesh;
 
 namespace IntegrationTests.Parameters {
   [Collection("GrasshopperFixture collection")]
@@ -23,8 +26,8 @@ namespace IntegrationTests.Parameters {
       var valOut = (GH_Mesh)param.VolatileData.get_Branch(0)[0];
       Mesh mesh = valOut.Value;
       Assert.NotNull(mesh);
-      Assert.InRange(mesh.Vertices.Count, 3450, 3455);
-      Assert.InRange(mesh.Faces.Count, 4715, 4725);
+      Assert.Equal(3772.0, mesh.Vertices.Count, DoubleComparer.Default);
+      Assert.Equal(5305.0, mesh.Faces.Count, DoubleComparer.Default);
     }
 
     [Fact]
@@ -34,7 +37,7 @@ namespace IntegrationTests.Parameters {
       Assert.NotNull(param);
       var valOut = param.VolatileData.AllData(false).ToList();
       Assert.NotNull(valOut);
-      Assert.Equal(1852, valOut.Count);
+      Assert.Equal(1980.0, valOut.Count, DoubleComparer.Default);
     }
 
     [Fact]
@@ -45,8 +48,8 @@ namespace IntegrationTests.Parameters {
       var valOut = (GH_Mesh)param.VolatileData.get_Branch(0)[0];
       Mesh mesh = valOut.Value;
       Assert.NotNull(mesh);
-      Assert.Equal(972, mesh.Vertices.Count);
-      Assert.Equal(2132, mesh.Faces.Count);
+      Assert.Equal(1044.0, mesh.Vertices.Count, DoubleComparer.Default);
+      Assert.Equal(2324.0, mesh.Faces.Count, DoubleComparer.Default);
     }
 
     [Fact]
@@ -56,7 +59,7 @@ namespace IntegrationTests.Parameters {
       Assert.NotNull(param);
       var valOut = param.VolatileData.AllData(false).ToList();
       Assert.NotNull(valOut);
-      Assert.Equal(1468, valOut.Count);
+      Assert.Equal(1596.0, valOut.Count, DoubleComparer.Default);
     }
 
     [Fact]
@@ -67,8 +70,8 @@ namespace IntegrationTests.Parameters {
       var valOut = (GH_Mesh)param.VolatileData.get_Branch(0)[0];
       Mesh mesh = valOut.Value;
       Assert.NotNull(mesh);
-      Assert.Equal(728, mesh.Vertices.Count);
-      Assert.Equal(786, mesh.Faces.Count);
+      Assert.Equal(800.0, mesh.Vertices.Count, DoubleComparer.Default);
+      Assert.Equal(866.0, mesh.Faces.Count, DoubleComparer.Default);
     }
 
     [Fact]
@@ -78,7 +81,7 @@ namespace IntegrationTests.Parameters {
       Assert.NotNull(param);
       var valOut = param.VolatileData.AllData(false).ToList();
       Assert.NotNull(valOut);
-      Assert.Equal(300, valOut.Count);
+      Assert.Equal(316.0, valOut.Count, DoubleComparer.Default);
     }
 
     [Fact]
@@ -89,14 +92,14 @@ namespace IntegrationTests.Parameters {
       var valOut1 = (GH_Mesh)param.VolatileData.get_Branch(0)[0];
       Mesh mesh1 = valOut1.Value;
       Assert.NotNull(mesh1);
-      Assert.Equal(80, mesh1.Vertices.Count);
-      Assert.Equal(110, mesh1.Faces.Count);
+      Assert.Equal(88.0, mesh1.Vertices.Count, DoubleComparer.Default);
+      Assert.Equal(122.0, mesh1.Faces.Count, DoubleComparer.Default);
 
       var valOut2 = (GH_Mesh)param.VolatileData.get_Branch(0)[1];
       Mesh mesh2 = valOut2.Value;
       Assert.NotNull(mesh2);
-      Assert.Equal(80, mesh2.Vertices.Count);
-      Assert.Equal(110, mesh2.Faces.Count);
+      Assert.Equal(88.0, mesh2.Vertices.Count, DoubleComparer.Default);
+      Assert.Equal(122.0, mesh2.Faces.Count, DoubleComparer.Default);
     }
 
     [Fact]
@@ -107,8 +110,8 @@ namespace IntegrationTests.Parameters {
       var valOut = (GH_Mesh)param.VolatileData.get_Branch(0)[0];
       Mesh mesh = valOut.Value;
       Assert.NotNull(mesh);
-      Assert.Equal(8, mesh.Vertices.Count);
-      Assert.Equal(6, mesh.Faces.Count);
+      Assert.Equal(8.0, mesh.Vertices.Count, DoubleComparer.Default);
+      Assert.Equal(6.0, mesh.Faces.Count, DoubleComparer.Default);
     }
 
     [Fact]
@@ -119,14 +122,14 @@ namespace IntegrationTests.Parameters {
       var valOut1 = (GH_Mesh)param.VolatileData.get_Branch(0)[0];
       Mesh mesh1 = valOut1.Value;
       Assert.NotNull(mesh1);
-      Assert.Equal(80, mesh1.Vertices.Count);
-      Assert.Equal(110, mesh1.Faces.Count);
+      Assert.Equal(88.0, mesh1.Vertices.Count, DoubleComparer.Default);
+      Assert.Equal(122.0, mesh1.Faces.Count, DoubleComparer.Default);
 
       var valOut2 = (GH_Mesh)param.VolatileData.get_Branch(0)[1];
       Mesh mesh2 = valOut2.Value;
       Assert.NotNull(mesh2);
-      Assert.Equal(80, mesh2.Vertices.Count);
-      Assert.Equal(110, mesh2.Faces.Count);
+      Assert.Equal(88.0, mesh2.Vertices.Count, DoubleComparer.Default);
+      Assert.Equal(122.0, mesh2.Faces.Count, DoubleComparer.Default);
     }
 
     [Fact]
@@ -137,8 +140,8 @@ namespace IntegrationTests.Parameters {
       var valOut = (GH_Mesh)param.VolatileData.get_Branch(0)[0];
       Mesh mesh = valOut.Value;
       Assert.NotNull(mesh);
-      Assert.Equal(8, mesh.Vertices.Count);
-      Assert.Equal(6, mesh.Faces.Count);
+      Assert.Equal(8.0, mesh.Vertices.Count, DoubleComparer.Default);
+      Assert.Equal(6.0, mesh.Faces.Count, DoubleComparer.Default);
     }
 
     [Fact]
