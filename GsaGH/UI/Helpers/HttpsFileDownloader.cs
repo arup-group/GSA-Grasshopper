@@ -125,7 +125,7 @@ namespace GsaGH.UI {
       string filePath = GetFullDownloadPath(file);
 
       using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-      await response.Content.CopyToAsync(fs)!;
+      await response.Content.CopyToAsync(fs);
     }
 
     public async Task<List<FileEntry>> GetFilesFromWebPageAsync() {
