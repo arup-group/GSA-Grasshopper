@@ -54,7 +54,7 @@ namespace GsaGH.UI.Helpers {
     /// <summary>
     ///   Converts a file name into text safe for WinForms menu display.
     ///   Decodes HTML entities, normalizes whitespace, and escapes ampersands
-    ///   so characters like '&' are shown literally instead of treated as mnemonics.
+    ///   so characters like '&amp;' are shown literally instead of treated as mnemonics.
     /// </summary>
     /// <param name="fileName">Raw file name from HTML/link source.</param>
     /// <returns>Menu-safe text for <see cref="ToolStripMenuItem" />.</returns>
