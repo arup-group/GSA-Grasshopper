@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 using HtmlAgilityPack;
 
@@ -53,8 +54,11 @@ namespace GsaGH.UI.Helpers {
 
     /// <summary>
     ///   Converts a file name into text safe for WinForms menu display.
-    ///   Decodes HTML entities, normalizes whitespace, and escapes ampersands
-    ///   so characters like '&amp;' are shown literally instead of treated as mnemonics.
+    ///   Decodes HTML entities, trims leading and trailing whitespace, replaces
+    ///   carriage returns, line feeds and tabs with single spaces, and doubles
+    ///   ampersands so characters like '&amp;' are shown literally instead of
+    ///   being treated as mnemonics. A <see langword="null" /> input returns
+    ///   an empty string.
     /// </summary>
     /// <param name="fileName">Raw file name from HTML/link source.</param>
     /// <returns>Menu-safe text for <see cref="ToolStripMenuItem" />.</returns>
