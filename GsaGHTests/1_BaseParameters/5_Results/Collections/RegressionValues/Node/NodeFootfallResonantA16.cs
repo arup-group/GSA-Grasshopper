@@ -6,61 +6,61 @@ namespace GsaGHTests.Parameters.Results {
     // "footfall_steel.gwb" for nodes 200 to 206 for Resonant analysis case A16
     internal static List<double> MaximumResponseFactor() {
       return new List<double>() {
-        5.928,
-7.416,
-8.262,
-8.207,
-7.192,
-5.322,
-2.821
+        5.927,
+        7.414,
+        8.261,
+        8.206,
+        7.191,
+        5.321,
+        2.820
       };
     }
 
     internal static List<double> PeakVelocity() {
       return new List<double>() {
         0.001104,
-0.001383,
-0.001541,
-0.001531,
-0.001342,
-992.7E-6,
-526.1E-6
+        0.001382,
+        0.001541,
+        0.001531,
+        0.001341,
+        992.5E-6,
+        526.0E-6
       };
     }
 
     internal static List<double> RMSVelocity() {
       return new List<double>() {
-        928.3E-6,
-0.001163,
-0.001296,
-0.001288,
-0.001128,
-834.7E-6,
-442.4E-6
+        780.4E-6,
+        977.6E-6,
+        0.001090,
+        0.001082,
+        948.5E-6,
+        701.8E-6,
+        371.9E-6
       };
     }
 
     internal static List<double> PeakAcceleration() {
       return new List<double>() {
-        0.04193,
-0.05245,
-0.05844,
-0.05805,
-0.05087,
-0.03764,
-0.01995
+        0.04192,
+        0.05244,
+        0.05843,
+        0.05804,
+        0.05086,
+        0.03764,
+        0.01995
       };
     }
 
     internal static List<double> RMSAcceleration() {
       return new List<double>() {
-        0.03526,
-0.04411,
-0.04915,
-0.04882,
-0.04278,
-0.03165,
-0.01678
+        0.02964,
+        0.03708,
+        0.04132,
+        0.04104,
+        0.03597,
+        0.02661,
+        0.01411
       };
     }
 

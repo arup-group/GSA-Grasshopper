@@ -158,6 +158,7 @@ namespace GsaGH.Components {
             ? MergeModels.MergeModel(models, this, Length.Zero) :
             models[0].Clone();
         }
+        GsaGH.Helpers.Utility.DeleteResults(model.ApiModel);
 
         // Assemble model
         var assembly = new ModelAssembly(model, lists, elem1ds, elem2ds, mem1ds, mem2ds, _lengthUnit);

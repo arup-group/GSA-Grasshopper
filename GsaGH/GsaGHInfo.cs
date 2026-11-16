@@ -119,13 +119,6 @@ namespace GsaGH {
         return GH_LoadingInstruction.Abort;
       }
 
-      // this is a temporary fix for TDA
-      // needs more investigation!
-      if (!_underTest) {
-        if (Assembly.GetEntryAssembly() != null && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
-          Assembly.LoadFile(PluginPath + MicrosoftDataSqliteDll);
-        }
-      }
 
       SetInstances();
       SetPlugins();

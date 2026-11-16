@@ -122,7 +122,7 @@ namespace GsaGH.Components {
             hasError = true;
             break;
           }
-
+          GsaGH.Helpers.Utility.DeleteResults(newModel);
           // synchronise analysis layer after design task has updated sections
           newModel.CreateElementsFromMembers();
           // re-run analysis, but only for tasks required for the combination case definition
