@@ -69,7 +69,10 @@ namespace GsaGH.Helpers.Assembly {
       ConvertElements(elem1ds, elem2ds, null);
       ConvertMembers(mem1ds, mem2ds, null);
       ConvertLists(lists);
-      AssembleNodesElementsMembersAndLists();
+      if (_deleteResults) {
+        DeleteExistingResultsBeforeAssembly();
+        AssembleNodesElementsMembersAndLists();
+      }
     }
 
     internal ModelAssembly(
@@ -480,9 +483,7 @@ namespace GsaGH.Helpers.Assembly {
         return;
       }
 
-      foreach (int taskId in _model.AnalysisTasks().Keys) {
-        _model.DeleteResults(taskId);
-      }
+      Utility.DeleteResults(_model);
     }
 
     private bool ModelHasResults() {
