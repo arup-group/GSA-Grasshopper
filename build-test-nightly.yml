@@ -76,9 +76,11 @@ steps:
   failOnStderr: true
 
 - powershell: |
-    & 'C:\Program Files\Oasys\*\GSA.exe' /Register
-  displayName: 'Register GSA COM'
-  failOnStderr: false
+    .\registerGsaCom.Tests.ps1
+    .\registerGsaCom.ps1
+  displayName: 'Register and verify GSA 10.3 COM'
+  failOnStderr: true
+  timeoutInMinutes: 3
 
 - powershell: |
     ./cleanRegistry.ps1

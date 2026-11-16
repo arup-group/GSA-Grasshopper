@@ -42,6 +42,13 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate.
 
+### Nightly COM preflight
+`build-test-nightly.yml` runs `registerGsaCom.ps1` on the dedicated Windows runner before the tests. It registers the exact GSA 10.3 executable, checks the registration exit code and effective 64-bit COM server path (including per-user overrides), then activates `Gsa_10_3.ComAuto` and checks `NewFile` and `Close`. The setup task has a three-minute timeout and fails rather than retrying or masking COM startup errors. Latest/deployment is unchanged.
+
+Run this script only on an idle dedicated runner: it changes COM registration and opens a temporary GSA model. It refuses to proceed when GSA is already running and never stops existing GSA processes. A successful registration alone does not prove COM startup works; Nightly must pass the preflight and the real integration suite. If activation still fails, investigate the runner's GSA startup, licensing and Windows event logs rather than changing the shared lazy COM instance.
+
+Validate the setup logic safely with `powershell.exe -NoProfile -File .\registerGsaCom.Tests.ps1`. This isolated harness replaces process, registry and COM access; it does not validate real COM startup or replace integration coverage.
+
 ### Code convention
 We are following the [Arup Programming Style Guides](https://arup-group.github.io/programming-styleguide/csharp-style.html) which is a fork of the [Google Style Guides](https://google.github.io/styleguide/). The [.editorconfig](.editorconfig) file in this repo contains these formatting rules, and includes rules for code-cleanup using resharper.
 
