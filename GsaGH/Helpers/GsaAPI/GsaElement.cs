@@ -8,12 +8,12 @@ namespace GsaAPI {
     private GSAElement() { }
     public GSAElement(Element element) {
       Element = element;
-      SetGroupFrom(Element);
+      SetDefaultGroup();
     }
     public GSAElement(LoadPanelElement element) {
       LoadPanelElement = element;
       IsLoadPanel = true;
-      SetGroupFrom(Element);
+      SetDefaultGroup();
     }
 
     public bool IsLoadPanel { get; }
@@ -237,13 +237,9 @@ namespace GsaAPI {
       }
     }
 
-    private static void SetGroupFrom(Element element) {
-      try {
-        if (element.Group <= 0) {
-          element.Group = DefaultGroup;
-        }
-      } catch (Exception) {
-        // Exception is intentionally swallowed/ignored
+    private void SetDefaultGroup() {
+      if (Group <= 0) {
+        Group = DefaultGroup;
       }
     }
   }
