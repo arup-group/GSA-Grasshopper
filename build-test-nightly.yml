@@ -18,36 +18,8 @@ workspace:
 
 steps:
 - powershell: |
-    $listingFailed = $false
-
-    Write-Output 'GSA top-level prefixes and objects:'
-    aws s3 ls s3://oasys-installer-store/GSA/
-    if ($LASTEXITCODE -ne 0) {
-      Write-Warning "Failed to list GSA top-level prefixes (exit code $LASTEXITCODE)."
-      $listingFailed = $true
-    }
-
-    Write-Output 'All GSA MSI files (including nightly and other prefixes):'
-    $objects = aws s3 ls s3://oasys-installer-store/GSA/ --recursive
-    if ($LASTEXITCODE -ne 0) {
-      Write-Warning "Failed to list GSA objects (exit code $LASTEXITCODE)."
-      $listingFailed = $true
-    } else {
-      $installers = @($objects | Where-Object { $_ -match '\.msi\s*$' })
-      if ($installers.Count -eq 0) {
-        Write-Output 'No MSI files found under GSA/.'
-      } else {
-        $installers | ForEach-Object { Write-Output $_ }
-      }
-    }
-
-    if ($listingFailed) { throw 'GSA installer inventory was incomplete.' }
-  displayName: 'List available GSA installers'
-  continueOnError: true
-
-- powershell: |
     Get-ChildItem *.msi -Recurse | Remove-Item
-    aws s3 cp s3://oasys-installer-store/GSA/nightly . --exclude "*" --include *Arup*.msi --recursive
+    aws s3 cp s3://oasys-installer-store/GSA/latest-release-branch . --exclude "*" --include *Arup*.msi --recursive
     Get-ChildItem *.msi | Rename-Item -NewName gsa.msi
   displayName: 'Download GSA nightly'
   failOnStderr: true
