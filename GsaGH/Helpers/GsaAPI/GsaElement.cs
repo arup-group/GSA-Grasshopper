@@ -238,8 +238,12 @@ namespace GsaAPI {
     }
 
     private void SetDefaultGroup() {
-      if (Group <= 0) {
-        Group = DefaultGroup;
+      try {
+        if (Group <= 0) {
+          Group = DefaultGroup;
+        }
+      } catch {
+        // Do nothing
       }
     }
   }

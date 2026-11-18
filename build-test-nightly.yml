@@ -21,7 +21,7 @@ steps:
     Get-ChildItem *.msi -Recurse | Remove-Item
     aws s3 cp s3://oasys-installer-store/GSA/latest-release-branch . --exclude "*" --include *Arup*.msi --recursive
     Get-ChildItem *.msi | Rename-Item -NewName gsa.msi
-  displayName: 'Download GSA nightly'
+  displayName: 'Download GSA nightly release'
   failOnStderr: true
 
 - powershell: |
