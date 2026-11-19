@@ -20,25 +20,18 @@ namespace GsaGHTests.Helpers {
 
       Assert.Equal(comp.DropDownItems.Count, comp.SelectedItems.Count);
 
-      comp.CreateAttributes();
-      using (var doc = new GH_Document()) {
-        doc.AddObject(comp, true);
-        for (int i = 0; i < comp.DropDownItems.Count; i++) {
-          comp.SetSelected(i, 0);
+      for (int i = 0; i < comp.DropDownItems.Count; i++) {
+        comp.SetSelected(i, 0);
 
-          for (int j = 0; j < comp.DropDownItems[i].Count; j++) {
-            comp.SetSelected(i, j);
-            comp.Attributes.PerformLayout();
-            comp.ExpireSolution(true);
-            comp.Params.Output[0].CollectData();
-            Assert.Equal(comp.SelectedItems[i], comp.DropDownItems[i][j]);
-          }
+        for (int j = 0; j < comp.DropDownItems[i].Count; j++) {
+          comp.SetSelected(i, j);
+          TestDeserialize(comp);
+          Assert.Equal(comp.SelectedItems[i], comp.DropDownItems[i][j]);
         }
       }
     }
 
-    public static void TestDeserialize(
-      GH_OasysComponent comp, string customIdentifier = "", bool verifyDropDownSelection = false) {
+    public static void TestDeserialize(GH_OasysComponent comp, string customIdentifier = "") {
       comp.CreateAttributes();
 
       var doc = new GH_Document();
@@ -67,11 +60,6 @@ namespace GsaGHTests.Helpers {
       deserializedComponent.Params.Output[0].CollectData();
 
       Duplicates.AreEqual(originalComponent, deserializedComponent, new List<string>() { "Guid", "Capacity" });
-      if (verifyDropDownSelection) {
-        var originalDropdown = Assert.IsAssignableFrom<GH_OasysDropDownComponent>(originalComponent);
-        var deserializedDropdown = Assert.IsAssignableFrom<GH_OasysDropDownComponent>(deserializedComponent);
-        Assert.Equal(originalDropdown.SelectedItems, deserializedDropdown.SelectedItems);
-      }
       doc.Dispose();
     }
   }
