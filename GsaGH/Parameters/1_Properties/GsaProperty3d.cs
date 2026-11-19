@@ -57,21 +57,25 @@ namespace GsaGH.Parameters {
     /// <param name="prop3d"></param>
     internal GsaProperty3d(KeyValuePair<int, Prop3D> prop3d) {
       Id = prop3d.Key;
-      ApiProp3d = prop3d.Value;
+      ApiProp3d = DuplicateFrom(prop3d.Value);
       IsReferencedById = false;
     }
 
     public Prop3D DuplicateApiObject() {
+      return DuplicateFrom(ApiProp3d);
+    }
+
+    private static Prop3D DuplicateFrom(Prop3D source) {
       var prop = new Prop3D {
-        MaterialAnalysisProperty = ApiProp3d.MaterialAnalysisProperty,
-        MaterialGradeProperty = ApiProp3d.MaterialGradeProperty,
-        MaterialType = ApiProp3d.MaterialType,
-        Name = ApiProp3d.Name.ToString(),
-        AxisProperty = ApiProp3d.AxisProperty,
+        MaterialAnalysisProperty = source.MaterialAnalysisProperty,
+        MaterialGradeProperty = source.MaterialGradeProperty,
+        MaterialType = source.MaterialType,
+        Name = source.Name.ToString(),
+        AxisProperty = source.AxisProperty,
       };
       // workaround to handle that Color is non-nullable type
-      if ((Color)ApiProp3d.Colour != Color.FromArgb(0, 0, 0)) {
-        prop.Colour = ApiProp3d.Colour;
+      if ((Color)source.Colour != Color.FromArgb(0, 0, 0)) {
+        prop.Colour = source.Colour;
       }
 
       return prop;

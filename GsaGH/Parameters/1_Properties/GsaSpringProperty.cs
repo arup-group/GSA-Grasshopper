@@ -44,12 +44,12 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaSpringProperty(SpringProperty property) {
-      ApiProperty = property;
+      ApiProperty = DuplicateFrom(property);
     }
 
     internal GsaSpringProperty(KeyValuePair<int, SpringProperty> property) {
       Id = property.Key;
-      ApiProperty = property.Value;
+      ApiProperty = DuplicateFrom(property.Value);
     }
 
     public override string ToString() {
@@ -65,8 +65,12 @@ namespace GsaGH.Parameters {
     }
 
     internal SpringProperty DuplicateApiObject() {
+      return DuplicateFrom(ApiProperty);
+    }
+
+    private static SpringProperty DuplicateFrom(SpringProperty source) {
       SpringProperty property;
-      switch (ApiProperty) {
+      switch (source) {
         case AxialSpringProperty axialSpringProperty:
           property = new AxialSpringProperty {
             Stiffness = axialSpringProperty.Stiffness
@@ -146,12 +150,12 @@ namespace GsaGH.Parameters {
       }
 
       // workaround to handle that Color is non-nullable type
-      if ((Color)ApiProperty.Colour != Color.FromArgb(0, 0, 0)) {
-        property.Colour = ApiProperty.Colour;
+      if ((Color)source.Colour != Color.FromArgb(0, 0, 0)) {
+        property.Colour = source.Colour;
       }
 
-      property.DampingRatio = ApiProperty.DampingRatio;
-      property.Name = ApiProperty.Name;
+      property.DampingRatio = source.DampingRatio;
+      property.Name = source.Name;
 
       return property;
     }

@@ -89,7 +89,7 @@ namespace GsaGH.Parameters {
       ConcurrentDictionary<int, GsaProperty3d> prop3ds) {
       NgonMesh = mesh;
       InitVariablesFromMesh(mesh, false);
-      ApiElements = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
+      ApiElements = elements.OrderBy(kvp => kvp.Key).Select(kvp => DuplicateFrom(kvp.Value)).ToList();
       Ids = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Key).ToList();
       if (!prop3ds.IsNullOrEmpty()) {
         Prop3ds = prop3ds.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
@@ -102,20 +102,32 @@ namespace GsaGH.Parameters {
         return ApiElements;
       }
 
-      var elems = new List<GSAElement>();
-      for (int i = 0; i < ApiElements.Count; i++) {
-        elems.Add(CreateGsaElement(i));
+      return ApiElements.Select(DuplicateFrom).ToList();
+    }
 
-        SetOffsets(elems, i);
-        elems[i].Topology = new ReadOnlyCollection<int>(ApiElements[i].Topology);
+    private static GSAElement DuplicateFrom(GSAElement source) {
+      var element = new GSAElement(new Element()) {
+        Group = source.Group,
+        IsDummy = source.IsDummy,
+        Name = source.Name.ToString(),
+        OrientationNode = source.OrientationNode,
+        OrientationAngle = source.OrientationAngle,
+        ParentMember = source.ParentMember,
+        Property = source.Property,
+        Type = source.Type,
+        Topology = new ReadOnlyCollection<int>(source.Topology.ToList()),
+      };
 
-        // workaround to handle that Color is non-nullable type
-        if ((Color)ApiElements[i].Colour != Color.FromArgb(0, 0, 0)) {
-          elems[i].Colour = ApiElements[i].Colour;
-        }
+      element.Offset.X1 = source.Offset.X1;
+      element.Offset.X2 = source.Offset.X2;
+      element.Offset.Y = source.Offset.Y;
+      element.Offset.Z = source.Offset.Z;
+
+      if ((Color)source.Colour != Color.FromArgb(0, 0, 0)) {
+        element.Colour = source.Colour;
       }
 
-      return elems;
+      return element;
     }
 
     public DataTree<int> GetTopologyIDs() {
@@ -175,24 +187,5 @@ namespace GsaGH.Parameters {
       FaceInt = convertMesh.Item4;
     }
 
-    private GSAElement CreateGsaElement(int i) {
-      return new GSAElement(new Element()) {
-        Group = ApiElements[i].Group,
-        IsDummy = ApiElements[i].IsDummy,
-        Name = ApiElements[i].Name.ToString(),
-        OrientationNode = ApiElements[i].OrientationNode,
-        OrientationAngle = ApiElements[i].OrientationAngle,
-        ParentMember = ApiElements[i].ParentMember,
-        Property = ApiElements[i].Property,
-        Type = ApiElements[i].Type,
-      };
-    }
-
-    private void SetOffsets(List<GSAElement> elems, int i) {
-      elems[i].Offset.X1 = ApiElements[i].Offset.X1;
-      elems[i].Offset.X2 = ApiElements[i].Offset.X2;
-      elems[i].Offset.Y = ApiElements[i].Offset.Y;
-      elems[i].Offset.Z = ApiElements[i].Offset.Z;
-    }
   }
 }

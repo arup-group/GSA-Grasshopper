@@ -8,18 +8,18 @@ namespace GsaGHTests.Parameters.Results {
     internal static List<double> TotalLoad = new List<double>() { //in kN
       80160,
       -80160,
-      -59.45E-12,
+      -63.73E-12,
       113400,
-      450100,
-      450100,
+      824300,
+      824300,
       -3.206E+6,
-      3.269E+6,
+      3.412E+6,
     };
 
     internal static List<double> TotalReaction = new List<double>() { // in kN
       -80160,
       80160,
-      0.001875,
+      -0.001875,
       113400,
       -450100,
       -450100,

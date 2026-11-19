@@ -42,6 +42,19 @@ namespace GsaGHTests.Helpers.GsaAPITests {
       Assert.Equal(11, gsaElement.Group);
     }
 
+    [Theory]
+    [InlineData(0, 1)]
+    [InlineData(-1, 1)]
+    [InlineData(11, 11)]
+    public void ConstructorNormalizesLoadPanelGroup(int group, int expected) {
+      var panel = new LoadPanelElement { Group = group };
+
+      var element = new GSAElement(panel);
+
+      Assert.Equal(expected, element.Group);
+      Assert.Equal(expected, panel.Group);
+    }
+
     [Fact]
     public void NameShouldBeSetCorrectlyForParent() {
       Assert.Equal("name", gsaElement.Name);
@@ -201,6 +214,19 @@ namespace GsaGHTests.Helpers.GsaAPITests {
     [Fact]
     public void GroupsShouldDefaultToOne() {
       Assert.Equal(22, gsaElement.Group);
+    }
+
+    [Theory]
+    [InlineData(0, 1)]
+    [InlineData(-1, 1)]
+    [InlineData(22, 22)]
+    public void ConstructorNormalizesElementGroup(int group, int expected) {
+      var apiElement = new Element { Group = group };
+
+      var element = new GSAElement(apiElement);
+
+      Assert.Equal(expected, element.Group);
+      Assert.Equal(expected, apiElement.Group);
     }
 
     [Fact]
