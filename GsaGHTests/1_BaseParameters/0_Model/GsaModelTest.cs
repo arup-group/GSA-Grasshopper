@@ -64,7 +64,7 @@ namespace GsaGHTests.Parameters {
     }
 
     [Fact]
-    public void TestSaveModel() {
+    public void NativeApiSavesExistingModelTest() {
       var m = new GsaModel();
       string file = GsaFile.SteelDesignSimple;
       m.ApiModel.Open(file);
