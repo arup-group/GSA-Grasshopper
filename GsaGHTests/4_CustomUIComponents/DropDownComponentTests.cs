@@ -1,4 +1,8 @@
 ﻿using System;
+using System.IO;
+
+using Grasshopper.Kernel;
+using Grasshopper.Kernel.Parameters;
 
 using GsaGH.Components;
 
@@ -93,6 +97,44 @@ namespace GsaGHTests.CustomComponent {
     public void ToggleDropDownsTest(Type t, bool ignoreSpacerDescriptionCount = false) {
       var comp = (GH_OasysDropDownComponent)Activator.CreateInstance(t);
       OasysDropDownComponentTestHelper.ChangeDropDownTest(comp, ignoreSpacerDescriptionCount);
+      OasysDropDownComponentTestHelper.TestDeserialize(comp, verifyDropDownSelection: true);
+    }
+
+    [Fact]
+    public void DropdownSelectionAndInputConnectionSurviveReopen() {
+      var component = new CreateList();
+      var source = new Param_String();
+      component.CreateAttributes();
+      source.CreateAttributes();
+
+      string directory = Path.Combine(Environment.CurrentDirectory, "GH-Test-Files");
+      Directory.CreateDirectory(directory);
+      string path = Path.Combine(directory, Guid.NewGuid() + ".gh");
+
+      using (var document = new GH_Document()) {
+        document.AddObject(source, false);
+        document.AddObject(component, false);
+        component.Params.Input[1].AddSource(source);
+        component.SetSelected(0, 2);
+        string selected = component.SelectedItems[0];
+        Guid componentId = component.InstanceGuid;
+        Guid sourceId = source.InstanceGuid;
+
+        try {
+          var writer = new GH_DocumentIO { Document = document };
+          Assert.True(writer.SaveQuiet(path));
+          var reader = new GH_DocumentIO();
+          Assert.True(reader.Open(path));
+          using (reader.Document) {
+            var loaded = Assert.IsType<CreateList>(reader.Document.FindComponent(componentId));
+            Assert.Equal(selected, loaded.SelectedItems[0]);
+            Assert.Single(loaded.Params.Input[1].Sources);
+            Assert.Equal(sourceId, loaded.Params.Input[1].Sources[0].InstanceGuid);
+          }
+        } finally {
+          File.Delete(path);
+        }
+      }
     }
   }
 }
