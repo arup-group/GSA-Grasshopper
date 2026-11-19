@@ -11,8 +11,25 @@ using GsaGH.Parameters;
 using Xunit;
 
 namespace IntegrationTests.ExampleFiles {
+  public sealed class MidSupportDocumentFixture : IDisposable {
+    public GH_Document Document { get; }
+
+    public MidSupportDocumentFixture(GrasshopperFixture grasshopper) {
+      Document = Example5_4PointSrfMidSupport_Test.Document();
+    }
+
+    public void Dispose() {
+      Document.Dispose();
+    }
+  }
+
   [Collection("GrasshopperFixture collection")]
-  public class Example5_4PointSrfMidSupport_Test {
+  public class Example5_4PointSrfMidSupport_Test : IClassFixture<MidSupportDocumentFixture> {
+    private readonly GH_Document _document;
+
+    public Example5_4PointSrfMidSupport_Test(MidSupportDocumentFixture fixture) {
+      _document = fixture.Document;
+    }
 
     public static GH_Document Document() {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
@@ -28,19 +45,19 @@ namespace IntegrationTests.ExampleFiles {
 
     [Fact]
     public void MaxDeflectionTest() {
-      IGH_Param param = Helper.FindParameter(Document(), "RH_OUT:deflection");
+      IGH_Param param = Helper.FindParameter(_document, "RH_OUT:deflection");
       var output = (GH_Number)param.VolatileData.get_Branch(0)[0];
       Assert.Equal(5.563436, output.Value, DoubleComparer.Default);
     }
 
     [Fact]
     public void NoRuntimeErrorsTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(_document, GH_RuntimeMessageLevel.Error);
     }
 
     [Fact]
     public void MeshResultGooTest() {
-      IGH_Param param = Helper.FindParameter(Document(), "ResultMesh");
+      IGH_Param param = Helper.FindParameter(_document, "ResultMesh");
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         var item = (MeshResultGoo)data;
         Assert.True(item.Value.IsValid);
@@ -53,7 +70,7 @@ namespace IntegrationTests.ExampleFiles {
 
     [Fact]
     public void PointResultGooTest() {
-      IGH_Param param = Helper.FindParameter(Document(), "ResultPoint");
+      IGH_Param param = Helper.FindParameter(_document, "ResultPoint");
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         var item = (PointResultGoo)data;
         Assert.True(item.Value.IsValid);
@@ -75,7 +92,7 @@ namespace IntegrationTests.ExampleFiles {
     [InlineData("Value")]
     [InlineData("NodeId")]
     public void TestCastTo(string groupIdentifier) {
-      IGH_Param param = Helper.FindParameter(Document(), groupIdentifier);
+      IGH_Param param = Helper.FindParameter(_document, groupIdentifier);
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         Assert.True(data.IsValid);
       }

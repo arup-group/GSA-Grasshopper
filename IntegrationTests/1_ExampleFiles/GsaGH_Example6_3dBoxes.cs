@@ -11,9 +11,29 @@ using GsaGH.Helpers;
 using Xunit;
 
 namespace IntegrationTests.ExampleFiles {
+
+  public sealed class BoxesDocumentFixture : IDisposable {
+    public GH_Document Document { get; }
+
+    public BoxesDocumentFixture(GrasshopperFixture grasshopper) {
+      // The existing collection fixture is initialized first.
+      Document = Example6_3dBoxes_Test.Document();
+    }
+
+    public void Dispose() {
+      Document.Dispose();
+    }
+  }
+
   [Collection("GrasshopperFixture collection")]
   [SuppressMessage("ReSharper", "InconsistentNaming")]
-  public class Example6_3dBoxes_Test {
+  public class Example6_3dBoxes_Test: IClassFixture<BoxesDocumentFixture>{
+
+    private readonly GH_Document _document;
+
+    public Example6_3dBoxes_Test(BoxesDocumentFixture fixture) {
+        _document = fixture.Document;
+    }
 
     public static GH_Document Document() {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
@@ -29,10 +49,10 @@ namespace IntegrationTests.ExampleFiles {
 
     [Fact]
     public void MaxDeflectionTest() {
-      IGH_Param param1 = Helper.FindParameter(Document(), "TestMaxValue");
+      IGH_Param param1 = Helper.FindParameter(_document, "TestMaxValue");
       var output1 = (GH_Number)param1.VolatileData.get_Branch(0)[0];
 
-      IGH_Param param2 = Helper.FindParameter(Document(), "TestDeflectedShape");
+      IGH_Param param2 = Helper.FindParameter(_document, "TestDeflectedShape");
       var output2 = (GH_Number)param2.VolatileData.get_Branch(0)[0];
 
       Assert.Equal(output1.Value, output2.Value, DoubleComparer.Default);
@@ -41,7 +61,7 @@ namespace IntegrationTests.ExampleFiles {
 
     [Fact]
     public void Stress3dTest() {
-      IGH_Param param = Helper.FindParameter(Document(), "3dStress");
+      IGH_Param param = Helper.FindParameter(_document, "3dStress");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
@@ -58,7 +78,7 @@ namespace IntegrationTests.ExampleFiles {
 
     [Fact]
     public void CombinationStress3dTest() {
-      IGH_Param param = Helper.FindParameter(Document(), "Comb3dStress");
+      IGH_Param param = Helper.FindParameter(_document, "Comb3dStress");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
@@ -75,7 +95,7 @@ namespace IntegrationTests.ExampleFiles {
 
     [Fact]
     public void CombinationDisplament3dTest() {
-      IGH_Param param = Helper.FindParameter(Document(), "Comb3dDisplacement");
+      IGH_Param param = Helper.FindParameter(_document, "Comb3dDisplacement");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
@@ -86,7 +106,7 @@ namespace IntegrationTests.ExampleFiles {
 
     [Fact]
     public void NoRuntimeErrorsTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(_document, GH_RuntimeMessageLevel.Error);
     }
   }
 }
