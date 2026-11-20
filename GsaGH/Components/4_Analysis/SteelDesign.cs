@@ -122,7 +122,7 @@ namespace GsaGH.Components {
             hasError = true;
             break;
           }
-
+          GsaGH.Helpers.Utility.DeleteResults(newModel);
           // synchronise analysis layer after design task has updated sections
           newModel.CreateElementsFromMembers();
           // re-run analysis, but only for tasks required for the combination case definition
@@ -208,7 +208,7 @@ namespace GsaGH.Components {
       int combinationCaseId = model.SteelDesignTasks()[taskId].CombinationCaseId;
       string comboDefinitions = model.CombinationCases()[combinationCaseId].Definition;
       var caseIds = new List<int>();
-      var split = comboDefinitions.Split('A').ToList();
+      List<string> split = comboDefinitions.Split('A').ToList();
       split.RemoveAt(0);
       foreach (string caseId in split) {
         // 1.35A4 + 1.5A67 - might need something extra to catch edge cases
