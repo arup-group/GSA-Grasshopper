@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
+using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
+
+using Double6 = GsaAPI.Double6;
 
 using GsaGH.Components;
 using GsaGH.Helpers;
@@ -31,6 +34,81 @@ namespace GsaGHTests.Components.Results {
       ComponentTestHelper.SetInput(comp, "not a result");
       comp.Params.Output[0].CollectData();
       Assert.True((int)comp.RuntimeMessageLevel >= 10);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    public void EmptySelectedPermutationReportsUnavailable(int selection) {
+      var result = MixedPermutationResult(new List<int> { 1, 2 });
+      var comp = new Element2dDisplacements();
+      comp.SetSelected(0, selection);
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, ElementList, 1);
+      ComponentTestHelper.ComputeOutput(comp);
+
+      Assert.Contains("Result is not available for the selected component",
+        comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+      Assert.All(comp.Params.Output, output => Assert.True(
+        output.VolatileDataCount == 0 || output.VolatileData.AllData(false).All(item => item == null)));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void EmptyAnalysisDisplacementsReportUnavailable(bool allPermutations) {
+      var result = (GsaResult)GsaResultTests.AnalysisCaseResult(GsaFile.Element2dSimple, 1);
+      var ids = result.ElementIds(ElementList, 2);
+      foreach (int id in ids) {
+        result.Element2dDisplacements.Cache[id] = Entity2dResultsFactory.CreateDisplacements(
+          new ReadOnlyCollection<Double6>(new List<Double6>()));
+      }
+      if (allPermutations) {
+        result.SelectedPermutationIds = new List<int> { -1 };
+      }
+      var comp = new Element2dDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, ElementList, 1);
+      ComponentTestHelper.ComputeOutput(comp);
+      Assert.Contains("Result is not available for the selected component",
+        comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
+    [Theory]
+    [InlineData(1, false)]
+    [InlineData(2, true)]
+    public void ValidPermutationRetainsItsNumberWhenAnotherIsEmpty(int selected, bool emptyFirst) {
+      var result = MixedPermutationResult(new List<int> { selected }, emptyFirst);
+      var comp = new Element2dDisplacements();
+      ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
+      ComponentTestHelper.SetInput(comp, ElementList, 1);
+
+      IList<GH_Path> paths = ComponentTestHelper.GetPathOutput(comp, 0);
+      Assert.NotEmpty(paths);
+      Assert.All(paths, path => Assert.Equal(selected, path.Indices[1]));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
+    private static GsaResult MixedPermutationResult(List<int> selectedPermutations, bool emptyFirst = false) {
+      var result = (GsaResult)GsaResultTests.CombinationCaseResult(GsaFile.Element2dSimple, 2);
+      var ids = result.ElementIds(ElementList, 2);
+      result.Element2dDisplacements.ResultSubset(ids);
+      foreach (int id in ids) {
+        int count = result.Element2dDisplacements.Cache[id][0].Results().Count;
+        var valid = new ReadOnlyCollection<Double6>(
+          Enumerable.Repeat(new Double6(1, 2, 3, 0, 0, 0), count).ToList());
+        var empty = new ReadOnlyCollection<Double6>(new List<Double6>());
+        result.Element2dDisplacements.Cache[id] = Entity2dResultsFactory.CreateDisplacements(
+          new ReadOnlyCollection<ReadOnlyCollection<Double6>>(emptyFirst
+            ? new List<ReadOnlyCollection<Double6>> { empty, valid }
+            : new List<ReadOnlyCollection<Double6>> { valid, empty }));
+      }
+
+      result.SelectedPermutationIds = selectedPermutations;
+      return result;
     }
 
     [Fact]

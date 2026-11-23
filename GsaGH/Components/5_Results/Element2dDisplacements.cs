@@ -155,7 +155,14 @@ namespace GsaGH.Components {
           1,
         };
         if (permutations.Count == 1 && permutations[0] == -1) {
-          permutations = Enumerable.Range(1, resultSet.Subset.Values.First().Count).ToList();
+          int permutationCount = resultSet.Subset.Values.FirstOrDefault()?.Count ?? 0;
+          permutations = Enumerable.Range(1, permutationCount).ToList();
+        }
+
+        if (elementIds.Count == 0 || permutations.Count == 0
+          || !ResultsUtility.HasMeshResults(resultSet.Subset, elementIds, permutations)) {
+          this.AddRuntimeWarning("Result is not available for the selected component");
+          return;
         }
 
         if (_selectedItems[0] == ExtremaHelper.Vector6Displacements[0]) {

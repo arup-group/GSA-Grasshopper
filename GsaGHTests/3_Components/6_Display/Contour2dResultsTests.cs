@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
+using System.Drawing;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
@@ -58,6 +60,57 @@ namespace GsaGHTests.Components.Display {
     }
 
     [Fact]
+    public void OneElementWithoutDisplacementsRejectsPartialContour() {
+      var resultGoo = GsaResultTests.NodeAndElement2dAnalysisCaseResultsMother();
+      var result = (GsaResult)resultGoo.Value;
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, resultGoo);
+      Assert.NotNull(ComponentTestHelper.GetOutput(comp));
+      var ids = result.ElementIds("All", 2);
+      Assert.True(ids.Count > 1);
+      result.Element2dDisplacements.Cache[ids[0]] = Entity2dResultsFactory.CreateDisplacements(
+        new ReadOnlyCollection<Double6>(new List<Double6>()));
+
+      ComponentTestHelper.ComputeOutput(comp);
+      Assert.Contains("Result is not available for the selected component",
+        comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+      Assert.Null(ComponentTestHelper.GetOutput(comp));
+    }
+
+    [Fact]
+    public void UnanalysedModelClearsContourAndLegend() {
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dAnalysisCaseResultsMother());
+      Assert.NotNull(ComponentTestHelper.GetOutput(comp));
+      var field = typeof(Contour2dResults).GetField("_gradients", BindingFlags.Instance | BindingFlags.NonPublic);
+      var gradients = (List<(int startY, int endY, Color gradientColor)>)field.GetValue(comp);
+      Assert.NotEmpty(gradients);
+
+      var apiModel = new GsaAPI.Model();
+      int n1 = apiModel.AddNode(new Node());
+      var node2 = new Node();
+      node2.Position.X = 1;
+      int n2 = apiModel.AddNode(node2);
+      var node3 = new Node();
+      node3.Position.Y = 1;
+      int n3 = apiModel.AddNode(node3);
+      apiModel.AddElement(new Element {
+        Type = ElementType.TRI3,
+        Topology = new ReadOnlyCollection<int>(new[] { n1, n2, n3 }),
+      });
+      var getResult = new GetResult();
+      ComponentTestHelper.SetInput(getResult, new GsaModelGoo(new GsaModel(apiModel)));
+      comp.Params.Input[0].RemoveAllSources();
+      comp.Params.Input[0].AddSource(getResult.Params.Output[0]);
+      ComponentTestHelper.ComputeOutput(comp);
+
+      Assert.Contains("No Analysis Case Results exist in Model", getResult.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+      Assert.All(comp.Params.Output, output => Assert.Equal(0, output.VolatileDataCount));
+      Assert.Empty((List<(int startY, int endY, Color gradientColor)>)field.GetValue(comp));
+    }
+
+    [Fact]
     public void SelectionWithout2dElementsReportsNo2dElements() {
       var comp = new Contour2dResults();
       ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dAnalysisCaseResultsMother());
@@ -81,14 +134,16 @@ namespace GsaGHTests.Components.Display {
       Assert.NotNull(converted[1]);
     }
 
-    [Fact]
-    public void EmptySelectedPermutationReportsUnavailable() {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void EmptySelectedPermutationReportsUnavailable(bool envelope) {
       var resultGoo = GsaResultTests.NodeAndElement2dCombinationResultsMother();
       var result = (GsaResult)resultGoo.Value;
       var comp = new Contour2dResults();
       ComponentTestHelper.SetInput(comp, resultGoo);
       Assert.NotNull(ComponentTestHelper.GetOutput(comp));
-      result.SelectedPermutationIds = new List<int> { 2 };
+      result.SelectedPermutationIds = envelope ? new List<int> { 1, 2 } : new List<int> { 2 };
       foreach (int id in result.ElementIds("All", 2)) {
         int count = result.Element2dDisplacements.Cache[id][0].Results().Count;
         var zero = new Double6(0, 0, 0, 0, 0, 0);

@@ -11,6 +11,14 @@ using OasysUnits.Units;
 
 namespace GsaGH.Parameters.Results {
   internal static partial class ResultsUtility {
+    internal static bool HasMeshResults<T>(
+      IDictionary<int, IList<IMeshQuantity<T>>> subset, IEnumerable<int> ids, IEnumerable<int> permutations)
+      where T : IResultItem {
+      return ids.All(id => subset.TryGetValue(id, out IList<IMeshQuantity<T>> items)
+        && items != null && permutations.All(p => p > 0 && p <= items.Count
+          && items[p - 1] != null && items[p - 1].Results() != null && items[p - 1].Results().Count > 0));
+    }
+
     internal static ConcurrentDictionary<int, IList<IQuantity>> GetResultComponent<T>(
       IDictionary<int, IList<IMeshQuantity<T>>> subset, Func<T, IQuantity> selector,
       List<int> permutations, EnvelopeMethod envelopeType)

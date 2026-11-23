@@ -569,9 +569,8 @@ namespace GsaGH.Components {
             displacements = result.Element2dDisplacements.ResultSubset(elementIds);
           IEnumerable<int> selectedPermutations = permutations == null || permutations.Count == 0
             ? new List<int> { 1 } : permutations;
-          if (elementIds.Any(id => !displacements.Subset.TryGetValue(id, out IList<IMeshQuantity<IDisplacement>> items)
-            || items == null || selectedPermutations.Any(p => p < 1 || p > items.Count
-              || items[p - 1] == null || items[p - 1].Results() == null || items[p - 1].Results().Count == 0))) {
+          // A partial contour or envelope could misrepresent the selected results.
+          if (!ResultsUtility.HasMeshResults(displacements.Subset, elementIds, selectedPermutations)) {
             this.AddRuntimeWarning("Result is not available for the selected component");
             return;
           }
