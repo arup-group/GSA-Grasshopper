@@ -26,19 +26,12 @@ namespace GsaGH.Parameters {
     }
 
     internal GsaAssembly(Assembly assembly) {
-      ApiAssembly = DuplicateFrom(assembly);
+      ApiAssembly = assembly;
     }
 
     internal GsaAssembly(KeyValuePair<int, Assembly> assembly) {
       Id = assembly.Key;
-      ApiAssembly = DuplicateFrom(assembly.Value);
-    }
-
-    private static Assembly DuplicateFrom(Assembly source) {
-      var wrapper = new GsaAssembly {
-        ApiAssembly = source,
-      };
-      return wrapper.DuplicateApiObject();
+      ApiAssembly = assembly.Value;
     }
 
     public override string ToString() {

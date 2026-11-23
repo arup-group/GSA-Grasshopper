@@ -110,8 +110,10 @@ namespace GsaGH.Parameters {
       List<string> topoType, ReadOnlyCollection<double> localAxis, GsaNode orientationNode,
       LengthUnit modelUnit, GsaSpringProperty springProperty = null) : base(modelUnit) {
       Id = mem.Key;
-      ApiMember = DuplicateFrom(mem.Value);
+      ApiMember = mem.Value;
       ApiMember.MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
+      ApiMember.Group = mem.Value.Group;
+
       AdjustToModelUnit(modelUnit);
 
       PolyCurve = RhinoConversions.BuildArcLineCurveFromPtsAndTopoType(topology, topoType);
@@ -128,39 +130,35 @@ namespace GsaGH.Parameters {
     }
 
     public Member DuplicateApiObject() {
-      return DuplicateFrom(ApiMember);
-    }
-
-    private static Member DuplicateFrom(Member source) {
       var mem = new Member {
-        Group = source.Group,
-        IsDummy = source.IsDummy,
-        IsIntersector = source.IsIntersector,
-        EquivalentUniformMomentFactor = source.EquivalentUniformMomentFactor,
-        MeshSize = source.MeshSize,
-        MomentAmplificationFactorStrongAxis = source.MomentAmplificationFactorStrongAxis,
-        MomentAmplificationFactorWeakAxis = source.MomentAmplificationFactorWeakAxis,
-        Name = source.Name.ToString(),
-        OrientationAngle = source.OrientationAngle,
-        OrientationNode = source.OrientationNode,
-        Property = source.Property,
-        Type = source.Type,
-        Type1D = source.Type1D,
-        AutomaticOffset = source.AutomaticOffset,
-        EffectiveLength = source.EffectiveLength,
+        Group = ApiMember.Group,
+        IsDummy = ApiMember.IsDummy,
+        IsIntersector = ApiMember.IsIntersector,
+        EquivalentUniformMomentFactor = ApiMember.EquivalentUniformMomentFactor,
+        MeshSize = ApiMember.MeshSize,
+        MomentAmplificationFactorStrongAxis = ApiMember.MomentAmplificationFactorStrongAxis,
+        MomentAmplificationFactorWeakAxis = ApiMember.MomentAmplificationFactorWeakAxis,
+        Name = ApiMember.Name.ToString(),
+        OrientationAngle = ApiMember.OrientationAngle,
+        OrientationNode = ApiMember.OrientationNode,
+        Property = ApiMember.Property,
+        Type = ApiMember.Type,
+        Type1D = ApiMember.Type1D,
+        AutomaticOffset = ApiMember.AutomaticOffset,
+        EffectiveLength = ApiMember.EffectiveLength,
       };
-      if (source.Topology != string.Empty) {
-        mem.Topology = source.Topology;
+      if (ApiMember.Topology != string.Empty) {
+        mem.Topology = ApiMember.Topology;
       }
 
-      mem.SetOffsetsFrom(source);
+      mem.SetOffsetsFrom(ApiMember);
 
-      mem.SetEndRelease(0, source.GetEndRelease(0));
-      mem.SetEndRelease(1, source.GetEndRelease(1));
+      mem.SetEndRelease(0, ApiMember.GetEndRelease(0));
+      mem.SetEndRelease(1, ApiMember.GetEndRelease(1));
 
       // workaround to handle that Color is non-nullable type
-      if ((Color)source.Colour != Color.FromArgb(0, 0, 0)) {
-        mem.Colour = source.Colour;
+      if ((Color)ApiMember.Colour != Color.FromArgb(0, 0, 0)) {
+        mem.Colour = ApiMember.Colour;
       }
 
       return mem;

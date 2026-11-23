@@ -479,15 +479,7 @@ namespace GsaGH.Helpers.Assembly {
     }
 
     private void DeleteExistingResultsBeforeAssembly() {
-      if (!_deleteResults && !ModelHasResults()) {
-        return;
-      }
-
       Utility.DeleteResults(_model);
-    }
-
-    private bool ModelHasResults() {
-      return _model.Results().Count > 0 || _model.CombinationCaseResults().Count > 0;
     }
 
     private void ElementsFromMembers(bool createElementsFromMembers, Length toleranceCoincidentNodes, GH_Component owner) {

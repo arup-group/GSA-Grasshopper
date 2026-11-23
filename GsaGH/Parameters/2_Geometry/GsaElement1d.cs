@@ -123,35 +123,27 @@ namespace GsaGH.Parameters
 
         public GSAElement DuplicateApiObject()
         {
-            return DuplicateFrom(ApiElement);
-        }
-
-        private static GSAElement DuplicateFrom(GSAElement source)
-        {
             var elem = new Element
             {
-                Group = source.Group,
-                IsDummy = source.IsDummy,
-                Name = source.Name.ToString(),
-                OrientationAngle = source.OrientationAngle,
-                OrientationNode = source.OrientationNode,
-                ParentMember = source.ParentMember,
-                Property = source.Property,
-                Type = source.Type,
-                Topology = new ReadOnlyCollection<int>(source.Topology.ToList()),
+                Group = ApiElement.Group,
+                IsDummy = ApiElement.IsDummy,
+                Name = ApiElement.Name.ToString(),
+                OrientationAngle = ApiElement.OrientationAngle,
+                OrientationNode = ApiElement.OrientationNode,
+                ParentMember = ApiElement.ParentMember,
+                Property = ApiElement.Property,
+                Type = ApiElement.Type,
+                Topology = new ReadOnlyCollection<int>(ApiElement.Topology.ToList()),
             };
-            elem.SetEndRelease(0, source.GetEndRelease(0));
-            elem.SetEndRelease(1, source.GetEndRelease(1));
+            elem.SetEndRelease(0, ApiElement.GetEndRelease(0));
+            elem.SetEndRelease(1, ApiElement.GetEndRelease(1));
 
-            elem.Offset.X1 = source.Offset.X1;
-            elem.Offset.X2 = source.Offset.X2;
-            elem.Offset.Y = source.Offset.Y;
-            elem.Offset.Z = source.Offset.Z;
+            SetOffsets(elem);
 
             // workaround to handle that System.Drawing.Color is non-nullable type
-            if ((Color)source.Colour != Color.FromArgb(0, 0, 0))
+            if ((Color)ApiElement.Colour != Color.FromArgb(0, 0, 0))
             {
-                elem.Colour = source.Colour;
+                elem.Colour = ApiElement.Colour;
             }
 
             return new GSAElement(elem);
@@ -236,7 +228,7 @@ namespace GsaGH.Parameters
           LengthUnit modelUnit)
         {
             Id = element.Key;
-            ApiElement = DuplicateFrom(element.Value);
+            ApiElement = element.Value;
             if (nodes.Keys.Contains(ApiElement.OrientationNode))
             {
                 OrientationNode = new GsaNode(Nodes.Point3dFromNode(nodes[ApiElement.OrientationNode], modelUnit));

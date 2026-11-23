@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 
@@ -37,66 +36,6 @@ namespace GsaGHTests.Parameters {
       };
 
       Duplicates.AreEqual(original, assembled, new List<string>() { "Guid" });
-    }
-
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public void PreviewAssemblyWithoutGeometryPreservesResults(bool emptyCollections) {
-      var model = new GsaModel();
-      model.ApiModel.Open(GsaFile.SteelDesignSimple);
-      int resultCount = model.ApiModel.Results().Count;
-      int combinationResultCount = model.ApiModel.CombinationCaseResults().Count;
-      Assert.True(resultCount > 0);
-
-      var assembly = new ModelAssembly(model,
-        emptyCollections ? new List<GsaList>() : null,
-        emptyCollections ? new List<GsaElement1d>() : null,
-        emptyCollections ? new List<GsaElement2d>() : null,
-        emptyCollections ? new List<GsaMember1d>() : null,
-        emptyCollections ? new List<GsaMember2d>() : null,
-        LengthUnit.Meter);
-
-      Assert.Same(model.ApiModel, assembly.GetModel());
-      Assert.Equal(resultCount, assembly.GetModel().Results().Count);
-      Assert.Equal(combinationResultCount, assembly.GetModel().CombinationCaseResults().Count);
-    }
-
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public void PreviewAssemblyWithGeometryDeletesClonedResults(bool geometryInList) {
-      var original = new GsaModel();
-      original.ApiModel.Open(GsaFile.SteelDesignSimple);
-      int resultCount = original.ApiModel.Results().Count;
-      int combinationResultCount = original.ApiModel.CombinationCaseResults().Count;
-      int elementCount = original.ApiModel.Elements().Count;
-      Assert.True(resultCount > 0);
-      GsaModel model = original.Clone();
-      Assert.Equal(resultCount, model.ApiModel.Results().Count);
-
-      var element = new GsaElement1d(new LineCurve(Point3d.Origin, new Point3d(0, 0, 10))) {
-        Section = new GsaSection("STD R 200 100")
-      };
-      var lists = new List<GsaList>();
-      var elements = new List<GsaElement1d>();
-      if (geometryInList) {
-        lists.Add(new GsaList {
-          EntityType = GsaGH.Parameters.EntityType.Element,
-          _elements = (new ConcurrentBag<GsaElement1dGoo> { new GsaElement1dGoo(element) },
-            new ConcurrentBag<GsaElement2dGoo>(), new ConcurrentBag<GsaElement3dGoo>())
-        });
-      } else {
-        elements.Add(element);
-      }
-
-      var assembly = new ModelAssembly(model, lists, elements, null, null, null, LengthUnit.Meter);
-
-      Assert.Empty(assembly.GetModel().Results());
-      Assert.Equal(elementCount + 1, assembly.GetModel().Elements().Count);
-      Assert.Equal(resultCount, original.ApiModel.Results().Count);
-      Assert.Equal(combinationResultCount, original.ApiModel.CombinationCaseResults().Count);
-      Assert.Equal(elementCount, original.ApiModel.Elements().Count);
     }
 
     [Fact]
