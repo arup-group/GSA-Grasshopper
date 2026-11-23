@@ -148,7 +148,9 @@ namespace GsaGH.Components {
     public override void DrawViewportWires(IGH_PreviewArgs args) {
       base.DrawViewportWires(args);
 
-      _contourLegendManager.Legend.DrawLegendRectangle(args, _resType, _case, _gradients);
+      if (_gradients.Count > 0) {
+        _contourLegendManager.Legend.DrawLegendRectangle(args, _resType, _case, _gradients);
+      }
     }
 
     public override bool Read(GH_IReader reader) {
@@ -445,6 +447,9 @@ namespace GsaGH.Components {
     }
 
     protected override void BeforeSolveInstance() {
+      _gradients.Clear();
+      _case = string.Empty;
+      _resType = string.Empty;
       switch (_mode) {
         case FoldMode.Displacement:
           Message = (int)_disp < 4 ? Length.GetAbbreviation(_lengthResultUnit) :
@@ -528,10 +533,14 @@ namespace GsaGH.Components {
       ReadOnlyDictionary<int, Element> elems = result.Model.ApiModel.Elements(elementlist);
       ReadOnlyDictionary<int, Node> nodes = result.Model.ApiModel.Nodes();
 
-      if (elems.Count == 0) {
-        this.AddRuntimeError($"Model contains no results for elements in list '{elementlist}'");
+      ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);
+      if (elementIds.Count == 0) {
+        this.AddRuntimeError($"No 2D elements found in list '{elementlist}'");
         return;
       }
+      var selected2dIds = new HashSet<int>(elementIds);
+      elems = new ReadOnlyDictionary<int, Element>(elems.Where(e => selected2dIds.Contains(e.Key))
+        .ToDictionary(e => e.Key, e => e.Value));
 
       var ghColours = new List<GH_Colour>();
       var colors = new List<Color>();
@@ -549,7 +558,6 @@ namespace GsaGH.Components {
         GH_Convert.ToInterval(ghInterval, ref customMinMax, GH_Conversion.Both);
       }
 
-      ReadOnlyCollection<int> elementIds = result.ElementIds(elementlist, 2);
       ConcurrentDictionary<int, IList<IQuantity>> values = null;
       ConcurrentDictionary<int, (IList<double> x, IList<double> y, IList<double> z)> valuesXyz = null;
 
@@ -559,6 +567,14 @@ namespace GsaGH.Components {
         case FoldMode.Displacement:
           IMeshResultSubset<IMeshQuantity<IDisplacement>, IDisplacement, ResultVector6<Entity2dExtremaKey>>
             displacements = result.Element2dDisplacements.ResultSubset(elementIds);
+          IEnumerable<int> selectedPermutations = permutations == null || permutations.Count == 0
+            ? new List<int> { 1 } : permutations;
+          if (elementIds.Any(id => !displacements.Subset.TryGetValue(id, out IList<IMeshQuantity<IDisplacement>> items)
+            || items == null || selectedPermutations.Any(p => p < 1 || p > items.Count
+              || items[p - 1] == null || items[p - 1].Results() == null || items[p - 1].Results().Count == 0))) {
+            this.AddRuntimeWarning("Result is not available for the selected component");
+            return;
+          }
           Func<IDisplacement, IQuantity> translationSelector = null;
           switch (_disp) {
             case DisplayValue.X:
@@ -747,6 +763,10 @@ namespace GsaGH.Components {
           dmax = ResultHelper.GetSafeExtrema(nodeFootfall.Max.MaximumResponseFactor, key => nodeFootfall.GetExtrema(key).MaximumResponseFactor);
           dmin = ResultHelper.GetSafeExtrema(nodeFootfall.Min.MaximumResponseFactor, key => nodeFootfall.GetExtrema(key).MaximumResponseFactor);
           break;
+
+        case FoldMode.Footfall:
+          this.AddRuntimeWarning("Result is not available for the selected component");
+          return;
       }
 
       if (double.IsNaN(dmax) || double.IsNaN(dmin)) {

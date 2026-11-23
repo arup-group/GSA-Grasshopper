@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Special;
+
+using GsaAPI;
 
 using GsaGH.Components;
 using GsaGH.Parameters;
@@ -29,6 +33,107 @@ namespace GsaGHTests.Components.Display {
 
       Assert.Single(messages);
       Assert.Equal("Combination Case 2 contains 3 permutations which have been enveloped using Absolute method.\r\nChange the enveloping method by right-clicking the component.", messages[0]);
+    }
+
+    [Fact]
+    public void EmptyDisplacementsClearPreviousContourAndReportUnavailable() {
+      var resultGoo = GsaResultTests.NodeAndElement2dAnalysisCaseResultsMother();
+      var result = (GsaResult)resultGoo.Value;
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, resultGoo);
+      Assert.NotNull(ComponentTestHelper.GetOutput(comp));
+
+      foreach (int id in result.ElementIds("All", 2)) {
+        result.Element2dDisplacements.Cache[id] = Entity2dResultsFactory.CreateDisplacements(
+          new ReadOnlyCollection<Double6>(new List<Double6>()));
+      }
+
+      ComponentTestHelper.ComputeOutput(comp);
+      Assert.Contains("Result is not available for the selected component",
+        comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+      Assert.Null(ComponentTestHelper.GetOutput(comp));
+      Assert.Equal(0, comp.Params.Output[1].VolatileDataCount);
+      Assert.Equal(0, comp.Params.Output[2].VolatileDataCount);
+    }
+
+    [Fact]
+    public void SelectionWithout2dElementsReportsNo2dElements() {
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement1dAnalysisCaseResultsMother());
+      ComponentTestHelper.ComputeOutput(comp);
+
+      Assert.Contains("No 2D elements found in list 'All'",
+        comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+      Assert.Null(ComponentTestHelper.GetOutput(comp));
+    }
+
+    [Fact]
+    public void EmptyApiDisplacementsProduceEmptyResult() {
+      var empty = new ReadOnlyCollection<Double6>(new List<Double6>());
+      Assert.Empty(Entity2dResultsFactory.CreateDisplacements(empty));
+      var zero = new Double6(0, 0, 0, 0, 0, 0);
+      var valid = new ReadOnlyCollection<Double6>(Enumerable.Repeat(zero, 5).ToList());
+      var permutations = new ReadOnlyCollection<ReadOnlyCollection<Double6>>(
+        new List<ReadOnlyCollection<Double6>> { empty, valid });
+      var converted = Entity2dResultsFactory.CreateDisplacements(permutations);
+      Assert.Null(converted[0]);
+      Assert.NotNull(converted[1]);
+    }
+
+    [Fact]
+    public void EmptySelectedPermutationReportsUnavailable() {
+      var resultGoo = GsaResultTests.NodeAndElement2dCombinationResultsMother();
+      var result = (GsaResult)resultGoo.Value;
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, resultGoo);
+      Assert.NotNull(ComponentTestHelper.GetOutput(comp));
+      result.SelectedPermutationIds = new List<int> { 2 };
+      foreach (int id in result.ElementIds("All", 2)) {
+        int count = result.Element2dDisplacements.Cache[id][0].Results().Count;
+        var zero = new Double6(0, 0, 0, 0, 0, 0);
+        var valid = new ReadOnlyCollection<Double6>(Enumerable.Repeat(zero, count).ToList());
+        var empty = new ReadOnlyCollection<Double6>(new List<Double6>());
+        result.Element2dDisplacements.Cache[id] = Entity2dResultsFactory.CreateDisplacements(
+          new ReadOnlyCollection<ReadOnlyCollection<Double6>>(new List<ReadOnlyCollection<Double6>> { valid, empty }));
+      }
+
+      ComponentTestHelper.ComputeOutput(comp);
+      Assert.Contains("Result is not available for the selected component",
+        comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Null(ComponentTestHelper.GetOutput(comp));
+    }
+
+    [Fact]
+    public void ZeroDisplacementsProduceContour() {
+      var resultGoo = GsaResultTests.NodeAndElement2dAnalysisCaseResultsMother();
+      var result = (GsaResult)resultGoo.Value;
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, resultGoo);
+      Assert.NotNull(ComponentTestHelper.GetOutput(comp));
+      foreach (int id in result.ElementIds("All", 2)) {
+        int count = result.Element2dDisplacements.Cache[id][0].Results().Count;
+        var zeros = new ReadOnlyCollection<Double6>(
+          Enumerable.Range(0, count).Select(_ => new Double6(0, 0, 0, 0, 0, 0)).ToList());
+        result.Element2dDisplacements.Cache[id] = Entity2dResultsFactory.CreateDisplacements(zeros);
+      }
+
+      ComponentTestHelper.ComputeOutput(comp);
+      Assert.NotNull(ComponentTestHelper.GetOutput(comp));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Empty(comp.RuntimeMessages(GH_RuntimeMessageLevel.Error));
+    }
+
+    [Fact]
+    public void FootfallForCombinationCaseReportsUnavailable() {
+      var comp = new Contour2dResults();
+      ComponentTestHelper.SetInput(comp, GsaResultTests.NodeAndElement2dCombinationResultsMother());
+      Assert.NotNull(ComponentTestHelper.GetOutput(comp));
+      comp.SetSelected(0, 3);
+      ComponentTestHelper.ComputeOutput(comp);
+      Assert.Contains("Result is not available for the selected component",
+        comp.RuntimeMessages(GH_RuntimeMessageLevel.Warning));
+      Assert.Null(ComponentTestHelper.GetOutput(comp));
     }
 
     [Fact]

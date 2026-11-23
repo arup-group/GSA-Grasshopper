@@ -7,6 +7,10 @@ namespace GsaGH.Parameters.Results {
   internal static partial class Entity2dResultsFactory {
     internal static IList<IMeshQuantity<IDisplacement>> CreateDisplacements(
       ReadOnlyCollection<Double6> results) {
+      if (results.Count == 0) {
+        return new List<IMeshQuantity<IDisplacement>>();
+      }
+
       return new List<IMeshQuantity<IDisplacement>> {
               CreateFromApiCollection(results)
              };
@@ -16,7 +20,7 @@ namespace GsaGH.Parameters.Results {
       ReadOnlyCollection<ReadOnlyCollection<Double6>> results) {
       var permutations = new List<IMeshQuantity<IDisplacement>>();
       foreach (ReadOnlyCollection<Double6> permutation in results) {
-        permutations.Add(CreateFromApiCollection(permutation));
+        permutations.Add(permutation.Count == 0 ? null : CreateFromApiCollection(permutation));
       }
       return permutations;
     }
