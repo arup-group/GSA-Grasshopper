@@ -161,5 +161,22 @@ namespace GsaGHTests.GooWrappers {
       Assert.Equal(0, restored.PersistentData.DataCount);
       Assert.Empty(restored.RuntimeMessages(GH_RuntimeMessageLevel.Error));
     }
+
+    [Fact]
+    public void TemporarySnapshotCleanupFailureDoesNotEscape() {
+      string path = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".gwb");
+      File.WriteAllText(path, "snapshot");
+      try {
+        using (new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None)) {
+          string warning = GsaModelGoo.CleanupTemporarySnapshot(path);
+          Assert.NotNull(warning);
+          Assert.Contains("Could not remove temporary GSA snapshot", warning);
+          Assert.True(File.Exists(path));
+        }
+        Assert.True(File.Exists(path));
+      } finally {
+        File.Delete(path);
+      }
+    }
   }
 }

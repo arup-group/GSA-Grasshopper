@@ -63,7 +63,10 @@ namespace GsaGH.Parameters {
         // Grasshopper discards the item if false is returned, including its error marker.
         return true;
       } finally {
-        File.Delete(path);
+        string cleanupWarning = CleanupTemporarySnapshot(path);
+        if (cleanupWarning != null) {
+          writer.AddMessage(cleanupWarning, GH_Message_Type.warning);
+        }
       }
     }
 
@@ -105,7 +108,10 @@ namespace GsaGH.Parameters {
         PersistenceError = $"Cannot restore internalised GSA model: {ex.Message}";
         reader.AddMessage(PersistenceError, GH_Message_Type.error);
       } finally {
-        File.Delete(path);
+        string cleanupWarning = CleanupTemporarySnapshot(path);
+        if (cleanupWarning != null) {
+          reader.AddMessage(cleanupWarning, GH_Message_Type.warning);
+        }
       }
 
       // Retain an invalid item so the parameter can report the error on the canvas.
@@ -120,6 +126,18 @@ namespace GsaGH.Parameters {
     private static void ValidateSnapshotLength(long length) {
       if (length <= 0 || length > MaximumSnapshotBytes) {
         throw new InvalidDataException("Embedded GSA models must be between 1 byte and 100 MiB.");
+      }
+    }
+
+    internal static string CleanupTemporarySnapshot(string path) {
+      try {
+        if (File.Exists(path)) {
+          File.Delete(path);
+        }
+        return null;
+      } catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException
+        || ex is System.Security.SecurityException) {
+        return $"Could not remove temporary GSA snapshot '{path}'. {ex.Message}";
       }
     }
   }
