@@ -117,8 +117,19 @@ steps:
     testAssemblyVer2: |
       GsaGHTests\bin\x64\Release\net48\GsaGHTests.dll
     resultsFolder: '$(System.DefaultWorkingDirectory)\results\gsagh'
-    otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:"$(USERPROFILE)\.nuget\packages\coverlet.collector\6.0.2\build"'
+    otherConsoleOptions: '--collect:"XPlat Code Coverage" /TestAdapterPath:"$(USERPROFILE)\.nuget\packages\coverlet.collector\6.0.2\build" /p:ParallelizeTestCollections=false'
+- powershell: |
+    # Target the primary GSA analysis engine and its interface processes
+    $processes = @("GSA", "Gsa_Gui")
 
+    foreach ($p in $processes) {
+        if (Get-Process -Name $p -ErrorAction SilentlyContinue) {
+            Write-Host "Found running instance of $p. Terminating..."
+            Stop-Process -Name $p -Force -ErrorAction SilentlyContinue
+        }
+    }
+  displayName: 'Clean Orphaned Oasys GSA Processes'
+  continue-on-error: true
 - task: VSTest@3
   displayName: 'Integration test'
   inputs:
