@@ -18,7 +18,7 @@ namespace GsaGHTests.Parameters.Results {
 
     internal static List<double> PeakVelocity() {
       return new List<double>() {
-        813.3E-6,
+        813.0E-6,
         992.3E-6,
         0.001130,
         0.001222,

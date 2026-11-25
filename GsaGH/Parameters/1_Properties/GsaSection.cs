@@ -77,25 +77,29 @@ namespace GsaGH.Parameters {
     /// <param name="section"></param>
     internal GsaSection(KeyValuePair<int, Section> section) {
       Id = section.Key;
-      ApiSection = section.Value;
+      ApiSection = DuplicateFrom(section.Value);
       IsReferencedById = false;
     }
 
     public Section DuplicateApiObject() {
+      return DuplicateFrom(ApiSection);
+    }
+
+    private static Section DuplicateFrom(Section source) {
       var sec = new Section() {
-        MaterialAnalysisProperty = ApiSection.MaterialAnalysisProperty,
-        MaterialGradeProperty = ApiSection.MaterialGradeProperty,
-        MaterialType = ApiSection.MaterialType,
-        Name = ApiSection.Name.ToString(),
-        BasicOffset = ApiSection.BasicOffset,
-        AdditionalOffsetY = ApiSection.AdditionalOffsetY,
-        AdditionalOffsetZ = ApiSection.AdditionalOffsetZ,
-        Pool = ApiSection.Pool,
-        Profile = ApiSection.Profile,
+        MaterialAnalysisProperty = source.MaterialAnalysisProperty,
+        MaterialGradeProperty = source.MaterialGradeProperty,
+        MaterialType = source.MaterialType,
+        Name = source.Name.ToString(),
+        BasicOffset = source.BasicOffset,
+        AdditionalOffsetY = source.AdditionalOffsetY,
+        AdditionalOffsetZ = source.AdditionalOffsetZ,
+        Pool = source.Pool,
+        Profile = source.Profile,
       };
       // workaround to handle that Color is non-nullable type
-      if ((Color)ApiSection.Colour != Color.FromArgb(0, 0, 0)) {
-        sec.Colour = ApiSection.Colour;
+      if ((Color)source.Colour != Color.FromArgb(0, 0, 0)) {
+        sec.Colour = source.Colour;
       }
 
       return sec;

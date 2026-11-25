@@ -105,13 +105,6 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void TestGetMemberListDefinitionFromMemberList() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      var apiList = new EntityList() {
-        Type = GsaAPI.EntityType.Member,
-        Definition = "1",
-        Name = "myList"
-      };
-      result.Model.ApiModel.AddList(apiList);
-
       var comp = new Member1dDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       var list = new GsaList("myList", "1", GsaAPI.EntityType.Member);
@@ -124,13 +117,6 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void TestGetMemberListDefinitionErrorFromElementList() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      var apiList = new EntityList() {
-        Type = GsaAPI.EntityType.Element,
-        Definition = "1",
-        Name = "myList"
-      };
-      result.Model.ApiModel.AddList(apiList);
-
       var comp = new Member1dDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       var list = new GsaList("myList", "1", GsaAPI.EntityType.Element);
@@ -143,13 +129,6 @@ namespace GsaGHTests.Components.Results {
     [Fact]
     public void TestGetMemberListDefinitionFromUnnamedMemberList() {
       GsaResult result = GsaResultTests.AnalysisCaseResult(GsaFile.SteelDesignSimple, 1);
-      var apiList = new EntityList() {
-        Type = GsaAPI.EntityType.Member,
-        Definition = "1",
-        Name = string.Empty
-      };
-      result.Model.ApiModel.AddList(apiList);
-
       var comp = new Member1dDisplacements();
       ComponentTestHelper.SetInput(comp, new GsaResultGoo(result));
       var list = new GsaList(string.Empty, "1", GsaAPI.EntityType.Member);

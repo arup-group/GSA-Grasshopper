@@ -107,7 +107,7 @@ namespace GsaGH.Parameters {
       Mesh = mesh;
       Topology = new Point3dList(mesh.Vertices.ToPoint3dArray());
       TopoInt = RhinoConversions.ConvertMeshToElem2d(Mesh);
-      ApiElements = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
+      ApiElements = elements.OrderBy(kvp => kvp.Key).Select(kvp => DuplicateFrom(kvp.Value)).ToList();
       Ids = elements.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Key).ToList();
       if (!prop2ds.IsNullOrEmpty()) {
         Prop2ds = prop2ds.OrderBy(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
@@ -119,7 +119,7 @@ namespace GsaGH.Parameters {
     /// </summary>
     internal GsaElement2d(int id, GSAElement element, Curve curve, GsaProperty2d prop2d, LengthUnit modelUnit) : base(modelUnit) {
       Curve = curve;
-      ApiElements = new List<GSAElement>() { element };
+      ApiElements = new List<GSAElement>() { DuplicateFrom(element) };
       Topology = RhinoConversions.LoadPanelTopo(curve);
       TopoInt = RhinoConversions.LoadPanelTopoIndices(curve);
       Ids = new List<int>() { id };
@@ -137,41 +137,42 @@ namespace GsaGH.Parameters {
         return ApiElements;
       }
 
-      var elems = new List<GSAElement>();
-      for (int i = 0; i < ApiElements.Count; i++) {
-        GSAElement element2d = ApiElements[i];
-        GSAElement element = null;
-        if (element2d.IsLoadPanel) {
-          element = new GSAElement(new LoadPanelElement()) {
-            Group = element2d.Group,
-            IsDummy = element2d.IsDummy,
-            Name = element2d.Name.ToString(),
-            OrientationAngle = element2d.OrientationAngle,
-            ParentMember = element2d.ParentMember,
-            Property = element2d.Property,
-            Type = element2d.Type,
-            Topology = new ReadOnlyCollection<int>(element2d.Topology.ToList()),
-          };
-        } else {
-          element = new GSAElement(new Element()) {
-            Group = element2d.Group,
-            IsDummy = element2d.IsDummy,
-            Name = element2d.Name.ToString(),
-            OrientationNode = element2d.OrientationNode,
-            OrientationAngle = element2d.OrientationAngle,
-            ParentMember = element2d.ParentMember,
-            Property = element2d.Property,
-            Type = element2d.Type,
-            Topology = new ReadOnlyCollection<int>(element2d.Topology.ToList()),
-            Offset = element2d.Offset,
-          };
-        }
-        if ((Color)element2d.Colour != Color.FromArgb(0, 0, 0)) {
-          element.Colour = element2d.Colour;
-        }
-        elems.Add(element);
+      return ApiElements.Select(DuplicateFrom).ToList();
+    }
+
+    private static GSAElement DuplicateFrom(GSAElement source) {
+      GSAElement element;
+      if (source.IsLoadPanel) {
+        element = new GSAElement(new LoadPanelElement()) {
+          Group = source.Group,
+          IsDummy = source.IsDummy,
+          Name = source.Name.ToString(),
+          OrientationAngle = source.OrientationAngle,
+          ParentMember = source.ParentMember,
+          Property = source.Property,
+          Type = source.Type,
+          Topology = new ReadOnlyCollection<int>(source.Topology.ToList()),
+        };
+      } else {
+        element = new GSAElement(new Element()) {
+          Group = source.Group,
+          IsDummy = source.IsDummy,
+          Name = source.Name.ToString(),
+          OrientationNode = source.OrientationNode,
+          OrientationAngle = source.OrientationAngle,
+          ParentMember = source.ParentMember,
+          Property = source.Property,
+          Type = source.Type,
+          Topology = new ReadOnlyCollection<int>(source.Topology.ToList()),
+          Offset = source.Offset,
+        };
       }
-      return elems;
+
+      if ((Color)source.Colour != Color.FromArgb(0, 0, 0)) {
+        element.Colour = source.Colour;
+      }
+
+      return element;
     }
 
     public Point3dList GetCenterPoints() {
