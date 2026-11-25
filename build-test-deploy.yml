@@ -264,12 +264,6 @@ steps:
     & 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\amd64\MSBuild.exe' GsaGH.csproj /t:pack /p:Platform=x64 /p:PackageOutputPath=$(Build.ArtifactStagingDirectory) /p:IncludeSymbols=true /p:SymbolPackageFormat=snupkg /p:DebugType=portable /property:Configuration=Release
   displayName: Package NuGet
 
-- powershell: |
-    New-Item -ItemType Directory -Force $(Build.ArtifactStagingDirectory)
-    Copy-Item GsaGH/bin/Release/*.nupkg $(Build.ArtifactStagingDirectory)
-    Copy-Item GsaGH/bin/Release/*.snupkg $(Build.ArtifactStagingDirectory)
-  displayName: Put Artifacts into Staging Directory
-
 - publish: $(Build.ArtifactStagingDirectory)
   artifact: NuGetPackages
   displayName: Publish Nuget and Snupkg Packages
