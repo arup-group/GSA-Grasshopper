@@ -87,37 +87,40 @@ namespace GsaGH.Parameters {
     /// Create a new instance from an API object from an existing model
     /// </summary>
     internal GsaMember3d(Member member, int id, Mesh mesh, GsaProperty3d prop, LengthUnit modelUnit) {
-      ApiMember = member;
       Id = id;
+      ApiMember = DuplicateFrom(member);
+      ApiMember.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
       SolidMesh = RhinoConversions.ConvertMeshToTriMeshSolid(mesh);
       Prop3d = prop;
-      ApiMember.MeshSize = new Length(member.MeshSize, LengthUnit.Meter).As(modelUnit);
-      ApiMember.Group = member.Group;
       UpdatePreview();
     }
 
     public Member DuplicateApiObject() {
+      return DuplicateFrom(ApiMember);
+    }
+
+    private static Member DuplicateFrom(Member source) {
       var mem = new Member {
-        Group = ApiMember.Group,
-        IsDummy = ApiMember.IsDummy,
-        IsIntersector = ApiMember.IsIntersector,
-        MeshSize = ApiMember.MeshSize,
-        Name = ApiMember.Name,
-        OrientationAngle = ApiMember.OrientationAngle,
-        OrientationNode = ApiMember.OrientationNode,
-        Property = ApiMember.Property,
-        Type = ApiMember.Type,
+        Group = source.Group,
+        IsDummy = source.IsDummy,
+        IsIntersector = source.IsIntersector,
+        MeshSize = source.MeshSize,
+        Name = source.Name,
+        OrientationAngle = source.OrientationAngle,
+        OrientationNode = source.OrientationNode,
+        Property = source.Property,
+        Type = source.Type,
       };
-      if (ApiMember.Topology != string.Empty) {
-        mem.Topology = ApiMember.Topology;
+      if (source.Topology != string.Empty) {
+        mem.Topology = source.Topology;
       }
 
-      mem.SetOffsetsFrom(ApiMember);
+      mem.SetOffsetsFrom(source);
 
-      if ((Color)ApiMember.Colour
+      if ((Color)source.Colour
         != Color.FromArgb(0, 0, 0)) // workaround to handle that Color is non-nullable type
       {
-        mem.Colour = ApiMember.Colour;
+        mem.Colour = source.Colour;
       }
 
       return mem;

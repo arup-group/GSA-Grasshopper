@@ -44,10 +44,8 @@ namespace GsaGH.Parameters {
 
       var loads = new List<GsaLoadGoo>();
       foreach (BeamLoad apiLoad in beamLoads) {
-        var load = new GsaBeamLoad {
-          ApiLoad = apiLoad,
-          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
-        };
+        var load = DetachImportedLoad(new GsaBeamLoad { ApiLoad = apiLoad });
+        load.ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType);
         load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
@@ -67,10 +65,8 @@ namespace GsaGH.Parameters {
 
       var loads = new List<GsaLoadGoo>();
       foreach (BeamThermalLoad apiLoad in beamThermalLoads) {
-        var load = new GsaBeamThermalLoad {
-          ApiLoad = apiLoad,
-          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
-        };
+        var load = DetachImportedLoad(new GsaBeamThermalLoad { ApiLoad = apiLoad });
+        load.ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType);
         load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
@@ -90,10 +86,8 @@ namespace GsaGH.Parameters {
 
       var loads = new List<GsaLoadGoo>();
       foreach (FaceLoad apiLoad in faceLoads) {
-        var load = new GsaFaceLoad {
-          ApiLoad = apiLoad,
-          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
-        };
+        var load = DetachImportedLoad(new GsaFaceLoad { ApiLoad = apiLoad });
+        load.ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType);
         load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
@@ -113,10 +107,8 @@ namespace GsaGH.Parameters {
 
       var loads = new List<GsaLoadGoo>();
       foreach (FaceThermalLoad apiLoad in faceThermalLoads) {
-        var load = new GsaFaceThermalLoad {
-          ApiLoad = apiLoad,
-          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
-        };
+        var load = DetachImportedLoad(new GsaFaceThermalLoad { ApiLoad = apiLoad });
+        load.ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType);
         load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
@@ -136,10 +128,8 @@ namespace GsaGH.Parameters {
 
       var loads = new List<GsaLoadGoo>();
       foreach (GravityLoad apiLoad in gravityLoads) {
-        var load = new GsaGravityLoad {
-          ApiLoad = apiLoad,
-          ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType)
-        };
+        var load = DetachImportedLoad(new GsaGravityLoad { ApiLoad = apiLoad });
+        load.ReferenceList = new GsaList(apiLoad.Name, apiLoad.EntityList, apiLoad.EntityType);
         load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
         loads.Add(new GsaLoadGoo(load));
       }
@@ -164,10 +154,10 @@ namespace GsaGH.Parameters {
 
       var loads = new List<GsaLoadGoo>();
       foreach (GridAreaLoad gridAreaLoad in areaLoads) {
-        var load = new GsaGridAreaLoad {
+        var load = DetachImportedLoad(new GsaGridAreaLoad {
           ApiLoad = gridAreaLoad,
           GridPlaneSurface = CreateGridPlaneSurfaceFromApi(model, gridAreaLoad.GridSurface, unit)
-        };
+        });
 
         if (load.GridPlaneSurface != null) {
           if (gridAreaLoad.PolyLineDefinition != string.Empty && gridAreaLoad.PolyLineDefinition.Contains('(')) {
@@ -204,10 +194,10 @@ namespace GsaGH.Parameters {
 
       var loads = new List<GsaLoadGoo>();
       foreach (GridLineLoad gridLineLoad in lineLoads) {
-        var load = new GsaGridLineLoad {
+        var load = DetachImportedLoad(new GsaGridLineLoad {
           ApiLoad = gridLineLoad,
           GridPlaneSurface = CreateGridPlaneSurfaceFromApi(model, gridLineLoad.GridSurface, unit)
-        };
+        });
 
         if (load.GridPlaneSurface != null) {
           if (gridLineLoad.PolyLineDefinition != string.Empty && gridLineLoad.PolyLineDefinition.Contains('(')) {
@@ -280,7 +270,7 @@ namespace GsaGH.Parameters {
         gps.Plane = plane;
       }
 
-      return gps;
+      return gps.Duplicate();
     }
 
     /// <summary>
@@ -300,14 +290,14 @@ namespace GsaGH.Parameters {
 
       var loads = new List<GsaLoadGoo>();
       foreach (GridPointLoad gridPointLoad in pointLoads) {
-        var load = new GsaGridPointLoad {
+        var load = DetachImportedLoad(new GsaGridPointLoad {
           ApiLoad = gridPointLoad,
           GridPlaneSurface = CreateGridPlaneSurfaceFromApi(model, gridPointLoad.GridSurface, unit)
-        };
+        });
 
         if (unit != LengthUnit.Meter) {
-          load.ApiLoad.X = new Length(load.ApiLoad.X, LengthUnit.Meter).As(unit);
-          load.ApiLoad.Y = new Length(load.ApiLoad.Y, LengthUnit.Meter).As(unit);
+          load.ApiLoad.X = new Length(gridPointLoad.X, LengthUnit.Meter).As(unit);
+          load.ApiLoad.Y = new Length(gridPointLoad.Y, LengthUnit.Meter).As(unit);
         }
 
         load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
@@ -360,10 +350,10 @@ namespace GsaGH.Parameters {
           }
 
           foreach (NodeLoad gsaLoad in gsaloads) {
-            var load = new GsaNodeLoad {
+            var load = DetachImportedLoad(new GsaNodeLoad {
               ApiLoad = gsaLoad,
               Type = ntyp,
-            };
+            });
             load.LoadCase = new GsaLoadCase(load.ApiLoad.Case, loadCases);
             loads.Add(new GsaLoadGoo(load));
           }
@@ -373,6 +363,13 @@ namespace GsaGH.Parameters {
       }
 
       return loads;
+    }
+
+    /// <summary>
+    ///   Copy a load wrapper off the open GSA model so import does not keep live API references.
+    /// </summary>
+    private static T DetachImportedLoad<T>(T importedFromModel) where T : class, IGsaLoad {
+      return (T)((IGsaLoad)importedFromModel).Duplicate();
     }
   }
 }

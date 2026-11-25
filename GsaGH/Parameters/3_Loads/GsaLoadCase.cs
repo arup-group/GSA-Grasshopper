@@ -31,7 +31,7 @@ namespace GsaGH.Parameters {
 
     internal GsaLoadCase(int id, ReadOnlyDictionary<int, LoadCase> loadCases) : this(id) {
       if (loadCases != null && loadCases.ContainsKey(Id)) {
-        LoadCase = loadCases[id];
+        LoadCase = DuplicateFrom(loadCases[Id]);
       }
     }
 
@@ -47,9 +47,13 @@ namespace GsaGH.Parameters {
     }
 
     internal LoadCase DuplicateApiObject() {
+      return DuplicateFrom(LoadCase);
+    }
+
+    private static LoadCase DuplicateFrom(LoadCase source) {
       return new LoadCase() {
-        CaseType = LoadCase.CaseType,
-        Name = LoadCase.Name
+        CaseType = source.CaseType,
+        Name = source.Name
       };
     }
 

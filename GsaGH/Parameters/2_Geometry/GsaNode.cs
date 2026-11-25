@@ -69,9 +69,8 @@ namespace GsaGH.Parameters {
     /// </summary>
     internal GsaNode(Node node, int id, LengthUnit unit, Plane localAxis = new Plane()) {
       Id = id;
-      ApiNode = node;
+      ApiNode = DuplicateFrom(node);
       if (unit != LengthUnit.Meter) {
-        ApiNode = DuplicateApiObject();
         ApiNode.Position.X = new Length(node.Position.X, LengthUnit.Meter).As(unit);
         ApiNode.Position.Y = new Length(node.Position.Y, LengthUnit.Meter).As(unit);
         ApiNode.Position.Z = new Length(node.Position.Z, LengthUnit.Meter).As(unit);
@@ -85,30 +84,34 @@ namespace GsaGH.Parameters {
     }
 
     public Node DuplicateApiObject() {
+      return DuplicateFrom(ApiNode);
+    }
+
+    private static Node DuplicateFrom(Node source) {
       var node = new Node {
-        AxisProperty = ApiNode.AxisProperty,
-        DamperProperty = ApiNode.DamperProperty,
-        MassProperty = ApiNode.MassProperty,
-        Name = ApiNode.Name.ToString(),
+        AxisProperty = source.AxisProperty,
+        DamperProperty = source.DamperProperty,
+        MassProperty = source.MassProperty,
+        Name = source.Name.ToString(),
         Restraint = new NodalRestraint {
-          X = ApiNode.Restraint.X,
-          Y = ApiNode.Restraint.Y,
-          Z = ApiNode.Restraint.Z,
-          XX = ApiNode.Restraint.XX,
-          YY = ApiNode.Restraint.YY,
-          ZZ = ApiNode.Restraint.ZZ,
+          X = source.Restraint.X,
+          Y = source.Restraint.Y,
+          Z = source.Restraint.Z,
+          XX = source.Restraint.XX,
+          YY = source.Restraint.YY,
+          ZZ = source.Restraint.ZZ,
         },
-        SpringProperty = ApiNode.SpringProperty,
+        SpringProperty = source.SpringProperty,
         Position = new Vector3 {
-          X = ApiNode.Position.X,
-          Y = ApiNode.Position.Y,
-          Z = ApiNode.Position.Z,
+          X = source.Position.X,
+          Y = source.Position.Y,
+          Z = source.Position.Z,
         },
       };
 
       // workaround to handle that Color is non-nullable type
-      if ((Color)ApiNode.Colour != Color.FromArgb(0, 0, 0)) {
-        node.Colour = ApiNode.Colour;
+      if ((Color)source.Colour != Color.FromArgb(0, 0, 0)) {
+        node.Colour = source.Colour;
       }
 
       return node;
