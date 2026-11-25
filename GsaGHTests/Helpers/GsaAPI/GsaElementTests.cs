@@ -38,7 +38,7 @@ namespace GsaGHTests.Helpers.GsaAPITests {
     }
 
     [Fact]
-    public void GroupsShouldDefaultToOne() {
+    public void GroupsShouldSetCorrectly() {
       Assert.Equal(11, gsaElement.Group);
     }
 
