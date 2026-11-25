@@ -60,10 +60,10 @@ namespace GsaGHTests.Parameters.Results {
 
     internal static List<double?> ZzInKiloNewtonsPerMeter() {
       return new List<double?>() {
-        2.930E-6,
+        6.103E-6,
         null,
         null,
-        -2.441E-6,
+        -0.4882E-6,
       };
     }
 

@@ -133,9 +133,8 @@ namespace GsaGH.Parameters {
       List<Point3dList> voidTopology, List<List<string>> voidTopologyType,
       List<Point3dList> inlcusionLinesTopology, List<List<string>> inclusionTopologyType,
       Point3dList includePoints, GsaProperty2d prop2d, LengthUnit modelUnit) : base(modelUnit) {
-      ApiMember = mem.Value;
+      ApiMember = DuplicateFrom(mem.Value);
       ApiMember.MeshSize = new Length(mem.Value.MeshSize, LengthUnit.Meter).As(modelUnit);
-      ApiMember.Group = mem.Value.Group;
       Id = mem.Key;
 
       InitTopology(topology, topologyType);
@@ -161,29 +160,33 @@ namespace GsaGH.Parameters {
     }
 
     public Member DuplicateApiObject() {
+      return DuplicateFrom(ApiMember);
+    }
+
+    private static Member DuplicateFrom(Member source) {
       var mem = new Member {
-        Group = ApiMember.Group,
-        IsDummy = ApiMember.IsDummy,
-        MeshSize = ApiMember.MeshSize,
-        Name = ApiMember.Name.ToString(),
-        OrientationAngle = ApiMember.OrientationAngle,
-        OrientationNode = ApiMember.OrientationNode,
-        Property = ApiMember.Property,
-        Type = ApiMember.Type,
-        Type2D = ApiMember.Type2D,
-        AutomaticOffset = ApiMember.AutomaticOffset,
-        IsIntersector = ApiMember.IsIntersector,
-        MeshMode2d = ApiMember.MeshMode2d,
+        Group = source.Group,
+        IsDummy = source.IsDummy,
+        MeshSize = source.MeshSize,
+        Name = source.Name.ToString(),
+        OrientationAngle = source.OrientationAngle,
+        OrientationNode = source.OrientationNode,
+        Property = source.Property,
+        Type = source.Type,
+        Type2D = source.Type2D,
+        AutomaticOffset = source.AutomaticOffset,
+        IsIntersector = source.IsIntersector,
+        MeshMode2d = source.MeshMode2d,
       };
-      if (ApiMember.Topology != string.Empty) {
-        mem.Topology = ApiMember.Topology;
+      if (source.Topology != string.Empty) {
+        mem.Topology = source.Topology;
       }
 
-      mem.SetOffsetsFrom(ApiMember);
+      mem.SetOffsetsFrom(source);
 
       // workaround to handle that Color is non-nullable type
-      if ((Color)ApiMember.Colour != Color.FromArgb(0, 0, 0)) {
-        mem.Colour = ApiMember.Colour;
+      if ((Color)source.Colour != Color.FromArgb(0, 0, 0)) {
+        mem.Colour = source.Colour;
       }
 
       return mem;
