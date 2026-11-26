@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 
+using GH_IO.Serialization;
+
 using Grasshopper.Kernel;
 
 using GsaGH.Helpers.GH;
@@ -28,6 +30,28 @@ namespace GsaGH.Parameters {
     protected override GsaModelGoo PreferredCast(object data) {
       this.AddRuntimeError($"Data conversion failed from {data.GetTypeName()} to Model");
       return new GsaModelGoo(null);
+    }
+
+    public override bool Read(GH_IReader reader) {
+      bool result = base.Read(reader);
+      foreach (GsaModelGoo goo in PersistentData.AllData(true)) {
+        if (goo?.PersistenceError != null) {
+          this.AddRuntimeError(goo.PersistenceError);
+        }
+      }
+      return result;
+    }
+
+    protected override void OnVolatileDataCollected() {
+      base.OnVolatileDataCollected();
+      if (SourceCount != 0) {
+        return;
+      }
+      foreach (GsaModelGoo goo in PersistentData.AllData(true)) {
+        if (goo?.PersistenceError != null) {
+          this.AddRuntimeError(goo.PersistenceError);
+        }
+      }
     }
   }
 }

@@ -16,6 +16,22 @@ Head over to our GSA documentation site for:
 - [Parameter overview](https://docs.oasys-software.com/structural/gsa/references/gsagh/gsagh-parameters.html?source=GsaGhGithub)
 - [Component overview](https://docs.oasys-software.com/structural/gsa/references/gsagh/gsagh-components.html?source=GsaGhGithub)
 
+### Internalising GSA models
+
+The Model parameter embeds a versioned GSA binary (`.gwb`) snapshot when its data is
+internalised and the Grasshopper document is saved. The snapshot includes model
+geometry, properties, loads, analysis tasks and the results stored in the GSA
+binary; external references are not packaged. The original model file is not
+needed to restore the snapshot. Models are saved from a clone, leaving the live
+model and its file association unchanged.
+
+Each snapshot is limited to 100 MiB of GSA binary data before Grasshopper archive
+compression. Larger models produce a save error; keep an Open Model component
+and an external GSA file instead. Missing, damaged or unsupported snapshots
+produce an archive error and an error on the Model parameter. Old documents
+still load, but model data already lost by older versions cannot be recovered:
+reconnect the original model and internalise it again.
+
 ## Tutorials
 [![Tutorials](https://img.shields.io/badge/Tutorials-Start%20today-red?logo=youtube&style=social)](https://www.youtube.com/playlist?list=PLm0cokV2wawoKLWO7cp8FBlhGkBsbEYsh)
 
