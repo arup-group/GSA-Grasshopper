@@ -12,9 +12,26 @@ using GsaGH.Parameters;
 using Xunit;
 
 namespace IntegrationTests.ExampleFiles {
+  public sealed class ReciprocalDocumentFixture : IDisposable {
+    public GH_Document Document { get; }
+
+    public ReciprocalDocumentFixture(GrasshopperFixture grasshopper) {
+      Document = Example2_Reciprocal_Test.Document();
+    }
+
+    public void Dispose() {
+      Document.Dispose();
+    }
+  }
+
   [Collection("GrasshopperFixture collection")]
   [SuppressMessage("ReSharper", "InconsistentNaming")]
-  public class Example2_Reciprocal_Test {
+  public class Example2_Reciprocal_Test : IClassFixture<ReciprocalDocumentFixture> {
+    private readonly GH_Document _document;
+
+    public Example2_Reciprocal_Test(ReciprocalDocumentFixture fixture) {
+      _document = fixture.Document;
+    }
 
     public static GH_Document Document() {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
@@ -30,26 +47,26 @@ namespace IntegrationTests.ExampleFiles {
 
     [Fact]
     public void MaxMyyAssert() {
-      IGH_Param param = Helper.FindParameter(Document(), "MaxMyy");
+      IGH_Param param = Helper.FindParameter(_document, "MaxMyy");
       var output = (GH_Number)param.VolatileData.get_Branch(0)[0];
       Assert.Equal(-157.193672, output.Value, DoubleComparer.Default);
     }
 
     [Fact]
     public void NoRuntimeErrorsTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(_document, GH_RuntimeMessageLevel.Error);
     }
 
     [Fact]
     public void SumLoadForceAssert() {
-      IGH_Param param = Helper.FindParameter(Document(), "SumLoadForce");
+      IGH_Param param = Helper.FindParameter(_document, "SumLoadForce");
       var output = (GH_Boolean)param.VolatileData.get_Branch(0)[0];
       Assert.True(output.Value);
     }
 
     [Fact]
     public void VectorResultGooTest() {
-      IGH_Param param = Helper.FindParameter(Document(), "ReactionForceVector");
+      IGH_Param param = Helper.FindParameter(_document, "ReactionForceVector");
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         var item = (GsaDiagramGoo)data;
         Assert.True(item.IsValid);
@@ -70,7 +87,7 @@ namespace IntegrationTests.ExampleFiles {
     [InlineData("CaseId")]
     [InlineData("Vector")]
     public void TestCastTo(string groupIdentifier) {
-      IGH_Param param = Helper.FindParameter(Document(), groupIdentifier);
+      IGH_Param param = Helper.FindParameter(_document, groupIdentifier);
       foreach (IGH_Goo data in param.VolatileData.AllData(false)) {
         Assert.True(data.IsValid);
       }

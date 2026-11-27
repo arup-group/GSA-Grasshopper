@@ -96,13 +96,12 @@ namespace GsaGH {
         + $" of GSA-Grasshopper requires {GsaVersionRequired.FullVersion} installed. Please upgrade {ProductName}.";
     private string _GsaApiDllVersion;
     private readonly IAnalytics _analytics;
-    private readonly bool _underTest;
 
-    public AddReferencePriority() : this(new PostHoGAnalytics(), underTest: false) { }
+    public AddReferencePriority() : this(new PostHoGAnalytics()) { }
 
-    internal AddReferencePriority(IAnalytics analytics, bool underTest) {
+    internal AddReferencePriority(IAnalytics analytics) {
       _analytics = analytics;
-      _underTest = underTest;
+
     }
 
     public override GH_LoadingInstruction PriorityLoad() {
@@ -119,13 +118,6 @@ namespace GsaGH {
         return GH_LoadingInstruction.Abort;
       }
 
-      // this is a temporary fix for TDA
-      // needs more investigation!
-      if (!_underTest) {
-        if (Assembly.GetEntryAssembly() != null && !Assembly.GetEntryAssembly().FullName.Contains("compute.geometry")) {
-          Assembly.LoadFile(PluginPath + MicrosoftDataSqliteDll);
-        }
-      }
 
       SetInstances();
       SetPlugins();

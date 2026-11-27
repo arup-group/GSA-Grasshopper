@@ -76,7 +76,7 @@ namespace GsaGHTests {
     [Fact]
     public void ShouldHavePosthogSetupWhenWeLoad() {
       var analyticsSpy = new AnalyticsSpy();
-      var addReferencePriority = new AddReferencePriority(analyticsSpy, true);
+      var addReferencePriority = new AddReferencePriority(analyticsSpy);
       addReferencePriority.PriorityLoad();
       Assert.True(analyticsSpy.loadedCalled);
     }

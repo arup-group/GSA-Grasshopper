@@ -11,9 +11,26 @@ using GsaGH.Helpers;
 using Xunit;
 
 namespace IntegrationTests.ExampleFiles {
+  public sealed class GerberMemberDocumentFixture : IDisposable {
+    public GH_Document Document { get; }
+
+    public GerberMemberDocumentFixture(GrasshopperFixture grasshopper) {
+      Document = Example1_GerberMember_Test.Document();
+    }
+
+    public void Dispose() {
+      Document.Dispose();
+    }
+  }
+
   [Collection("GrasshopperFixture collection")]
   [SuppressMessage("ReSharper", "InconsistentNaming")]
-  public class Example1_GerberMember_Test {
+  public class Example1_GerberMember_Test : IClassFixture<GerberMemberDocumentFixture> {
+    private readonly GH_Document _document;
+
+    public Example1_GerberMember_Test(GerberMemberDocumentFixture fixture) {
+      _document = fixture.Document;
+    }
 
     public static GH_Document Document() {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
@@ -29,14 +46,14 @@ namespace IntegrationTests.ExampleFiles {
 
     [Fact]
     public void MaxMyyAssert() {
-      IGH_Param param = Helper.FindParameter(Document(), "MaxMyy");
+      IGH_Param param = Helper.FindParameter(_document, "MaxMyy");
       var output = (GH_Number)param.VolatileData.get_Branch(0)[0];
       Assert.Equal(60.028894, output.Value, DoubleComparer.Default);
     }
 
     [Fact]
     public void NoRuntimeErrorsTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(_document, GH_RuntimeMessageLevel.Error);
     }
   }
 }

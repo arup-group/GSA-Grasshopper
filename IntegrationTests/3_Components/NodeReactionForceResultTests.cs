@@ -10,8 +10,25 @@ using GsaGH.Helpers;
 using Xunit;
 
 namespace IntegrationTests.Components {
+  public sealed class NodeReactionForceResultDocumentFixture : IDisposable {
+    public GH_Document Document { get; }
+
+    public NodeReactionForceResultDocumentFixture(GrasshopperFixture grasshopper) {
+      Document = NodeReactionForceResultTests.Document();
+    }
+
+    public void Dispose() {
+      Document.Dispose();
+    }
+  }
+
   [Collection("GrasshopperFixture collection")]
-  public class NodeReactionForceResultTests {
+  public class NodeReactionForceResultTests : IClassFixture<NodeReactionForceResultDocumentFixture> {
+    private readonly GH_Document _document;
+
+    public NodeReactionForceResultTests(NodeReactionForceResultDocumentFixture fixture) {
+      _document = fixture.Document;
+    }
 
     public static GH_Document Document() {
       Type thisClass = MethodBase.GetCurrentMethod().DeclaringType;
@@ -31,7 +48,7 @@ namespace IntegrationTests.Components {
 
     [Fact]
     public void FAssert() {
-      IGH_Param param = Helper.FindParameter(Document(), "F");
+      IGH_Param param = Helper.FindParameter(_document, "F");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
@@ -44,7 +61,7 @@ namespace IntegrationTests.Components {
 
     [Fact]
     public void FxAssert() {
-      IGH_Param param = Helper.FindParameter(Document(), "Fx");
+      IGH_Param param = Helper.FindParameter(_document, "Fx");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
@@ -57,7 +74,7 @@ namespace IntegrationTests.Components {
 
     [Fact]
     public void FyAssert() {
-      IGH_Param param = Helper.FindParameter(Document(), "Fy");
+      IGH_Param param = Helper.FindParameter(_document, "Fy");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
@@ -70,7 +87,7 @@ namespace IntegrationTests.Components {
 
     [Fact]
     public void FzAssert() {
-      IGH_Param param = Helper.FindParameter(Document(), "Fz");
+      IGH_Param param = Helper.FindParameter(_document, "Fz");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
@@ -83,7 +100,7 @@ namespace IntegrationTests.Components {
 
     [Fact]
     public void MAssert() {
-      IGH_Param param = Helper.FindParameter(Document(), "M");
+      IGH_Param param = Helper.FindParameter(_document, "M");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
@@ -96,7 +113,7 @@ namespace IntegrationTests.Components {
 
     [Fact]
     public void MxxAssert() {
-      IGH_Param param = Helper.FindParameter(Document(), "Mxx");
+      IGH_Param param = Helper.FindParameter(_document, "Mxx");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
@@ -109,7 +126,7 @@ namespace IntegrationTests.Components {
 
     [Fact]
     public void MyyAssert() {
-      IGH_Param param = Helper.FindParameter(Document(), "Myy");
+      IGH_Param param = Helper.FindParameter(_document, "Myy");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
@@ -122,7 +139,7 @@ namespace IntegrationTests.Components {
 
     [Fact]
     public void MzzAssert() {
-      IGH_Param param = Helper.FindParameter(Document(), "Mzz");
+      IGH_Param param = Helper.FindParameter(_document, "Mzz");
       var output1 = (GH_Number)param.VolatileData.get_Branch(0)[0];
       var output2 = (GH_Number)param.VolatileData.get_Branch(0)[1];
       var output3 = (GH_Number)param.VolatileData.get_Branch(0)[2];
@@ -135,7 +152,7 @@ namespace IntegrationTests.Components {
 
     [Fact]
     public void NoRuntimeErrorsTest() {
-      Helper.TestNoRuntimeMessagesInDocument(Document(), GH_RuntimeMessageLevel.Error);
+      Helper.TestNoRuntimeMessagesInDocument(_document, GH_RuntimeMessageLevel.Error);
     }
   }
 }
